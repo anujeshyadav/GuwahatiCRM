@@ -1,0 +1,2 @@
+(this["webpackJsonpvuexy-react-admin-dashboard"]=this["webpackJsonpvuexy-react-admin-dashboard"]||[]).push([[385],{2943:function(e,t,n){"use strict";n.r(t);var a=n(17),r=n(18),c=n(19),u=n(20),i=n(1),o=n.n(i),s=function(e){Object(c.a)(n,e);var t=Object(u.a)(n);function n(){return Object(a.a)(this,n),t.apply(this,arguments)}return Object(r.a)(n,[{key:"render",value:function(){return o.a.createElement("div",null," textInComponent ")}}]),n}(i.Component);t.default=s}}]);
+//# sourceMappingURL=385.cf107911.chunk.js.map
