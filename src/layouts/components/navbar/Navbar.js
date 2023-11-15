@@ -80,11 +80,21 @@ const ThemeNavbar = (props) => {
                   sidebarVisibility={props.sidebarVisibility}
                   handleAppOverlay={props.handleAppOverlay}
                 />
+                <span>
+                  <img
+                    style={{ borderRadius: "8px" }}
+                    src={userImg}
+                    width={60}
+                    height={45}
+                  />
+                </span>
               </div>
               {props.horizontal ? (
                 <div className="logo d-flex align-items-center">
                   <div className="brand-logo mr-50"></div>
-                  <h2 className="text-primary brand-text mb-0">Softnewmen</h2>
+                  <h2 className="text-primary brand-text mb-0">
+                    guwahati Project
+                  </h2>
                 </div>
               ) : null}
               {/* working navbar */}

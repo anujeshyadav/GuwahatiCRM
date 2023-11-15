@@ -198,19 +198,22 @@ class HorizontalLayout extends PureComponent {
           }
         )}
       >
-        <Sidebar
-          toggleSidebarMenu={this.toggleSidebarMenu}
-          sidebarState={this.state.sidebarState}
-          sidebarHover={this.sidebarMenuHover}
-          sidebarVisibility={this.handleSidebarVisibility}
-          visibilityState={this.state.sidebarHidden}
-          activePath={this.props.match.path}
-          currentLang={this.state.currentLang}
-          activeTheme={customizerProps.menuTheme}
-          collapsed={this.state.collapsedContent}
-          menuOpen={this.state.menuOpen}
-          navbarType={customizerProps.navbarType}
-        />
+        <div className="sidebarmenu">
+          <Sidebar
+            toggleSidebarMenu={this.toggleSidebarMenu}
+            sidebarState={this.state.sidebarState}
+            sidebarHover={this.sidebarMenuHover}
+            sidebarVisibility={this.handleSidebarVisibility}
+            visibilityState={this.state.sidebarHidden}
+            activePath={this.props.match.path}
+            currentLang={this.state.currentLang}
+            activeTheme={customizerProps.menuTheme}
+            collapsed={this.state.collapsedContent}
+            menuOpen={this.state.menuOpen}
+            navbarType={customizerProps.navbarType}
+          />
+        </div>
+
         <div
           className={classnames("app-content content", {
             "show-overlay": this.state.appOverlay === true,

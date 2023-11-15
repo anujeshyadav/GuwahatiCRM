@@ -10,7 +10,7 @@ import { store } from "./redux/storeConfig/store";
 import Spinner from "./components/@vuexy/spinner/Fallback-spinner";
 import "./index.scss";
 import "./@fake-db";
-import  App  from "./App";
+import App from "./App";
 
 //const LazyApp = lazy(() => import("./App"));
 
@@ -20,7 +20,7 @@ ReactDOM.render(
     domain={config.domain}
     client_id={config.clientId}
     redirect_uri={window.location.origin + process.env.REACT_APP_PUBLIC_PATH}
->
+  >
     <Provider store={store}>
       <Suspense fallback={<Spinner />}>
         <Layout>
