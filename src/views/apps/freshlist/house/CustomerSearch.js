@@ -46,6 +46,7 @@ import {
   CreateCustomerList,
   CreateCustomerxmlView,
   DeleteAccount,
+  DeleteCustomerList,
 } from "../../../../ApiEndPoint/ApiCalling";
 import {
   BsCloudDownloadFill,
@@ -301,7 +302,7 @@ class CustomerSearch extends React.Component {
     }).then((value) => {
       switch (value) {
         case "delete":
-          DeleteAccount(id)
+          DeleteCustomerList(id)
             .then((res) => {
               let selectedData = this.gridApi.getSelectedRows();
               this.gridApi.updateRowData({ remove: selectedData });

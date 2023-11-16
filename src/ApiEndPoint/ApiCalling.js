@@ -14,6 +14,7 @@ import {
   Warranty_Delete,
   Create_Account_save,
   Create_Account_List,
+  Delete_Customer_List,
   Delete_Account_List,
   Add_To_Cart_PartsCatelougue,
   Create_Account_Update,
@@ -155,6 +156,12 @@ export const CreateCustomersave = async (data) => {
 export const DeleteAccount = async (id) => {
   let response = await axiosConfig
     .get(`${Delete_Account_List}` + id)
+    .then((res) => res.data);
+  return response;
+};
+export const DeleteCustomerList = async (id) => {
+  let response = await axiosConfig
+    .get(`${Delete_Customer_List}` + id)
     .then((res) => res.data);
   return response;
 };

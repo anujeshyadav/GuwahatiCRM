@@ -5,7 +5,8 @@ export const Create_Account_save = "/user/save-user";
 export const Create_Account_List = "/user/view-user";
 export const Create_Customer_List = "/customer/view-customer";
 export const Create_Account_Update = "/create-account/update-account/";
-export const Delete_Account_List = "/create-account/delete-account/";
+export const Delete_Account_List = "/user/delete-user/";
+export const Delete_Customer_List = "/customer/delete-customer/";
 export const Create_Parts = "/part-config/createParts";
 export const customerRegistration = "/account/customerRegistration";
 

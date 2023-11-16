@@ -1,5 +1,229 @@
-import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+// import React, { useEffect, useState } from "react";
+// import { useParams } from "react-router-dom";
+// import xmlJs from "xml-js";
+// import {
+//   Card,
+//   CardBody,
+//   Col,
+//   Form,
+//   Row,
+//   Input,
+//   Label,
+//   Button,
+//   FormGroup,
+//   CustomInput,
+//   Badge,
+// } from "reactstrap";
+// import { history } from "../../../../history";
+// import swal from "sweetalert";
+// import "../../../../../src/layouts/assets/scss/pages/users.scss";
+
+// import {
+//   CreateAccountSave,
+//   CreateAccountUpdate,
+//   CreateAccountView,
+// } from "../../../../ApiEndPoint/ApiCalling";
+
+// const CreateAccount = ({ ViewOneData }) => {
+//   const [CreatAccountView, setCreatAccountView] = useState({});
+//   const [formData, setFormData] = useState({});
+//   const [dropdownValue, setdropdownValue] = useState({});
+
+//   const Params = useParams();
+
+//   const handleInputChange = (e) => {
+//     const { name, value } = e.target;
+//     setFormData({
+//       ...formData,
+//       [name]: value,
+//     });
+//   };
+//   // console.log(formData);
+//   useEffect(() => {
+//     console.log(ViewOneData);
+//     setFormData(ViewOneData);
+//     // CreateAccountUpdate(Params.id)
+//     //   .then((res) => {
+//     //     console.log(res);
+//     //   })
+//     //   .catch((err) => {
+//     //     console.log(err);
+//     //   });
+//     CreateAccountView()
+//       .then((res) => {
+//         const jsonData = xmlJs.xml2json(res.data, { compact: true, spaces: 2 });
+//         // console.log(JSON.parse(jsonData));
+//         setCreatAccountView(JSON.parse(jsonData));
+//         setdropdownValue(JSON.parse(jsonData));
+//       })
+//       .catch((err) => {
+//         console.log(err);
+//       });
+//   }, []);
+
+//   const submitHandler = (e) => {
+//     e.preventDefault();
+//     // console.log(formData);
+//     CreateAccountSave(formData)
+//       .then((res) => {
+//         if (res.status) {
+//           setFormData({});
+//           window.location.reload();
+//           swal("Acccont Created Successfully");
+//         }
+//       })
+//       .catch((err) => {
+//         console.log(err);
+//       });
+//   };
+
+//   return (
+//     <div>
+//       <div>
+//         <Card>
+//           <Row className="m-2">
+//             <Col>
+//               <h1 className="float-left">Account Information</h1>
+//             </Col>
+//           </Row>
+
+//           <CardBody>
+//             <Form className="m-1" onSubmit={submitHandler}>
+//               <Row className="mb-2">
+//                 <Col lg="6" md="6">
+//                   <FormGroup>
+//                     <Label>
+//                       {
+//                         dropdownValue.CreateAccount?.MyDropdown?.dropdown?.label
+//                           ?._text
+//                       }
+//                     </Label>
+//                     <CustomInput
+//                       readOnly
+//                       type="select"
+//                       name={
+//                         dropdownValue.CreateAccount?.MyDropdown?.dropdown?.name
+//                           ?._text
+//                       }
+//                       value={
+//                         formData[
+//                           dropdownValue.CreateAccount?.MyDropdown?.dropdown
+//                             ?.name?._text
+//                         ]
+//                       }
+//                       onChange={handleInputChange}
+//                     >
+//                       <option value="">
+//                         {" "}
+//                         {
+//                           formData[
+//                             dropdownValue.CreateAccount?.MyDropdown?.dropdown
+//                               ?.name?._text
+//                           ]
+//                         }
+//                       </option>
+//                       {/* {dropdownValue?.CreateAccount?.MyDropdown?.dropdown?.option.map(
+//                         (option, index) => (
+//                           <option
+//                             key={index}
+//                             value={option?._attributes?.value}
+//                           >
+//                             {option?._attributes?.value}
+//                           </option>
+//                         )
+//                       )} */}
+//                     </CustomInput>
+//                   </FormGroup>
+//                 </Col>
+
+//                 {CreatAccountView &&
+//                   CreatAccountView?.CreateAccount?.input?.map((ele, i) => {
+//                     return (
+//                       <Col key={i} lg="6" md="6" sm="12">
+//                         <FormGroup>
+//                           <Label>{ele?.label?._text}</Label>
+//                           <Input
+//                             readOnly
+//                             onKeyDown={(e) => {
+//                               if (ele?.type?._attributes?.type == "number") {
+//                                 ["e", "E", "+", "-"].includes(e.key) &&
+//                                   e.preventDefault();
+//                               }
+//                             }}
+//                             type={ele?.type?._attributes?.type}
+//                             placeholder={ele?.placeholder?._text}
+//                             name={ele?.name?._text}
+//                             value={formData[ele?.name?._text]}
+//                             onChange={handleInputChange}
+//                           />
+//                         </FormGroup>
+//                       </Col>
+//                     );
+//                   })}
+//               </Row>
+//               <hr />
+//               <Row className="mt-2 ">
+//                 <Col lg="6" md="6" sm="6" className="mb-2">
+//                   <Label className="">
+//                     <h4>
+//                       Status-
+//                       <Badge
+//                         color={
+//                           formData.Status == "Active" ? "primary" : "danger"
+//                         }
+//                       >
+//                         {formData.Status}
+//                       </Badge>
+//                     </h4>
+//                   </Label>
+//                   {/* <div className="form-label-group mx-1">
+//                     {CreatAccountView &&
+//                       CreatAccountView?.CreateAccount?.Radiobutton?.input?.map(
+//                         (ele, i) => {
+//                           return (
+//                             <FormGroup key={i}>
+//                               <Input
+//                                 key={i}
+//                                 style={{ marginRight: "3px" }}
+//                                 required
+//                                 type={ele?.type?._attributes?.type}
+//                                 name={ele?.name?._text}
+//                                 value={`${
+//                                   ele?.label?._text == "Active"
+//                                     ? "Active"
+//                                     : "Deactive"
+//                                 }`}
+//                                 onChange={handleInputChange}
+//                               />{" "}
+//                               <span style={{ marginRight: "20px" }}>
+//                                 {ele?.label?._text}
+//                               </span>
+//                             </FormGroup>
+//                           );
+//                         }
+//                       )}
+//                   </div> */}
+//                 </Col>
+//               </Row>
+
+//               {/* <Row>
+//                 <Button.Ripple
+//                   color="primary"
+//                   type="submit"
+//                   className="mr-1 mt-2 mx-2"
+//                 >
+//                   Update
+//                 </Button.Ripple>
+//               </Row> */}
+//             </Form>
+//           </CardBody>
+//         </Card>
+//       </div>
+//     </div>
+//   );
+// };
+// export default CreateAccount;
+import React, { useEffect, useState, useContext } from "react";
 import xmlJs from "xml-js";
 import {
   Card,
@@ -15,45 +239,100 @@ import {
   Badge,
 } from "reactstrap";
 import { history } from "../../../../history";
+import PhoneInput from "react-phone-input-2";
+import "react-phone-input-2/lib/style.css";
+import { Country, State, City } from "country-state-city";
+import Select from "react-select";
+import moment from "moment-timezone";
+import { Route } from "react-router-dom";
+
 import swal from "sweetalert";
 import "../../../../../src/layouts/assets/scss/pages/users.scss";
 
 import {
   CreateAccountSave,
-  CreateAccountUpdate,
   CreateAccountView,
 } from "../../../../ApiEndPoint/ApiCalling";
+import { BiEnvelope } from "react-icons/bi";
+import { FcPhoneAndroid } from "react-icons/fc";
+import { BsWhatsapp } from "react-icons/bs";
+import "../../../../assets/scss/pages/users.scss";
+import UserContext from "../../../../context/Context";
+import { CloudLightning } from "react-feather";
+import { FaPlus } from "react-icons/fa";
 
-const CreateAccount = ({ ViewOneData }) => {
-  const [CreatAccountView, setCreatAccountView] = useState({});
+const EditAccount = ({ ViewOneData }) => {
+  const [CreatAccountView, setCreatAccountView] = useState([]);
+  const [Countries, setCountry] = useState({});
+  const [States, setState] = useState({});
+  const [Cities, setCities] = useState({});
   const [formData, setFormData] = useState({});
   const [dropdownValue, setdropdownValue] = useState({});
+  const [index, setindex] = useState("");
+  const [error, setError] = useState("");
+  const [permissions, setpermissions] = useState({});
 
-  const Params = useParams();
+  const Context = useContext(UserContext);
 
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({
-      ...formData,
-      [name]: value,
-    });
+  const handleInputChange = (e, type, i) => {
+    const { name, value, checked } = e.target;
+    setindex(i);
+    if (type == "checkbox") {
+      if (checked) {
+        setFormData({
+          ...formData,
+          [name]: checked,
+        });
+      } else {
+        setFormData({
+          ...formData,
+          [name]: checked,
+        });
+      }
+    } else {
+      if (type == "number") {
+        if (/^\d{0,10}$/.test(value)) {
+          setFormData({
+            ...formData,
+            [name]: value,
+          });
+          setError("");
+        } else {
+          setError(
+            "Please enter a valid number with a maximum length of 10 digits"
+          );
+        }
+      } else {
+        if (value.length <= 10) {
+          setFormData({
+            ...formData,
+            [name]: value,
+          });
+          // console.log(value);
+          setError("");
+        } else {
+          setFormData({
+            ...formData,
+            [name]: value,
+          });
+          // setError("Input length exceeds the maximum of 10 characters");
+        }
+      }
+    }
   };
-  // console.log(formData);
+  useEffect(() => {
+    console.log(formData);
+  }, [formData]);
   useEffect(() => {
     console.log(ViewOneData);
     setFormData(ViewOneData);
-    // CreateAccountUpdate(Params.id)
-    //   .then((res) => {
-    //     console.log(res);
-    //   })
-    //   .catch((err) => {
-    //     console.log(err);
-    //   });
     CreateAccountView()
       .then((res) => {
         const jsonData = xmlJs.xml2json(res.data, { compact: true, spaces: 2 });
-        // console.log(JSON.parse(jsonData));
-        setCreatAccountView(JSON.parse(jsonData));
+        // console.log(JSON.parse(jsonData)?.CreateUser?.input);
+
+        setCreatAccountView(JSON.parse(jsonData)?.CreateUser?.input);
+
         setdropdownValue(JSON.parse(jsonData));
       })
       .catch((err) => {
@@ -63,18 +342,22 @@ const CreateAccount = ({ ViewOneData }) => {
 
   const submitHandler = (e) => {
     e.preventDefault();
-    // console.log(formData);
-    CreateAccountSave(formData)
-      .then((res) => {
-        if (res.status) {
+    console.log(formData);
+    if (error) {
+      swal("Error occured while Entering Details");
+    } else {
+      CreateAccountSave(formData)
+        .then((res) => {
           setFormData({});
-          window.location.reload();
-          swal("Acccont Created Successfully");
-        }
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+          if (res.status) {
+            window.location.reload();
+            swal("User Created Successfully");
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }
   };
 
   return (
@@ -83,14 +366,34 @@ const CreateAccount = ({ ViewOneData }) => {
         <Card>
           <Row className="m-2">
             <Col>
-              <h1 className="float-left">Account Information</h1>
+              <h1 className="float-left">Edit User</h1>
+            </Col>
+            <Col>
+              <div className="float-right">
+                {/* <Route
+                  render={({ history }) => (
+                    <Button
+                      style={{ cursor: "pointer" }}
+                      className="float-right mr-1"
+                      color="primary"
+                      onClick={() =>
+                        history.push("/app/SoftNumen/accounSearch")
+                      }
+                    >
+                      {" "}
+                      Back
+                    </Button>
+                  )}
+                /> */}
+              </div>
             </Col>
           </Row>
+          {/* <hr /> */}
 
           <CardBody>
             <Form className="m-1" onSubmit={submitHandler}>
               <Row className="mb-2">
-                <Col lg="6" md="6">
+                {/* <Col lg="6" md="6">
                   <FormGroup>
                     <Label>
                       {
@@ -99,7 +402,7 @@ const CreateAccount = ({ ViewOneData }) => {
                       }
                     </Label>
                     <CustomInput
-                      readOnly
+                      required
                       type="select"
                       name={
                         dropdownValue.CreateAccount?.MyDropdown?.dropdown?.name
@@ -113,16 +416,8 @@ const CreateAccount = ({ ViewOneData }) => {
                       }
                       onChange={handleInputChange}
                     >
-                      <option value="">
-                        {" "}
-                        {
-                          formData[
-                            dropdownValue.CreateAccount?.MyDropdown?.dropdown
-                              ?.name?._text
-                          ]
-                        }
-                      </option>
-                      {/* {dropdownValue?.CreateAccount?.MyDropdown?.dropdown?.option.map(
+                      <option value="">--Select Role--</option>
+                      {dropdownValue?.CreateAccount?.MyDropdown?.dropdown?.option.map(
                         (option, index) => (
                           <option
                             key={index}
@@ -131,52 +426,399 @@ const CreateAccount = ({ ViewOneData }) => {
                             {option?._attributes?.value}
                           </option>
                         )
-                      )} */}
+                      )}
                     </CustomInput>
                   </FormGroup>
-                </Col>
+                </Col> */}
 
                 {CreatAccountView &&
-                  CreatAccountView?.CreateAccount?.input?.map((ele, i) => {
-                    return (
-                      <Col key={i} lg="6" md="6" sm="12">
-                        <FormGroup>
-                          <Label>{ele?.label?._text}</Label>
-                          <Input
-                            readOnly
-                            onKeyDown={(e) => {
-                              if (ele?.type?._attributes?.type == "number") {
-                                ["e", "E", "+", "-"].includes(e.key) &&
-                                  e.preventDefault();
-                              }
-                            }}
-                            type={ele?.type?._attributes?.type}
-                            placeholder={ele?.placeholder?._text}
-                            name={ele?.name?._text}
-                            value={formData[ele?.name?._text]}
-                            onChange={handleInputChange}
-                          />
-                        </FormGroup>
-                      </Col>
-                    );
+                  CreatAccountView?.map((ele, i) => {
+                    {
+                      /* console.log(Context?.UserInformatio?.dateFormat); */
+                    }
+                    // console.log(Countries);
+                    // console.log(States);
+                    const convertedTime = moment("2022-08-05T12:00:00")
+                      .tz("America/New_York")
+                      .format("D MMM, YYYY HH:mm");
+
+                    if (!!ele?.phoneinput) {
+                      return (
+                        <>
+                          <Col key={i} lg="4" md="4" sm="12">
+                            <FormGroup>
+                              <Label>{ele?.label?._text}</Label>
+                              <PhoneInput
+                                disabled
+                                inputClass="myphoneinput"
+                                country={"us"}
+                                onKeyDown={(e) => {
+                                  if (
+                                    ele?.type?._attributes?.type == "number"
+                                  ) {
+                                    ["e", "E", "+", "-"].includes(e.key) &&
+                                      e.preventDefault();
+                                  }
+                                }}
+                                countryCodeEditable={false}
+                                name={ele?.name?._text}
+                                value={formData[ele?.name?._text]}
+                                onChange={(phone) => {
+                                  setFormData({
+                                    ...formData,
+                                    [ele?.name?._text]: phone,
+                                  });
+                                }}
+                              />
+                              {index === i ? (
+                                <>
+                                  {error && (
+                                    <span style={{ color: "red" }}>
+                                      {error}
+                                    </span>
+                                  )}
+                                </>
+                              ) : (
+                                <></>
+                              )}
+                            </FormGroup>
+                          </Col>
+                        </>
+                      );
+                    } else if (!!ele?.library) {
+                      if (ele?.label._text?.includes("ountry")) {
+                        console.log(ele);
+                        return (
+                          <Col key={i} lg="4" md="4" sm="12">
+                            <FormGroup>
+                              <Label>{ele?.label?._text}</Label>
+                              <Select
+                                disabled
+                                inputClass="countryclass"
+                                className="countryclassnw"
+                                options={Country.getAllCountries()}
+                                getOptionLabel={(options) => {
+                                  return options["name"];
+                                }}
+                                getOptionValue={(options) => {
+                                  return options["name"];
+                                }}
+                                value={Countries}
+                                onChange={(country) => {
+                                  setCountry(country);
+                                  setFormData({
+                                    ...formData,
+                                    ["Country"]: country?.name,
+                                  });
+                                }}
+                              />
+                              {index === i ? (
+                                <>
+                                  {error && (
+                                    <span style={{ color: "red" }}>
+                                      {error}
+                                    </span>
+                                  )}
+                                </>
+                              ) : (
+                                <></>
+                              )}
+                            </FormGroup>
+                          </Col>
+                        );
+                      } else if (ele?.label._text?.includes("tate")) {
+                        return (
+                          <Col key={i} lg="4" md="4" sm="12">
+                            <FormGroup>
+                              <Label>{ele?.label?._text}</Label>
+                              <Select
+                                disabled
+                                options={State?.getStatesOfCountry(
+                                  Countries?.isoCode
+                                )}
+                                getOptionLabel={(options) => {
+                                  return options["name"];
+                                }}
+                                getOptionValue={(options) => {
+                                  return options["name"];
+                                }}
+                                value={States}
+                                onChange={(State) => {
+                                  setState(State);
+                                  setFormData({
+                                    ...formData,
+                                    ["State"]: State?.name,
+                                  });
+                                }}
+                              />
+                              {index === i ? (
+                                <>
+                                  {error && (
+                                    <span style={{ color: "red" }}>
+                                      {error}
+                                    </span>
+                                  )}
+                                </>
+                              ) : (
+                                <></>
+                              )}
+                            </FormGroup>
+                          </Col>
+                        );
+                      } else if (ele?.label._text?.includes("ity")) {
+                        return (
+                          <Col key={i} lg="4" md="4" sm="12">
+                            <FormGroup>
+                              <Label>{ele?.label?._text}</Label>
+                              <Select
+                                disabled
+                                options={City?.getCitiesOfState(
+                                  States?.countryCode,
+                                  States?.isoCode
+                                )}
+                                getOptionLabel={(options) => {
+                                  return options["name"];
+                                }}
+                                getOptionValue={(options) => {
+                                  return options["name"];
+                                }}
+                                value={Cities}
+                                onChange={(City) => {
+                                  setCities(City);
+                                  setFormData({
+                                    ...formData,
+                                    ["City"]: City?.name,
+                                  });
+                                }}
+                              />
+                              {index === i ? (
+                                <>
+                                  {error && (
+                                    <span style={{ color: "red" }}>
+                                      {error}
+                                    </span>
+                                  )}
+                                </>
+                              ) : (
+                                <></>
+                              )}
+                            </FormGroup>
+                          </Col>
+                        );
+                      } else {
+                        return (
+                          <>
+                            {ele?.type?._attributes?.type == "date" ? (
+                              <>
+                                <Col key={i} lg="4" md="4" sm="12">
+                                  <FormGroup key={i}>
+                                    <Label>{ele?.label?._text}</Label>
+
+                                    <Input
+                                      disabled
+                                      onKeyDown={(e) => {
+                                        if (
+                                          ele?.type?._attributes?.type ==
+                                          "number"
+                                        ) {
+                                          ["e", "E", "+", "-"].includes(
+                                            e.key
+                                          ) && e.preventDefault();
+                                        }
+                                      }}
+                                      type={ele?.type?._attributes?.type}
+                                      placeholder={ele?.placeholder?._text}
+                                      name={ele?.name?._text}
+                                      dateFormat={
+                                        Context?.UserInformatio?.dateFormat
+                                      }
+                                      value={
+                                        moment(formData[ele?.name?._text])
+                                          .tz(Context?.UserInformatio?.timeZone)
+                                          .format(
+                                            Context?.UserInformatio?.dateFormat
+                                          )
+                                        // formData[ele?.name?._text]
+                                      }
+                                      // value={formData[ele?.name?._text]}
+                                      onChange={(e) =>
+                                        handleInputChange(
+                                          e,
+                                          ele?.type?._attributes?.type,
+                                          i
+                                        )
+                                      }
+                                    />
+                                    {index === i ? (
+                                      <>
+                                        {error && (
+                                          <span style={{ color: "red" }}>
+                                            {error}
+                                          </span>
+                                        )}
+                                      </>
+                                    ) : (
+                                      <></>
+                                    )}
+                                  </FormGroup>
+                                </Col>
+                              </>
+                            ) : (
+                              <>
+                                <Col key={i} lg="4" md="4" sm="12">
+                                  <FormGroup key={i}>
+                                    <Label>{ele?.label?._text}</Label>
+
+                                    <Input
+                                      disabled
+                                      onKeyDown={(e) => {
+                                        if (
+                                          ele?.type?._attributes?.type ==
+                                          "number"
+                                        ) {
+                                          ["e", "E", "+", "-"].includes(
+                                            e.key
+                                          ) && e.preventDefault();
+                                        }
+                                      }}
+                                      type={ele?.type?._attributes?.type}
+                                      placeholder={ele?.placeholder?._text}
+                                      name={ele?.name?._text}
+                                      value={formData[ele?.name?._text]}
+                                      onChange={(e) =>
+                                        handleInputChange(
+                                          e,
+                                          ele?.type?._attributes?.type,
+                                          i
+                                        )
+                                      }
+                                    />
+                                    {index === i ? (
+                                      <>
+                                        {error && (
+                                          <span style={{ color: "red" }}>
+                                            {error}
+                                          </span>
+                                        )}
+                                      </>
+                                    ) : (
+                                      <></>
+                                    )}
+                                  </FormGroup>
+                                </Col>
+                              </>
+                            )}
+                          </>
+                        );
+                      }
+                    } else {
+                      return (
+                        <>
+                          {!!ele?.number ? (
+                            <>
+                              <Col key={i} lg="4" md="4" sm="12">
+                                <FormGroup key={i}>
+                                  <Label>{ele?.label?._text}</Label>
+
+                                  <Input
+                                    disabled
+                                    onWheel={(e) => {
+                                      e.preventDefault(); // Prevent the mouse wheel scroll event
+                                    }}
+                                    onKeyDown={(e) => {
+                                      if (
+                                        ele?.type?._attributes?.type == "number"
+                                      ) {
+                                        ["e", "E", "+", "-"].includes(e.key) &&
+                                          e.preventDefault();
+                                      }
+                                    }}
+                                    type={ele?.type?._attributes?.type}
+                                    placeholder={ele?.placeholder?._text}
+                                    name={ele?.name?._text}
+                                    value={formData[ele?.name?._text]}
+                                    onChange={(e) =>
+                                      handleInputChange(
+                                        e,
+                                        ele?.type?._attributes?.type,
+                                        i
+                                      )
+                                    }
+                                  />
+                                  {index === i ? (
+                                    <>
+                                      {error && (
+                                        <span style={{ color: "red" }}>
+                                          {error}
+                                        </span>
+                                      )}
+                                    </>
+                                  ) : (
+                                    <></>
+                                  )}
+                                </FormGroup>
+                              </Col>
+                            </>
+                          ) : (
+                            <Col key={i} lg="4" md="4" sm="12">
+                              <FormGroup key={i}>
+                                <Label>{ele?.label?._text}</Label>
+
+                                <Input
+                                  disabled
+                                  onKeyDown={(e) => {
+                                    if (
+                                      ele?.type?._attributes?.type == "number"
+                                    ) {
+                                      ["e", "E", "+", "-"].includes(e.key) &&
+                                        e.preventDefault();
+                                    }
+                                  }}
+                                  type={ele?.type?._attributes?.type}
+                                  placeholder={ele?.placeholder?._text}
+                                  name={ele?.name?._text}
+                                  value={formData[ele?.name?._text]}
+                                  onChange={(e) => {
+                                    // const value = e.target.value;
+                                    // // Use regular expression to allow only numbers
+                                    // const numericValue = value.replace(
+                                    //   /\D/g,
+                                    //   ""
+                                    // );
+                                    handleInputChange(
+                                      e,
+                                      ele?.type?._attributes?.type,
+                                      i
+                                    );
+                                  }}
+                                />
+                                {index === i ? (
+                                  <>
+                                    {error && (
+                                      <span style={{ color: "red" }}>
+                                        {error}
+                                      </span>
+                                    )}
+                                  </>
+                                ) : (
+                                  <></>
+                                )}
+                              </FormGroup>
+                            </Col>
+                          )}
+                        </>
+                      );
+                    }
                   })}
               </Row>
+
               <hr />
-              <Row className="mt-2 ">
+              {/* <Row className="mt-2 ">
                 <Col lg="6" md="6" sm="6" className="mb-2">
                   <Label className="">
-                    <h4>
-                      Status-
-                      <Badge
-                        color={
-                          formData.Status == "Active" ? "primary" : "danger"
-                        }
-                      >
-                        {formData.Status}
-                      </Badge>
-                    </h4>
+                    <h4>Status</h4>
                   </Label>
-                  {/* <div className="form-label-group mx-1">
+                  <div className="form-label-group mx-1">
                     {CreatAccountView &&
                       CreatAccountView?.CreateAccount?.Radiobutton?.input?.map(
                         (ele, i) => {
@@ -195,16 +837,19 @@ const CreateAccount = ({ ViewOneData }) => {
                                 }`}
                                 onChange={handleInputChange}
                               />{" "}
-                              <span style={{ marginRight: "20px" }}>
+                              <span
+                                className="mx-1 mt-1"
+                                style={{ marginRight: "20px" }}
+                              >
                                 {ele?.label?._text}
                               </span>
                             </FormGroup>
                           );
                         }
                       )}
-                  </div> */}
+                  </div>
                 </Col>
-              </Row>
+              </Row> */}
 
               {/* <Row>
                 <Button.Ripple
@@ -212,7 +857,7 @@ const CreateAccount = ({ ViewOneData }) => {
                   type="submit"
                   className="mr-1 mt-2 mx-2"
                 >
-                  Update
+                  Submit
                 </Button.Ripple>
               </Row> */}
             </Form>
@@ -222,4 +867,4 @@ const CreateAccount = ({ ViewOneData }) => {
     </div>
   );
 };
-export default CreateAccount;
+export default EditAccount;
