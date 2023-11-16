@@ -43,6 +43,8 @@ import swal from "sweetalert";
 import {
   CreateAccountList,
   CreateAccountView,
+  CreateCustomerList,
+  CreateCustomerxmlView,
   DeleteAccount,
 } from "../../../../ApiEndPoint/ApiCalling";
 import {
@@ -55,7 +57,7 @@ import UserContext from "../../../../context/Context";
 
 const SelectedColums = [];
 
-class AccounSearch extends React.Component {
+class CustomerSearch extends React.Component {
   static contextType = UserContext;
   constructor(props) {
     super(props);
@@ -102,21 +104,23 @@ class AccounSearch extends React.Component {
 
   async componentDidMount() {
     const UserInformation = this.context?.UserInformatio;
-    await CreateAccountView()
+
+    await CreateCustomerxmlView()
       .then((res) => {
         var mydropdownArray = [];
         var adddropdown = [];
         const jsonData = xmlJs.xml2json(res.data, { compact: true, spaces: 2 });
-        console.log(JSON.parse(jsonData)?.CreateUser);
-
-        const inputs = JSON.parse(jsonData)?.CreateUser?.input?.map((ele) => {
-          return {
-            headerName: ele?.label._text,
-            field: ele?.name._text,
-            filter: true,
-            sortable: true,
-          };
-        });
+        console.log(JSON.parse(jsonData));
+        const inputs = JSON.parse(jsonData).CreateCustomer?.input?.map(
+          (ele) => {
+            return {
+              headerName: ele?.label._text,
+              field: ele?.name._text,
+              filter: true,
+              sortable: true,
+            };
+          }
+        );
         // let Radioinput =
         //   JSON.parse(jsonData).CreateAccount?.Radiobutton?.input[0]?.name
         //     ?._text;
@@ -142,35 +146,36 @@ class AccounSearch extends React.Component {
         //   },
         // ];
 
-        // let dropdown = JSON.parse(jsonData).CreateAccount?.MyDropdown?.dropdown;
-        // if (dropdown.length) {
-        //   var mydropdownArray = dropdown?.map((ele) => {
-        //     return {
-        //       headerName: ele?.label,
-        //       field: ele?.name,
-        //       filter: true,
-        //       sortable: true,
-        //     };
-        //   });
-        // } else {
-        //   var adddropdown = [
-        //     {
-        //       headerName: dropdown?.label._text,
-        //       field: dropdown?.name._text,
-        //       filter: true,
-        //       sortable: true,
-        //     },
-        //   ];
-        // }
+        let dropdown =
+          JSON.parse(jsonData).CreateCustomer?.MyDropdown?.dropdown;
+        if (dropdown?.length) {
+          var mydropdownArray = dropdown?.map((ele) => {
+            return {
+              headerName: ele?.label,
+              field: ele?.name,
+              filter: true,
+              sortable: true,
+            };
+          });
+        } else {
+          var adddropdown = [
+            {
+              headerName: dropdown?.label._text,
+              field: dropdown?.name._text,
+              filter: true,
+              sortable: true,
+            },
+          ];
+        }
 
         let myHeadings = [
           // ...checkboxinput,
           ...inputs,
-          // ...adddropdown,
-          // ...addRadio,
-          // ...mydropdownArray,
+          ...adddropdown,
+          //   ...addRadio,
+          ...mydropdownArray,
         ];
-        // console.log(myHeadings);
+        console.log(myHeadings);
         let Product = [
           {
             headerName: "Actions",
@@ -259,7 +264,7 @@ class AccounSearch extends React.Component {
 
         this.setState({ AllcolumnDefs: Product });
 
-        let userHeading = JSON.parse(localStorage.getItem("AccountSearch"));
+        let userHeading = JSON.parse(localStorage.getItem("CustomerSearch"));
         if (userHeading?.length) {
           this.setState({ columnDefs: userHeading });
           this.gridApi.setColumnDefs(userHeading);
@@ -274,9 +279,9 @@ class AccounSearch extends React.Component {
         console.log(err);
         swal("Error", "something went wrong try again");
       });
-    await CreateAccountList()
+    await CreateCustomerList()
       .then((res) => {
-        let value = res?.User;
+        let value = res?.Customer;
         this.setState({ rowData: value });
       })
       .catch((err) => {
@@ -519,7 +524,7 @@ class AccounSearch extends React.Component {
     this.setState({ SelectedcolumnDefs: this.state.SelectedcolumnDefs });
     this.setState({ rowData: this.state.rowData });
     localStorage.setItem(
-      "AccountSearch",
+      "CustomerSearch",
       JSON.stringify(this.state.SelectedcolumnDefs)
     );
     this.LookupviewStart();
@@ -607,7 +612,7 @@ class AccounSearch extends React.Component {
                     <Card>
                       <Row className="m-2">
                         <Col>
-                          <h1 className="float-left">User list</h1>
+                          <h1 className="float-left">Customer List</h1>
                         </Col>
                         <Col>
                           <span className="mx-1">
@@ -688,11 +693,11 @@ class AccounSearch extends React.Component {
                                   color="primary"
                                   onClick={() =>
                                     history.push(
-                                      "/app/SoftNumen/account/CreateAccount"
+                                      "/app/SoftNumen/account/CreateCustomer"
                                     )
                                   }
                                 >
-                                  <FaPlus size={15} /> Create User
+                                  <FaPlus size={15} /> Create Customer
                                 </Badge>
                               )}
                             />
@@ -994,4 +999,4 @@ class AccounSearch extends React.Component {
     );
   }
 }
-export default AccounSearch;
+export default CustomerSearch;

@@ -27,6 +27,8 @@ import "../../../../../src/layouts/assets/scss/pages/users.scss";
 import {
   CreateAccountSave,
   CreateAccountView,
+  CreateCustomersave,
+  CreateCustomerxmlView,
 } from "../../../../ApiEndPoint/ApiCalling";
 import { BiEnvelope } from "react-icons/bi";
 import { FcPhoneAndroid } from "react-icons/fc";
@@ -36,7 +38,7 @@ import UserContext from "../../../../context/Context";
 import { CloudLightning } from "react-feather";
 import { FaPlus } from "react-icons/fa";
 
-const CreateAccount = () => {
+const CreateCustomer = () => {
   const [CreatAccountView, setCreatAccountView] = useState([]);
   const [Countries, setCountry] = useState({});
   const [States, setState] = useState({});
@@ -49,6 +51,15 @@ const CreateAccount = () => {
 
   const Context = useContext(UserContext);
 
+  const handleFileChange = (e, type, i) => {
+    const { name, value, checked } = e.target;
+    let allimages = Array.from(e.target.files);
+    setindex(i);
+    setFormData({
+      ...formData,
+      [name]: allimages,
+    });
+  };
   const handleInputChange = (e, type, i) => {
     const { name, value, checked } = e.target;
     setindex(i);
@@ -72,10 +83,19 @@ const CreateAccount = () => {
             [name]: value,
           });
           setError("");
-        } else {
-          setError(
-            "Please enter a valid number with a maximum length of 10 digits"
-          );
+        }
+        //  else {
+        //   setError(
+        //     "Please enter a valid number with a maximum length of 10 digits"
+        //   );
+        // }
+      } else if (type == "file") {
+        // debugger;
+        if (e.target.files) {
+          setFormData({
+            ...formData,
+            [name]: e.target.files[0],
+          });
         }
       } else {
         if (value.length <= 10) {
@@ -99,28 +119,56 @@ const CreateAccount = () => {
     console.log(formData);
   }, [formData]);
   useEffect(() => {
-    CreateAccountView()
+    CreateCustomerxmlView()
       .then((res) => {
         const jsonData = xmlJs.xml2json(res.data, { compact: true, spaces: 2 });
-        // console.log(JSON.parse(jsonData)?.CreateUser?.input);
+        console.log(JSON.parse(jsonData)?.CreateCustomer);
+        setCreatAccountView(JSON.parse(jsonData)?.CreateCustomer?.input);
 
-        setCreatAccountView(JSON.parse(jsonData)?.CreateUser?.input);
-
-        setdropdownValue(JSON.parse(jsonData));
+        setdropdownValue(
+          JSON.parse(jsonData)?.CreateCustomer?.MyDropDown?.dropdown
+        );
       })
       .catch((err) => {
         console.log(err);
+        swal("Something Went Wrong");
       });
   }, []);
 
   const submitHandler = (e) => {
     e.preventDefault();
-    console.log(formData);
+    // console.log(CreatAccountView);
+    // console.log(dropdownValue);
+    let formdata = new FormData();
+    CreatAccountView?.map((ele, i) => {
+      if (ele?.type?._attributes?.type == "text") {
+        formdata.append(`${ele?.name._text}`, formData[ele?.name?._text]);
+      } else if (ele?.type?._attributes?.type == "file") {
+        if (ele?.name?._text == "Shopphoto") {
+          formData[ele?.name?._text]?.map((val, index) => {
+            formdata.append("file", formData[ele?.name?._text][index]);
+          });
+        }
+        if (ele?.name?._text == "photo") {
+          formData[ele?.name?._text]?.map((val, index) => {
+            formdata.append("files", formData[ele?.name?._text][index]);
+          });
+        }
+      }
+    });
+    formdata.append(
+      `${dropdownValue?.name?._text}`,
+      formData[dropdownValue?.name?._text]
+    );
+    formdata.forEach((value, key) => {
+      console.log(key, value);
+    });
     if (error) {
       swal("Error occured while Entering Details");
     } else {
-      CreateAccountSave(formData)
+      CreateCustomersave(formdata)
         .then((res) => {
+          console.log(res);
           setFormData({});
           if (res.status) {
             window.location.reload();
@@ -128,7 +176,7 @@ const CreateAccount = () => {
           }
         })
         .catch((err) => {
-          console.log(err);
+          console.log(err.response);
         });
     }
   };
@@ -139,7 +187,7 @@ const CreateAccount = () => {
         <Card>
           <Row className="m-2">
             <Col>
-              <h1 className="float-left">Create User</h1>
+              <h1 className="float-left">Create Customer</h1>
             </Col>
             <Col>
               <div className="float-right">
@@ -150,7 +198,7 @@ const CreateAccount = () => {
                       className="float-right mr-1"
                       color="primary"
                       onClick={() =>
-                        history.push("/app/SoftNumen/accounSearch")
+                        history.push("/app/SoftNumen/CustomerSearch")
                       }
                     >
                       {" "}
@@ -167,43 +215,32 @@ const CreateAccount = () => {
           <CardBody>
             <Form className="m-1" onSubmit={submitHandler}>
               <Row className="mb-2">
-                {/* <Col lg="6" md="6">
-                  <FormGroup>
-                    <Label>
-                      {
-                        dropdownValue.CreateAccount?.MyDropdown?.dropdown?.label
-                          ?._text
-                      }
-                    </Label>
-                    <CustomInput
-                      required
-                      type="select"
-                      name={
-                        dropdownValue.CreateAccount?.MyDropdown?.dropdown?.name
-                          ?._text
-                      }
-                      value={
-                        formData[
-                          dropdownValue.CreateAccount?.MyDropdown?.dropdown
-                            ?.name?._text
-                        ]
-                      }
-                      onChange={handleInputChange}
-                    >
-                      <option value="">--Select Role--</option>
-                      {dropdownValue?.CreateAccount?.MyDropdown?.dropdown?.option.map(
-                        (option, index) => (
+                {dropdownValue && (
+                  <Col lg="4" md="4" sm="12">
+                    <FormGroup>
+                      <Label className="mb-1">
+                        {dropdownValue && dropdownValue?.label?._text}
+                      </Label>
+                      <CustomInput
+                        required
+                        type="select"
+                        name={dropdownValue && dropdownValue?.name?._text}
+                        value={formData[dropdownValue?.name?._text]}
+                        onChange={handleInputChange}
+                      >
+                        <option value="">--Select Role--</option>
+                        {dropdownValue?.option?.map((option, index) => (
                           <option
                             key={index}
                             value={option?._attributes?.value}
                           >
                             {option?._attributes?.value}
                           </option>
-                        )
-                      )}
-                    </CustomInput>
-                  </FormGroup>
-                </Col> */}
+                        ))}
+                      </CustomInput>
+                    </FormGroup>
+                  </Col>
+                )}
 
                 {CreatAccountView &&
                   CreatAccountView?.map((ele, i) => {
@@ -221,7 +258,9 @@ const CreateAccount = () => {
                         <>
                           <Col key={i} lg="4" md="4" sm="12">
                             <FormGroup>
-                              <Label>{ele?.label?._text}</Label>
+                              <Label className="mb-1">
+                                {ele?.label?._text}
+                              </Label>
                               <PhoneInput
                                 inputClass="myphoneinput"
                                 country={"us"}
@@ -264,7 +303,9 @@ const CreateAccount = () => {
                         return (
                           <Col key={i} lg="4" md="4" sm="12">
                             <FormGroup>
-                              <Label>{ele?.label?._text}</Label>
+                              <Label className="mb-1">
+                                {ele?.label?._text}
+                              </Label>
                               <Select
                                 inputClass="countryclass"
                                 className="countryclassnw"
@@ -302,7 +343,9 @@ const CreateAccount = () => {
                         return (
                           <Col key={i} lg="4" md="4" sm="12">
                             <FormGroup>
-                              <Label>{ele?.label?._text}</Label>
+                              <Label className="mb-1">
+                                {ele?.label?._text}
+                              </Label>
                               <Select
                                 options={State?.getStatesOfCountry(
                                   Countries?.isoCode
@@ -340,7 +383,9 @@ const CreateAccount = () => {
                         return (
                           <Col key={i} lg="4" md="4" sm="12">
                             <FormGroup>
-                              <Label>{ele?.label?._text}</Label>
+                              <Label className="mb-1">
+                                {ele?.label?._text}
+                              </Label>
                               <Select
                                 options={City?.getCitiesOfState(
                                   States?.countryCode,
@@ -382,7 +427,9 @@ const CreateAccount = () => {
                               <>
                                 <Col key={i} lg="4" md="4" sm="12">
                                   <FormGroup key={i}>
-                                    <Label>{ele?.label?._text}</Label>
+                                    <Label className="mb-1">
+                                      {ele?.label?._text}
+                                    </Label>
 
                                     <Input
                                       onKeyDown={(e) => {
@@ -436,7 +483,9 @@ const CreateAccount = () => {
                               <>
                                 <Col key={i} lg="4" md="4" sm="12">
                                   <FormGroup key={i}>
-                                    <Label>{ele?.label?._text}</Label>
+                                    <Label className="mb-1">
+                                      {ele?.label?._text}
+                                    </Label>
 
                                     <Input
                                       onKeyDown={(e) => {
@@ -486,7 +535,9 @@ const CreateAccount = () => {
                             <>
                               <Col key={i} lg="4" md="4" sm="12">
                                 <FormGroup key={i}>
-                                  <Label>{ele?.label?._text}</Label>
+                                  <Label className="mb-1">
+                                    {ele?.label?._text}
+                                  </Label>
 
                                   <Input
                                     onWheel={(e) => {
@@ -529,9 +580,102 @@ const CreateAccount = () => {
                           ) : (
                             <Col key={i} lg="4" md="4" sm="12">
                               <FormGroup key={i}>
-                                <Label>{ele?.label?._text}</Label>
+                                {ele?.type?._attributes?.type &&
+                                ele?.type?._attributes?.type == "file" ? (
+                                  <>
+                                    <Label className="mb-1">
+                                      {ele?.label?._text}
+                                    </Label>
+
+                                    <Input
+                                      multiple
+                                      className="form-control"
+                                      type={ele?.type?._attributes?.type}
+                                      placeholder={ele?.placeholder?._text}
+                                      name={ele?.name?._text}
+                                      //   value={formData[ele?.name?._text]}
+                                      onChange={(e) => {
+                                        // const value = e.target.value;
+                                        // // Use regular expression to allow only numbers
+                                        // const numericValue = value.replace(
+                                        //   /\D/g,
+                                        //   ""
+                                        // );
+                                        handleFileChange(
+                                          e,
+                                          ele?.type?._attributes?.type,
+                                          i
+                                        );
+                                      }}
+                                    />
+                                    {index === i ? (
+                                      <>
+                                        {error && (
+                                          <span style={{ color: "red" }}>
+                                            {error}
+                                          </span>
+                                        )}
+                                      </>
+                                    ) : (
+                                      <></>
+                                    )}
+                                  </>
+                                ) : (
+                                  <>
+                                    <Label className="mb-1">
+                                      {ele?.label?._text}
+                                    </Label>
+
+                                    <Input
+                                      className="form-control"
+                                      onKeyDown={(e) => {
+                                        if (
+                                          ele?.type?._attributes?.type ==
+                                          "number"
+                                        ) {
+                                          ["e", "E", "+", "-"].includes(
+                                            e.key
+                                          ) && e.preventDefault();
+                                        }
+                                      }}
+                                      type={ele?.type?._attributes?.type}
+                                      placeholder={ele?.placeholder?._text}
+                                      name={ele?.name?._text}
+                                      value={formData[ele?.name?._text]}
+                                      onChange={(e) => {
+                                        // const value = e.target.value;
+                                        // // Use regular expression to allow only numbers
+                                        // const numericValue = value.replace(
+                                        //   /\D/g,
+                                        //   ""
+                                        // );
+                                        handleInputChange(
+                                          e,
+                                          ele?.type?._attributes?.type,
+                                          i
+                                        );
+                                      }}
+                                    />
+                                    {index === i ? (
+                                      <>
+                                        {error && (
+                                          <span style={{ color: "red" }}>
+                                            {error}
+                                          </span>
+                                        )}
+                                      </>
+                                    ) : (
+                                      <></>
+                                    )}
+                                  </>
+                                )}
+
+                                {/* <Label className="mb-1">
+                                  {ele?.label?._text}
+                                </Label>
 
                                 <Input
+                                  className="form-control"
                                   onKeyDown={(e) => {
                                     if (
                                       ele?.type?._attributes?.type == "number"
@@ -568,7 +712,7 @@ const CreateAccount = () => {
                                   </>
                                 ) : (
                                   <></>
-                                )}
+                                )} */}
                               </FormGroup>
                             </Col>
                           )}
@@ -633,4 +777,4 @@ const CreateAccount = () => {
     </div>
   );
 };
-export default CreateAccount;
+export default CreateCustomer;

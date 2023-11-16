@@ -1,6 +1,9 @@
-export const Create_Account_xmlView = "/create-account/createAccount";
-export const Create_Account_save = "/create-account/save-account";
-export const Create_Account_List = "/create-account/get-account";
+export const Create_Account_xmlView = "/user/get-xml";
+export const Create_Customer_xmlView = "/customer/get-xml";
+export const Create_Customer_save = "/customer/save-customer";
+export const Create_Account_save = "/user/save-user";
+export const Create_Account_List = "/user/view-user";
+export const Create_Customer_List = "/customer/view-customer";
 export const Create_Account_Update = "/create-account/update-account/";
 export const Delete_Account_List = "/create-account/delete-account/";
 export const Create_Parts = "/part-config/createParts";

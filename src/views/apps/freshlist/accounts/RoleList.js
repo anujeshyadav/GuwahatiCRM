@@ -13,6 +13,7 @@ import {
   DropdownItem,
   DropdownToggle,
   Button,
+  Badge,
 } from "reactstrap";
 import UserContext from "../../../../context/Context";
 import xmlJs from "xml-js";
@@ -28,6 +29,7 @@ import swal from "sweetalert";
 import { Route } from "react-router-dom";
 import { BsEye, BsTrash } from "react-icons/bs";
 import { CreateAccountView } from "../../../../ApiEndPoint/ApiCalling";
+import { FaPlus } from "react-icons/fa";
 
 class RoleList extends React.Component {
   static contextType = UserContext;
@@ -410,21 +412,22 @@ class RoleList extends React.Component {
               <Col>
                 <h1 className="float-left">Created Role List</h1>
               </Col>
-              {/* <Col>
+              <Col>
                 <Route
                   render={({ history }) => (
-                    <Button
+                    <Badge
+                      style={{ cursor: "pointer" }}
                       className=" float-right"
                       color="primary"
                       onClick={() =>
-                        history.push("/app/freshlist/refundrequest/addRefund")
+                        history.push("/app/freshlist/account/addRoleNew")
                       }
                     >
-                      Add Refund
-                    </Button>
+                      <FaPlus size={15} /> Create Role
+                    </Badge>
                   )}
                 />
-              </Col> */}
+              </Col>
             </Row>
             <CardBody>
               {this.state.rowData === null ? null : (

@@ -37,8 +37,10 @@ import { IntlContext } from "../../../utility/context/Internationalization";
 import { Route, useHistory } from "react-router-dom";
 import ToggleMode from "./ToggleMode";
 import logoinfo from "../../assets/img/logo/logo-info.png";
-import { BsCartCheckFill } from "react-icons/bs";
+import { BsCartCheckFill, BsMoon, BsMoonFill } from "react-icons/bs";
 import UserContext from "../../../context/Context";
+import themeConfig from "../../../../src/configs/themeConfig";
+
 import { MdDelete } from "react-icons/md";
 import {
   AddToCartGet,
@@ -193,6 +195,7 @@ class NavbarUser extends React.PureComponent {
     Grand: "",
     Shippingfee: 5,
     Shipping: "",
+    theme: "semi-dark",
     Taxamount: "",
     Total: Number,
     Update_User_details: {},
@@ -388,6 +391,15 @@ class NavbarUser extends React.PureComponent {
   };
   async componentDidMount() {
     const user = this.context;
+    const mytheme = localStorage.getItem("theme");
+    // debugger;
+    if (mytheme) {
+      themeConfig.theme = mytheme;
+    } else {
+      themeConfig.theme = this.state.theme;
+    }
+    // console.log(theme);
+    this.setState({ theme: mytheme });
     await this.handleShowCart();
     this.loadScript("https://checkout.razorpay.com/v1/checkout.js");
 
@@ -463,6 +475,17 @@ class NavbarUser extends React.PureComponent {
   //     navbarSearch: !this.state.navbarSearch
   //   })
   // }
+  changetheme = (value) => {
+    // console.log(value);
+    localStorage.setItem("theme", value);
+    this.setState({ theme: value });
+    window.location.reload();
+    // if (value) {
+    //   themeConfig.theme = value;
+    // } else {
+    //   themeConfig.theme = this.state.theme;
+    // }
+  };
 
   removeItem = (id) => {
     let cart = this.state.shoppingCart;
@@ -1253,7 +1276,17 @@ class NavbarUser extends React.PureComponent {
             );
           }}
         </IntlContext.Consumer>
-
+        <div title="Toggle Mode" className="mt-2" style={{ cursor: "pointer" }}>
+          {this.state.theme == "semi-dark" ? (
+            <>
+              <BsMoonFill onClick={() => this.changetheme("dark")} size={25} />
+            </>
+          ) : (
+            <>
+              <BsMoon onClick={() => this.changetheme("semi-dark")} size={25} />
+            </>
+          )}
+        </div>
         <UncontrolledDropdown
           tag="li"
           className="dropdown-notification nav-item"

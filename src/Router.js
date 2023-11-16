@@ -629,6 +629,9 @@ const UpdateExistingRole = lazy(() =>
 const CreateAccount = lazy(() =>
   import("./views/apps/freshlist/accounts/CreateAccount")
 );
+const CreateCustomer = lazy(() =>
+  import("./views/apps/freshlist/accounts/CreateCustomer")
+);
 
 const EditAccount = lazy(() =>
   import("./views/apps/freshlist/accounts/EditAccount")
@@ -723,6 +726,9 @@ const ServiceMaster = lazy(() =>
 );
 const AccounSearch = lazy(() =>
   import("./views/apps/freshlist/house/AccounSearch")
+);
+const CustomerSearch = lazy(() =>
+  import("./views/apps/freshlist/house/CustomerSearch")
 );
 const SupplierList = lazy(() =>
   import("./views/apps/freshlist/house/SupplierList")
@@ -1856,6 +1862,10 @@ class AppRouter extends React.Component {
             component={CreateAccount}
           />
           <AppRoute
+            path="/app/SoftNumen/account/CreateCustomer"
+            component={CreateCustomer}
+          />
+          <AppRoute
             path="/app/SoftNumen/account/EditAccount/:id"
             component={EditAccount}
           />
@@ -1955,7 +1965,14 @@ class AppRouter extends React.Component {
             path="/app/freshlist/house/serviceMaster"
             component={ServiceMaster}
           />
-          <AppRoute path="/app/SoftNumen/accounSearch" component={AccounSearch} />
+          <AppRoute
+            path="/app/SoftNumen/accounSearch"
+            component={AccounSearch}
+          />
+          <AppRoute
+            path="/app/SoftNumen/CustomerSearch"
+            component={CustomerSearch}
+          />
           <AppRoute
             path="/app/freshlist/house/SupplierList"
             component={SupplierList}

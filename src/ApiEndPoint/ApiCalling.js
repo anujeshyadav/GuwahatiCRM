@@ -1,5 +1,8 @@
 import {
   Create_Account_xmlView,
+  Create_Customer_xmlView,
+  Create_Customer_save,
+  Create_Customer_List,
   Create_Parts,
   customerRegistration,
   Product_Registration,
@@ -129,9 +132,21 @@ export const CreateAccountView = async () => {
     .then((res) => res.data);
   return response;
 };
+export const CreateCustomerxmlView = async () => {
+  let response = await axiosConfig
+    .get(`${Create_Customer_xmlView}`)
+    .then((res) => res.data);
+  return response;
+};
 export const CreateAccountSave = async (data) => {
   let response = await axiosConfig
     .post(`${Create_Account_save}`, data)
+    .then((res) => res.data);
+  return response;
+};
+export const CreateCustomersave = async (data) => {
+  let response = await axiosConfig
+    .post(`${Create_Customer_save}`, data)
     .then((res) => res.data);
   return response;
 };
@@ -146,6 +161,12 @@ export const DeleteAccount = async (id) => {
 export const CreateAccountList = async (data) => {
   let response = await axiosConfig
     .get(`${Create_Account_List}`, data)
+    .then((res) => res.data);
+  return response;
+};
+export const CreateCustomerList = async (data) => {
+  let response = await axiosConfig
+    .get(`${Create_Customer_List}`, data)
     .then((res) => res.data);
   return response;
 };

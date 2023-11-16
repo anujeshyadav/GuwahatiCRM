@@ -198,6 +198,7 @@ class HorizontalLayout extends PureComponent {
           }
         )}
       >
+        {/* working top bar sidemenu */}
         <div className="sidebarmenu">
           <Sidebar
             toggleSidebarMenu={this.toggleSidebarMenu}

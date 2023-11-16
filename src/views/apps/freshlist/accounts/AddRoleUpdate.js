@@ -17,6 +17,8 @@ import {
 import { Roles } from "./AddRole";
 import axiosConfig from "../../../../axiosConfig";
 import swal from "sweetalert";
+import { Route } from "react-router-dom";
+
 import "../../../../assets/scss/pages/users.scss";
 import { BsFillArrowDownCircleFill } from "react-icons/bs";
 import { AiOutlineSearch } from "react-icons/ai";
@@ -146,22 +148,46 @@ export default function AddRoleNew(args) {
       <Row className="">
         <Col xl={12}>
           <Card>
+            <Row className="m-2">
+              <Col>
+                <h1 className="float-left">Create Role</h1>
+              </Col>
+              <Col>
+                <div className="float-right">
+                  <Route
+                    render={({ history }) => (
+                      <Button
+                        style={{ cursor: "pointer" }}
+                        className="float-right mr-1"
+                        color="primary"
+                        onClick={() =>
+                          history.push("/app/Trupee/account/RoleList")
+                        }
+                      >
+                        {" "}
+                        Back
+                        {/* <FaPlus size={15} /> Create User */}
+                      </Button>
+                    )}
+                  />
+                </div>
+              </Col>
+            </Row>
             <div className="container" />
             <Form onSubmit={handleSumit}>
               <div className="container mt-5">
                 <Row className="mb-3 container">
                   <Col>
                     <Label>Enter Role Name*</Label>
-                    <InputGroup className="maininput">
-                      <Input
-                        disabled
-                        value={Role}
-                        onChange={(e) => setRole(e.target.value)}
-                        type="text"
-                        placeholder="Choose Role"
-                        className="form-control inputs"
-                      />
-                      <Button
+                    <Input
+                      // disabled
+                      value={Role}
+                      onChange={(e) => setRole(e.target.value)}
+                      type="text"
+                      placeholder="Enter Role Name"
+                      className="form-control inputs"
+                    />
+                    {/* <Button
                         onClick={handleopentoggle}
                         // onClick={toggle}
                         color="primary"
@@ -171,8 +197,7 @@ export default function AddRoleNew(args) {
                           onClick={(e) => e.preventDefault()}
                           fill="white"
                         />
-                      </Button>
-                    </InputGroup>
+                      </Button> */}
                   </Col>
                   <Col>
                     <Label>Enter Role Description * </Label>
