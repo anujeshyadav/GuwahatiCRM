@@ -7,9 +7,11 @@ import {
   logoutWithJWT,
   logoutWithFirebase,
 } from "../../../redux/actions/auth/loginActions";
+import { Route } from "react-router-dom";
 import NavbarBookmarks from "./NavbarBookmarks";
 import NavbarUser from "./NavbarUser";
 import userImg from "../../../assets/img/portrait/small/avatar-s-11.jpg";
+// import { history } from "../../history";
 
 const PhoneNo = (props) => {
   console.log(props);
@@ -81,11 +83,17 @@ const ThemeNavbar = (props) => {
                   handleAppOverlay={props.handleAppOverlay}
                 />
                 <span>
-                  <img
-                    style={{ borderRadius: "8px" }}
-                    src={userImg}
-                    width={60}
-                    height={45}
+                  <Route
+                    render={({ history }) => (
+                      <img
+                        title="click to go Dashboard"
+                        onClick={() => history.push("/dashboard")}
+                        style={{ borderRadius: "8px", cursor: "pointer" }}
+                        src={userImg}
+                        width={60}
+                        height={45}
+                      />
+                    )}
                   />
                 </span>
               </div>
