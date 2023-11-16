@@ -1,7 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import classnames from "classnames";
-import navigationConfig from "../../../../../configs/navigationConfig";
+import navigationConfig from "../../../../../configs/horizontalMenuConfig";
 import SideMenuGroup from "./SideMenuGroup";
 import { Badge } from "reactstrap";
 import { ChevronRight } from "react-feather";
@@ -139,7 +139,7 @@ class SideMenuContent extends React.Component {
     // Loop over sidebar items
     // console.log(this.state.showpage);
 
-    const menuItems = navigationConfig.map((item, i) => {
+    const menuItems = navigationConfig?.map((item, i) => {
       // navigationConfig[i].children?.forEach((tab) => {
       //   if (this.state.showpage?.includes(tab?.title)) {
       //     tab.hidden = false;
