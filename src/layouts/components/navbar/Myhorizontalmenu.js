@@ -10,8 +10,9 @@ import { ChevronDown, ChevronRight } from "react-feather";
 import { Link } from "react-router-dom";
 import { connect } from "react-redux";
 import { FormattedMessage } from "react-intl";
-import { history } from "../../../../history";
-import navigationConfig from "../../../../configs/horizontalMenuConfig";
+import { history } from "../../../history";
+import navigationConfig from "../../../configs/horizontalMenuConfig";
+import "../../assets/scss/core/menu/horizontal-menu.scss";
 class HorizontalSidebar extends React.Component {
   constructor(props) {
     super(props);
@@ -99,7 +100,6 @@ class HorizontalSidebar extends React.Component {
         tag="ul"
         className="mt-50"
         onMouseEnter={(e) => e.preventDefault()}
-        // onMouseEnter={(e) => e.preventDefault()}
         modifiers={{
           setMaxHeight: {
             enabled: true,
@@ -184,11 +184,11 @@ class HorizontalSidebar extends React.Component {
                       onMouseLeave={() => this.closeDropdown(child.id)}
                     >
                       <DropdownToggle
-                        className="d-flex justify-content-between align-items-center item-content"
+                        className="d-flex justify-content-between align-items-center item-content mydropdowntoggle"
                         tag={"div"}
                         onClick={() => this.closeDropdown(child.id)}
                       >
-                        <div className="dropdown-toggle-sub text-truncate">
+                        <div className="dropdown-toggle-sub text-truncate mytruncate">
                           <span className="menu-icon align-bottom mr-1">
                             {child.icon}
                           </span>
@@ -244,7 +244,7 @@ class HorizontalSidebar extends React.Component {
   };
 
   renderDropdown = (arr) => {
-    // console.log(arr);
+    console.log(arr);
     return arr?.map((item) => {
       if (
         item.type === "item" &&
@@ -265,9 +265,12 @@ class HorizontalSidebar extends React.Component {
           ref={(el) => (this.menuDrodpown = el)}
         >
           <div
-            className={classnames("nav-item-wrapper cursor-pointer", {
-              "single-item": item.type === "item",
-            })}
+            className={classnames(
+              "nav-item-wrapper cursor-pointer customwrapper",
+              {
+                "single-item": item.type === "item",
+              }
+            )}
             onClick={() => {
               this.openDropdown(item.id);
               this.handleParentHover(item.id);
@@ -342,10 +345,10 @@ class HorizontalSidebar extends React.Component {
 
   render() {
     return (
-      <div className="horizontal-menu-wrapper">
+      <div className="">
         <div
           className={classnames(
-            "header-navbar navbar-expand-sm navbar navbar-horizontal navbar-shadow",
+            " mycustomereturn header-navbar navbar-expand-sm navbar navbar-horizontal navbar-shadow",
             {
               "navbar-static": this.props.navbarType === "static",
               "fixed-top": this.props.navbarType === "sticky",
@@ -357,8 +360,11 @@ class HorizontalSidebar extends React.Component {
             }
           )}
         >
-          <div className="navbar-container main-menu-content">
-            <ul className="nav navbar-nav" id="main-menu-navigation">
+          <div className="navbar-container main-menu-content mycustomcontent">
+            <ul
+              className="nav navbar-nav"
+              id="main-menu-navigation mycustomnavigation"
+            >
               {this.renderDropdown(navigationConfig)}
             </ul>
           </div>

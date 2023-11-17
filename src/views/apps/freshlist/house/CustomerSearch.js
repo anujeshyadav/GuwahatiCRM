@@ -17,12 +17,11 @@ import {
   ModalBody,
   Badge,
 } from "reactstrap";
-import ExcelReader from "../parts/ExcelReader";
 import { ContextLayout } from "../../../../utility/context/Layout";
 import { AgGridReact } from "ag-grid-react";
 import "ag-grid-community/dist/styles/ag-grid.css";
-import EditAccount from "../accounts/EditAccount";
-import ViewAccount from "../accounts/ViewAccount";
+import EditAccount from "../accounts/EditCustomer";
+import ViewAccount from "../accounts/ViewCustomer";
 import jsPDF from "jspdf";
 import "jspdf-autotable";
 import Logo from "../../../../assets/img/profile/pages/logomain.png";
@@ -41,11 +40,8 @@ import {
 import moment from "moment-timezone";
 import swal from "sweetalert";
 import {
-  CreateAccountList,
-  CreateAccountView,
   CreateCustomerList,
   CreateCustomerxmlView,
-  DeleteAccount,
   DeleteCustomerList,
 } from "../../../../ApiEndPoint/ApiCalling";
 import {
