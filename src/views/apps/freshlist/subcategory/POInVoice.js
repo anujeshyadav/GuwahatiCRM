@@ -69,13 +69,17 @@ const styles = StyleSheet.create({
 });
 
 const POInVoice = ({
+  UserChoice,
   invoiceData,
   CurrentWords,
   BilData,
   tableList,
   AllCharges,
 }) => {
-  // console.log(tableList);
+  console.log(UserChoice);
+  console.log(UserChoice?.billTo);
+  console.log(UserChoice?.imagePosition);
+  console.log(UserChoice?.shipto);
   // console.log(invoiceData);
   // console.log(BilData);
   // console.log(CurrentWords);
@@ -100,36 +104,74 @@ const POInVoice = ({
                 height: "100px",
               }}
             >
-              <Image
-                style={{ width: "200px", padding: "25px 10px" }}
-                src={logo}
-                // style={styles.image}
-              ></Image>
-              <View style={{ padding: "10px" }}>
-                <Text style={{ fontSize: "10px", fontWeight: "bold" }}>
-                  PRAVARI CORPORATE MANAGEMENT SERVICES PVT. LTD.
-                </Text>
+              {UserChoice?.imagePosition &&
+              UserChoice?.imagePosition == "Left" ? (
+                <>
+                  <Image
+                    style={{ width: "200px", padding: "25px 10px" }}
+                    src={logo}
+                    // style={styles.image}
+                  ></Image>
+                  <View style={{ padding: "10px" }}>
+                    <Text style={{ fontSize: "10px", fontWeight: "bold" }}>
+                      PRAVARI CORPORATE MANAGEMENT SERVICES PVT. LTD.
+                    </Text>
 
-                <Text
-                  style={{
-                    fontSize: "8px",
-                    marginTop: "5px",
-                    marginBottom: "2px",
-                  }}
-                >
-                  ROOM 7,A-WING,Shree Datta Digambar CHS Ltd.
-                </Text>
-                <Text style={styles.header}>
-                  Guru Datta Mandir Road ,Gaurishankarwadi No. 1{" "}
-                </Text>
-                <Text style={styles.header}>
-                  Opp. Yashomandir,Pant Nagar ,Ghatkopar East,
-                </Text>
-                <Text style={styles.header}>
-                  Mumbai,Maharastra, 400075. india
-                </Text>
-                <Text style={styles.GSTIN}>GSTIN: 27AAHCP2196E1ZB</Text>
-              </View>
+                    <Text
+                      style={{
+                        fontSize: "8px",
+                        marginTop: "5px",
+                        marginBottom: "2px",
+                      }}
+                    >
+                      ROOM 7,A-WING,Shree Datta Digambar CHS Ltd.
+                    </Text>
+                    <Text style={styles.header}>
+                      Guru Datta Mandir Road ,Gaurishankarwadi No. 1{" "}
+                    </Text>
+                    <Text style={styles.header}>
+                      Opp. Yashomandir,Pant Nagar ,Ghatkopar East,
+                    </Text>
+                    <Text style={styles.header}>
+                      Mumbai,Maharastra, 400075. india
+                    </Text>
+                    <Text style={styles.GSTIN}>GSTIN: 27AAHCP2196E1ZB</Text>
+                  </View>
+                </>
+              ) : (
+                <>
+                  <View style={{ padding: "10px" }}>
+                    <Text style={{ fontSize: "10px", fontWeight: "bold" }}>
+                      PRAVARI CORPORATE MANAGEMENT SERVICES PVT. LTD.
+                    </Text>
+
+                    <Text
+                      style={{
+                        fontSize: "8px",
+                        marginTop: "5px",
+                        marginBottom: "2px",
+                      }}
+                    >
+                      ROOM 7,A-WING,Shree Datta Digambar CHS Ltd.
+                    </Text>
+                    <Text style={styles.header}>
+                      Guru Datta Mandir Road ,Gaurishankarwadi No. 1{" "}
+                    </Text>
+                    <Text style={styles.header}>
+                      Opp. Yashomandir,Pant Nagar ,Ghatkopar East,
+                    </Text>
+                    <Text style={styles.header}>
+                      Mumbai,Maharastra, 400075. india
+                    </Text>
+                    <Text style={styles.GSTIN}>GSTIN: 27AAHCP2196E1ZB</Text>
+                  </View>
+                  <Image
+                    style={{ width: "200px", padding: "25px 10px" }}
+                    src={logo}
+                    // style={styles.image}
+                  ></Image>
+                </>
+              )}
             </View>
             <View
               style={{
@@ -228,31 +270,59 @@ const POInVoice = ({
                 <View
                   style={{ flexDirection: "row", paddingBottom: "3px 3px" }}
                 >
-                  <Text
-                    style={{
-                      fontSize: "10px",
-                      fontWeight: "1000",
-                      marginLeft: "5px",
-                      width: "50%",
-                    }}
-                  >
-                    Bill To
-                  </Text>
+                  {UserChoice?.billTo == "Left" && (
+                    <Text
+                      style={{
+                        fontSize: "10px",
+                        fontWeight: "1000",
+                        marginLeft: "5px",
+                        width: "50%",
+                      }}
+                    >
+                      Bill To
+                    </Text>
+                  )}
+                  {UserChoice?.shipto == "Left" && (
+                    <Text
+                      style={{
+                        fontSize: "10px",
+                        fontWeight: "1000",
+                        marginLeft: "5px",
+                        width: "50%",
+                      }}
+                    >
+                      Ship To
+                    </Text>
+                  )}
                 </View>
               </View>
 
               <View style={{ padding: "2px", width: "50%" }}>
                 <View style={{ flexDirection: "row", paddingBottom: "3px" }}>
-                  <Text
-                    style={{
-                      fontSize: "10px",
-                      fontWeight: "bold",
-                      marginLeft: "5px",
-                      width: "50%",
-                    }}
-                  >
-                    Ship to
-                  </Text>
+                  {UserChoice?.billTo == "right" && (
+                    <Text
+                      style={{
+                        fontSize: "10px",
+                        fontWeight: "1000",
+                        marginLeft: "5px",
+                        width: "50%",
+                      }}
+                    >
+                      Bill To
+                    </Text>
+                  )}
+                  {UserChoice?.shipto == "right" && (
+                    <Text
+                      style={{
+                        fontSize: "10px",
+                        fontWeight: "1000",
+                        marginLeft: "5px",
+                        width: "50%",
+                      }}
+                    >
+                      Ship To
+                    </Text>
+                  )}
                 </View>
               </View>
             </View>
@@ -272,53 +342,105 @@ const POInVoice = ({
                   borderRight: "1px solid black",
                 }}
               >
-                <View style={{ flexDirection: "", paddingBottom: "3px" }}>
-                  <Text
-                    style={{
-                      fontSize: "13px",
-                      fontWeight: "bold",
-                    }}
-                  >
-                    {invoiceData?.company_name}
-                  </Text>{" "}
-                  <Text
-                    style={{
-                      fontSize: "10px",
-                      width: "45%",
-                      fontWeight: "bold",
-                    }}
-                  >
-                    {invoiceData?.billing_street},
-                    {invoiceData?.billing_city_name}
-                    {invoiceData?.billing_state_name} ,
-                    {invoiceData?.billing_pincode}
-                  </Text>{" "}
-                </View>
+                {UserChoice?.billTo == "Left" && (
+                  <View style={{ flexDirection: "", paddingBottom: "3px" }}>
+                    <Text
+                      style={{
+                        fontSize: "13px",
+                        fontWeight: "bold",
+                      }}
+                    >
+                      {invoiceData?.company_name}
+                    </Text>{" "}
+                    <Text
+                      style={{
+                        fontSize: "10px",
+                        width: "45%",
+                        fontWeight: "bold",
+                      }}
+                    >
+                      {invoiceData?.billing_street},
+                      {invoiceData?.billing_city_name}
+                      {invoiceData?.billing_state_name} ,
+                      {invoiceData?.billing_pincode}
+                    </Text>{" "}
+                  </View>
+                )}
+                {UserChoice?.shipto == "Left" && (
+                  <View style={{ flexDirection: "", paddingBottom: "3px" }}>
+                    <Text
+                      style={{
+                        fontSize: "13px",
+                        fontWeight: "bold",
+                      }}
+                    >
+                      {invoiceData?.company_name}
+                    </Text>{" "}
+                    <Text
+                      style={{
+                        fontSize: "10px",
+                        width: "45%",
+                        fontWeight: "bold",
+                      }}
+                    >
+                      {invoiceData?.shipping_street}
+                      {invoiceData?.shippingcity_city_name}{" "}
+                      {invoiceData?.shippingstate_state_name} ,
+                      {invoiceData?.shipping_pincode}
+                    </Text>{" "}
+                  </View>
+                )}
               </View>
 
               <View style={{ padding: "10px", width: "50%" }}>
-                <View style={{ flexDirection: "", paddingBottom: "3px" }}>
-                  <Text
-                    style={{
-                      fontSize: "13px",
-                      fontWeight: "bold",
-                    }}
-                  >
-                    {invoiceData?.company_name}
-                  </Text>{" "}
-                  <Text
-                    style={{
-                      fontSize: "10px",
-                      width: "45%",
-                      fontWeight: "bold",
-                    }}
-                  >
-                    {invoiceData?.shipping_street}
-                    {invoiceData?.shippingcity_city_name}{" "}
-                    {invoiceData?.shippingstate_state_name} ,
-                    {invoiceData?.shipping_pincode}
-                  </Text>{" "}
-                </View>
+                {UserChoice?.billTo == "right" && (
+                  <View style={{ flexDirection: "", paddingBottom: "3px" }}>
+                    <Text
+                      style={{
+                        fontSize: "13px",
+                        fontWeight: "bold",
+                      }}
+                    >
+                      {invoiceData?.company_name}
+                    </Text>{" "}
+                    <Text
+                      style={{
+                        fontSize: "10px",
+                        width: "45%",
+                        fontWeight: "bold",
+                      }}
+                    >
+                      {invoiceData?.billing_street},
+                      {invoiceData?.billing_city_name}
+                      {invoiceData?.billing_state_name} ,
+                      {invoiceData?.billing_pincode}
+                    </Text>{" "}
+                  </View>
+                )}
+                {UserChoice?.shipto == "right" && (
+                  <View style={{ flexDirection: "", paddingBottom: "3px" }}>
+                    <Text
+                      style={{
+                        fontSize: "13px",
+                        fontWeight: "bold",
+                      }}
+                    >
+                      {invoiceData?.company_name}
+                    </Text>{" "}
+                    <Text
+                      style={{
+                        fontSize: "10px",
+                        width: "45%",
+                        fontWeight: "bold",
+                      }}
+                    >
+                      {invoiceData?.shipping_street}
+                      {invoiceData?.shippingcity_city_name}{" "}
+                      {invoiceData?.shippingstate_state_name} ,
+                      {invoiceData?.shipping_pincode}
+                    </Text>{" "}
+                  </View>
+                )}
               </View>
             </View>
             <View

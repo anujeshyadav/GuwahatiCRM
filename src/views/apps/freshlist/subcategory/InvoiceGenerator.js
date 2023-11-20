@@ -17,6 +17,7 @@ import {
   ModalHeader,
   ModalBody,
   Badge,
+  FormGroup,
 } from "reactstrap";
 import { AiOutlineDownload } from "react-icons/ai";
 import axiosConfig from "../../../../axiosConfig";
@@ -37,7 +38,9 @@ const toWords = new ToWords({
   converterOptions: {
     currency: true,
     ignoreDecimal: false,
+    ShowMyBill: false,
     ignoreZeroCurrency: false,
+
     doNotAddOnly: false,
     currencyOptions: {
       // can be used to override defaults for the selected locale
@@ -62,12 +65,15 @@ class InvoiceGenerator extends React.Component {
     Applied_Charges: {},
     paginationPageSize: 20,
     currenPageSize: "",
+    Billtoposition: "Left",
+    shipto: "right",
+    logoposition: "Left",
     ButtonText: "Submit",
     Mergebilllength: "",
     modal: false,
     sgst: "",
     discount: "",
-    ViewBill: false,
+    ViewBill: true,
     wordsNumber: "",
     cgst: "",
     otherCharges: "",
@@ -751,7 +757,8 @@ class InvoiceGenerator extends React.Component {
   toggleModalclose = () => {
     // debugger;
     this.setState({ modal: false });
-    window.location.reload();
+    this.setState({ ShowMyBill: false });
+    // window.location.reload();
     // AddedBill = [];
     // console.log(AddedBill);
   };
@@ -761,6 +768,12 @@ class InvoiceGenerator extends React.Component {
   async componentDidMount() {
     let pageparmission = JSON.parse(localStorage.getItem("userData"));
     // console.log(pageparmission.role);
+    let userchoice = JSON.parse(localStorage.getItem("billUI"));
+    if (userchoice) {
+      this.setState({ logoposition: userchoice?.imagePosition });
+      this.setState({ Billtoposition: userchoice?.billTo });
+      this.setState({ shipto: userchoice?.shipto });
+    }
     let newparmisson = pageparmission?.role?.find(
       (value) => value?.pageName === "invoice Generator"
     );
@@ -805,6 +818,21 @@ class InvoiceGenerator extends React.Component {
       }
     );
   }
+  submitHandler = (e) => {
+    e.preventDefault();
+    let mychoice = {
+      imagePosition: this.state.logoposition,
+      billTo: this.state.Billtoposition,
+      shipto: this.state.shipto,
+    };
+
+    if (mychoice.billTo == mychoice.shipto) {
+      swal("Can not set Bill to and Ship to on one Same side");
+    } else {
+      localStorage.setItem("billUI", JSON.stringify(mychoice));
+      this.setState({ ShowMyBill: true });
+    }
+  };
   onGridReady = (params) => {
     this.gridApi = params.api;
     this.gridColumnApi = params.columnApi;
@@ -840,7 +868,7 @@ class InvoiceGenerator extends React.Component {
                 </h1>
               </Col>
 
-              {this.state.Mergebilllength > 0 ? (
+              {/* {this.state.Mergebilllength > 0 ? (
                 <Col>
                   <Button
                     // style={{ marginRight: "-22rem" }}
@@ -853,8 +881,19 @@ class InvoiceGenerator extends React.Component {
                     Create Invoice
                   </Button>
                 </Col>
-              ) : null}
-
+              ) : null} */}
+              <Col>
+                <Button
+                  // style={{ marginRight: "-22rem" }}
+                  className=" btn btn-danger float-right"
+                  // onClick={() =>
+                  // history.push("/app/freshlist/subcategory/SubCategoryList")
+                  // }
+                  onClick={this.MergeBillNow}
+                >
+                  Create Invoice
+                </Button>
+              </Col>
               {/* <Col>
                 <Route
                   render={({ history }) => (
@@ -975,109 +1014,191 @@ class InvoiceGenerator extends React.Component {
             Download Bill
           </ModalHeader>
           <ModalBody>
-            {this.state.ViewBill && this.state.ViewBill ? (
+            {this.state.ShowMyBill && this.state.ShowMyBill ? (
               <>
-                <div style={{ width: "100%" }} className="">
-                  <InvoicGenerator
-                    PrintData={this.state.PrintData}
-                    Applied_Charges={this.state.Applied_Charges}
-                    AllbillMerged={this.state.AllbillMerged}
-                    wordsNumber={this.state.wordsNumber}
-                    sgst={this.state.sgst}
-                    cgst={this.state.cgst}
-                    deliveryCharges={this.state.deliveryCharges}
-                    otherCharges={this.state.otherCharges}
-                    discount={this.state.discount}
-                    AddedBill={AddedBill}
-                  />
-                </div>
+                {this.state.ViewBill && this.state.ViewBill ? (
+                  <>
+                    <div style={{ width: "100%" }} className="">
+                      <InvoicGenerator
+                        PrintData={this.state.PrintData}
+                        Applied_Charges={this.state.Applied_Charges}
+                        AllbillMerged={this.state.AllbillMerged}
+                        wordsNumber={this.state.wordsNumber}
+                        sgst={this.state.sgst}
+                        cgst={this.state.cgst}
+                        deliveryCharges={this.state.deliveryCharges}
+                        otherCharges={this.state.otherCharges}
+                        discount={this.state.discount}
+                        AddedBill={AddedBill}
+                      />
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <div style={{ width: "100%" }} className="">
+                      <Form onSubmit={(e) => this.handleSubmit(e)}>
+                        <Row className="main div heading px-3 py-3">
+                          <Col lg="6" className="mb-2">
+                            <Label>SGST</Label>
+                            <select
+                              required
+                              className="form-control"
+                              value={this.state.sgst}
+                              onChange={this.changeHandler}
+                              name="sgst"
+                            >
+                              <option value="not selected">--Select--</option>
+                              <option value="5">5%</option>
+                              <option value="9">9%</option>
+                              <option value="12">12%</option>
+                            </select>
+                          </Col>
+                          <Col lg="6" className="mb-2">
+                            <Label>CGST</Label>
+                            <select
+                              required
+                              className="form-control"
+                              name="cgst"
+                              placeholder="Enter CGST"
+                              value={this.state.cgst}
+                              onChange={this.changeHandler}
+                            >
+                              <option value="not selected">--Select--</option>
+                              <option value="5">5%</option>
+                              <option value="9">9%</option>
+                              <option value="12">12%</option>
+                            </select>
+                          </Col>
+                          <Col lg="6">
+                            <Label className="mt-2">Other Charges</Label>
+                            <Input
+                              type="number"
+                              name="otherCharges"
+                              placeholder="Enter Other Charges"
+                              value={this.state.otherCharges}
+                              onChange={this.changeHandler}
+                            ></Input>
+                          </Col>
+                          <Col lg="6">
+                            <Label className="mt-2">Delivery Charges</Label>
+                            <Input
+                              type="number"
+                              name="deliveryCharges"
+                              placeholder="Enter Delivery Charges"
+                              value={this.state.deliveryCharges}
+                              onChange={this.changeHandler}
+                            ></Input>
+                          </Col>
+                          <Col lg="6">
+                            <Label className="mt-2">Discount </Label>
+                            <Input
+                              type="number"
+                              name="discount"
+                              placeholder="Enter discount value"
+                              value={this.state.discount}
+                              onChange={this.changeHandler}
+                            ></Input>
+                          </Col>
+                        </Row>
+                        <Row>
+                          <Col lg="12" className="mt-2 mb-2">
+                            <div className="d-flex justify-content-center">
+                              <Button
+                                disabled={
+                                  this.state.ButtonText === "InProcess"
+                                    ? true
+                                    : false
+                                }
+                                color="primary"
+                                type="submit"
+                              >
+                                {this.state.ButtonText}
+                              </Button>
+                            </div>
+                          </Col>
+                        </Row>
+                      </Form>
+                    </div>
+                  </>
+                )}
               </>
             ) : (
               <>
-                <div style={{ width: "100%" }} className="">
-                  <Form onSubmit={(e) => this.handleSubmit(e)}>
-                    <Row className="main div heading px-3 py-3">
-                      <Col lg="6" className="mb-2">
-                        <Label>SGST</Label>
-                        <select
-                          required
-                          className="form-control"
-                          value={this.state.sgst}
-                          onChange={this.changeHandler}
-                          name="sgst"
+                <Form className="m-1" onSubmit={this.submitHandler}>
+                  <Row className="mb-2">
+                    <Col lg="4" md="4" className="mb-2">
+                      <Label>Logo Position</Label>
+                      <CustomInput
+                        type="select"
+                        placeholder="Select Type"
+                        name="logoposition"
+                        value={this.state.logoposition}
+                        onChange={this.changeHandler}
+                      >
+                        <option>---Select---</option>
+                        <option value="Left">Left</option>
+                        <option value="right">Right</option>
+                      </CustomInput>
+                    </Col>
+                    <Col lg="4" md="4" className="mb-2">
+                      <Label>ship to position</Label>
+                      <CustomInput
+                        type="select"
+                        placeholder="Select Type"
+                        name="shipto"
+                        value={this.state.shipto}
+                        onChange={this.changeHandler}
+                      >
+                        <option>---Select---</option>
+                        <option value="Left">Left</option>
+                        <option value="right">Right</option>
+                      </CustomInput>
+                      <span>
+                        {this.state.shipto == this.state.Billtoposition ? (
+                          <span style={{ color: "red" }}>
+                            Bill to and ship to cannot be same
+                          </span>
+                        ) : null}
+                      </span>
+                    </Col>
+
+                    <Col lg="4" md="4" className="mb-2">
+                      <Label>Bill to position</Label>
+                      <CustomInput
+                        type="select"
+                        placeholder="Select Type"
+                        name="Billtoposition"
+                        value={this.state.Billtoposition}
+                        onChange={this.changeHandler}
+                      >
+                        <option>---Select---</option>
+                        <option value="Left">Left</option>
+                        <option value="right">Right</option>
+                      </CustomInput>
+                      <span>
+                        {this.state.shipto == this.state.Billtoposition ? (
+                          <span style={{ color: "red" }}>
+                            Bill to and ship to cannot be same
+                          </span>
+                        ) : null}
+                      </span>
+                    </Col>
+                  </Row>
+
+                  <Row>
+                    <Col>
+                      <div className="d-flex justify-content-center">
+                        <Button.Ripple
+                          color="primary"
+                          type="submit"
+                          className="mr-1 mb-1"
                         >
-                          <option value="not selected">--Select--</option>
-                          <option value="5">5%</option>
-                          <option value="9">9%</option>
-                          <option value="12">12%</option>
-                        </select>
-                      </Col>
-                      <Col lg="6" className="mb-2">
-                        <Label>CGST</Label>
-                        <select
-                          required
-                          className="form-control"
-                          name="cgst"
-                          placeholder="Enter CGST"
-                          value={this.state.cgst}
-                          onChange={this.changeHandler}
-                        >
-                          <option value="not selected">--Select--</option>
-                          <option value="5">5%</option>
-                          <option value="9">9%</option>
-                          <option value="12">12%</option>
-                        </select>
-                      </Col>
-                      <Col lg="6">
-                        <Label className="mt-2">Other Charges</Label>
-                        <Input
-                          type="number"
-                          name="otherCharges"
-                          placeholder="Enter Other Charges"
-                          value={this.state.otherCharges}
-                          onChange={this.changeHandler}
-                        ></Input>
-                      </Col>
-                      <Col lg="6">
-                        <Label className="mt-2">Delivery Charges</Label>
-                        <Input
-                          type="number"
-                          name="deliveryCharges"
-                          placeholder="Enter Delivery Charges"
-                          value={this.state.deliveryCharges}
-                          onChange={this.changeHandler}
-                        ></Input>
-                      </Col>
-                      <Col lg="6">
-                        <Label className="mt-2">Discount </Label>
-                        <Input
-                          type="number"
-                          name="discount"
-                          placeholder="Enter discount value"
-                          value={this.state.discount}
-                          onChange={this.changeHandler}
-                        ></Input>
-                      </Col>
-                    </Row>
-                    <Row>
-                      <Col lg="12" className="mt-2 mb-2">
-                        <div className="d-flex justify-content-center">
-                          <Button
-                            disabled={
-                              this.state.ButtonText === "InProcess"
-                                ? true
-                                : false
-                            }
-                            color="primary"
-                            type="submit"
-                          >
-                            {this.state.ButtonText}
-                          </Button>
-                        </div>
-                      </Col>
-                    </Row>
-                  </Form>
-                </div>
+                          Submit
+                        </Button.Ripple>
+                      </div>
+                    </Col>
+                  </Row>
+                </Form>
               </>
             )}
           </ModalBody>
