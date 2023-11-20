@@ -112,7 +112,7 @@ export class AddCategory extends Component {
           <CardBody>
             <Form className="m-1" onSubmit={this.submitHandler}>
               <Row className="mb-2">
-                <Col lg="6" md="6">
+                <Col lg="4" md="4">
                   <FormGroup>
                     <Label>Category Name</Label>
                     <Input
@@ -140,12 +140,12 @@ export class AddCategory extends Component {
                   </CustomInput>
                 </Col> */}
 
-                {/* <Col lg="6" md="6">
+                <Col lg="4" md="4">
                   <FormGroup>
                     <Label>Category Image </Label>
                     <CustomInput type="file" onChange={this.onChangeHandler1} />
                   </FormGroup>
-                </Col> */}
+                </Col>
 
                 {/* <Col lg="6" md="6">
                   <FormGroup>
@@ -160,29 +160,29 @@ export class AddCategory extends Component {
                     <CustomInput type="file" onChange={this.onChangeHandler3} />
                   </FormGroup>
                 </Col> */}
-                {/* <Col lg="6" md="6">
+                {/* <Col lg="4" md="4">
                   <FormGroup>
                     <Label>App Banner</Label>
                     <CustomInput type="file" onChange={this.onChangeHandler4} />
                   </FormGroup>
                 </Col> */}
 
-                {/* <Col lg="6" md="6" className="mb-2">
+                <Col lg="4" md="4" className="mb-2">
                   <Label>Description</Label>
-                  <input
+                  <textarea
                     type="text"
                     className="form-control"
                     name="feature"
                     value={this.state.feature}
                     onChange={this.changeHandler}
                   />
-                </Col> */}
+                </Col>
 
-                {/* <Col lg="6" md="6" sm="6" className="mb-2 mt-1">
+                <Col lg="12" md="12" sm="12" className="mb-2 mt-1">
                   <Label className="mb-0">Status</Label>
                   <div
                     className="form-label-group"
-                    onChange={this.handleChange}
+                    onChange={this.changeHandler}
                   >
                     <input
                       style={{ marginRight: "3px" }}
@@ -200,14 +200,14 @@ export class AddCategory extends Component {
                     />
                     <span style={{ marginRight: "3px" }}>Deactive</span>
                   </div>
-                </Col> */}
+                </Col>
               </Row>
 
               <Row>
                 <Col>
                   <div className="d-flex justify-content-start">
                     <Button.Ripple color="primary" type="submit" className="">
-                      Add Category
+                      + Add
                     </Button.Ripple>
                   </div>
                 </Col>
