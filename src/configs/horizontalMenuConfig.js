@@ -738,8 +738,8 @@ const horizontalMenuConfig = [
         icon: <FaProductHunt size={15} />,
         children: [
           {
-            id: "CategoryList",
-            title: "Category List",
+            id: "Registration",
+            title: "Registration",
             type: "item",
             icon: <FaCircle size={8} />,
             permissions: ["admin", "editor"],
