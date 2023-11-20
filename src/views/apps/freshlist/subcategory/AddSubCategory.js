@@ -26,6 +26,7 @@ export class AddSubCategory extends Component {
       type: "",
       feature: "",
       status: "",
+      Description: "",
       selectedFile1: null,
       selectedName1: "",
       selectedFile2: null,
@@ -37,31 +38,31 @@ export class AddSubCategory extends Component {
     };
   }
 
-  onChangeHandler1 = event => {
+  onChangeHandler1 = (event) => {
     this.setState({ selectedFile1: event.target.files[0] });
     this.setState({ selectedName1: event.target.files[0].name });
     console.log(event.target.files[0]);
   };
-  onChangeHandler2 = event => {
+  onChangeHandler2 = (event) => {
     this.setState({ selectedFile2: event.target.files[0] });
     this.setState({ selectedName2: event.target.files[0].name });
     console.log(event.target.files[0]);
   };
-  onChangeHandler3 = event => {
+  onChangeHandler3 = (event) => {
     this.setState({ selectedFile3: event.target.files[0] });
     this.setState({ selectedName3: event.target.files[0].name });
     console.log(event.target.files[0]);
   };
-  onChangeHandler4 = event => {
+  onChangeHandler4 = (event) => {
     this.setState({ selectedFile4: event.target.files[0] });
     this.setState({ selectedName4: event.target.files[0].name });
     console.log(event.target.files[0]);
   };
 
-  changeHandler1 = e => {
+  changeHandler1 = (e) => {
     this.setState({ status: e.target.value });
   };
-  changeHandler = e => {
+  changeHandler = (e) => {
     this.setState({ [e.target.name]: e.target.value });
   };
 
@@ -70,18 +71,18 @@ export class AddSubCategory extends Component {
   componentDidMount() {
     axiosConfig
       .get(`/admin/getallcategory`)
-      .then(response => {
+      .then((response) => {
         console.log(response.data.data);
         this.setState({ data: response.data.data });
         console.log(this.state.data);
       })
-      .catch(error => {
+      .catch((error) => {
         console.log(error);
       });
   }
 
   // Submit Sub-Category Api
-  submitHandler = e => {
+  submitHandler = (e) => {
     e.preventDefault();
     const data = new FormData();
     data.append("subcategory_name", this.state.subcategory_name);
@@ -111,14 +112,14 @@ export class AddSubCategory extends Component {
     }
     axiosConfig
       .post(`/admin/addsubcategory`, data)
-      .then(response => {
+      .then((response) => {
         console.log(response);
         if (response.data.msg === "success") {
           swal("Success!", "You Data IS been Submitted", "success");
           this.props.history.push("/app/freshlist/subcategory/subCategoryList");
         }
       })
-      .catch(error => {
+      .catch((error) => {
         console.log(error);
       });
   };
@@ -150,7 +151,24 @@ export class AddSubCategory extends Component {
           <CardBody>
             <Form className="m-1" onSubmit={this.submitHandler}>
               <Row className="mb-2">
-                <Col lg="6" md="6">
+                <Col lg="4" md="4" className="mb-2">
+                  <Label>Category</Label>
+                  <CustomInput
+                    type="select"
+                    placeholder="Select Category"
+                    name="category"
+                    value={this.state.category}
+                    onChange={this.changeHandler}
+                  >
+                    <option>Select Category</option>
+                    {this.state.data.map((cat) => (
+                      <option value={cat._id} key={cat._id}>
+                        {cat.category_name}
+                      </option>
+                    ))}
+                  </CustomInput>
+                </Col>
+                <Col lg="4" md="4">
                   <FormGroup>
                     <Label> Sub-Category Name</Label>
                     <Input
@@ -162,24 +180,20 @@ export class AddSubCategory extends Component {
                     />
                   </FormGroup>
                 </Col>
-                <Col lg="6" md="6" className="mb-2">
-                  <Label>Category</Label>
-                  <CustomInput
-                    type="select"
-                    placeholder="Select Category"
-                    name="category"
-                    value={this.state.category}
-                    onChange={this.changeHandler}
-                  >
-                    <option>Select Category</option>
-                    {this.state.data.map(cat => (
-                      <option value={cat._id} key={cat._id}>
-                        {cat.category_name}
-                      </option>
-                    ))}
-                  </CustomInput>
+                <Col lg="4" md="4">
+                  <FormGroup>
+                    <Label> Sub-Category Name</Label>
+                    <textarea
+                      type="textarea"
+                      className="form-control"
+                      placeholder="Description "
+                      name="Description"
+                      value={this.state.Description}
+                      onChange={this.changeHandler}
+                    />
+                  </FormGroup>
                 </Col>
-                <Col lg="6" md="6" className="mb-2">
+                {/* <Col lg="4" md="4" className="mb-2">
                   <Label>Type</Label>
                   <CustomInput
                     type="select"
@@ -193,36 +207,36 @@ export class AddSubCategory extends Component {
                     <option value="nonveg">Non-Veg</option>
                     <option value="egg">Egg only</option>
                   </CustomInput>
-                </Col>
+                </Col> */}
 
-                <Col lg="6" md="6">
+                <Col lg="4" md="4">
                   <FormGroup>
-                    <Label>Category Image </Label>
+                    <Label>SubCategory Image </Label>
                     <CustomInput type="file" onChange={this.onChangeHandler1} />
                   </FormGroup>
                 </Col>
 
-                <Col lg="6" md="6">
+                {/* <Col lg="4" md="4">
                   <FormGroup>
                     <Label>Thumbnail</Label>
                     <CustomInput type="file" onChange={this.onChangeHandler2} />
                   </FormGroup>
-                </Col>
+                </Col> */}
 
-                <Col lg="6" md="6">
+                {/* <Col lg="4" md="4">
                   <FormGroup>
                     <Label>Web Banner </Label>
                     <CustomInput type="file" onChange={this.onChangeHandler3} />
                   </FormGroup>
-                </Col>
-                <Col lg="6" md="6">
+                </Col> */}
+                {/* <Col lg="4" md="4">
                   <FormGroup>
                     <Label>App Banner</Label>
                     <CustomInput type="file" onChange={this.onChangeHandler4} />
                   </FormGroup>
-                </Col>
+                </Col> */}
 
-                <Col lg="6" md="6" className="mb-2">
+                {/* <Col lg="4" md="4" className="mb-2">
                   <Label>Feature</Label>
                   <CustomInput
                     type="select"
@@ -235,9 +249,9 @@ export class AddSubCategory extends Component {
                     <option value="yes">Yes</option>
                     <option value="no">No</option>
                   </CustomInput>
-                </Col>
+                </Col> */}
 
-                <Col lg="6" md="6" sm="6" className="mb-2 mt-1">
+                <Col lg="4" md="4" sm="6" className="mb-2 mt-1">
                   <Label className="mb-0">Status</Label>
                   <div
                     className="form-label-group"

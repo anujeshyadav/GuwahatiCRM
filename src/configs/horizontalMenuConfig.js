@@ -691,6 +691,7 @@ const horizontalMenuConfig = [
       },
     ],
   },
+
   {
     id: "Others",
     title: "Others",
@@ -698,13 +699,72 @@ const horizontalMenuConfig = [
     icon: <FaProductHunt size={15} />,
     children: [
       {
-        id: "ProductCreation",
-        title: "Product Creation",
-        type: "item",
-        icon: <FaCircle size={8} />,
-        permissions: ["admin", "editor"],
-        navLink: "/app/softNumen/system/WareHouseListSoft",
+        id: "ProductList",
+        title: "Product",
+        type: "collapse",
+        icon: <FaProductHunt size={15} />,
+        children: [
+          {
+            id: "CategoryList",
+            title: "Category List",
+            type: "item",
+            icon: <FaCircle size={8} />,
+            permissions: ["admin", "editor"],
+            navLink: "/app/freshlist/category/categoryList",
+          },
+          {
+            id: "subCategoryList",
+            title: "subCategory List",
+            type: "item",
+            icon: <FaCircle size={8} />,
+            permissions: ["admin", "editor"],
+            navLink: "/app/freshlist/subcategory/subCategoryList",
+          },
+          {
+            id: "ProductCreation",
+            title: "Product Creation",
+            type: "item",
+            icon: <FaCircle size={8} />,
+            permissions: ["admin", "editor"],
+            navLink: "/app/freshlist/house/houseProductList",
+            // navLink: "/app/freshlist/house/AddProduct",
+          },
+        ],
       },
+      {
+        id: "Multivendor",
+        title: "Multivendor",
+        type: "collapse",
+        icon: <FaProductHunt size={15} />,
+        children: [
+          {
+            id: "CategoryList",
+            title: "Category List",
+            type: "item",
+            icon: <FaCircle size={8} />,
+            permissions: ["admin", "editor"],
+            navLink: "/app/freshlist/category/categoryList",
+          },
+          {
+            id: "subCategoryList",
+            title: "subCategory List",
+            type: "item",
+            icon: <FaCircle size={8} />,
+            permissions: ["admin", "editor"],
+            navLink: "/app/freshlist/subcategory/subCategoryList",
+          },
+          {
+            id: "ProductCreation",
+            title: "Product Creation",
+            type: "item",
+            icon: <FaCircle size={8} />,
+            permissions: ["admin", "editor"],
+            navLink: "/app/freshlist/house/houseProductList",
+            // navLink: "/app/freshlist/house/AddProduct",
+          },
+        ],
+      },
+
       {
         id: "HRM",
         title: "HRM",

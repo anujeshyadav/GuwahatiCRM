@@ -301,7 +301,7 @@ class CategoryList extends React.Component {
                   Category List
                 </h1>
               </Col>
-              {/* <Col>
+              <Col>
                 <Button
                   style={{ cursor: "pointer" }}
                   className="btn btn-danger float-right"
@@ -311,10 +311,10 @@ class CategoryList extends React.Component {
                     )
                   }
                 >
-                  Add
+                  + Add Category
                 </Button>
-              </Col> */}
-              <Col>
+              </Col>
+              {/* <Col>
                 {this.state.Createpermisson && (
                   <Route
                     render={({ history }) => (
@@ -330,7 +330,7 @@ class CategoryList extends React.Component {
                     )}
                   />
                 )}
-              </Col>
+              </Col> */}
             </Row>
             <CardBody>
               {this.state.rowData === null ? null : (
