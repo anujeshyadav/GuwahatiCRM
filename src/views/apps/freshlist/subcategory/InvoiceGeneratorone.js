@@ -10,10 +10,13 @@ const InvoiceGenerator = (props) => {
   console.log(props);
   const [Printview, setPrintview] = useState({});
   const [AllCharges, setAllCharges] = useState({});
+  const [UserChoice, setUserChoice] = useState({});
   const [details, setDetails] = useState([]);
 
   useEffect(() => {
     // debugger;
+    let userchoice = JSON.parse(localStorage.getItem("billUI"));
+    setUserChoice(userchoice);
     if (props?.AddedBill?.length > 0) {
       // console.log("props", props);
       // console.log("Multibil here", props?.AllbillMerged);
@@ -44,6 +47,7 @@ const InvoiceGenerator = (props) => {
       {/* {/ Use PDFViewer to preview the generated PDF /} */}
       <PDFViewer width="1000" height="800">
         <POInVoice
+          UserChoice={UserChoice}
           invoiceData={Printview}
           CurrentWords={props.wordsNumber}
           BilData={props}
