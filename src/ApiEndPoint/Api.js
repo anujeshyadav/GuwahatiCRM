@@ -1,3 +1,13 @@
+// Guwahati open
+export const Create_warehouse_xmlView = "/warehouse/get-xml";
+export const Create_warehouse_save  = "/warehouse/save-warehouse";
+
+// Guwahati close
+
+
+
+
+
 export const Create_Account_xmlView = "/user/get-xml";
 export const Create_Customer_xmlView = "/customer/get-xml";
 export const Create_Customer_save = "/customer/save-customer";

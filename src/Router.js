@@ -352,6 +352,7 @@ const EditCategory = lazy(() =>
 const ViewCategory = lazy(() =>
   import("./views/apps/freshlist/category/ViewCategory")
 );
+
 // Subcategory SubCategoryList
 const SubCategoryList = lazy(() =>
   import("./views/apps/freshlist/subcategory/SubCategoryList")
@@ -513,6 +514,28 @@ const WareHouseListSoft = lazy(() =>
 const CreateWareHouse = lazy(() =>
   import("./views/apps/freshlist/customer/warehouse/CreateWareHouse")
 );
+const RawMaterialInward = lazy(() =>
+  import("./views/apps/freshlist/customer/warehouse/RawMaterialInward")
+);
+const RawmaterialOutward = lazy(() =>
+  import("./views/apps/freshlist/customer/warehouse/RawmaterialOutward")
+);
+const StockTransferwarehouse = lazy(() =>
+  import("./views/apps/freshlist/customer/warehouse/StockTransfer")
+);
+const DamageReport = lazy(() =>
+  import("./views/apps/freshlist/customer/warehouse/DamageReport")
+);
+const StockStorage = lazy(() =>
+  import("./views/apps/freshlist/customer/warehouse/StockStorage")
+);
+const WastageDetail = lazy(() =>
+  import("./views/apps/freshlist/customer/warehouse/WastageDetail")
+);
+const DispatchDetail = lazy(() =>
+  import("./views/apps/freshlist/customer/warehouse/DispatchDetail")
+);
+
 const InVoiceSystem = lazy(() =>
   import("./views/apps/freshlist/customer/SystemManagement/InVoice")
 );
@@ -1703,8 +1726,36 @@ class AppRouter extends React.Component {
             component={WareHouseListSoft}
           />
           <AppRoute
-            path="/app/softNumen/system/CreateWareHouse"
+            path="/app/softNumen/warehouse/CreateWareHouse"
             component={CreateWareHouse}
+          />
+          <AppRoute
+            path="/app/softNumen/warehouse/RawMaterialInward"
+            component={RawMaterialInward}
+          />
+          <AppRoute
+            path="/app/softNumen/warehouse/RawmaterialOutward"
+            component={RawmaterialOutward}
+          />
+          <AppRoute
+            path="/app/softNumen/warehouse/StockTransfer"
+            component={StockTransferwarehouse}
+          />
+          <AppRoute
+            path="/app/softNumen/warehouse/DamageReport"
+            component={DamageReport}
+          />
+          <AppRoute
+            path="/app/softNumen/warehouse/StockStorage"
+            component={StockStorage}
+          />
+          <AppRoute
+            path="/app/softNumen/warehouse/WastageDetail"
+            component={WastageDetail}
+          />
+          <AppRoute
+            path="/app/softNumen/warehouse/DispatchDetail"
+            component={DispatchDetail}
           />
           <AppRoute
             path="/app/softNumen/system/SupportsSystem"

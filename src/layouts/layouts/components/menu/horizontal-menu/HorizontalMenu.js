@@ -236,7 +236,9 @@ class HorizontalSidebar extends React.Component {
   }
 
   renderDropdown = arr => {
+    console.log(arr)
     return arr.map(item => {
+      {console.log(item)}
       if (
         item.type === "item" &&
         item.navLink &&

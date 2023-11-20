@@ -24,7 +24,7 @@ import "../../../../../assets/scss/plugins/tables/_agGridStyleOverride.scss";
 import "../../../../../assets/scss/pages/users.scss";
 
 
-class CategoryList extends React.Component {
+class WastageDetail extends React.Component {
   state = {
     rowData: [],
     Viewpermisson: null,
@@ -36,7 +36,6 @@ class CategoryList extends React.Component {
     getPageSize: "",
     defaultColDef: {
       sortable: true,
-      // editable: true,
       resizable: true,
       suppressMenu: true,
     },
@@ -270,7 +269,6 @@ class CategoryList extends React.Component {
   render() {
     const { rowData, columnDefs, defaultColDef } = this.state;
     return (
-      // console.log(rowData),
       <Row className="app-user-list">
         <Col sm="12"></Col>
         <Col sm="12">
@@ -278,7 +276,7 @@ class CategoryList extends React.Component {
             <Row className="m-2">
               <Col>
                 <h1 sm="6" className="float-left">
-                WareHouse List
+                WastageDetail List
                 </h1>
               </Col>
               <Col>
@@ -291,7 +289,7 @@ class CategoryList extends React.Component {
                     )
                   }
                 >
-                  + Add WareHouse
+                  + Add WastageDetail
                 </Button>
               </Col>
               {/* <Col>
@@ -408,4 +406,4 @@ class CategoryList extends React.Component {
     );
   }
 }
-export default CategoryList;
+export default WastageDetail;

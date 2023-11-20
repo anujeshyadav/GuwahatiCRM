@@ -244,10 +244,11 @@ class HorizontalSidebar extends React.Component {
   };
 
   renderDropdown = (arr) => {
-    // console.log(arr);
+    console.log(arr);
     let allList = [];
-    let MyTotalList = arr?.map((ele, i) => {
-      debugger;
+    // let MyTotalList = 
+    arr?.map((ele, i) => {
+      // debugger;
       if (!!ele?.children) {
         allList.push(ele?.children);
       } else if (!!ele?.children?.children) {

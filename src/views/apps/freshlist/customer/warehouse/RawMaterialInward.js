@@ -24,7 +24,7 @@ import "../../../../../assets/scss/plugins/tables/_agGridStyleOverride.scss";
 import "../../../../../assets/scss/pages/users.scss";
 
 
-class CategoryList extends React.Component {
+class RawMaterialInward extends React.Component {
   state = {
     rowData: [],
     Viewpermisson: null,
@@ -278,7 +278,7 @@ class CategoryList extends React.Component {
             <Row className="m-2">
               <Col>
                 <h1 sm="6" className="float-left">
-                WareHouse List
+                Raw Material Inward List
                 </h1>
               </Col>
               <Col>
@@ -291,7 +291,7 @@ class CategoryList extends React.Component {
                     )
                   }
                 >
-                  + Add WareHouse
+                  + RawMaterialInward
                 </Button>
               </Col>
               {/* <Col>
@@ -408,4 +408,4 @@ class CategoryList extends React.Component {
     );
   }
 }
-export default CategoryList;
+export default RawMaterialInward;
