@@ -167,7 +167,8 @@ class HorizontalSidebar extends React.Component {
                   }
                   target={child.newTab ? "_blank" : undefined}
                   onMouseEnter={() => this.handleItemHover(child.id)}
-                  onMouseLeave={() => this.handleItemHover(null)}>
+                  // onMouseLeave={() => this.handleItemHover(null)}
+                  >
                   {child.children ? (
                     <Dropdown
                       className={classnames("sub-menu w-100", {})}
@@ -175,7 +176,8 @@ class HorizontalSidebar extends React.Component {
                       direction={this.state.openLeft ? "left" : "right"}
                       toggle={() => true}
                       onMouseEnter={() => this.openDropdown(child.id)}
-                      onMouseLeave={() => this.closeDropdown(child.id)}>
+                      // onMouseLeave={() => this.closeDropdown(child.id)}
+                      >
                       <DropdownToggle
                         className="d-flex justify-content-between align-items-center item-content"
                         tag={"div"}
@@ -236,7 +238,9 @@ class HorizontalSidebar extends React.Component {
   }
 
   renderDropdown = arr => {
+    console.log(arr)
     return arr.map(item => {
+      {console.log(item)}
       if (
         item.type === "item" &&
         item.navLink &&
@@ -262,10 +266,11 @@ class HorizontalSidebar extends React.Component {
               this.openDropdown(item.id)
               this.handleParentHover(item.id)
             }}
-            onMouseLeave={() => {
-              this.closeDropdown(item.id)
-              this.handleParentHover(null)
-            }}>
+            // onMouseLeave={() => {
+            //   this.closeDropdown(item.id)
+            //   this.handleParentHover(null)
+            // }}
+            >
             {item.children ? (
               <Dropdown
                 isOpen={this.state.openDropdown.includes(item.id)}

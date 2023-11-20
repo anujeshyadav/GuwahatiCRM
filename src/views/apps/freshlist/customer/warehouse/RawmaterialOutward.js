@@ -24,7 +24,7 @@ import "../../../../../assets/scss/plugins/tables/_agGridStyleOverride.scss";
 import "../../../../../assets/scss/pages/users.scss";
 
 
-class CategoryList extends React.Component {
+class RawmaterialOutward extends React.Component {
   state = {
     rowData: [],
     Viewpermisson: null,
@@ -36,7 +36,6 @@ class CategoryList extends React.Component {
     getPageSize: "",
     defaultColDef: {
       sortable: true,
-      // editable: true,
       resizable: true,
       suppressMenu: true,
     },
@@ -158,9 +157,7 @@ class CategoryList extends React.Component {
                       size="25px"
                       color="red"
                       onClick={() => {
-                        // let selectedData = this.gridApi.getSelectedRows();
                         this.runthisfunction(params?.data?.id);
-                        // this.gridApi.updateRowData({ remove: selectedData });
                       }}
                     />
                   )}
@@ -278,7 +275,7 @@ class CategoryList extends React.Component {
             <Row className="m-2">
               <Col>
                 <h1 sm="6" className="float-left">
-                WareHouse List
+                Raw Material Outward List
                 </h1>
               </Col>
               <Col>
@@ -287,11 +284,11 @@ class CategoryList extends React.Component {
                   className="btn btn-primary float-right"
                   onClick={() =>
                     this.props.history.push(
-                      "/app/softNumen/warehouse/CreateWareHouse"
+                        "/app/softNumen/warehouse/CreateWareHouse"
                     )
                   }
                 >
-                  + Add WareHouse
+                  + RawMaterialOutward
                 </Button>
               </Col>
               {/* <Col>
@@ -408,4 +405,4 @@ class CategoryList extends React.Component {
     );
   }
 }
-export default CategoryList;
+export default RawmaterialOutward;

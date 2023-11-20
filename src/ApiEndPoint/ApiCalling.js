@@ -1,4 +1,8 @@
 import {
+  Create_warehouse_xmlView,
+  Create_warehouse_save,
+
+
   Create_Account_xmlView,
   Create_Customer_xmlView,
   Create_Customer_save,
@@ -102,6 +106,25 @@ dotenv.config();
 // const secretKey = process.env.REACT_APP_SECRET_KEY;
 // console.log(`API Key: ${apiKey}`);
 // console.log(`Secret Key: ${secretKey}`);
+
+
+// guwahati api calling open
+
+
+export const CreatewarehouseView = async () => {
+  let response = await axiosConfig
+    .get(`${Create_warehouse_xmlView}`)
+    .then((res) => res.data);
+  return response;
+};
+
+export const CreateWarehousesave  = async (data) => {
+  let response = await axiosConfig
+    .post(`${Create_warehouse_save}`, data)
+    .then((res) => res.data);
+  return response;
+};
+// guwahati api calling close
 
 export const UserLogin = async (data) => {
   let response = await axiosConfig

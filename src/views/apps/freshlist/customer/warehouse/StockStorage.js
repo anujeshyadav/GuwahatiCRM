@@ -10,9 +10,8 @@ import {
   DropdownMenu,
   DropdownItem,
   DropdownToggle,
-  Badge,
 } from "reactstrap";
-import { Route, Link } from "react-router-dom";
+import { Route } from "react-router-dom";
 import swal from "sweetalert";
 import { AgGridReact } from "ag-grid-react";
 import { Edit, Trash2, ChevronDown, Eye } from "react-feather";
@@ -24,7 +23,7 @@ import "../../../../../assets/scss/plugins/tables/_agGridStyleOverride.scss";
 import "../../../../../assets/scss/pages/users.scss";
 
 
-class CategoryList extends React.Component {
+class StockStorage extends React.Component {
   state = {
     rowData: [],
     Viewpermisson: null,
@@ -36,7 +35,6 @@ class CategoryList extends React.Component {
     getPageSize: "",
     defaultColDef: {
       sortable: true,
-      // editable: true,
       resizable: true,
       suppressMenu: true,
     },
@@ -270,15 +268,14 @@ class CategoryList extends React.Component {
   render() {
     const { rowData, columnDefs, defaultColDef } = this.state;
     return (
-      // console.log(rowData),
-      <Row className="app-user-list">
+    <Row className="app-user-list">
         <Col sm="12"></Col>
         <Col sm="12">
           <Card>
             <Row className="m-2">
               <Col>
                 <h1 sm="6" className="float-left">
-                WareHouse List
+                StockStorage List
                 </h1>
               </Col>
               <Col>
@@ -291,7 +288,7 @@ class CategoryList extends React.Component {
                     )
                   }
                 >
-                  + Add WareHouse
+                  + Add StockStorage
                 </Button>
               </Col>
               {/* <Col>
@@ -408,4 +405,4 @@ class CategoryList extends React.Component {
     );
   }
 }
-export default CategoryList;
+export default StockStorage;
