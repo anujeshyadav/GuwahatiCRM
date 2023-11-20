@@ -361,10 +361,7 @@ class HorizontalSidebar extends React.Component {
           )}
         >
           <div className="navbar-container main-menu-content mycustomcontent">
-            <ul
-              className="nav navbar-nav"
-              id="main-menu-navigation mycustomnavigation"
-            >
+            <ul className="nav" id="main-menu-navigation mycustomnavigation">
               {this.renderDropdown(navigationConfig)}
             </ul>
           </div>
