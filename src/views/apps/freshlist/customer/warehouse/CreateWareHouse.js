@@ -22,7 +22,7 @@ import { history } from "../../../../../history";
 import "../../../../../../src/layouts/assets/scss/pages/users.scss";
 
 import {
-  CreatewarehouseView,
+  Createwarehousexml,
   CreateWarehousesave,
 } from "../../../../../ApiEndPoint/ApiCalling";
 
@@ -72,7 +72,7 @@ const CreateWareHouse = () => {
 
   };
 useEffect(() => {
-    CreatewarehouseView()
+  Createwarehousexml()
       .then(res => {
         const jsonData = xmlJs.xml2json(res.data, { compact: true, spaces: 2 });
         setCreatWarehouseView(JSON.parse(jsonData))

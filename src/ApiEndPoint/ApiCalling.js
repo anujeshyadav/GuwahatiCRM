@@ -1,6 +1,8 @@
 import {
   Create_warehouse_xmlView,
   Create_warehouse_save,
+  Create_Warehouse_List,
+  Create_transporter_xmlView,
   Create_Category,
   Save_Product,
   Create_SubCategory,
@@ -99,6 +101,8 @@ import {
   AddOrderComment,
   Order_ViewList,
   orders_ID,
+  Create_transporter_save,
+  Create_Transporter_List,
 } from "./Api";
 import axiosConfig from "../axiosConfig";
 import dotenv from "dotenv";
@@ -113,17 +117,47 @@ dotenv.config();
 
 // guwahati api calling open
 
-export const CreatewarehouseView = async () => {
+
+
+export const Createwarehousexml = async () => {
+
   let response = await axiosConfig
     .get(`${Create_warehouse_xmlView}`)
     .then((res) => res.data);
   return response;
 };
 
+
+
 export const CreateWarehousesave = async (data) => {
   let response = await axiosConfig
-    .post(`${Create_warehouse_save}`, data)
-    .then((res) => res.data);
+  .post(`${Create_warehouse_save}`, data)
+  .then((res) => res.data);
+  return response;
+};
+
+export const CreateWarehouseList = async () => {
+  let response = await axiosConfig
+  .get(`${Create_Warehouse_List}`)
+  .then((res) => res.data);
+  return response;
+};
+export const Createtransporterxml = async () => {
+  let response = await axiosConfig
+  .get(`${Create_transporter_xmlView}`)
+  .then((res) => res.data);
+  return response;
+};
+export const Createtransportersave  = async (data) => {
+  let response = await axiosConfig
+  .post(`${Create_transporter_save}`, data)
+  .then((res) => res.data);
+  return response;
+};
+export const CreateTransporterList = async () => {
+  let response = await axiosConfig
+  .get(`${Create_Transporter_List}`)
+  .then((res) => res.data);
   return response;
 };
 export const CreateCategory = async (data) => {

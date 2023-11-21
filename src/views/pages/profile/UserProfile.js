@@ -8,14 +8,16 @@ import {
   Input,
   Card,
   CardTitle,
-  CustomInput,
+  CustomInput,FormGroup ,
 } from "reactstrap";
-import "../../../assets/scss/pages/users-profile.scss";
+import Select from "react-select";
+import { Country, State, City } from "country-state-city";
 import CheckBoxesVuexy from "../../../components/@vuexy/checkbox/CheckboxesVuexy";
 import { Check } from "react-feather";
 import Breadcrumbs from "../../../components/@vuexy/breadCrumbs/BreadCrumb";
 import swal from "sweetalert";
 import { EditUserProfile } from "../../../ApiEndPoint/ApiCalling";
+import "../../../assets/scss/pages/users-profile.scss";
 import UserContext from "../../../context/Context";
 import moment from "moment-timezone";
 
@@ -24,23 +26,29 @@ class UserProfile extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      firstName:"",
+      lastName:"",
+      Countries:"",
+      States:"",
+      Cities:"",
       name: "",
       LoginData: {},
-      Update_User_details: {},
+      formData:"",
+      // Update_User_details: {},
       email: "",
       cnfmPassword: "",
       password: "",
-      Role: "",
-      adminimg: "",
-      Date_format: "",
-      Date_Time_format: "",
-      Currency: "",
-      selectedName: "",
-      Locale: "",
-      Loading: "Submit",
-      T_Zone: "",
-      selectedFile: null,
-      data: {},
+      // Role: "",
+      // adminimg: "",
+      // Date_format: "",
+      // Date_Time_format: "",
+      // Currency: "",
+      // selectedName: "",
+      // Locale: "",
+      // Loading: "Submit",
+      // T_Zone: "",
+      // selectedFile: null,
+      // data: {},
     };
   }
 
@@ -55,28 +63,28 @@ class UserProfile extends React.Component {
     console.log(this.context);
     let pageparmission = JSON.parse(localStorage.getItem("userData"));
 
-    console.log(pageparmission);
+    // console.log(pageparmission);
     this.setState({ LoginData: pageparmission });
 
     this.setState({
       // data: response.data.data,
       name: pageparmission?.name,
       email: pageparmission?.email,
-      mobile: pageparmission?.mobile,
-      Role: pageparmission?.Role,
-      Date_format: pageparmission.dateFormat,
-      Locale: pageparmission?.locale,
-      Date_Time_format: pageparmission?.dateTimeFormat,
-      T_Zone: pageparmission?.timeZone,
-      Currency: pageparmission?.currency,
+      // mobile: pageparmission?.mobile,
+      // Role: pageparmission?.Role,
+      // Date_format: pageparmission.dateFormat,
+      // Locale: pageparmission?.locale,
+      // Date_Time_format: pageparmission?.dateTimeFormat,
+      // T_Zone: pageparmission?.timeZone,
+      // Currency: pageparmission?.currency,
       // cnfmPassword: pageparmission?.Userinfo?.password,
     });
-    if (
-      pageparmission?.currency == undefined ||
-      pageparmission?.currency == null
-    ) {
-      this.setState({ Currency: "USD" });
-    }
+    // if (
+    //   pageparmission?.currency == undefined ||
+    //   pageparmission?.currency == null
+    // ) {
+    //   this.setState({ Currency: "USD" });
+    // }
     // console.log(this.context);
   }
 
@@ -95,15 +103,15 @@ class UserProfile extends React.Component {
     if (this.state.password) {
       data.append("Password", this.state.password);
     }
-    // data.append("cnfmPassword", this.state.cnfmPassword);
-    data.append("dateFormat", this.state.Date_format);
-    data.append("dateTimeFormat", this.state.Date_Time_format);
-    data.append("locale", this.state.Locale);
-    data.append("timeZone", this.state.T_Zone);
-    data.append("currency", this.state.Currency);
-    if (this.state.selectedFile !== null) {
-      data.append("file", this.state.selectedFile);
-    }
+    data.append("cnfmPassword", this.state.cnfmPassword);
+    // data.append("dateFormat", this.state.Date_format);
+    // data.append("dateTimeFormat", this.state.Date_Time_format);
+    // data.append("locale", this.state.Locale);
+    // data.append("timeZone", this.state.T_Zone);
+    // data.append("currency", this.state.Currency);
+    // if (this.state.selectedFile !== null) {
+    //   data.append("file", this.state.selectedFile);
+    // }
     if (this.state.password) {
       if (this.state.password == this.state.cnfmPassword) {
         EditUserProfile(userData?.accountId, data)
@@ -117,10 +125,8 @@ class UserProfile extends React.Component {
               swal("Success!", "Updated Successfully", "success");
               this.setState({ Loading: "Submit" });
             }
-            // window.location.reload("/#/pages/profile");
           })
           .catch((error) => {
-            console.log("dddddd");
             swal("Error!", "Something went Wrong", "error");
             this.setState({ Loading: "Submit" });
             console.log(error.response);
@@ -141,7 +147,6 @@ class UserProfile extends React.Component {
             swal("Success!", "Updated Successfully", "success");
             this.setState({ Loading: "Submit" });
           }
-          // window.location.reload("/#/pages/profile");
         })
         .catch((error) => {
           console.log("object");
@@ -150,13 +155,6 @@ class UserProfile extends React.Component {
           this.setState({ Loading: "Submit" });
         });
     }
-    // for (var value of data.values()) {
-    //   console.log(value);
-    // }
-
-    // for (var key of data.keys()) {
-    //   console.log(key);
-    // }
   };
   render() {
     console.log(this.context?.UserInformatio);
@@ -172,7 +170,7 @@ class UserProfile extends React.Component {
             <Col lg="4" md="4" xl="4" sm="12">
               <Card className="bg-authentication rounded-0 mb-0 w-100">
                 <div className="profile-img text-center st-1">
-                  {this.state.LoginData?.profileImage ? (
+                  {/* {this.state.LoginData?.profileImage ? (
                     <>
                       <img
                         src={`http://65.0.96.247:8000//Images/${this.context?.UserInformatio?.profileImage}`}
@@ -192,29 +190,53 @@ class UserProfile extends React.Component {
                         height="280px"
                       />
                     </>
-                  )}
+                  )} */}
                   <ul
                     style={{ listStyleType: "none" }}
                     className="lst-1 usrdatlist"
                   >
                     <li className="lst-2 p-1">
-                      Name:{" "}
+                      FirstName:
                       <span className="lst-3">
                         <strong>{this.state.LoginData?.name}</strong>
                       </span>
                     </li>
                     <li className="lst-2 p-1">
-                      Email:{" "}
+                      LastName:
+                      <span className="lst-3">
+                        <strong>{this.state.LoginData?.name}</strong>
+                      </span>
+                    </li>
+                    <li className="lst-2 p-1">
+                      Email:
                       <span className="lst-3">
                         <strong>{this.context?.UserInformatio?.email}</strong>
                       </span>
                     </li>
                     <li className="lst-2 p-1">
+                      Country:
+                      <span className="lst-3">
+                        <strong>{this.context?.UserInformatio?.email}</strong>
+                      </span>
+                    </li>
+                    <li className="lst-2 p-1">
+                      State:
+                      <span className="lst-3">
+                        <strong>{this.context?.UserInformatio?.email}</strong>
+                      </span>
+                    </li>
+                    <li className="lst-2 p-1">
+                      City:
+                      <span className="lst-3">
+                        <strong>{this.context?.UserInformatio?.email}</strong>
+                      </span>
+                    </li>
+                    {/* <li className="lst-2 p-1">
                       Role:
                       <span className="lst-3">
                         <strong>{this.context?.UserInformatio?.Role}</strong>
                       </span>
-                    </li>
+                    </li> */}
                   </ul>
                 </div>
               </Card>
@@ -236,11 +258,21 @@ class UserProfile extends React.Component {
 
                     <Row className="m-0">
                       <Col sm="12" lg="6" md="6" className="p-1">
-                        <Label>UserName</Label>
+                        <Label>FirstName</Label>
                         <Input
                           type="text"
-                          name="name"
-                          placeholder="Name"
+                          name="firstName"
+                          placeholder="FirstName"
+                          value={this.state.name}
+                          onChange={this.changeHandler}
+                        />
+                      </Col>
+                      <Col sm="12" lg="6" md="6" className="p-1">
+                        <Label>LastName</Label>
+                        <Input
+                          type="text"
+                          name="lastName"
+                          placeholder="LastName"
                           value={this.state.name}
                           onChange={this.changeHandler}
                         />
@@ -255,6 +287,92 @@ class UserProfile extends React.Component {
                           onChange={this.changeHandler}
                         />
                       </Col>
+                      <Col  lg="6" md="6" sm="12">
+                              <FormGroup>
+                                <Label>Select Country</Label>
+                                <Select
+                                  inputClass="countryclass"
+                                  className="countryclassnw"
+                                  options={Country.getAllCountries()}
+                                  getOptionLabel={(options) => {
+                                    return options["name"];
+                                  }}
+                                  getOptionValue={(options) => {
+                                    return options["name"];
+                                  }}
+                                  value={this.state.Countries.name}
+                                  onChange={(country) => {
+                                    this.setState({country})
+                                  this.setState((prevState) => ({
+                                  formData: {
+                                        ...prevState.formData,
+                                        ["Country"]: country?.name,
+                                      },
+                                    }));
+                                  }}
+                                />
+                               
+                              </FormGroup>
+                            </Col>
+                            <Col lg="6" md="6" sm="12">
+                              <FormGroup>
+                                <Label>Select State</Label>
+                                <Select
+                                  options={State?.getStatesOfCountry(
+                                    this.state.Countries?.isoCode
+                                  )}
+                                  getOptionLabel={(options) => {
+                                    return options["name"];
+                                  }}
+                                  getOptionValue={(options) => {
+                                    return options["name"];
+                                  }}
+                                  value={this.state.States.name}
+                                  // onChange={(State) => {
+                                  //   setState(State);
+                                  //   setFormData({
+                                  //     ...formData,
+                                  //     ["State"]: State?.name,
+                                  //   });
+                                  // }}
+                                  onChange={(State) => {
+                                    this.setState({State})
+                                  this.setState((prevState) => ({
+                                  formData: {
+                                        ...prevState.formData,
+                                        ["State"]: State?.name,
+                                      },
+                                    }));
+                                  }}
+                                />
+                               
+                              </FormGroup>
+                            </Col>
+                            <Col  lg="6" md="6" sm="12">
+                              <FormGroup>
+                                <Label>Select City</Label>
+                                <Select
+                                  options={City?.getCitiesOfState(
+                                    this.state.States?.countryCode,
+                                    this.state.States?.isoCode
+                                  )}
+                                  getOptionLabel={(options) => {
+                                    return options["name"];
+                                  }}
+                                  getOptionValue={(options) => {
+                                    return options["name"];
+                                  }}
+                                  value={this.state.Cities}
+                                  // onChange={(City) => {
+                                  //   setCities(City);
+                                  //   setFormData({
+                                  //     ...formData,
+                                  //     ["City"]: City?.name,
+                                  //   });
+                                  // }}
+                                />
+                             </FormGroup>
+                            </Col>
                       <Col sm="12" lg="6" md="6" className="p-1">
                         <Label>Password</Label>
                         <Input
@@ -276,7 +394,8 @@ class UserProfile extends React.Component {
                           onChange={this.changeHandler}
                         />
                       </Col>
-                      <Col sm="12" lg="6" md="6" className="p-1">
+                      
+                      {/* <Col sm="12" lg="6" md="6" className="p-1">
                         <Label>User Image</Label>
                         <Input
                           className="form-control"
@@ -284,8 +403,8 @@ class UserProfile extends React.Component {
                           name="profileImage"
                           onChange={this.onChangeHandler}
                         />
-                      </Col>
-                      <Col sm="12" lg="6" md="6" className="p-1">
+                      </Col> */}
+                      {/* <Col sm="12" lg="6" md="6" className="p-1">
                         <Label>Locale</Label>
                         <CustomInput
                           name="Locale"
@@ -389,16 +508,9 @@ class UserProfile extends React.Component {
                           <option value="Asia/Calcutta-IST">
                             Indian Standard Time (IST)
                           </option>
-                          {/* <option value="AST">
-                            Arabian Standard Time (AST)
-                          </option> */}
-                          {/* <option value="GST">Gulf Standard Time (GST)</option> */}
-                          {/* <option value="SAST">
-                            South Africa Standard Time (SAST)
-                          </option> */}
                         </CustomInput>
-                      </Col>
-                      <Col sm="12" lg="6" md="6" className="p-1">
+                      </Col> */}
+                      {/* <Col sm="12" lg="6" md="6" className="p-1">
                         <Label>Date-Format</Label>
                         <CustomInput
                           name="Date_format"
@@ -466,8 +578,8 @@ class UserProfile extends React.Component {
                             15:30)
                           </option>
                         </CustomInput>
-                      </Col>
-                      <Col sm="12" lg="6" md="6" className="p-1">
+                      </Col> */}
+                      {/* <Col sm="12" lg="6" md="6" className="p-1">
                         <Label>Currency</Label>
                         <CustomInput
                           name="Currency"
@@ -520,12 +632,11 @@ class UserProfile extends React.Component {
                           <option value="SEK_kr">SEK</option>
                           <option value="SGD_$">SGD</option>
                           <option value="THB_฿">THB</option>
-                          {/* <option value="TRY_">TRY</option> */}
                           <option value="TWD_NT$">TWD</option>
                           <option value="UAH_₴">UAH</option>
                           <option value="UYU_$U">UYU</option>
                         </CustomInput>
-                      </Col>
+                      </Col> */}
                     </Row>
                     <Row>
                       <Col>

@@ -508,6 +508,7 @@ const DebitNotes = lazy(() =>
 const CreateNotes = lazy(() =>
   import("./views/apps/freshlist/customer/Quotation/CreateNotes")
 );
+
 const WareHouseListSoft = lazy(() =>
   import("./views/apps/freshlist/customer/warehouse/WareHouseList")
 );
@@ -535,7 +536,18 @@ const WastageDetail = lazy(() =>
 const DispatchDetail = lazy(() =>
   import("./views/apps/freshlist/customer/warehouse/DispatchDetail")
 );
-
+const TransporterList = lazy(() =>
+  import("./views/apps/freshlist/customer/transporter/TransporterList")
+);
+const CreateTransporter= lazy(() =>
+  import("./views/apps/freshlist/customer/transporter/CreateTransporter")
+);
+const UnitList = lazy(() =>
+  import("./views/apps/freshlist/customer/unit/UnitList")
+);
+const CreateUnit= lazy(() =>
+  import("./views/apps/freshlist/customer/unit/CreateUnit")
+);
 const InVoiceSystem = lazy(() =>
   import("./views/apps/freshlist/customer/SystemManagement/InVoice")
 );
@@ -1756,6 +1768,22 @@ class AppRouter extends React.Component {
           <AppRoute
             path="/app/softNumen/warehouse/DispatchDetail"
             component={DispatchDetail}
+          />
+          <AppRoute
+            path="/app/softNumen/transporter/TransporterList"
+            component={TransporterList}
+          />
+          <AppRoute
+            path="/app/softNumen/transporter/CreateTransporter"
+            component={CreateTransporter}
+          />
+          <AppRoute
+            path="/app/softNumen/Unit/UnitList"
+            component={UnitList}
+          />
+          <AppRoute
+            path="/app/softNumen/Unit/CreateUnit"
+            component={CreateUnit}
           />
           <AppRoute
             path="/app/softNumen/system/SupportsSystem"
