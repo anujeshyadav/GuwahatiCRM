@@ -28,9 +28,11 @@ class UserProfile extends React.Component {
     this.state = {
       firstName:"",
       lastName:"",
-      Countries:"",
-      States:"",
-      Cities:"",
+      Countries:[],
+      States:[],
+      Cities:[],
+      selectedCountry: "",
+      selectedState: "",
       name: "",
       LoginData: {},
       formData:"",
@@ -60,6 +62,8 @@ class UserProfile extends React.Component {
   };
 
   componentDidMount() {
+    const countries = Country.getAllCountries();
+    this.setState({ countries });
     console.log(this.context);
     let pageparmission = JSON.parse(localStorage.getItem("userData"));
 
@@ -70,14 +74,7 @@ class UserProfile extends React.Component {
       // data: response.data.data,
       name: pageparmission?.name,
       email: pageparmission?.email,
-      // mobile: pageparmission?.mobile,
-      // Role: pageparmission?.Role,
-      // Date_format: pageparmission.dateFormat,
-      // Locale: pageparmission?.locale,
-      // Date_Time_format: pageparmission?.dateTimeFormat,
-      // T_Zone: pageparmission?.timeZone,
-      // Currency: pageparmission?.currency,
-      // cnfmPassword: pageparmission?.Userinfo?.password,
+     cnfmPassword: pageparmission?.Userinfo?.password,
     });
     // if (
     //   pageparmission?.currency == undefined ||
