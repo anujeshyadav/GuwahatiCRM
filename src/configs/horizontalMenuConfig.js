@@ -444,7 +444,7 @@ const horizontalMenuConfig = [
         type: "item",
         icon: <FaCode size={15} />,
         permissions: ["admin", "editor"],
-        navLink: "/app/SoftNumen/Inspections/CreateInspections",
+        navLink: "/app/softNumen/transporter/TransporterList",
       },
       {
         id: "Receipt and payment customized",
@@ -899,6 +899,14 @@ const horizontalMenuConfig = [
         icon: <FaCircle size={8} />,
         permissions: ["admin", "editor"],
         navLink: "/app/softNumen/system/WareHouseListSoft",
+      },
+      {
+        id: "Unit",
+        title: "UnitList",
+        type: "item",
+        icon: <FaCircle size={8} />,
+        permissions: ["admin", "editor"],
+        navLink: "/app/softNumen/Unit/UnitList",
       },
     ],
   },

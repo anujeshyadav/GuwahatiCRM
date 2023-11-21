@@ -1,11 +1,12 @@
 // Guwahati open
 export const Create_warehouse_xmlView = "/warehouse/get-xml";
 export const Create_warehouse_save  = "/warehouse/save-warehouse";
+export const Create_Warehouse_List = "/warehouse/view-warehouse";
+export const Create_transporter_xmlView = "/transporter/get-xml";
+export const Create_transporter_save  = "/transporter/save-transporter";
+export const Create_Transporter_List = "/transporter/view-transporter";
 
 // Guwahati close
-
-
-
 
 
 export const Create_Account_xmlView = "/user/get-xml";
