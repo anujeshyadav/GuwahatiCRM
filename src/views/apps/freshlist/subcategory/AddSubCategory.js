@@ -15,12 +15,16 @@ import { history } from "../../../../history";
 import axiosConfig from "../../../../axiosConfig";
 import { Route } from "react-router-dom";
 import swal from "sweetalert";
+import {
+  AllCategoryList,
+  CreateSubCategory,
+} from "../../../../ApiEndPoint/ApiCalling";
 
 export class AddSubCategory extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      data: [],
+      CatList: [],
       subcategory_name: "",
       category: "",
       type: "",
@@ -68,60 +72,43 @@ export class AddSubCategory extends Component {
 
   // All Category Api
 
-  componentDidMount() {
-    axiosConfig
-      .get(`/admin/getallcategory`)
-      .then((response) => {
-        console.log(response.data.data);
-        this.setState({ data: response.data.data });
-        console.log(this.state.data);
+  async componentDidMount() {
+    await AllCategoryList()
+      .then((res) => {
+        console.log(res);
+        if (res?.Category) {
+          this.setState({ CatList: res?.Category });
+        }
       })
-      .catch((error) => {
-        console.log(error);
+      .catch((err) => {
+        console.log(err);
       });
   }
 
   // Submit Sub-Category Api
-  submitHandler = (e) => {
+  submitHandler = async (e) => {
     e.preventDefault();
     const data = new FormData();
-    data.append("subcategory_name", this.state.subcategory_name);
+    data.append("name", this.state.subcategory_name);
     data.append("category", this.state.category);
-    data.append("type", this.state.type);
-    data.append("feature", this.state.feature);
+    data.append("description", this.state.Description);
     data.append("status", this.state.status);
-    data.append("image", this.state.selectedFile1, this.state.selectedName1);
-    data.append(
-      "thumbnail_img",
-      this.state.selectedFile2,
-      this.state.selectedName2
-    );
-    data.append(
-      "webbanner",
-      this.state.selectedFile3,
-      this.state.selectedName3
-    );
-    data.append(
-      "app_banner",
-      this.state.selectedFile4,
-      this.state.selectedName4
-    );
-
-    for (var value of data.values()) {
-      console.log(value);
+    if (this.state.selectedFile1) {
+      data.append("file", this.state.selectedFile1);
     }
-    axiosConfig
-      .post(`/admin/addsubcategory`, data)
-      .then((response) => {
-        console.log(response);
-        if (response.data.msg === "success") {
-          swal("Success!", "You Data IS been Submitted", "success");
-          this.props.history.push("/app/freshlist/subcategory/subCategoryList");
-        }
+
+    await CreateSubCategory(data)
+      .then((res) => {
+        console.log(res);
+        swal("Success!", "Your Subcategory has been Added", "success");
+        this.props.history.push("/app/freshlist/subcategory/subCategoryList");
       })
-      .catch((error) => {
-        console.log(error);
+      .catch((err) => {
+        console.log(err);
       });
+    // for (var value of data.values()) {
+    //   console.log(value);
+    // }
   };
   render() {
     return (
@@ -152,28 +139,31 @@ export class AddSubCategory extends Component {
             <Form className="m-1" onSubmit={this.submitHandler}>
               <Row className="mb-2">
                 <Col lg="4" md="4" className="mb-2">
-                  <Label>Category</Label>
+                  <Label>Category *</Label>
                   <CustomInput
+                    required
                     type="select"
                     placeholder="Select Category"
                     name="category"
                     value={this.state.category}
                     onChange={this.changeHandler}
                   >
-                    <option>Select Category</option>
-                    {this.state.data.map((cat) => (
-                      <option value={cat._id} key={cat._id}>
-                        {cat.category_name}
+                    <option>--Select Category--</option>
+                    {this.state.CatList?.map((cat) => (
+                      <option value={cat?._id} key={cat?._id}>
+                        {cat?.name}
                       </option>
                     ))}
                   </CustomInput>
                 </Col>
+
                 <Col lg="4" md="4">
                   <FormGroup>
                     <Label> Sub-Category Name</Label>
-                    <Input
+                    <input
                       type="text"
-                      placeholder="Category Name"
+                      className="form-control"
+                      placeholder="subcategory name "
                       name="subcategory_name"
                       value={this.state.subcategory_name}
                       onChange={this.changeHandler}
@@ -182,11 +172,11 @@ export class AddSubCategory extends Component {
                 </Col>
                 <Col lg="4" md="4">
                   <FormGroup>
-                    <Label> Sub-Category Name</Label>
+                    <Label> Sub-Category Description</Label>
                     <textarea
                       type="textarea"
                       className="form-control"
-                      placeholder="Description "
+                      placeholder="Category Description"
                       name="Description"
                       value={this.state.Description}
                       onChange={this.changeHandler}
@@ -255,7 +245,7 @@ export class AddSubCategory extends Component {
                   <Label className="mb-0">Status</Label>
                   <div
                     className="form-label-group"
-                    onChange={this.handleChange}
+                    onChange={this.changeHandler1}
                   >
                     <input
                       style={{ marginRight: "3px" }}
@@ -282,7 +272,7 @@ export class AddSubCategory extends Component {
                   type="submit"
                   className="mr-1 mb-1"
                 >
-                  Add
+                  + Add
                 </Button.Ripple>
               </Row>
             </Form>
