@@ -10,6 +10,8 @@ import {
   DropdownMenu,
   DropdownItem,
   DropdownToggle,
+  Label,
+  CustomInput,
 } from "reactstrap";
 import axiosConfig from "../../../../axiosConfig";
 import axios from "axios";
@@ -20,12 +22,17 @@ import { history } from "../../../../history";
 import "../../../../assets/scss/plugins/tables/_agGridStyleOverride.scss";
 import "../../../../assets/scss/pages/users.scss";
 import { Route } from "react-router-dom";
+import { AllCategoryList } from "../../../../ApiEndPoint/ApiCalling";
+import swal from "sweetalert";
 
 class SubCategoryList extends React.Component {
   state = {
     rowData: [],
+    CatList: [],
     paginationPageSize: 20,
     currenPageSize: "",
+    category: "NA",
+    Show: false,
     getPageSize: "",
     defaultColDef: {
       sortable: true,
@@ -48,69 +55,73 @@ class SubCategoryList extends React.Component {
         width: 100,
         cellRendererFramework: (params) => {
           return (
-            <img
-              className=" rounded-circle mr-50"
-              src={params.data.image}
-              alt="user avatar"
-              height="40"
-              width="40"
-            />
+            <>
+              {params.data?.image && (
+                <img
+                  className="rounded-circle mr-50"
+                  src={`http://65.0.96.247:8000/Images/${params.data?.image}`}
+                  alt="user avatar"
+                  height="40"
+                  width="40"
+                />
+              )}
+            </>
           );
         },
       },
       {
         headerName: "Name",
-        field: "subcategory_name",
+        field: "name",
         filter: true,
-        width: 150,
+        width: 200,
         cellRendererFramework: (params) => {
           return (
             <div className="d-flex align-items-center">
-              <span>{params.data.subcategory_name}</span>
+              <span>{params.data?.name}</span>
             </div>
           );
         },
       },
 
       {
-        headerName: "Category",
-        field: "category.category_name",
+        headerName: "description",
+        field: "description",
         filter: true,
-        width: 150,
+        width: 200,
         cellRendererFramework: (params) => {
           return (
             <div className="d-flex align-items-center">
-              <span>{params.data.category?.category_name}</span>
+              <span>{params.data?.description}</span>
             </div>
           );
         },
       },
-      {
-        headerName: "Type",
-        field: "type",
-        filter: true,
-        width: 150,
-        cellRendererFramework: (params) => {
-          return (
-            <div className="d-flex align-items-center">
-              <span>{params.data?.type}</span>
-            </div>
-          );
-        },
-      },
-      {
-        headerName: "Feature",
-        field: "feature",
-        filter: true,
-        width: 150,
-        cellRendererFramework: (params) => {
-          return (
-            <div className="d-flex align-items-center">
-              <span>{params.data?.feature}</span>
-            </div>
-          );
-        },
-      },
+      // {
+      //   headerName: "Type",
+      //   field: "type",
+      //   filter: true,
+      //   width: 150,
+      //   cellRendererFramework: (params) => {
+      //     return (
+      //       <div className="d-flex align-items-center">
+      //         <span>{params.data?.type}</span>
+      //       </div>
+      //     );
+      //   },
+      // },
+      // {
+      //   headerName: "Feature",
+      //   field: "feature",
+      //   filter: true,
+      //   width: 150,
+      //   cellRendererFramework: (params) => {
+      //     return (
+      //       <div className="d-flex align-items-center">
+      //         <span>{params.data?.feature}</span>
+      //       </div>
+      //     );
+      //   },
+      // },
 
       {
         headerName: "Status",
@@ -118,11 +129,11 @@ class SubCategoryList extends React.Component {
         filter: true,
         width: 150,
         cellRendererFramework: (params) => {
-          return params.value === "Active" ? (
+          return params.data?.status === "Active" ? (
             <div className="badge badge-pill badge-success">
-              {params.data.status}
+              {params.data?.status}
             </div>
-          ) : params.value === "Inactive" ? (
+          ) : params.data?.status === "Inactive" ? (
             <div className="badge badge-pill badge-warning">
               {params.data.status}
             </div>
@@ -180,11 +191,33 @@ class SubCategoryList extends React.Component {
   };
 
   async componentDidMount() {
-    await axiosConfig.get(`/admin/getalldata`).then((response) => {
-      let rowData = response.data.data;
-      console.log(rowData);
-      this.setState({ rowData });
+    let pageparmission = JSON.parse(localStorage.getItem("userData"));
+
+    let newparmisson = pageparmission?.role?.find(
+      (value) => value?.pageName === "Category List"
+    );
+
+    this.setState({ Viewpermisson: newparmisson?.permission.includes("View") });
+    this.setState({
+      Createpermisson: newparmisson?.permission.includes("Create"),
     });
+    this.setState({
+      Editpermisson: newparmisson?.permission.includes("Edit"),
+    });
+    this.setState({
+      Deletepermisson: newparmisson?.permission.includes("Delete"),
+    });
+
+    await AllCategoryList()
+      .then((res) => {
+        console.log(res);
+        if (res?.Category) {
+          this.setState({ CatList: res?.Category });
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   }
   async runthisfunction(id) {
     console.log(id);
@@ -218,15 +251,31 @@ class SubCategoryList extends React.Component {
       });
     }
   };
+  handleShowSubCat = (e) => {
+    e.preventDefault();
+    if (this.state.category != "NA") {
+      let selecteddata = this.state.CatList?.filter(
+        (ele, i) => ele?._id == this.state.category
+      );
+      console.log(selecteddata[0]?.subcategories);
+      this.setState({ rowData: selecteddata[0]?.subcategories });
+      this.setState({ Show: true });
+    } else {
+      swal("Select Category");
+    }
+  };
+  changeHandler = (e) => {
+    this.setState({ [e.target.name]: e.target.value });
+  };
   render() {
-    const { rowData, columnDefs, defaultColDef } = this.state;
+    const { rowData, columnDefs, defaultColDef, Show } = this.state;
     return (
       <Row className="app-user-list">
         <Col sm="12"></Col>
         <Col sm="12">
           <Card>
             <Row className="m-2">
-              <Col>
+              <Col lg="5" md="5" xs="12">
                 <h1 sm="6" className="float-left">
                   SubCategory List
                 </h1>
@@ -242,11 +291,38 @@ class SubCategoryList extends React.Component {
                     Back
                   </Button>
                 </Col> */}
+              <Col lg="3" md="3" className="mb-2">
+                <Label>Category *</Label>
+                <CustomInput
+                  required
+                  type="select"
+                  placeholder="Select Category"
+                  name="category"
+                  value={this.state.category}
+                  onChange={this.changeHandler}
+                >
+                  <option value="NA">--Select Category--</option>
+                  {this.state.CatList?.map((cat) => (
+                    <option value={cat?._id} key={cat?._id}>
+                      {cat?.name}
+                    </option>
+                  ))}
+                </CustomInput>
+              </Col>
+              <Col lg="2" md="2" className="mb-2">
+                <Button
+                  className="mt-2"
+                  color="primary"
+                  onClick={this.handleShowSubCat}
+                >
+                  Submit
+                </Button>
+              </Col>
               <Col>
                 <Route
                   render={({ history }) => (
                     <Button
-                      className="btn float-right"
+                      className="btn float-right mt-2"
                       color="primary"
                       onClick={() =>
                         history.push(
@@ -260,96 +336,102 @@ class SubCategoryList extends React.Component {
                 />
               </Col>
             </Row>
-            <CardBody>
-              {this.state.rowData === null ? null : (
-                <div className="ag-theme-material w-100 my-2 ag-grid-table">
-                  <div className="d-flex flex-wrap justify-content-between align-items-center">
-                    <div className="mb-1">
-                      <UncontrolledDropdown className="p-1 ag-dropdown">
-                        <DropdownToggle tag="div">
-                          {this.gridApi
-                            ? this.state.currenPageSize
-                            : "" * this.state.getPageSize -
-                              (this.state.getPageSize - 1)}{" "}
-                          -{" "}
-                          {this.state.rowData.length -
-                            this.state.currenPageSize * this.state.getPageSize >
-                          0
-                            ? this.state.currenPageSize * this.state.getPageSize
-                            : this.state.rowData.length}{" "}
-                          of {this.state.rowData.length}
-                          <ChevronDown className="ml-50" size={15} />
-                        </DropdownToggle>
-                        <DropdownMenu right>
-                          <DropdownItem
-                            tag="div"
-                            onClick={() => this.filterSize(20)}
-                          >
-                            20
-                          </DropdownItem>
-                          <DropdownItem
-                            tag="div"
-                            onClick={() => this.filterSize(50)}
-                          >
-                            50
-                          </DropdownItem>
-                          <DropdownItem
-                            tag="div"
-                            onClick={() => this.filterSize(100)}
-                          >
-                            100
-                          </DropdownItem>
-                          <DropdownItem
-                            tag="div"
-                            onClick={() => this.filterSize(134)}
-                          >
-                            134
-                          </DropdownItem>
-                        </DropdownMenu>
-                      </UncontrolledDropdown>
-                    </div>
-                    <div className="d-flex flex-wrap justify-content-between mb-1">
-                      <div className="table-input mr-1">
-                        <Input
-                          placeholder="search..."
-                          onChange={(e) =>
-                            this.updateSearchQuery(e.target.value)
-                          }
-                          value={this.state.value}
-                        />
+            {Show ? (
+              <>
+                <CardBody>
+                  {this.state.rowData === null ? null : (
+                    <div className="ag-theme-material w-100 my-2 ag-grid-table">
+                      <div className="d-flex flex-wrap justify-content-between align-items-center">
+                        <div className="mb-1">
+                          <UncontrolledDropdown className="p-1 ag-dropdown">
+                            <DropdownToggle tag="div">
+                              {this.gridApi
+                                ? this.state.currenPageSize
+                                : "" * this.state.getPageSize -
+                                  (this.state.getPageSize - 1)}{" "}
+                              -{" "}
+                              {this.state.rowData.length -
+                                this.state.currenPageSize *
+                                  this.state.getPageSize >
+                              0
+                                ? this.state.currenPageSize *
+                                  this.state.getPageSize
+                                : this.state.rowData.length}{" "}
+                              of {this.state.rowData.length}
+                              <ChevronDown className="ml-50" size={15} />
+                            </DropdownToggle>
+                            <DropdownMenu right>
+                              <DropdownItem
+                                tag="div"
+                                onClick={() => this.filterSize(20)}
+                              >
+                                20
+                              </DropdownItem>
+                              <DropdownItem
+                                tag="div"
+                                onClick={() => this.filterSize(50)}
+                              >
+                                50
+                              </DropdownItem>
+                              <DropdownItem
+                                tag="div"
+                                onClick={() => this.filterSize(100)}
+                              >
+                                100
+                              </DropdownItem>
+                              <DropdownItem
+                                tag="div"
+                                onClick={() => this.filterSize(134)}
+                              >
+                                134
+                              </DropdownItem>
+                            </DropdownMenu>
+                          </UncontrolledDropdown>
+                        </div>
+                        <div className="d-flex flex-wrap justify-content-between mb-1">
+                          <div className="table-input mr-1">
+                            <Input
+                              placeholder="search..."
+                              onChange={(e) =>
+                                this.updateSearchQuery(e.target.value)
+                              }
+                              value={this.state.value}
+                            />
+                          </div>
+                          <div className="export-btn">
+                            <Button.Ripple
+                              color="primary"
+                              onClick={() => this.gridApi.exportDataAsCsv()}
+                            >
+                              Export as CSV
+                            </Button.Ripple>
+                          </div>
+                        </div>
                       </div>
-                      <div className="export-btn">
-                        <Button.Ripple
-                          color="primary"
-                          onClick={() => this.gridApi.exportDataAsCsv()}
-                        >
-                          Export as CSV
-                        </Button.Ripple>
-                      </div>
+                      <ContextLayout.Consumer>
+                        {(context) => (
+                          <AgGridReact
+                            gridOptions={{}}
+                            rowSelection="multiple"
+                            defaultColDef={defaultColDef}
+                            columnDefs={columnDefs}
+                            rowData={rowData}
+                            onGridReady={this.onGridReady}
+                            colResizeDefault={"shift"}
+                            animateRows={true}
+                            floatingFilter={false}
+                            pagination={true}
+                            paginationPageSize={this.state.paginationPageSize}
+                            pivotPanelShow="always"
+                            enableRtl={context.state.direction === "rtl"}
+                          />
+                        )}
+                      </ContextLayout.Consumer>
                     </div>
-                  </div>
-                  <ContextLayout.Consumer>
-                    {(context) => (
-                      <AgGridReact
-                        gridOptions={{}}
-                        rowSelection="multiple"
-                        defaultColDef={defaultColDef}
-                        columnDefs={columnDefs}
-                        rowData={rowData}
-                        onGridReady={this.onGridReady}
-                        colResizeDefault={"shift"}
-                        animateRows={true}
-                        floatingFilter={false}
-                        pagination={true}
-                        paginationPageSize={this.state.paginationPageSize}
-                        pivotPanelShow="always"
-                        enableRtl={context.state.direction === "rtl"}
-                      />
-                    )}
-                  </ContextLayout.Consumer>
-                </div>
-              )}
-            </CardBody>
+                  )}
+                </CardBody>
+              </>
+            ) : null}
           </Card>
         </Col>
       </Row>

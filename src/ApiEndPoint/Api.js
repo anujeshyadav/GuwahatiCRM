@@ -6,8 +6,16 @@ export const Create_transporter_xmlView = "/transporter/get-xml";
 export const Create_transporter_save  = "/transporter/save-transporter";
 export const Create_Transporter_List = "/transporter/view-transporter";
 
-// Guwahati close
 
+
+export const Create_Category = "/categories/save-category";
+export const Category_List = "/categories/view-category";
+export const Create_SubCategory = "/categories/save-subcategory";
+export const Create_Product_XMLView = "/product/get-xml";
+export const Save_Product = "/product/save-product";
+export const ProductList_View = "/product/view-product";
+
+// Guwahati close
 
 export const Create_Account_xmlView = "/user/get-xml";
 export const Create_Customer_xmlView = "/customer/get-xml";

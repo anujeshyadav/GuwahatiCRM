@@ -3,6 +3,12 @@ import {
   Create_warehouse_save,
   Create_Warehouse_List,
   Create_transporter_xmlView,
+  Create_Category,
+  Save_Product,
+  Create_SubCategory,
+  ProductList_View,
+  Create_Product_XMLView,
+  Category_List,
   Create_Account_xmlView,
   Create_Customer_xmlView,
   Create_Customer_save,
@@ -109,11 +115,12 @@ dotenv.config();
 // console.log(`API Key: ${apiKey}`);
 // console.log(`Secret Key: ${secretKey}`);
 
-
 // guwahati api calling open
 
 
+
 export const Createwarehousexml = async () => {
+
   let response = await axiosConfig
     .get(`${Create_warehouse_xmlView}`)
     .then((res) => res.data);
@@ -121,7 +128,8 @@ export const Createwarehousexml = async () => {
 };
 
 
-export const CreateWarehousesave  = async (data) => {
+
+export const CreateWarehousesave = async (data) => {
   let response = await axiosConfig
   .post(`${Create_warehouse_save}`, data)
   .then((res) => res.data);
@@ -150,6 +158,40 @@ export const CreateTransporterList = async () => {
   let response = await axiosConfig
   .get(`${Create_Transporter_List}`)
   .then((res) => res.data);
+  return response;
+};
+export const CreateCategory = async (data) => {
+  let response = await axiosConfig
+    .post(Create_Category, data)
+    .then((res) => res.data);
+  return response;
+};
+export const CreateProductXMLView = async () => {
+  let response = await axiosConfig
+    .get(Create_Product_XMLView)
+    .then((res) => res.data);
+  return response;
+};
+export const CreateSubCategory = async (data) => {
+  let response = await axiosConfig
+    .post(Create_SubCategory, data)
+    .then((res) => res.data);
+  return response;
+};
+export const SaveProduct = async (data) => {
+  let response = await axiosConfig
+    .post(Save_Product, data)
+    .then((res) => res.data);
+  return response;
+};
+export const AllCategoryList = async () => {
+  let response = await axiosConfig.get(Category_List).then((res) => res.data);
+  return response;
+};
+export const ProductListView = async () => {
+  let response = await axiosConfig
+    .get(ProductList_View)
+    .then((res) => res.data);
   return response;
 };
 // guwahati api calling close

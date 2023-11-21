@@ -15,6 +15,7 @@ import { history } from "../../../../history";
 import axiosConfig from "../../../../axiosConfig";
 import { Route } from "react-router-dom";
 import swal from "sweetalert";
+import { CreateCategory } from "../../../../ApiEndPoint/ApiCalling";
 
 export class AddCategory extends Component {
   constructor(props) {
@@ -66,22 +67,21 @@ export class AddCategory extends Component {
     e.preventDefault();
     let pageparmission = JSON.parse(localStorage.getItem("userData"));
     const data = new FormData();
-    data.append("user_id", pageparmission?.Userinfo?.id);
-    data.append("category_name", this.state.category_name);
-    data.append("status", "Active");
+    // data.append("user_id", pageparmission?.Userinfo?.id);
+    data.append("name", this.state.category_name);
+    data.append("description", this.state.feature);
+    data.append("status", this.state.status);
+    if (this.state.selectedFile1) {
+      data.append("file", this.state.selectedFile1);
+    }
 
-    axiosConfig
-      .post(`/addcategory`, data)
-      .then((response) => {
-        console.log(response?.data.success);
-        if (response?.data.success) {
-          swal("Success!", "You Data Submitted", "Success");
-          this.setState({ category_name: "" });
-          // this.props.history.push("/app/freshlist/category/categoryList");
-        }
+    CreateCategory(data)
+      .then((res) => {
+        this.props.history.push("/app/freshlist/category/categoryList");
+        swal("Success!", "Category Created", "Success");
       })
-      .catch((error) => {
-        console.log(error);
+      .catch((err) => {
+        console.log(err);
       });
   };
   render() {
@@ -182,7 +182,7 @@ export class AddCategory extends Component {
                   <Label className="mb-0">Status</Label>
                   <div
                     className="form-label-group"
-                    onChange={this.changeHandler}
+                    onChange={this.changeHandler1}
                   >
                     <input
                       style={{ marginRight: "3px" }}
