@@ -22,6 +22,7 @@ import "../../../../assets/scss/plugins/tables/_agGridStyleOverride.scss";
 import "../../../../assets/scss/pages/users.scss";
 import { Route, Link } from "react-router-dom";
 import swal from "sweetalert";
+import { AllCategoryList } from "../../../../ApiEndPoint/ApiCalling";
 
 class CategoryList extends React.Component {
   state = {
@@ -47,34 +48,37 @@ class CategoryList extends React.Component {
         width: 100,
         filter: true,
       },
-      // {
-      //   headerName: "Image",
-      //   field: "image",
-      //   filter: true,
-      //   width: 100,
-      //   cellRendererFramework: (params) => {
-      //     return (
-      //       <div className="d-flex align-items-center cursor-pointer">
-      //         <img
-      //           className="rounded-circle mr-50"
-      //           src={params.data?.image}
-      //           alt="user avatar"
-      //           height="40"
-      //           width="40"
-      //         />
-      //       </div>
-      //     );
-      //   },
-      // },
+      {
+        headerName: "Image",
+        field: "image",
+        filter: true,
+        width: 100,
+        cellRendererFramework: (params) => {
+          let base = axiosConfig();
+          return (
+            <div className="d-flex align-items-center cursor-pointer">
+              {params.data.image && (
+                <img
+                  className="rounded-circle mr-50"
+                  src={`http://65.0.96.247:8000/Images/${params.data?.image}`}
+                  alt="user avatar"
+                  height="40"
+                  width="40"
+                />
+              )}
+            </div>
+          );
+        },
+      },
       {
         headerName: "Name",
-        field: "category_name",
+        field: "name",
         filter: true,
         width: 200,
         cellRendererFramework: (params) => {
           return (
             <div className="d-flex align-items-center cursor-pointer">
-              <span>{params?.data?.category_name}</span>
+              <span>{params?.data?.name}</span>
             </div>
           );
         },
@@ -92,21 +96,36 @@ class CategoryList extends React.Component {
       //     );
       //   },
       // },
-      // {
-      //   headerName: "Featured",
-      //   field: "feature",
-      //   filter: true,
-      //   width: 150,
-      //   cellRendererFramework: (params) => {
-      //     return (
-      //       <div className="d-flex align-items-center cursor-pointer">
-      //         <span className="" style={{ textTransform: "uppercase" }}>
-      //           {params.data?.feature}
-      //         </span>
-      //       </div>
-      //     );
-      //   },
-      // },
+      {
+        headerName: "Description",
+        field: "description",
+        filter: true,
+        width: 150,
+        cellRendererFramework: (params) => {
+          return (
+            <div className="d-flex align-items-center cursor-pointer">
+              <span className="" style={{ textTransform: "uppercase" }}>
+                {params.data?.description}
+              </span>
+            </div>
+          );
+        },
+      },
+      {
+        headerName: "createdAt",
+        field: "createdAt",
+        filter: true,
+        width: 150,
+        cellRendererFramework: (params) => {
+          return (
+            <div className="d-flex align-items-center cursor-pointer">
+              <span className="" style={{ textTransform: "uppercase" }}>
+                {params.data?.createdAt}
+              </span>
+            </div>
+          );
+        },
+      },
       {
         headerName: "Status",
         field: "status",
@@ -215,14 +234,23 @@ class CategoryList extends React.Component {
 
     data.append("user_id", pageparmission?.Userinfo?.id);
     data.append("role", pageparmission?.Userinfo?.role);
-
-    await axiosConfig.post("/getcategory", data).then((response) => {
-      let rowData = response.data.data?.category;
-      console.log(rowData);
-      if (rowData) {
-        this.setState({ rowData });
-      }
-    });
+    await AllCategoryList()
+      .then((res) => {
+        console.log(res?.Category);
+        if (res?.Category) {
+          this.setState({ rowData: res?.Category });
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+    // await axiosConfig.post("/getcategory", data).then((response) => {
+    //   let rowData = response.data.data?.category;
+    //   console.log(rowData);
+    //   if (rowData) {
+    //     this.setState({ rowData });
+    //   }
+    // });
   }
 
   async runthisfunction(id) {
