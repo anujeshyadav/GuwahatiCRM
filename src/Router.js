@@ -548,6 +548,9 @@ const UnitList = lazy(() =>
 const CreateUnit = lazy(() =>
   import("./views/apps/freshlist/customer/unit/CreateUnit")
 );
+const EditUnit= lazy(() =>
+  import("./views/apps/freshlist/customer/unit/EditUnit")
+);
 const InVoiceSystem = lazy(() =>
   import("./views/apps/freshlist/customer/SystemManagement/InVoice")
 );
@@ -1372,7 +1375,8 @@ class AppRouter extends React.Component {
             component={ViewOneReceivedOrder}
           />
           <AppRoute
-            path="/app/softnumen/order/purchaseinvoices"
+            // path="/app/softnumen/order/purchaseinvoices"
+            path="/app/softnumen/order/purchasedOrder"
             component={PurchasedOrder}
           />
           <AppRoute path="/app/freshlist/order/AddOrder" component={AddOrder} />
@@ -1786,6 +1790,18 @@ class AppRouter extends React.Component {
             path="/app/softNumen/Unit/CreateUnit"
             component={CreateUnit}
           />
+          <AppRoute
+            path="/app/softNumen/Unit/editUnit/:id"
+            component={EditUnit}
+          />
+           {/* <AppRoute
+            path="/app/SoftNumen/account/EditAccount/:id"
+            component={EditAccount}
+          />
+          <AppRoute
+            path="/app/SoftNumen/account/ViewAccount/:id"
+            component={ViewAccount}
+          /> */}
           <AppRoute
             path="/app/softNumen/system/SupportsSystem"
             component={SupportsSystem}

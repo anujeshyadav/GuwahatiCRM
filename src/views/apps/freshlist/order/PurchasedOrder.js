@@ -745,72 +745,7 @@ class PurchasedOrder extends React.Component {
     const { rowData, columnDefs, defaultColDef } = this.state;
     return (
       <Row className="app-user-list">
-        {/* <Col sm="12">
-          <h2> Select Date Range</h2>
-          <Card>
-            <CardBody>
-              <Form className="m-1" onSubmit={this.submitHandler}>
-                <Row>
-                  <Col lg="3" className="mb-2">
-                    <Label>All</Label>
-                    <Input
-                      required
-                      type="select"
-                      name="bannertype"
-                      placeholder=""
-                      value={this.state.bannertype}
-                      onChange={this.changeHandler}
-                    >
-                      <option value="select">--Select--</option>
-                      <option value="All">All</option>
-                      <option value="Painding">Painding</option>
-                      <option value="Confirmed">Confirmed</option>
-                      <option value="in_process">In Process</option>
-                      <option value="out_for_delivery">Out for Delivery</option>
-                      <option value="delivered">Delivered</option>
-                      <option value="returned">Returned</option>
-                      <option value="failed_to_deliver">
-                        Failed to Deliver
-                      </option>
-                    </Input>
-                  </Col>
-                  <Col lg="3" className="mb-2">
-                    <Label>Start Date</Label>
-                    <Input
-                      required
-                      type="date"
-                      name="bannertype"
-                      placeholder=""
-                      value={this.state.bannertype}
-                      onChange={this.changeHandler}
-                    ></Input>
-                  </Col>
-                  <Col lg="3" className="mb-2">
-                    <Label>End Date</Label>
-                    <Input
-                      required
-                      type="date"
-                      name="bannertype"
-                      placeholder=""
-                      value={this.state.bannertype}
-                      onChange={this.changeHandler}
-                    ></Input>
-                  </Col>
-
-                  <Col lg="3" className="mb-2">
-                    <Button.Ripple className="bt" color="primary" type="submit">
-                      Show Data
-                    </Button.Ripple>
-                  </Col>
-                </Row>
-              </Form>
-            </CardBody>
-          </Card>
-        </Col> */}
-        {/* <Col>
-          <AnalyticsDashboard />
-        </Col> */}
-        <Col sm="12">
+     <Col sm="12">
           <Card>
             <Row className="m-2">
               <Col>
@@ -819,7 +754,7 @@ class PurchasedOrder extends React.Component {
                 </h1>
               </Col>
               {/* <Col>
-                {this.state.Createpermisson && (
+             
                   <Route
                     render={({ history }) => (
                       <Button
@@ -833,7 +768,7 @@ class PurchasedOrder extends React.Component {
                       </Button>
                     )}
                   />
-                )}
+             
               </Col> */}
             </Row>
             <CardBody>

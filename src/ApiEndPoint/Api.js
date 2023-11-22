@@ -8,6 +8,14 @@ export const Create_Warehouse_List = "/warehouse/view-warehouse";
 export const Create_transporter_xmlView = "/transporter/get-xml";
 export const Create_transporter_save = "/transporter/save-transporter";
 export const Create_Transporter_List = "/transporter/view-transporter";
+export const Delete_Transporter_List = "/transporter/delete-transporter/";
+
+export const Create_unit_xmlView = "/unit/get-xml";
+export const Create_unit_save  = "/unit/save-unit";
+export const Create_unit_List = "/unit/view-unit";
+export const Delete_Unit_List = "/unit/delete-unit/";
+export const Unit_ViewOne = "/unit/update-unit/";
+
 
 export const Create_Category = "/categories/save-category";
 export const Category_List = "/categories/view-category";

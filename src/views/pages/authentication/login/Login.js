@@ -17,7 +17,7 @@ import {
   InputGroupAddon,
 } from "reactstrap";
 import { FaBeer } from "react-icons/fa";
-import logo from "../../../../assets/img/logo/paravilogo.png";
+import logo from "../../../../assets/img/logo/mainLogo.png";
 import "../../../../assets/scss/pages/authentication.scss";
 import { history } from "../../../../history";
 import LoginAuth0 from "./LoginAuth0";
@@ -135,11 +135,9 @@ class Login extends React.Component {
 
   loginHandler = async (e) => {
     e.preventDefault();
-    // this.props.history.push("/dashboard");
 
     let data = { username: this.state.email, password: this.state.password };
-    // console.log(data);
-    await UserLogin(data)
+  await UserLogin(data)
       .then((res) => {
         console.log(res?.user);
         if (

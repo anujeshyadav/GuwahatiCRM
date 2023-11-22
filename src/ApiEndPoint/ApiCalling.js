@@ -3,6 +3,14 @@ import {
   Create_warehouse_save,
   Create_Warehouse_List,
   Create_transporter_xmlView,
+  Create_transporter_save,
+  Create_Transporter_List,
+  Delete_Transporter_List,
+  Create_unit_xmlView,
+  Create_unit_save,
+  Create_unit_List,
+  Delete_Unit_List,
+  Unit_ViewOne,
   Create_Category,
   Save_Product,
   Create_SubCategory,
@@ -104,8 +112,7 @@ import {
   AddOrderComment,
   Order_ViewList,
   orders_ID,
-  Create_transporter_save,
-  Create_Transporter_List,
+ 
 } from "./Api";
 import axiosConfig from "../axiosConfig";
 import dotenv from "dotenv";
@@ -170,16 +177,23 @@ export const CreateTransporterList = async () => {
     .then((res) => res.data);
   return response;
 };
+export const DeleteTransporterList = async (id) => {
+  let response = await axiosConfig
+    .delete(`${Delete_Transporter_List}` + id)
+    
+    .then((res) => res.data);
+  return response;
+};
 export const CreateCategory = async (data) => {
   let response = await axiosConfig
-    .post(Create_Category, data)
-    .then((res) => res.data);
+  .post(Create_Category, data)
+  .then((res) => res.data);
   return response;
 };
 export const CreateProductXMLView = async () => {
   let response = await axiosConfig
-    .get(Create_Product_XMLView)
-    .then((res) => res.data);
+  .get(Create_Product_XMLView)
+  .then((res) => res.data);
   return response;
 };
 export const CreatePartyList = async () => {
@@ -190,32 +204,69 @@ export const CreatePartyList = async () => {
 };
 export const CreateSubCategory = async (data) => {
   let response = await axiosConfig
-    .post(Create_SubCategory, data)
-    .then((res) => res.data);
+  .post(Create_SubCategory, data)
+  .then((res) => res.data);
   return response;
 };
 export const SaveProduct = async (data) => {
   let response = await axiosConfig
-    .post(Save_Product, data)
-    .then((res) => res.data);
+  .post(Save_Product, data)
+  .then((res) => res.data);
   return response;
 };
+
 export const AllCategoryList = async () => {
   let response = await axiosConfig.get(Category_List).then((res) => res.data);
   return response;
 };
 export const ProductListView = async () => {
   let response = await axiosConfig
-    .get(ProductList_View)
+  .get(ProductList_View)
+  .then((res) => res.data);
+  return response;
+};
+export const CreateunitxmlView = async () => {
+  let response = await axiosConfig
+  .get(`${Create_unit_xmlView}`)
+  .then((res) => res.data);
+  return response;
+};
+export const SaveUnit = async (data) => {
+  let response = await axiosConfig
+  .post(Create_unit_save, data)
+  .then((res) => res.data);
+  return response;
+};
+
+export const UnitListView = async () => {
+  let response = await axiosConfig
+  .get(Create_unit_List)
+  .then((res) => res.data);
+  return response;
+};
+
+export const DeleteUnitList = async (id) => {
+  let response = await axiosConfig
+    .delete(`${Delete_Unit_List}` + id)
+    
     .then((res) => res.data);
   return response;
 };
+export const UnitViewOne = async (id) => {
+  let response = await axiosConfig
+    .put(`${Unit_ViewOne}` + id)
+    
+    .then((res) => res.data);
+  return response;
+};
+
+
 // guwahati api calling close
 
 export const UserLogin = async (data) => {
   let response = await axiosConfig
-    .post(Login_User, data)
-    .then((res) => res.data);
+  .post(Login_User, data)
+  .then((res) => res.data);
   return response;
 };
 export const UserOTPVerify = async (data) => {

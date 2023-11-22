@@ -20,6 +20,7 @@ import { AgGridReact } from "ag-grid-react";
 import "ag-grid-community/dist/styles/ag-grid.css";
 import EditAccount from "../../../freshlist/accounts/EditAccount";
 import ViewAccount from "../../../freshlist/accounts/ViewAccount";
+import EditUnit from "./EditUnit";
 import jsPDF from "jspdf";
 // import db from "../../../../context/indexdb";
 import "jspdf-autotable";
@@ -43,9 +44,10 @@ import {
 import moment from "moment-timezone";
 import swal from "sweetalert";
 import {
-    DeleteProductWiki,
-    Createtransporterxml,
-    CreateTransporterList,
+    DeleteUnitList,
+    CreateunitxmlView,
+    UnitListView,
+    UnitViewOne,
 } from "../../../../../ApiEndPoint/ApiCalling";
 import {
     BsCloudDownloadFill,
@@ -92,6 +94,8 @@ class UnitList extends React.Component {
     };
 
     handleChangeEdit = (data, types) => {
+        console.log(data)
+        // UnitViewOne
         let type = types;
         if (type == "readonly") {
             this.setState({ ViewOneUserView: true });
@@ -106,23 +110,23 @@ class UnitList extends React.Component {
         const UserInformation = this.context?.UserInformatio;
 
         await
-            CreateTransporterList()
+            UnitListView()
                 .then((res) => {
-                    console.log(res.Transporter);
-                    this.setState({ rowData: res?.Transporter });
+                    console.log(res);
+                    this.setState({ rowData: res?.Unit });
                 })
                 .catch((err) => {
                     console.log(err);
                 });
 
-        await Createtransporterxml()
+        await CreateunitxmlView()
             .then((res) => {
                 // var mydropdownArray = [];
                 // var adddropdown = [];
                 const jsonData = xmlJs.xml2json(res.data, { compact: true, spaces: 2 });
-                console.log(JSON.parse(jsonData).CreateTransporter);
+                console.log(JSON.parse(jsonData));
 
-                const inputs = JSON.parse(jsonData).CreateTransporter
+                const inputs = JSON.parse(jsonData).CreateUnit
                     ?.input?.map((ele) => {
                         return {
                             headerName: ele?.label._text,
@@ -354,7 +358,7 @@ class UnitList extends React.Component {
         }).then((value) => {
             switch (value) {
                 case "delete":
-                    DeleteProductWiki(id)
+                    DeleteUnitList(id)
                         .then((res) => {
                             let selectedData = this.gridApi.getSelectedRows();
                             this.gridApi.updateRowData({ remove: selectedData });
@@ -617,7 +621,7 @@ class UnitList extends React.Component {
         } = this.state;
         return (
             <>
-                {/* <ExcelReader /> */}
+             
                 <Row className="app-user-list">
                     {this.state.EditOneUserView && this.state.EditOneUserView ? (
                         <Row className="card">
@@ -634,8 +638,8 @@ class UnitList extends React.Component {
                                     </Button>
                                 </div>
                             </Col>
-
-                            <EditAccount EditOneData={this.state.EditOneData} />
+                            <EditUnit   ViewOneData={this.state.ViewOneData} /> 
+                            {/* <EditAccount EditOneData={this.state.EditOneData} /> */}
                         </Row>
                     ) : (
                         <>
@@ -655,6 +659,7 @@ class UnitList extends React.Component {
                                                 </Button>
                                             </div>
                                         </Col>
+                                       
                                         <ViewAccount ViewOneData={this.state.ViewOneData} />
                                     </Row>
                                 </>
@@ -839,22 +844,7 @@ class UnitList extends React.Component {
                                                                     defaultColDef={defaultColDef}
                                                                     columnDefs={columnDefs}
                                                                     rowData={rowData}
-                                                                    // onGridReady={(params) => {
-                                                                    //   this.gridApi = params.api;
-                                                                    //   this.gridColumnApi = params.columnApi;
-                                                                    //   this.gridRef.current = params.api;
-
-                                                                    //   this.setState({
-                                                                    //     currenPageSize:
-                                                                    //       this.gridApi.paginationGetCurrentPage() +
-                                                                    //       1,
-                                                                    //     getPageSize:
-                                                                    //       this.gridApi.paginationGetPageSize(),
-                                                                    //     totalPages:
-                                                                    //       this.gridApi.paginationGetTotalPages(),
-                                                                    //   });
-                                                                    // }}
-                                                                    onGridReady={this.onGridReady}
+                                                                onGridReady={this.onGridReady}
                                                                     colResizeDefault={"shift"}
                                                                     animateRows={true}
                                                                     floatingFilter={false}
