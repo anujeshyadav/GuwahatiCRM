@@ -6,6 +6,8 @@ import {
   Create_Category,
   Save_Product,
   Create_SubCategory,
+  Create_Party_List,
+  Create_Party_save,
   ProductList_View,
   Create_Product_XMLView,
   Category_List,
@@ -15,6 +17,7 @@ import {
   Create_Customer_List,
   Create_Parts,
   customerRegistration,
+  Create_Party_XML,
   Product_Registration,
   Warranty_AuditHistory,
   Warranty_AuditHistoryList,
@@ -117,47 +120,54 @@ dotenv.config();
 
 // guwahati api calling open
 
-
-
 export const Createwarehousexml = async () => {
-
   let response = await axiosConfig
     .get(`${Create_warehouse_xmlView}`)
     .then((res) => res.data);
   return response;
 };
 
-
-
 export const CreateWarehousesave = async (data) => {
   let response = await axiosConfig
-  .post(`${Create_warehouse_save}`, data)
-  .then((res) => res.data);
+    .post(`${Create_warehouse_save}`, data)
+    .then((res) => res.data);
   return response;
 };
 
 export const CreateWarehouseList = async () => {
   let response = await axiosConfig
-  .get(`${Create_Warehouse_List}`)
-  .then((res) => res.data);
+    .get(`${Create_Warehouse_List}`)
+    .then((res) => res.data);
   return response;
 };
 export const Createtransporterxml = async () => {
   let response = await axiosConfig
-  .get(`${Create_transporter_xmlView}`)
-  .then((res) => res.data);
+    .get(`${Create_transporter_xmlView}`)
+    .then((res) => res.data);
   return response;
 };
-export const Createtransportersave  = async (data) => {
+export const CreatePartyXML = async () => {
   let response = await axiosConfig
-  .post(`${Create_transporter_save}`, data)
-  .then((res) => res.data);
+    .get(`${Create_Party_XML}`)
+    .then((res) => res.data);
+  return response;
+};
+export const Createtransportersave = async (data) => {
+  let response = await axiosConfig
+    .post(`${Create_transporter_save}`, data)
+    .then((res) => res.data);
+  return response;
+};
+export const CreatePartysave = async (data) => {
+  let response = await axiosConfig
+    .post(`${Create_Party_save}`, data)
+    .then((res) => res.data);
   return response;
 };
 export const CreateTransporterList = async () => {
   let response = await axiosConfig
-  .get(`${Create_Transporter_List}`)
-  .then((res) => res.data);
+    .get(`${Create_Transporter_List}`)
+    .then((res) => res.data);
   return response;
 };
 export const CreateCategory = async (data) => {
@@ -169,6 +179,12 @@ export const CreateCategory = async (data) => {
 export const CreateProductXMLView = async () => {
   let response = await axiosConfig
     .get(Create_Product_XMLView)
+    .then((res) => res.data);
+  return response;
+};
+export const CreatePartyList = async () => {
+  let response = await axiosConfig
+    .get(Create_Party_List)
     .then((res) => res.data);
   return response;
 };

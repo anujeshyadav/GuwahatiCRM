@@ -166,7 +166,7 @@ const AddProduct = () => {
         formdata.append(`${ele?.name._text}`, formData[ele?.name?._text]);
       }
     });
-    CreatAccountView?.MyDropdown?.map((ele, i) => {
+    CreatAccountView?.MyDropDown?.map((ele, i) => {
       formdata.append(
         `${ele?.dropdown?.name?._text}`,
         formData[ele?.dropdown?.name?._text]
@@ -234,7 +234,7 @@ const AddProduct = () => {
             <Form className="m-1" onSubmit={submitHandler}>
               <Row className="mb-2">
                 {dropdownValue &&
-                  dropdownValue?.MyDropdown?.map((ele, i) => {
+                  dropdownValue?.MyDropDown?.map((ele, i) => {
                     console.log(ele?.dropdown?.name?._text);
                     if (ele?.dropdown?.name?._text == "category") {
                       return (
@@ -291,6 +291,57 @@ const AddProduct = () => {
                         </>
                       );
                     }
+                    if (ele?.dropdown?.name?._text == "Unit") {
+                      return (
+                        <>
+                          <Col key={i} lg="4" md="4">
+                            <Label className="mb-1">
+                              {ele?.dropdown?.label?._text}
+                            </Label>
+                            <CustomInput
+                              required
+                              type="select"
+                              placeholder="Select Category"
+                              name={ele?.dropdown?.name?._text}
+                              value={formData[ele?.dropdown?.name?._text]}
+                              onChange={handleInputChange}
+                            >
+                              <option value="NA">--Select Unit--</option>
+                              {subcatlist?.map((cat) => (
+                                <option value={cat?.name} key={cat?._id}>
+                                  {cat?.name}
+                                </option>
+                              ))}
+                            </CustomInput>
+                          </Col>
+                        </>
+                      );
+                    } else {
+                      return (
+                        <Col lg="4" md="4">
+                          <FormGroup>
+                            <Label>{ele?.dropdown?.label?._text}</Label>
+                            <CustomInput
+                              required
+                              type="select"
+                              name={ele?.dropdown?.name?._text}
+                              value={formData[ele?.dropdown?.name?._text]}
+                              onChange={handleInputChange}
+                            >
+                              <option value="">--Select Role--</option>
+                              {ele?.dropdown?.option?.map((option, index) => (
+                                <option
+                                  key={index}
+                                  value={option?._attributes?.value}
+                                >
+                                  {option?._attributes?.value}
+                                </option>
+                              ))}
+                            </CustomInput>
+                          </FormGroup>
+                        </Col>
+                      );
+                    }
                   })}
                 {/* <Col lg="6" md="6">
                   <FormGroup>
@@ -344,7 +395,7 @@ const AddProduct = () => {
                     if (!!ele?.phoneinput) {
                       return (
                         <>
-                          <Col key={i} lg="4" md="4" sm="12">
+                          <Col className="mt-1" key={i} lg="4" md="4" sm="12">
                             <FormGroup>
                               <Label>{ele?.label?._text}</Label>
                               <PhoneInput
@@ -387,7 +438,7 @@ const AddProduct = () => {
                       if (ele?.label._text?.includes("ountry")) {
                         console.log(ele);
                         return (
-                          <Col key={i} lg="4" md="4" sm="12">
+                          <Col className="mt-1" key={i} lg="4" md="4" sm="12">
                             <FormGroup>
                               <Label>{ele?.label?._text}</Label>
                               <Select
@@ -425,7 +476,7 @@ const AddProduct = () => {
                         );
                       } else if (ele?.label._text?.includes("tate")) {
                         return (
-                          <Col key={i} lg="4" md="4" sm="12">
+                          <Col className="mt-1" key={i} lg="4" md="4" sm="12">
                             <FormGroup>
                               <Label>{ele?.label?._text}</Label>
                               <Select
@@ -463,7 +514,7 @@ const AddProduct = () => {
                         );
                       } else if (ele?.label._text?.includes("ity")) {
                         return (
-                          <Col key={i} lg="4" md="4" sm="12">
+                          <Col className="mt-1" key={i} lg="4" md="4" sm="12">
                             <FormGroup>
                               <Label>{ele?.label?._text}</Label>
                               <Select
@@ -505,7 +556,13 @@ const AddProduct = () => {
                           <>
                             {ele?.type?._attributes?.type == "date" ? (
                               <>
-                                <Col key={i} lg="4" md="4" sm="12">
+                                <Col
+                                  className="mt-1"
+                                  key={i}
+                                  lg="4"
+                                  md="4"
+                                  sm="12"
+                                >
                                   <FormGroup key={i}>
                                     <Label>{ele?.label?._text}</Label>
 
@@ -559,7 +616,13 @@ const AddProduct = () => {
                               </>
                             ) : (
                               <>
-                                <Col key={i} lg="4" md="4" sm="12">
+                                <Col
+                                  className="mt-1"
+                                  key={i}
+                                  lg="4"
+                                  md="4"
+                                  sm="12"
+                                >
                                   <FormGroup key={i}>
                                     <Label>{ele?.label?._text}</Label>
 
@@ -609,7 +672,13 @@ const AddProduct = () => {
                         <>
                           {!!ele?.number ? (
                             <>
-                              <Col key={i} lg="4" md="4" sm="12">
+                              <Col
+                                className="mt-1"
+                                key={i}
+                                lg="4"
+                                md="4"
+                                sm="12"
+                              >
                                 <FormGroup key={i}>
                                   <Label>{ele?.label?._text}</Label>
 
@@ -652,7 +721,7 @@ const AddProduct = () => {
                               </Col>
                             </>
                           ) : (
-                            <Col key={i} lg="4" md="4" sm="12">
+                            <Col className="mt-1" key={i} lg="4" md="4" sm="12">
                               <FormGroup key={i}>
                                 {ele?.type?._attributes?.type &&
                                 ele?.type?._attributes?.type == "file" ? (

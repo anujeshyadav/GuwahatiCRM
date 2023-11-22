@@ -1,369 +1,3 @@
-// import React from "react";
-// import {
-//   Card,
-//   CardBody,
-//   Input,
-//   Row,
-//   Col,
-//   Button,
-//   UncontrolledDropdown,
-//   DropdownMenu,
-//   DropdownItem,
-//   DropdownToggle,
-//   Label,
-//   CustomInput,
-// } from "reactstrap";
-// // import axiosConfig from "../../../axiosConfig";
-// import axios from "axios";
-// import { ContextLayout } from "../../../../utility/context/Layout";
-// import { AgGridReact } from "ag-grid-react";
-// import { Edit, Trash2, ChevronDown, Eye } from "react-feather";
-// import { history } from "../../../../history";
-// import "../../../../assets/scss/plugins/tables/_agGridStyleOverride.scss";
-// import "../../../../assets/scss/pages/users.scss";
-// import { Route, Link } from "react-router-dom";
-// import { ProductListView } from "../../../../ApiEndPoint/ApiCalling";
-
-// class HouseProductList extends React.Component {
-//   state = {
-//     rowData: [],
-//     paginationPageSize: 20,
-//     currenPageSize: "",
-//     getPageSize: "",
-//     defaultColDef: {
-//       sortable: true,
-//       editable: true,
-//       resizable: true,
-//       suppressMenu: true,
-//     },
-//     columnDefs: [
-//       {
-//         headerName: "S.No",
-//         valueGetter: "node.rowIndex + 1",
-//         field: "node.rowIndex + 1",
-//         width: 150,
-//         filter: true,
-//       },
-//       {
-//         headerName: "Product Name",
-//         field: "product_name",
-//         filter: true,
-//         width: 200,
-//         cellRendererFramework: (params) => {
-//           return (
-//             <div>
-//               <span>{params.data.product_name}</span>
-//             </div>
-//           );
-//         },
-//       },
-//       {
-//         headerName: "Purchase Price",
-//         field: "buying_price",
-//         filter: true,
-//         width: 190,
-//         cellRendererFramework: (params) => {
-//           return (
-//             <div className="d-flex align-items-center cursor-pointer">
-//               <span>{params.data.buying_price}</span>
-//             </div>
-//           );
-//         },
-//       },
-
-//       {
-//         headerName: "Selling Price",
-//         field: "selling_price",
-//         filter: true,
-//         width: 200,
-//         cellRendererFramework: (params) => {
-//           return (
-//             <div>
-//               <span>{params.data.selling_price}</span>
-//             </div>
-//           );
-//         },
-//       },
-//       {
-//         headerName: "Status",
-//         field: "status",
-//         filter: true,
-//         width: 150,
-//         cellRendererFramework: (params) => {
-//           return params.data.status === "Active" ? (
-//             <div className="badge badge-pill badge-success">
-//               {params.data.status}
-//             </div>
-//           ) : params.data.status === "Inactive" ? (
-//             <div className="badge badge-pill badge-warning">
-//               {params.data.status}
-//             </div>
-//           ) : null;
-//         },
-//       },
-//       {
-//         headerName: "Actions",
-//         field: "sortorder",
-//         // eslint-disable-next-line no-dupe-keys
-//         field: "transactions",
-//         width: 150,
-//         cellRendererFramework: (params) => {
-//           return (
-//             <div className="actions cursor-pointer">
-//               <Route
-//                 render={({ history }) => (
-//                   <Eye
-//                     className="mr-50"
-//                     size="25px"
-//                     color="green"
-//                     onClick={() =>
-//                       history.push(
-//                         `/app/freshlist/house/viewHouseProduct/${params.data._id}`
-//                       )
-//                     }
-//                   />
-//                 )}
-//               />
-//               <Route
-//                 render={({ history }) => (
-//                   <Edit
-//                     className="mr-50"
-//                     size="25px"
-//                     color="blue"
-//                     onClick={() =>
-//                       history.push(
-//                         `/app/freshlist/house/editHouseProduct/${params.data._id}`
-//                       )
-//                     }
-//                   />
-//                 )}
-//               />
-//               <Trash2
-//                 className="mr-50"
-//                 size="25px"
-//                 color="red"
-//                 onClick={() => {
-//                   let selectedData = this.gridApi.getSelectedRows();
-//                   this.runthisfunction(params.data._id);
-//                   this.gridApi.updateRowData({ remove: selectedData });
-//                 }}
-//               />
-//             </div>
-//           );
-//         },
-//       },
-//     ],
-//   };
-
-//   async componentDidMount() {
-//     await ProductListView()
-//       .then((res) => {
-//         console.log(res?.Product);
-//       })
-//       .catch((err) => {
-//         console.log(err);
-//       });
-//   }
-
-//   async runthisfunction(id) {
-//     console.log(id);
-//     await axios.get(`http://35.154.86.59/api/user/delcustomer/${id}`).then(
-//       (response) => {
-//         console.log(response);
-//       },
-//       (error) => {
-//         console.log(error);
-//       }
-//     );
-//   }
-//   onGridReady = (params) => {
-//     this.gridApi = params.api;
-//     this.gridColumnApi = params.columnApi;
-//     this.setState({
-//       currenPageSize: this.gridApi.paginationGetCurrentPage() + 1,
-//       getPageSize: this.gridApi.paginationGetPageSize(),
-//       totalPages: this.gridApi.paginationGetTotalPages(),
-//     });
-//   };
-//   updateSearchQuery = (val) => {
-//     this.gridApi.setQuickFilter(val);
-//   };
-//   filterSize = (val) => {
-//     if (this.gridApi) {
-//       this.gridApi.paginationSetPageSize(Number(val));
-//       this.setState({
-//         currenPageSize: val,
-//         getPageSize: val,
-//       });
-//     }
-//   };
-//   render() {
-//     const { rowData, columnDefs, defaultColDef } = this.state;
-//     return (
-//       console.log(rowData),
-//       (
-//         <Row className="app-user-list">
-//           <Col sm="12"></Col>
-//           <Col sm="12">
-//             <Card>
-//               <Row className="m-2">
-//                 <Col>
-//                   <h1 sm="6" className="float-left">
-//                     Product List
-//                   </h1>
-//                 </Col>
-//                 {/* <Col>
-//                   <Button
-//                     style={{ marginRight: "-22rem" }}
-//                     className=" btn btn-danger float-right"
-//                     onClick={() =>
-//                       history.push("/app/freshlist/house/HouseProductList")
-//                     }
-//                   >
-//                     Back
-//                   </Button>
-//                 </Col> */}
-//                 <Col>
-//                   <Route
-//                     render={({ history }) => (
-//                       <Button
-//                         className="btn  float-right"
-//                         color="primary"
-//                         onClick={() =>
-//                           history.push("/app/freshlist/house/AddProduct")
-//                         }
-//                       >
-//                         Add Product
-//                       </Button>
-//                     )}
-//                   />
-//                 </Col>
-//               </Row>
-//               <CardBody>
-//                 {this.state.rowData === null ? null : (
-//                   <div className="ag-theme-material w-100 my-2 ag-grid-table">
-//                     <div className="d-flex flex-wrap justify-content-between align-items-center">
-//                       <div className="mb-1">
-//                         <UncontrolledDropdown className="p-1 ag-dropdown">
-//                           <DropdownToggle tag="div">
-//                             {this.gridApi
-//                               ? this.state.currenPageSize
-//                               : "" * this.state.getPageSize -
-//                                 (this.state.getPageSize - 1)}{" "}
-//                             -{" "}
-//                             {this.state.rowData.length -
-//                               this.state.currenPageSize *
-//                                 this.state.getPageSize >
-//                             0
-//                               ? this.state.currenPageSize *
-//                                 this.state.getPageSize
-//                               : this.state.rowData.length}{" "}
-//                             of {this.state.rowData.length}
-//                             <ChevronDown className="ml-50" size={15} />
-//                           </DropdownToggle>
-//                           <DropdownMenu right>
-//                             <DropdownItem
-//                               tag="div"
-//                               onClick={() => this.filterSize(20)}
-//                             >
-//                               20
-//                             </DropdownItem>
-//                             <DropdownItem
-//                               tag="div"
-//                               onClick={() => this.filterSize(50)}
-//                             >
-//                               50
-//                             </DropdownItem>
-//                             <DropdownItem
-//                               tag="div"
-//                               onClick={() => this.filterSize(100)}
-//                             >
-//                               100
-//                             </DropdownItem>
-//                             <DropdownItem
-//                               tag="div"
-//                               onClick={() => this.filterSize(134)}
-//                             >
-//                               134
-//                             </DropdownItem>
-//                           </DropdownMenu>
-//                         </UncontrolledDropdown>
-//                       </div>
-//                       <div className="d-flex flex-wrap justify-content-between mb-1">
-//                         <div className="mr-1">
-//                           <CustomInput
-//                             type="select"
-//                             placeholder="Select Type"
-//                             name="type"
-//                             value={this.state.sortorder}
-//                             onChange={this.changeHandler}
-//                           >
-//                             <option> Select Products </option>
-//                             <option value="less than 10">Less than 10</option>
-//                             <option value="less than 5 ">Less than 5</option>
-//                             <option value="out of stock">Out of Stock</option>
-//                             <option value="less than 5 ">
-//                               Expiring in 90 Days
-//                             </option>
-//                             <option value="out of stock">
-//                               Expiring in 60 Days
-//                             </option>
-//                             <option value="out of stock">
-//                               Expiring in 30 Days
-//                             </option>
-//                           </CustomInput>
-//                         </div>
-
-//                         <div className="table-input mr-1">
-//                           <Input
-//                             placeholder="search..."
-//                             onChange={(e) =>
-//                               this.updateSearchQuery(e.target.value)
-//                             }
-//                             value={this.state.value}
-//                           />
-//                         </div>
-//                         <div className="export-btn">
-//                           <Button.Ripple
-//                             color="primary"
-//                             onClick={() => this.gridApi.exportDataAsCsv()}
-//                           >
-//                             Export as CSV
-//                           </Button.Ripple>
-//                         </div>
-//                       </div>
-//                     </div>
-//                     <ContextLayout.Consumer>
-//                       {(context) => (
-//                         <AgGridReact
-//                           gridOptions={{}}
-//                           rowSelection="multiple"
-//                           defaultColDef={defaultColDef}
-//                           columnDefs={columnDefs}
-//                           rowData={rowData}
-//                           onGridReady={this.onGridReady}
-//                           colResizeDefault={"shift"}
-//                           animateRows={true}
-//                           floatingFilter={false}
-//                           pagination={true}
-//                           paginationPageSize={this.state.paginationPageSize}
-//                           pivotPanelShow="always"
-//                           enableRtl={context.state.direction === "rtl"}
-//                         />
-//                       )}
-//                     </ContextLayout.Consumer>
-//                   </div>
-//                 )}
-//               </CardBody>
-//             </Card>
-//           </Col>
-//         </Row>
-//       )
-//     );
-//   }
-// }
-// export default HouseProductList;
-
 import React, { useRef } from "react";
 import { Route } from "react-router-dom";
 import xmlJs from "xml-js";
@@ -383,6 +17,7 @@ import {
   ModalBody,
   Badge,
 } from "reactstrap";
+import ExcelReader from "../parts/ExcelReader";
 import { ContextLayout } from "../../../../utility/context/Layout";
 import { AgGridReact } from "ag-grid-react";
 import "ag-grid-community/dist/styles/ag-grid.css";
@@ -408,9 +43,9 @@ import swal from "sweetalert";
 import {
   CreateAccountList,
   CreateAccountView,
-  CreateProductXMLView,
+  CreatePartyList,
+  CreatePartyXML,
   DeleteAccount,
-  ProductListView,
 } from "../../../../ApiEndPoint/ApiCalling";
 import {
   BsCloudDownloadFill,
@@ -422,7 +57,7 @@ import UserContext from "../../../../context/Context";
 
 const SelectedColums = [];
 
-class HouseProductList extends React.Component {
+class PartyList extends React.Component {
   static contextType = UserContext;
   constructor(props) {
     super(props);
@@ -469,50 +104,47 @@ class HouseProductList extends React.Component {
 
   async componentDidMount() {
     const UserInformation = this.context?.UserInformatio;
-    CreateProductXMLView()
+    CreatePartyXML()
       .then((res) => {
+        var mydropdownArray = [];
+        var adddropdown = [];
         const jsonData = xmlJs.xml2json(res.data, { compact: true, spaces: 2 });
-        console.log(JSON.parse(jsonData)?.createProduct);
+        console.log(JSON.parse(jsonData)?.CreateParty);
+        const inputs = JSON.parse(jsonData)?.CreateParty?.input?.map((ele) => {
+          return {
+            headerName: ele?.label._text,
+            field: ele?.name._text,
+            filter: true,
+            sortable: true,
+          };
+        });
 
-        const inputs = JSON.parse(jsonData)?.createProduct?.input?.map(
-          (ele) => {
-            if (ele?.type._attributes.type == "file") {
-              return {
-                headerName: ele?.label._text,
-                field: ele?.name._text,
-                filter: true,
-                sortable: true,
-                cellRendererFramework: (params) => {
-                  return (
-                    <>
-                      <div className="actions cursor-pointer">
-                        <div className="actions cursor-pointer">
-                          {params.data?.Product_image && (
-                            <img
-                              className="rounded-circle mr-50"
-                              src={`http://65.0.96.247:8000/Images/${params.data?.Product_image}`}
-                              alt="user avatar"
-                              height="40"
-                              width="40"
-                            />
-                          )}
-                        </div>
-                      </div>
-                    </>
-                  );
-                },
-              };
-            } else {
-              return {
-                headerName: ele?.label._text,
-                field: ele?.name._text,
-                filter: true,
-                sortable: true,
-              };
-            }
-          }
-        );
-        let dropdown = JSON.parse(jsonData).createProduct?.MyDropDown;
+        // let Radioinput =
+        //   JSON.parse(jsonData).CreateAccount?.Radiobutton?.input[0]?.name
+        //     ?._text;
+        // const addRadio = [
+        //   {
+        //     headerName: Radioinput,
+        //     field: Radioinput,
+        //     filter: true,
+        //     sortable: true,
+        //     cellRendererFramework: (params) => {
+        //       return params.data?.Status === "Active" ? (
+        //         <div className="badge badge-pill badge-success">
+        //           {params.data.Status}
+        //         </div>
+        //       ) : params.data?.Status === "Deactive" ? (
+        //         <div className="badge badge-pill badge-warning">
+        //           {params.data.Status}
+        //         </div>
+        //       ) : (
+        //         "NA"
+        //       );
+        //     },
+        //   },
+        // ];
+
+        let dropdown = JSON.parse(jsonData).CreateParty?.MyDropDown;
         if (dropdown.length) {
           var mydropdownArray = dropdown?.map((ele) => {
             return {
@@ -532,7 +164,6 @@ class HouseProductList extends React.Component {
             },
           ];
         }
-        debugger;
 
         let myHeadings = [
           // ...checkboxinput,
@@ -541,6 +172,7 @@ class HouseProductList extends React.Component {
           // ...addRadio,
           ...mydropdownArray,
         ];
+        // console.log(myHeadings);
         let Product = [
           {
             headerName: "Actions",
@@ -556,9 +188,9 @@ class HouseProductList extends React.Component {
                         className="mr-50"
                         size="25px"
                         color="green"
-                        // onClick={() => {
-                        //   this.handleChangeEdit(params.data, "readonly");
-                        // }}
+                        onClick={() => {
+                          this.handleChangeEdit(params.data, "readonly");
+                        }}
                       />
                     )}
                   />
@@ -568,9 +200,9 @@ class HouseProductList extends React.Component {
                         className="mr-50"
                         size="25px"
                         color="blue"
-                        // onClick={() => {
-                        //   this.handleChangeEdit(params.data, "Editable");
-                        // }}
+                        onClick={() => {
+                          this.handleChangeEdit(params.data, "Editable");
+                        }}
                       />
                     )}
                   />
@@ -593,6 +225,23 @@ class HouseProductList extends React.Component {
           },
 
           ...myHeadings,
+          //   {
+          //     headerName: "Status",
+          //     field: "status",
+          //     filter: true,
+          //     width: 100,
+          //     cellRendererFramework: (params) => {
+          //       return params.data.status === "Active" ? (
+          //         <div className="badge badge-pill badge-success">
+          //           {params.data.status}
+          //         </div>
+          //       ) : params.data.status === "Deactive" ? (
+          //         <div className="badge badge-pill badge-warning">
+          //           {params.data.status}
+          //         </div>
+          //       ) : null;
+          //     },
+          //   },
           {
             headerName: "Created date",
             field: "createdAt",
@@ -629,7 +278,7 @@ class HouseProductList extends React.Component {
 
         this.setState({ AllcolumnDefs: Product });
 
-        let userHeading = JSON.parse(localStorage.getItem("ProductList"));
+        let userHeading = JSON.parse(localStorage.getItem("PartyList"));
         if (userHeading?.length) {
           this.setState({ columnDefs: userHeading });
           this.gridApi.setColumnDefs(userHeading);
@@ -642,12 +291,12 @@ class HouseProductList extends React.Component {
       })
       .catch((err) => {
         console.log(err);
-        swal("Error", "something went wrong try again");
       });
-    await ProductListView()
+
+    await CreatePartyList()
       .then((res) => {
-        console.log(res?.Product);
-        this.setState({ rowData: res?.Product });
+        let value = res?.Party;
+        this.setState({ rowData: value });
       })
       .catch((err) => {
         console.log(err);
@@ -888,7 +537,7 @@ class HouseProductList extends React.Component {
     this.setState({ SelectedcolumnDefs: this.state.SelectedcolumnDefs });
     this.setState({ rowData: this.state.rowData });
     localStorage.setItem(
-      "ProductList",
+      "PartyList",
       JSON.stringify(this.state.SelectedcolumnDefs)
     );
     this.LookupviewStart();
@@ -976,7 +625,7 @@ class HouseProductList extends React.Component {
                     <Card>
                       <Row className="m-2">
                         <Col>
-                          <h1 className="float-left">Product List</h1>
+                          <h1 className="float-left">Party list</h1>
                         </Col>
                         <Col>
                           <span className="mx-1">
@@ -1051,17 +700,18 @@ class HouseProductList extends React.Component {
                           <span>
                             <Route
                               render={({ history }) => (
-                                <Button
-                                  className="btn  float-right mr-1"
+                                <Badge
+                                  style={{ cursor: "pointer" }}
+                                  className="float-right mr-1"
                                   color="primary"
                                   onClick={() =>
                                     history.push(
-                                      "/app/freshlist/house/AddProduct"
+                                      "/app/SoftNumen/account/PartyCreation"
                                     )
                                   }
                                 >
-                                  Add Product
-                                </Button>
+                                  <FaPlus size={15} /> Create Party
+                                </Badge>
                               )}
                             />
                           </span>
@@ -1362,4 +1012,4 @@ class HouseProductList extends React.Component {
     );
   }
 }
-export default HouseProductList;
+export default PartyList;
