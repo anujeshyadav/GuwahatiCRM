@@ -343,7 +343,7 @@ class HorizontalSidebar extends React.Component {
   }
 
   renderDropdown = (arr) => {
-    console.log(this.state.SelectedcolumnDefs);
+    // console.log(this.state.SelectedcolumnDefs);
     let myownlink = this.state.SelectedcolumnDefs;
     return myownlink?.map((ele, i) => {
       return (

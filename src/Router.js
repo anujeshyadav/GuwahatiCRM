@@ -539,13 +539,13 @@ const DispatchDetail = lazy(() =>
 const TransporterList = lazy(() =>
   import("./views/apps/freshlist/customer/transporter/TransporterList")
 );
-const CreateTransporter= lazy(() =>
+const CreateTransporter = lazy(() =>
   import("./views/apps/freshlist/customer/transporter/CreateTransporter")
 );
 const UnitList = lazy(() =>
   import("./views/apps/freshlist/customer/unit/UnitList")
 );
-const CreateUnit= lazy(() =>
+const CreateUnit = lazy(() =>
   import("./views/apps/freshlist/customer/unit/CreateUnit")
 );
 const InVoiceSystem = lazy(() =>
@@ -664,6 +664,9 @@ const UpdateExistingRole = lazy(() =>
 const CreateAccount = lazy(() =>
   import("./views/apps/freshlist/accounts/CreateAccount")
 );
+const PartyCreation = lazy(() =>
+  import("./views/apps/freshlist/accounts/PartyCreation")
+);
 const CreateCustomer = lazy(() =>
   import("./views/apps/freshlist/accounts/CreateCustomer")
 );
@@ -762,6 +765,7 @@ const ServiceMaster = lazy(() =>
 const AccounSearch = lazy(() =>
   import("./views/apps/freshlist/house/AccounSearch")
 );
+const PartyList = lazy(() => import("./views/apps/freshlist/house/PartyList"));
 const CustomerSearch = lazy(() =>
   import("./views/apps/freshlist/house/CustomerSearch")
 );
@@ -1777,10 +1781,7 @@ class AppRouter extends React.Component {
             path="/app/softNumen/transporter/CreateTransporter"
             component={CreateTransporter}
           />
-          <AppRoute
-            path="/app/softNumen/Unit/UnitList"
-            component={UnitList}
-          />
+          <AppRoute path="/app/softNumen/Unit/UnitList" component={UnitList} />
           <AppRoute
             path="/app/softNumen/Unit/CreateUnit"
             component={CreateUnit}
@@ -1940,6 +1941,11 @@ class AppRouter extends React.Component {
             path="/app/SoftNumen/account/CreateAccount"
             component={CreateAccount}
           />
+          {/* create Party */}
+          <AppRoute
+            path="/app/SoftNumen/account/PartyCreation"
+            component={PartyCreation}
+          />
           <AppRoute
             path="/app/SoftNumen/account/CreateCustomer"
             component={CreateCustomer}
@@ -2044,6 +2050,7 @@ class AppRouter extends React.Component {
             path="/app/freshlist/house/serviceMaster"
             component={ServiceMaster}
           />
+          <AppRoute path="/app/SoftNumen/PartyList" component={PartyList} />
           <AppRoute
             path="/app/SoftNumen/accounSearch"
             component={AccounSearch}

@@ -307,7 +307,8 @@ const horizontalMenuConfig = [
         type: "item",
         icon: <FaList size={15} />,
         permissions: ["admin", "editor"],
-        navLink: "/app/SoftNumen/ticket/CreateTicket",
+        // navLink: "/app/SoftNumen/account/PartyCreation",
+        navLink: "/app/SoftNumen/PartyList",
       },
       {
         id: "Team Creation",
