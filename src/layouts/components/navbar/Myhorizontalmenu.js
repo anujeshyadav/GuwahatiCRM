@@ -24,6 +24,7 @@ class HorizontalSidebar extends React.Component {
       itemHover: null,
       parentHover: null,
       activeChildUrl: null,
+      isClassAdded: false,
     };
     this.activeFlag = false;
     this.parentItems = [];
@@ -35,6 +36,11 @@ class HorizontalSidebar extends React.Component {
   }
 
   openDropdown = (id) => {
+    // debugger
+    console.log("myID",id)
+    this.setState(() => ({
+    isClassAdded: true,
+    }));
     let arr = this.state.openDropdown;
     if (!arr.includes(id)) arr.push(id);
     return this.setState({
@@ -175,7 +181,7 @@ class HorizontalSidebar extends React.Component {
                 >
                   {child.children ? (
                     <Dropdown
-                      className={classnames("sub-menu w-100", {})}
+                      className={classnames("sub-menu w-100", {}) }
                       isOpen={this.state.openDropdown.includes(child.id)}
                       direction={this.state.openLeft ? "left" : "right"}
                       toggle={() => true}
@@ -244,7 +250,6 @@ class HorizontalSidebar extends React.Component {
   };
 
   renderDropdown = (arr) => {
-    // console.log(arr);
     return arr?.map((item) => {
       if (
         item.type === "item" &&
@@ -286,8 +291,9 @@ class HorizontalSidebar extends React.Component {
           >
             {item.children ? (
               <Dropdown
-                isOpen={this.state.openDropdown.includes(item.id)}
-                className="nav-link"
+             isOpen={this.state.openDropdown.includes(item.id)}
+                // className="nav-link"
+                 className={classnames("nav-link ttt",this.state.isClassAdded=="true" ? 'show' : '')}
                 toggle={() => this.openDropdown(item.id)}
               >
                 <DropdownToggle className="d-flex align-items-center" tag="div">

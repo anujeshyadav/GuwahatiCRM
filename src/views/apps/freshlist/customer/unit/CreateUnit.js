@@ -23,8 +23,8 @@ import "react-phone-input-2/lib/style.css";
 import { history } from "../../../../../history";
 import "../../../../../../src/layouts/assets/scss/pages/users.scss";
 import {
-  Createtransporterxml,
-  Createtransportersave,
+  CreateunitxmlView,
+  SaveUnit,
 } from "../../../../../ApiEndPoint/ApiCalling";
 import "../../../../../assets/scss/pages/users.scss";
 // import UserContext from "../../../../../context/Context";
@@ -35,7 +35,7 @@ const StateList = [
     // Add more states as needed
   ];
 const CreateUnit = () => {
-  const [CreatTransporterView, setCreatTransporterView] = useState({});
+  const [CreatUnitView, setCreatUnitView] = useState({});
   const [Countries, setCountry] = useState({});
   const [States, setState] = useState({});
   const [Cities, setCities] = useState({});
@@ -85,21 +85,22 @@ const CreateUnit = () => {
 
 
 useEffect(() => {
-  Createtransporterxml()
+  CreateunitxmlView()
       .then(res => {
         const jsonData = xmlJs.xml2json(res.data, { compact: true, spaces: 2 });
-       setCreatTransporterView(JSON.parse(jsonData))
+        console.log(JSON.parse(jsonData).CreateUnit)
+      setCreatUnitView(JSON.parse(jsonData))
       })
       .catch(err => {
         console.log(err);
       });
   }, []);
 
-  const onSelect1 = (selectedList, selectedItem) => {
+  const onSelect1 = (selectedList) => {
     setSelectedValue(selectedList)
     console.log('Selected:', selectedList);
  };
-  const onRemove1 = (selectedList, removedItem) => {
+  const onRemove1 = (selectedList) => {
     setSelectedValue(selectedList); 
     console.log('Removed:', selectedList);
   };
@@ -110,20 +111,20 @@ useEffect(() => {
     //   }
     e.preventDefault();
     console.log(formData)
-    // if (error) {
-    //   swal("Error occured while Entering Details");
-    // } else {
-    //   Createtransportersave(formData)
-    //     .then(res => {
-    //         console.log(res)
-    //       if (res.status) {
-    //          swal(`${res.message}`)
-    //        }
-    //     })
-    //     .catch(err => {
-    //       console.log(err);
-    //     });
-    // }
+    if (error) {
+      swal("Error occured while Entering Details");
+    } else {
+      SaveUnit(formData)
+        .then(res => {
+            console.log(res)
+          if (res.status) {
+             swal(`${res.message}`)
+           }
+        })
+        .catch(err => {
+          console.log(err);
+        });
+    }
   };
 
   return (
@@ -140,7 +141,7 @@ useEffect(() => {
                   <Button
                     className=" btn btn-danger float-right"
                     onClick={() =>
-                      history.push("/app/softNumen/transporter/TransporterList")
+                      history.push("/app/softNumen/Unit/UnitList")
                     }
                   >
                     Back
@@ -161,305 +162,302 @@ useEffect(() => {
                           required
                           showCheckbox="true"
                           isObject="false"
-                          options={StateList} // Options to display in the dropdown
-                          // selectedValues={selectedValue}   // Preselected value to persist in dropdown
-                          onSelect={onSelect1} // Function will trigger on select event
-                          onRemove={onRemove1} // Function will trigger on remove event
-                          displayValue="state_title" // Property name to display in the dropdown options
+                          options={StateList} 
+                          onSelect={onSelect1} 
+                          onRemove={onRemove1} 
+                          displayValue="state_title" 
                         />
             </Col>
-                {CreatTransporterView &&
-                  CreatTransporterView?.CreateTransporter?.input?.map((ele, i) => {
-                  if (!!ele?.phoneinput) {
-                        return (
-                          <>
-                            <Col key={i} lg="6" md="6" sm="12">
-                              <FormGroup>
-                                <Label>{ele?.label?._text}</Label>
-                                <PhoneInput
-                                  inputClass="myphoneinput"
-                                  country={"in"}
-                                  onKeyDown={(e) => {
-                                    if (
-                                      ele?.type?._attributes?.type == "number"
-                                    ) {
-                                      ["e", "E", "+", "-"].includes(e.key) &&
-                                        e.preventDefault();
-                                    }
-                                  }}
-                                  countryCodeEditable={false}
-                                  name={ele?.name?._text}
-                                  value={formData[ele?.name?._text]}
-                                  onChange={(phone) => {
-                                    setFormData({
-                                      ...formData,
-                                      [ele?.name?._text]: phone,
-                                    });
-                                  }}
-                                />
-                                {index === i ? (
-                                  <>
-                                    {error && (
-                                      <span style={{ color: "red" }}>
-                                        {error}
-                                      </span>
-                                    )}
-                                  </>
-                                ) : (
-                                  <></>
-                                )}
-                              </FormGroup>
-                            </Col>
-                          </>
-                        );
-                      } else if (!!ele?.library) {
-                        if (ele?.label._text?.includes("ountry")) {
-                          return (
-                            <Col key={i} lg="6" md="6" sm="12">
-                              <FormGroup>
-                                <Label>{ele?.label?._text}</Label>
-                                <Select
-                                  inputClass="countryclass"
-                                  className="countryclassnw"
-                                  options={Country.getAllCountries()}
-                                  getOptionLabel={(options) => {
-                                    return options["name"];
-                                  }}
-                                  getOptionValue={(options) => {
-                                    return options["name"];
-                                  }}
-                                  value={Countries}
-                                  onChange={(country) => {
-                                    setCountry(country);
-                                    setFormData({
-                                      ...formData,
-                                      ["Country"]: country?.name,
-                                    });
-                                  }}
-                                />
-                                {index === i ? (
-                                  <>
-                                    {error && (
-                                      <span style={{ color: "red" }}>
-                                        {error}
-                                      </span>
-                                    )}
-                                  </>
-                                ) : (
-                                  <></>
-                                )}
-                              </FormGroup>
-                            </Col>
-                          );
-                        } else if (ele?.label._text?.includes("tate")) {
-                          return (
-                            <Col key={i} lg="6" md="6" sm="12">
-                              <FormGroup>
-                                <Label>{ele?.label?._text}</Label>
-                                <Select
-                                  options={State?.getStatesOfCountry(
-                                    Countries?.isoCode
-                                  )}
-                                  getOptionLabel={(options) => {
-                                    return options["name"];
-                                  }}
-                                  getOptionValue={(options) => {
-                                    return options["name"];
-                                  }}
-                                  value={States}
-                                  onChange={(State) => {
-                                    setState(State);
-                                    setFormData({
-                                      ...formData,
-                                      ["State"]: State?.name,
-                                    });
-                                  }}
-                                />
-                                {index === i ? (
-                                  <>
-                                    {error && (
-                                      <span style={{ color: "red" }}>
-                                        {error}
-                                      </span>
-                                    )}
-                                  </>
-                                ) : (
-                                  <></>
-                                )}
-                              </FormGroup>
-                            </Col>
-                          );
-                        } else if (ele?.label._text?.includes("ity")) {
-                          return (
-                            <Col key={i} lg="6" md="6" sm="12">
-                              <FormGroup>
-                                <Label>{ele?.label?._text}</Label>
-                                <Select
-                                  options={City?.getCitiesOfState(
-                                    States?.countryCode,
-                                    States?.isoCode
-                                  )}
-                                  getOptionLabel={(options) => {
-                                    return options["name"];
-                                  }}
-                                  getOptionValue={(options) => {
-                                    return options["name"];
-                                  }}
-                                  value={Cities}
-                                  onChange={(City) => {
-                                    setCities(City);
-                                    setFormData({
-                                      ...formData,
-                                      ["City"]: City?.name,
-                                    });
-                                  }}
-                                />
-                                {index === i ? (
-                                  <>
-                                    {error && (
-                                      <span style={{ color: "red" }}>
-                                        {error}
-                                      </span>
-                                    )}
-                                  </>
-                                ) : (
-                                  <></>
-                                )}
-                              </FormGroup>
-                            </Col>
-                          );
-                        } else {
-                          return (
-                            <Col key={i} lg="6" md="6" sm="12">
-                              <FormGroup key={i}>
-                                <Label>{ele?.label?._text}</Label>
-  
-                                <Input
-                                  onKeyDown={(e) => {
-                                    if (
-                                      ele?.type?._attributes?.type == "number"
-                                    ) {
-                                      ["e", "E", "+", "-"].includes(e.key) &&
-                                        e.preventDefault();
-                                    }
-                                  }}
-                                  type={ele?.type?._attributes?.type}
-                                  placeholder={ele?.placeholder?._text}
-                                  name={ele?.name?._text}
-                                  value={formData[ele?.name?._text]}
-                                  onChange={(e) =>
-                                    handleInputChange(
-                                      e,
-                                      ele?.type?._attributes?.type,
-                                      i
-                                    )
-                                  }
-                                />
-                                {index === i ? (
-                                  <>
-                                    {error && (
-                                      <span style={{ color: "red" }}>
-                                        {error}
-                                      </span>
-                                    )}
-                                  </>
-                                ) : (
-                                  <></>
-                                )}
-                              </FormGroup>
-                            </Col>
-                          );
+                {CreatUnitView &&
+                  CreatUnitView?.CreateUnit
+                  ?.input?.map((ele, i) => {
+                   return (
+                    <Col key={i} lg="6" md="6" sm="12">
+                    <FormGroup key={i}>
+                      <Label>{ele?.label?._text}</Label>
+
+                      <Input
+                        // onKeyDown={(e) => {
+                        //   if (
+                        //     ele?.type?._attributes?.type == "number"
+                        //   ) {
+                        //     ["e", "E", "+", "-"].includes(e.key) &&
+                        //       e.preventDefault();
+                        //   }
+                        // }}
+                        type={ele?.type?._attributes?.type}
+                        placeholder={ele?.placeholder?._text}
+                        name={ele?.name?._text}
+                        value={formData[ele?.name?._text]}
+                        onChange={(e) =>
+                          handleInputChange(
+                            e,
+                            ele?.type?._attributes?.type,
+                            i
+                          )
                         }
-                      } else {
-                        return (
-                          <>
-                            <Col key={i} lg="6" md="6" sm="12">
-                              <FormGroup key={i}>
-                                <Label>{ele?.label?._text}</Label>
+                      />
+                      {index === i ? (
+                        <>
+                          {error && (
+                            <span style={{ color: "red" }}>
+                              {error}
+                            </span>
+                          )}
+                        </>
+                      ) : (
+                        <></>
+                      )}
+                    </FormGroup>
+                  </Col>
+                   )
+
+                  // if (!!ele?.phoneinput) {
+                  //       return (
+                  //         <>
+                  //           <Col key={i} lg="6" md="6" sm="12">
+                  //             <FormGroup>
+                  //               <Label>{ele?.label?._text}</Label>
+                  //               <PhoneInput
+                  //                 inputClass="myphoneinput"
+                  //                 country={"in"}
+                  //                 onKeyDown={(e) => {
+                  //                   if (
+                  //                     ele?.type?._attributes?.type == "number"
+                  //                   ) {
+                  //                     ["e", "E", "+", "-"].includes(e.key) &&
+                  //                       e.preventDefault();
+                  //                   }
+                  //                 }}
+                  //                 countryCodeEditable={false}
+                  //                 name={ele?.name?._text}
+                  //                 value={formData[ele?.name?._text]}
+                  //                 onChange={(phone) => {
+                  //                   setFormData({
+                  //                     ...formData,
+                  //                     [ele?.name?._text]: phone,
+                  //                   });
+                  //                 }}
+                  //               />
+                  //               {index === i ? (
+                  //                 <>
+                  //                   {error && (
+                  //                     <span style={{ color: "red" }}>
+                  //                       {error}
+                  //                     </span>
+                  //                   )}
+                  //                 </>
+                  //               ) : (
+                  //                 <></>
+                  //               )}
+                  //             </FormGroup>
+                  //           </Col>
+                  //         </>
+                  //       );
+                  //     } else if (!!ele?.library) {
+                  //       if (ele?.label._text?.includes("ountry")) {
+                  //         return (
+                  //           <Col key={i} lg="6" md="6" sm="12">
+                  //             <FormGroup>
+                  //               <Label>{ele?.label?._text}</Label>
+                  //               <Select
+                  //                 inputClass="countryclass"
+                  //                 className="countryclassnw"
+                  //                 options={Country.getAllCountries()}
+                  //                 getOptionLabel={(options) => {
+                  //                   return options["name"];
+                  //                 }}
+                  //                 getOptionValue={(options) => {
+                  //                   return options["name"];
+                  //                 }}
+                  //                 value={Countries}
+                  //                 onChange={(country) => {
+                  //                   setCountry(country);
+                  //                   setFormData({
+                  //                     ...formData,
+                  //                     ["Country"]: country?.name,
+                  //                   });
+                  //                 }}
+                  //               />
+                  //               {index === i ? (
+                  //                 <>
+                  //                   {error && (
+                  //                     <span style={{ color: "red" }}>
+                  //                       {error}
+                  //                     </span>
+                  //                   )}
+                  //                 </>
+                  //               ) : (
+                  //                 <></>
+                  //               )}
+                  //             </FormGroup>
+                  //           </Col>
+                  //         );
+                  //       } else if (ele?.label._text?.includes("tate")) {
+                  //         return (
+                  //           <Col key={i} lg="6" md="6" sm="12">
+                  //             <FormGroup>
+                  //               <Label>{ele?.label?._text}</Label>
+                  //               <Select
+                  //                 options={State?.getStatesOfCountry(
+                  //                   Countries?.isoCode
+                  //                 )}
+                  //                 getOptionLabel={(options) => {
+                  //                   return options["name"];
+                  //                 }}
+                  //                 getOptionValue={(options) => {
+                  //                   return options["name"];
+                  //                 }}
+                  //                 value={States}
+                  //                 onChange={(State) => {
+                  //                   setState(State);
+                  //                   setFormData({
+                  //                     ...formData,
+                  //                     ["State"]: State?.name,
+                  //                   });
+                  //                 }}
+                  //               />
+                  //               {index === i ? (
+                  //                 <>
+                  //                   {error && (
+                  //                     <span style={{ color: "red" }}>
+                  //                       {error}
+                  //                     </span>
+                  //                   )}
+                  //                 </>
+                  //               ) : (
+                  //                 <></>
+                  //               )}
+                  //             </FormGroup>
+                  //           </Col>
+                  //         );
+                  //       } else if (ele?.label._text?.includes("ity")) {
+                  //         return (
+                  //           <Col key={i} lg="6" md="6" sm="12">
+                  //             <FormGroup>
+                  //               <Label>{ele?.label?._text}</Label>
+                  //               <Select
+                  //                 options={City?.getCitiesOfState(
+                  //                   States?.countryCode,
+                  //                   States?.isoCode
+                  //                 )}
+                  //                 getOptionLabel={(options) => {
+                  //                   return options["name"];
+                  //                 }}
+                  //                 getOptionValue={(options) => {
+                  //                   return options["name"];
+                  //                 }}
+                  //                 value={Cities}
+                  //                 onChange={(City) => {
+                  //                   setCities(City);
+                  //                   setFormData({
+                  //                     ...formData,
+                  //                     ["City"]: City?.name,
+                  //                   });
+                  //                 }}
+                  //               />
+                  //               {index === i ? (
+                  //                 <>
+                  //                   {error && (
+                  //                     <span style={{ color: "red" }}>
+                  //                       {error}
+                  //                     </span>
+                  //                   )}
+                  //                 </>
+                  //               ) : (
+                  //                 <></>
+                  //               )}
+                  //             </FormGroup>
+                  //           </Col>
+                  //         );
+                  //       } else {
+                  //         return (
+                  //           <Col key={i} lg="6" md="6" sm="12">
+                  //             <FormGroup key={i}>
+                  //               <Label>{ele?.label?._text}</Label>
   
-                                <Input
-                                  onKeyDown={(e) => {
-                                    if (
-                                      ele?.type?._attributes?.type == "number"
-                                    ) {
-                                      ["e", "E", "+", "-"].includes(e.key) &&
-                                        e.preventDefault();
-                                    }
-                                  }}
-                                  type={ele?.type?._attributes?.type}
-                                  placeholder={ele?.placeholder?._text}
-                                  name={ele?.name?._text}
-                                  value={formData[ele?.name?._text]}
-                                  onChange={(e) =>
-                                    handleInputChange(
-                                      e,
-                                      ele?.type?._attributes?.type,
-                                      i
-                                    )
-                                  }
-                                />
-                                {index === i ? (
-                                  <>
-                                    {error && (
-                                      <span style={{ color: "red" }}>
-                                        {error}
-                                      </span>
-                                    )}
-                                  </>
-                                ) : (
-                                  <></>
-                                )}
-                              </FormGroup>
-                            </Col>
-                          </>
-                        );
-                      }
-                    // else {
-                    //   return (
-                    //     <>
-                    //       <Col key={i} lg="4" md="4" sm="12">
-                    //         <FormGroup>
-                    //           <Label>{ele?.label?._text}</Label>
-
-                    //           <Input
-                    //             onKeyDown={e => {
-                    //               if (
-                    //                 ele?.type?._attributes?.type == "number"
-                    //               ) {
-                    //                 ["e", "E", "+", "-"].includes(e.key) &&
-                    //                   e.preventDefault();
-                    //               }
-                    //             }}
-                    //             type={ele?.type?._attributes?.type}
-                    //             placeholder={ele?.placeholder?._text}
-                    //             name={ele?.name?._text}
-                    //             value={formData[ele?.name?._text]}
-                    //             onChange={e =>
-                    //               handleInputChange(
-                    //                 e,
-                    //                 ele?.type?._attributes?.type,
-                    //                 i
-                    //               )
-                    //             }
-                    //           />
-                    //           {index === i ? (
-                    //             <>
-                    //               {error && (
-                    //                 <span style={{ color: "red" }}>
-                    //                   {error}
-                    //                 </span>
-                    //               )}
-                    //             </>
-                    //           ) : (
-                    //             <></>
-                    //           )}
-                    //         </FormGroup>
-                    //       </Col>
-
-                    //     </>
-                    //   );
-                    // }
-                  })}
+                  //               <Input
+                  //                 onKeyDown={(e) => {
+                  //                   if (
+                  //                     ele?.type?._attributes?.type == "number"
+                  //                   ) {
+                  //                     ["e", "E", "+", "-"].includes(e.key) &&
+                  //                       e.preventDefault();
+                  //                   }
+                  //                 }}
+                  //                 type={ele?.type?._attributes?.type}
+                  //                 placeholder={ele?.placeholder?._text}
+                  //                 name={ele?.name?._text}
+                  //                 value={formData[ele?.name?._text]}
+                  //                 onChange={(e) =>
+                  //                   handleInputChange(
+                  //                     e,
+                  //                     ele?.type?._attributes?.type,
+                  //                     i
+                  //                   )
+                  //                 }
+                  //               />
+                  //               {index === i ? (
+                  //                 <>
+                  //                   {error && (
+                  //                     <span style={{ color: "red" }}>
+                  //                       {error}
+                  //                     </span>
+                  //                   )}
+                  //                 </>
+                  //               ) : (
+                  //                 <></>
+                  //               )}
+                  //             </FormGroup>
+                  //           </Col>
+                  //         );
+                  //       }
+                  //     } else {
+                  //       return (
+                  //         <>
+                  //           <Col key={i} lg="6" md="6" sm="12">
+                  //             <FormGroup key={i}>
+                  //               <Label>{ele?.label?._text}</Label>
+  
+                  //               <Input
+                  //                 onKeyDown={(e) => {
+                  //                   if (
+                  //                     ele?.type?._attributes?.type == "number"
+                  //                   ) {
+                  //                     ["e", "E", "+", "-"].includes(e.key) &&
+                  //                       e.preventDefault();
+                  //                   }
+                  //                 }}
+                  //                 type={ele?.type?._attributes?.type}
+                  //                 placeholder={ele?.placeholder?._text}
+                  //                 name={ele?.name?._text}
+                  //                 value={formData[ele?.name?._text]}
+                  //                 onChange={(e) =>
+                  //                   handleInputChange(
+                  //                     e,
+                  //                     ele?.type?._attributes?.type,
+                  //                     i
+                  //                   )
+                  //                 }
+                  //               />
+                  //               {index === i ? (
+                  //                 <>
+                  //                   {error && (
+                  //                     <span style={{ color: "red" }}>
+                  //                       {error}
+                  //                     </span>
+                  //                   )}
+                  //                 </>
+                  //               ) : (
+                  //                 <></>
+                  //               )}
+                  //             </FormGroup>
+                  //           </Col>
+                  //         </>
+                  //       );
+                  //     }
+                }
+                )}
               </Row>
               <hr />
               <Row>

@@ -43,7 +43,7 @@ import {
 import moment from "moment-timezone";
 import swal from "sweetalert";
 import {
-    DeleteProductWiki,
+    DeleteTransporterList,
     Createtransporterxml,
     CreateTransporterList,
 } from "../../../../../ApiEndPoint/ApiCalling";
@@ -223,12 +223,13 @@ class TransporterList extends React.Component {
 
                                     <Route
                                         render={() => (
+                                           
                                             <Trash2
                                                 className="mr-50"
                                                 size="25px"
                                                 color="red"
                                                 onClick={() => {
-                                                    this.runthisfunction(params?.data?._id);
+                                                   this.runthisfunction(params?.data?._id);
                                                 }}
                                             />
                                         )}
@@ -354,8 +355,9 @@ class TransporterList extends React.Component {
         }).then((value) => {
             switch (value) {
                 case "delete":
-                    DeleteProductWiki(id)
+                    DeleteTransporterList(id)
                         .then((res) => {
+                            console.log(res)
                             let selectedData = this.gridApi.getSelectedRows();
                             this.gridApi.updateRowData({ remove: selectedData });
                         })
