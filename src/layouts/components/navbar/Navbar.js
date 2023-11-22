@@ -106,11 +106,11 @@ const ThemeNavbar = (props) => {
                   </strong>
                 )}
               />
-              <span className="d-flex">
-                {/* <img src={logoimg} alt="" width={80} /> */}
-              </span>{" "}
-              <div>
-                {/* <Nav>
+              {/* <span className="d-flex"> */}
+              {/* <img src={logoimg} alt="" width={80} /> */}
+              {/* </span>{" "} */}
+              {/* <div> */}
+              {/* <Nav>
                   <NavbarBrand>
                     <img src={logoimg} alt="" width={120} />
                   </NavbarBrand>
@@ -312,7 +312,7 @@ const ThemeNavbar = (props) => {
                     </NavLink>
                   </NavItem>
                 </Nav> */}
-              </div>
+              {/* </div> */}
               <div className="bookmark-wrapper">
                 <NavbarBookmarks
                   sidebarVisibility={props.sidebarVisibility}
@@ -321,13 +321,11 @@ const ThemeNavbar = (props) => {
               </div>
               {props.horizontal ? (
                 <div className="logo d-flex align-items-center">
-                  <div className="brand-logo mr-50"></div>
                   <HorizontalMenu />
                 </div>
               ) : null}
               {/* working navbar */}
               <>
-                {/* <h2>dfdssf</h2> */}
                 <NavbarUser
                   handleAppOverlay={props.handleAppOverlay}
                   changeCurrentLang={props.changeCurrentLang}

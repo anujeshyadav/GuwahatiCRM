@@ -307,7 +307,8 @@ const horizontalMenuConfig = [
         type: "item",
         icon: <FaList size={15} />,
         permissions: ["admin", "editor"],
-        navLink: "/app/SoftNumen/ticket/CreateTicket",
+        // navLink: "/app/SoftNumen/account/PartyCreation",
+        navLink: "/app/SoftNumen/PartyList",
       },
       {
         id: "Team Creation",
@@ -438,14 +439,14 @@ const horizontalMenuConfig = [
         permissions: ["admin", "editor"],
         navLink: "/app/SoftNumen/ticket/CreateTicket",
       },
-      {
-        id: "TransporterList",
-        title: "Transporter List",
-        type: "item",
-        icon: <FaCode size={15} />,
-        permissions: ["admin", "editor"],
-        navLink: "/app/softNumen/transporter/TransporterList",
-      },
+      // {
+      //   id: "TransporterList",
+      //   title: "Transporter List",
+      //   type: "item",
+      //   icon: <FaCode size={15} />,
+      //   permissions: ["admin", "editor"],
+      //   navLink: "/app/softNumen/transporter/TransporterList",
+      // },
       {
         id: "Receipt and payment customized",
         title: "Receipt and Payment Customized",

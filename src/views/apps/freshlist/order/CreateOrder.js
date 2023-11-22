@@ -23,6 +23,8 @@ import { BsFillChatDotsFill, BsWhatsapp } from "react-icons/bs";
 import { FaHistory } from "react-icons/fa";
 import { FcPhoneAndroid } from "react-icons/fc";
 import { AiOutlineSearch } from "react-icons/ai";
+import Multiselect from "multiselect-react-dropdown";
+
 import { FiSend } from "react-icons/fi";
 
 import "../../../../assets/scss/pages/users.scss";
@@ -31,6 +33,7 @@ import {
   CommentOrder,
   CreateOrder_ID,
   CommentProductWiki,
+  ProductListView,
 } from "../../../../ApiEndPoint/ApiCalling";
 import "../../../../assets/scss/pages/users.scss";
 import Payment from "./payment/Payment";
@@ -41,10 +44,11 @@ const CreateOrder = (args) => {
   const [formData, setFormData] = useState({});
   const [dropdownValue, setdropdownValue] = useState({});
   const [StatusDropDown, setStatusDropDown] = useState({});
+  const [Index, setIndex] = useState("");
   const [partdetails, setPartDetails] = useState({});
   const [index, setindex] = useState("");
   const [error, setError] = useState("");
-  const [permissions, setpermissions] = useState({});
+  const [ProductList, setProductList] = useState([]);
   const [Commentshow, setCommentshow] = useState(false);
   const [OrderID, setOrderID] = useState();
   const [UserInfo, setUserInfo] = useState({});
@@ -73,6 +77,8 @@ const CreateOrder = (args) => {
       rquiredQty: 1,
       price: "",
       totalprice: "",
+      DateofDelivery: "",
+      PartyName: "",
       discount: "",
       Shipping: "",
       tax: "",
@@ -135,6 +141,7 @@ const CreateOrder = (args) => {
     setFormValues([...formValues, { files: [] }]);
   };
   const handleProductChangeProduct = (e, index) => {
+    setIndex(index);
     const { name, value } = e.target;
     const list = [...product];
     list[index][name] = value;
@@ -219,37 +226,48 @@ const CreateOrder = (args) => {
     }
   };
   // handleInputChange;
-  useEffect(() => {}, [formData]);
+  useEffect(() => {
+    console.log(product);
+  }, [product]);
+
   useEffect(() => {
     // console.log(part[0].Shipping);
-  }, [part]);
+    ProductListView()
+      .then((res) => {
+        console.log(res?.Product);
+        setProductList(res?.Product);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }, []);
   useEffect(() => {
     let userInfo = JSON.parse(localStorage.getItem("userData"));
     setUserInfo(userInfo);
-    CreateOrder_ID()
-      .then((res) => {
-        const lastElement = res?.Order[res?.Order?.length - 1].id;
-        const prefix = lastElement?.substring(0, 5);
-        const number = parseInt(lastElement?.match(/\d+$/)[0], 10) + 1;
-        const concatenatedString = prefix + number;
-        setOrderID(concatenatedString);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-    CreateOrder_ViewData()
-      .then((res) => {
-        const jsonData = xmlJs.xml2json(res.data, { compact: true, spaces: 2 });
-        setCreatAccountView(JSON.parse(jsonData));
-        setStatusDropDown(
-          JSON.parse(jsonData)?.createOrder.CurrentStatus?.MyDropDown?.dropdown
-        );
-        setdropdownValue(JSON.parse(jsonData));
-        setPartDetails(JSON.parse(jsonData)?.createOrder.PartDetails);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+    // CreateOrder_ID()
+    //   .then((res) => {
+    //     const lastElement = res?.Order[res?.Order?.length - 1].id;
+    //     const prefix = lastElement?.substring(0, 5);
+    //     const number = parseInt(lastElement?.match(/\d+$/)[0], 10) + 1;
+    //     const concatenatedString = prefix + number;
+    //     setOrderID(concatenatedString);
+    //   })
+    //   .catch((err) => {
+    //     console.log(err);
+    //   });
+    // CreateOrder_ViewData()
+    //   .then((res) => {
+    //     const jsonData = xmlJs.xml2json(res.data, { compact: true, spaces: 2 });
+    //     setCreatAccountView(JSON.parse(jsonData));
+    //     setStatusDropDown(
+    //       JSON.parse(jsonData)?.createOrder.CurrentStatus?.MyDropDown?.dropdown
+    //     );
+    //     setdropdownValue(JSON.parse(jsonData));
+    //     setPartDetails(JSON.parse(jsonData)?.createOrder.PartDetails);
+    //   })
+    //   .catch((err) => {
+    //     console.log(err);
+    //   });
   }, []);
 
   let addMorePart = () => {
@@ -279,11 +297,14 @@ const CreateOrder = (args) => {
     setProduct([
       ...product,
       {
+        product: "",
         productName: "",
         availableQty: "",
         rquiredQty: 1,
         price: "",
         totalprice: "",
+        DateofDelivery: "",
+        PartyName: "",
         discount: "",
         Shipping: "",
         tax: "",
@@ -332,6 +353,57 @@ const CreateOrder = (args) => {
     //     });
     // }
   };
+  const onSelect1 = (selectedList, selectedItem, index) => {
+    console.log(selectedList);
+    console.log(index);
+    // if (selectedList.length) {
+    //   for (var i = 0; i < selectedList.length; i++) {
+    //     selectedOptions.push(selectedList[i].id);
+    //   }
+    // }
+
+    // let arr = selectedList.map((ele) => ele.id);
+    // setmultiSelect(arr);
+    // console.log(multiSelect);
+
+    // let uniqueChars = [...new Set(selectedOptions)];
+
+    // if (uniqueChars.length === 1) {
+    //   let value = uniqueChars[0];
+    //   const formdata = new FormData();
+    //   formdata.append("state_id", value);
+    //   axiosConfig
+    //     .post(`/getcity`, formdata)
+    //     .then((res) => {
+    //       setCityList(res?.data?.cities);
+    //     })
+    //     .catch((err) => {
+    //       console.log(err);
+    //     });
+    // } else {
+    //   setCityList([]);
+    // }
+  };
+  const onRemove1 = (selectedList, removedItem, index) => {
+    // debugger;
+    // setselectedOptions("");
+    console.log(selectedList);
+    console.log(index);
+
+    // setmultiSelect(selectedList);
+
+    // let arr = selectedList.map((ele) => ele.id);
+    // console.log(arr);
+    // setmultiSelect(arr);
+    // console.log(multiSelect);
+    // if (selectedList.length) {
+    //   for (var i = 0; i < selectedList.length; i++) {
+    //     selectedOptions.push(selectedList[i].id);
+    //   }
+    // }
+    // let uniqueChars = [...new Set(selectedOptions)];
+    // console.log(uniqueChars);
+  };
   return (
     <div>
       <div>
@@ -341,7 +413,7 @@ const CreateOrder = (args) => {
               <div>
                 <h1 className="">Create Order</h1>
               </div>
-              <div className="d-flex justify-content-between">
+              {/* <div className="d-flex justify-content-between">
                 <div>
                   <span className="orderIdtext pr-1">Order Id</span>
 
@@ -397,7 +469,7 @@ const CreateOrder = (args) => {
                     ) : null}
                   </div>
                 </div>
-              </div>
+              </div> */}
             </Col>
           </Row>
 
@@ -911,7 +983,7 @@ const CreateOrder = (args) => {
                     }
                   )} */}
 
-                <div className="container">
+                {/* <div className="container">
                   <Label className="py-1">Notification</Label>
                   <div>
                     {CreatAccountView &&
@@ -958,18 +1030,17 @@ const CreateOrder = (args) => {
                         }
                       )}
                   </div>
-                </div>
+                </div> */}
               </Row>
-              <hr />
 
-              <h2 className="text-center">Product Details</h2>
+              {/* <h2 className="text-center">Product Details</h2> */}
               {product &&
                 product?.map((product, index) => (
-                  <Row className="productRow" key={index}>
-                    <div className="setInput lookUp" lg="2" md="2" sm="12">
-                      <div className="mainLook">
+                  <Row className="" key={index}>
+                    <Col className="mb-1" lg="2" md="2" sm="12">
+                      <div className="">
                         <Label>Product#</Label>
-                        <InputGroup className="maininput">
+                        {/* <InputGroup className="">
                           <Input
                             className="form-control inputs"
                             disabled
@@ -989,24 +1060,40 @@ const CreateOrder = (args) => {
                               fill="white"
                             />
                           </Button>
-                        </InputGroup>
+                        </InputGroup> */}
+                        <Multiselect
+                          required
+                          selectionLimit={1}
+                          // showCheckbox="true"
+
+                          isObject="false"
+                          options={ProductList} // Options to display in the dropdown
+                          // selectedValues={selectedValue}   // Preselected value to persist in dropdown
+                          onSelect={(selectedList, selectedItem) => {
+                            onSelect1(selectedList, selectedItem, index);
+                          }} // Function will trigger on select event
+                          onRemove={(selectedList, selectedItem) => {
+                            onRemove1(selectedList, selectedItem, index);
+                          }} // Function will trigger on remove event
+                          displayValue="Product_Title" // Property name to display in the dropdown options
+                        />
                       </div>
-                    </div>
-                    <div className="setInput" lg="2" md="2" sm="12">
+                    </Col>
+                    <Col className="mb-1" lg="2" md="2" sm="12">
                       <div className="">
-                        <Label>ProdName</Label>
+                        <Label>Product Name</Label>
                         <Input
                           type="text"
                           name="ProdName"
                           readOnly
-                          placeholder="ProdName"
+                          placeholder="Product Name"
                           value={product.productName || ""}
                         />
                       </div>
-                    </div>
-                    <div className="setInput" lg="2" md="2" sm="12">
-                      <div className="Qntywidth">
-                        <Label>Avl_Qty</Label>
+                    </Col>
+                    <Col className="mb-1" lg="2" md="2" sm="12">
+                      <div className="">
+                        <Label>Available Qty</Label>
                         <Input
                           type="number"
                           name="availableQty"
@@ -1015,10 +1102,10 @@ const CreateOrder = (args) => {
                           value={product.availableQty}
                         />
                       </div>
-                    </div>
-                    <div className="setInput" lg="2" md="2" sm="12">
-                      <div className="Qntywidth">
-                        <Label>Req_Qty</Label>
+                    </Col>
+                    <Col className="mb-1" lg="2" md="2" sm="12">
+                      <div className="">
+                        <Label>Required Qty</Label>
                         <Input
                           type="number"
                           name="rquiredQty"
@@ -1027,8 +1114,8 @@ const CreateOrder = (args) => {
                           onChange={(e) => handleProductChangeProduct(e, index)}
                         />
                       </div>
-                    </div>
-                    <div className="setInput" lg="2" md="2" sm="12">
+                    </Col>
+                    <Col className="mb-1" lg="2" md="2" sm="12">
                       <div className="">
                         <Label>Price</Label>
                         <Input
@@ -1039,10 +1126,10 @@ const CreateOrder = (args) => {
                           value={product.price}
                         />
                       </div>
-                    </div>
-                    <div className="setInput" lg="2" md="2" sm="12">
+                    </Col>
+                    <Col className="mb-1" lg="2" md="2" sm="12">
                       <div className="">
-                        <Label>TtlPrice</Label>
+                        <Label>Total Price</Label>
                         <Input
                           type="number"
                           name="totalprice"
@@ -1052,10 +1139,42 @@ const CreateOrder = (args) => {
                           // value={product.price * product.rquiredQty}
                         />
                       </div>
-                    </div>
-                    <div className="setInput" lg="2" md="2" sm="12">
+                    </Col>
+                    <Col className="mb-1" lg="2" md="2" sm="12">
                       <div className="">
-                        <Label>Dissct</Label>
+                        <Label>Choose Party</Label>
+
+                        <Multiselect
+                          required
+                          selectionLimit={1}
+                          // showCheckbox="true"
+
+                          isObject="false"
+                          options={ProductList} // Options to display in the dropdown
+                          // selectedValues={selectedValue}   // Preselected value to persist in dropdown
+                          onSelect={onSelect1} // Function will trigger on select event
+                          onRemove={onRemove1} // Function will trigger on remove event
+                          displayValue="Product_Title" // Property name to display in the dropdown options
+                        />
+                      </div>
+                    </Col>
+                    <Col className="mb-1" lg="2" md="2" sm="12">
+                      <div className="">
+                        <Label>Date Of Delivery</Label>
+                        <Input
+                          required
+                          type="date"
+                          name="DateofDelivery"
+                          placeholder="Date of Delivery"
+                          value={product.DateofDelivery}
+                          // value={product.price * product.rquiredQty}
+                          onChange={(e) => handleProductChangeProduct(e, index)}
+                        />
+                      </div>
+                    </Col>
+                    <Col className="mb-1" lg="2" md="2" sm="12">
+                      <div className="">
+                        <Label>Discount</Label>
                         <Input
                           type="number"
                           name="discount"
@@ -1064,10 +1183,10 @@ const CreateOrder = (args) => {
                           value={product.discount}
                         />
                       </div>
-                    </div>
-                    <div className="setInput" lg="2" md="2" sm="12">
+                    </Col>
+                    <Col className="mb-1" lg="2" md="2" sm="12">
                       <div className="">
-                        <Label>Shipcst</Label>
+                        <Label>Shipping Cost</Label>
                         <Input
                           type="number"
                           name="Shipcst"
@@ -1076,9 +1195,9 @@ const CreateOrder = (args) => {
                           value={product.Shipping}
                         />
                       </div>
-                    </div>
-                    <div className="setInput" lg="2" md="2" sm="12">
-                      <div className="Qntywidth">
+                    </Col>
+                    <Col className="mb-1" lg="2" md="2" sm="12">
+                      <div className="">
                         <Label>Tax</Label>
                         <Input
                           type="number"
@@ -1088,9 +1207,10 @@ const CreateOrder = (args) => {
                           value={product.tax}
                         />
                       </div>
-                    </div>
-                    <div className="setInput" lg="2" md="2" sm="12">
-                      <div className="Qntywidth">
+                    </Col>
+
+                    {/* <Col className="mb-1" lg="2" md="2" sm="12">
+                      <div className="">
                         <Label>Grdttl</Label>
                         <Input
                           type="number"
@@ -1100,8 +1220,8 @@ const CreateOrder = (args) => {
                           value={product.grandTotal || ""}
                         />
                       </div>
-                    </div>
-                    <div className="d-flex mt-2 abb" lg="" md="2" sm="12">
+                    </Col> */}
+                    <Col className="d-flex mt-1 abb" lg="3" md="3" sm="12">
                       <div className="btnStyle">
                         {index ? (
                           <Button
@@ -1117,7 +1237,7 @@ const CreateOrder = (args) => {
 
                       <div className="btnStyle">
                         <Button
-                          className="ml-1 "
+                          className="ml-1 mb-1"
                           color="primary"
                           type="button"
                           onClick={() => addMoreProduct()}
@@ -1125,11 +1245,10 @@ const CreateOrder = (args) => {
                           +
                         </Button>
                       </div>
-                    </div>
+                    </Col>
                   </Row>
                 ))}
-              <hr></hr>
-              <h2 className="text-center">Part Details</h2>
+              {/* <h2 className="text-center">Part Details</h2>
               {part.map((part, index) => (
                 <Row className="" key={index}>
                   <div className="setInput" lg="2" md="2" sm="12">
@@ -1295,14 +1414,22 @@ const CreateOrder = (args) => {
                     </div>
                   </Col>
                 </Row>
-              ))}
+              ))} */}
               <Row>
-                <Button.Ripple color="primary" type="submit" className="mt-2">
-                  Submit
-                </Button.Ripple>
+                <Col>
+                  <div className="d-flex justify-content-center">
+                    <Button.Ripple
+                      color="primary"
+                      type="submit"
+                      className="mt-2"
+                    >
+                      Submit
+                    </Button.Ripple>
+                  </div>
+                </Col>
               </Row>
             </Form>
-            {Commentshow && Commentshow ? (
+            {/* {Commentshow && Commentshow ? (
               <>
                 {Comments.length &&
                   Comments?.map((ele, i) => (
@@ -1419,7 +1546,7 @@ const CreateOrder = (args) => {
                 </Row>
               ))}
             </div>
-            <Payment />
+            <Payment /> */}
           </CardBody>
         </Card>
         <Modal
