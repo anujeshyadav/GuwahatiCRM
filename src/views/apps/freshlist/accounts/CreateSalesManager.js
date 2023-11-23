@@ -232,7 +232,7 @@ const CreateSalesManager = () => {
                         value={formData[dropdownValue?.name?._text]}
                         onChange={handleInputChange}
                       >
-                        <option value="">--Select Role--</option>
+                        <option value="">--Select --</option>
                         {dropdownValue?.option?.map((option, index) => (
                           <option
                             key={index}
