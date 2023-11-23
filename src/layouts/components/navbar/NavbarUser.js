@@ -117,6 +117,20 @@ const UserDropdown = (props) => {
         render={({ history }) => (
           <DropdownItem
             tag="a"
+            onClick={(e) => {
+              e.preventDefault();
+              history.push("/pages/profile/userProfile");
+            }}
+          >
+            <Icon.Plus size={14} className="mr-50" />
+            <span className="align-middle">Upload Logo</span>
+          </DropdownItem>
+        )}
+      />
+      <Route
+        render={({ history }) => (
+          <DropdownItem
+            tag="a"
             href="#"
             onClick={(e) => {
               localStorage.clear();

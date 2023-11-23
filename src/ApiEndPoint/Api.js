@@ -11,11 +11,10 @@ export const Create_Transporter_List = "/transporter/view-transporter";
 export const Delete_Transporter_List = "/transporter/delete-transporter/";
 
 export const Create_unit_xmlView = "/unit/get-xml";
-export const Create_unit_save  = "/unit/save-unit";
+export const Create_unit_save = "/unit/save-unit";
 export const Create_unit_List = "/unit/view-unit";
 export const Delete_Unit_List = "/unit/delete-unit/";
 export const Unit_ViewOne = "/unit/update-unit/";
-
 
 export const Create_Category = "/categories/save-category";
 export const Category_List = "/categories/view-category";
@@ -27,6 +26,10 @@ export const ProductList_View = "/product/view-product";
 // Guwahati close
 
 export const Create_Account_xmlView = "/user/get-xml";
+export const Create_SalesMan_xmlView =
+  "https://xmlfileaws.s3.ap-south-1.amazonaws.com/CreateSalesmanConfig%5D.xml";
+export const Create_SalesManager_xmlView =
+  "https://xmlfileaws.s3.ap-south-1.amazonaws.com/CreateSalesManagerConfig.xml";
 export const Create_Customer_xmlView = "/customer/get-xml";
 export const Create_Customer_save = "/customer/save-customer";
 export const Create_Account_save = "/user/save-user";

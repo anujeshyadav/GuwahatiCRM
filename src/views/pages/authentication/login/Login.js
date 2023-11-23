@@ -135,9 +135,10 @@ class Login extends React.Component {
 
   loginHandler = async (e) => {
     e.preventDefault();
+    this.props.history.push("/dashboard");
 
     let data = { username: this.state.email, password: this.state.password };
-  await UserLogin(data)
+    await UserLogin(data)
       .then((res) => {
         console.log(res?.user);
         if (
