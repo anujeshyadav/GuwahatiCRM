@@ -20,6 +20,7 @@ import { Country, State, City } from "country-state-city";
 import Select from "react-select";
 import moment from "moment-timezone";
 import { Route } from "react-router-dom";
+import createSalesManager from "../../../../xmlfiles/CreateSalesManager";
 
 import swal from "sweetalert";
 import "../../../../../src/layouts/assets/scss/pages/users.scss";
@@ -120,23 +121,29 @@ const CreateSalesManager = () => {
     console.log(formData);
   }, [formData]);
   useEffect(() => {
-    CreateMySalesManager()
-      .then((res) => {
-        console.log(res);
+    let response = createSalesManager();
+    const jsonData = xmlJs.xml2json(response, { compact: true, spaces: 2 });
+    debugger;
+    console.log(JSON.parse(jsonData)?.Createsalesmanager);
+    setCreatAccountView(JSON.parse(jsonData)?.Createsalesmanager?.input);
 
-        debugger;
-        const jsonData = xmlJs.xml2json(res, { compact: true, spaces: 2 });
-        console.log(JSON.parse(jsonData)?.Createsalesmanager);
-        setCreatAccountView(JSON.parse(jsonData)?.Createsalesmanager?.input);
+    // CreateMySalesManager()
+    //   .then((res) => {
+    //     console.log(res);
 
-        setdropdownValue(
-          JSON.parse(jsonData)?.CreateCustomer?.MyDropDown?.dropdown
-        );
-      })
-      .catch((err) => {
-        console.log(err);
-        swal("Something Went Wrong");
-      });
+    //     debugger;
+    //     const jsonData = xmlJs.xml2json(res, { compact: true, spaces: 2 });
+    //     console.log(JSON.parse(jsonData)?.Createsalesmanager);
+    //     setCreatAccountView(JSON.parse(jsonData)?.Createsalesmanager?.input);
+
+    //     setdropdownValue(
+    //       JSON.parse(jsonData)?.CreateCustomer?.MyDropDown?.dropdown
+    //     );
+    //   })
+    //   .catch((err) => {
+    //     console.log(err);
+    //     swal("Something Went Wrong");
+    //   });
   }, []);
 
   const submitHandler = (e) => {
@@ -219,7 +226,7 @@ const CreateSalesManager = () => {
           <CardBody>
             <Form className="m-1" onSubmit={submitHandler}>
               <Row className="mb-2">
-                {dropdownValue && (
+                {/* {dropdownValue && (
                   <Col lg="4" md="4" sm="12">
                     <FormGroup>
                       <Label className="mb-1">
@@ -244,7 +251,7 @@ const CreateSalesManager = () => {
                       </CustomInput>
                     </FormGroup>
                   </Col>
-                )}
+                )} */}
 
                 {CreatAccountView &&
                   CreatAccountView?.map((ele, i) => {

@@ -45,7 +45,7 @@ import { Route } from "react-router-dom";
                 {CreatGoDownView &&
                   CreatGoDownView?.map((ele, i) => {
                    return (
-                    <Col  lg="6" md="6" sm="12">
+                    <Col  lg="4" md="4" sm="12">
                     <FormGroup >
                       <Label>{ele?.label?._text}</Label>
 
