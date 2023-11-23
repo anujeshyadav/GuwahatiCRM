@@ -667,6 +667,9 @@ const UpdateExistingRole = lazy(() =>
 const CreateAccount = lazy(() =>
   import("./views/apps/freshlist/accounts/CreateAccount")
 );
+const CreateReturnSalesOrder = lazy(() =>
+  import("./views/apps/freshlist/accounts/CreateReturnSalesOrder")
+);
 const PartyCreation = lazy(() =>
   import("./views/apps/freshlist/accounts/PartyCreation")
 );
@@ -773,6 +776,9 @@ const ServiceMaster = lazy(() =>
 );
 const AccounSearch = lazy(() =>
   import("./views/apps/freshlist/house/AccounSearch")
+);
+const SalesOrderReturn = lazy(() =>
+  import("./views/apps/freshlist/house/SalesOrderReturn")
 );
 const PartyList = lazy(() => import("./views/apps/freshlist/house/PartyList"));
 const CustomerSearch = lazy(() =>
@@ -1969,6 +1975,10 @@ class AppRouter extends React.Component {
             path="/app/SoftNumen/account/CreateAccount"
             component={CreateAccount}
           />
+          <AppRoute
+            path="/app/SoftNumen/account/CreateReturnSalesOrder"
+            component={CreateReturnSalesOrder}
+          />
           {/* create Party */}
           <AppRoute
             path="/app/SoftNumen/account/PartyCreation"
@@ -2090,6 +2100,10 @@ class AppRouter extends React.Component {
           <AppRoute
             path="/app/SoftNumen/accounSearch"
             component={AccounSearch}
+          />
+          <AppRoute
+            path="/app/SoftNumen/SalesOrderReturnList"
+            component={SalesOrderReturn}
           />
           <AppRoute
             path="/app/SoftNumen/CustomerSearch"

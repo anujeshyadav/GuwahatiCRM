@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useContext } from "react";
 import xmlJs from "xml-js";
+import Multiselect from "multiselect-react-dropdown";
 import {
   Card,
   CardBody,
@@ -20,6 +21,7 @@ import { Country, State, City } from "country-state-city";
 import Select from "react-select";
 import moment from "moment-timezone";
 import { Route } from "react-router-dom";
+import salesreturnorderlist from "../../../../xmlfiles/SalesReturnXmlcall";
 
 import swal from "sweetalert";
 import "../../../../../src/layouts/assets/scss/pages/users.scss";
@@ -27,9 +29,6 @@ import "../../../../../src/layouts/assets/scss/pages/users.scss";
 import {
   CreateAccountSave,
   CreateAccountView,
-  CreateCustomersave,
-  CreateCustomerxmlView,
-  CreateMySalesTeam,
 } from "../../../../ApiEndPoint/ApiCalling";
 import { BiEnvelope } from "react-icons/bi";
 import { FcPhoneAndroid } from "react-icons/fc";
@@ -38,9 +37,8 @@ import "../../../../assets/scss/pages/users.scss";
 import UserContext from "../../../../context/Context";
 import { CloudLightning } from "react-feather";
 import { FaPlus } from "react-icons/fa";
-import createSalesman from "../../../../xmlfiles/CreateSalesman";
 
-const CreateSalesTeam = () => {
+const CreateReturnSalesOrder = () => {
   const [CreatAccountView, setCreatAccountView] = useState([]);
   const [Countries, setCountry] = useState({});
   const [States, setState] = useState({});
@@ -53,15 +51,6 @@ const CreateSalesTeam = () => {
 
   const Context = useContext(UserContext);
 
-  const handleFileChange = (e, type, i) => {
-    const { name, value, checked } = e.target;
-    let allimages = Array.from(e.target.files);
-    setindex(i);
-    setFormData({
-      ...formData,
-      [name]: allimages,
-    });
-  };
   const handleInputChange = (e, type, i) => {
     const { name, value, checked } = e.target;
     setindex(i);
@@ -85,19 +74,10 @@ const CreateSalesTeam = () => {
             [name]: value,
           });
           setError("");
-        }
-        //  else {
-        //   setError(
-        //     "Please enter a valid number with a maximum length of 10 digits"
-        //   );
-        // }
-      } else if (type == "file") {
-        // debugger;
-        if (e.target.files) {
-          setFormData({
-            ...formData,
-            [name]: e.target.files[0],
-          });
+        } else {
+          setError(
+            "Please enter a valid number with a maximum length of 10 digits"
+          );
         }
       } else {
         if (value.length <= 10) {
@@ -121,66 +101,33 @@ const CreateSalesTeam = () => {
     console.log(formData);
   }, [formData]);
   useEffect(() => {
-    let response = createSalesman();
+    let response = salesreturnorderlist();
     const jsonData = xmlJs.xml2json(response, { compact: true, spaces: 2 });
-    console.log(JSON.parse(jsonData)?.Createsalesman);
-    setCreatAccountView(JSON.parse(jsonData)?.Createsalesman?.input);
-
-    // setdropdownValue(
-    //   JSON.parse(jsonData)?.Createsalesman?.MyDropDown?.dropdown
-    // );
-    // CreateMySalesTeam()
+    console.log(JSON.parse(jsonData)?.SalesReturn);
+    setCreatAccountView(JSON.parse(jsonData)?.SalesReturn?.input);
+    setdropdownValue(JSON.parse(jsonData)?.SalesReturn?.MyDropDown?.dropdown);
+    // CreateAccountView()
     //   .then((res) => {
-    //     console.log(res);
-    //     debugger;
-    //     const jsonData = xmlJs.xml2json(res, { compact: true, spaces: 2 });
-    //     console.log(JSON.parse(jsonData)?.Createsalesmanager);
-    //     setCreatAccountView(JSON.parse(jsonData)?.Createsalesmanager?.input);
+    //     const jsonData = xmlJs.xml2json(res.data, { compact: true, spaces: 2 });
+    //     // console.log(JSON.parse(jsonData)?.CreateUser?.input);
 
-    //     setdropdownValue(
-    //       JSON.parse(jsonData)?.CreateCustomer?.MyDropDown?.dropdown
-    //     );
+    //     setCreatAccountView(JSON.parse(jsonData)?.CreateUser?.input);
+
+    //     setdropdownValue(JSON.parse(jsonData));
     //   })
     //   .catch((err) => {
     //     console.log(err);
-    //     swal("Something Went Wrong");
     //   });
   }, []);
 
   const submitHandler = (e) => {
     e.preventDefault();
-    // console.log(CreatAccountView);
-    // console.log(dropdownValue);
-    let formdata = new FormData();
-    CreatAccountView?.map((ele, i) => {
-      if (ele?.type?._attributes?.type == "text") {
-        formdata.append(`${ele?.name._text}`, formData[ele?.name?._text]);
-      } else if (ele?.type?._attributes?.type == "file") {
-        if (ele?.name?._text == "Shopphoto") {
-          formData[ele?.name?._text]?.map((val, index) => {
-            formdata.append("file", formData[ele?.name?._text][index]);
-          });
-        }
-        if (ele?.name?._text == "photo") {
-          formData[ele?.name?._text]?.map((val, index) => {
-            formdata.append("files", formData[ele?.name?._text][index]);
-          });
-        }
-      }
-    });
-    formdata.append(
-      `${dropdownValue?.name?._text}`,
-      formData[dropdownValue?.name?._text]
-    );
-    formdata.forEach((value, key) => {
-      console.log(key, value);
-    });
+    console.log(formData);
     if (error) {
       swal("Error occured while Entering Details");
     } else {
-      CreateCustomersave(formdata)
+      CreateAccountSave(formData)
         .then((res) => {
-          console.log(res);
           setFormData({});
           if (res.status) {
             window.location.reload();
@@ -188,7 +135,7 @@ const CreateSalesTeam = () => {
           }
         })
         .catch((err) => {
-          console.log(err.response);
+          console.log(err);
         });
     }
   };
@@ -199,7 +146,7 @@ const CreateSalesTeam = () => {
         <Card>
           <Row className="m-2">
             <Col>
-              <h1 className="float-left">Create Sales Man</h1>
+              <h1 className="float-left">Create Sales order Return</h1>
             </Col>
             <Col>
               <div className="float-right">
@@ -210,7 +157,7 @@ const CreateSalesTeam = () => {
                       className="float-right mr-1"
                       color="primary"
                       onClick={() =>
-                        history.push("/app/SoftNumen/CreateSalesMan")
+                        history.push("/app/SoftNumen/SalesOrderReturnList")
                       }
                     >
                       {" "}
@@ -227,16 +174,14 @@ const CreateSalesTeam = () => {
           <CardBody>
             <Form className="m-1" onSubmit={submitHandler}>
               <Row className="mb-2">
-                {/* {dropdownValue && (
-                  <Col lg="4" md="4" sm="12">
+                {dropdownValue && dropdownValue ? (
+                  <Col lg="4" md="4">
                     <FormGroup>
-                      <Label className="mb-1">
-                        {dropdownValue && dropdownValue?.label?._text}
-                      </Label>
+                      <Label>{dropdownValue?.label?._text}</Label>
                       <CustomInput
                         required
                         type="select"
-                        name={dropdownValue && dropdownValue?.name?._text}
+                        name={dropdownValue?.name?._text}
                         value={formData[dropdownValue?.name?._text]}
                         onChange={handleInputChange}
                       >
@@ -252,7 +197,7 @@ const CreateSalesTeam = () => {
                       </CustomInput>
                     </FormGroup>
                   </Col>
-                )} */}
+                ) : null}
 
                 {CreatAccountView &&
                   CreatAccountView?.map((ele, i) => {
@@ -270,9 +215,7 @@ const CreateSalesTeam = () => {
                         <>
                           <Col key={i} lg="4" md="4" sm="12">
                             <FormGroup>
-                              <Label className="mb-1">
-                                {ele?.label?._text}
-                              </Label>
+                              <Label>{ele?.label?._text}</Label>
                               <PhoneInput
                                 inputClass="myphoneinput"
                                 country={"us"}
@@ -315,9 +258,7 @@ const CreateSalesTeam = () => {
                         return (
                           <Col key={i} lg="4" md="4" sm="12">
                             <FormGroup>
-                              <Label className="mb-1">
-                                {ele?.label?._text}
-                              </Label>
+                              <Label>{ele?.label?._text}</Label>
                               <Select
                                 inputClass="countryclass"
                                 className="countryclassnw"
@@ -355,9 +296,7 @@ const CreateSalesTeam = () => {
                         return (
                           <Col key={i} lg="4" md="4" sm="12">
                             <FormGroup>
-                              <Label className="mb-1">
-                                {ele?.label?._text}
-                              </Label>
+                              <Label>{ele?.label?._text}</Label>
                               <Select
                                 options={State?.getStatesOfCountry(
                                   Countries?.isoCode
@@ -395,9 +334,7 @@ const CreateSalesTeam = () => {
                         return (
                           <Col key={i} lg="4" md="4" sm="12">
                             <FormGroup>
-                              <Label className="mb-1">
-                                {ele?.label?._text}
-                              </Label>
+                              <Label>{ele?.label?._text}</Label>
                               <Select
                                 options={City?.getCitiesOfState(
                                   States?.countryCode,
@@ -439,9 +376,7 @@ const CreateSalesTeam = () => {
                               <>
                                 <Col key={i} lg="4" md="4" sm="12">
                                   <FormGroup key={i}>
-                                    <Label className="mb-1">
-                                      {ele?.label?._text}
-                                    </Label>
+                                    <Label>{ele?.label?._text}</Label>
 
                                     <Input
                                       onKeyDown={(e) => {
@@ -495,9 +430,7 @@ const CreateSalesTeam = () => {
                               <>
                                 <Col key={i} lg="4" md="4" sm="12">
                                   <FormGroup key={i}>
-                                    <Label className="mb-1">
-                                      {ele?.label?._text}
-                                    </Label>
+                                    <Label>{ele?.label?._text}</Label>
 
                                     <Input
                                       onKeyDown={(e) => {
@@ -547,9 +480,7 @@ const CreateSalesTeam = () => {
                             <>
                               <Col key={i} lg="4" md="4" sm="12">
                                 <FormGroup key={i}>
-                                  <Label className="mb-1">
-                                    {ele?.label?._text}
-                                  </Label>
+                                  <Label>{ele?.label?._text}</Label>
 
                                   <Input
                                     onWheel={(e) => {
@@ -592,102 +523,9 @@ const CreateSalesTeam = () => {
                           ) : (
                             <Col key={i} lg="4" md="4" sm="12">
                               <FormGroup key={i}>
-                                {ele?.type?._attributes?.type &&
-                                ele?.type?._attributes?.type == "file" ? (
-                                  <>
-                                    <Label className="mb-1">
-                                      {ele?.label?._text}
-                                    </Label>
-
-                                    <Input
-                                      multiple
-                                      className="form-control"
-                                      type={ele?.type?._attributes?.type}
-                                      placeholder={ele?.placeholder?._text}
-                                      name={ele?.name?._text}
-                                      //   value={formData[ele?.name?._text]}
-                                      onChange={(e) => {
-                                        // const value = e.target.value;
-                                        // // Use regular expression to allow only numbers
-                                        // const numericValue = value.replace(
-                                        //   /\D/g,
-                                        //   ""
-                                        // );
-                                        handleFileChange(
-                                          e,
-                                          ele?.type?._attributes?.type,
-                                          i
-                                        );
-                                      }}
-                                    />
-                                    {index === i ? (
-                                      <>
-                                        {error && (
-                                          <span style={{ color: "red" }}>
-                                            {error}
-                                          </span>
-                                        )}
-                                      </>
-                                    ) : (
-                                      <></>
-                                    )}
-                                  </>
-                                ) : (
-                                  <>
-                                    <Label className="mb-1">
-                                      {ele?.label?._text}
-                                    </Label>
-
-                                    <Input
-                                      className="form-control"
-                                      onKeyDown={(e) => {
-                                        if (
-                                          ele?.type?._attributes?.type ==
-                                          "number"
-                                        ) {
-                                          ["e", "E", "+", "-"].includes(
-                                            e.key
-                                          ) && e.preventDefault();
-                                        }
-                                      }}
-                                      type={ele?.type?._attributes?.type}
-                                      placeholder={ele?.placeholder?._text}
-                                      name={ele?.name?._text}
-                                      value={formData[ele?.name?._text]}
-                                      onChange={(e) => {
-                                        // const value = e.target.value;
-                                        // // Use regular expression to allow only numbers
-                                        // const numericValue = value.replace(
-                                        //   /\D/g,
-                                        //   ""
-                                        // );
-                                        handleInputChange(
-                                          e,
-                                          ele?.type?._attributes?.type,
-                                          i
-                                        );
-                                      }}
-                                    />
-                                    {index === i ? (
-                                      <>
-                                        {error && (
-                                          <span style={{ color: "red" }}>
-                                            {error}
-                                          </span>
-                                        )}
-                                      </>
-                                    ) : (
-                                      <></>
-                                    )}
-                                  </>
-                                )}
-
-                                {/* <Label className="mb-1">
-                                  {ele?.label?._text}
-                                </Label>
+                                <Label>{ele?.label?._text}</Label>
 
                                 <Input
-                                  className="form-control"
                                   onKeyDown={(e) => {
                                     if (
                                       ele?.type?._attributes?.type == "number"
@@ -724,7 +562,7 @@ const CreateSalesTeam = () => {
                                   </>
                                 ) : (
                                   <></>
-                                )} */}
+                                )}
                               </FormGroup>
                             </Col>
                           )}
@@ -789,4 +627,4 @@ const CreateSalesTeam = () => {
     </div>
   );
 };
-export default CreateSalesTeam;
+export default CreateReturnSalesOrder;

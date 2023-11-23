@@ -102,8 +102,8 @@ const CreateOrder = (args) => {
 
   const [Comments, setComments] = useState([
     {
-      name: JSON.parse(localStorage.getItem("userData")).UserName,
-      userRole: JSON.parse(localStorage.getItem("userData")).Role,
+      name: JSON.parse(localStorage.getItem("userData"))?.UserName,
+      userRole: JSON.parse(localStorage.getItem("userData"))?.Role,
       comment: "",
       time: new Date(),
     },
@@ -111,8 +111,8 @@ const CreateOrder = (args) => {
   const [formValues, setFormValues] = useState([{ files: [] }]);
 
   const newComment = {
-    userName: JSON.parse(localStorage.getItem("userData")).UserName,
-    Role: JSON.parse(localStorage.getItem("userData")).Role,
+    userName: JSON.parse(localStorage.getItem("userData"))?.UserName,
+    Role: JSON.parse(localStorage.getItem("userData"))?.Role,
     comment: "",
     time: new Date().toString(),
   };
