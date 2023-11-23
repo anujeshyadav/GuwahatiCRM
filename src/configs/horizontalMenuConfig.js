@@ -965,6 +965,14 @@ const horizontalMenuConfig = [
         permissions: ["admin", "editor"],
         navLink: "/app/softNumen/Unit/UnitList",
       },
+      {
+        id: "wareHouseStock",
+        title: "WareHouseStock",
+        type: "item",
+        icon: <FaCircle size={8} />,
+        permissions: ["admin", "editor"],
+        navLink: "/app/softnumen/warehouseStock",
+      },
     ],
   },
 
