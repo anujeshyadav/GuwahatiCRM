@@ -38,6 +38,7 @@ import "../../../../assets/scss/pages/users.scss";
 import UserContext from "../../../../context/Context";
 import { CloudLightning } from "react-feather";
 import { FaPlus } from "react-icons/fa";
+import xmlfile from "../../../../../src/xmlfiles/CreateSalesmanConfig.xml";
 
 const CreateSalesTeam = () => {
   const [CreatAccountView, setCreatAccountView] = useState([]);
@@ -118,6 +119,23 @@ const CreateSalesTeam = () => {
   };
   useEffect(() => {
     console.log(formData);
+    console.log(xmlfile);
+    const fetchData = async () => {
+      try {
+        const response = await fetch("path/to/your/xml/file.xml");
+        const xmlData = await response.text();
+
+        parseString(xmlData, (err, result) => {
+          if (err) {
+            console.error("Error parsing XML:", err);
+          } else {
+            setData(result);
+          }
+        });
+      } catch (error) {
+        console.error("Error fetching XML:", error);
+      }
+    };
   }, [formData]);
   useEffect(() => {
     CreateMySalesTeam()
