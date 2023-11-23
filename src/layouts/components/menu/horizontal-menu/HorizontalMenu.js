@@ -337,7 +337,7 @@ class HorizontalSidebar extends React.Component {
       } else {
       }
     });
-    console.log(allList.flat());
+    // console.log(allList.flat());
     let myallList = allList?.flat();
     this.setState({ AllAvailableCol: myallList });
   }

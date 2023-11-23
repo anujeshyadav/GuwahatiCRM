@@ -481,6 +481,10 @@ const CreateOrder = lazy(() =>
 const InvoiceGenerator = lazy(() =>
   import("./views/apps/freshlist/subcategory/InvoiceGenerator")
 );
+
+const WarehouseStock = lazy(() =>
+  import("./views/apps/freshlist/subcategory/WarehouseStock")
+);
 const AddTaxSoft = lazy(() =>
   import("./views/apps/freshlist/subcategory/AddTax")
 );
@@ -1467,6 +1471,10 @@ class AppRouter extends React.Component {
           <AppRoute
             path="/app/softnumen/InvoiceGenerator"
             component={InvoiceGenerator}
+          />
+         <AppRoute
+            path="/app/softnumen/warehouseStock"
+            component={WarehouseStock}
           />
           <AppRoute path="/app/softnumen/AddTaxSoft" component={AddTaxSoft} />
           <AppRoute

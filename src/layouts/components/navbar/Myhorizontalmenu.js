@@ -37,16 +37,17 @@ class HorizontalSidebar extends React.Component {
 
   openDropdown = (id) => {
     console.log(id)
-  // const openDrop =document.getElementById("showlist")
+  // document.getElementById("showlist").className="show nav-link"; 
+  // console.log(openDrop.className)
   // document.getElementById("showlist").className = "show nav-link dropdown";  
-  if(id){
-    this.setState(() => ({
-      isClassAdded: true,
-      }));
-  }
-  
+
     let arr = this.state.openDropdown;
     if (!arr.includes(id)) arr.push(id);
+    if(id){
+      this.setState(() => ({
+        isClassAdded: true,
+        }));
+    }
     return this.setState({
       openDropdown: arr,
     });
@@ -186,7 +187,7 @@ class HorizontalSidebar extends React.Component {
                   {child.children ? (
                     <Dropdown
                       className={classnames("sub-menu w-100", {}) }
-                      isOpen={this.state.openDropdown.includes(child.id)}
+                      // isOpen={this.state.openDropdown.includes(child.id)}
                       direction={this.state.openLeft ? "left" : "right"}
                       toggle={() => true}
                       onClick={() => this.openDropdown(child.id)}
@@ -281,7 +282,7 @@ class HorizontalSidebar extends React.Component {
               }
             )}
             onClick={() => {
-              this.openDropdown(item.id);
+              // this.openDropdown(item.id);
               this.handleParentHover(item.id);
             }}
             // onMouseEnter={() => {

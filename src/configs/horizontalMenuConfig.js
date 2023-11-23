@@ -141,6 +141,7 @@ const horizontalMenuConfig = [
         type: "item",
         icon: <FaCircle size={8} />,
         permissions: ["admin", "editor"],
+        // navLink: "/app/softnumen/InvoiceGenerator",
         navLink: "/app/softNumen/order/OrderSearch",
       },
       {
