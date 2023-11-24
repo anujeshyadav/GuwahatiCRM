@@ -187,7 +187,7 @@ class HorizontalSidebar extends React.Component {
                   {child.children ? (
                     <Dropdown
                       className={classnames("sub-menu w-100", {}) }
-                      // isOpen={this.state.openDropdown.includes(child.id)}
+                      isOpen={this.state.openDropdown.includes(child.id)}
                       direction={this.state.openLeft ? "left" : "right"}
                       toggle={() => true}
                       onClick={() => this.openDropdown(child.id)}

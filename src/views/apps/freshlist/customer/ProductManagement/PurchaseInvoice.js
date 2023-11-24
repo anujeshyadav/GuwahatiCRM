@@ -17,29 +17,30 @@ import {
   ModalHeader,
   ModalBody,
   Badge,
+  FormGroup,
 } from "reactstrap";
 import { AiOutlineDownload } from "react-icons/ai";
+import axiosConfig from "../../../../../axiosConfig";
 import { ToWords } from "to-words";
-import "../../../../assets/css/main.css";
-import axiosConfig from "../../../../axiosConfig";
-import { ContextLayout } from "../../../../utility/context/Layout";
+import { ContextLayout } from "../../../../../utility/context/Layout";
 import { AgGridReact } from "ag-grid-react";
-import "ag-grid-community/dist/styles/ag-grid.css";
 import { Eye, Trash2, ChevronDown, Edit, CloudLightning } from "react-feather";
-import { history } from "../../../../history";
-import "../../../../assets/scss/plugins/tables/_agGridStyleOverride.scss";
-import "../../../../assets/scss/pages/users.scss";
-import swal from "sweetalert";
-import InvoiceGenerator from "../subcategory/PurchaseOrderGenerator";
-// import AnalyticsDashboard from "../../../dashboard/analytics/AnalyticsDashboard";
+import { history } from "../../../../../history";
+import "../../../../../assets/scss/plugins/tables/_agGridStyleOverride.scss";
+import "../../../../../assets/scss/pages/users.scss";
+// import "../../../../assets/scss/pages/users.scss";
+import InvoicGenerator from "../../subcategory/InvoiceGeneratorone";
 import { Route, Link } from "react-router-dom";
+import swal from "sweetalert";
 
 const toWords = new ToWords({
   localeCode: "en-IN",
   converterOptions: {
     currency: true,
     ignoreDecimal: false,
+    ShowMyBill: false,
     ignoreZeroCurrency: false,
+
     doNotAddOnly: false,
     currencyOptions: {
       // can be used to override defaults for the selected locale
@@ -54,13 +55,26 @@ const toWords = new ToWords({
     },
   },
 });
-class PurchasedOrder extends React.Component {
+const AddedBill = [];
+const AllProduct = [];
+
+class PurchaseInvoice extends React.Component {
   state = {
+    AllbillMerged: [],
     rowData: [],
+    Applied_Charges: {},
+    paginationPageSize: 20,
+    currenPageSize: "",
+    Billtoposition: "Left",
+    shipto: "right",
+    logoposition: "Left",
+    ButtonText: "Submit",
+    Mergebilllength: "",
     modal: false,
     sgst: "",
-    wordsNumber: "",
+    discount: "",
     ViewBill: true,
+    wordsNumber: "",
     cgst: "",
     otherCharges: "",
     deliveryCharges: "",
@@ -69,10 +83,13 @@ class PurchasedOrder extends React.Component {
     Editpermisson: null,
     Createpermisson: null,
     Deletepermisson: null,
-    paginationPageSize: 20,
-    currenPageSize: "",
     getPageSize: "",
-    info: true,
+    defaultColDef: {
+      sortable: true,
+      // editable: true,
+      resizable: true,
+      suppressMenu: true,
+    },
     columnDefs: [
       {
         headerName: "S.No",
@@ -80,6 +97,37 @@ class PurchasedOrder extends React.Component {
         field: "node.rowIndex + 1",
         width: 80,
         filter: true,
+      },
+      {
+        headerName: "Add Bills",
+        width: 160,
+        filter: true,
+        cellRendererFramework: (params) => {
+          return (
+            <div className="d-flex align-items-center justify-content-center cursor-pointer">
+              <div>
+                <span>
+                  <input
+                    type="checkbox"
+                    className="customcheckbox"
+                    onClick={(e) => {
+                      this.handleMultipleBillsAdd(
+                        params?.data,
+                        e.target.checked
+                      );
+                      // console.log(e.target.checked);
+                    }}
+                  />
+                  {/* <AiOutlineDownload
+                    onClick={() => this.handleBillDownload(params.data)}
+                    fill="green"
+                    size="30px"
+                  /> */}
+                </span>
+              </div>
+            </div>
+          );
+        },
       },
       {
         headerName: "Status",
@@ -155,28 +203,28 @@ class PurchasedOrder extends React.Component {
           );
         },
       },
-      {
-        headerName: "Invoice",
-        field: "invoice",
-        filter: true,
-        resizable: true,
-        width: 150,
-        cellRendererFramework: (params) => {
-          return (
-            <div className="d-flex align-items-center justify-content-center cursor-pointer">
-              <div>
-                <span>
-                  <AiOutlineDownload
-                    onClick={() => this.handleBillDownload(params.data)}
-                    fill="green"
-                    size="30px"
-                  />
-                </span>
-              </div>
-            </div>
-          );
-        },
-      },
+      // {
+      //   headerName: "Invoice",
+      //   field: "invoice",
+      //   filter: true,
+      //   resizable: true,
+      //   width: 150,
+      //   cellRendererFramework: (params) => {
+      //     return (
+      //       <div className="d-flex align-items-center justify-content-center cursor-pointer">
+      //         <div>
+      //           <span>
+      //             <AiOutlineDownload
+      //               onClick={() => this.handleBillDownload(params.data)}
+      //               fill="green"
+      //               size="30px"
+      //             />
+      //           </span>
+      //         </div>
+      //       </div>
+      //     );
+      //   },
+      // },
       {
         headerName: "username",
         field: "user_full_name",
@@ -200,22 +248,22 @@ class PurchasedOrder extends React.Component {
           );
         },
       },
-      // {
-      //   headerName: "order id ",
-      //   field: "user_full_name",
-      //   filter: true,
-      //   resizable: true,
-      //   width: 150,
-      //   cellRendererFramework: (params) => {
-      //     return (
-      //       <div className="d-flex align-items-center cursor-pointer">
-      //         <div>
-      //           <span>{params.data?.user_full_name}</span>
-      //         </div>
-      //       </div>
-      //     );
-      //   },
-      // },
+      {
+        headerName: "supplier_name",
+        field: "supplier_name",
+        filter: true,
+        resizable: true,
+        width: 210,
+        cellRendererFramework: (params) => {
+          return (
+            <div className="d-flex align-items-center cursor-pointer">
+              <div>
+                <span>{params.data?.supplier_name}</span>
+              </div>
+            </div>
+          );
+        },
+      },
 
       // {
       //   headerName: "Product Image",
@@ -619,13 +667,78 @@ class PurchasedOrder extends React.Component {
       // },
     ],
   };
+  handleMultipleBillsAdd = (data, check) => {
+    this.setState({ PrintData: data });
+
+    let pageparmission = JSON.parse(localStorage.getItem("userData"));
+    if (check) {
+      AddedBill.push({
+        order_id: data?.order_id,
+        user_id: pageparmission?.Userinfo?.id,
+        role: pageparmission?.Userinfo?.role,
+      });
+    } else {
+      let index = AddedBill.findIndex(
+        (ele) => ele?.order_id === data?.order_id
+      );
+      AddedBill.splice(index, 1);
+    }
+
+    this.setState({ Mergebilllength: AddedBill?.length });
+  };
+  MergeBillNow = (e) => {
+    e.preventDefault();
+     this.toggleModal();
+  };
   handleSubmit = (e) => {
-    // e.preventDefault();
-    this.setState({ ViewBill: true });
+    e.preventDefault();
+    this.setState({ ButtonText: "InProcess" });
+    // console.log(this.state.sgst);
+    // console.log(this.state.cgst);
+    // console.log(this.state.deliveryCharges);
+    if (this.state.sgst && this.state.cgst) {
+      let pageparmission = JSON.parse(localStorage.getItem("userData"));
+      let formdata = new FormData();
+
+      formdata.append("user_id", pageparmission?.Userinfo?.id);
+      formdata.append("order_id", JSON.stringify(AddedBill));
+      formdata.append("role", pageparmission?.Userinfo?.role);
+      formdata.append("sgst", this.state.sgst);
+      formdata.append("cgst", this.state.cgst);
+      formdata.append("discount_value", this.state.discount);
+      formdata.append("delivery_charges", this.state.deliveryCharges);
+      formdata.append("other_charges", this.state.otherCharges);
+
+      axiosConfig
+        .post(`/createmergebillapi`, formdata)
+        .then((res) => {
+          this.setState({ Applied_Charges: res.data?.data?.applied_charges });
+          this.setState({ AllbillMerged: res.data.data?.items });
+          this.setState({ ViewBill: true });
+
+          // this.setState({ PrintData: res.data });
+          const toWords = new ToWords();
+          let words = toWords.convert(
+            Number(res.data?.data?.applied_charges?.grandtotal),
+            {
+              currency: true,
+            }
+          );
+
+          this.setState({ wordsNumber: words });
+        })
+        .catch((err) => {
+          console.log(err);
+          this.setState({ ButtonText: "Submit" });
+        });
+    } else {
+      this.setState({ ButtonText: "Submit" });
+
+      swal("Enter Values in field");
+    }
   };
   handleBillDownload = (data) => {
-    console.log(data);
-    this.setState({ PrintData: data });
+    this.setState({PrintData: data});
     const toWords = new ToWords();
     let words = toWords.convert(Number(data.sub_total), { currency: true });
     this.setState({ wordsNumber: words });
@@ -636,46 +749,30 @@ class PurchasedOrder extends React.Component {
       modal: !prevState.modal,
     }));
   };
+  toggleModalclose = () => {
+    // debugger;
+    this.setState({ modal: false });
+    this.setState({ ShowMyBill: false });
+    // window.location.reload();
+    // AddedBill = [];
+    // console.log(AddedBill);
+  };
   changeHandler = (e) => {
     this.setState({ [e.target.name]: e.target.value });
   };
-  handleSwitchChange = () => {
-    return swal("Success!", "Submitted SuccessFully!", "success");
-  };
   async componentDidMount() {
     let pageparmission = JSON.parse(localStorage.getItem("userData"));
-    // console.log(pageparmission?.Userinfo?.id);
-    const formdata = new FormData();
-    formdata.append("user_id", pageparmission?.Userinfo?.id);
-    formdata.append("role", pageparmission?.Userinfo?.role);
-    await axiosConfig
-      .post(`/getallcompleteorders`, formdata)
-      .then((res) => {
-        console.log(res.data.data);
-        let rowData = res.data.data;
-        this.setState({ rowData });
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-    // const formdata = new FormData();
-    // formdata.append("user_id", pageparmission?.Userinfo?.id);
-
-    // await axiosConfig
-    //   .post(`/purchase_order`, formdata)
-    //   .then((res) => {
-    //     console.log(res.data.data);
-    //     let rowData = res.data.data;
-    //     this.setState({ rowData });
-    //   })
-    //   .catch((err) => {
-    //     console.log(err);
-    //   });
-
+    // console.log(pageparmission.role);
+    let userchoice = JSON.parse(localStorage.getItem("billUI"));
+    if (userchoice) {
+      this.setState({ logoposition: userchoice?.imagePosition });
+      this.setState({ Billtoposition: userchoice?.billTo });
+      this.setState({ shipto: userchoice?.shipto });
+    }
     let newparmisson = pageparmission?.role?.find(
-      (value) => value?.pageName === "Purchase Order"
+      (value) => value?.pageName === "invoice Generator"
     );
-
+    // console.log(newparmisson);
     this.setState({ Viewpermisson: newparmisson?.permission.includes("View") });
     this.setState({
       Createpermisson: newparmisson?.permission.includes("Create"),
@@ -686,19 +783,51 @@ class PurchasedOrder extends React.Component {
     this.setState({
       Deletepermisson: newparmisson?.permission.includes("Delete"),
     });
+    // console.log(newparmisson?.permission.includes("View"));
+    // console.log(newparmisson?.permission.includes("Create"));
+    // console.log(newparmisson?.permission.includes("Edit"));
+    // console.log(newparmisson?.permission.includes("Delete"));
 
-    // await axiosConfig.get("/admin/allorder_list").then((response) => {
-
-    //   console.log(rowData);
-    // });
+    const formdata = new FormData();
+    formdata.append("user_id", pageparmission?.Userinfo?.id);
+    formdata.append("role", pageparmission?.Userinfo?.role);
+    await axiosConfig
+      .post(`/getallcompleteorders`, formdata)
+      .then((res) => {
+        // console.log(res.data.data);
+        let rowData = res.data.data;
+        this.setState({ rowData });
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   }
-
   async runthisfunction(id) {
-    await axiosConfig.delete(`/admin/del_order/${id}`).then((response) => {
-      swal("Row Deleted!", "SuccessFull Deleted!", "error");
-      console.log(response);
-    });
+    // console.log(id);
+    await axiosConfig.delete(`/admin/del_subcategory/${id}`).then(
+      (response) => {
+        console.log(response);
+      },
+      (error) => {
+        console.log(error);
+      }
+    );
   }
+  submitHandler = (e) => {
+    e.preventDefault();
+    let mychoice = {
+      imagePosition: this.state.logoposition,
+      billTo: this.state.Billtoposition,
+      shipto: this.state.shipto,
+    };
+
+    if (mychoice.billTo == mychoice.shipto) {
+      swal("Can not set Bill to and Ship to on one Same side");
+    } else {
+      localStorage.setItem("billUI", JSON.stringify(mychoice));
+      this.setState({ ShowMyBill: true });
+    }
+  };
   onGridReady = (params) => {
     this.gridApi = params.api;
     this.gridColumnApi = params.columnApi;
@@ -711,7 +840,6 @@ class PurchasedOrder extends React.Component {
   updateSearchQuery = (val) => {
     this.gridApi.setQuickFilter(val);
   };
-
   filterSize = (val) => {
     if (this.gridApi) {
       this.gridApi.paginationSetPageSize(Number(val));
@@ -721,54 +849,50 @@ class PurchasedOrder extends React.Component {
       });
     }
   };
-  onChangeHandler = (event) => {
-    this.setState({ selectedFile: event.target.files[0] });
-    this.setState({ selectedName: event.target.files[0].name });
-    console.log(event.target.files[0]);
-  };
-  onChangeHandler = (event) => {
-    this.setState({ selectedFile: event.target.files });
-    this.setState({ selectedName: event.target.files.name });
-    console.log(event.target.files);
-  };
-  changeHandler1 = (e) => {
-    this.setState({ status: e.target.value });
-  };
-  changeHandler = (e) => {
-    this.setState({ [e.target.name]: e.target.value });
-  };
-  submitHandler = (e) => {
-    e.preventDefault();
-  };
-
   render() {
     const { rowData, columnDefs, defaultColDef } = this.state;
     return (
       <Row className="app-user-list">
-     <Col sm="12">
+        <Col sm="12"></Col>
+        <Col sm="12">
           <Card>
             <Row className="m-2">
               <Col>
-                <h1 col-sm-6 className="float-left">
-                   Purchased Order
+                <h1 sm="6" className="float-left">
+                Purchase Invoice
                 </h1>
               </Col>
+
+          
+              <Col>
+                <Button
+                  className=" btn float-right"
+                  size="md"
+                  // onClick={() =>
+                  // history.push("/app/freshlist/subcategory/SubCategoryList")
+                  // }
+                  onClick={this.MergeBillNow}
+                  color="primary"
+                >
+                  Create Invoice
+                </Button>
+              </Col>
               {/* <Col>
-             
-                  <Route
-                    render={({ history }) => (
-                      <Button
-                        className=" float-right"
-                        color="primary"
-                        onClick={() =>
-                          history.push("/app/freshlist/order/addOrder")
-                        }
-                      >
-                        Add Order
-                      </Button>
-                    )}
-                  />
-             
+                <Route
+                  render={({ history }) => (
+                    <Button
+                      className="btn float-right"
+                      color="primary"
+                      onClick={() =>
+                        history.push(
+                          "/app/freshlist/subcategory/addSubCategory"
+                        )
+                      }
+                    >
+                      Add New
+                    </Button>
+                  )}
+                />
               </Col> */}
             </Row>
             <CardBody>
@@ -781,13 +905,13 @@ class PurchasedOrder extends React.Component {
                           {this.gridApi
                             ? this.state.currenPageSize
                             : "" * this.state.getPageSize -
-                              (this.state.getPageSize - 1)}
-                          -
+                              (this.state.getPageSize - 1)}{" "}
+                          -{" "}
                           {this.state.rowData.length -
                             this.state.currenPageSize * this.state.getPageSize >
                           0
                             ? this.state.currenPageSize * this.state.getPageSize
-                            : this.state.rowData.length}
+                            : this.state.rowData.length}{" "}
                           of {this.state.rowData.length}
                           <ChevronDown className="ml-50" size={15} />
                         </DropdownToggle>
@@ -822,14 +946,13 @@ class PurchasedOrder extends React.Component {
                     <div className="d-flex flex-wrap justify-content-between mb-1">
                       <div className="table-input mr-1">
                         <Input
-                          placeholder="Search here..."
+                          placeholder="search..."
                           onChange={(e) =>
                             this.updateSearchQuery(e.target.value)
                           }
                           value={this.state.value}
                         />
                       </div>
-
                       <div className="export-btn">
                         <Button.Ripple
                           color="primary"
@@ -844,7 +967,7 @@ class PurchasedOrder extends React.Component {
                     {(context) => (
                       <AgGridReact
                         gridOptions={{}}
-                        // rowSelection="multiple"
+                        rowSelection="multiple"
                         defaultColDef={defaultColDef}
                         columnDefs={columnDefs}
                         rowData={rowData}
@@ -870,76 +993,195 @@ class PurchasedOrder extends React.Component {
           className={this.props.className}
           style={{ maxWidth: "1050px" }}
         >
-          <ModalHeader toggle={this.toggleModal}>Download Bill</ModalHeader>
+          <ModalHeader toggle={this.toggleModalclose}>
+            Download Bill
+          </ModalHeader>
           <ModalBody>
-            {this.state.ViewBill && this.state.ViewBill ? (
+            {this.state.ShowMyBill && this.state.ShowMyBill ? (
               <>
-                <div style={{ width: "100%" }} className="">
-                  <InvoiceGenerator
-                    PrintData={this.state.PrintData}
-                    wordsNumber={this.state.wordsNumber}
-                    sgst={this.state.sgst}
-                    cgst={this.state.cgst}
-                    deliveryCharges={this.state.deliveryCharges}
-                    otherCharges={this.state.otherCharges}
-                  />
-                </div>
+                {this.state.ViewBill && this.state.ViewBill ? (
+                  <>
+                    <div style={{ width: "100%" }} className="">
+                      <InvoicGenerator
+                        PrintData={this.state.PrintData}
+                        Applied_Charges={this.state.Applied_Charges}
+                        AllbillMerged={this.state.AllbillMerged}
+                        wordsNumber={this.state.wordsNumber}
+                        sgst={this.state.sgst}
+                        cgst={this.state.cgst}
+                        deliveryCharges={this.state.deliveryCharges}
+                        otherCharges={this.state.otherCharges}
+                        discount={this.state.discount}
+                        AddedBill={AddedBill}
+                      />
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <div style={{ width: "100%" }} className="">
+                      <Form onSubmit={(e) => this.handleSubmit(e)}>
+                        <Row className="main div heading px-3 py-3">
+                          <Col lg="6" className="mb-2">
+                            <Label>SGST</Label>
+                            <select
+                              required
+                              className="form-control"
+                              value={this.state.sgst}
+                              onChange={this.changeHandler}
+                              name="sgst"
+                            >
+                              <option value="not selected">--Select--</option>
+                              <option value="5">5%</option>
+                              <option value="9">9%</option>
+                              <option value="12">12%</option>
+                            </select>
+                          </Col>
+                          <Col lg="6" className="mb-2">
+                            <Label>CGST</Label>
+                            <select
+                              required
+                              className="form-control"
+                              name="cgst"
+                              placeholder="Enter CGST"
+                              value={this.state.cgst}
+                              onChange={this.changeHandler}
+                            >
+                              <option value="not selected">--Select--</option>
+                              <option value="5">5%</option>
+                              <option value="9">9%</option>
+                              <option value="12">12%</option>
+                            </select>
+                          </Col>
+                          <Col lg="6">
+                            <Label className="mt-2">Other Charges</Label>
+                            <Input
+                              type="number"
+                              name="otherCharges"
+                              placeholder="Enter Other Charges"
+                              value={this.state.otherCharges}
+                              onChange={this.changeHandler}
+                            ></Input>
+                          </Col>
+                          <Col lg="6">
+                            <Label className="mt-2">Delivery Charges</Label>
+                            <Input
+                              type="number"
+                              name="deliveryCharges"
+                              placeholder="Enter Delivery Charges"
+                              value={this.state.deliveryCharges}
+                              onChange={this.changeHandler}
+                            ></Input>
+                          </Col>
+                          <Col lg="6">
+                            <Label className="mt-2">Discount </Label>
+                            <Input
+                              type="number"
+                              name="discount"
+                              placeholder="Enter discount value"
+                              value={this.state.discount}
+                              onChange={this.changeHandler}
+                            ></Input>
+                          </Col>
+                        </Row>
+                        <Row>
+                          <Col lg="12" className="mt-2 mb-2">
+                            <div className="d-flex justify-content-center">
+                              <Button
+                                disabled={
+                                  this.state.ButtonText === "InProcess"
+                                    ? true
+                                    : false
+                                }
+                                color="primary"
+                                type="submit"
+                              >
+                                {this.state.ButtonText}
+                              </Button>
+                            </div>
+                          </Col>
+                        </Row>
+                      </Form>
+                    </div>
+                  </>
+                )}
               </>
             ) : (
               <>
-                <div style={{ width: "100%" }} className="">
-                  <Form onSubmit={() => this.handleSubmit()}>
-                    <Row>
-                      <Col lg="6" className="mb-2">
-                        <Label>SGST</Label>
-                        <Input
-                          required
-                          type="number"
-                          name="sgst"
-                          placeholder="Enter SGST"
-                          value={this.state.sgst}
-                          onChange={this.changeHandler}
-                        ></Input>
-                      </Col>
-                      <Col lg="6" className="mb-2">
-                        <Label>CGST</Label>
-                        <Input
-                          required
-                          type="number"
-                          name="cgst"
-                          placeholder="Enter CGST"
-                          value={this.state.cgst}
-                          onChange={this.changeHandler}
-                        ></Input>
-                      </Col>
-                      <Col lg="6">
-                        <Label>Other Charges</Label>
-                        <Input
-                          type="number"
-                          name="otherCharges"
-                          placeholder="Enter Other Charges"
-                          value={this.state.otherCharges}
-                          onChange={this.changeHandler}
-                        ></Input>
-                      </Col>
-                      <Col lg="6">
-                        <Label>Delivery Charges</Label>
-                        <Input
-                          type="number"
-                          name="deliveryCharges"
-                          placeholder="Enter Delivery Charges"
-                          value={this.state.deliveryCharges}
-                          onChange={this.changeHandler}
-                        ></Input>
-                      </Col>
-                      <Col lg="3" className="mt-2">
-                        <Button color="primary" type="submit">
+                <Form className="m-1" onSubmit={this.submitHandler}>
+                  <Row className="mb-2">
+                    <Col lg="4" md="4" className="mb-2">
+                      <Label>Logo Position</Label>
+                      <CustomInput
+                        type="select"
+                        placeholder="Select Type"
+                        name="logoposition"
+                        value={this.state.logoposition}
+                        onChange={this.changeHandler}
+                      >
+                        <option>---Select---</option>
+                        <option value="Left">Left</option>
+                        <option value="right">Right</option>
+                      </CustomInput>
+                    </Col>
+                    <Col lg="4" md="4" className="mb-2">
+                      <Label>ship to position</Label>
+                      <CustomInput
+                        type="select"
+                        placeholder="Select Type"
+                        name="shipto"
+                        value={this.state.shipto}
+                        onChange={this.changeHandler}
+                      >
+                        <option>---Select---</option>
+                        <option value="Left">Left</option>
+                        <option value="right">Right</option>
+                      </CustomInput>
+                      <span>
+                        {this.state.shipto == this.state.Billtoposition ? (
+                          <span style={{ color: "red" }}>
+                            Bill to and ship to cannot be same
+                          </span>
+                        ) : null}
+                      </span>
+                    </Col>
+
+                    <Col lg="4" md="4" className="mb-2">
+                      <Label>Bill to position</Label>
+                      <CustomInput
+                        type="select"
+                        placeholder="Select Type"
+                        name="Billtoposition"
+                        value={this.state.Billtoposition}
+                        onChange={this.changeHandler}
+                      >
+                        <option>---Select---</option>
+                        <option value="Left">Left</option>
+                        <option value="right">Right</option>
+                      </CustomInput>
+                      <span>
+                        {this.state.shipto == this.state.Billtoposition ? (
+                          <span style={{ color: "red" }}>
+                            Bill to and ship to cannot be same
+                          </span>
+                        ) : null}
+                      </span>
+                    </Col>
+                  </Row>
+
+                  <Row>
+                    <Col>
+                      <div className="d-flex justify-content-center">
+                        <Button.Ripple
+                          color="primary"
+                          type="submit"
+                          className="mr-1 mb-1"
+                        >
                           Submit
-                        </Button>
-                      </Col>
-                    </Row>
-                  </Form>
-                </div>
+                        </Button.Ripple>
+                      </div>
+                    </Col>
+                  </Row>
+                </Form>
               </>
             )}
           </ModalBody>
@@ -948,4 +1190,4 @@ class PurchasedOrder extends React.Component {
     );
   }
 }
-export default PurchasedOrder;
+export default PurchaseInvoice;

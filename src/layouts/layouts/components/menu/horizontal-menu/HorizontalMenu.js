@@ -15,7 +15,6 @@ import navigationConfig from "../../../../configs/horizontalMenuConfig"
 class HorizontalSidebar extends React.Component {
   constructor(props) {
     super(props)
-
     this.state = {
       activeParents: [],
       openDropdown: [],
