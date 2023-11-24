@@ -213,7 +213,9 @@ const horizontalMenuConfig = [
         type: "item",
         icon: <FaCircle size={8} />,
         permissions: ["admin", "editor"],
-        navLink: "/app/SoftNumen/product/ProductRegistration",
+        // navLink: "/app/SoftNumen/product/ProductRegistration",
+        navLink: "/app/softnumen/order/purchasedOrder",
+
       },
       {
         id: "PurchaseInvoice",
@@ -221,7 +223,8 @@ const horizontalMenuConfig = [
         type: "item",
         icon: <FaCircle size={8} />,
         permissions: ["admin", "editor"],
-        navLink: "/app/softnumen/InvoiceGenerator",
+        navLink: "/app/SoftNumen/product/PurchaseInvoice",
+        // navLink: "/app/softnumen/InvoiceGenerator",
       },
       {
         id: "PurchaseDamage",
