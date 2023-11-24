@@ -221,6 +221,23 @@ class AccounSearch extends React.Component {
               );
             },
           },
+          {
+            headerName: "Status",
+            field: "status",
+            filter: true,
+            width: 150,
+            cellRendererFramework: (params) => {
+              return params.data?.status === "Active" ? (
+                <div className="badge badge-pill badge-success">
+                  {params.data?.status}
+                </div>
+              ) : params.data?.status === "Deactive" ? (
+                <div className="badge badge-pill badge-warning">
+                  {params.data?.status}
+                </div>
+              ) : null;
+            },
+          },
 
           ...myHeadings,
           {
@@ -570,6 +587,7 @@ class AccounSearch extends React.Component {
                     onClick={(e) => {
                       e.preventDefault();
                       this.setState({ EditOneUserView: false });
+                      this.componentDidMount();
                     }}
                     color="danger"
                   >

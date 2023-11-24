@@ -671,6 +671,9 @@ const UpdateExistingRole = lazy(() =>
 const CreateAccount = lazy(() =>
   import("./views/apps/freshlist/accounts/CreateAccount")
 );
+const CreateTarget = lazy(() =>
+  import("./views/apps/freshlist/accounts/CreateTarget")
+);
 const CreateReturnSalesOrder = lazy(() =>
   import("./views/apps/freshlist/accounts/CreateReturnSalesOrder")
 );
@@ -785,6 +788,9 @@ const ServiceMaster = lazy(() =>
 );
 const AccounSearch = lazy(() =>
   import("./views/apps/freshlist/house/AccounSearch")
+);
+const TargetCreationList = lazy(() =>
+  import("./views/apps/freshlist/house/TargetCreation")
 );
 const SalesOrderReturn = lazy(() =>
   import("./views/apps/freshlist/house/SalesOrderReturn")
@@ -1482,7 +1488,7 @@ class AppRouter extends React.Component {
             path="/app/softnumen/InvoiceGenerator"
             component={InvoiceGenerator}
           />
-         <AppRoute
+          <AppRoute
             path="/app/softnumen/warehouseStock"
             component={WarehouseStock}
           />
@@ -1992,6 +1998,10 @@ class AppRouter extends React.Component {
             component={CreateAccount}
           />
           <AppRoute
+            path="/app/SoftNumen/account/CreateTarget"
+            component={CreateTarget}
+          />
+          <AppRoute
             path="/app/SoftNumen/account/CreateReturnSalesOrder"
             component={CreateReturnSalesOrder}
           />
@@ -2116,6 +2126,10 @@ class AppRouter extends React.Component {
           <AppRoute
             path="/app/SoftNumen/accounSearch"
             component={AccounSearch}
+          />
+          <AppRoute
+            path="/app/SoftNumen/TargetCreationList"
+            component={TargetCreationList}
           />
           <AppRoute
             path="/app/SoftNumen/SalesOrderReturnList"

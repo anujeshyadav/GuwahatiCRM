@@ -17,11 +17,12 @@ import {
   ModalBody,
   Badge,
 } from "reactstrap";
+import ExcelReader from "../parts/ExcelReader";
 import { ContextLayout } from "../../../../utility/context/Layout";
 import { AgGridReact } from "ag-grid-react";
 import "ag-grid-community/dist/styles/ag-grid.css";
-import EditAccount from "../accounts/EditCustomer";
-import ViewAccount from "../accounts/ViewCustomer";
+import EditAccount from "../accounts/EditAccount";
+import ViewAccount from "../accounts/ViewAccount";
 import jsPDF from "jspdf";
 import "jspdf-autotable";
 import Logo from "../../../../assets/img/profile/pages/logomain.png";
@@ -40,9 +41,9 @@ import {
 import moment from "moment-timezone";
 import swal from "sweetalert";
 import {
-  CreateCustomerList,
-  CreateCustomerxmlView,
-  DeleteCustomerList,
+  CreateAccountList,
+  CreateAccountView,
+  DeleteAccount,
 } from "../../../../ApiEndPoint/ApiCalling";
 import {
   BsCloudDownloadFill,
@@ -54,7 +55,7 @@ import UserContext from "../../../../context/Context";
 
 const SelectedColums = [];
 
-class CustomerSearch extends React.Component {
+class TargetCreation extends React.Component {
   static contextType = UserContext;
   constructor(props) {
     super(props);
@@ -101,23 +102,21 @@ class CustomerSearch extends React.Component {
 
   async componentDidMount() {
     const UserInformation = this.context?.UserInformatio;
-
-    await CreateCustomerxmlView()
+    await CreateAccountView()
       .then((res) => {
         var mydropdownArray = [];
         var adddropdown = [];
         const jsonData = xmlJs.xml2json(res.data, { compact: true, spaces: 2 });
-        console.log(JSON.parse(jsonData));
-        const inputs = JSON.parse(jsonData).CreateCustomer?.input?.map(
-          (ele) => {
-            return {
-              headerName: ele?.label._text,
-              field: ele?.name._text,
-              filter: true,
-              sortable: true,
-            };
-          }
-        );
+        console.log(JSON.parse(jsonData)?.CreateUser);
+
+        const inputs = JSON.parse(jsonData)?.CreateUser?.input?.map((ele) => {
+          return {
+            headerName: ele?.label._text,
+            field: ele?.name._text,
+            filter: true,
+            sortable: true,
+          };
+        });
         // let Radioinput =
         //   JSON.parse(jsonData).CreateAccount?.Radiobutton?.input[0]?.name
         //     ?._text;
@@ -143,36 +142,35 @@ class CustomerSearch extends React.Component {
         //   },
         // ];
 
-        let dropdown =
-          JSON.parse(jsonData).CreateCustomer?.MyDropDown?.dropdown;
-        if (dropdown?.length) {
-          var mydropdownArray = dropdown?.map((ele) => {
-            return {
-              headerName: ele?.label,
-              field: ele?.name,
-              filter: true,
-              sortable: true,
-            };
-          });
-        } else {
-          var adddropdown = [
-            {
-              headerName: dropdown?.label._text,
-              field: dropdown?.name._text,
-              filter: true,
-              sortable: true,
-            },
-          ];
-        }
+        // let dropdown = JSON.parse(jsonData).CreateAccount?.MyDropdown?.dropdown;
+        // if (dropdown.length) {
+        //   var mydropdownArray = dropdown?.map((ele) => {
+        //     return {
+        //       headerName: ele?.label,
+        //       field: ele?.name,
+        //       filter: true,
+        //       sortable: true,
+        //     };
+        //   });
+        // } else {
+        //   var adddropdown = [
+        //     {
+        //       headerName: dropdown?.label._text,
+        //       field: dropdown?.name._text,
+        //       filter: true,
+        //       sortable: true,
+        //     },
+        //   ];
+        // }
 
         let myHeadings = [
           // ...checkboxinput,
           ...inputs,
-          ...adddropdown,
-          //   ...addRadio,
-          ...mydropdownArray,
+          // ...adddropdown,
+          // ...addRadio,
+          // ...mydropdownArray,
         ];
-        console.log(myHeadings);
+        // console.log(myHeadings);
         let Product = [
           {
             headerName: "Actions",
@@ -223,23 +221,6 @@ class CustomerSearch extends React.Component {
               );
             },
           },
-          {
-            headerName: "Status",
-            field: "status",
-            filter: true,
-            width: 150,
-            cellRendererFramework: (params) => {
-              return params.data?.status === "Active" ? (
-                <div className="badge badge-pill badge-success">
-                  {params.data.status}
-                </div>
-              ) : params.data?.status === "Deactive" ? (
-                <div className="badge badge-pill badge-warning">
-                  {params.data.status}
-                </div>
-              ) : null;
-            },
-          },
 
           ...myHeadings,
           {
@@ -278,7 +259,7 @@ class CustomerSearch extends React.Component {
 
         this.setState({ AllcolumnDefs: Product });
 
-        let userHeading = JSON.parse(localStorage.getItem("CustomerSearch"));
+        let userHeading = JSON.parse(localStorage.getItem("TargetList"));
         if (userHeading?.length) {
           this.setState({ columnDefs: userHeading });
           this.gridApi.setColumnDefs(userHeading);
@@ -293,9 +274,9 @@ class CustomerSearch extends React.Component {
         console.log(err);
         swal("Error", "something went wrong try again");
       });
-    await CreateCustomerList()
+    await CreateAccountList()
       .then((res) => {
-        let value = res?.Customer;
+        let value = res?.User;
         this.setState({ rowData: value });
       })
       .catch((err) => {
@@ -315,7 +296,7 @@ class CustomerSearch extends React.Component {
     }).then((value) => {
       switch (value) {
         case "delete":
-          DeleteCustomerList(id)
+          DeleteAccount(id)
             .then((res) => {
               let selectedData = this.gridApi.getSelectedRows();
               this.gridApi.updateRowData({ remove: selectedData });
@@ -538,7 +519,7 @@ class CustomerSearch extends React.Component {
     this.setState({ SelectedcolumnDefs: this.state.SelectedcolumnDefs });
     this.setState({ rowData: this.state.rowData });
     localStorage.setItem(
-      "CustomerSearch",
+      "TargetList",
       JSON.stringify(this.state.SelectedcolumnDefs)
     );
     this.LookupviewStart();
@@ -589,7 +570,6 @@ class CustomerSearch extends React.Component {
                     onClick={(e) => {
                       e.preventDefault();
                       this.setState({ EditOneUserView: false });
-                      this.componentDidMount();
                     }}
                     color="danger"
                   >
@@ -627,7 +607,7 @@ class CustomerSearch extends React.Component {
                     <Card>
                       <Row className="m-2">
                         <Col>
-                          <h1 className="float-left">Customer List</h1>
+                          <h1 className="float-left">Target List</h1>
                         </Col>
                         <Col>
                           <span className="mx-1">
@@ -708,11 +688,11 @@ class CustomerSearch extends React.Component {
                                   color="primary"
                                   onClick={() =>
                                     history.push(
-                                      "/app/SoftNumen/account/CreateCustomer"
+                                      "/app/SoftNumen/account/CreateTarget"
                                     )
                                   }
                                 >
-                                  <FaPlus size={15} /> Create Customer
+                                  <FaPlus size={15} /> Create Target
                                 </Badge>
                               )}
                             />
@@ -1014,4 +994,4 @@ class CustomerSearch extends React.Component {
     );
   }
 }
-export default CustomerSearch;
+export default TargetCreation;

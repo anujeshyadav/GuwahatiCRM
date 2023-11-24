@@ -99,12 +99,36 @@ const EditAccount = ({ ViewOneData }) => {
     console.log(formData);
   }, [formData]);
   useEffect(() => {
-    console.log(ViewOneData);
     setFormData(ViewOneData);
+    console.log(ViewOneData);
+    if (ViewOneData?.Country) {
+      let countryselected = Country?.getAllCountries()?.filter(
+        (ele, i) => ele?.name == ViewOneData?.Country
+      );
+      setCountry(countryselected);
+      if (ViewOneData?.State) {
+        let stateselected = State?.getStatesOfCountry(
+          countryselected[0]?.isoCode
+        )?.filter((ele, i) => ele?.name == ViewOneData?.State);
+        setState(stateselected);
+        console.log(stateselected);
+        if (ViewOneData?.City) {
+          let cityselected = City.getCitiesOfState(
+            stateselected[0]?.countryCode,
+            stateselected[0]?.isoCode
+          )?.filter((ele, i) => ele?.name == ViewOneData?.City);
+          setCities(cityselected);
+        }
+      }
+    }
+    if (ViewOneData?.status) {
+      formData["status"] = ViewOneData?.status;
+    }
     CreateAccountView()
       .then((res) => {
         const jsonData = xmlJs.xml2json(res.data, { compact: true, spaces: 2 });
-        // console.log(JSON.parse(jsonData)?.CreateUser?.input);
+        console.log(JSON.parse(jsonData)?.CreateUser?.input);
+        debugger;
 
         setCreatAccountView(JSON.parse(jsonData)?.CreateUser?.input);
 
@@ -141,7 +165,7 @@ const EditAccount = ({ ViewOneData }) => {
         <Card>
           <Row className="m-2">
             <Col>
-              <h1 className="float-left">Edit User</h1>
+              <h1 className="float-left">View User</h1>
             </Col>
             <Col>
               <div className="float-right">
@@ -226,7 +250,7 @@ const EditAccount = ({ ViewOneData }) => {
                               <PhoneInput
                                 disabled
                                 inputClass="myphoneinput"
-                                country={"us"}
+                                country={"in"}
                                 onKeyDown={(e) => {
                                   if (
                                     ele?.type?._attributes?.type == "number"
@@ -586,7 +610,39 @@ const EditAccount = ({ ViewOneData }) => {
                     }
                   })}
               </Row>
+              <Col lg="6" md="6" sm="6" className="mb-2 mt-1">
+                <Label className="mb-0">Status</Label>
+                <div
+                  className="form-label-group"
+                  // onChange={(e) => {
+                  //   setFormData({
+                  //     ...formData,
+                  //     ["status"]: e.target.value,
+                  //   });
+                  // }}
+                >
+                  <input
+                    disabled
+                    checked={formData["status"] == "Active"}
+                    style={{ marginRight: "3px" }}
+                    type="radio"
+                    name="status"
+                    value="Active"
+                  />
+                  <span style={{ marginRight: "20px" }}>Active</span>
 
+                  <input
+                    // checked={status == "Inactive"}
+                    checked={formData["status"] == "Deactive"}
+                    disabled
+                    style={{ marginRight: "3px" }}
+                    type="radio"
+                    name="status"
+                    value="Deactive"
+                  />
+                  <span style={{ marginRight: "3px" }}>Deactive</span>
+                </div>
+              </Col>
               <hr />
               {/* <Row className="mt-2 ">
                 <Col lg="6" md="6" sm="6" className="mb-2">

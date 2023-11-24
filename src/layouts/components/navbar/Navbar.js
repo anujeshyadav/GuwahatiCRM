@@ -26,8 +26,9 @@ import { Box, Circle, DollarSign, ShoppingCart, Users } from "react-feather";
 import { FaAngleDown } from "react-icons/fa";
 import { Link } from "react-router-dom/cjs/react-router-dom.min";
 import { Route } from "react-router-dom";
-
 import HorizontalMenu from "./Myhorizontalmenu";
+// import HorizontalMenu from "../../../../src/layouts/layouts/components/menu/horizontal-menu/HorizontalMenu";
+
 const PhoneNo = (props) => {
   console.log(props);
   let phone_no = "";
