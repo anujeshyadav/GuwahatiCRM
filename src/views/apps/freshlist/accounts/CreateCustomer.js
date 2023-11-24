@@ -60,6 +60,9 @@ const CreateCustomer = () => {
       [name]: allimages,
     });
   };
+  const handleChange =()=>{
+    console.log("object")
+  }
   const handleInputChange = (e, type, i) => {
     const { name, value, checked } = e.target;
     setindex(i);
@@ -116,7 +119,7 @@ const CreateCustomer = () => {
     }
   };
   useEffect(() => {
-    console.log(formData);
+    console.log(formData.status);
   }, [formData]);
   useEffect(() => {
     CreateCustomerxmlView()
@@ -160,6 +163,11 @@ const CreateCustomer = () => {
       `${dropdownValue?.name?._text}`,
       formData[dropdownValue?.name?._text]
     );
+    formdata.append(
+      'status',
+      formData.status
+    );
+    
     formdata.forEach((value, key) => {
       console.log(key, value);
     });
@@ -723,6 +731,36 @@ const CreateCustomer = () => {
               </Row>
 
               <hr />
+              <Row className="mt-2">
+              <Col lg="6" md="6" sm="6" className="mb-2 mt-1">
+                <Label className="mb-0">Status</Label>
+                <div
+                  className="form-label-group"
+                  onChange={(e) => {
+                    setFormData({
+                      ...formData,
+                      ["status"]: e.target.value,
+                    });
+                  }}
+                >
+                  <input
+                    style={{ marginRight: "3px" }}
+                    type="radio"
+                    name="status"
+                    value="Active"
+                  />
+                  <span style={{ marginRight: "20px" }}>Active</span>
+
+                  <input
+                    style={{ marginRight: "3px" }}
+                    type="radio"
+                    name="status"
+                    value="Deactive"
+                  />
+                  <span style={{ marginRight: "3px" }}>Deactive</span>
+                </div>
+              </Col>
+              </Row>
               {/* <Row className="mt-2 ">
                 <Col lg="6" md="6" sm="6" className="mb-2">
                   <Label className="">

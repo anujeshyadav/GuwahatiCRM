@@ -688,9 +688,9 @@ class InvoiceGenerator extends React.Component {
   };
   MergeBillNow = (e) => {
     e.preventDefault();
-
-    this.toggleModal();
+   this.toggleModal();
   };
+
   handleSubmit = (e) => {
     e.preventDefault();
     this.setState({ ButtonText: "InProcess" });
@@ -710,8 +710,7 @@ class InvoiceGenerator extends React.Component {
       formdata.append("discount_value", this.state.discount);
       formdata.append("delivery_charges", this.state.deliveryCharges);
       formdata.append("other_charges", this.state.otherCharges);
-
-      axiosConfig
+       axiosConfig
         .post(`/createmergebillapi`, formdata)
         .then((res) => {
           // console.log(res.data?.data?.applied_charges);
@@ -867,50 +866,15 @@ class InvoiceGenerator extends React.Component {
                   Generate invoice
                 </h1>
               </Col>
-
-              {/* {this.state.Mergebilllength > 0 ? (
-                <Col>
-                  <Button
-                    // style={{ marginRight: "-22rem" }}
-                    className=" btn btn-danger float-right"
-                    // onClick={() =>
-                    // history.push("/app/freshlist/subcategory/SubCategoryList")
-                    // }
-                    onClick={this.MergeBillNow}
-                  >
-                    Create Invoice
-                  </Button>
-                </Col>
-              ) : null} */}
-              <Col>
+                 <Col>
                 <Button
-                  // style={{ marginRight: "-22rem" }}
                   className=" btn btn-danger float-right"
-                  // onClick={() =>
-                  // history.push("/app/freshlist/subcategory/SubCategoryList")
-                  // }
-                  onClick={this.MergeBillNow}
+                 onClick={this.MergeBillNow}
                 >
                   Create Invoice
                 </Button>
               </Col>
-              {/* <Col>
-                <Route
-                  render={({ history }) => (
-                    <Button
-                      className="btn float-right"
-                      color="primary"
-                      onClick={() =>
-                        history.push(
-                          "/app/freshlist/subcategory/addSubCategory"
-                        )
-                      }
-                    >
-                      Add New
-                    </Button>
-                  )}
-                />
-              </Col> */}
+          
             </Row>
             <CardBody>
               {this.state.rowData === null ? null : (

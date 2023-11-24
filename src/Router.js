@@ -732,6 +732,11 @@ const ProductRegistration = lazy(() =>
     "./views/apps/freshlist/customer/ProductManagement/ProductRegistration"
   )
 );
+const PurchaseInvoice = lazy(() =>
+  import(
+    "./views/apps/freshlist/customer/ProductManagement/PurchaseInvoice"
+  )
+);
 const ProductSearch = lazy(() =>
   import("./views/apps/freshlist/customer/ProductManagement/ProductSearch")
 );
@@ -1403,7 +1408,6 @@ class AppRouter extends React.Component {
             component={ViewOneReceivedOrder}
           />
           <AppRoute
-            // path="/app/softnumen/order/purchaseinvoices"
             path="/app/softnumen/order/purchasedOrder"
             component={PurchasedOrder}
           />
@@ -1885,6 +1889,10 @@ class AppRouter extends React.Component {
           <AppRoute
             path="/app/SoftNumen/product/ProductRegistration"
             component={ProductRegistration}
+          />
+          <AppRoute
+            path="/app/SoftNumen/product/PurchaseInvoice"
+            component={PurchaseInvoice}
           />
           <AppRoute
             path="/app/SoftNumen/product/ProductSearch"

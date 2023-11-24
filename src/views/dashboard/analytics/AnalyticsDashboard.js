@@ -1,7 +1,6 @@
 import React from "react";
 import { Row, Col, Card, CardTitle, CardText } from "reactstrap";
 import axiosConfig from "../../../axiosConfig";
-import axios from "axios";
 import DispatchedOrders from "./DispatchedOrders";
 import "../../../assets/scss/pages/dashboard-analytics.scss";
 import {
@@ -319,10 +318,10 @@ class AnalyticsDashboard extends React.Component {
             <Row>
               <Col>
                 <div className="d-flex justify-content-center align itme center">
-                  <h2 style={{ color: "red" }}>
+                  {/* <h2 style={{ color: "red" }}>
                     {" "}
                     You are Not Authorized To View this Page
-                  </h2>
+                  </h2> */}
                 </div>
               </Col>
             </Row>

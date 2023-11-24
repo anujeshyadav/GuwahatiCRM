@@ -10,9 +10,6 @@ import {
   DropdownItem,
   DropdownToggle,
   Button,
-  CardTitle,
-  CardText,
-  Label,
 } from "reactstrap";
 import axiosConfig from "../../../../../axiosConfig";
 import ReactHtmlParser from "react-html-parser";
