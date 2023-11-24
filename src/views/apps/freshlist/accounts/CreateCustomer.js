@@ -60,9 +60,9 @@ const CreateCustomer = () => {
       [name]: allimages,
     });
   };
-  const handleChange =()=>{
-    console.log("object")
-  }
+  const handleChange = () => {
+    console.log("object");
+  };
   const handleInputChange = (e, type, i) => {
     const { name, value, checked } = e.target;
     setindex(i);
@@ -119,7 +119,7 @@ const CreateCustomer = () => {
     }
   };
   useEffect(() => {
-    console.log(formData.status);
+    console.log(formData);
   }, [formData]);
   useEffect(() => {
     CreateCustomerxmlView()
@@ -157,19 +157,18 @@ const CreateCustomer = () => {
             formdata.append("files", formData[ele?.name?._text][index]);
           });
         }
+      } else {
+        formdata.append(`${ele?.name._text}`, formData[ele?.name?._text]);
       }
     });
     formdata.append(
       `${dropdownValue?.name?._text}`,
       formData[dropdownValue?.name?._text]
     );
-    formdata.append(
-      'status',
-      formData.status
-    );
-    
+    formdata.append("status", formData.status);
+
     formdata.forEach((value, key) => {
-      console.log(key, value);
+      // console.log(key, value);
     });
     if (error) {
       swal("Error occured while Entering Details");
@@ -179,12 +178,13 @@ const CreateCustomer = () => {
           console.log(res);
           setFormData({});
           if (res.status) {
-            window.location.reload();
-            swal("User Created Successfully");
+            // window.location.reload();
+            swal("Customer Created Successfully");
           }
         })
         .catch((err) => {
           console.log(err.response);
+          swal("Please Fill correct details");
         });
     }
   };
@@ -232,7 +232,7 @@ const CreateCustomer = () => {
                       <CustomInput
                         required
                         type="select"
-                        name={dropdownValue && dropdownValue?.name?._text}
+                        name={dropdownValue?.name?._text}
                         value={formData[dropdownValue?.name?._text]}
                         onChange={handleInputChange}
                       >
@@ -307,7 +307,9 @@ const CreateCustomer = () => {
                       );
                     } else if (!!ele?.library) {
                       if (ele?.label._text?.includes("ountry")) {
-                        console.log(ele);
+                        {
+                          /* console.log(ele); */
+                        }
                         return (
                           <Col key={i} lg="4" md="4" sm="12">
                             <FormGroup>
@@ -732,34 +734,34 @@ const CreateCustomer = () => {
 
               <hr />
               <Row className="mt-2">
-              <Col lg="6" md="6" sm="6" className="mb-2 mt-1">
-                <Label className="mb-0">Status</Label>
-                <div
-                  className="form-label-group"
-                  onChange={(e) => {
-                    setFormData({
-                      ...formData,
-                      ["status"]: e.target.value,
-                    });
-                  }}
-                >
-                  <input
-                    style={{ marginRight: "3px" }}
-                    type="radio"
-                    name="status"
-                    value="Active"
-                  />
-                  <span style={{ marginRight: "20px" }}>Active</span>
+                <Col lg="6" md="6" sm="6" className="mb-2 mt-1">
+                  <Label className="mb-0">Status</Label>
+                  <div
+                    className="form-label-group"
+                    onChange={(e) => {
+                      setFormData({
+                        ...formData,
+                        ["status"]: e.target.value,
+                      });
+                    }}
+                  >
+                    <input
+                      style={{ marginRight: "3px" }}
+                      type="radio"
+                      name="status"
+                      value="Active"
+                    />
+                    <span style={{ marginRight: "20px" }}>Active</span>
 
-                  <input
-                    style={{ marginRight: "3px" }}
-                    type="radio"
-                    name="status"
-                    value="Deactive"
-                  />
-                  <span style={{ marginRight: "3px" }}>Deactive</span>
-                </div>
-              </Col>
+                    <input
+                      style={{ marginRight: "3px" }}
+                      type="radio"
+                      name="status"
+                      value="Deactive"
+                    />
+                    <span style={{ marginRight: "3px" }}>Deactive</span>
+                  </div>
+                </Col>
               </Row>
               {/* <Row className="mt-2 ">
                 <Col lg="6" md="6" sm="6" className="mb-2">

@@ -7,6 +7,7 @@ import {
   Create_Transporter_List,
   Delete_Transporter_List,
   Create_SalesMan_xmlView,
+  Create_Customer_Update,
   Create_SalesManager_xmlView,
   Create_unit_xmlView,
   Create_unit_save,
@@ -353,6 +354,13 @@ export const CreateAccountUpdate = async (id, formdata) => {
   // console.log(id, formdata);
   let response = await axiosConfig
     .post(`${Create_Account_Update}` + id, formdata)
+    .then((res) => res.data);
+  return response;
+};
+export const CreateCustomerUpdate = async (id, formdata) => {
+  // console.log(id, formdata);
+  let response = await axiosConfig
+    .post(`${Create_Customer_Update}` + id, formdata)
     .then((res) => res.data);
   return response;
 };

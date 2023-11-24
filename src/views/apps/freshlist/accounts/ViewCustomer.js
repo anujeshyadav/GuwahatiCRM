@@ -767,6 +767,29 @@ const CreateCustomer = ({ ViewOneData }) => {
   useEffect(() => {
     console.log(ViewOneData);
     setFormData(ViewOneData);
+    if (ViewOneData?.Country) {
+      let countryselected = Country?.getAllCountries()?.filter(
+        (ele, i) => ele?.name == ViewOneData?.Country
+      );
+      setCountry(countryselected);
+      if (ViewOneData?.State) {
+        let stateselected = State?.getStatesOfCountry(
+          countryselected[0]?.isoCode
+        )?.filter((ele, i) => ele?.name == ViewOneData?.State);
+        setState(stateselected);
+        console.log(stateselected);
+        if (ViewOneData?.City) {
+          let cityselected = City.getCitiesOfState(
+            stateselected[0]?.countryCode,
+            stateselected[0]?.isoCode
+          )?.filter((ele, i) => ele?.name == ViewOneData?.City);
+          setCities(cityselected);
+        }
+      }
+    }
+    if (ViewOneData?.status) {
+      formData["status"] = ViewOneData?.status;
+    }
     CreateCustomerxmlView()
       .then((res) => {
         const jsonData = xmlJs.xml2json(res.data, { compact: true, spaces: 2 });
@@ -802,6 +825,8 @@ const CreateCustomer = ({ ViewOneData }) => {
             formdata.append("files", formData[ele?.name?._text][index]);
           });
         }
+      } else {
+        formdata.append(`${ele?.name._text}`, formData[ele?.name?._text]);
       }
     });
     formdata.append(
@@ -866,7 +891,8 @@ const CreateCustomer = ({ ViewOneData }) => {
                   <Col lg="4" md="4" sm="12">
                     <FormGroup>
                       <Label className="mb-1">
-                        {dropdownValue && dropdownValue?.label?._text}
+                        {dropdownValue && dropdownValue?.label?._text} : -{" "}
+                        {formData[dropdownValue?.name?._text]}
                       </Label>
                       <CustomInput
                         disabled
@@ -1379,6 +1405,39 @@ const CreateCustomer = ({ ViewOneData }) => {
               </Row>
 
               <hr />
+              <Col lg="6" md="6" sm="6" className="mb-2 mt-1">
+                <Label className="mb-0">Status</Label>
+                <div
+                  className="form-label-group"
+                  // onChange={(e) => {
+                  //   setFormData({
+                  //     ...formData,
+                  //     ["status"]: e.target.value,
+                  //   });
+                  // }}
+                >
+                  <input
+                    disabled
+                    checked={formData["status"] == "Active"}
+                    style={{ marginRight: "3px" }}
+                    type="radio"
+                    name="status"
+                    value="Active"
+                  />
+                  <span style={{ marginRight: "20px" }}>Active</span>
+
+                  <input
+                    // checked={status == "Inactive"}
+                    checked={formData["status"] == "Deactive"}
+                    disabled
+                    style={{ marginRight: "3px" }}
+                    type="radio"
+                    name="status"
+                    value="Deactive"
+                  />
+                  <span style={{ marginRight: "3px" }}>Deactive</span>
+                </div>
+              </Col>
               {/* <Row className="mt-2 ">
                 <Col lg="6" md="6" sm="6" className="mb-2">
                   <Label className="">

@@ -138,8 +138,8 @@ const EditAccount = ({ EditOneData }) => {
 
   const submitHandler = (e) => {
     e.preventDefault();
-    console.log(EditOneData);
-    console.log(formData);
+    // console.log(EditOneData);
+    // console.log(formData);
     if (error) {
       swal("Error occured while Entering Details");
     } else {

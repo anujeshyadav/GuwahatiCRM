@@ -667,6 +667,7 @@ import "../../../../../src/layouts/assets/scss/pages/users.scss";
 import {
   CreateAccountSave,
   CreateAccountView,
+  CreateCustomerUpdate,
   CreateCustomersave,
   CreateCustomerxmlView,
 } from "../../../../ApiEndPoint/ApiCalling";
@@ -760,6 +761,28 @@ const CreateCustomer = ({ EditOneData }) => {
   }, [formData]);
   useEffect(() => {
     setFormData(EditOneData);
+    console.log(EditOneData);
+    if (EditOneData?.Country) {
+      let countryselected = Country?.getAllCountries()?.filter(
+        (ele, i) => ele?.name == EditOneData?.Country
+      );
+      setCountry(countryselected);
+      if (EditOneData?.State) {
+        let stateselected = State?.getStatesOfCountry(
+          countryselected[0]?.isoCode
+        )?.filter((ele, i) => ele?.name == EditOneData?.State);
+        setState(stateselected);
+        if (EditOneData?.City) {
+          let cityselected = City.getCitiesOfState(
+            stateselected[0]?.countryCode,
+            stateselected[0]?.isoCode
+          )?.filter((ele, i) => ele?.name == EditOneData?.City);
+          setCities(cityselected);
+        }
+      }
+    }
+
+    formData["status"] = EditOneData?.status;
     CreateCustomerxmlView()
       .then((res) => {
         const jsonData = xmlJs.xml2json(res.data, { compact: true, spaces: 2 });
@@ -795,8 +818,11 @@ const CreateCustomer = ({ EditOneData }) => {
             formdata.append("files", formData[ele?.name?._text][index]);
           });
         }
+      } else {
+        formdata.append(`${ele?.name._text}`, formData[ele?.name?._text]);
       }
     });
+    formdata.append(`status`, formData["status"]);
     formdata.append(
       `${dropdownValue?.name?._text}`,
       formData[dropdownValue?.name?._text]
@@ -807,13 +833,14 @@ const CreateCustomer = ({ EditOneData }) => {
     if (error) {
       swal("Error occured while Entering Details");
     } else {
-      CreateCustomersave(formdata)
+      CreateCustomerUpdate(EditOneData?._id, formdata)
         .then((res) => {
           console.log(res);
+          debugger;
           setFormData({});
           if (res.status) {
-            window.location.reload();
-            swal("User Created Successfully");
+            // window.location.reload();
+            swal("User Updated Successfully");
           }
         })
         .catch((err) => {
@@ -828,7 +855,7 @@ const CreateCustomer = ({ EditOneData }) => {
         <Card>
           <Row className="m-2">
             <Col>
-              <h1 className="float-left">Create Customer</h1>
+              <h1 className="float-left">Edit Customer</h1>
             </Col>
             <Col>
               {/* <div className="float-right">
@@ -1400,7 +1427,37 @@ const CreateCustomer = ({ EditOneData }) => {
                   </div>
                 </Col>
               </Row> */}
+              <Col lg="6" md="6" sm="6" className="mb-2 mt-1">
+                <Label className="mb-0">Status</Label>
+                <div
+                  className="form-label-group"
+                  onChange={(e) => {
+                    setFormData({
+                      ...formData,
+                      ["status"]: e.target.value,
+                    });
+                  }}
+                >
+                  <input
+                    checked={formData["status"] == "Active"}
+                    style={{ marginRight: "3px" }}
+                    type="radio"
+                    name="status"
+                    value="Active"
+                  />
+                  <span style={{ marginRight: "20px" }}>Active</span>
 
+                  <input
+                    // checked={status == "Inactive"}
+                    checked={formData["status"] == "Deactive"}
+                    style={{ marginRight: "3px" }}
+                    type="radio"
+                    name="status"
+                    value="Deactive"
+                  />
+                  <span style={{ marginRight: "3px" }}>Deactive</span>
+                </div>
+              </Col>
               <Row>
                 <Button.Ripple
                   color="primary"

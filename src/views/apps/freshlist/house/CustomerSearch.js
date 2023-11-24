@@ -144,7 +144,7 @@ class CustomerSearch extends React.Component {
         // ];
 
         let dropdown =
-          JSON.parse(jsonData).CreateCustomer?.MyDropdown?.dropdown;
+          JSON.parse(jsonData).CreateCustomer?.MyDropDown?.dropdown;
         if (dropdown?.length) {
           var mydropdownArray = dropdown?.map((ele) => {
             return {
@@ -589,6 +589,7 @@ class CustomerSearch extends React.Component {
                     onClick={(e) => {
                       e.preventDefault();
                       this.setState({ EditOneUserView: false });
+                      this.componentDidMount();
                     }}
                     color="danger"
                   >
