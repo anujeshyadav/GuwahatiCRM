@@ -37,7 +37,7 @@ import UserContext from "../../../../context/Context";
 import { CloudLightning } from "react-feather";
 import { FaPlus } from "react-icons/fa";
 
-const CreateAccount = () => {
+const CreateTarget = () => {
   const [CreatAccountView, setCreatAccountView] = useState([]);
   const [Countries, setCountry] = useState({});
   const [States, setState] = useState({});
@@ -116,7 +116,7 @@ const CreateAccount = () => {
 
   const submitHandler = (e) => {
     e.preventDefault();
-    // console.log(formData);
+    console.log(formData);
     if (error) {
       swal("Error occured while Entering Details");
     } else {
@@ -124,7 +124,7 @@ const CreateAccount = () => {
         .then((res) => {
           setFormData({});
           if (res.status) {
-            // window.location.reload();
+            window.location.reload();
             swal("User Created Successfully");
           }
         })
@@ -140,7 +140,7 @@ const CreateAccount = () => {
         <Card>
           <Row className="m-2">
             <Col>
-              <h1 className="float-left">Create User</h1>
+              <h1 className="float-left">Create Target</h1>
             </Col>
             <Col>
               <div className="float-right">
@@ -151,7 +151,7 @@ const CreateAccount = () => {
                       className="float-right mr-1"
                       color="primary"
                       onClick={() =>
-                        history.push("/app/SoftNumen/accounSearch")
+                        history.push("/app/SoftNumen/TargetCreationList")
                       }
                     >
                       {" "}
@@ -225,7 +225,7 @@ const CreateAccount = () => {
                               <Label>{ele?.label?._text}</Label>
                               <PhoneInput
                                 inputClass="myphoneinput"
-                                country={"in"}
+                                country={"us"}
                                 onKeyDown={(e) => {
                                   if (
                                     ele?.type?._attributes?.type == "number"
@@ -617,34 +617,7 @@ const CreateAccount = () => {
                   </div>
                 </Col>
               </Row> */}
-              <Col lg="6" md="6" sm="6" className="mb-2 mt-1">
-                <Label className="mb-0">Status</Label>
-                <div
-                  className="form-label-group"
-                  onChange={(e) => {
-                    setFormData({
-                      ...formData,
-                      ["status"]: e.target.value,
-                    });
-                  }}
-                >
-                  <input
-                    style={{ marginRight: "3px" }}
-                    type="radio"
-                    name="status"
-                    value="Active"
-                  />
-                  <span style={{ marginRight: "20px" }}>Active</span>
 
-                  <input
-                    style={{ marginRight: "3px" }}
-                    type="radio"
-                    name="status"
-                    value="Deactive"
-                  />
-                  <span style={{ marginRight: "3px" }}>Deactive</span>
-                </div>
-              </Col>
               <Row>
                 <Button.Ripple
                   color="primary"
@@ -661,4 +634,4 @@ const CreateAccount = () => {
     </div>
   );
 };
-export default CreateAccount;
+export default CreateTarget;

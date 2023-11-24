@@ -101,6 +101,27 @@ const EditAccount = ({ EditOneData }) => {
   }, [formData]);
   useEffect(() => {
     setFormData(EditOneData);
+    if (EditOneData?.Country) {
+      let countryselected = Country?.getAllCountries()?.filter(
+        (ele, i) => ele?.name == EditOneData?.Country
+      );
+      setCountry(countryselected);
+      if (EditOneData?.State) {
+        let stateselected = State?.getStatesOfCountry(
+          countryselected[0]?.isoCode
+        )?.filter((ele, i) => ele?.name == EditOneData?.State);
+        setState(stateselected);
+        if (EditOneData?.City) {
+          let cityselected = City.getCitiesOfState(
+            stateselected[0]?.countryCode,
+            stateselected[0]?.isoCode
+          )?.filter((ele, i) => ele?.name == EditOneData?.City);
+          setCities(cityselected);
+        }
+      }
+    }
+
+    formData["status"] = EditOneData?.status;
     CreateAccountView()
       .then((res) => {
         const jsonData = xmlJs.xml2json(res.data, { compact: true, spaces: 2 });
@@ -118,7 +139,6 @@ const EditAccount = ({ EditOneData }) => {
   const submitHandler = (e) => {
     e.preventDefault();
     console.log(EditOneData);
-    debugger;
     console.log(formData);
     if (error) {
       swal("Error occured while Entering Details");
@@ -128,7 +148,7 @@ const EditAccount = ({ EditOneData }) => {
           setFormData({});
           if (res.status) {
             // window.location.reload();
-            swal("User Created Successfully");
+            swal("User Updated Successfully");
           }
         })
         .catch((err) => {
@@ -227,7 +247,7 @@ const EditAccount = ({ EditOneData }) => {
                               <Label>{ele?.label?._text}</Label>
                               <PhoneInput
                                 inputClass="myphoneinput"
-                                country={"us"}
+                                country={"in"}
                                 onKeyDown={(e) => {
                                   if (
                                     ele?.type?._attributes?.type == "number"
@@ -269,6 +289,7 @@ const EditAccount = ({ EditOneData }) => {
                             <FormGroup>
                               <Label>{ele?.label?._text}</Label>
                               <Select
+                                disabled
                                 inputClass="countryclass"
                                 className="countryclassnw"
                                 options={Country.getAllCountries()}
@@ -307,6 +328,7 @@ const EditAccount = ({ EditOneData }) => {
                             <FormGroup>
                               <Label>{ele?.label?._text}</Label>
                               <Select
+                                disabled
                                 options={State?.getStatesOfCountry(
                                   Countries?.isoCode
                                 )}
@@ -345,6 +367,7 @@ const EditAccount = ({ EditOneData }) => {
                             <FormGroup>
                               <Label>{ele?.label?._text}</Label>
                               <Select
+                                disabled
                                 options={City?.getCitiesOfState(
                                   States?.countryCode,
                                   States?.isoCode
@@ -619,7 +642,37 @@ const EditAccount = ({ EditOneData }) => {
                   </div>
                 </Col>
               </Row> */}
+              <Col lg="6" md="6" sm="6" className="mb-2 mt-1">
+                <Label className="mb-0">Status</Label>
+                <div
+                  className="form-label-group"
+                  onChange={(e) => {
+                    setFormData({
+                      ...formData,
+                      ["status"]: e.target.value,
+                    });
+                  }}
+                >
+                  <input
+                    checked={formData["status"] == "Active"}
+                    style={{ marginRight: "3px" }}
+                    type="radio"
+                    name="status"
+                    value="Active"
+                  />
+                  <span style={{ marginRight: "20px" }}>Active</span>
 
+                  <input
+                    // checked={status == "Inactive"}
+                    checked={formData["status"] == "Deactive"}
+                    style={{ marginRight: "3px" }}
+                    type="radio"
+                    name="status"
+                    value="Deactive"
+                  />
+                  <span style={{ marginRight: "3px" }}>Deactive</span>
+                </div>
+              </Col>
               <Row>
                 <Button.Ripple
                   color="primary"

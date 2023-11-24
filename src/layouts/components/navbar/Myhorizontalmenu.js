@@ -36,17 +36,17 @@ class HorizontalSidebar extends React.Component {
   }
 
   openDropdown = (id) => {
-    console.log(id)
-  // document.getElementById("showlist").className="show nav-link"; 
-  // console.log(openDrop.className)
-  // document.getElementById("showlist").className = "show nav-link dropdown";  
+    console.log(id);
+    // document.getElementById("showlist").className="show nav-link";
+    // console.log(openDrop.className)
+    // document.getElementById("showlist").className = "show nav-link dropdown";
 
     let arr = this.state.openDropdown;
     if (!arr.includes(id)) arr.push(id);
-    if(id){
+    if (id) {
       this.setState(() => ({
         isClassAdded: true,
-        }));
+      }));
     }
     return this.setState({
       openDropdown: arr,
@@ -186,8 +186,8 @@ class HorizontalSidebar extends React.Component {
                 >
                   {child.children ? (
                     <Dropdown
-                      className={classnames("sub-menu w-100", {}) }
-                      // isOpen={this.state.openDropdown.includes(child.id)}
+                      className={classnames("sub-menu w-100", {})}
+                      isOpen={this.state.openDropdown.includes(child.id)}
                       direction={this.state.openLeft ? "left" : "right"}
                       toggle={() => true}
                       onClick={() => this.openDropdown(child.id)}
@@ -285,10 +285,10 @@ class HorizontalSidebar extends React.Component {
               // this.openDropdown(item.id);
               this.handleParentHover(item.id);
             }}
-            // onMouseEnter={() => {
-            //   this.openDropdown(item.id);
-            //   this.handleParentHover(item.id);
-            // }}
+            onMouseEnter={() => {
+              this.openDropdown(item.id);
+              this.handleParentHover(item.id);
+            }}
             onMouseLeave={() => {
               this.closeDropdown(item.id);
               this.handleParentHover(null);
@@ -296,7 +296,7 @@ class HorizontalSidebar extends React.Component {
           >
             {item.children ? (
               <Dropdown
-             isOpen={this.state.openDropdown.includes(item.id)}
+                isOpen={this.state.openDropdown.includes(item.id)}
                 className="nav-link"
                 id="showlist"
                 //  className={classnames("nav-link",this.state.isClassAdded==true ? 'show' : '')}

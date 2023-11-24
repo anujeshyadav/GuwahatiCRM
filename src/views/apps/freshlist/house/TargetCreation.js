@@ -55,7 +55,7 @@ import UserContext from "../../../../context/Context";
 
 const SelectedColums = [];
 
-class AccounSearch extends React.Component {
+class TargetCreation extends React.Component {
   static contextType = UserContext;
   constructor(props) {
     super(props);
@@ -221,23 +221,6 @@ class AccounSearch extends React.Component {
               );
             },
           },
-          {
-            headerName: "Status",
-            field: "status",
-            filter: true,
-            width: 150,
-            cellRendererFramework: (params) => {
-              return params.data?.status === "Active" ? (
-                <div className="badge badge-pill badge-success">
-                  {params.data?.status}
-                </div>
-              ) : params.data?.status === "Deactive" ? (
-                <div className="badge badge-pill badge-warning">
-                  {params.data?.status}
-                </div>
-              ) : null;
-            },
-          },
 
           ...myHeadings,
           {
@@ -276,7 +259,7 @@ class AccounSearch extends React.Component {
 
         this.setState({ AllcolumnDefs: Product });
 
-        let userHeading = JSON.parse(localStorage.getItem("AccountSearch"));
+        let userHeading = JSON.parse(localStorage.getItem("TargetList"));
         if (userHeading?.length) {
           this.setState({ columnDefs: userHeading });
           this.gridApi.setColumnDefs(userHeading);
@@ -536,7 +519,7 @@ class AccounSearch extends React.Component {
     this.setState({ SelectedcolumnDefs: this.state.SelectedcolumnDefs });
     this.setState({ rowData: this.state.rowData });
     localStorage.setItem(
-      "AccountSearch",
+      "TargetList",
       JSON.stringify(this.state.SelectedcolumnDefs)
     );
     this.LookupviewStart();
@@ -587,7 +570,6 @@ class AccounSearch extends React.Component {
                     onClick={(e) => {
                       e.preventDefault();
                       this.setState({ EditOneUserView: false });
-                      this.componentDidMount();
                     }}
                     color="danger"
                   >
@@ -625,7 +607,7 @@ class AccounSearch extends React.Component {
                     <Card>
                       <Row className="m-2">
                         <Col>
-                          <h1 className="float-left">User list</h1>
+                          <h1 className="float-left">Target List</h1>
                         </Col>
                         <Col>
                           <span className="mx-1">
@@ -706,11 +688,11 @@ class AccounSearch extends React.Component {
                                   color="primary"
                                   onClick={() =>
                                     history.push(
-                                      "/app/SoftNumen/account/CreateAccount"
+                                      "/app/SoftNumen/account/CreateTarget"
                                     )
                                   }
                                 >
-                                  <FaPlus size={15} /> Create User
+                                  <FaPlus size={15} /> Create Target
                                 </Badge>
                               )}
                             />
@@ -1012,4 +994,4 @@ class AccounSearch extends React.Component {
     );
   }
 }
-export default AccounSearch;
+export default TargetCreation;

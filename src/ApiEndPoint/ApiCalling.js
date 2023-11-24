@@ -350,7 +350,7 @@ export const CreateCustomerList = async (data) => {
   return response;
 };
 export const CreateAccountUpdate = async (id, formdata) => {
-  console.log(id, formdata);
+  // console.log(id, formdata);
   let response = await axiosConfig
     .post(`${Create_Account_Update}` + id, formdata)
     .then((res) => res.data);
