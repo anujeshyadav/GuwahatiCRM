@@ -216,13 +216,13 @@ class UserProfile extends React.Component {
                     <li className="lst-2 p-1">
                       FirstName:
                       <span className="lst-3">
-                        <strong>{this.state.LoginData?.name}</strong>
+                        <strong>{this.context?.UserInformatio.firstName}</strong>
                       </span>
                     </li>
                     <li className="lst-2 p-1">
                       LastName:
                       <span className="lst-3">
-                        <strong>{this.state.LoginData?.name}</strong>
+                        <strong>{this.context?.UserInformatio.lastName}</strong>
                       </span>
                     </li>
                     <li className="lst-2 p-1">
@@ -234,19 +234,19 @@ class UserProfile extends React.Component {
                     <li className="lst-2 p-1">
                       Country:
                       <span className="lst-3">
-                        <strong>{this.context?.UserInformatio?.email}</strong>
+                        <strong>{this.context?.UserInformatio?.Country}</strong>
                       </span>
                     </li>
                     <li className="lst-2 p-1">
                       State:
                       <span className="lst-3">
-                        <strong>{this.context?.UserInformatio?.email}</strong>
+                        <strong>{this.context?.UserInformatio?.State}</strong>
                       </span>
                     </li>
                     <li className="lst-2 p-1">
                       City:
                       <span className="lst-3">
-                        <strong>{this.context?.UserInformatio?.email}</strong>
+                        <strong>{this.context?.UserInformatio?.City}</strong>
                       </span>
                     </li>
 
@@ -276,7 +276,7 @@ class UserProfile extends React.Component {
                           type="text"
                           name="firstName"
                           placeholder="FirstName"
-                          value={this.state.name}
+                          value={this.state.firstName}
                           onChange={this.changeHandler}
                         />
                       </Col>
