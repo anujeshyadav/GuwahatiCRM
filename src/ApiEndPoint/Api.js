@@ -23,6 +23,8 @@ export const Create_Product_XMLView = "/product/get-xml";
 export const Save_Product = "/product/save-product";
 export const ProductList_View = "/product/view-product";
 
+export const Save_Order = "/order/save-place-order";
+
 // Guwahati close
 
 export const Create_Account_xmlView = "/user/get-xml";
@@ -127,7 +129,7 @@ export const createQuoteView = "/create-quote/create-quote";
 export const createWarehouseView = "/create-warehouse/create-warehouse";
 
 // login Api End  Points
-export const Login_User = "/create-account/signin";
+export const Login_User = "/user/signin";
 export const Login_OTP = "/create-account/verify-otp";
 export const Edit_Profile = "/create-account/edit-profile/";
 
