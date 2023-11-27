@@ -4,6 +4,7 @@ import {
   SaveOrder_List,
   Delete_Sales_person,
   Create_Warehouse_List,
+  Create_Target_save,
   Create_Sales_personXMlView,
   Create_Sales_ManagerXMlView,
   Update_Sales_Manager_save,
@@ -983,4 +984,13 @@ export const Update_Sales_Managersave = async (id, data) => {
   return response;
 };
 //
+
+// create target
+export const Create_Targetsave = async (data) => {
+  let response = await axiosConfig
+    .post(Create_Target_save, data)
+    .then((res) => res.data);
+  return response;
+};
+// Create_Target_save
 //
