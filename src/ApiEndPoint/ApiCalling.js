@@ -10,6 +10,7 @@ import {
   Create_SalesMan_xmlView,
   Create_Customer_Update,
   Create_SalesManager_xmlView,
+  Create_Target_xml_view,
   Create_unit_xmlView,
   Create_unit_save,
   Create_unit_List,
@@ -318,6 +319,12 @@ export const CreateMySalesTeam = async () => {
 export const CreateMySalesManager = async () => {
   let response = await axiosConfig
     .get(`${Create_SalesManager_xmlView}`)
+    .then((res) => res.data);
+  return response;
+};
+export const CreateTargetXmlView = async () => {
+  let response = await axiosConfig
+    .get(`${Create_Target_xml_view}`)
     .then((res) => res.data);
   return response;
 };
