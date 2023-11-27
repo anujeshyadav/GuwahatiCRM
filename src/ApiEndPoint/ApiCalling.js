@@ -1,9 +1,18 @@
 import {
   Create_warehouse_xmlView,
   Create_warehouse_save,
-  
+  SaveOrder_List,
+  Delete_Sales_person,
   Create_Warehouse_List,
+  Create_Sales_personXMlView,
+  Create_Sales_ManagerXMlView,
+  Update_Sales_Manager_save,
+  Delete_SalesManager_person,
+  Create_Salesmanager_save,
   Create_transporter_xmlView,
+  Create_Sales_person_save,
+  Update_Sales_person_save,
+  Create_Sales_person_List,
   Create_transporter_save,
   Create_Transporter_List,
   Delete_Transporter_List,
@@ -97,6 +106,7 @@ import {
   Save_Delivery_Address,
   Supplier_View,
   SerViceCenter_View,
+  Sales_Manager_List,
   WarrentyUpload_View,
   Warranty_View,
   WarrantyList_View,
@@ -257,6 +267,13 @@ export const DeleteUnitList = async (id) => {
     .then((res) => res.data);
   return response;
 };
+export const DeleteSalesperson = async (id) => {
+  let response = await axiosConfig
+    .delete(`${Delete_Sales_person}` + id)
+
+    .then((res) => res.data);
+  return response;
+};
 export const UnitViewOne = async (id) => {
   let response = await axiosConfig
     .put(`${Unit_ViewOne}` + id)
@@ -264,7 +281,6 @@ export const UnitViewOne = async (id) => {
     .then((res) => res.data);
   return response;
 };
-
 
 export const SaveOrder = async (data) => {
   let response = await axiosConfig
@@ -322,9 +338,33 @@ export const CreateMySalesManager = async () => {
     .then((res) => res.data);
   return response;
 };
+export const SaveOrderList = async () => {
+  let response = await axiosConfig
+    .get(`${SaveOrder_List}`)
+    .then((res) => res.data);
+  return response;
+};
 export const CreateTargetXmlView = async () => {
   let response = await axiosConfig
     .get(`${Create_Target_xml_view}`)
+    .then((res) => res.data);
+  return response;
+};
+export const CreateSalespersonXMlView = async () => {
+  let response = await axiosConfig
+    .get(`${Create_Sales_personXMlView}`)
+    .then((res) => res.data);
+  return response;
+};
+export const Create_Sales_personList = async () => {
+  let response = await axiosConfig
+    .get(`${Create_Sales_person_List}`)
+    .then((res) => res.data);
+  return response;
+};
+export const Create_Sales_personsave = async (data) => {
+  let response = await axiosConfig
+    .post(`${Create_Sales_person_save}`, data)
     .then((res) => res.data);
   return response;
 };
@@ -370,6 +410,13 @@ export const CreateAccountUpdate = async (id, formdata) => {
   // console.log(id, formdata);
   let response = await axiosConfig
     .post(`${Create_Account_Update}` + id, formdata)
+    .then((res) => res.data);
+  return response;
+};
+export const UpdateSalespersonsave = async (id, formdata) => {
+  // console.log(id, formdata);
+  let response = await axiosConfig
+    .put(`${Update_Sales_person_save}` + id, formdata)
     .then((res) => res.data);
   return response;
 };
@@ -901,3 +948,39 @@ export const CreateOrder_ID = async () => {
   let response = await axiosConfig.get(`${orders_ID}`).then((res) => res.data);
   return response;
 };
+
+// create Sales Manger
+export const CreateSalesManagerXMlView = async () => {
+  let response = await axiosConfig
+    .get(`${Create_Sales_ManagerXMlView}`)
+    .then((res) => res.data);
+  return response;
+};
+export const Create_Salesmanagersave = async (data) => {
+  let response = await axiosConfig
+    .post(`${Create_Salesmanager_save}`, data)
+    .then((res) => res.data);
+  return response;
+};
+//
+export const Sales_ManagerList = async () => {
+  let response = await axiosConfig
+    .get(`${Sales_Manager_List}`)
+    .then((res) => res.data);
+  return response;
+};
+export const DeleteSalesManagerperson = async (id) => {
+  let response = await axiosConfig
+    .delete(`${Delete_SalesManager_person}` + id)
+
+    .then((res) => res.data);
+  return response;
+};
+export const Update_Sales_Managersave = async (id, data) => {
+  let response = await axiosConfig
+    .put(Update_Sales_Manager_save + id, data)
+    .then((res) => res.data);
+  return response;
+};
+//
+//
