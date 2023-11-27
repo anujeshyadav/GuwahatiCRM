@@ -1,6 +1,5 @@
 import React, { useEffect, useState, useContext } from "react";
 import xmlJs from "xml-js";
-import Multiselect from "multiselect-react-dropdown";
 import {
   Card,
   CardBody,
@@ -22,13 +21,14 @@ import Select from "react-select";
 import moment from "moment-timezone";
 import { Route } from "react-router-dom";
 import salesreturnorderlist from "../../../../xmlfiles/SalesReturnXmlcall";
-
+import Multiselect from "multiselect-react-dropdown";
 import swal from "sweetalert";
 import "../../../../../src/layouts/assets/scss/pages/users.scss";
 
 import {
   CreateAccountSave,
   CreateAccountView,
+  SaveOrderList,
 } from "../../../../ApiEndPoint/ApiCalling";
 import { BiEnvelope } from "react-icons/bi";
 import { FcPhoneAndroid } from "react-icons/fc";
@@ -40,6 +40,7 @@ import { FaPlus } from "react-icons/fa";
 
 const CreateReturnSalesOrder = () => {
   const [CreatAccountView, setCreatAccountView] = useState([]);
+  const [OrderList, setOrderList] = useState([]);
   const [Countries, setCountry] = useState({});
   const [States, setState] = useState({});
   const [Cities, setCities] = useState({});
@@ -106,6 +107,15 @@ const CreateReturnSalesOrder = () => {
     console.log(JSON.parse(jsonData)?.SalesReturn);
     setCreatAccountView(JSON.parse(jsonData)?.SalesReturn?.input);
     setdropdownValue(JSON.parse(jsonData)?.SalesReturn?.MyDropDown?.dropdown);
+
+    SaveOrderList()
+      .then((res) => {
+        console.log(res?.orderHistory);
+        setOrderList(res?.orderHistory);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
     // CreateAccountView()
     //   .then((res) => {
     //     const jsonData = xmlJs.xml2json(res.data, { compact: true, spaces: 2 });
@@ -119,7 +129,55 @@ const CreateReturnSalesOrder = () => {
     //     console.log(err);
     //   });
   }, []);
+  const onSelect1 = (selectedList, selectedItem) => {
+    console.log(selectedList);
+    // if (selectedList.length) {
+    //   for (var i = 0; i < selectedList.length; i++) {
+    //     selectedOptions.push(selectedList[i].id);
+    //   }
+    // }
 
+    // let arr = selectedList.map((ele) => ele.id);
+    // setmultiSelect(arr);
+    // console.log(multiSelect);
+
+    // let uniqueChars = [...new Set(selectedOptions)];
+
+    // if (uniqueChars.length === 1) {
+    //   let value = uniqueChars[0];
+    //   const formdata = new FormData();
+    //   formdata.append("state_id", value);
+    //   axiosConfig
+    //     .post(`/getcity`, formdata)
+    //     .then((res) => {
+    //       setCityList(res?.data?.cities);
+    //     })
+    //     .catch((err) => {
+    //       console.log(err);
+    //     });
+    // } else {
+    //   setCityList([]);
+    // }
+  };
+  const onRemove1 = (selectedList, removedItem) => {
+    console.log(selectedList);
+
+    // debugger;
+    // setselectedOptions("");
+    // console.log(selectedList);
+    // setmultiSelect(selectedList);
+    // let arr = selectedList.map((ele) => ele.id);
+    // console.log(arr);
+    // setmultiSelect(arr);
+    // console.log(multiSelect);
+    // if (selectedList.length) {
+    //   for (var i = 0; i < selectedList.length; i++) {
+    //     selectedOptions.push(selectedList[i].id);
+    //   }
+    // }
+    // let uniqueChars = [...new Set(selectedOptions)];
+    // console.log(uniqueChars);
+  };
   const submitHandler = (e) => {
     e.preventDefault();
     console.log(formData);
@@ -175,28 +233,38 @@ const CreateReturnSalesOrder = () => {
             <Form className="m-1" onSubmit={submitHandler}>
               <Row className="mb-2">
                 {dropdownValue && dropdownValue ? (
-                  <Col lg="4" md="4">
-                    <FormGroup>
-                      <Label>{dropdownValue?.label?._text}</Label>
-                      <CustomInput
-                        required
-                        type="select"
-                        name={dropdownValue?.name?._text}
-                        value={formData[dropdownValue?.name?._text]}
-                        onChange={handleInputChange}
-                      >
-                        <option value="">--Select--</option>
-                        {dropdownValue?.option?.map((option, index) => (
-                          <option
-                            key={index}
-                            value={option?._attributes?.value}
-                          >
-                            {option?._attributes?.value}
-                          </option>
-                        ))}
-                      </CustomInput>
-                    </FormGroup>
-                  </Col>
+                  <>
+                    <Col lg="4" md="4">
+                      <FormGroup>
+                        <Label>{dropdownValue?.label?._text}</Label>
+                        {/* <CustomInput
+                          required
+                          type="select"
+                          name={dropdownValue?.name?._text}
+                          value={formData[dropdownValue?.name?._text]}
+                          onChange={handleInputChange}
+                        >
+                          <option value="">--Select--</option>
+                          {OrderList?.map((option, index) => (
+                            <option key={index} value={option?._id}>
+                              {option?._id}
+                            </option>
+                          ))}
+                        </CustomInput> */}
+                        <Multiselect
+                          required
+                          // showCheckbox="true"
+                          selectionLimit={1}
+                          isObject="false"
+                          options={OrderList} // Options to display in the dropdown
+                          // selectedValues={selectedValue}   // Preselected value to persist in dropdown
+                          onSelect={onSelect1} // Function will trigger on select event
+                          onRemove={onRemove1} // Function will trigger on remove event
+                          displayValue="_id" // Property name to display in the dropdown options
+                        />
+                      </FormGroup>
+                    </Col>
+                  </>
                 ) : null}
 
                 {CreatAccountView &&

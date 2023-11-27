@@ -30,6 +30,8 @@ import {
   CreateCustomersave,
   CreateCustomerxmlView,
   CreateMySalesTeam,
+  CreateSalespersonXMlView,
+  Create_Sales_personsave,
 } from "../../../../ApiEndPoint/ApiCalling";
 import { BiEnvelope } from "react-icons/bi";
 import { FcPhoneAndroid } from "react-icons/fc";
@@ -121,10 +123,22 @@ const CreateSalesTeam = () => {
     console.log(formData);
   }, [formData]);
   useEffect(() => {
-    let response = createSalesman();
-    const jsonData = xmlJs.xml2json(response, { compact: true, spaces: 2 });
-    console.log(JSON.parse(jsonData)?.Createsalesman);
-    setCreatAccountView(JSON.parse(jsonData)?.Createsalesman?.input);
+    CreateSalespersonXMlView()
+      .then((res) => {
+        console.log(res?.data);
+        const jsonData = xmlJs.xml2json(res?.data, {
+          compact: true,
+          spaces: 2,
+        });
+        console.log(JSON.parse(jsonData)?.Createsalesman);
+        setCreatAccountView(JSON.parse(jsonData)?.Createsalesman?.input);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+    // const jsonData = xmlJs.xml2json(response, { compact: true, spaces: 2 });
+    // console.log(JSON.parse(jsonData)?.Createsalesman);
+    // setCreatAccountView(JSON.parse(jsonData)?.Createsalesman?.input);
 
     // setdropdownValue(
     //   JSON.parse(jsonData)?.Createsalesman?.MyDropDown?.dropdown
@@ -166,25 +180,28 @@ const CreateSalesTeam = () => {
             formdata.append("files", formData[ele?.name?._text][index]);
           });
         }
+      } else {
+        formdata.append(`status`, formData["status"]);
       }
     });
-    formdata.append(
-      `${dropdownValue?.name?._text}`,
-      formData[dropdownValue?.name?._text]
-    );
+    // formdata.append(
+    //   `${dropdownValue?.name?._text}`,
+    //   formData[dropdownValue?.name?._text]
+    // );
     formdata.forEach((value, key) => {
       console.log(key, value);
     });
     if (error) {
       swal("Error occured while Entering Details");
     } else {
-      CreateCustomersave(formdata)
+      Create_Sales_personsave(formdata)
+        // CreateCustomersave(formdata)
         .then((res) => {
           console.log(res);
-          setFormData({});
+          // setFormData({});
           if (res.status) {
             window.location.reload();
-            swal("User Created Successfully");
+            swal("Sales Person Created Successfully");
           }
         })
         .catch((err) => {
@@ -275,7 +292,7 @@ const CreateSalesTeam = () => {
                               </Label>
                               <PhoneInput
                                 inputClass="myphoneinput"
-                                country={"us"}
+                                country={"in"}
                                 onKeyDown={(e) => {
                                   if (
                                     ele?.type?._attributes?.type == "number"
@@ -772,7 +789,39 @@ const CreateSalesTeam = () => {
                   </div>
                 </Col>
               </Row> */}
+              <Col lg="6" md="6" sm="6" className="mb-2 mt-1">
+                <Label className="mb-0">Status</Label>
+                <div>
+                  <input
+                    style={{ marginRight: "3px" }}
+                    type="radio"
+                    name="status"
+                    value="Active"
+                    className="form-label-group"
+                    onChange={(e) => {
+                      setFormData({
+                        ...formData,
+                        ["status"]: "Active",
+                      });
+                    }}
+                  />
+                  <span style={{ marginRight: "20px" }}>Active</span>
 
+                  <input
+                    style={{ marginRight: "3px" }}
+                    type="radio"
+                    name="status"
+                    value="Deactive"
+                    onChange={(e) => {
+                      setFormData({
+                        ...formData,
+                        ["status"]: "Deactive",
+                      });
+                    }}
+                  />
+                  <span style={{ marginRight: "3px" }}>Deactive</span>
+                </div>
+              </Col>
               <Row>
                 <Button.Ripple
                   color="primary"

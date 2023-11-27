@@ -31,6 +31,8 @@ import {
   CreateCustomersave,
   CreateCustomerxmlView,
   CreateMySalesManager,
+  CreateSalesManagerXMlView,
+  Create_Salesmanagersave,
 } from "../../../../ApiEndPoint/ApiCalling";
 import { BiEnvelope } from "react-icons/bi";
 import { FcPhoneAndroid } from "react-icons/fc";
@@ -121,69 +123,60 @@ const CreateSalesManager = () => {
     console.log(formData);
   }, [formData]);
   useEffect(() => {
-    let response = createSalesManager();
-    const jsonData = xmlJs.xml2json(response, { compact: true, spaces: 2 });
-    debugger;
-    console.log(JSON.parse(jsonData)?.Createsalesmanager);
-    setCreatAccountView(JSON.parse(jsonData)?.Createsalesmanager?.input);
+    CreateSalesManagerXMlView()
+      .then((res) => {
+        const jsonData = xmlJs.xml2json(res.data, { compact: true, spaces: 2 });
+        console.log(JSON.parse(jsonData)?.Createsalesmanager);
+        setCreatAccountView(JSON.parse(jsonData)?.Createsalesmanager?.input);
 
-    // CreateMySalesManager()
-    //   .then((res) => {
-    //     console.log(res);
-
-    //     debugger;
-    //     const jsonData = xmlJs.xml2json(res, { compact: true, spaces: 2 });
-    //     console.log(JSON.parse(jsonData)?.Createsalesmanager);
-    //     setCreatAccountView(JSON.parse(jsonData)?.Createsalesmanager?.input);
-
-    //     setdropdownValue(
-    //       JSON.parse(jsonData)?.CreateCustomer?.MyDropDown?.dropdown
-    //     );
-    //   })
-    //   .catch((err) => {
-    //     console.log(err);
-    //     swal("Something Went Wrong");
-    //   });
+        setdropdownValue(
+          JSON.parse(jsonData)?.CreateCustomer?.MyDropDown?.dropdown
+        );
+      })
+      .catch((err) => {
+        console.log(err);
+        swal("Something Went Wrong");
+      });
   }, []);
 
   const submitHandler = (e) => {
     e.preventDefault();
     // console.log(CreatAccountView);
     // console.log(dropdownValue);
-    let formdata = new FormData();
-    CreatAccountView?.map((ele, i) => {
-      if (ele?.type?._attributes?.type == "text") {
-        formdata.append(`${ele?.name._text}`, formData[ele?.name?._text]);
-      } else if (ele?.type?._attributes?.type == "file") {
-        if (ele?.name?._text == "Shopphoto") {
-          formData[ele?.name?._text]?.map((val, index) => {
-            formdata.append("file", formData[ele?.name?._text][index]);
-          });
-        }
-        if (ele?.name?._text == "photo") {
-          formData[ele?.name?._text]?.map((val, index) => {
-            formdata.append("files", formData[ele?.name?._text][index]);
-          });
-        }
-      }
-    });
-    formdata.append(
-      `${dropdownValue?.name?._text}`,
-      formData[dropdownValue?.name?._text]
-    );
-    formdata.forEach((value, key) => {
-      console.log(key, value);
-    });
+    // let formdata = new FormData();
+    // CreatAccountView?.map((ele, i) => {
+    //   if (ele?.type?._attributes?.type == "text") {
+    //     formdata.append(`${ele?.name._text}`, formData[ele?.name?._text]);
+    //   } else if (ele?.type?._attributes?.type == "file") {
+    //     if (ele?.name?._text == "Shopphoto") {
+    //       formData[ele?.name?._text]?.map((val, index) => {
+    //         formdata.append("file", formData[ele?.name?._text][index]);
+    //       });
+    //     }
+    //     if (ele?.name?._text == "photo") {
+    //       formData[ele?.name?._text]?.map((val, index) => {
+    //         formdata.append("files", formData[ele?.name?._text][index]);
+    //       });
+    //     }
+    //   }
+    // });
+    // formdata.append(
+    //   `${dropdownValue?.name?._text}`,
+    //   formData[dropdownValue?.name?._text]
+    // );
+    // formdata.forEach((value, key) => {
+    //   console.log(key, value);
+    // });
     if (error) {
       swal("Error occured while Entering Details");
     } else {
-      CreateCustomersave(formdata)
+      Create_Salesmanagersave(formData)
         .then((res) => {
           console.log(res);
-          setFormData({});
+          // setFormData({});
           if (res.status) {
-            window.location.reload();
-            swal("User Created Successfully");
+            // window.location.reload();
+            swal("SalesManager Created Successfully");
           }
         })
         .catch((err) => {
@@ -274,7 +267,7 @@ const CreateSalesManager = () => {
                               </Label>
                               <PhoneInput
                                 inputClass="myphoneinput"
-                                country={"us"}
+                                country={"in"}
                                 onKeyDown={(e) => {
                                   if (
                                     ele?.type?._attributes?.type == "number"
@@ -771,7 +764,34 @@ const CreateSalesManager = () => {
                   </div>
                 </Col>
               </Row> */}
+              <Col lg="6" md="6" sm="6" className="mb-2 mt-1">
+                <Label className="mb-0">Status</Label>
+                <div
+                  className="form-label-group"
+                  onChange={(e) => {
+                    setFormData({
+                      ...formData,
+                      ["status"]: e.target.value,
+                    });
+                  }}
+                >
+                  <input
+                    style={{ marginRight: "3px" }}
+                    type="radio"
+                    name="status"
+                    value="Active"
+                  />
+                  <span style={{ marginRight: "20px" }}>Active</span>
 
+                  <input
+                    style={{ marginRight: "3px" }}
+                    type="radio"
+                    name="status"
+                    value="Deactive"
+                  />
+                  <span style={{ marginRight: "3px" }}>Deactive</span>
+                </div>
+              </Col>
               <Row>
                 <Button.Ripple
                   color="primary"

@@ -20,8 +20,8 @@ import {
 import { ContextLayout } from "../../../../utility/context/Layout";
 import { AgGridReact } from "ag-grid-react";
 import "ag-grid-community/dist/styles/ag-grid.css";
-import EditAccount from "../accounts/EditCustomer";
-import ViewAccount from "../accounts/ViewCustomer";
+import EditAccount from "../accounts/EditSalesManager";
+import ViewAccount from "../accounts/ViewSalesManager";
 import jsPDF from "jspdf";
 import "jspdf-autotable";
 import Logo from "../../../../assets/img/profile/pages/logomain.png";
@@ -42,7 +42,10 @@ import swal from "sweetalert";
 import {
   CreateCustomerList,
   CreateCustomerxmlView,
+  CreateSalesManagerXMlView,
   DeleteCustomerList,
+  DeleteSalesManagerperson,
+  Sales_ManagerList,
 } from "../../../../ApiEndPoint/ApiCalling";
 import {
   BsCloudDownloadFill,
@@ -102,13 +105,13 @@ class CreateSalesManager extends React.Component {
   async componentDidMount() {
     const UserInformation = this.context?.UserInformatio;
 
-    await CreateCustomerxmlView()
+    await CreateSalesManagerXMlView()
       .then((res) => {
         var mydropdownArray = [];
         var adddropdown = [];
         const jsonData = xmlJs.xml2json(res.data, { compact: true, spaces: 2 });
         console.log(JSON.parse(jsonData));
-        const inputs = JSON.parse(jsonData).CreateCustomer?.input?.map(
+        const inputs = JSON.parse(jsonData)?.Createsalesmanager?.input?.map(
           (ele) => {
             return {
               headerName: ele?.label._text,
@@ -168,9 +171,9 @@ class CreateSalesManager extends React.Component {
         let myHeadings = [
           // ...checkboxinput,
           ...inputs,
-          ...adddropdown,
+          // ...adddropdown,
           //   ...addRadio,
-          ...mydropdownArray,
+          // ...mydropdownArray,
         ];
         console.log(myHeadings);
         let Product = [
@@ -223,6 +226,23 @@ class CreateSalesManager extends React.Component {
               );
             },
           },
+          {
+            headerName: "Status",
+            field: "status",
+            filter: true,
+            width: 150,
+            cellRendererFramework: (params) => {
+              return params.data?.status === "Active" ? (
+                <div className="badge badge-pill badge-success">
+                  {params.data.status}
+                </div>
+              ) : params.data?.status === "Deactive" ? (
+                <div className="badge badge-pill badge-warning">
+                  {params.data.status}
+                </div>
+              ) : null;
+            },
+          },
 
           ...myHeadings,
           {
@@ -260,8 +280,7 @@ class CreateSalesManager extends React.Component {
         ];
 
         this.setState({ AllcolumnDefs: Product });
-
-        let userHeading = JSON.parse(localStorage.getItem("CustomerSearch"));
+        let userHeading = JSON.parse(localStorage.getItem("SalesManagerList"));
         if (userHeading?.length) {
           this.setState({ columnDefs: userHeading });
           this.gridApi.setColumnDefs(userHeading);
@@ -276,9 +295,9 @@ class CreateSalesManager extends React.Component {
         console.log(err);
         swal("Error", "something went wrong try again");
       });
-    await CreateCustomerList()
+    await Sales_ManagerList()
       .then((res) => {
-        let value = res?.Customer;
+        let value = res?.SalesManager;
         this.setState({ rowData: value });
       })
       .catch((err) => {
@@ -298,7 +317,7 @@ class CreateSalesManager extends React.Component {
     }).then((value) => {
       switch (value) {
         case "delete":
-          DeleteCustomerList(id)
+          DeleteSalesManagerperson(id)
             .then((res) => {
               let selectedData = this.gridApi.getSelectedRows();
               this.gridApi.updateRowData({ remove: selectedData });
@@ -521,7 +540,7 @@ class CreateSalesManager extends React.Component {
     this.setState({ SelectedcolumnDefs: this.state.SelectedcolumnDefs });
     this.setState({ rowData: this.state.rowData });
     localStorage.setItem(
-      "CustomerSearch",
+      "SalesManagerList",
       JSON.stringify(this.state.SelectedcolumnDefs)
     );
     this.LookupviewStart();
@@ -572,6 +591,7 @@ class CreateSalesManager extends React.Component {
                     onClick={(e) => {
                       e.preventDefault();
                       this.setState({ EditOneUserView: false });
+                      this.componentDidMount();
                     }}
                     color="danger"
                   >

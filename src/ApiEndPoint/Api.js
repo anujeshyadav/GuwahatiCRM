@@ -3,6 +3,17 @@ export const Create_warehouse_xmlView = "/warehouse/get-xml";
 export const Create_warehouse_save = "/warehouse/save-warehouse";
 export const Create_Party_XML = "/party/get-xml";
 export const Create_Party_save = "/party/save-party";
+export const Create_Sales_personXMlView = "/sales-person/get-xml";
+export const Create_Sales_ManagerXMlView = "/sales-manager/get-xml";
+export const Create_Salesmanager_save = "/sales-manager/save-sales-manager";
+export const Sales_Manager_List = "/sales-manager/view-sales-manager";
+export const Delete_SalesManager_person =
+  "/sales-manager/delete-sales-manager/";
+export const Delete_Sales_person = "/sales-person/delete-sales-person/";
+export const Update_Sales_Manager_save = "/sales-manager/update-sales-manager/";
+export const Update_Sales_person_save = "/sales-person/update-sales-person/";
+export const Create_Sales_person_List = "/sales-person/view-sales-person";
+export const Create_Sales_person_save = "/sales-person/save-sales-person";
 export const Create_Party_List = "/party/view-party";
 export const Create_Warehouse_List = "/warehouse/view-warehouse";
 export const Create_transporter_xmlView = "/transporter/get-xml";
@@ -24,6 +35,7 @@ export const Save_Product = "/product/save-product";
 export const ProductList_View = "/product/view-product";
 
 export const Save_Order = "/order/save-place-order";
+export const SaveOrder_List = "/order/view-place-order";
 
 // Guwahati close
 
@@ -33,6 +45,7 @@ export const Create_SalesMan_xmlView =
 export const Create_SalesManager_xmlView =
   "https://xmlfileaws.s3.ap-south-1.amazonaws.com/CreateSalesManagerConfig.xml";
 export const Create_Customer_xmlView = "/customer/get-xml";
+export const Create_Target_xml_view = "/target-creation/get-xml";
 export const Create_Customer_save = "/customer/save-customer";
 export const Create_Customer_Update = "/customer/update-customer/";
 export const Create_Account_save = "/user/save-user";
@@ -41,6 +54,7 @@ export const Create_Customer_List = "/customer/view-customer";
 export const Create_Account_Update = "/user/update-user/";
 export const Delete_Account_List = "/user/delete-user/";
 export const Delete_Customer_List = "/customer/delete-customer/";
+
 export const Create_Parts = "/part-config/createParts";
 export const customerRegistration = "/account/customerRegistration";
 
