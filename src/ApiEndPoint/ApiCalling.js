@@ -1,6 +1,7 @@
 import {
   Create_warehouse_xmlView,
   Create_warehouse_save,
+  
   Create_Warehouse_List,
   Create_transporter_xmlView,
   Create_transporter_save,
@@ -17,6 +18,7 @@ import {
   Unit_ViewOne,
   Create_Category,
   Save_Product,
+  Save_Order,
   Create_SubCategory,
   Create_Party_List,
   Create_Party_save,
@@ -263,6 +265,13 @@ export const UnitViewOne = async (id) => {
   return response;
 };
 
+
+export const SaveOrder = async (data) => {
+  let response = await axiosConfig
+    .post(Save_Order, data)
+    .then((res) => res.data);
+  return response;
+};
 // guwahati api calling close
 
 export const UserLogin = async (data) => {
