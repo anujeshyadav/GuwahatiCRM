@@ -108,16 +108,17 @@ class CustomerSearch extends React.Component {
         var adddropdown = [];
         const jsonData = xmlJs.xml2json(res.data, { compact: true, spaces: 2 });
         console.log(JSON.parse(jsonData));
-        const inputs = JSON.parse(jsonData).CreateCustomer?.input?.map(
-          (ele) => {
-            return {
-              headerName: ele?.label._text,
-              field: ele?.name._text,
-              filter: true,
-              sortable: true,
-            };
-          }
+        let allinput = JSON.parse(jsonData).CreateCustomer?.input?.filter(
+          (ele, i) => ele?.type?._attributes?.type !== "file"
         );
+        const inputs = allinput?.map((ele) => {
+          return {
+            headerName: ele?.label._text,
+            field: ele?.name._text,
+            filter: true,
+            sortable: true,
+          };
+        });
         // let Radioinput =
         //   JSON.parse(jsonData).CreateAccount?.Radiobutton?.input[0]?.name
         //     ?._text;
@@ -277,7 +278,6 @@ class CustomerSearch extends React.Component {
         ];
 
         this.setState({ AllcolumnDefs: Product });
-
         let userHeading = JSON.parse(localStorage.getItem("CustomerSearch"));
         if (userHeading?.length) {
           this.setState({ columnDefs: userHeading });
@@ -532,7 +532,6 @@ class CustomerSearch extends React.Component {
 
   HandleSetVisibleField = (e) => {
     e.preventDefault();
-    debugger;
     this.gridApi.setColumnDefs(this.state.SelectedcolumnDefs);
     this.setState({ columnDefs: this.state.SelectedcolumnDefs });
     this.setState({ SelectedcolumnDefs: this.state.SelectedcolumnDefs });

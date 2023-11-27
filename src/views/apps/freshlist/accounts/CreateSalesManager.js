@@ -771,7 +771,34 @@ const CreateSalesManager = () => {
                   </div>
                 </Col>
               </Row> */}
+              <Col lg="6" md="6" sm="6" className="mb-2 mt-1">
+                <Label className="mb-0">Status</Label>
+                <div
+                  className="form-label-group"
+                  onChange={(e) => {
+                    setFormData({
+                      ...formData,
+                      ["status"]: e.target.value,
+                    });
+                  }}
+                >
+                  <input
+                    style={{ marginRight: "3px" }}
+                    type="radio"
+                    name="status"
+                    value="Active"
+                  />
+                  <span style={{ marginRight: "20px" }}>Active</span>
 
+                  <input
+                    style={{ marginRight: "3px" }}
+                    type="radio"
+                    name="status"
+                    value="Deactive"
+                  />
+                  <span style={{ marginRight: "3px" }}>Deactive</span>
+                </div>
+              </Col>
               <Row>
                 <Button.Ripple
                   color="primary"
