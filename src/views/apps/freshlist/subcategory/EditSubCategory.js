@@ -38,31 +38,31 @@ export class EditSubCategory extends Component {
     };
   }
 
-  onChangeHandler1 = event => {
+  onChangeHandler1 = (event) => {
     this.setState({ selectedFile1: event.target.files[0] });
     this.setState({ selectedName1: event.target.files[0].name });
     console.log(event.target.files[0]);
   };
-  onChangeHandler2 = event => {
+  onChangeHandler2 = (event) => {
     this.setState({ selectedFile2: event.target.files[0] });
     this.setState({ selectedName2: event.target.files[0].name });
     console.log(event.target.files[0]);
   };
-  onChangeHandler3 = event => {
+  onChangeHandler3 = (event) => {
     this.setState({ selectedFile3: event.target.files[0] });
     this.setState({ selectedName3: event.target.files[0].name });
     console.log(event.target.files[0]);
   };
-  onChangeHandler4 = event => {
+  onChangeHandler4 = (event) => {
     this.setState({ selectedFile4: event.target.files[0] });
     this.setState({ selectedName4: event.target.files[0].name });
     console.log(event.target.files[0]);
   };
 
-  changeHandler1 = e => {
+  changeHandler1 = (e) => {
     this.setState({ status: e.target.value });
   };
-  changeHandler = e => {
+  changeHandler = (e) => {
     this.setState({ [e.target.name]: e.target.value });
   };
 
@@ -71,19 +71,19 @@ export class EditSubCategory extends Component {
   componentDidMount() {
     axiosConfig
       .get(`/admin/getallcategory`)
-      .then(response => {
+      .then((response) => {
         console.log(response.data.data);
         this.setState({ list: response.data.data });
         console.log(this.state.data);
       })
-      .catch(error => {
+      .catch((error) => {
         console.log(error);
       });
 
     let { id } = this.props.match.params;
     axiosConfig
       .get(`/admin/sub_viewonedata/${id}`)
-      .then(response => {
+      .then((response) => {
         console.log(response.data.data);
         this.setState({
           data: response.data.data,
@@ -92,13 +92,13 @@ export class EditSubCategory extends Component {
           type: response.data.data.type,
         });
       })
-      .catch(error => {
+      .catch((error) => {
         console.log(error);
       });
   }
 
   // Submit Sub-Category Api
-  submitHandler = e => {
+  submitHandler = (e) => {
     e.preventDefault();
     const data = new FormData();
     data.append("subcategory_name", this.state.subcategory_name);
@@ -138,14 +138,14 @@ export class EditSubCategory extends Component {
 
     axiosConfig
       .post(`/admin/edit_Subcategory/${id}`, data)
-      .then(response => {
+      .then((response) => {
         console.log(response);
         if (response.data.message === "success") {
           swal("Success!", "Submitted Succesfully", "success");
           this.props.history.push("/app/freshlist/subcategory/subCategoryList");
         }
       })
-      .catch(error => {
+      .catch((error) => {
         console.log(error);
       });
   };
@@ -199,7 +199,7 @@ export class EditSubCategory extends Component {
                     onChange={this.changeHandler}
                   >
                     <option>Select Category</option>
-                    {this.state.list.map(cat => (
+                    {this.state.list.map((cat) => (
                       <option value={cat._id} key={cat._id}>
                         {cat.category_name}
                       </option>
