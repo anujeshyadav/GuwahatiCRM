@@ -35,21 +35,20 @@ import {
   CommentProductWiki,
   SaveOrder,
   ProductListView,
+  CreatePartyList,
 } from "../../../../ApiEndPoint/ApiCalling";
 import "../../../../assets/scss/pages/users.scss";
 import Payment from "./payment/Payment";
 import OrderedList from "./OrderedList";
 import AuditHistory from "./audithistory/AuditHistory";
 const CreateOrder = (args) => {
-  const [CreatAccountView, setCreatAccountView] = useState({});
   const [formData, setFormData] = useState({});
-  const [dropdownValue, setdropdownValue] = useState({});
-  const [StatusDropDown, setStatusDropDown] = useState({});
   const [Index, setIndex] = useState("");
   const [index, setindex] = useState("");
   const [error, setError] = useState("");
   const [ProductList, setProductList] = useState([]);
-  const [productPrice, setproductPrice] = useState('');
+  const [PartyList, setPartyList] = useState([]);
+  const [grandTotalAmt, setGrandTotalAmt] = useState(0);
   // const [OrderID, setOrderID] = useState();
   const [UserInfo, setUserInfo] = useState({});
   const [modal, setModal] = useState(false);
@@ -87,6 +86,8 @@ const CreateOrder = (args) => {
   ]);
 
   const handleProductChangeProduct = (e, index) => {
+
+    // product.price * product?.qty
    setIndex(index);
     const { name, value } = e.target;
     const list = [...product];
@@ -95,52 +96,42 @@ const CreateOrder = (args) => {
     let amt = 0;
     if (list.length > 0) {
       const x = list?.map((val) => {
-        list[index]["totalprice"] = val .qty* val.price;
+        console.log(val.qty* val.price)
+        list[index]["totalprice"] = val.qty* val.price;
         return val.qty * val.price;
       });
      amt = x.reduce((a, b) => a + b);
-      // console.log(amt);
+      console.log("GrandTotal",amt);
     }
     // console.log(list)
     setProduct(list);
+    setGrandTotalAmt(amt)
     // setAmount(amt);
   };
 
   const handleSelection = (selectedList, selectedItem, index) => {
-    console.log(selectedItem?._id)
-  setproductPrice(selectedItem.Product_MRP)
-  //  onSelect1(selectedList, selectedItem, index);
-  console.log(selectedItem)
- const newProduct = product[index];
-  newProduct["price"]=selectedItem.Product_MRP;
-  newProduct["productId"]=selectedItem?._id;
-  // newProduct["DateofDelivery"]=selectedItem.Product_MRP;
-  onSelect1(selectedList, selectedItem, index);
+    debugger
+    console.log(selectedItem)
+    // const TotalPrice= 
+     product.map((value)=> console.log(value.totalprice))
+   
+  // setGrandTotalAmt(TotalPrice)
+setProduct(prevProductList => {
+ // console.log(Quantity[index])
+    const updatedProductList = [...prevProductList]; // Create a copy of the productList array
+    const updatedProduct = { ...updatedProductList[index] }; // Create a copy of the product at the specified index
+    updatedProduct.price = selectedItem.Product_MRP; // Update the price of the copied product
+    updatedProduct.productId = selectedItem._id;
+    updatedProductList[index] = updatedProduct; // Replace the product at the specified index with the updated one
+
+    // updatedProduct.grandTotal = Quantity[index]*selectedItem.Product_MRP;
+    // setGrandTotalAmt
+    return updatedProductList; // Return the updated product list to set the state
+  });
+  product.map((value)=> console.log(value.totalprice))
+ onSelect1(selectedList, selectedItem, index);
   };
-
-
-
-
-
-  // const handleProductChangePart = (e, index) => {
-  //   console.log(e.target.value);
-  //   setPart([{ qty: e.target.value }]);
-  // };
-
-
-
-  // let handleFileChange = (i, e) => {
-  //   const newFormValues = [...formValues];
-  //   const selectedFiles = e.target.files;
-  //   newFormValues[i].files = selectedFiles;
-  //   setFormValues(newFormValues);
-  // };
-  // let removeFormFields = (i) => {
-  //   let newFormValues = [...Comments];
-  //   newFormValues.splice(i, 1);
-  //   setComments(newFormValues);
-  // };
-  const handleInputChange = (e, type, i) => {
+ const handleInputChange = (e, type, i) => {
     const { name, value, checked } = e.target;
     setindex(i);
     if (type == "checkbox") {
@@ -190,11 +181,18 @@ const CreateOrder = (args) => {
   }, [product]);
 
   useEffect(() => {
-    // console.log(part[0].Shipping);
     ProductListView()
       .then((res) => {
-        console.log(res?.Product);
+        // console.log(res?.Product);
         setProductList(res?.Product);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+      CreatePartyList()
+      .then((res) => {
+        // console.log(res.Party)
+        setPartyList(res.Party)
       })
       .catch((err) => {
         console.log(err);
@@ -242,7 +240,7 @@ const CreateOrder = (args) => {
         availableQty: "",
         qty: 1,
         price: "",
-        // totalprice: "",
+        totalprice: "",
         DateofDelivery: "",
         PartyName: "",
         discount: "",
@@ -357,377 +355,12 @@ const CreateOrder = (args) => {
               <div>
                 <h1 className="">Create Order</h1>
               </div>
-              {/* <div className="d-flex justify-content-between">
-                <div>
-                  <span className="orderIdtext pr-1">Order Id</span>
-
-                  <span className="orderId">
-                    {OrderID ? `#${OrderID}` : `#ord00${OrderID}`}
-                  </span>
-                  <span
-                    className="ml-2"
-                    onClick={handleHistory}
-                    style={{ cursor: "pointer" }}
-                  >
-                    <FaHistory size={15} color="#055761" />
-                  </span>
-                </div>
-                <div>
-                  <span className="orderId">Status:</span> <span>Draft</span>
-                </div>
-                <div className="mystatus">
-                  <div>
-                    {!!StatusDropDown && !!StatusDropDown ? (
-                      <>
-                        <Label>{StatusDropDown?.label?._text}</Label>
-                        <CustomInput
-                          required
-                          type="select"
-                          name={StatusDropDown?.name?._text}
-                          value={formData[StatusDropDown?.name?._text]}
-                          onChange={handleInputChange}
-                        >
-                          <option value="">--Select Status---</option>
-                          {StatusDropDown?.option?.map((option, index) => {
-                            let dropdownpermision =
-                              option?._attributes?.permission.split(",");
-                            let permission = dropdownpermision?.includes(
-                              UserInfo?.Role
-                            );
-
-                            return (
-                              <>
-                                {permission && (
-                                  <option
-                                    key={index}
-                                    value={option?._attributes?.value}
-                                  >
-                                    {option?._attributes?.value}
-                                  </option>
-                                )}
-                              </>
-                            );
-                          })}
-                        </CustomInput>
-                      </>
-                    ) : null}
-                  </div>
-                </div>
-              </div> */}
-            </Col>
+  </Col>
           </Row>
 
           <CardBody>
             <Form className="m-1" onSubmit={submitHandler}>
-              <Row className="mb-2">
-                {dropdownValue?.createOrder?.MyDropDown.map((drop, i) => {
-                  return (
-                    <Col lg="6" md="6" key={i}>
-                      <FormGroup>
-                        <Label>{drop?.dropdown?.label?._text}</Label>
-                        <CustomInput
-                          // required
-                          type="select"
-                          name={drop?.dropdown?.name?._text}
-                          value={
-                            formData[drop?.dropdown?.dropdown?.name?._text]
-                          }
-                          onChange={handleInputChange}
-                        >
-                          <option value="">
-                            --Select {drop?.dropdown.name._text}---
-                          </option>
-                          {drop.dropdown.option.map((option, index) => {
-                            return (
-                              <option
-                                key={index}
-                                value={option?._attributes?.value}
-                              >
-                                {option?._attributes?.value}
-                              </option>
-                            );
-                          })}
-                        </CustomInput>
-                      </FormGroup>
-                    </Col>
-                  );
-                })}
-                {dropdownValue?.createOrder?.OType?.MyDropDown?.map(
-                  (drop, i) => {
-                    return (
-                      <Col lg="6" md="6" key={i}>
-                        <FormGroup>
-                          <Label>{drop?.dropdown?.label?._text}</Label>
-                          <CustomInput
-                            type="select"
-                            name={drop?.dropdown?.name?._text}
-                            value={
-                              formData[drop?.dropdown?.dropdown?.name?._text]
-                            }
-                            onChange={handleInputChange}
-                          >
-                            <option value="">
-                              --Select {drop?.dropdown.name._text}---
-                            </option>
-                            {drop.dropdown.option.map((option, index) => {
-                              return (
-                                <option
-                                  key={index}
-                                  value={option?._attributes?.value}
-                                >
-                                  {option?._attributes?.value}
-                                </option>
-                              );
-                            })}
-                          </CustomInput>
-                        </FormGroup>
-                      </Col>
-                    );
-                  }
-                )}
-                {dropdownValue?.createOrder?.OType?.SuppliedBy?.MyDropDown.map(
-                  (drop, i) => {
-                    return (
-                      <Col lg="6" md="6" key={i}>
-                        <FormGroup>
-                          <Label>{drop?.dropdown?.label?._text}</Label>
-                          <CustomInput
-                            type="select"
-                            name={drop?.dropdown?.name?._text}
-                            value={
-                              formData[drop?.dropdown?.dropdown?.name?._text]
-                            }
-                            onChange={handleInputChange}
-                          >
-                            <option value="">
-                              --Select {drop?.dropdown.name._text}---
-                            </option>
-                            {drop.dropdown.option.map((option, index) => {
-                              return (
-                                <option
-                                  key={index}
-                                  value={option?._attributes?.value}
-                                >
-                                  {option?._attributes?.value}
-                                </option>
-                              );
-                            })}
-                          </CustomInput>
-                        </FormGroup>
-                      </Col>
-                    );
-                  }
-                )}
-
-                {CreatAccountView &&
-                  CreatAccountView?.createOrder?.input?.map((ele, i) => {
-                    {
-                      /* if (ele?.role) {
-                      let roles = ele?.role?.find(
-                        role => role._attributes?.name === "WARRANTY APPROVER"
-                      );
-
-                      View = roles?.permissions?._text.includes("View");
-                      Edit = roles?.permissions?._text.includes("Edit");
-                    } */
-                    }
-                    if (!!ele?.lookup) {
-                      return (
-                        <>
-                          <>
-                            <Col key={i} lg="6" md="6" sm="12">
-                              <FormGroup>
-                                <Label>{ele?.label?._text}</Label>
-                                <InputGroup className="maininput">
-                                  <Input
-                                    className="form-control inputs"
-                                    type="text"
-                                    name={ele?.name?._text}
-                                    placeholder={ele?.name._text}
-                                    value={formData[ele?.name?._text]}
-                                    readOnly
-                                  />
-                                  <Button
-                                    color="primary"
-                                    className="mybtn primary"
-                                    name="part"
-                                    onClick={handleopentoggle}
-                                  >
-                                    <AiOutlineSearch
-                                      onClick={(e) => e.preventDefault()}
-                                      fill="white"
-                                    />
-                                  </Button>
-                                </InputGroup>
-
-                                {index === i ? (
-                                  <>
-                                    {error && (
-                                      <span style={{ color: "red" }}>
-                                        {error}
-                                      </span>
-                                    )}
-                                  </>
-                                ) : (
-                                  <></>
-                                )}
-                              </FormGroup>
-                            </Col>
-                          </>
-                        </>
-                      );
-                    }
-
-                    if (!!ele?.phoneinput) {
-                      return (
-                        <>
-                          <>
-                            <Col key={i} lg="6" md="6" sm="12">
-                              <FormGroup>
-                                <Label>{ele?.label?._text}</Label>
-                                <PhoneInput
-                                  inputClass="myphoneinput"
-                                  country={"us"}
-                                  onKeyDown={(e) => {
-                                    if (
-                                      ele?.type?._attributes?.type == "number"
-                                    ) {
-                                      ["e", "E", "+", "-"].includes(e.key) &&
-                                        e.preventDefault();
-                                    }
-                                  }}
-                                  countryCodeEditable={false}
-                                  name={ele?.name?._text}
-                                  value={formData[ele?.name?._text]}
-                                  onChange={(phone) => {
-                                    setFormData({
-                                      ...formData,
-                                      [ele?.name?._text]: phone,
-                                    });
-                                  }}
-                                  // onChange={handleInputChange}
-                                />
-                                {index === i ? (
-                                  <>
-                                    {error && (
-                                      <span style={{ color: "red" }}>
-                                        {error}
-                                      </span>
-                                    )}
-                                  </>
-                                ) : (
-                                  <></>
-                                )}
-                              </FormGroup>
-                            </Col>
-                          </>
-                        </>
-                      );
-                    } else if (!!ele?.Readonly) {
-                      if (ele?.type._attributes?.type == "checkbox") {
-                        return (
-                          <>
-                            <div>
-                              <Label className="mx-2">
-                                {ele?.heading?._text}
-                              </Label>
-                              <Col key={i} lg="12" md="12" sm="12">
-                                <FormGroup>
-                                  <Input
-                                    disabled
-                                    className="mx-1"
-                                    type={ele?.type._attributes?.type}
-                                    name={ele?.name?._text}
-                                    placeholder={ele?.name._text}
-                                    value={formData[ele?.value?._text]}
-                                  />
-                                  <span className="mx-3 py-1">
-                                    {ele?.value?._text}
-                                  </span>
-                                  {index === i ? (
-                                    <>
-                                      {error && (
-                                        <span style={{ color: "red" }}>
-                                          {error}
-                                        </span>
-                                      )}
-                                    </>
-                                  ) : (
-                                    <></>
-                                  )}
-                                </FormGroup>
-                              </Col>
-                            </div>
-                          </>
-                        );
-                      } else {
-                        return (
-                          <>
-                            <Col key={i} lg="6" md="6" sm="12">
-                              <Label>{ele?.label?._text}</Label>
-                              <FormGroup>
-                                <Input
-                                  disabled
-                                  className="form-control"
-                                  type={ele?.type._attributes?.type}
-                                  name={ele?.name?._text}
-                                  placeholder={ele?.name._text}
-                                  value={formData[ele?.value?._text]}
-                                />
-                                <span className="mx-2">
-                                  {ele?.value?._text}
-                                </span>
-                                {index === i ? (
-                                  <>
-                                    {error && (
-                                      <span style={{ color: "red" }}>
-                                        {error}
-                                      </span>
-                                    )}
-                                  </>
-                                ) : (
-                                  <></>
-                                )}
-                              </FormGroup>
-                            </Col>
-                          </>
-                        );
-                      }
-                    } else {
-                      return (
-                        <>
-                          <Col key={i} lg="6" md="6" sm="12">
-                            <Label>{ele?.label?._text}</Label>
-
-                            <Input
-                              type={ele?.type?._attributes?.type}
-                              placeholder={ele?.placeholder?._text}
-                              name={ele?.name?._text}
-                              value={formData[ele?.name?._text]}
-                              onChange={(e) =>
-                                handleInputChange(
-                                  e,
-                                  ele?.type?._attributes?.type,
-                                  i
-                                )
-                              }
-                            />
-                            {index === i ? (
-                              <>
-                                {error && (
-                                  <span style={{ color: "red" }}>{error}</span>
-                                )}
-                              </>
-                            ) : (
-                              <></>
-                            )}
-                          </Col>
-                        </>
-                      );
-                    }
-                  })}
-  </Row>
-  {product &&
+             {product &&
                 product?.map((product, index) => (
                   <Row className="" key={index}>
                     <Col className="mb-1" lg="2" md="2" sm="12">
@@ -765,10 +398,10 @@ const CreateOrder = (args) => {
                         <Label>Price</Label>
                         <Input
                           type="number"
-                          name="Price"
+                          name="price"
                           readOnly
                           placeholder="Price"
-                          value={productPrice}
+                          value={product.price}
                         />
                       </div>
                     </Col>
@@ -780,7 +413,7 @@ const CreateOrder = (args) => {
                           name="totalprice"
                           readOnly
                           placeholder="TtlPrice"
-                          value={productPrice * product?.qty}
+                          value={product.price * product?.qty}
                         />
                       </div>
                     </Col> 
@@ -793,11 +426,11 @@ const CreateOrder = (args) => {
                           selectionLimit={1}
                           // showCheckbox="true"
                            isObject="false"
-                          options={ProductList} // Options to display in the dropdown
+                          options={PartyList} // Options to display in the dropdown
                           // selectedValues={selectedValue}   // Preselected value to persist in dropdown
                           onSelect={onSelect1} // Function will trigger on select event
                           onRemove={onRemove1} // Function will trigger on remove event
-                          displayValue="Product_Title" // Property name to display in the dropdown options
+                          displayValue="firstName" // Property name to display in the dropdown options
                         />
                       </div>
                     </Col>
@@ -815,7 +448,36 @@ const CreateOrder = (args) => {
                         />
                       </div>
                     </Col>
-                    {/* <Col className="mb-1" lg="2" md="2" sm="12">
+            
+                    <Col className="d-flex mt-1 abb" lg="3" md="3" sm="12">
+                      <div className="btnStyle">
+                        {index ? (
+                          <Button
+                            type="button"
+                            color="danger"
+                            className="button remove "
+                            onClick={() => removeMoreProduct(index)}
+                          >
+                            -
+                          </Button>
+                        ) : null}
+                      </div>
+
+                      <div className="btnStyle">
+                        <Button
+                          className="ml-1 mb-1"
+                          color="primary"
+                          type="button"
+                          onClick={() => addMoreProduct()}
+                        >
+                          +
+                        </Button>
+                      </div>
+                    </Col>
+                  </Row>
+                ))}
+                <Row>
+                {/* <Col className="mb-1" lg="2" md="2" sm="12">
                       <div className="">
                         <Label>Discount</Label>
                         <Input
@@ -852,45 +514,20 @@ const CreateOrder = (args) => {
                       </div>
                     </Col> */}
 
-                    {/* <Col className="mb-1" lg="2" md="2" sm="12">
-                      <div className="">
-                        <Label>Grdttl</Label>
+                    <Col className="mb-1" lg="2" md="2" sm="12">
+                      <div className="GrandTotal d-flex">
+                        <Label className="pr-5">Grdttl</Label>
+                        <div>{grandTotalAmt}</div>
                         <Input
                           type="number"
-                          name="Grdttl"
+                          name="grandTotal"
                           readOnly
                           placeholder="Grdttl"
-                          value={product.grandTotal || ""}
+                          value={product.grandTotal}
                         />
                       </div>
-                    </Col> */}
-                    <Col className="d-flex mt-1 abb" lg="3" md="3" sm="12">
-                      <div className="btnStyle">
-                        {index ? (
-                          <Button
-                            type="button"
-                            color="danger"
-                            className="button remove "
-                            onClick={() => removeMoreProduct(index)}
-                          >
-                            -
-                          </Button>
-                        ) : null}
-                      </div>
-
-                      <div className="btnStyle">
-                        <Button
-                          className="ml-1 mb-1"
-                          color="primary"
-                          type="button"
-                          onClick={() => addMoreProduct()}
-                        >
-                          +
-                        </Button>
-                      </div>
                     </Col>
-                  </Row>
-                ))}
+                </Row>
                <Row>
                 <Col>
                   <div className="d-flex justify-content-center">
