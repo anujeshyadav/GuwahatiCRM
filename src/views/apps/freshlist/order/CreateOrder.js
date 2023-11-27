@@ -108,27 +108,42 @@ const CreateOrder = (args) => {
     setGrandTotalAmt(amt)
     // setAmount(amt);
   };
-
+  const arr=[]
+  let sampleValue=0;
   const handleSelection = (selectedList, selectedItem, index) => {
-    debugger
-    console.log(selectedItem)
-    // const TotalPrice= 
-     product.map((value)=> console.log(value.totalprice))
-   
-  // setGrandTotalAmt(TotalPrice)
+    sampleValue++
+    console.log(sampleValue)
 setProduct(prevProductList => {
- // console.log(Quantity[index])
     const updatedProductList = [...prevProductList]; // Create a copy of the productList array
     const updatedProduct = { ...updatedProductList[index] }; // Create a copy of the product at the specified index
     updatedProduct.price = selectedItem.Product_MRP; // Update the price of the copied product
     updatedProduct.productId = selectedItem._id;
     updatedProductList[index] = updatedProduct; // Replace the product at the specified index with the updated one
-
-    // updatedProduct.grandTotal = Quantity[index]*selectedItem.Product_MRP;
-    // setGrandTotalAmt
-    return updatedProductList; // Return the updated product list to set the state
+ return updatedProductList; // Return the updated product list to set the state
   });
-  product.map((value)=> console.log(value.totalprice))
+
+  const totals = product.map((value,ind) => {
+    return value.qty * selectedItem.Product_MRP;
+  });
+  // console.log(totals[0])
+
+
+//   const arr = [];
+//   const indicesToPush = [0, 3]; // Example indices to push the values
+//   const valuesToPush = [100, 200]
+//   indicesToPush.forEach((index,i) => {
+//     if (index < totals.length) {
+//       arr[index] = valuesToPush[i]; 
+//     }
+//   });
+// console.log(arr)
+
+
+
+// arr.push(totals[index])
+// console.log(arr)
+// setGrandTotalAmt(totals[])
+ 
  onSelect1(selectedList, selectedItem, index);
   };
  const handleInputChange = (e, type, i) => {
@@ -175,9 +190,9 @@ setProduct(prevProductList => {
       }
     }
   };
-  // handleInputChange;
+ 
   useEffect(() => {
-    console.log(product);
+    // console.log(product);
   }, [product]);
 
   useEffect(() => {
