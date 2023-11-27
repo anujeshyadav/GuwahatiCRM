@@ -112,14 +112,12 @@ console.log(GrandTotal);
 
   const handleSelection = (selectedList, selectedItem, index) => {
     SelectedITems.push(selectedItem);
-    debugger
 setProduct(prevProductList => {
     const updatedProductList = [...prevProductList]; // Create a copy of the productList array
     const updatedProduct = { ...updatedProductList[index] }; // Create a copy of the product at the specified index
     updatedProduct.price = selectedItem.Product_MRP; // Update the price of the copied product
     updatedProduct.productId = selectedItem._id;
     updatedProductList[index] = updatedProduct; // Replace the product at the specified index with the updated one
-    debugger
     let myarr = prevProductList?.map((ele, i) => {
      console.log(ele?.qty * selectedItem[i]?.Product_MRP);
       let indextotal = ele?.qty * SelectedITems[i]?.Product_MRP;
@@ -127,7 +125,6 @@ setProduct(prevProductList => {
       return indextotal;
     });
     console.log(myarr);
-    debugger
     let amt = myarr.reduce((a, b) => a + b);
     setGrandTotalAmt(amt);
  return updatedProductList; // Return the updated product list to set the state
@@ -208,30 +205,6 @@ setProduct(prevProductList => {
     const userInfo = JSON.parse(localStorage.getItem("userData"));
     console.log(userInfo)
     setUserInfo(userInfo);
-    // CreateOrder_ID()
-    //   .then((res) => {
-    //     const lastElement = res?.Order[res?.Order?.length - 1].id;
-    //     const prefix = lastElement?.substring(0, 5);
-    //     const number = parseInt(lastElement?.match(/\d+$/)[0], 10) + 1;
-    //     const concatenatedString = prefix + number;
-    //     setOrderID(concatenatedString);
-    //   })
-    //   .catch((err) => {
-    //     console.log(err);
-    //   });
-    // CreateOrder_ViewData()
-    //   .then((res) => {
-    //     const jsonData = xmlJs.xml2json(res.data, { compact: true, spaces: 2 });
-    //     setCreatAccountView(JSON.parse(jsonData));
-    //     setStatusDropDown(
-    //       JSON.parse(jsonData)?.createOrder.CurrentStatus?.MyDropDown?.dropdown
-    //     );
-    //     setdropdownValue(JSON.parse(jsonData));
-    //     setPartDetails(JSON.parse(jsonData)?.createOrder.PartDetails);
-    //   })
-    //   .catch((err) => {
-    //     console.log(err);
-    //   });
   }, []);
 
 
@@ -257,8 +230,11 @@ setProduct(prevProductList => {
     ]);
   };
   let removeMoreProduct = (i) => {
-    let newFormValues = [...product];
+   let newFormValues = [...product];
     newFormValues.splice(i, 1);
+    GrandTotal.splice(i, 1);
+    let amt = GrandTotal.reduce((a, b) => a + b);
+    setGrandTotalAmt(amt);
     setProduct(newFormValues);
   };
   // let handlePartChange = (i, e) => {

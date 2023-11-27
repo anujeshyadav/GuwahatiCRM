@@ -1,5 +1,0 @@
-<<<<<<<< HEAD:build/static/js/407.9197da25.chunk.js.map
-{"version":3,"sources":["views/apps/freshlist/category/ViewCategory.js"],"names":["ViewCategory","Component"],"mappings":"gNAEMA,EAAY,kHAGf,OAHe,mCAChB,WACE,OAAO,6BAAK,yBACb,EAHe,CAASC,aAMZD","file":"static/js/407.9197da25.chunk.js","sourcesContent":["import React, { Component } from \"react\";\r\n\r\nclass ViewCategory extends Component {\r\n  render() {\r\n    return <div> textInComponent </div>;\r\n  }\r\n}\r\n\r\nexport default ViewCategory;\r\n"],"sourceRoot":""}
-========
-{"version":3,"sources":["views/apps/freshlist/category/ViewCategory.js"],"names":["ViewCategory","Component"],"mappings":"gNAEMA,EAAY,kHAGf,OAHe,mCAChB,WACE,OAAO,6BAAK,yBACb,EAHe,CAASC,aAMZD","file":"static/js/407.1eb4375c.chunk.js","sourcesContent":["import React, { Component } from \"react\";\r\n\r\nclass ViewCategory extends Component {\r\n  render() {\r\n    return <div> textInComponent </div>;\r\n  }\r\n}\r\n\r\nexport default ViewCategory;\r\n"],"sourceRoot":""}
->>>>>>>> dba8e899a573457d3be831ce207d17e2017b79b1:build/static/js/407.1eb4375c.chunk.js.map

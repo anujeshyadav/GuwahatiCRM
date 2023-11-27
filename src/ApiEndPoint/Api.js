@@ -46,6 +46,7 @@ export const Create_SalesManager_xmlView =
   "https://xmlfileaws.s3.ap-south-1.amazonaws.com/CreateSalesManagerConfig.xml";
 export const Create_Customer_xmlView = "/customer/get-xml";
 export const Create_Target_xml_view = "/target-creation/get-xml";
+export const Create_Target_save = "/target-creation/save-target-creation";
 export const Create_Customer_save = "/customer/save-customer";
 export const Create_Customer_Update = "/customer/update-customer/";
 export const Create_Account_save = "/user/save-user";

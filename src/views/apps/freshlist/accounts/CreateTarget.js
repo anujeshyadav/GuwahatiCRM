@@ -39,6 +39,7 @@ import {
   ProductListView,
   CreatePartyList,
   Create_Sales_personList,
+  Create_Targetsave,
 } from "../../../../ApiEndPoint/ApiCalling";
 import "../../../../assets/scss/pages/users.scss";
 import Timepickers from "../../../forms/form-elements/datepicker/Timepicker";
@@ -108,6 +109,8 @@ const CreateTarget = (args) => {
     if (list.length > 0) {
       const x = list?.map((val) => {
         console.log(val.qty * val.price);
+        GrandTotal[index] = val.qty * val.price;
+
         list[index]["totalprice"] = val.qty * val.price;
         return val.qty * val.price;
       });
@@ -120,8 +123,25 @@ const CreateTarget = (args) => {
     // setAmount(amt);
   };
 
+  const handleRemoveSelected = (selectedList, selectedItem, index) => {
+    // console.log(selectedList);
+    // console.log(selectedItem); // removed item
+    // console.log(product);
+    // console.log(index);
+    // console.log(SelectedITems);
+    SelectedITems.splice(index, 1);
+    let myarr = product?.map((ele, i) => {
+      console.log(ele?.qty * selectedItem[i]?.Product_MRP);
+      let indextotal = ele?.qty * SelectedITems[i]?.Product_MRP;
+      GrandTotal[index] = indextotal;
+      return indextotal;
+    });
+
+    let amt = myarr.reduce((a, b) => a + b);
+    setGrandTotalAmt(amt);
+  };
   const handleSelection = (selectedList, selectedItem, index) => {
-   SelectedITems.push(selectedItem);
+    SelectedITems.push(selectedItem);
     setProduct((prevProductList) => {
       const updatedProductList = [...prevProductList]; // Create a copy of the productList array
       const updatedProduct = { ...updatedProductList[index] }; // Create a copy of the product at the specified index
@@ -129,18 +149,17 @@ const CreateTarget = (args) => {
       updatedProduct.productId = selectedItem?._id;
       updatedProductList[index] = updatedProduct; // Replace the product at the specified index with the updated one
       let myarr = prevProductList?.map((ele, i) => {
-        console.log(ele?.qty * selectedItem?.Product_MRP);
+        console.log(ele?.qty * selectedItem[i]?.Product_MRP);
         let indextotal = ele?.qty * SelectedITems[i]?.Product_MRP;
         GrandTotal[index] = indextotal;
         return indextotal;
       });
-       console.log(myarr);
       let amt = myarr.reduce((a, b) => a + b);
       setGrandTotalAmt(amt);
     return updatedProductList; // Return the updated product list to set the state
     });
     product.map((value) => console.log(value.totalprice));
-    onSelect1(selectedList, selectedItem, index);
+    // onSelect1(selectedList, selectedItem, index);
   };
   const handleInputChange = (e, type, i) => {
     const { name, value, checked } = e.target;
@@ -193,7 +212,7 @@ const CreateTarget = (args) => {
     console.log(Salesperson);
     console.log(targetStartDate);
     console.log(targetEndDate);
-  }, [product, GrandTotal]);
+  }, [product, targetEndDate]);
 
   useEffect(() => {
     Create_Sales_personList()
@@ -270,9 +289,12 @@ const CreateTarget = (args) => {
     ]);
   };
   let removeMoreProduct = (i) => {
-    console.log(GrandTotal);
     let newFormValues = [...product];
     newFormValues.splice(i, 1);
+    GrandTotal.splice(i, 1);
+    let amt = GrandTotal.reduce((a, b) => a + b);
+    setGrandTotalAmt(amt);
+
     setProduct(newFormValues);
   };
   // let handlePartChange = (i, e) => {
@@ -283,26 +305,35 @@ const CreateTarget = (args) => {
 
   const submitHandler = (e) => {
     e.preventDefault();
-    const ObjOrder = {
-      userId: UserInfo?._id,
-      fullName: UserInfo?.UserName,
-      address: UserInfo?.Address,
-      // MobileNo: 1234567890,
-      // country: "USA",
-      // state: "California",
-      // city: "Los Angeles",
-      // landMark: "Nearby Park",
-      // pincode: 90001,
-      // grandTotal: 100.50,
-      // discount: 10.00,
-      // shippingCost: 5.00,
-      // taxAmount: 7.50,
-      // status: "pending",
-      orderItems: product,
-    };
+
+    console.log(product);
+    console.log(GrandTotal);
+    console.log(Salesperson);
+    console.log(targetStartDate);
+    console.log(targetEndDate);
+    console.log(grandTotalAmt);
+    debugger;
+    // const ObjOrder = {
+    //   userId: UserInfo?._id,
+    //   fullName: UserInfo?.UserName,
+    //   address: UserInfo?.Address,
+    //   // MobileNo: 1234567890,
+    //   // country: "USA",
+    //   // state: "California",
+    //   // city: "Los Angeles",
+    //   // landMark: "Nearby Park",
+    //   // pincode: 90001,
+    //   // grandTotal: 100.50,
+    //   // discount: 10.00,
+    //   // shippingCost: 5.00,
+    //   // taxAmount: 7.50,
+    //   // status: "pending",
+    //   orderItems: product,
+    // };
     if (error) {
       swal("Error occured while Entering Details");
     } else {
+      // Create_Targetsave()
       SaveOrder(ObjOrder)
         .then((res) => {
           // if (res.status) {
@@ -454,7 +485,11 @@ const CreateTarget = (args) => {
                             handleSelection(selectedList, selectedItem, index)
                           }
                           onRemove={(selectedList, selectedItem) => {
-                            onRemove1(selectedList, selectedItem, index);
+                            handleRemoveSelected(
+                              selectedList,
+                              selectedItem,
+                              index
+                            );
                           }}
                           displayValue="Product_Title" // Property name to display in the dropdown options
                         />
