@@ -41,8 +41,10 @@ import "../../../../assets/scss/pages/users.scss";
 import Payment from "./payment/Payment";
 import OrderedList from "./OrderedList";
 import AuditHistory from "./audithistory/AuditHistory";
+let GrandTotal = [];
+let SelectedITems = [];
 const CreateOrder = (args) => {
-  const [formData, setFormData] = useState({});
+ const [formData, setFormData] = useState({});
   const [Index, setIndex] = useState("");
   const [index, setindex] = useState("");
   const [error, setError] = useState("");
@@ -87,7 +89,6 @@ const CreateOrder = (args) => {
 
   const handleProductChangeProduct = (e, index) => {
 
-    // product.price * product?.qty
    setIndex(index);
     const { name, value } = e.target;
     const list = [...product];
@@ -106,44 +107,33 @@ const CreateOrder = (args) => {
     // console.log(list)
     setProduct(list);
     setGrandTotalAmt(amt)
-    // setAmount(amt);
+console.log(GrandTotal); 
   };
-  const arr=[]
-  let sampleValue=0;
+
   const handleSelection = (selectedList, selectedItem, index) => {
-    sampleValue++
-    console.log(sampleValue)
+    SelectedITems.push(selectedItem);
+    debugger
 setProduct(prevProductList => {
     const updatedProductList = [...prevProductList]; // Create a copy of the productList array
     const updatedProduct = { ...updatedProductList[index] }; // Create a copy of the product at the specified index
     updatedProduct.price = selectedItem.Product_MRP; // Update the price of the copied product
     updatedProduct.productId = selectedItem._id;
     updatedProductList[index] = updatedProduct; // Replace the product at the specified index with the updated one
+    debugger
+    let myarr = prevProductList?.map((ele, i) => {
+     console.log(ele?.qty * selectedItem[i]?.Product_MRP);
+      let indextotal = ele?.qty * SelectedITems[i]?.Product_MRP;
+      GrandTotal[index] = indextotal;
+      return indextotal;
+    });
+    console.log(myarr);
+    debugger
+    let amt = myarr.reduce((a, b) => a + b);
+    setGrandTotalAmt(amt);
  return updatedProductList; // Return the updated product list to set the state
-  });
-
-  const totals = product.map((value,ind) => {
-    return value.qty * selectedItem.Product_MRP;
-  });
-  // console.log(totals[0])
-
-
-//   const arr = [];
-//   const indicesToPush = [0, 3]; // Example indices to push the values
-//   const valuesToPush = [100, 200]
-//   indicesToPush.forEach((index,i) => {
-//     if (index < totals.length) {
-//       arr[index] = valuesToPush[i]; 
-//     }
-//   });
-// console.log(arr)
-
-
-
-// arr.push(totals[index])
-// console.log(arr)
-// setGrandTotalAmt(totals[])
  
+  });
+  product.map((value) => console.log(value.totalprice));
  onSelect1(selectedList, selectedItem, index);
   };
  const handleInputChange = (e, type, i) => {
@@ -193,7 +183,8 @@ setProduct(prevProductList => {
  
   useEffect(() => {
     // console.log(product);
-  }, [product]);
+    console.log(GrandTotal)
+  }, [product,GrandTotal]);
 
   useEffect(() => {
     ProductListView()
@@ -491,58 +482,15 @@ setProduct(prevProductList => {
                     </Col>
                   </Row>
                 ))}
-                <Row>
-                {/* <Col className="mb-1" lg="2" md="2" sm="12">
-                      <div className="">
-                        <Label>Discount</Label>
-                        <Input
-                          type="number"
-                          name="discount"
-                          readOnly
-                          placeholder="Dissct"
-                          value={product.discount}
-                        />
-                      </div>
-                    </Col> */}
-                    {/* <Col className="mb-1" lg="2" md="2" sm="12">
-                      <div className="">
-                        <Label>Shipping Cost</Label>
-                        <Input
-                          type="number"
-                          name="Shipcst"
-                          readOnly
-                          placeholder="Shipcst"
-                          value={product.Shipping}
-                        />
-                      </div>
-                    </Col> */}
-                    {/* <Col className="mb-1" lg="2" md="2" sm="12">
-                      <div className="">
-                        <Label>Tax</Label>
-                        <Input
-                          type="number"
-                          name="tax"
-                          readOnly
-                          placeholder="Tax"
-                          value={product.tax}
-                        />
-                      </div>
-                    </Col> */}
-
-                    <Col className="mb-1" lg="2" md="2" sm="12">
-                      <div className="GrandTotal d-flex">
-                        <Label className="pr-5">Grdttl</Label>
-                        <div>{grandTotalAmt}</div>
-                        <Input
-                          type="number"
-                          name="grandTotal"
-                          readOnly
-                          placeholder="Grdttl"
-                          value={product.grandTotal}
-                        />
-                      </div>
-                    </Col>
-                </Row>
+              <Row>
+                <Col className="mb-1" lg="12" md="12" sm="12">
+                  <div className=" d-flex justify-content-end">
+                    <Label className="pr-5">
+                      Grand Total : <strong>{grandTotalAmt}</strong>
+                    </Label>
+                  </div>
+                </Col>
+              </Row>
                <Row>
                 <Col>
                   <div className="d-flex justify-content-center">
