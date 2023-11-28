@@ -697,6 +697,7 @@ import { FaHistory } from "react-icons/fa";
 import { FcPhoneAndroid } from "react-icons/fc";
 import { AiOutlineSearch } from "react-icons/ai";
 import Flatpickr from "react-flatpickr";
+import { useParams, useLocation } from "react-router-dom";
 
 import Multiselect from "multiselect-react-dropdown";
 
@@ -725,7 +726,7 @@ import { Route } from "react-router-dom";
 let GrandTotal = [];
 let SelectedITems = [];
 let IndividualIndex = [];
-const CreateTarget = (args) => {
+const EditTarget = (args) => {
   const [formData, setFormData] = useState({});
   const [Index, setIndex] = useState("");
   const [targetStartDate, settargetStartDate] = useState("");
@@ -736,12 +737,14 @@ const CreateTarget = (args) => {
   const [PartyList, setPartyList] = useState([]);
   const [Salesperson, setSalesperson] = useState("");
   const [grandTotalAmt, setGrandTotalAmt] = useState(0);
-  // const [OrderID, setOrderID] = useState();
+  const [Editdata, setEditdata] = useState({});
   const [UserInfo, setUserInfo] = useState({});
   const [modal, setModal] = useState(false);
   const [items, setItems] = useState("");
   const [audit, setAudit] = useState(false);
   const [SalesPersonList, setSalesPersonList] = useState([]);
+  const Params = useParams();
+  const location = useLocation();
   const toggle = (item) => {
     setItems(item);
     setModal(!modal);
@@ -886,6 +889,25 @@ const CreateTarget = (args) => {
   };
   // handleInputChange;
   useEffect(() => {
+    console.log(Params.id);
+    console.log(location?.state?.startDate);
+    if (location?.state) {
+      localStorage.setItem("EditoneProduct", location?.state);
+      setEditdata(location?.state);
+      debugger;
+      settargetStartDate(location?.state?.startDate?.split("T")[0]);
+      settargetEndDate(location?.state?.endDate?.split("T")[0]);
+      setProduct(location?.state?.products);
+      setGrandTotalAmt(location?.state?.grandTotal);
+      console.log(location?.state?.salesPersonId._id);
+    } else {
+      let mydata = localStorage.getItem("EditoneProduct");
+      setEditdata(mydata);
+      settargetStartDate(mydata?.startDate?.split("T")[0]);
+      settargetEndDate(mydata?.endDate?.split("T")[0]);
+      setProduct(mydata?.products);
+      setGrandTotalAmt(mydata?.grandTotal);
+    }
     console.log(product);
     console.log(GrandTotal);
     console.log(Salesperson);
@@ -1143,7 +1165,7 @@ const CreateTarget = (args) => {
                       // showCheckbox="true"
                       isObject="false"
                       options={SalesPersonList} // Options to display in the dropdown
-                      // selectedValues={selectedValue}   // Preselected value to persist in dropdown
+                      //   selectedValues={}   // Preselected value to persist in dropdown
                       onSelect={onSelect1} // Function will trigger on select event
                       onRemove={onRemove1} // Function will trigger on remove event
                       displayValue="firstName" // Property name to display in the dropdown options
@@ -1337,4 +1359,4 @@ const CreateTarget = (args) => {
     </div>
   );
 };
-export default CreateTarget;
+export default EditTarget;

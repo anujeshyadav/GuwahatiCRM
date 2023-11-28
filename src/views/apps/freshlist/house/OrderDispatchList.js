@@ -17,12 +17,11 @@ import {
   ModalBody,
   Badge,
 } from "reactstrap";
-
 import { ContextLayout } from "../../../../utility/context/Layout";
 import { AgGridReact } from "ag-grid-react";
 import "ag-grid-community/dist/styles/ag-grid.css";
-import EditAccount from "../accounts/EditAccount";
-import ViewAccount from "../accounts/ViewAccount";
+import EditAccount from "../accounts/EditSalesManager";
+import ViewAccount from "../accounts/ViewSalesManager";
 import jsPDF from "jspdf";
 import "jspdf-autotable";
 import Logo from "../../../../assets/img/profile/pages/logomain.png";
@@ -41,11 +40,12 @@ import {
 import moment from "moment-timezone";
 import swal from "sweetalert";
 import {
-  CreateAccountList,
-  CreateAccountView,
-  Create_TargetList,
-  DeleteAccount,
-  Delete_targetINlist,
+  CreateCustomerList,
+  CreateCustomerxmlView,
+  CreateSalesManagerXMlView,
+  DeleteCustomerList,
+  DeleteSalesManagerperson,
+  Sales_ManagerList,
 } from "../../../../ApiEndPoint/ApiCalling";
 import {
   BsCloudDownloadFill,
@@ -54,11 +54,10 @@ import {
 } from "react-icons/bs";
 import * as XLSX from "xlsx";
 import UserContext from "../../../../context/Context";
-import TargetAssignedOne from "./TargetAssignedOne";
 
 const SelectedColums = [];
 
-class TargetCreation extends React.Component {
+class OrderDispatchList extends React.Component {
   static contextType = UserContext;
   constructor(props) {
     super(props);
@@ -68,16 +67,12 @@ class TargetCreation extends React.Component {
       isOpen: false,
       Arrindex: "",
       rowData: [],
-      modal: false,
-      modalone: false,
-      ViewData: {},
-
       setMySelectedarr: [],
       SelectedCols: [],
       paginationPageSize: 5,
       currenPageSize: "",
       getPageSize: "",
-      // columnDefs: [],
+      columnDefs: [],
       AllcolumnDefs: [],
       SelectedcolumnDefs: [],
       defaultColDef: {
@@ -87,467 +82,9 @@ class TargetCreation extends React.Component {
         resizable: true,
         suppressMenu: true,
       },
-      columnDefs: [
-        {
-          headerName: "UID",
-          valueGetter: "node.rowIndex + 1",
-          field: "node.rowIndex + 1",
-          // checkboxSelection: true,
-          width: 80,
-          filter: true,
-          // cellRendererFramework: (params) => {
-          //   return (
-          //     <div className="d-flex align-items-center cursor-pointer">
-          //       <div className="">
-          //         <input
-          //           className="addinarray"
-          //           onClick={(e) => {
-          //             console.log(e.target.checked);
-          //             if (e.target.checked) {
-          //               console.log(this.state.SelectedProduct);
-          //               this.setState({
-          //                 SelectedProduct: this.state.SelectedProduct.concat(
-          //                   params?.data
-          //                 ),
-          //               });
-          //             } else {
-          //               let data = this.state.SelectedProduct.filter((ele, i) => {
-          //                 if (ele?.id === params?.data?.id) {
-          //                   this.state.SelectedProduct.splice(i, 1);
-          //                 }
-          //               });
-          //             }
-          //           }}
-          //           type="checkbox"
-          //         />
-          //       </div>
-          //     </div>
-          //   );
-          // },
-        },
-
-        {
-          headerName: "first Name",
-          field: "salesPersonId.firstName",
-          filter: "agSetColumnFilter",
-          width: 200,
-          cellRendererFramework: (params) => {
-            // console.log(params.data);
-            return (
-              <div className="d-flex align-items-center cursor-pointer">
-                <div className="">
-                  <span>{params.data?.salesPersonId?.firstName}</span>
-                  {/* {params?.data?.product_images ? (
-                    <img
-                      style={{ borderRadius: "12px" }}
-                      width="60px"
-                      height="40px"
-                      src={params?.data?.product_images[0]}
-                      alt="image"
-                    />
-                  ) : (
-                    "No Image "
-                  )} */}
-                </div>
-              </div>
-            );
-          },
-        },
-        {
-          headerName: "Actions",
-          field: "transactions",
-          width: 180,
-          cellRendererFramework: (params) => {
-            return (
-              <div className="actions cursor-pointer">
-                {/* {this.state.Viewpermisson && ( */}
-                <Eye
-                  className="mr-50"
-                  size="25px"
-                  color="green"
-                  onClick={
-                    () => {
-                      this.setState({ ViewData: params?.data });
-                      this.toggleModal();
-                    }
-                    // history.push(
-                    //   `/app/freshlist/order/viewAll/${params.data._id}`
-                    // )
-                  }
-                />
-                {/* )} */}
-                {/* {this.state.Editpermisson && ( */}
-                <Edit
-                  className="mr-50"
-                  size="25px"
-                  color="blue"
-                  onClick={() =>
-                    this.props.history.push({
-                      pathname: `/app/AJGroup/account/EditTarget/${params.data?._id}`,
-                      state: params.data,
-                    })
-                  }
-                />
-                {/* )} */}
-                {/* {this.state.Deletepermisson && ( */}
-                <Trash2
-                  className="mr-50"
-                  size="25px"
-                  color="Red"
-                  onClick={() => {
-                    this.runthisfunction(params?.data?._id);
-                  }}
-                />
-                {/* )} */}
-              </div>
-            );
-          },
-        },
-        {
-          headerName: "Product Assigned",
-          field: "Product Name",
-          filter: "agSetColumnFilter",
-          width: 200,
-          cellRendererFramework: (params) => {
-            return (
-              <div className="d-flex align-items-center cursor-pointer">
-                <div className="">
-                  <span>
-                    {params?.data?.products?.length &&
-                      params?.data?.products?.length}{" "}
-                    Product
-                  </span>
-                  {/* {params.data?.products &&
-                    params.data?.products?.map((ele, i) => {
-                      return (
-                        <>
-                          <div> Product:{ele?.productId?.Product_Title}</div>
-                          <div> qty:{ele?.qtyAssign}</div>
-                        </>
-                      );
-                    })} */}
-                </div>
-              </div>
-            );
-          },
-        },
-        {
-          headerName: "Last Name",
-          field: "salesPersonId?.lastName",
-          filter: "agSetColumnFilter",
-          width: 200,
-          cellRendererFramework: (params) => {
-            // console.log(params.data);
-            return (
-              <div className="d-flex align-items-center cursor-pointer">
-                <div className="">
-                  <span>{params.data?.salesPersonId?.lastName}</span>
-                </div>
-              </div>
-            );
-          },
-        },
-        {
-          headerName: "Target Start Date",
-          field: "startDate",
-          filter: "agSetColumnFilter",
-          width: 200,
-          cellRendererFramework: (params) => {
-            // console.log(params.data);
-            return (
-              <div className="d-flex align-items-center cursor-pointer">
-                <div className="">
-                  <span>{params.data?.startDate?.split("T")[0]}</span>
-                </div>
-              </div>
-            );
-          },
-        },
-        {
-          headerName: "Target End Date",
-          field: "endDate",
-          filter: "agSetColumnFilter",
-          width: 200,
-          cellRendererFramework: (params) => {
-            // console.log(params.data);
-            return (
-              <div className="d-flex align-items-center cursor-pointer">
-                <div className="">
-                  <span>{params.data?.endDate?.split("T")[0]}</span>
-                </div>
-              </div>
-            );
-          },
-        },
-        // {
-        //   headerName: "Products",
-        //   field: "products",
-        //   filter: "agSetColumnFilter",
-        //   width: 500,
-        //   cellRendererFramework: (params) => {
-        //     return (
-        //       <div className="d-flex flex-wrap">
-        //         {params?.data?.products &&
-        //           params?.data?.products?.map((ele, i) => {
-        //             if (params.data?.products.length > 1) {
-        //               return <span key={i}>{ele?.title}, &nbsp;</span>;
-        //             } else {
-        //               return <span key={i}>{ele?.title}</span>;
-        //             }
-        //           })}
-        //       </div>
-        //     );
-        //   },
-        // },
-        // {
-        //   headerName: "Product Name",
-        //   field: "title",
-        //   filter: "agSetColumnFilter",
-        //   width: 200,
-        //   cellRendererFramework: (params) => {
-        //     return (
-        //       <div className="d-flex align-items-center cursor-pointer">
-        //         <div className="">
-        //           <span>{params.data?.title}</span>
-        //         </div>
-        //       </div>
-        //     );
-        //   },
-        // },
-        // {
-        //   headerName: "Assign To",
-        //   field: "assign_full_name",
-        //   filter: "agSetColumnFilter",
-        //   width: 150,
-        //   cellRendererFramework: (params) => {
-        //     return (
-        //       <div className="d-flex align-items-center cursor-pointer">
-        //         <div className="">
-        //           <span>{params.data?.assign_full_name}</span>
-        //         </div>
-        //       </div>
-        //     );
-        //   },
-        // },
-        {
-          headerName: "Assigned By",
-          field: "user_full_name",
-          filter: "agSetColumnFilter",
-          width: 180,
-          cellRendererFramework: (params) => {
-            return (
-              <div className="d-flex align-items-center cursor-pointer">
-                <div className="">
-                  <span>{params.data?.user_full_name}</span>
-                </div>
-              </div>
-            );
-          },
-        },
-        // {
-        //   headerName: "Product",
-        //   field: "title",
-        //   filter: "agSetColumnFilter",
-        //   width: 150,
-        //   cellRendererFramework: (params) => {
-        //     return (
-        //       <div className="d-flex align-items-center cursor-pointer">
-        //         <div className="">
-        //           <span>{params.data?.title}</span>
-        //         </div>
-        //       </div>
-        //     );
-        //   },
-        // },
-        // {
-        //   headerName: "Assigned User",
-        //   field: "qty",
-        //   filter: "agSetColumnFilter",
-        //   width: 180,
-        //   cellRendererFramework: (params) => {
-        //     return (
-        //       <div className="d-flex align-items-center cursor-pointer">
-        //         <div className="">
-        //           <span>{params?.data?.assign_full_name}</span>
-        //         </div>
-        //       </div>
-        //     );
-        //   },
-        // },
-        // {
-        //   headerName: "CATEGORY",
-        //   field: "category_name",
-        //   filter: "agSetColumnFilter",
-        //   width: 150,
-        //   cellRendererFramework: (params) => {
-        //     return (
-        //       <div className="d-flex align-items-center cursor-pointer">
-        //         <div className="">
-        //           <span>{params.data?.category_name}</span>
-        //         </div>
-        //       </div>
-        //     );
-        //   },
-        // },
-        // {
-        //   headerName: "Description",
-        //   field: "description",
-        //   filter: "agSetColumnFilter",
-        //   width: 120,
-        //   cellRendererFramework: (params) => {
-        //     return (
-        //       <div className="d-flex align-items-center cursor-pointer">
-        //         <div className="">
-        //           <span>{ReactHtmlParser(params.data?.description)}</span>
-        //         </div>
-        //       </div>
-        //     );
-        //   },
-        // },
-        // {
-        //   headerName: "PRICE",
-        //   field: "price",
-        //   filter: "agSetColumnFilter",
-        //   width: 120,
-        //   cellRendererFramework: (params) => {
-        //     return (
-        //       <div className="d-flex align-items-center cursor-pointer">
-        //         <div className="">
-        //           <span>{params?.data?.price}</span>
-        //         </div>
-        //       </div>
-        //     );
-        //   },
-        // },
-        // {
-        //   headerName: "DiscountPrice",
-        //   field: "discountprice",
-        //   filter: "agSetColumnFilter",
-        //   width: 120,
-        //   cellRendererFramework: (params) => {
-        //     return (
-        //       <div className="d-flex align-items-center cursor-pointer">
-        //         <div className="">
-        //           <span>{params.data?.discountprice}</span>
-        //         </div>
-        //       </div>
-        //     );
-        //   },
-        // },
-        // {
-        //   headerName: "Shipping Fee",
-        //   field: "shipping_fee",
-        //   filter: "agSetColumnFilter",
-        //   width: 120,
-        //   cellRendererFramework: (params) => {
-        //     return (
-        //       <div className="d-flex align-items-center cursor-pointer">
-        //         <div className="">
-        //           <span>{params.data?.shipping_fee}</span>
-        //         </div>
-        //       </div>
-        //     );
-        //   },
-        // },
-        // {
-        //   headerName: "Tax Rate",
-        //   field: "tax_rate",
-        //   filter: "agSetColumnFilter",
-        //   width: 120,
-        //   cellRendererFramework: (params) => {
-        //     return (
-        //       <div className="d-flex align-items-center cursor-pointer">
-        //         <div className="">
-        //           <span>{params.data?.tax_rate}</span>
-        //         </div>
-        //       </div>
-        //     );
-        //   },
-        // },
-        // {
-        //   headerName: "Tags",
-        //   field: "tags",
-        //   filter: "agSetColumnFilter",
-        //   width: 120,
-        //   cellRendererFramework: (params) => {
-        //     return (
-        //       <div className="d-flex align-items-center cursor-pointer">
-        //         <div className="">
-        //           <span>{params.data?.tags}</span>
-        //         </div>
-        //       </div>
-        //     );
-        //   },
-        // },
-        // {
-        //   headerName: "STOCK",
-        //   field: "stock",
-
-        //   filter: "agSetColumnFilter",
-        //   width: 150,
-        //   cellRendererFramework: (params) => {
-        //     return (
-        //       <div className="d-flex align-items-center cursor-pointer">
-        //         <div className="">
-        //           <span>{ReactHtmlParser(params.data?.stock)}</span>
-        //         </div>
-        //       </div>
-        //     );
-        //   },
-        // },
-        {
-          headerName: "Created at",
-          field: "createdAt",
-          filter: "agSetColumnFilter",
-          width: 200,
-          cellRendererFramework: (params) => {
-            return (
-              <div className="d-flex align-items-center cursor-pointer">
-                <div className="">
-                  <span>{params.data?.createdAt?.split(" ")[0]}</span>
-                </div>
-              </div>
-            );
-          },
-        },
-        {
-          headerName: "updatedAt",
-          field: "updatedAt",
-          filter: "agSetColumnFilter",
-          width: 200,
-          cellRendererFramework: (params) => {
-            return (
-              <div className="d-flex align-items-center cursor-pointer">
-                <div className="">
-                  <span>{params.data?.updatedAt?.split(" ")[0]}</span>
-                </div>
-              </div>
-            );
-          },
-        },
-        // {
-        //   headerName: "SALES",
-        //   field: "pisces",
-        //   filter: "agSetColumnFilter",
-        //   width: 120,
-        //   cellRendererFramework: (params) => {
-        //     return (
-        //       <div className="d-flex align-items-center cursor-pointer">
-        //         <div className="">
-        //           <span>{ReactHtmlParser(params.data.pisces)}</span>
-        //         </div>
-        //       </div>
-        //     );
-        //   },
-        // },
-      ],
     };
   }
-  toggleModal = () => {
-    this.setState((prevState) => ({
-      modalone: !prevState.modalone,
-    }));
-  };
+
   LookupviewStart = () => {
     this.setState((prevState) => ({
       modal: !prevState.modal,
@@ -567,229 +104,211 @@ class TargetCreation extends React.Component {
 
   async componentDidMount() {
     const UserInformation = this.context?.UserInformatio;
-    // await CreateAccountView()
-    //   .then((res) => {
-    //     var mydropdownArray = [];
-    //     var adddropdown = [];
-    //     const jsonData = xmlJs.xml2json(res.data, { compact: true, spaces: 2 });
-    //     console.log(JSON.parse(jsonData)?.CreateUser);
 
-    //     const inputs = JSON.parse(jsonData)?.CreateUser?.input?.map((ele) => {
-    //       return {
-    //         headerName: ele?.label._text,
-    //         field: ele?.name._text,
-    //         filter: true,
-    //         sortable: true,
-    //       };
-    //     });
-    //     // let Radioinput =
-    //     //   JSON.parse(jsonData).CreateAccount?.Radiobutton?.input[0]?.name
-    //     //     ?._text;
-    //     // const addRadio = [
-    //     //   {
-    //     //     headerName: Radioinput,
-    //     //     field: Radioinput,
-    //     //     filter: true,
-    //     //     sortable: true,
-    //     //     cellRendererFramework: (params) => {
-    //     //       return params.data?.Status === "Active" ? (
-    //     //         <div className="badge badge-pill badge-success">
-    //     //           {params.data.Status}
-    //     //         </div>
-    //     //       ) : params.data?.Status === "Deactive" ? (
-    //     //         <div className="badge badge-pill badge-warning">
-    //     //           {params.data.Status}
-    //     //         </div>
-    //     //       ) : (
-    //     //         "NA"
-    //     //       );
-    //     //     },
-    //     //   },
-    //     // ];
-
-    //     // let dropdown = JSON.parse(jsonData).CreateAccount?.MyDropdown?.dropdown;
-    //     // if (dropdown.length) {
-    //     //   var mydropdownArray = dropdown?.map((ele) => {
-    //     //     return {
-    //     //       headerName: ele?.label,
-    //     //       field: ele?.name,
-    //     //       filter: true,
-    //     //       sortable: true,
-    //     //     };
-    //     //   });
-    //     // } else {
-    //     //   var adddropdown = [
-    //     //     {
-    //     //       headerName: dropdown?.label._text,
-    //     //       field: dropdown?.name._text,
-    //     //       filter: true,
-    //     //       sortable: true,
-    //     //     },
-    //     //   ];
-    //     // }
-
-    //     let myHeadings = [
-    //       // ...checkboxinput,
-    //       ...inputs,
-    //       // ...adddropdown,
-    //       // ...addRadio,
-    //       // ...mydropdownArray,
-    //     ];
-    //     // console.log(myHeadings);
-    //     let Product = [
-    //       {
-    //         headerName: "Actions",
-    //         field: "sortorder",
-    //         field: "transactions",
-    //         width: 190,
-    //         cellRendererFramework: (params) => {
-    //           return (
-    //             <div className="actions cursor-pointer">
-    //               <Route
-    //                 render={({ history }) => (
-    //                   <Eye
-    //                     className="mr-50"
-    //                     size="25px"
-    //                     color="green"
-    //                     onClick={() => {
-    //                       this.handleChangeEdit(params.data, "readonly");
-    //                     }}
-    //                   />
-    //                 )}
-    //               />
-    //               <Route
-    //                 render={({ history }) => (
-    //                   <Edit
-    //                     className="mr-50"
-    //                     size="25px"
-    //                     color="blue"
-    //                     onClick={() => {
-    //                       this.handleChangeEdit(params.data, "Editable");
-    //                     }}
-    //                   />
-    //                 )}
-    //               />
-
-    //               <Route
-    //                 render={() => (
-    //                   <Trash2
-    //                     className="mr-50"
-    //                     size="25px"
-    //                     color="red"
-    //                     onClick={() => {
-    //                       this.runthisfunction(params?.data?._id);
-    //                     }}
-    //                   />
-    //                 )}
-    //               />
-    //             </div>
-    //           );
-    //         },
-    //       },
-    //       {
-    //         headerName: "Status",
-    //         field: "status",
-    //         filter: true,
-    //         width: 150,
-    //         cellRendererFramework: (params) => {
-    //           return params.data?.status === "Active" ? (
-    //             <div className="badge badge-pill badge-success">
-    //               {params.data.status}
-    //             </div>
-    //           ) : params.data?.status === "Deactive" ? (
-    //             <div className="badge badge-pill badge-warning">
-    //               {params.data.status}
-    //             </div>
-    //           ) : null;
-    //         },
-    //       },
-
-    //       ...myHeadings,
-    //       {
-    //         headerName: "Created date",
-    //         field: "createdAt",
-    //         filter: true,
-    //         sortable: true,
-    //         cellRendererFramework: (params) => {
-    //           return (
-    //             <>
-    //               <div className="actions cursor-pointer">
-    //                 <span>{params?.data?.createdAt}</span>
-    //               </div>
-    //             </>
-    //           );
-    //         },
-    //       },
-    //       {
-    //         headerName: "Updated date",
-    //         field: "updatedAt",
-    //         filter: true,
-    //         sortable: true,
-    //         cellRendererFramework: (params) => {
-    //           return (
-    //             <>
-    //               <div className="actions cursor-pointer">
-    //                 <div className="actions cursor-pointer">
-    //                   <span>{params?.data?.createdAt}</span>
-    //                 </div>
-    //               </div>
-    //             </>
-    //           );
-    //         },
-    //       },
-    //     ];
-
-    //     this.setState({ AllcolumnDefs: Product });
-
-    //     let userHeading = JSON.parse(localStorage.getItem("TargetList"));
-    //     if (userHeading?.length) {
-    //       this.setState({ columnDefs: userHeading });
-    //       this.gridApi.setColumnDefs(userHeading);
-    //       this.setState({ SelectedcolumnDefs: userHeading });
-    //     } else {
-    //       this.setState({ columnDefs: Product });
-    //       this.setState({ SelectedcolumnDefs: Product });
-    //     }
-    //     this.setState({ SelectedCols: Product });
-    //   })
-    //   .catch((err) => {
-    //     console.log(err);
-    //     swal("Error", "something went wrong try again");
-    //   });
-    await Create_TargetList()
+    await CreateSalesManagerXMlView()
       .then((res) => {
-        this.setState({ rowData: res?.TargetCreation });
-        this.setState({ AllcolumnDefs: this.state.columnDefs });
-        this.setState({ SelectedCols: this.state.columnDefs });
+        var mydropdownArray = [];
+        var adddropdown = [];
+        const jsonData = xmlJs.xml2json(res.data, { compact: true, spaces: 2 });
+        console.log(JSON.parse(jsonData));
+        const inputs = JSON.parse(jsonData)?.Createsalesmanager?.input?.map(
+          (ele) => {
+            return {
+              headerName: ele?.label._text,
+              field: ele?.name._text,
+              filter: true,
+              sortable: true,
+            };
+          }
+        );
+        // let Radioinput =
+        //   JSON.parse(jsonData).CreateAccount?.Radiobutton?.input[0]?.name
+        //     ?._text;
+        // const addRadio = [
+        //   {
+        //     headerName: Radioinput,
+        //     field: Radioinput,
+        //     filter: true,
+        //     sortable: true,
+        //     cellRendererFramework: (params) => {
+        //       return params.data?.Status === "Active" ? (
+        //         <div className="badge badge-pill badge-success">
+        //           {params.data.Status}
+        //         </div>
+        //       ) : params.data?.Status === "Deactive" ? (
+        //         <div className="badge badge-pill badge-warning">
+        //           {params.data.Status}
+        //         </div>
+        //       ) : (
+        //         "NA"
+        //       );
+        //     },
+        //   },
+        // ];
 
-        let userHeading = JSON.parse(localStorage.getItem("TargetList"));
+        let dropdown =
+          JSON.parse(jsonData).CreateCustomer?.MyDropdown?.dropdown;
+        if (dropdown?.length) {
+          var mydropdownArray = dropdown?.map((ele) => {
+            return {
+              headerName: ele?.label,
+              field: ele?.name,
+              filter: true,
+              sortable: true,
+            };
+          });
+        } else {
+          var adddropdown = [
+            {
+              headerName: dropdown?.label._text,
+              field: dropdown?.name._text,
+              filter: true,
+              sortable: true,
+            },
+          ];
+        }
+
+        let myHeadings = [
+          // ...checkboxinput,
+          ...inputs,
+          // ...adddropdown,
+          //   ...addRadio,
+          // ...mydropdownArray,
+        ];
+        console.log(myHeadings);
+        let Product = [
+          {
+            headerName: "Actions",
+            field: "sortorder",
+            field: "transactions",
+            width: 190,
+            cellRendererFramework: (params) => {
+              return (
+                <div className="actions cursor-pointer">
+                  <Route
+                    render={({ history }) => (
+                      <Eye
+                        className="mr-50"
+                        size="25px"
+                        color="green"
+                        onClick={() => {
+                          this.handleChangeEdit(params.data, "readonly");
+                        }}
+                      />
+                    )}
+                  />
+                  <Route
+                    render={({ history }) => (
+                      <Edit
+                        className="mr-50"
+                        size="25px"
+                        color="blue"
+                        onClick={() => {
+                          this.handleChangeEdit(params.data, "Editable");
+                        }}
+                      />
+                    )}
+                  />
+
+                  <Route
+                    render={() => (
+                      <Trash2
+                        className="mr-50"
+                        size="25px"
+                        color="red"
+                        onClick={() => {
+                          this.runthisfunction(params?.data?._id);
+                        }}
+                      />
+                    )}
+                  />
+                </div>
+              );
+            },
+          },
+          {
+            headerName: "Status",
+            field: "status",
+            filter: true,
+            width: 150,
+            cellRendererFramework: (params) => {
+              return params.data?.status === "Active" ? (
+                <div className="badge badge-pill badge-success">
+                  {params.data.status}
+                </div>
+              ) : params.data?.status === "Deactive" ? (
+                <div className="badge badge-pill badge-warning">
+                  {params.data.status}
+                </div>
+              ) : null;
+            },
+          },
+
+          ...myHeadings,
+          {
+            headerName: "Created date",
+            field: "createdAt",
+            filter: true,
+            sortable: true,
+            cellRendererFramework: (params) => {
+              return (
+                <>
+                  <div className="actions cursor-pointer">
+                    <span>{params?.data?.createdAt}</span>
+                  </div>
+                </>
+              );
+            },
+          },
+          {
+            headerName: "Updated date",
+            field: "updatedAt",
+            filter: true,
+            sortable: true,
+            cellRendererFramework: (params) => {
+              return (
+                <>
+                  <div className="actions cursor-pointer">
+                    <div className="actions cursor-pointer">
+                      <span>{params?.data?.createdAt}</span>
+                    </div>
+                  </div>
+                </>
+              );
+            },
+          },
+        ];
+
+        this.setState({ AllcolumnDefs: Product });
+        let userHeading = JSON.parse(localStorage.getItem("SalesManagerList"));
         if (userHeading?.length) {
           this.setState({ columnDefs: userHeading });
           this.gridApi.setColumnDefs(userHeading);
           this.setState({ SelectedcolumnDefs: userHeading });
         } else {
-          this.setState({ columnDefs: this.state.columnDefs });
-          this.setState({ SelectedcolumnDefs: this.state.columnDefs });
+          this.setState({ columnDefs: Product });
+          this.setState({ SelectedcolumnDefs: Product });
         }
+        this.setState({ SelectedCols: Product });
+      })
+      .catch((err) => {
+        console.log(err);
+        swal("Error", "something went wrong try again");
+      });
+    await Sales_ManagerList()
+      .then((res) => {
+        let value = res?.SalesManager;
+        this.setState({ rowData: value });
       })
       .catch((err) => {
         console.log(err);
       });
-    // await CreateAccountList()
-    //   .then((res) => {
-    //     let value = res?.User;
-    //     this.setState({ rowData: value });
-    //   })
-    //   .catch((err) => {
-    //     console.log(err);
-    //   });
   }
   toggleDropdown = () => {
     this.setState((prevState) => ({ isOpen: !prevState.isOpen }));
   };
 
   runthisfunction(id) {
-    debugger;
     swal("Warning", "Sure You Want to Delete it", {
       buttons: {
         cancel: "cancel",
@@ -798,7 +317,7 @@ class TargetCreation extends React.Component {
     }).then((value) => {
       switch (value) {
         case "delete":
-          Delete_targetINlist(id)
+          DeleteSalesManagerperson(id)
             .then((res) => {
               let selectedData = this.gridApi.getSelectedRows();
               this.gridApi.updateRowData({ remove: selectedData });
@@ -1021,7 +540,7 @@ class TargetCreation extends React.Component {
     this.setState({ SelectedcolumnDefs: this.state.SelectedcolumnDefs });
     this.setState({ rowData: this.state.rowData });
     localStorage.setItem(
-      "TargetList",
+      "SalesManagerList",
       JSON.stringify(this.state.SelectedcolumnDefs)
     );
     this.LookupviewStart();
@@ -1039,11 +558,11 @@ class TargetCreation extends React.Component {
     });
   };
   handleLeftShift = () => {
-    let SelectedCols = this.state.SelectedcolumnDefs?.slice();
+    let SelectedCols = this.state.SelectedcolumnDefs.slice();
     let delindex = this.state.Arrindex; /* Your delete index here */
 
     if (SelectedCols && delindex >= 0) {
-      const splicedElement = SelectedCols?.splice(delindex, 1); // Remove the element
+      const splicedElement = SelectedCols.splice(delindex, 1); // Remove the element
 
       this.setState({
         SelectedcolumnDefs: SelectedCols, // Update the state with the modified array
@@ -1072,6 +591,7 @@ class TargetCreation extends React.Component {
                     onClick={(e) => {
                       e.preventDefault();
                       this.setState({ EditOneUserView: false });
+                      this.componentDidMount();
                     }}
                     color="danger"
                   >
@@ -1109,7 +629,7 @@ class TargetCreation extends React.Component {
                     <Card>
                       <Row className="m-2">
                         <Col>
-                          <h1 className="float-left">Target List</h1>
+                          <h1 className="float-left">Order Dispatch List</h1>
                         </Col>
                         <Col>
                           <span className="mx-1">
@@ -1190,11 +710,11 @@ class TargetCreation extends React.Component {
                                   color="primary"
                                   onClick={() =>
                                     history.push(
-                                      "/app/SoftNumen/account/CreateTarget"
+                                      "/app/AjGroup/dispatch/CreateDispach"
                                     )
                                   }
                                 >
-                                  <FaPlus size={15} /> Create Target
+                                  <FaPlus size={15} /> Create Dispatch
                                 </Badge>
                               )}
                             />
@@ -1415,9 +935,9 @@ class TargetCreation extends React.Component {
                                       <IoMdRemoveCircleOutline
                                         onClick={() => {
                                           const SelectedCols =
-                                            this.state.SelectedcolumnDefs?.slice();
+                                            this.state.SelectedcolumnDefs.slice();
                                           const delindex =
-                                            SelectedCols?.findIndex(
+                                            SelectedCols.findIndex(
                                               (element) =>
                                                 element?.headerName ==
                                                 ele?.headerName
@@ -1425,7 +945,7 @@ class TargetCreation extends React.Component {
 
                                           if (SelectedCols && delindex >= 0) {
                                             const splicedElement =
-                                              SelectedCols?.splice(delindex, 1); // Remove the element
+                                              SelectedCols.splice(delindex, 1); // Remove the element
                                             // splicedElement contains the removed element, if needed
 
                                             this.setState({
@@ -1492,24 +1012,8 @@ class TargetCreation extends React.Component {
             </Row>
           </ModalBody>
         </Modal>
-        <Modal
-          isOpen={this.state.modalone}
-          toggle={this.toggleModal}
-          className="modal-dialog modal-xl"
-          // className="modal-dialog modal-lg"
-          size="lg"
-          backdrop={true}
-          fullscreen={true}
-        >
-          <ModalHeader toggle={this.toggleModal}>View Details</ModalHeader>
-          <ModalBody className="myproducttable">
-            {/* <div className="container"> */}
-            <TargetAssignedOne ViewData={this.state.ViewData} />
-            {/* </div> */}
-          </ModalBody>
-        </Modal>
       </>
     );
   }
 }
-export default TargetCreation;
+export default OrderDispatchList;
