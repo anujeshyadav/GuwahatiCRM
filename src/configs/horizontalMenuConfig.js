@@ -94,12 +94,12 @@ const horizontalMenuConfig = [
         navLink: "/app/softnumen/InvoiceGenerator",
       },
       {
-        id: "CreateOrder",
-        title: "Create Order",
+        id: "OrderList",
+        title: "Sales Order",
         type: "item",
         icon: <FaCircle size={8} />,
         permissions: ["admin", "editor"],
-        navLink: "/app/softnumen/order/createorder",
+        navLink: "/app/softnumen/order/orderList",
       },
       {
         id: "PlaceOrder",
@@ -107,7 +107,7 @@ const horizontalMenuConfig = [
         type: "item",
         icon: <FaCircle size={8} />,
         permissions: ["admin", "editor"],
-        navLink: "/app/softNumen/order/OrderSearch",
+        navLink: "/app/softNumen/order/placeOrder",
       },
       {
         id: "PendingOrder",

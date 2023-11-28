@@ -1,7 +1,9 @@
 import {
   Create_warehouse_xmlView,
   Create_warehouse_save,
-  SaveOrder_List,
+  Save_Place_Order,
+  // SaveOrder_List,
+  view_create_order_history,
   Delete_Sales_person,
   Create_Warehouse_List,
   Create_Target_save,
@@ -286,10 +288,28 @@ export const UnitViewOne = async (id) => {
     .then((res) => res.data);
   return response;
 };
-
+// by own
 export const SaveOrder = async (data) => {
   let response = await axiosConfig
     .post(Save_Order, data)
+    .then((res) => res.data);
+  return response;
+};
+
+// by others
+export const SavePlaceOrder = async (data) => {
+  let response = await axiosConfig
+    .post(Save_Place_Order, data)
+    .then((res) => res.data);
+  return response;
+};
+
+
+
+
+export const createOrderhistoryview = async () => {
+  let response = await axiosConfig
+    .get(`${view_create_order_history}`)
     .then((res) => res.data);
   return response;
 };
