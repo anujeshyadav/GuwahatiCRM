@@ -17,6 +17,9 @@ import {
   Update_Sales_person_save,
   Create_Sales_person_List,
   Create_transporter_save,
+  Create_Target_List,
+  Delete_target_INlist,
+  Update_target_INlist,
   Create_Transporter_List,
   Delete_Transporter_List,
   Create_SalesMan_xmlView,
@@ -39,6 +42,7 @@ import {
   Category_List,
   Create_Account_xmlView,
   Create_Customer_xmlView,
+  Delete_individual_Target,
   Create_Customer_save,
   Create_Customer_List,
   Create_Parts,
@@ -1009,6 +1013,31 @@ export const Update_Sales_Managersave = async (id, data) => {
 export const Create_Targetsave = async (data) => {
   let response = await axiosConfig
     .post(Create_Target_save, data)
+    .then((res) => res.data);
+  return response;
+};
+export const Create_TargetList = async () => {
+  let response = await axiosConfig
+    .get(`${Create_Target_List}`)
+    .then((res) => res.data);
+  return response;
+};
+export const Delete_targetINlist = async (id) => {
+  let response = await axiosConfig
+    .delete(`${Delete_target_INlist}` + id)
+
+    .then((res) => res.data);
+  return response;
+};
+export const Delete_individualTarget = async (id, id1) => {
+  let response = await axiosConfig
+    .delete(`${Delete_individual_Target}` + id + "/product/" + id1)
+    .then((res) => res.data);
+  return response;
+};
+export const Update_targetINlist = async (id, data) => {
+  let response = await axiosConfig
+    .put(Update_target_INlist + id, data)
     .then((res) => res.data);
   return response;
 };
