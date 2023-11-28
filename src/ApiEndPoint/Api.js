@@ -47,7 +47,7 @@ export const Create_SalesManager_xmlView =
 export const Create_Customer_xmlView = "/customer/get-xml";
 export const Create_Target_xml_view = "/target-creation/get-xml";
 
-export const Create_Target_List = "target-creation/view-target-creation";
+export const Create_Target_List = "/target-creation/view-target-creation";
 export const Delete_target_INlist = "/target-creation/delete-target-creation/";
 export const Update_target_INlist = "/target-creation/update-target-creation/";
 export const Delete_individual_Target = "/target-creation/";
