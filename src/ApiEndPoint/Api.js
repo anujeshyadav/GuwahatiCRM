@@ -46,6 +46,12 @@ export const Create_SalesManager_xmlView =
   "https://xmlfileaws.s3.ap-south-1.amazonaws.com/CreateSalesManagerConfig.xml";
 export const Create_Customer_xmlView = "/customer/get-xml";
 export const Create_Target_xml_view = "/target-creation/get-xml";
+
+export const Create_Target_List = "target-creation/view-target-creation";
+export const Delete_target_INlist = "/target-creation/delete-target-creation/";
+export const Update_target_INlist = "/target-creation/update-target-creation/";
+export const Delete_individual_Target = "/target-creation/";
+
 export const Create_Target_save = "/target-creation/save-target-creation";
 export const Create_Customer_save = "/customer/save-customer";
 export const Create_Customer_Update = "/customer/update-customer/";

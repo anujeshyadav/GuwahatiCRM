@@ -44,6 +44,8 @@ import {
 import "../../../../assets/scss/pages/users.scss";
 import Timepickers from "../../../forms/form-elements/datepicker/Timepicker";
 import Pickers from "../../../forms/form-elements/datepicker/Pickers";
+import { Route } from "react-router-dom";
+
 // import Payment from "./payment/Payment";
 // import OrderedList from "./OrderedList";
 // import AuditHistory from "./audithistory/AuditHistory";
@@ -306,13 +308,28 @@ const CreateTarget = (args) => {
   const submitHandler = (e) => {
     e.preventDefault();
 
-    console.log(product);
-    console.log(GrandTotal);
-    console.log(Salesperson);
-    console.log(targetStartDate);
-    console.log(targetEndDate);
-    console.log(grandTotalAmt);
-    debugger;
+    // console.log(product);
+    // console.log(GrandTotal);
+    // console.log(Salesperson[0]?._id);
+    // console.log(targetStartDate);
+    // console.log(targetEndDate);
+    // console.log(grandTotalAmt);
+    let Allproduct = product?.map((ele, i) => {
+      console.log(ele);
+      return {
+        productId: ele?.productId,
+        qtyAssign: ele?.qty,
+        price: ele?.price,
+        totalPrice: ele?.totalprice,
+      };
+    });
+    let payload = {
+      startDate: targetStartDate,
+      endDate: targetEndDate,
+      grandTotal: grandTotalAmt,
+      salesPersonId: Salesperson[0]?._id,
+      products: Allproduct,
+    };
     // const ObjOrder = {
     //   userId: UserInfo?._id,
     //   fullName: UserInfo?.UserName,
@@ -333,13 +350,12 @@ const CreateTarget = (args) => {
     if (error) {
       swal("Error occured while Entering Details");
     } else {
-      // Create_Targetsave()
-      SaveOrder(ObjOrder)
+      Create_Targetsave(payload)
         .then((res) => {
           // if (res.status) {
           //   setFormData({});
           //   window.location.reload();
-          swal("Order Created Successfully");
+          swal("Target Created Successfully");
           // }
           console.log(res);
         })
@@ -403,6 +419,24 @@ const CreateTarget = (args) => {
             <Col className="">
               <div>
                 <h1 className="">Create Target</h1>
+              </div>
+            </Col>
+            <Col>
+              <div className="float-right">
+                <Route
+                  render={({ history }) => (
+                    <Button
+                      style={{ cursor: "pointer" }}
+                      className="float-right mr-1"
+                      color="primary"
+                      onClick={() => history.goBack()}
+                    >
+                      {" "}
+                      Back
+                      {/* <FaPlus size={15} /> Create User */}
+                    </Button>
+                  )}
+                />
               </div>
             </Col>
           </Row>

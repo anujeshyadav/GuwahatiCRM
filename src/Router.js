@@ -674,6 +674,9 @@ const CreateAccount = lazy(() =>
 const CreateTarget = lazy(() =>
   import("./views/apps/freshlist/accounts/CreateTarget")
 );
+const EditTarget = lazy(() =>
+  import("./views/apps/freshlist/accounts/EditTarget")
+);
 const CreateReturnSalesOrder = lazy(() =>
   import("./views/apps/freshlist/accounts/CreateReturnSalesOrder")
 );
@@ -688,6 +691,9 @@ const CreateSalesTeam = lazy(() =>
 );
 const CreateSalesManag = lazy(() =>
   import("./views/apps/freshlist/accounts/CreateSalesManager")
+);
+const CreateDispach = lazy(() =>
+  import("./views/apps/freshlist/accounts/CreateDispach")
 );
 
 const EditAccount = lazy(() =>
@@ -733,9 +739,7 @@ const ProductRegistration = lazy(() =>
   )
 );
 const PurchaseInvoice = lazy(() =>
-  import(
-    "./views/apps/freshlist/customer/ProductManagement/PurchaseInvoice"
-  )
+  import("./views/apps/freshlist/customer/ProductManagement/PurchaseInvoice")
 );
 const ProductSearch = lazy(() =>
   import("./views/apps/freshlist/customer/ProductManagement/ProductSearch")
@@ -804,6 +808,9 @@ const CreateSalesMan = lazy(() =>
 );
 const CreateSalesManager = lazy(() =>
   import("./views/apps/freshlist/house/SalesManagerList")
+);
+const OrderDispatchList = lazy(() =>
+  import("./views/apps/freshlist/house/OrderDispatchList")
 );
 const SupplierList = lazy(() =>
   import("./views/apps/freshlist/house/SupplierList")
@@ -2002,6 +2009,10 @@ class AppRouter extends React.Component {
             component={CreateTarget}
           />
           <AppRoute
+            path="/app/AJGroup/account/EditTarget/:id"
+            component={EditTarget}
+          />
+          <AppRoute
             path="/app/SoftNumen/account/CreateReturnSalesOrder"
             component={CreateReturnSalesOrder}
           />
@@ -2021,6 +2032,10 @@ class AppRouter extends React.Component {
           <AppRoute
             path="/app/SoftNumen/account/CreateSalesManag"
             component={CreateSalesManag}
+          />
+          <AppRoute
+            path="/app/AjGroup/dispatch/CreateDispach"
+            component={CreateDispach}
           />
           <AppRoute
             path="/app/SoftNumen/account/EditAccount/:id"
@@ -2146,6 +2161,10 @@ class AppRouter extends React.Component {
           <AppRoute
             path="/app/SoftNumen/CreateSalesManager"
             component={CreateSalesManager}
+          />
+          <AppRoute
+            path="/app/Ajgroup/order/OrderDispatchList"
+            component={OrderDispatchList}
           />
           <AppRoute
             path="/app/freshlist/house/SupplierList"
