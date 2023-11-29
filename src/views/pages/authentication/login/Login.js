@@ -17,7 +17,7 @@ import {
   InputGroupAddon,
 } from "reactstrap";
 import { FaBeer } from "react-icons/fa";
-import logo from "../../../../assets/img/logo/mainLogo.png";
+import logo from "../../../../assets/img/logo/mainLogo1.png";
 import "../../../../assets/scss/pages/authentication.scss";
 import { history } from "../../../../history";
 import LoginAuth0 from "./LoginAuth0";
@@ -88,6 +88,7 @@ class Login extends React.Component {
               "userToken",
               JSON.stringify(response?.user?.token)
             );
+            debugger;
             setTimeout(() => {
               this.props.history.push("/dashboard");
             }, 1500);
@@ -135,20 +136,18 @@ class Login extends React.Component {
 
   loginHandler = async (e) => {
     e.preventDefault();
-   
-
     let data = { email: this.state.email, password: this.state.password };
-    console.log(data)
+    console.log(data);
     await UserLogin(data)
       .then((res) => {
         this.props.history.push("/dashboard");
         console.log(res?.user);
-          let basicinfor = res?.user;
-          let newinfor = res?.user?.user1;
-          let allinfor = { ...basicinfor, ...newinfor };
-           this.context?.setUserInformatio(allinfor);
- localStorage.setItem("userData", JSON.stringify(allinfor));
-       // if (
+        let basicinfor = res?.user;
+        let newinfor = res?.user?.user1;
+        let allinfor = { ...basicinfor, ...newinfor };
+        this.context?.setUserInformatio(allinfor);
+        localStorage.setItem("userData", JSON.stringify(allinfor));
+        // if (
         //   JSON.parse(res?.user?.gmail) ||
         //   JSON.parse(res?.user?.whatsapp) ||
         //   JSON.parse(res?.user?.sms)
@@ -290,8 +289,8 @@ class Login extends React.Component {
                       <img
                         src={logo}
                         alt="loginImg"
-                        width="90%"
-                        height="150px"
+                        width="100%"
+                        height="110px"
                       />
                     </div>
 

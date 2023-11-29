@@ -497,6 +497,7 @@ class HorizontalSidebar extends React.Component {
               onClick={this.handleTogglemodal}
               style={{ cursor: "pointer" }}
               color="red"
+              size={18}
               className="mr-2 "
             />
           </span>
