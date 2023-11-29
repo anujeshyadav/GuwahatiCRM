@@ -1113,7 +1113,7 @@ class NavbarUser extends React.PureComponent {
                                         {i + 1} &nbsp;
                                         <MdDelete
                                           color="red"
-                                          size={20}
+                                          size={19}
                                           onClick={(e) => {
                                             this.handleDeletePartsCate(e, ele);
                                           }}
@@ -1293,11 +1293,11 @@ class NavbarUser extends React.PureComponent {
         <div title="Toggle Mode" className="mt-2" style={{ cursor: "pointer" }}>
           {this.state.theme == "semi-dark" ? (
             <>
-              <BsMoonFill onClick={() => this.changetheme("dark")} size={25} />
+              <BsMoonFill onClick={() => this.changetheme("dark")} size={19} />
             </>
           ) : (
             <>
-              <BsMoon onClick={() => this.changetheme("semi-dark")} size={25} />
+              <BsMoon onClick={() => this.changetheme("semi-dark")} size={19} />
             </>
           )}
         </div>
@@ -1306,7 +1306,7 @@ class NavbarUser extends React.PureComponent {
           className="dropdown-notification nav-item"
         >
           <DropdownToggle tag="a" className="nav-link nav-link-label">
-            <BsCartCheckFill color="#055761" size={21} />
+            <BsCartCheckFill color="#055761" size={19} />
             <Badge pill color="primary" className="badge-up">
               {user?.PartsCatalougueCart?.length > 0 ? (
                 <>{user?.PartsCatalougueCart?.length}</>
@@ -1382,7 +1382,7 @@ class NavbarUser extends React.PureComponent {
                           >
                             <MdDelete
                               color="red"
-                              size={20}
+                              size={19}
                               onClick={(e) => {
                                 this.handleDeletePartsCate(e, ele);
                               }}
@@ -1417,7 +1417,7 @@ class NavbarUser extends React.PureComponent {
           className="dropdown-notification nav-item"
         >
           <DropdownToggle tag="a" className="nav-link nav-link-label">
-            <Icon.Bell size={21} />
+            <Icon.Bell size={19} />
             <Badge pill color="primary" className="badge-up">
               1
             </Badge>
@@ -1446,7 +1446,7 @@ class NavbarUser extends React.PureComponent {
                   <Media left href="#">
                     <Icon.PlusSquare
                       className="font-medium-5 primary"
-                      size={21}
+                      size={19}
                     />
                   </Media>
                   <Media body>
@@ -1592,8 +1592,8 @@ class NavbarUser extends React.PureComponent {
                   <img
                     src={`http://65.0.96.247:8000//Images/${user?.UserInformatio?.profileImage}`}
                     className="round"
-                    height="40"
-                    width="40"
+                    height="30"
+                    width="30"
                     alt="avatar"
                   />
                 </>
@@ -1602,8 +1602,8 @@ class NavbarUser extends React.PureComponent {
                   <img
                     src={logoinfo}
                     className="round"
-                    height="40"
-                    width="40"
+                    height="30"
+                    width="30"
                     alt="avatar"
                   />
                 </>

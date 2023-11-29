@@ -25,6 +25,7 @@ import logoimg from "../../../assets/img/logo/logomain.png";
 import { Box, Circle, DollarSign, ShoppingCart, Users } from "react-feather";
 import { FaAngleDown } from "react-icons/fa";
 import { Link } from "react-router-dom/cjs/react-router-dom.min";
+import logo from "../../../assets/img/logo/mainLogo1.png";
 import { Route } from "react-router-dom";
 import HorizontalMenu from "./Myhorizontalmenu";
 // import HorizontalMenu from "../../../../src/layouts/layouts/components/menu/horizontal-menu/HorizontalMenu";
@@ -98,13 +99,13 @@ const ThemeNavbar = (props) => {
               {" "}
               <Route
                 render={({ history }) => (
-                  <strong
+                  <div
                     title="Click to Go Dashboard"
                     style={{ fontWeight: "800", cursor: "pointer" }}
                     onClick={() => history.push("/dashboard")}
                   >
-                    AJ GROUP
-                  </strong>
+                    <img src={logo} width="50%" height={35} alt="logo" />
+                  </div>
                 )}
               />
               {/* <span className="d-flex"> */}
