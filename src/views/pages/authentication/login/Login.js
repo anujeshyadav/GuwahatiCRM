@@ -80,7 +80,7 @@ class Login extends React.Component {
           let basicinfor = response?.user;
           let newinfor = response?.user?.user1;
           let allinfor = { ...basicinfor, ...newinfor };
-
+console.log(response?.user?.token)
           if (response?.status) {
             this.context?.setUserInformatio(allinfor);
             localStorage.setItem("userData", JSON.stringify(allinfor));

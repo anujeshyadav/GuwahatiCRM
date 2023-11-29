@@ -29,17 +29,14 @@ import { FiSend } from "react-icons/fi";
 
 import "../../../../assets/scss/pages/users.scss";
 import {
-  CreateOrder_ViewData,
-  CommentOrder,
-  CreateOrder_ID,
-  CommentProductWiki,
+ 
   SaveOrder,
   ProductListView,
   CreatePartyList,
 } from "../../../../ApiEndPoint/ApiCalling";
 import "../../../../assets/scss/pages/users.scss";
 import Payment from "./payment/Payment";
-import OrderedList from "./OrderedList";
+import OrderedList from "./OrderList";
 import AuditHistory from "./audithistory/AuditHistory";
 let GrandTotal = [];
 let SelectedITems = [];
@@ -51,25 +48,9 @@ const CreateOrder = (args) => {
   const [ProductList, setProductList] = useState([]);
   const [PartyList, setPartyList] = useState([]);
   const [grandTotalAmt, setGrandTotalAmt] = useState(0);
-  // const [OrderID, setOrderID] = useState();
   const [UserInfo, setUserInfo] = useState({});
-  const [modal, setModal] = useState(false);
-  const [items, setItems] = useState("");
-  const [audit, setAudit] = useState(false);
-  const toggle = (item) => {
-    setItems(item);
-    setModal(!modal);
-  };
-  const audittoggle = () => {
-    setAudit(!audit);
-    // setModal(!modal);
-  };
-  const handleopentoggle = (iteam) => {
-    toggle(iteam);
-  };
-  const handleHistory = () => {
-    audittoggle();
-  };
+
+  
   const [product, setProduct] = useState([
     {
       product: "",
@@ -79,17 +60,15 @@ const CreateOrder = (args) => {
       price: "",
       totalprice: "",
       DateofDelivery: "",
-      PartyName: "",
-      discount: "",
-      Shipping: "",
-      tax: "",
-      grandTotal: "",
+      partyId: "",
+      // discount: "",
+      // Shipping: "",
+      // tax: "",
     },
   ]);
 
   const handleProductChangeProduct = (e, index) => {
-
-   setIndex(index);
+  setIndex(index);
     const { name, value } = e.target;
     const list = [...product];
     list[index][name] = value;
@@ -104,22 +83,30 @@ const CreateOrder = (args) => {
      amt = x.reduce((a, b) => a + b);
       console.log("GrandTotal",amt);
     }
-    // console.log(list)
+    console.log(list)
     setProduct(list);
     setGrandTotalAmt(amt)
 console.log(GrandTotal); 
   };
 
+  const handleSelectionParty = (selectedList, selectedItem, index) => {
+        setProduct(prevProductList => {
+         const updatedProductList = [...prevProductList]; 
+         const updatedProduct = { ...updatedProductList[index] }; 
+         updatedProduct.partyId = selectedItem?._id;
+         updatedProductList[index] = updatedProduct;
+         return updatedProductList; 
+      });
+  }
   const handleSelection = (selectedList, selectedItem, index) => {
     SelectedITems.push(selectedItem);
-setProduct(prevProductList => {
-    const updatedProductList = [...prevProductList]; // Create a copy of the productList array
+    setProduct(prevProductList => {
+   const updatedProductList = [...prevProductList]; 
     const updatedProduct = { ...updatedProductList[index] }; // Create a copy of the product at the specified index
     updatedProduct.price = selectedItem.Product_MRP; // Update the price of the copied product
     updatedProduct.productId = selectedItem._id;
     updatedProductList[index] = updatedProduct; // Replace the product at the specified index with the updated one
     let myarr = prevProductList?.map((ele, i) => {
-     console.log(ele?.qty * selectedItem[i]?.Product_MRP);
       let indextotal = ele?.qty * SelectedITems[i]?.Product_MRP;
       GrandTotal[index] = indextotal;
       return indextotal;
@@ -127,66 +114,19 @@ setProduct(prevProductList => {
     console.log(myarr);
     let amt = myarr.reduce((a, b) => a + b);
     setGrandTotalAmt(amt);
- return updatedProductList; // Return the updated product list to set the state
- 
+    return updatedProductList; // Return the updated product list to set the state
   });
-  product.map((value) => console.log(value.totalprice));
- onSelect1(selectedList, selectedItem, index);
   };
- const handleInputChange = (e, type, i) => {
-    const { name, value, checked } = e.target;
-    setindex(i);
-    if (type == "checkbox") {
-      if (checked) {
-        setFormData({
-          ...formData,
-          [name]: checked,
-        });
-      } else {
-        setFormData({
-          ...formData,
-          [name]: checked,
-        });
-      }
-    } else {
-      if (type == "number") {
-        if (/^\d{0,10}$/.test(value)) {
-          setFormData({
-            ...formData,
-            [name]: value,
-          });
-          setError("");
-        } else {
-          setError(
-            "Please enter a valid number with a maximum length of 10 digits"
-          );
-        }
-      } else {
-        if (value.length <= 10) {
-          setFormData({
-            ...formData,
-            [name]: value,
-          });
-          setError("");
-        } else {
-          setFormData({
-            ...formData,
-            [name]: value,
-          });
-        }
-      }
-    }
-  };
- 
+
   useEffect(() => {
-    // console.log(product);
+    console.log(product);
     console.log(GrandTotal)
   }, [product,GrandTotal]);
 
   useEffect(() => {
     ProductListView()
       .then((res) => {
-        // console.log(res?.Product);
+        console.log(res.Product)
         setProductList(res?.Product);
       })
       .catch((err) => {
@@ -194,7 +134,7 @@ setProduct(prevProductList => {
       });
       CreatePartyList()
       .then((res) => {
-        // console.log(res.Party)
+        console.log(res.Party)
         setPartyList(res.Party)
       })
       .catch((err) => {
@@ -208,8 +148,6 @@ setProduct(prevProductList => {
   }, []);
 
 
-
-
   let addMoreProduct = () => {
     setProduct([
       ...product,
@@ -221,11 +159,10 @@ setProduct(prevProductList => {
         price: "",
         totalprice: "",
         DateofDelivery: "",
-        PartyName: "",
+        partyId: "",
         discount: "",
         Shipping: "",
         tax: "",
-        grandTotal: "",
       },
     ]);
   };
@@ -237,79 +174,48 @@ setProduct(prevProductList => {
     setGrandTotalAmt(amt);
     setProduct(newFormValues);
   };
-  // let handlePartChange = (i, e) => {
-  //   let newFormValues = [...part];
-  //   newFormValues[i][e.target.name] = e.target.value;
-  //   setPart(newFormValues);
-  // };
+
 
   const submitHandler = (e) => {
+    debugger
     e.preventDefault();
+    console.log("Final ",product)
  const ObjOrder= {
  userId: UserInfo?._id,
   fullName: UserInfo?.UserName,
   address: UserInfo?.Address,
-  // MobileNo: 1234567890,
-  // country: "USA",
-  // state: "California",
-  // city: "Los Angeles",
+  grandTotal: grandTotalAmt,
+  MobileNo: UserInfo?.mobileNumber,
+  country: UserInfo?.Country,
+  state:  UserInfo?.State,
+  city:  UserInfo?.City,
   // landMark: "Nearby Park",
   // pincode: 90001,
-  // grandTotal: 100.50,
   // discount: 10.00,
   // shippingCost: 5.00,
   // taxAmount: 7.50,
-  // status: "pending",
+
     orderItems:product
   }
   if (error) {
       swal("Error occured while Entering Details");
     } else {
-      SaveOrder(ObjOrder)
+      SaveOrder(ObjOrder) 
         .then(res => {
+          console.log(res)
           // if (res.status) {
           //   setFormData({});
           //   window.location.reload();
             swal("Order Created Successfully");
           // }
-          console.log(res)
+         
         })
         .catch(err => {
           console.log(err);
         });
     }
   };
-  const onSelect1 = (selectedList, selectedItem, index) => {
-    // console.log(selectedList);
-    // console.log(index);
-    // if (selectedList.length) {
-    //   for (var i = 0; i < selectedList.length; i++) {
-    //     selectedOptions.push(selectedList[i].id);
-    //   }
-    // }
 
-    // let arr = selectedList.map((ele) => ele.id);
-    // setmultiSelect(arr);
-    // console.log(multiSelect);
-
-    // let uniqueChars = [...new Set(selectedOptions)];
-
-    // if (uniqueChars.length === 1) {
-    //   let value = uniqueChars[0];
-    //   const formdata = new FormData();
-    //   formdata.append("state_id", value);
-    //   axiosConfig
-    //     .post(`/getcity`, formdata)
-    //     .then((res) => {
-    //       setCityList(res?.data?.cities);
-    //     })
-    //     .catch((err) => {
-    //       console.log(err);
-    //     });
-    // } else {
-    //   setCityList([]);
-    // }
-  };
   const onRemove1 = (selectedList, removedItem, index) => {
     console.log(selectedList);
     console.log(index);
@@ -410,7 +316,8 @@ setProduct(prevProductList => {
                            isObject="false"
                           options={PartyList} // Options to display in the dropdown
                           // selectedValues={selectedValue}   // Preselected value to persist in dropdown
-                          onSelect={onSelect1} // Function will trigger on select event
+                          onSelect={(selectedList, selectedItem) =>handleSelectionParty(selectedList, selectedItem, index)} 
+                          // onSelect={onSelect1} // Function will trigger on select event
                           onRemove={onRemove1} // Function will trigger on remove event
                           displayValue="firstName" // Property name to display in the dropdown options
                         />
@@ -425,7 +332,6 @@ setProduct(prevProductList => {
                           name="DateofDelivery"
                           placeholder="Date of Delivery"
                           value={product.DateofDelivery}
-                          // value={product.price * product.qty}
                           onChange={(e) => handleProductChangeProduct(e, index)}
                         />
                       </div>
@@ -461,9 +367,29 @@ setProduct(prevProductList => {
               <Row>
                 <Col className="mb-1" lg="12" md="12" sm="12">
                   <div className=" d-flex justify-content-end">
-                    <Label className="pr-5">
-                      Grand Total : <strong>{grandTotalAmt}</strong>
+                    <ul className="subtotal">
+                      <li>
+                     
+                  <Label className="">
+                      SubTotal : <strong>{grandTotalAmt}</strong>
                     </Label>
+                      </li>
+                  <li>
+                  <Label className="">
+                      Shipping Cost : <strong>RS 50</strong>
+                    </Label>
+                  </li>
+                  <li><Label className="">
+                     Tax: <strong>RS 25</strong>
+                    </Label></li>
+                  <li><Label className="">
+                      Discount : <strong>RS 5</strong>
+                    </Label></li>
+                  <li> <Label className="pr-5">
+                      Grand Total : <strong>{grandTotalAmt+50+25+5}</strong>
+                    </Label></li>
+                   </ul>
+                    
                   </div>
                 </Col>
               </Row>
