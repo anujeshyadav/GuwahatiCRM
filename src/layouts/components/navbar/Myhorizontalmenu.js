@@ -35,8 +35,7 @@ class HorizontalSidebar extends React.Component {
     };
   }
 
-  openDropdown = (id) => {
-    console.log(id);
+  openDropdown = id => {
     // document.getElementById("showlist").className="show nav-link";
     // console.log(openDrop.className)
     // document.getElementById("showlist").className = "show nav-link dropdown";
@@ -53,7 +52,7 @@ class HorizontalSidebar extends React.Component {
     });
   };
 
-  closeDropdown = (id) => {
+  closeDropdown = id => {
     let arr = this.state.openDropdown;
     arr.splice(arr.indexOf(id), 1);
     return this.setState({
@@ -61,13 +60,13 @@ class HorizontalSidebar extends React.Component {
     });
   };
 
-  handleItemHover = (id) => {
+  handleItemHover = id => {
     this.setState({
       itemHover: id,
     });
   };
 
-  handleParentHover = (id) => {
+  handleParentHover = id => {
     this.setState({
       parentHover: id,
     });
@@ -98,7 +97,7 @@ class HorizontalSidebar extends React.Component {
     }
   };
 
-  handleActiveParent = (arr) => {
+  handleActiveParent = arr => {
     this.setState({
       activeParents: arr,
     });
@@ -110,11 +109,11 @@ class HorizontalSidebar extends React.Component {
       <DropdownMenu
         tag="ul"
         className="mt-50"
-        onMouseEnter={(e) => e.preventDefault()}
+        onMouseEnter={e => e.preventDefault()}
         modifiers={{
           setMaxHeight: {
             enabled: true,
-            fn: (data) => {
+            fn: data => {
               let pageHeight = window.innerHeight,
                 ddTop = data.instance.reference.getBoundingClientRect().top,
                 ddHeight = data.popper.height,
@@ -140,7 +139,7 @@ class HorizontalSidebar extends React.Component {
           },
         }}
       >
-        {submenu.map((child) => {
+        {submenu.map(child => {
           const CustomAnchorTag = child.type === "external-link" ? `a` : Link;
           if (child.navLink && child.navLink === this.props.activePath) {
             this.activeFlag = true;
@@ -254,8 +253,8 @@ class HorizontalSidebar extends React.Component {
     );
   };
 
-  renderDropdown = (arr) => {
-    return arr?.map((item) => {
+  renderDropdown = arr => {
+    return arr?.map(item => {
       if (
         item.type === "item" &&
         item.navLink &&
@@ -272,7 +271,7 @@ class HorizontalSidebar extends React.Component {
             hover: this.state.parentHover === item.id,
           })}
           key={item.id}
-          ref={(el) => (this.menuDrodpown = el)}
+          ref={el => (this.menuDrodpown = el)}
         >
           <div
             className={classnames(
@@ -382,7 +381,7 @@ class HorizontalSidebar extends React.Component {
     );
   }
 }
-const mapStateToProps = (state) => {
+const mapStateToProps = state => {
   return {
     currentUser: state.auth.login.userRole,
   };
