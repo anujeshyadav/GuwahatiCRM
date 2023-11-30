@@ -102,18 +102,15 @@ const CreateAccount = () => {
   }, [formData]);
   useEffect(() => {
     Get_RoleList().then((res)=>{
-      // console.log(res?.Role)
       setdropdownValue(res?.Role)
     }).catch((err)=>{
       console.log(err)
+      swal("Roles List Not found")
     })
     CreateAccountView()
       .then((res) => {
         const jsonData = xmlJs.xml2json(res.data, { compact: true, spaces: 2 });
-        // console.log(JSON.parse(jsonData)?.CreateUser?.input);
-
         setCreatAccountView(JSON.parse(jsonData)?.CreateUser?.input);
-
         setdropdownValue(JSON.parse(jsonData));
       })
       .catch((err) => {
@@ -192,15 +189,16 @@ const CreateAccount = () => {
                   <option>
                     --select Role--
                   </option>
-                  <option>
-                   A
+                 {dropdownValue && dropdownValue?.length && dropdownValue?.map((ele,i)=>{
+                  console.log(ele)
+                  return(
+                    
+                  <option value={ele?._id}>
+                   {ele?.roleName}
                   </option>
-                  <option>
-                   B
-                  </option>
-                  <option>
-                    C
-                  </option>
+                  )
+                 })}
+                
                  </CustomInput>
 
                   </FormGroup>
