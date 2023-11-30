@@ -22,7 +22,7 @@ import "../../../../assets/scss/plugins/tables/_agGridStyleOverride.scss";
 import "../../../../assets/scss/pages/users.scss";
 import { Route, Link } from "react-router-dom";
 import swal from "sweetalert";
-import { AllCategoryList } from "../../../../ApiEndPoint/ApiCalling";
+import { AllCategoryList, DeleteCategory } from "../../../../ApiEndPoint/ApiCalling";
 
 class CategoryList extends React.Component {
   state = {
@@ -60,7 +60,7 @@ class CategoryList extends React.Component {
               {params.data.image && (
                 <img
                   className="rounded-circle mr-50"
-                  src={`http://65.0.96.247:8000/Images/${params.data?.image}`}
+                  src={`http://64.227.162.41:5000/Images/${params.data?.image}`}
                   alt="user avatar"
                   height="40"
                   width="40"
@@ -173,7 +173,7 @@ class CategoryList extends React.Component {
                   )}
                 />
               )} */}
-              {this.state.Editpermisson && (
+              {/* {this.state.Editpermisson && ( */}
                 <Route
                   render={({ history }) => (
                     <Edit
@@ -182,14 +182,14 @@ class CategoryList extends React.Component {
                       color="blue"
                       onClick={() =>
                         history.push(
-                          `/app/freshlist/category/editCategory/${params?.data?.id}`
+                          `/app/freshlist/category/editCategory/${params?.data?._id}`
                         )
                       }
                     />
                   )}
                 />
-              )}
-              {this.state.Deletepermisson && (
+              {/* )} */}
+              {/* {this.state.Deletepermisson && ( */}
                 <Route
                   render={({ history }) => (
                     <Trash2
@@ -198,13 +198,13 @@ class CategoryList extends React.Component {
                       color="red"
                       onClick={() => {
                         // let selectedData = this.gridApi.getSelectedRows();
-                        this.runthisfunction(params?.data?.id);
+                        this.runthisfunction(params?.data?._id);
                         // this.gridApi.updateRowData({ remove: selectedData });
                       }}
                     />
                   )}
                 />
-              )}
+              {/* )} */}
             </div>
           );
         },
@@ -267,27 +267,17 @@ class CategoryList extends React.Component {
         case "delete":
           let data = new FormData();
           let pageparmission = JSON.parse(localStorage.getItem("userData"));
-          data.append("user_id", pageparmission?.Userinfo?.id);
-          data.append("role", pageparmission?.Userinfo?.role);
-          data.append("tablename", "category");
-          data.append("delete_id", id);
-          axiosConfig
-            .post("/deleterecord", data)
-            .then((resp) => {
-              console.log(resp?.data.message);
-              if (resp?.data.success) {
-                swal("Success", "Category Deleted Successfully");
-                this.gridApi.updateRowData({ remove: selectedData });
-              }
-              if (!resp?.data?.success) {
-                console.log("object");
-                swal("Error", `${resp?.data.message}`);
-              }
-            })
-            .catch((err) => {
-              console.log(err);
-              // swal("Somethig Went Wrong");
-            });
+
+          DeleteCategory(id).then((res)=>{
+            console.log(res)
+            this.gridApi.updateRowData({ remove: selectedData });
+            swal("Success", "Category Deleted Successfully");
+
+          }).catch((err)=>{
+          console.log(err)
+          swal("Error", `Some Error Occured`);
+        })
+       
 
           break;
         default:

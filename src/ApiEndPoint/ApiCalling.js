@@ -2,8 +2,15 @@ import {
   Create_warehouse_xmlView,
   Create_warehouse_save,
   Save_Place_Order,
-  // SaveOrder_List,
+  Get_Role,
+  Get_Role_by_id,
+  Delete_Category,
+  Delete_Sub_Category,
+  View_Cat_by_id,
+  Update_Category,
+  Update_Role,
   view_create_order_history,
+  Update_Sub_Category,
   Delete_Sales_person,
   Create_Warehouse_List,
   Create_Target_save,
@@ -314,7 +321,54 @@ export const createOrderhistoryview = async () => {
   return response;
 };
 // guwahati api calling close
-
+export const Get_RoleList = async () => {
+  let response = await axiosConfig
+    .get(`${Get_Role}`)
+    .then((res) => res.data);
+  return response;
+};
+export const Get_Role_byid = async (id) => {
+  let response = await axiosConfig
+    .get(`${Get_Role_by_id}`+id)
+    .then((res) => res.data);
+  return response;
+};
+export const DeleteCategory = async (id) => {
+  let response = await axiosConfig
+    .get(`${Delete_Category}`+id)
+    .then((res) => res.data);
+  return response;
+};
+export const Delete_SubCategory = async (cid,sid) => {
+  let response = await axiosConfig
+    .delete(`${Delete_Sub_Category}`+cid+"/subcategories/"+sid)
+    .then((res) => res.data);
+  return response;
+};
+export const UpdateCategory = async (id,data) => {
+  let response = await axiosConfig
+    .put(`${Update_Category}`+id, data)
+    .then((res) => res.data);
+  return response;
+};
+export const View_Catby_id = async (id) => {
+  let response = await axiosConfig
+    .get(`${View_Cat_by_id}`+id)
+    .then((res) => res.data);
+  return response;
+};
+export const Update_SubCategory = async (cid,sid,data) => {
+  let response = await axiosConfig
+    .put(`${Update_Sub_Category}`+cid+"/subcategories/"+sid,data)
+    .then((res) => res.data);
+  return response;
+};
+export const Update_Role_list = async (id,payload) => {
+  let response = await axiosConfig
+    .put(`${Update_Role}`+id,payload)
+    .then((res) => res.data);
+  return response;
+};
 export const UserLogin = async (data) => {
   let response = await axiosConfig
     .post(Login_User, data)

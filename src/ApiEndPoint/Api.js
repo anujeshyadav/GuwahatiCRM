@@ -1,4 +1,7 @@
 // Guwahati open
+export const Get_Role = "/role/get-role";
+export const Get_Role_by_id = "/role/get-role-by-id/";
+export const Update_Role = "/role/update-role/";
 export const Create_warehouse_xmlView = "/warehouse/get-xml";
 export const Create_warehouse_save = "/warehouse/save-warehouse";
 export const Create_Party_XML = "/party/get-xml";
@@ -27,6 +30,11 @@ export const Create_unit_List = "/unit/view-unit";
 export const Delete_Unit_List = "/unit/delete-unit/";
 export const Unit_ViewOne = "/unit/update-unit/";
 
+export const Delete_Category = "/categories/delete-category/"; //done
+export const Delete_Sub_Category = "/categories/delete-categories/"; 
+export const View_Cat_by_id = "/categories/view-category-by-id/"; 
+export const Update_Category = "/categories/update-category/";
+export const Update_Sub_Category = "/categories/update-categories/";
 export const Create_Category = "/categories/save-category";
 export const Category_List = "/categories/view-category";
 export const Create_SubCategory = "/categories/save-subcategory";
