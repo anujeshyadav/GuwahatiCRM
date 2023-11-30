@@ -41,7 +41,7 @@ class Layout extends React.Component {
       })
     }
   }
-
+// Active for guwahati
   componentDidMount = () => {
     if (window !== "undefined") {
       window.addEventListener("resize", this.handleWindowResize)

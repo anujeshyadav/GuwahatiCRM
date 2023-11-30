@@ -126,7 +126,7 @@ class HorizontalSidebar extends React.Component {
       parentHover: id,
     });
   };
-
+// Active for guwahati
   componentDidMount() {
     this.handleActiveParent(this.activeParentItems);
   }

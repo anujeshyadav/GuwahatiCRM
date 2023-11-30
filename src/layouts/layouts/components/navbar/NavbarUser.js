@@ -160,7 +160,7 @@ class NavbarUser extends React.PureComponent {
   };
 
   componentDidMount() {
-    let accessToken = localStorage.getItem("auth-admintoken");
+    let accessToken = localStorage.getItem("userData");
     if (accessToken === null || accessToken === undefined) {
       history.push("/pages/login");
     }

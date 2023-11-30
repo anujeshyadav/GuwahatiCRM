@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState, useContext } from "react";
 import xmlJs from "xml-js";
 import {
@@ -48,12 +49,14 @@ import { Route } from "react-router-dom";
 
 let GrandTotal = [];
 let SelectedITems = [];
-const CreateTarget = (args) => {
+const CreatePromotionalActivity = (args) => {
   const [formData, setFormData] = useState({});
   const [Index, setIndex] = useState("");
   const [targetStartDate, settargetStartDate] = useState("");
   const [targetEndDate, settargetEndDate] = useState("");
   const [index, setindex] = useState("");
+  const [DiscountType, setDiscountType] = useState("")
+  
   const [error, setError] = useState("");
   const [ProductList, setProductList] = useState([]);
   const [PartyList, setPartyList] = useState([]);
@@ -415,7 +418,7 @@ const CreateTarget = (args) => {
           <Row className="m-2">
             <Col className="">
               <div>
-                <h1 className="">Create Target</h1>
+                <h1 className="">Create Promotional Activity</h1>
               </div>
             </Col>
             <Col>
@@ -430,7 +433,7 @@ const CreateTarget = (args) => {
                     >
                       {" "}
                       Back
-                      {/* <FaPlus size={15} /> Create User */}
+                
                     </Button>
                   )}
                 />
@@ -438,24 +441,138 @@ const CreateTarget = (args) => {
             </Col>
           </Row>
 
-          <CardBody>
-            {/* <Pickers /> */}
-            {/* <Col className="mb-3" md="6" sm="12">
-              <h5 className="text-bold-500">Range</h5>
-              <Flatpickr
-                // value={rangePicker}
-                className="form-control"
-                options={{ mode: "range" }}
-                onChange={(date) => {
-                  console.log(date);
-                }}
-              />
-            </Col> */}
+          
+
             <Form className="m-1" onSubmit={submitHandler}>
+            <div className="container">
+
+            <Row>
+                <Col>
+                <Input
+                      required
+                      type="radio"
+                      name="Product Quantity"
+                      placeholder="Product Quantity"
+                      className="mr-1"
+                      value={targetStartDate}
+                      onChange={(e) => setDiscountType("Percentage Wise")}
+                    
+                    />
+                    <Label>Percentage Wise</Label>
+                </Col>
+                <Col>
+                <Input
+                      required
+                      type="radio"
+                      name="Product Quantity"
+                      placeholder="Product Quantity"
+                      className="mr-1"
+                      value={targetStartDate}
+                      onChange={(e) => setDiscountType("Amount Wise")}
+                    
+                    />
+                    <Label>Amount Wise</Label>
+                </Col>
+                <Col>
+                <Input
+                      required
+                      type="radio"
+                      name="Product Quantity"
+                      placeholder="Product Quantity"
+                      className="mr-1"
+                      value={targetStartDate}
+                      onChange={(e) => setDiscountType("Product Wise")}
+                    
+                    />
+                    <Label>Product Wise</Label>
+                </Col>
+            </Row>
+            </div>
               <Row>
-                <Col className="mb-1" lg="2" md="2" sm="12">
+                {/* <Col className="mb-1" lg="3" md="3" sm="12">
                   <div className="">
-                    <Label>Choose Sales Person</Label>
+                    <Label>Choose Discount Type *</Label>
+
+                  <CustomInput 
+                  type="select"
+                  value={DiscountType}
+                  name="DiscountType"
+                  
+                  onChange={(e)=>setDiscountType(e.target.value)}
+                  >
+                    <option value="NA">--select--</option>
+                    <option value="Percentage Wise">Percentage Wise</option>
+                    <option value="Amount Wise">Amount Wise</option>
+                    <option value="Product Wise">Product Wise</option>
+                  </CustomInput>
+                  </div>
+                </Col> */}
+                {DiscountType && DiscountType=="Percentage Wise" ? (<>
+
+                 <Col className="mb-1" lg="3" md="3" sm="12">
+                   <div className="">
+                    <Label>Total Amount</Label>
+                    <Input
+                      required
+                      type="number"
+                      name="Product Quantity"
+                      placeholder="Product Quantity"
+                      value={targetStartDate}
+                      onChange={(e) => settargetStartDate(e.target.value)}
+                      onWheel={(e)=>e.preventDefault()}
+                    />
+                  </div>
+                </Col>
+                <Col className="mb-1" lg="3" md="3" sm="12">
+                  <div className="">
+                    <Label>Discount in Percentage</Label>
+                    <Input
+                      required
+                      type="number"
+                      name="Product Quantity"
+                      placeholder="Product Quantity"
+                      value={targetStartDate}
+                      onChange={(e) => settargetStartDate(e.target.value)}
+                      onWheel={(e)=>e.preventDefault()}
+                    />
+                  </div>
+                </Col>
+                </>) :null }
+                {DiscountType && DiscountType=="Amount Wise" ? (<>
+
+                <Col className="mb-1" lg="3" md="3" sm="12">
+                  <div className="">
+                    <Label>Total Amount</Label>
+                    <Input
+                      required
+                      type="number"
+                      name="Product Quantity"
+                      placeholder="Product Quantity"
+                      value={targetStartDate}
+                      onChange={(e) => settargetStartDate(e.target.value)}
+                      onWheel={(e)=>e.preventDefault()}
+                    />
+                  </div>
+                </Col>
+                <Col className="mb-1" lg="3" md="3" sm="12">
+                  <div className="">
+                    <Label>Discount Amount</Label>
+                    <Input
+                      required
+                      type="number"
+                      name="Product Quantity"
+                      placeholder="Product Quantity"
+                      value={targetStartDate}
+                      onChange={(e) => settargetStartDate(e.target.value)}
+                      onWheel={(e)=>e.preventDefault()}
+                    />
+                  </div>
+                </Col>
+                </>) :null }
+                {DiscountType && DiscountType=="Product Wise" ? (<>
+                    <Col className="mb-1" lg="3" md="3" sm="12">
+                  <div className="">
+                    <Label>Choose Product *</Label>
 
                     <Multiselect
                       required
@@ -470,36 +587,118 @@ const CreateTarget = (args) => {
                     />
                   </div>
                 </Col>
-                <Col className="mb-1" lg="2" md="2" sm="12">
+                <Col className="mb-1" lg="3" md="3" sm="12">
                   <div className="">
-                    <Label>Start date</Label>
+                    <Label>Total Number of Product</Label>
+                    <Input
+                      required
+                      type="number"
+                      name="TotalAmount"
+                      placeholder="Product Total Amount"
+                      value={targetStartDate}
+                      onChange={(e) => settargetStartDate(e.target.value)}
+                      onWheel={(e)=>e.preventDefault()}
+                    />
+                  </div>
+                </Col>
+                <Col className="mb-1" lg="3" md="3" sm="12">
+                  <div className="">
+                    <Label>Discount Amount</Label>
+                    <Input
+                      required
+                      type="number"
+                      name="Product Quantity"
+                      placeholder="Product Quantity"
+                      value={targetStartDate}
+                      onChange={(e) => settargetStartDate(e.target.value)}
+                      onWheel={(e)=>e.preventDefault()}
+                    />
+                  </div>
+                </Col>
+
+               <Row>
+                <Col className="mb-1" lg="6" md="6" sm="12">
+                   <Input
+                      required
+                      type="radio"
+                      name="Product Quantity"
+                      placeholder="Product Quantity"
+                      className="mr-1"
+                      value={targetStartDate}
+                      onChange={(e) => settargetStartDate(e.target.value)}
+                      onWheel={(e)=>e.preventDefault()}
+                    />
+                    <Label>or Free selected Product Quantity</Label>
+                  
+                </Col>
+               
+                <Col className="mb-1" lg="6" md="6" sm="12">
+                 
+                    <Input
+                      required
+                      type="radio"
+                      name="Product Quantity"
+                      className="mr-1"
+                      placeholder="Product Quantity"
+                      value={targetStartDate}
+                      onChange={(e) => settargetStartDate(e.target.value)}
+                      onWheel={(e)=>e.preventDefault()}
+                    />
+                    <Label>Want to Add Another Product</Label>
+                  
+                </Col>  
+                </Row>
+                </>) :null }
+                {/* <Col className="mb-1" lg="3" md="3" sm="12">
+                  <div className="">
+                    <Label>Choose Warehouse(from where) *</Label>
+
+                    <Multiselect
+                      required
+                      selectionLimit={1}
+                      // showCheckbox="true"
+                      isObject="false"
+                      options={SalesPersonList} // Options to display in the dropdown
+                      // selectedValues={selectedValue}   // Preselected value to persist in dropdown
+                      onSelect={onSelect1} // Function will trigger on select event
+                      onRemove={onRemove1} // Function will trigger on remove event
+                      displayValue="firstName" // Property name to display in the dropdown options
+                    />
+                  </div>
+                </Col>
+                <Col className="mb-1" lg="3" md="3" sm="12">
+                  <div className="">
+                    <Label>Choose Warehouse (to be Transfer) * </Label>
+
+                    <Multiselect
+                      required
+                      selectionLimit={1}
+                      // showCheckbox="true"
+                      isObject="false"
+                      options={SalesPersonList} // Options to display in the dropdown
+                      // selectedValues={selectedValue}   // Preselected value to persist in dropdown
+                      onSelect={onSelect1} // Function will trigger on select event
+                      onRemove={onRemove1} // Function will trigger on remove event
+                      displayValue="firstName" // Property name to display in the dropdown options
+                    />
+                  </div>
+                </Col>
+                <Col className="mb-1" lg="3" md="3" sm="12">
+                  <div className="">
+                    <Label>Stock Transfer date</Label>
                     <Input
                       required
                       type="date"
                       name="targetEndDate"
                       placeholder="Date of Delivery"
                       value={targetStartDate}
-                      // value={product.price * product.qty}
                       onChange={(e) => settargetStartDate(e.target.value)}
                     />
                   </div>
-                </Col>
-                <Col className="mb-1" lg="2" md="2" sm="12">
-                  <div className="">
-                    <Label>End Date</Label>
-                    <Input
-                      required
-                      type="date"
-                      name="targetstartDate"
-                      placeholder="Date of Delivery"
-                      value={targetEndDate}
-                      // value={product.price * product.qty}
-                      onChange={(e) => settargetEndDate(e.target.value)}
-                    />
-                  </div>
-                </Col>
+                </Col> */}
+            
               </Row>
-              {product &&
+              {/* {product &&
                 product?.map((product, index) => (
                   <Row className="" key={index}>
                     <Col className="mb-1" lg="2" md="2" sm="12">
@@ -508,10 +707,8 @@ const CreateTarget = (args) => {
                         <Multiselect
                           required
                           selectionLimit={1}
-                          // showCheckbox="true"
                           isObject="false"
                           options={ProductList}
-                          // selectedValues={selectedValue}   // Preselected value to persist in dropdown
                           onSelect={(selectedList, selectedItem) =>
                             handleSelection(selectedList, selectedItem, index)
                           }
@@ -528,7 +725,7 @@ const CreateTarget = (args) => {
                     </Col>
                     <Col className="mb-1" lg="2" md="2" sm="12">
                       <div className="">
-                        <Label>Quantity Assign</Label>
+                        <Label>Quantity To be Transfer</Label>
                         <Input
                           type="number"
                           name="qty"
@@ -589,46 +786,9 @@ const CreateTarget = (args) => {
                       </div>
                     </Col>
                   </Row>
-                ))}
-              <Row>
-                {/* <Col className="mb-1" lg="2" md="2" sm="12">
-                      <div className="">
-                        <Label>Discount</Label>
-                        <Input
-                          type="number"
-                          name="discount"
-                          readOnly
-                          placeholder="Dissct"
-                          value={product.discount}
-                        />
-                      </div>
-                    </Col> */}
-                {/* <Col className="mb-1" lg="2" md="2" sm="12">
-                      <div className="">
-                        <Label>Shipping Cost</Label>
-                        <Input
-                          type="number"
-                          name="Shipcst"
-                          readOnly
-                          placeholder="Shipcst"
-                          value={product.Shipping}
-                        />
-                      </div>
-                    </Col> */}
-                {/* <Col className="mb-1" lg="2" md="2" sm="12">
-                      <div className="">
-                        <Label>Tax</Label>
-                        <Input
-                          type="number"
-                          name="tax"
-                          readOnly
-                          placeholder="Tax"
-                          value={product.tax}
-                        />
-                      </div>
-                    </Col> */}
-              </Row>
-              <Row>
+                ))} */}
+           
+              {/* <Row>
                 <Col className="mb-1" lg="12" md="12" sm="12">
                   <div className=" d-flex justify-content-end">
                     <Label className="pr-5">
@@ -636,7 +796,7 @@ const CreateTarget = (args) => {
                     </Label>
                   </div>
                 </Col>
-              </Row>
+              </Row> */}
               <Row>
                 <Col>
                   <div className="d-flex justify-content-center">
@@ -651,10 +811,10 @@ const CreateTarget = (args) => {
                 </Col>
               </Row>
             </Form>
-          </CardBody>
+          
         </Card>
       </div>
     </div>
   );
 };
-export default CreateTarget;
+export default CreatePromotionalActivity;

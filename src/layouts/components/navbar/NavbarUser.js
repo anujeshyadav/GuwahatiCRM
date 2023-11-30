@@ -420,7 +420,7 @@ class NavbarUser extends React.PureComponent {
     let pageparmission = JSON.parse(localStorage.getItem("userData"));
 
     this.setState({ LoginData: pageparmission });
-    let accessToken = localStorage.getItem("userToken");
+    let accessToken = localStorage.getItem("userData");
     if (accessToken === null || accessToken === undefined) {
       history.push("/pages/login");
     }
