@@ -8,6 +8,7 @@ import swal from "sweetalert";
 import { BsFillArrowDownCircleFill } from "react-icons/bs";
 import { permission } from "./DummyPermissiom";
 import { useParams, useHistory } from "react-router-dom";
+import { Get_Role_byid, Update_Role_list } from "../../../../ApiEndPoint/ApiCalling";
 
 export default function AddRoleNew() {
   const [Desc, setDesc] = useState("");
@@ -22,22 +23,33 @@ export default function AddRoleNew() {
   const history = useHistory();
 
   useEffect(() => {
-    const formdata = new FormData();
-    formdata.append("role_name", param.id);
-    axiosConfig
-      .post(`/editroleview`, formdata)
-      .then((res) => {
-        // setSelected(permission);
-        setSelected(res?.data?.data?.permissioninfo);
-        // console.log("origional permission", res?.data?.data);
-        console.log("origional permission", res?.data?.data?.permissioninfo);
-        setRole(res?.data?.data?.roleinfo?.role_name);
-        setDesc(res?.data?.data?.roleinfo?.description);
-        setExistingpermission(res?.data?.data);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+    Get_Role_byid(param.id).then((res)=>{
+      console.log(res?.Role)
+      setSelected(res?.Role?.rolePermission);
+      setRole(res?.Role?.roleName);
+      setDesc(res?.Role?.desc);
+      setExistingpermission(res?.Role.data);
+
+    }).catch((err)=>{
+      console.log(err)
+    })
+   
+    // const formdata = new FormData();
+    // formdata.append("role_name", param.id);
+    // axiosConfig
+    //   .post(`/editroleview`, formdata)
+    //   .then((res) => {
+    //     // setSelected(permission);
+    //     setSelected(res?.data?.data?.permissioninfo);
+    //     // console.log("origional permission", res?.data?.data);
+    //     console.log("origional permission", res?.data?.data?.permissioninfo);
+    //     setRole(res?.data?.data?.roleinfo?.role_name);
+    //     setDesc(res?.data?.data?.roleinfo?.description);
+    //     setExistingpermission(res?.data?.data);
+    //   })
+    //   .catch((err) => {
+    //     console.log(err);
+    //   });
   }, []);
 
   // const navigate = useNavigate();
@@ -284,32 +296,37 @@ export default function AddRoleNew() {
 
   const handleSumit = (e) => {
     e.preventDefault();
+    let payload={
+      desc:Desc,
+      roleName:Role,
+      rolePermission:Selected
+    }
+    Update_Role_list(param.id,payload).then((res)=>{
+      console.log(res)
+      swal("Success", "Role Updated");
+    }).catch((err)=>{
+      console.log(err)
+    })
+    
 
-    let userdata = JSON.parse(localStorage.getItem("userData"));
-    console.log(userdata?.Userinfo?.id);
-    const formdata = new FormData();
-    formdata.set("user_id", userdata?.Userinfo?.id);
-    formdata.set("role_name", Role);
-    formdata.set("description", Desc);
-    formdata.set("selectedarray", JSON.stringify(Selected));
+    // let userdata = JSON.parse(localStorage.getItem("userData"));
+    // console.log(userdata?.Userinfo?.id);
+    // const formdata = new FormData();
+    // formdata.set("user_id", userdata?.Userinfo?.id);
+    // formdata.set("role_name", Role);
+    // formdata.set("description", Desc);
+    // formdata.set("selectedarray", JSON.stringify(Selected));
 
-    axiosConfig
-      .post(`/editrolesubmit`, formdata)
-      .then((res) => {
-        console.log(res);
-        swal("Success", "Role Updated");
-        // setSelected("");
-        // setDesc("");
-        // setRole("");
-        // window.location.reload();
-        var checkboxes = document.getElementsByName("check");
-        // for (var checkbox of checkboxes) {
-        //   checkbox.checked = false;
-        // }
-      })
-      .catch((er) => {
-        console.log(er);
-      });
+    // axiosConfig
+    //   .post(`/editrolesubmit`, formdata)
+    //   .then((res) => {
+    //     console.log(res);
+    //     swal("Success", "Role Updated");
+    //     var checkboxes = document.getElementsByName("check");
+    //           })
+    //   .catch((er) => {
+    //     console.log(er);
+    //   });
   };
   const handlesetparent = (value, index) => {
     // console.log(value);
@@ -320,7 +337,7 @@ export default function AddRoleNew() {
 
   return (
     <>
-      {Selected && Selected.length ? (
+      {Selected  ? (
         <>
           {/* <Row className="m-2">
         
@@ -350,7 +367,7 @@ export default function AddRoleNew() {
                       <Col>
                         <Label>Existing Role *</Label>
                         <Input
-                          disabled
+                          // disabled
                           value={Role}
                           onChange={(e) => setRole(e.target.value)}
                           type="text"
@@ -391,7 +408,7 @@ export default function AddRoleNew() {
                                       item?.pagename === value?.title &&
                                       item?.permission.includes("parentPermit")
                                   )
-                                    ? "340px"
+                                    ? "auto"
                                     : "40px"
                                 }`,
                               }}
