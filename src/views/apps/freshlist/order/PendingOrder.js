@@ -16,7 +16,6 @@ import {
   ModalHeader,
   ModalBody,
   Badge,
-  CustomInput,
 } from "reactstrap";
 
 import { ContextLayout } from "../../../../utility/context/Layout";
@@ -28,7 +27,7 @@ import jsPDF from "jspdf";
 import "jspdf-autotable";
 import Logo from "../../../../assets/img/profile/pages/logomain.png";
 import Papa from "papaparse";
-import { Eye, Trash2, ChevronDown, Edit, CornerDownLeft } from "react-feather";
+import { Eye, Trash2, ChevronDown, Edit } from "react-feather";
 import { IoMdRemoveCircleOutline } from "react-icons/io";
 import "../../../../assets/scss/plugins/tables/_agGridStyleOverride.scss";
 import "../../../../assets/scss/pages/users.scss";
@@ -60,7 +59,7 @@ import UserContext from "../../../../context/Context";
 
 const SelectedColums = [];
 
-class OrderList extends React.Component {
+class PendingOrder extends React.Component {
   static contextType = UserContext;
   constructor(props) {
     super(props);
@@ -97,8 +96,64 @@ class OrderList extends React.Component {
           // checkboxSelection: true,
           width: 80,
           filter: true,
+          // cellRendererFramework: (params) => {
+          //   return (
+          //     <div className="d-flex align-items-center cursor-pointer">
+          //       <div className="">
+          //         <input
+          //           className="addinarray"
+          //           onClick={(e) => {
+          //             console.log(e.target.checked);
+          //             if (e.target.checked) {
+          //               console.log(this.state.SelectedProduct);
+          //               this.setState({
+          //                 SelectedProduct: this.state.SelectedProduct.concat(
+          //                   params?.data
+          //                 ),
+          //               });
+          //             } else {
+          //               let data = this.state.SelectedProduct.filter((ele, i) => {
+          //                 if (ele?.id === params?.data?.id) {
+          //                   this.state.SelectedProduct.splice(i, 1);
+          //                 }
+          //               });
+          //             }
+          //           }}
+          //           type="checkbox"
+          //         />
+          //       </div>
+          //     </div>
+          //   );
+          // },
         },
 
+        // {
+        //   headerName: "first Name",
+        //   field: "salesPersonId.firstName",
+        //   filter: "agSetColumnFilter",
+        //   width: 200,
+        //   cellRendererFramework: params => {
+        //     // console.log(params.data);
+        //     return (
+        //       <div className="d-flex align-items-center cursor-pointer">
+        //         <div className="">
+        //           <span>{params.data?.salesPersonId?.firstName}</span>
+        //           {/* {params?.data?.product_images ? (
+        //             <img
+        //               style={{ borderRadius: "12px" }}
+        //               width="60px"
+        //               height="40px"
+        //               src={params?.data?.product_images[0]}
+        //               alt="image"
+        //             />
+        //           ) : (
+        //             "No Image "
+        //           )} */}
+        //         </div>
+        //       </div>
+        //     );
+        //   },
+        // },
         {
           headerName: "Actions",
           field: "transactions",
@@ -107,24 +162,22 @@ class OrderList extends React.Component {
             return (
               <div className="actions cursor-pointer">
                 {/* {this.state.Viewpermisson && ( */}
-                <CornerDownLeft
-                  className="mr-50"
-                  size="25px"
-                  color="green"
-                  onClick={() => {
-                    this.setState({ ViewData: params?.data });
-                    this.toggleModal();
-                  }}
-                />
                 <Eye
                   className="mr-50"
                   size="25px"
                   color="green"
-                  onClick={() => {
-                    this.setState({ ViewData: params?.data });
-                    this.toggleModal();
-                  }}
+                  onClick={
+                    () => {
+                      this.setState({ ViewData: params?.data });
+                      this.toggleModal();
+                    }
+                    // history.push(
+                    //   `/app/freshlist/order/viewAll/${params.data._id}`
+                    // )
+                  }
                 />
+                {/* )} */}
+                {/* {this.state.Editpermisson && ( */}
                 <Edit
                   className="mr-50"
                   size="25px"
@@ -136,7 +189,8 @@ class OrderList extends React.Component {
                     })
                   }
                 />
-
+                {/* )} */}
+                {/* {this.state.Deletepermisson && ( */}
                 <Trash2
                   className="mr-50"
                   size="25px"
@@ -145,33 +199,43 @@ class OrderList extends React.Component {
                     this.runthisfunction(params?.data?._id);
                   }}
                 />
+                {/* )} */}
               </div>
             );
           },
         },
         {
-          headerName: "Full Name",
+          headerName: "Product_Title",
           field: "orderItems",
           filter: true,
           width: 180,
           valueGetter: params => {
             if (params.data.orderItems && params.data.orderItems.length > 0) {
-              return params.data.fullName;
+              return params.data.orderItems[0].product.Product_Title;
             }
             return null;
           },
         },
-
         {
-          headerName: "Product Name",
+          headerName: "Category",
           field: "orderItems",
           filter: true,
-          width: 220,
+          width: 180,
           valueGetter: params => {
             if (params.data.orderItems && params.data.orderItems.length > 0) {
-              return params?.data?.orderItems?.map(val => {
-                return val?.product?.Product_Title;
-              });
+              return params.data.orderItems[0].product.category;
+            }
+            return null;
+          },
+        },
+        {
+          headerName: "SubCategory",
+          field: "orderItems",
+          filter: true,
+          width: 180,
+          valueGetter: params => {
+            if (params.data.orderItems && params.data.orderItems.length > 0) {
+              return params.data.orderItems[0].product.SubCategory;
             }
             return null;
           },
@@ -225,84 +289,84 @@ class OrderList extends React.Component {
           },
         },
 
-        // {
-        //   headerName: "Country",
-        //   field: "country",
-        //   filter: true,
-        //   width: 200,
-        //   cellRendererFramework: params => {
-        //     return (
-        //       <div>
-        //         <span>{params.data?.country}</span>
-        //       </div>
-        //     );
-        //   },
-        // },
-        // {
-        //   headerName: "State",
-        //   field: "state",
-        //   filter: true,
-        //   width: 200,
-        //   cellRendererFramework: params => {
-        //     return (
-        //       <div>
-        //         <span>{params.data?.state}</span>
-        //       </div>
-        //     );
-        //   },
-        // },
-        // {
-        //   headerName: "City",
-        //   field: "city",
-        //   filter: true,
-        //   width: 200,
-        //   cellRendererFramework: params => {
-        //     return (
-        //       <div>
-        //         <span>{params.data?.city}</span>
-        //       </div>
-        //     );
-        //   },
-        // },
-        // {
-        //   headerName: "MobileNo",
-        //   field: "MobileNo",
-        //   filter: true,
-        //   width: 150,
-        //   cellRendererFramework: params => {
-        //     return (
-        //       <div>
-        //         <span>{params.data?.MobileNo}</span>
-        //       </div>
-        //     );
-        //   },
-        // },
-        // {
-        //   headerName: "Discount",
-        //   field: "discount",
-        //   filter: true,
-        //   width: 200,
-        //   cellRendererFramework: params => {
-        //     return (
-        //       <div>
-        //         <span>{params.data?.discount}</span>
-        //       </div>
-        //     );
-        //   },
-        // },
-        // {
-        //   headerName: "GrandTotal",
-        //   field: "grandTotal",
-        //   filter: true,
-        //   width: 200,
-        //   cellRendererFramework: params => {
-        //     return (
-        //       <div>
-        //         <span>{params.data?.grandTotal}</span>
-        //       </div>
-        //     );
-        //   },
-        // },
+        {
+          headerName: "Country",
+          field: "country",
+          filter: true,
+          width: 200,
+          cellRendererFramework: params => {
+            return (
+              <div>
+                <span>{params.data?.country}</span>
+              </div>
+            );
+          },
+        },
+        {
+          headerName: "State",
+          field: "state",
+          filter: true,
+          width: 200,
+          cellRendererFramework: params => {
+            return (
+              <div>
+                <span>{params.data?.state}</span>
+              </div>
+            );
+          },
+        },
+        {
+          headerName: "City",
+          field: "city",
+          filter: true,
+          width: 200,
+          cellRendererFramework: params => {
+            return (
+              <div>
+                <span>{params.data?.city}</span>
+              </div>
+            );
+          },
+        },
+        {
+          headerName: "MobileNo",
+          field: "MobileNo",
+          filter: true,
+          width: 150,
+          cellRendererFramework: params => {
+            return (
+              <div>
+                <span>{params.data?.MobileNo}</span>
+              </div>
+            );
+          },
+        },
+        {
+          headerName: "Discount",
+          field: "discount",
+          filter: true,
+          width: 200,
+          cellRendererFramework: params => {
+            return (
+              <div>
+                <span>{params.data?.discount}</span>
+              </div>
+            );
+          },
+        },
+        {
+          headerName: "GrandTotal",
+          field: "grandTotal",
+          filter: true,
+          width: 200,
+          cellRendererFramework: params => {
+            return (
+              <div>
+                <span>{params.data?.grandTotal}</span>
+              </div>
+            );
+          },
+        },
 
         {
           headerName: "Status",
@@ -310,19 +374,11 @@ class OrderList extends React.Component {
           filter: true,
           width: 150,
           cellRendererFramework: params => {
-            return params.value === "completed" ? (
-              <div className="badge badge-pill badge-success">
-                {params.data.status}
-              </div>
-            ) : params.value === "pending" ? (
+            return params.value === "pending" ? (
               <div className="badge badge-pill badge-warning">
                 {params.data.status}
               </div>
-            ) : (
-              <div className="badge badge-pill badge-success">
-                {params.data.status}
-              </div>
-            );
+            ) : null;
           },
         },
       ],
@@ -356,7 +412,10 @@ class OrderList extends React.Component {
     await createOrderhistoryview()
       .then(res => {
         console.log(res?.orderHistory);
-        this.setState({ rowData: res?.orderHistory });
+        const pendingStatus = res?.orderHistory?.filter(
+          ele => ele.status == "pending"
+        );
+        this.setState({ rowData: pendingStatus });
         this.setState({ AllcolumnDefs: this.state.columnDefs });
         this.setState({ SelectedCols: this.state.columnDefs });
 
@@ -373,6 +432,14 @@ class OrderList extends React.Component {
       .catch(err => {
         console.log(err);
       });
+    // await CreateAccountList()
+    //   .then((res) => {
+    //     let value = res?.User;
+    //     this.setState({ rowData: value });
+    //   })
+    //   .catch((err) => {
+    //     console.log(err);
+    //   });
   }
   toggleDropdown = () => {
     this.setState(prevState => ({ isOpen: !prevState.isOpen }));
@@ -489,6 +556,8 @@ class OrderList extends React.Component {
     }
   };
   processCell = params => {
+    // console.log(params);
+    // Customize cell content as needed
     return params.value;
   };
 
@@ -588,6 +657,10 @@ class OrderList extends React.Component {
         });
 
         xmlString += "</root>";
+
+        // setXmlData(xmlString);
+
+        // Create a download link
         const blob = new Blob([xmlString], { type: "text/xml" });
         const link = document.createElement("a");
         link.href = URL.createObjectURL(blob);
@@ -692,7 +765,7 @@ class OrderList extends React.Component {
                     <Card>
                       <Row className="m-2">
                         <Col>
-                          <h1 className="float-left">Order List</h1>
+                          <h1 className="float-left">Pending List</h1>
                         </Col>
                         <Col>
                           <span className="mx-1">
@@ -763,24 +836,6 @@ class OrderList extends React.Component {
                                 </div>
                               )}
                             </div>
-                          </span>
-                          <span>
-                            <Route
-                              render={({ history }) => (
-                                <Badge
-                                  style={{ cursor: "pointer" }}
-                                  className="float-right mr-1"
-                                  color="primary"
-                                  onClick={() =>
-                                    history.push(
-                                      "/app/softnumen/order/createorder"
-                                    )
-                                  }
-                                >
-                                  <FaPlus size={15} /> Create Order
-                                </Badge>
-                              )}
-                            />
                           </span>
                         </Col>
                       </Row>
@@ -856,11 +911,30 @@ class OrderList extends React.Component {
                               {context => (
                                 <AgGridReact
                                   id="myAgGrid"
+                                  // gridOptions={{
+                                  //   domLayout: "autoHeight",
+                                  //   // or other layout options
+                                  // }}
                                   gridOptions={this.gridOptions}
                                   rowSelection="multiple"
                                   defaultColDef={defaultColDef}
                                   columnDefs={columnDefs}
                                   rowData={rowData}
+                                  // onGridReady={(params) => {
+                                  //   this.gridApi = params.api;
+                                  //   this.gridColumnApi = params.columnApi;
+                                  //   this.gridRef.current = params.api;
+
+                                  //   this.setState({
+                                  //     currenPageSize:
+                                  //       this.gridApi.paginationGetCurrentPage() +
+                                  //       1,
+                                  //     getPageSize:
+                                  //       this.gridApi.paginationGetPageSize(),
+                                  //     totalPages:
+                                  //       this.gridApi.paginationGetTotalPages(),
+                                  //   });
+                                  // }}
                                   onGridReady={this.onGridReady}
                                   colResizeDefault={"shift"}
                                   animateRows={true}
@@ -994,6 +1068,17 @@ class OrderList extends React.Component {
                                               SelectedcolumnDefs: SelectedCols, // Update the state with the modified array
                                             });
                                           }
+                                          // const delindex =
+                                          //   SelectedCols.findIndex(
+                                          //     (element) =>
+                                          //       element?.headerName ==
+                                          //       ele?.headerName
+                                          //   );
+
+                                          // SelectedCols?.splice(delindex, 1);
+                                          // this.setState({
+                                          //   SelectedcolumnDefs: SelectedCols,
+                                          // });
                                         }}
                                         style={{ cursor: "pointer" }}
                                         size="25px"
@@ -1035,18 +1120,9 @@ class OrderList extends React.Component {
             <Row>
               <Col>
                 <div className="d-flex justify-content-center">
-                  {/* <Button onClick={this.HandleSetVisibleField} color="primary">
+                  <Button onClick={this.HandleSetVisibleField} color="primary">
                     Submit
-                  </Button> */}
-
-                  <Badge
-                    style={{ cursor: "pointer" }}
-                    className=""
-                    color="primary"
-                    onClick={this.HandleSetVisibleField}
-                  >
-                    Submit
-                  </Badge>
+                  </Button>
                 </div>
               </Col>
             </Row>
@@ -1072,4 +1148,4 @@ class OrderList extends React.Component {
     );
   }
 }
-export default OrderList;
+export default PendingOrder;

@@ -13,7 +13,7 @@ ul.subtotal li {
 .Qntywidth {
   width: 80px;
 }
-.QntBtn{
+.QntBtn {
   width: 200px;
   display: flex;
 }
@@ -130,6 +130,15 @@ div.ex1 {
 .modalbodyhead {
   padding: 7%;
 }
+.modalbodyheadunit {
+  padding: 3%;
+}
+.modal .modal-header {
+  background-color: #00c0ef;
+}
+span.priamryValue {
+  padding-left: 10px;
+}
 input.mx-1 {
   width: 23px;
   height: 19px;
@@ -173,7 +182,6 @@ button.mybtn.primary.btn.btn-primary {
   // background-color: transparent;
   // border: 0 solid transparent;
   // padding: 0.9rem 2rem;
- 
 }
 
 input.form-check-input {
