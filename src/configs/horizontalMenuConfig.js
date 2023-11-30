@@ -115,7 +115,7 @@ const horizontalMenuConfig = [
         type: "item",
         icon: <FaCircle size={8} />,
         permissions: ["admin", "editor"],
-        navLink: "/app/softNumen/order/OrderSearch",
+        navLink: "/app/softnumen/order/pendingOrder",
       },
       {
         id: "CompleteOrder",
@@ -123,7 +123,7 @@ const horizontalMenuConfig = [
         type: "item",
         icon: <FaCircle size={8} />,
         permissions: ["admin", "editor"],
-        navLink: "/app/softNumen/order/OrderSearch",
+        navLink: "/app/softNumen/order/confirmedOrder",
       },
 
       {
@@ -181,7 +181,7 @@ const horizontalMenuConfig = [
         type: "item",
         icon: <FaCircle size={8} />,
         permissions: ["admin", "editor"],
-        navLink: "/app/softNumen/order/OrderSearch",
+        navLink: "/app/AjGroup/PromotionalActivityList",
       },
       {
         id: "Auto Billing Lock",
@@ -299,11 +299,11 @@ const horizontalMenuConfig = [
     children: [
       {
         id: "StockTransfer",
-        title: "StockTransfer",
+        title: "Stock Transfer",
         type: "item",
         icon: <FaList size={15} />,
         permissions: ["admin", "editor"],
-        navLink: "/app/softNumen/warranty/createWarrenty",
+        navLink: "/app/AjGroup/StockTransferList",
       },
       {
         id: "ConversionProcess",
@@ -363,7 +363,7 @@ const horizontalMenuConfig = [
     children: [
       {
         id: "PartyCreation",
-        title: "PartyCreation",
+        title: "Party Creation",
         type: "item",
         icon: <FaList size={15} />,
         permissions: ["admin", "editor"],
@@ -411,14 +411,7 @@ const horizontalMenuConfig = [
         permissions: ["admin", "editor"],
         navLink: "/app/SoftNumen/ticket/TicketSearch",
       },
-      {
-        id: "AutoTargetCreation",
-        title: "Auto Target Creation",
-        type: "item",
-        icon: <FaList size={15} />,
-        permissions: ["admin", "editor"],
-        navLink: "/app/SoftNumen/ticket/TicketSearch",
-      },
+
       {
         id: "TargetAchieved",
         title: "Auto Target Creation",
@@ -493,7 +486,7 @@ const horizontalMenuConfig = [
     children: [
       {
         id: "PartyList",
-        title: "PartyList",
+        title: "Party List",
         type: "item",
         icon: <FaList size={15} />,
         permissions: ["admin", "editor"],
@@ -598,7 +591,7 @@ const horizontalMenuConfig = [
       },
       {
         id: "DispatchReport",
-        title: "DispatchReport",
+        title: "Dispatch Report",
         type: "item",
         icon: <FaList size={15} />,
         permissions: ["admin", "editor"],
@@ -878,7 +871,7 @@ const horizontalMenuConfig = [
           },
           {
             id: "rawmaterialinward ",
-            title: "Raw Material Inward ",
+            title: "Raw Material Inward",
             type: "item",
             icon: <FaCircle size={8} />,
             permissions: ["admin", "editor"],
@@ -886,7 +879,7 @@ const horizontalMenuConfig = [
           },
           {
             id: "rawmaterialoutward",
-            title: "Raw Material Outward ",
+            title: "Raw Material Outward",
             type: "item",
             icon: <FaCircle size={8} />,
             permissions: ["admin", "editor"],
@@ -926,7 +919,7 @@ const horizontalMenuConfig = [
           },
           {
             id: "dispatchDetail",
-            title: "Dispatch Detail ",
+            title: "Dispatch Detail",
             type: "item",
             icon: <FaCircle size={8} />,
             permissions: ["admin", "editor"],

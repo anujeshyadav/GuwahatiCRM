@@ -72,6 +72,7 @@ class UnitList extends React.Component {
       Arrindex: "",
       rowData: [],
       primaryUnit: "",
+      IsprimaryUnit: false,
       secondaryUnit: "",
       setMySelectedarr: [],
       SelectedCols: [],
@@ -91,6 +92,9 @@ class UnitList extends React.Component {
     };
   }
 
+  componentDidMount() {
+    console.log(this.state.primaryUnit, this.state.secondaryUnit);
+  }
   LookupviewStart = () => {
     this.setState(prevState => ({
       modal: !prevState.modal,
@@ -116,7 +120,13 @@ class UnitList extends React.Component {
   };
   changeHandler = e => {
     console.log(e.target.value);
-    this.setState({ [e.target.name]: e.target.value });
+    if (e.target.value !== "None") {
+      this.setState({ IsprimaryUnit: true });
+      this.setState({ [e.target.name]: e.target.value });
+    } else {
+      this.setState({ IsprimaryUnit: false });
+      this.setState({ [e.target.name]: e.target.value });
+    }
   };
   async componentDidMount() {
     const UserInformation = this.context?.UserInformatio;
@@ -1007,7 +1017,7 @@ class UnitList extends React.Component {
                   placeholder="Select Type"
                   name="primaryUnit"
                   value={this.state.primaryUnit}
-                  defaultValue="" // Set the defaultValue here
+                  defaultValue="None"
                   onChange={this.changeHandler}
                 >
                   <option value="None">None</option>
@@ -1045,7 +1055,7 @@ class UnitList extends React.Component {
                   placeholder="Select Type"
                   name="secondaryUnit"
                   value={this.state.secondaryUnit}
-                  defaultValue=""
+                  defaultValue="None"
                   onChange={this.changeHandler}
                 >
                   <option value="None">None</option>
@@ -1071,12 +1081,9 @@ class UnitList extends React.Component {
                 </CustomInput>
               </Col>
             </Row>
-            {/* {this.state.primaryUnit && this.state.secondaryUnit ? (
-              <>
-              </>
-            ) : null} */}
-            {this.state.primaryUnit !== this.state.secondaryUnit ||
-            (this.state.primaryUnit && this.state.secondaryUnit) ? (
+            {/* || (this.state.primaryUnit && this.state.secondaryUnit) */}
+            {this.state.primaryUnit !== this.state.secondaryUnit &&
+            this.state.IsprimaryUnit == true ? (
               <>
                 <Row>
                   <Col md="12" lg="12" sm="12">
@@ -1111,7 +1118,6 @@ class UnitList extends React.Component {
                 </Row>
               </>
             ) : null}
-
             <hr></hr>
             <Row className="justify-content-end modalbodyheadunit">
               <Button

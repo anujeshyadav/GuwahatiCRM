@@ -136,55 +136,20 @@ class Login extends React.Component {
 
   loginHandler = async e => {
     e.preventDefault();
+    // this.props.history.push("/dashboard");
     let data = { email: this.state.email, password: this.state.password };
-    console.log(data);
+
     await UserLogin(data)
       .then(res => {
         this.props.history.push("/dashboard");
-        console.log(res?.user);
         let basicinfor = res?.user;
-        let newinfor = res?.user?.user1;
-        let allinfor = { ...basicinfor, ...newinfor };
-        this.context?.setUserInformatio(allinfor);
-        localStorage.setItem("userData", JSON.stringify(allinfor));
-        // if (
-        //   JSON.parse(res?.user?.gmail) ||
-        //   JSON.parse(res?.user?.whatsapp) ||
-        //   JSON.parse(res?.user?.sms)
-        // ) {
-        //   this.setState({ UserCredential: res?.user });
-        //   if (res?.status) {
-        //     swal({
-        //       icon: "success",
-        //       title: "OTP has been sent to Registered mail",
-        //       text: `${res?.user.email}`,
-        //     });
-        //     // swal(
-        //     //   "Success",
-        //     //   `OTP has been sent`,
-        //     //   `to Registered mail:- ${res?.user.email}`
-        //     // );
-        //     this.setState({ OtpScreen: true });
-        //   } else {
-        //     swal("Something Went Wrong");
-        //   }
-        // } else {
-        //   let basicinfor = res?.user;
-        //   let newinfor = res?.user?.user1;
-        //   let allinfor = { ...basicinfor, ...newinfor };
-
-        //   this.context?.setUserInformatio(allinfor);
-
-        //   localStorage.setItem("userData", JSON.stringify(allinfor));
-        //   localStorage.setItem("userToken", JSON.stringify(res?.user?.token));
-        //   this.props.history.push("/dashboard");
-        // }
+        this.context?.setUserInformatio(basicinfor);
+        localStorage.setItem("userData", JSON.stringify(basicinfor));
+        this.props.history.push("/dashboard");
       })
       .catch(err => {
         console.log(err.response?.data.message);
-        // let Incorrectpassword =
-        //   err.response?.data.message == "Incorrect password";
-        // let IncorrectEmail = err.response?.data.message == "Incorrect Email";
+
         if (err.response?.data.message == "Incorrect password") {
           swal({
             title: "Some Error Occurred",

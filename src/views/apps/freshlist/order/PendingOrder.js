@@ -374,11 +374,7 @@ class PendingOrder extends React.Component {
           filter: true,
           width: 150,
           cellRendererFramework: params => {
-            return params.value === "Active" ? (
-              <div className="badge badge-pill badge-success">
-                {params.data.status}
-              </div>
-            ) : params.value === "pending" ? (
+            return params.value === "pending" ? (
               <div className="badge badge-pill badge-warning">
                 {params.data.status}
               </div>
@@ -415,7 +411,11 @@ class PendingOrder extends React.Component {
 
     await createOrderhistoryview()
       .then(res => {
-        this.setState({ rowData: res?.orderHistory });
+        console.log(res?.orderHistory);
+        const pendingStatus = res?.orderHistory?.filter(
+          ele => ele.status == "pending"
+        );
+        this.setState({ rowData: pendingStatus });
         this.setState({ AllcolumnDefs: this.state.columnDefs });
         this.setState({ SelectedCols: this.state.columnDefs });
 

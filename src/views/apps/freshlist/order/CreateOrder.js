@@ -80,7 +80,7 @@ const CreateOrder = args => {
         list[index]["totalprice"] = val.qty * val.price;
         return val.qty * val.price;
       });
-      amt = x.reduce((a, b) => a + b);
+      amt = x.reduce((a, b) => a + b, 0);
       console.log("GrandTotal", amt);
     }
     console.log(list);
@@ -112,7 +112,7 @@ const CreateOrder = args => {
         return indextotal;
       });
       console.log(myarr);
-      let amt = myarr.reduce((a, b) => a + b);
+      let amt = myarr.reduce((a, b) => a + b, 0);
       setGrandTotalAmt(amt);
       return updatedProductList; // Return the updated product list to set the state
     });
@@ -169,7 +169,7 @@ const CreateOrder = args => {
     let newFormValues = [...product];
     newFormValues.splice(i, 1);
     GrandTotal.splice(i, 1);
-    let amt = GrandTotal.reduce((a, b) => a + b);
+    let amt = GrandTotal.reduce((a, b) => a + b, 0);
     setGrandTotalAmt(amt);
     setProduct(newFormValues);
   };
@@ -253,7 +253,6 @@ const CreateOrder = args => {
                 )}
               />
             </Col> */}
-            """"" +"
             <Col>
               <Route
                 render={({ history }) => (
@@ -274,6 +273,40 @@ const CreateOrder = args => {
 
           <CardBody>
             <Form className="m-1" onSubmit={submitHandler}>
+              <Row>
+                <Col className="mb-1" lg="6" md="6" sm="12">
+                  <div className="">
+                    <Label>Choose Party</Label>
+
+                    <Multiselect
+                      required
+                      selectionLimit={1}
+                      // showCheckbox="true"
+                      isObject="false"
+                      options={PartyList} // Options to display in the dropdown
+                      // selectedValues={selectedValue}   // Preselected value to persist in dropdown
+                      onSelect={(selectedList, selectedItem) =>
+                        handleSelectionParty(selectedList, selectedItem, index)
+                      }
+                      // onSelect={onSelect1} // Function will trigger on select event
+                      onRemove={onRemove1} // Function will trigger on remove event
+                      displayValue="firstName" // Property name to display in the dropdown options
+                    />
+                  </div>
+                </Col>
+                <Col className="mb-1" lg="6" md="6" sm="12">
+                  <div className="">
+                    <Label>Expected Delivery Date</Label>
+                    <Input
+                      required
+                      type="date"
+                      name="DateofDelivery"
+                      value={product.DateofDelivery}
+                      onChange={e => handleProductChangeProduct(e, index)}
+                    />
+                  </div>
+                </Col>
+              </Row>
               {product &&
                 product?.map((product, index) => (
                   <Row className="" key={index}>
@@ -333,44 +366,6 @@ const CreateOrder = args => {
                         />
                       </div>
                     </Col>
-                    <Col className="mb-1" lg="2" md="2" sm="12">
-                      <div className="">
-                        <Label>Choose Party</Label>
-
-                        <Multiselect
-                          required
-                          selectionLimit={1}
-                          // showCheckbox="true"
-                          isObject="false"
-                          options={PartyList} // Options to display in the dropdown
-                          // selectedValues={selectedValue}   // Preselected value to persist in dropdown
-                          onSelect={(selectedList, selectedItem) =>
-                            handleSelectionParty(
-                              selectedList,
-                              selectedItem,
-                              index
-                            )
-                          }
-                          // onSelect={onSelect1} // Function will trigger on select event
-                          onRemove={onRemove1} // Function will trigger on remove event
-                          displayValue="firstName" // Property name to display in the dropdown options
-                        />
-                      </div>
-                    </Col>
-                    <Col className="mb-1" lg="2" md="2" sm="12">
-                      <div className="">
-                        <Label>Date Of Delivery</Label>
-                        <Input
-                          required
-                          type="date"
-                          name="DateofDelivery"
-                          placeholder="Date of Delivery"
-                          value={product.DateofDelivery}
-                          onChange={e => handleProductChangeProduct(e, index)}
-                        />
-                      </div>
-                    </Col>
-
                     <Col className="d-flex mt-1 abb" lg="3" md="3" sm="12">
                       <div className="btnStyle">
                         {index ? (
@@ -378,6 +373,7 @@ const CreateOrder = args => {
                             type="button"
                             color="danger"
                             className="button remove "
+                            size="sm"
                             onClick={() => removeMoreProduct(index)}
                           >
                             -
@@ -390,6 +386,7 @@ const CreateOrder = args => {
                           className="ml-1 mb-1"
                           color="primary"
                           type="button"
+                          size="sm"
                           onClick={() => addMoreProduct()}
                         >
                           +

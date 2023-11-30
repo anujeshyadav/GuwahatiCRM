@@ -59,7 +59,7 @@ import UserContext from "../../../../context/Context";
 
 const SelectedColums = [];
 
-class PendingOrder extends React.Component {
+class CompleteOrder extends React.Component {
   static contextType = UserContext;
   constructor(props) {
     super(props);
@@ -72,13 +72,11 @@ class PendingOrder extends React.Component {
       modal: false,
       modalone: false,
       ViewData: {},
-
       setMySelectedarr: [],
       SelectedCols: [],
       paginationPageSize: 5,
       currenPageSize: "",
       getPageSize: "",
-      // columnDefs: [],
       AllcolumnDefs: [],
       SelectedcolumnDefs: [],
       defaultColDef: {
@@ -93,13 +91,15 @@ class PendingOrder extends React.Component {
           headerName: "UID",
           valueGetter: "node.rowIndex + 1",
           field: "node.rowIndex + 1",
+          // checkboxSelection: true,
           width: 80,
           filter: true,
         },
+
         {
           headerName: "Actions",
           field: "transactions",
-          width: 180,
+          width: 150,
           cellRendererFramework: params => {
             return (
               <div className="actions cursor-pointer">
@@ -112,6 +112,7 @@ class PendingOrder extends React.Component {
                     this.toggleModal();
                   }}
                 />
+
                 <Edit
                   className="mr-50"
                   size="25px"
@@ -123,6 +124,7 @@ class PendingOrder extends React.Component {
                     })
                   }
                 />
+
                 <Trash2
                   className="mr-50"
                   size="25px"
@@ -305,12 +307,8 @@ class PendingOrder extends React.Component {
           filter: true,
           width: 150,
           cellRendererFramework: params => {
-            return params.value === "Active" ? (
+            return params.value === "completed" ? (
               <div className="badge badge-pill badge-success">
-                {params.data.status}
-              </div>
-            ) : params.value === "pending" ? (
-              <div className="badge badge-pill badge-warning">
                 {params.data.status}
               </div>
             ) : null;
@@ -346,7 +344,10 @@ class PendingOrder extends React.Component {
 
     await createOrderhistoryview()
       .then(res => {
-        this.setState({ rowData: res?.orderHistory });
+        const ComplteStatus = res?.orderHistory?.filter(
+          ele => ele.status == "completed"
+        );
+        this.setState({ rowData: ComplteStatus });
         this.setState({ AllcolumnDefs: this.state.columnDefs });
         this.setState({ SelectedCols: this.state.columnDefs });
 
@@ -369,7 +370,6 @@ class PendingOrder extends React.Component {
   };
 
   runthisfunction(id) {
-    debugger;
     swal("Warning", "Sure You Want to Delete it", {
       buttons: {
         cancel: "cancel",
@@ -479,6 +479,8 @@ class PendingOrder extends React.Component {
     }
   };
   processCell = params => {
+    // console.log(params);
+    // Customize cell content as needed
     return params.value;
   };
 
@@ -576,7 +578,12 @@ class PendingOrder extends React.Component {
           });
           xmlString += "  </row>\n";
         });
+
         xmlString += "</root>";
+
+        // setXmlData(xmlString);
+
+        // Create a download link
         const blob = new Blob([xmlString], { type: "text/xml" });
         const link = document.createElement("a");
         link.href = URL.createObjectURL(blob);
@@ -651,8 +658,6 @@ class PendingOrder extends React.Component {
                   </Button>
                 </div>
               </Col>
-
-              {/* <EditAccount EditOneData={this.state.EditOneData} /> */}
             </Row>
           ) : (
             <>
@@ -672,7 +677,6 @@ class PendingOrder extends React.Component {
                         </Button>
                       </div>
                     </Col>
-                    {/* <ViewAccount ViewOneData={this.state.ViewOneData} /> */}
                   </Row>
                 </>
               ) : (
@@ -681,7 +685,7 @@ class PendingOrder extends React.Component {
                     <Card>
                       <Row className="m-2">
                         <Col>
-                          <h1 className="float-left">Confirm List</h1>
+                          <h1 className="float-left">Confirmed Order List</h1>
                         </Col>
                         <Col>
                           <span className="mx-1">
@@ -765,15 +769,15 @@ class PendingOrder extends React.Component {
                                     {this.gridApi
                                       ? this.state.currenPageSize
                                       : "" * this.state.getPageSize -
-                                        (this.state.getPageSize - 1)}{" "}
-                                    -{" "}
+                                        (this.state.getPageSize - 1)}
+                                    -
                                     {this.state.rowData.length -
                                       this.state.currenPageSize *
                                         this.state.getPageSize >
                                     0
                                       ? this.state.currenPageSize *
                                         this.state.getPageSize
-                                      : this.state.rowData.length}{" "}
+                                      : this.state.rowData.length}
                                     of {this.state.rowData.length}
                                     <ChevronDown className="ml-50" size={15} />
                                   </DropdownToggle>
@@ -837,13 +841,17 @@ class PendingOrder extends React.Component {
                                   animateRows={true}
                                   floatingFilter={false}
                                   pagination={true}
+                                  rowHeight={38}
+                                  // paginationTop={true}
+                                  // paginationBottom={false}
+                                  // paginateChildRows={true}
                                   paginationPageSize={
                                     this.state.paginationPageSize
                                   }
                                   pivotPanelShow="always"
                                   enableRtl={context.state.direction === "rtl"}
-                                  ref={this.gridRef} // Attach the ref to the grid
-                                  domLayout="autoHeight" // Adjust layout as needed
+                                  ref={this.gridRef}
+                                  domLayout="autoHeight"
                                 />
                               )}
                             </ContextLayout.Consumer>
@@ -965,6 +973,17 @@ class PendingOrder extends React.Component {
                                               SelectedcolumnDefs: SelectedCols, // Update the state with the modified array
                                             });
                                           }
+                                          // const delindex =
+                                          //   SelectedCols.findIndex(
+                                          //     (element) =>
+                                          //       element?.headerName ==
+                                          //       ele?.headerName
+                                          //   );
+
+                                          // SelectedCols?.splice(delindex, 1);
+                                          // this.setState({
+                                          //   SelectedcolumnDefs: SelectedCols,
+                                          // });
                                         }}
                                         style={{ cursor: "pointer" }}
                                         size="25px"
@@ -1018,15 +1037,20 @@ class PendingOrder extends React.Component {
           isOpen={this.state.modalone}
           toggle={this.toggleModal}
           className="modal-dialog modal-xl"
+          // className="modal-dialog modal-lg"
           size="lg"
           backdrop={true}
           fullscreen={true}
         >
           <ModalHeader toggle={this.toggleModal}>View Details</ModalHeader>
-          <ModalBody className="myproducttable"></ModalBody>
+          <ModalBody className="myproducttable">
+            {/* <div className="container"> */}
+            {/* <TargetAssignedOne ViewData={this.state.ViewData} /> */}
+            {/* </div> */}
+          </ModalBody>
         </Modal>
       </>
     );
   }
 }
-export default PendingOrder;
+export default CompleteOrder;

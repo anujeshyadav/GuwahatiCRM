@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState, useContext } from "react";
 import xmlJs from "xml-js";
 import {
@@ -415,7 +416,7 @@ const CreateTarget = (args) => {
           <Row className="m-2">
             <Col className="">
               <div>
-                <h1 className="">Create Target</h1>
+                <h1 className="">Create Stock Transfer</h1>
               </div>
             </Col>
             <Col>
@@ -453,9 +454,26 @@ const CreateTarget = (args) => {
             </Col> */}
             <Form className="m-1" onSubmit={submitHandler}>
               <Row>
-                <Col className="mb-1" lg="2" md="2" sm="12">
+                <Col className="mb-1" lg="3" md="3" sm="12">
                   <div className="">
-                    <Label>Choose Sales Person</Label>
+                    <Label>Choose Warehouse(from where) *</Label>
+
+                    <Multiselect
+                      required
+                      selectionLimit={1}
+                      // showCheckbox="true"
+                      isObject="false"
+                      options={SalesPersonList} // Options to display in the dropdown
+                      // selectedValues={selectedValue}   // Preselected value to persist in dropdown
+                      onSelect={onSelect1} // Function will trigger on select event
+                      onRemove={onRemove1} // Function will trigger on remove event
+                      displayValue="firstName" // Property name to display in the dropdown options
+                    />
+                  </div>
+                </Col>
+                <Col className="mb-1" lg="3" md="3" sm="12">
+                  <div className="">
+                    <Label>Choose Warehouse (to be Transfer) * </Label>
 
                     <Multiselect
                       required
@@ -472,19 +490,18 @@ const CreateTarget = (args) => {
                 </Col>
                 <Col className="mb-1" lg="2" md="2" sm="12">
                   <div className="">
-                    <Label>Start date</Label>
+                    <Label>Stock Transfer date</Label>
                     <Input
                       required
                       type="date"
                       name="targetEndDate"
                       placeholder="Date of Delivery"
                       value={targetStartDate}
-                      // value={product.price * product.qty}
                       onChange={(e) => settargetStartDate(e.target.value)}
                     />
                   </div>
                 </Col>
-                <Col className="mb-1" lg="2" md="2" sm="12">
+                {/* <Col className="mb-1" lg="2" md="2" sm="12">
                   <div className="">
                     <Label>End Date</Label>
                     <Input
@@ -497,7 +514,7 @@ const CreateTarget = (args) => {
                       onChange={(e) => settargetEndDate(e.target.value)}
                     />
                   </div>
-                </Col>
+                </Col> */}
               </Row>
               {product &&
                 product?.map((product, index) => (
@@ -528,7 +545,7 @@ const CreateTarget = (args) => {
                     </Col>
                     <Col className="mb-1" lg="2" md="2" sm="12">
                       <div className="">
-                        <Label>Quantity Assign</Label>
+                        <Label>Quantity To be Transfer</Label>
                         <Input
                           type="number"
                           name="qty"

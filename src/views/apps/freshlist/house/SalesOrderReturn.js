@@ -84,7 +84,7 @@ class SalesOrderReturn extends React.Component {
   }
 
   LookupviewStart = () => {
-    this.setState((prevState) => ({
+    this.setState(prevState => ({
       modal: !prevState.modal,
     }));
   };
@@ -103,13 +103,13 @@ class SalesOrderReturn extends React.Component {
   async componentDidMount() {
     const UserInformation = this.context?.UserInformatio;
     await CreateAccountView()
-      .then((res) => {
+      .then(res => {
         var mydropdownArray = [];
         var adddropdown = [];
         const jsonData = xmlJs.xml2json(res.data, { compact: true, spaces: 2 });
         console.log(JSON.parse(jsonData)?.CreateUser);
 
-        const inputs = JSON.parse(jsonData)?.CreateUser?.input?.map((ele) => {
+        const inputs = JSON.parse(jsonData)?.CreateUser?.input?.map(ele => {
           return {
             headerName: ele?.label._text,
             field: ele?.name._text,
@@ -117,67 +117,15 @@ class SalesOrderReturn extends React.Component {
             sortable: true,
           };
         });
-        // let Radioinput =
-        //   JSON.parse(jsonData).CreateAccount?.Radiobutton?.input[0]?.name
-        //     ?._text;
-        // const addRadio = [
-        //   {
-        //     headerName: Radioinput,
-        //     field: Radioinput,
-        //     filter: true,
-        //     sortable: true,
-        //     cellRendererFramework: (params) => {
-        //       return params.data?.Status === "Active" ? (
-        //         <div className="badge badge-pill badge-success">
-        //           {params.data.Status}
-        //         </div>
-        //       ) : params.data?.Status === "Deactive" ? (
-        //         <div className="badge badge-pill badge-warning">
-        //           {params.data.Status}
-        //         </div>
-        //       ) : (
-        //         "NA"
-        //       );
-        //     },
-        //   },
-        // ];
 
-        // let dropdown = JSON.parse(jsonData).CreateAccount?.MyDropdown?.dropdown;
-        // if (dropdown.length) {
-        //   var mydropdownArray = dropdown?.map((ele) => {
-        //     return {
-        //       headerName: ele?.label,
-        //       field: ele?.name,
-        //       filter: true,
-        //       sortable: true,
-        //     };
-        //   });
-        // } else {
-        //   var adddropdown = [
-        //     {
-        //       headerName: dropdown?.label._text,
-        //       field: dropdown?.name._text,
-        //       filter: true,
-        //       sortable: true,
-        //     },
-        //   ];
-        // }
-
-        let myHeadings = [
-          // ...checkboxinput,
-          ...inputs,
-          // ...adddropdown,
-          // ...addRadio,
-          // ...mydropdownArray,
-        ];
-        // console.log(myHeadings);
+        let myHeadings = [...inputs];
         let Product = [
           {
             headerName: "Actions",
             field: "sortorder",
             field: "transactions",
             width: 190,
-            cellRendererFramework: (params) => {
+            cellRendererFramework: params => {
               return (
                 <div className="actions cursor-pointer">
                   <Route
@@ -228,7 +176,7 @@ class SalesOrderReturn extends React.Component {
             field: "createdAt",
             filter: true,
             sortable: true,
-            cellRendererFramework: (params) => {
+            cellRendererFramework: params => {
               return (
                 <>
                   <div className="actions cursor-pointer">
@@ -243,7 +191,7 @@ class SalesOrderReturn extends React.Component {
             field: "updatedAt",
             filter: true,
             sortable: true,
-            cellRendererFramework: (params) => {
+            cellRendererFramework: params => {
               return (
                 <>
                   <div className="actions cursor-pointer">
@@ -270,21 +218,22 @@ class SalesOrderReturn extends React.Component {
         }
         this.setState({ SelectedCols: Product });
       })
-      .catch((err) => {
+      .catch(err => {
         console.log(err);
         swal("Error", "something went wrong try again");
       });
     await CreateAccountList()
-      .then((res) => {
+      .then(res => {
         let value = res?.User;
+        console.log(value);
         this.setState({ rowData: value });
       })
-      .catch((err) => {
+      .catch(err => {
         console.log(err);
       });
   }
   toggleDropdown = () => {
-    this.setState((prevState) => ({ isOpen: !prevState.isOpen }));
+    this.setState(prevState => ({ isOpen: !prevState.isOpen }));
   };
 
   runthisfunction(id) {
@@ -293,15 +242,15 @@ class SalesOrderReturn extends React.Component {
         cancel: "cancel",
         catch: { text: "Delete ", value: "delete" },
       },
-    }).then((value) => {
+    }).then(value => {
       switch (value) {
         case "delete":
           DeleteAccount(id)
-            .then((res) => {
+            .then(res => {
               let selectedData = this.gridApi.getSelectedRows();
               this.gridApi.updateRowData({ remove: selectedData });
             })
-            .catch((err) => {
+            .catch(err => {
               console.log(err);
             });
           break;
@@ -310,7 +259,7 @@ class SalesOrderReturn extends React.Component {
     });
   }
 
-  onGridReady = (params) => {
+  onGridReady = params => {
     this.gridApi = params.api;
     this.gridColumnApi = params.columnApi;
     this.gridRef.current = params.api;
@@ -322,11 +271,11 @@ class SalesOrderReturn extends React.Component {
     });
   };
 
-  updateSearchQuery = (val) => {
+  updateSearchQuery = val => {
     this.gridApi.setQuickFilter(val);
   };
 
-  filterSize = (val) => {
+  filterSize = val => {
     if (this.gridApi) {
       this.gridApi.paginationSetPageSize(Number(val));
       this.setState({
@@ -341,7 +290,7 @@ class SalesOrderReturn extends React.Component {
       SelectedColums?.push(value);
     } else {
       const delindex = SelectedColums?.findIndex(
-        (ele) => ele?.headerName === value?.headerName
+        ele => ele?.headerName === value?.headerName
       );
 
       SelectedColums?.splice(delindex, 1);
@@ -352,14 +301,14 @@ class SalesOrderReturn extends React.Component {
       Papa.parse(csvData, {
         header: true,
         skipEmptyLines: true,
-        complete: (result) => {
+        complete: result => {
           if (result.data && result.data.length > 0) {
             resolve(result.data);
           } else {
             reject(new Error("No data found in the CSV"));
           }
         },
-        error: (error) => {
+        error: error => {
           reject(error);
         },
       });
@@ -371,7 +320,7 @@ class SalesOrderReturn extends React.Component {
 
     const doc = new jsPDF("landscape", "mm", size, false);
     doc.setTextColor(5, 87, 97);
-    const tableData = parsedData.map((row) => Object.values(row));
+    const tableData = parsedData.map(row => Object.values(row));
     doc.addImage(Logo, "JPEG", 10, 10, 50, 30);
     let date = new Date();
     doc.setCreationDate(date);
@@ -396,14 +345,12 @@ class SalesOrderReturn extends React.Component {
       console.error("Error parsing CSV:", error);
     }
   };
-  processCell = (params) => {
-    // console.log(params);
-    // Customize cell content as needed
+  processCell = params => {
     return params.value;
   };
 
   convertCsvToExcel(csvData) {
-    return new Promise((resolve) => {
+    return new Promise(resolve => {
       Papa.parse(csvData, {
         header: true,
         dynamicTyping: true,
@@ -434,7 +381,7 @@ class SalesOrderReturn extends React.Component {
     window.URL.revokeObjectURL(url);
   }
 
-  exportToExcel = async (e) => {
+  exportToExcel = async e => {
     const CsvData = this.gridApi.getDataAsCsv({
       processCellCallback: this.processCell,
     });
@@ -447,7 +394,7 @@ class SalesOrderReturn extends React.Component {
       processCellCallback: this.processCell,
     });
     Papa.parse(CsvData, {
-      complete: (result) => {
+      complete: result => {
         const ws = XLSX.utils.json_to_sheet(result.data);
         const wb = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(wb, ws, "Sheet1");
@@ -483,13 +430,13 @@ class SalesOrderReturn extends React.Component {
       processCellCallback: this.processCell,
     });
     Papa.parse(CsvData, {
-      complete: (result) => {
+      complete: result => {
         const rows = result.data;
 
         // Create XML
         let xmlString = "<root>\n";
 
-        rows.forEach((row) => {
+        rows.forEach(row => {
           xmlString += "  <row>\n";
           row.forEach((cell, index) => {
             xmlString += `    <field${index + 1}>${cell}</field${index + 1}>\n`;
@@ -511,7 +458,7 @@ class SalesOrderReturn extends React.Component {
     });
   };
 
-  HandleSetVisibleField = (e) => {
+  HandleSetVisibleField = e => {
     e.preventDefault();
     debugger;
     this.gridApi.setColumnDefs(this.state.SelectedcolumnDefs);
@@ -528,10 +475,10 @@ class SalesOrderReturn extends React.Component {
   HeadingRightShift = () => {
     const updatedSelectedColumnDefs = [
       ...new Set([
-        ...this.state.SelectedcolumnDefs.map((item) => JSON.stringify(item)),
-        ...SelectedColums.map((item) => JSON.stringify(item)),
+        ...this.state.SelectedcolumnDefs.map(item => JSON.stringify(item)),
+        ...SelectedColums.map(item => JSON.stringify(item)),
       ]),
-    ].map((item) => JSON.parse(item));
+    ].map(item => JSON.parse(item));
     this.setState({
       SelectedcolumnDefs: [...new Set(updatedSelectedColumnDefs)], // Update the state with the combined array
     });
@@ -560,18 +507,18 @@ class SalesOrderReturn extends React.Component {
     } = this.state;
     return (
       <>
-        {/* <ExcelReader /> */}
         <Row className="app-user-list">
           {this.state.EditOneUserView && this.state.EditOneUserView ? (
             <Row className="card">
               <Col>
                 <div className="d-flex justify-content-end p-1">
                   <Button
-                    onClick={(e) => {
+                    onClick={e => {
                       e.preventDefault();
                       this.setState({ EditOneUserView: false });
                     }}
                     color="danger"
+                    size="sm"
                   >
                     Back
                   </Button>
@@ -588,7 +535,7 @@ class SalesOrderReturn extends React.Component {
                     <Col>
                       <div className="d-flex justify-content-end p-1">
                         <Button
-                          onClick={(e) => {
+                          onClick={e => {
                             e.preventDefault();
                             this.setState({ ViewOneUserView: false });
                           }}
@@ -759,7 +706,7 @@ class SalesOrderReturn extends React.Component {
                                 <div className="table-input mr-1">
                                   <Input
                                     placeholder="search Item here..."
-                                    onChange={(e) =>
+                                    onChange={e =>
                                       this.updateSearchQuery(e.target.value)
                                     }
                                     value={this.state.value}
@@ -768,7 +715,7 @@ class SalesOrderReturn extends React.Component {
                               </div>
                             </div>
                             <ContextLayout.Consumer className="ag-theme-alpine">
-                              {(context) => (
+                              {context => (
                                 <AgGridReact
                                   id="myAgGrid"
                                   // gridOptions={{
@@ -839,9 +786,7 @@ class SalesOrderReturn extends React.Component {
                         return (
                           <>
                             <div
-                              onClick={(e) =>
-                                this.handleChangeHeader(e, ele, i)
-                              }
+                              onClick={e => this.handleChangeHeader(e, ele, i)}
                               key={i}
                               className="mycustomtag mt-1"
                             >
@@ -916,7 +861,7 @@ class SalesOrderReturn extends React.Component {
                                             this.state.SelectedcolumnDefs.slice();
                                           const delindex =
                                             SelectedCols.findIndex(
-                                              (element) =>
+                                              element =>
                                                 element?.headerName ==
                                                 ele?.headerName
                                             );

@@ -233,7 +233,7 @@ const ViewAll = lazy(() => import("./views/apps/freshlist/order/ViewAll"));
 const ViewPending = lazy(() =>
   import("./views/apps/freshlist/order/ViewPending")
 );
-// const Pending = lazy(() => import("./views/apps/freshlist/order/Pending"));
+
 const ConfirmedOrder = lazy(() =>
   import("./views/apps/freshlist/order/CompleteOrder")
 );
@@ -681,6 +681,12 @@ const UpdateExistingRole = lazy(() =>
 const CreateAccount = lazy(() =>
   import("./views/apps/freshlist/accounts/CreateAccount")
 );
+const CreateStockTrx = lazy(() =>
+  import("./views/apps/freshlist/accounts/CreateStockTrx")
+);
+const CreatePromotionalActivity = lazy(() =>
+  import("./views/apps/freshlist/accounts/CreatePromotionalActivity")
+);
 const CreateTarget = lazy(() =>
   import("./views/apps/freshlist/accounts/CreateTarget")
 );
@@ -802,6 +808,12 @@ const ServiceMaster = lazy(() =>
 );
 const AccounSearch = lazy(() =>
   import("./views/apps/freshlist/house/AccounSearch")
+);
+const StockTransferList = lazy(() =>
+  import("./views/apps/freshlist/house/StockTransferList")
+);
+const PromotionalActivityList = lazy(() =>
+  import("./views/apps/freshlist/house/PromotionalActivityList")
 );
 const TargetCreationList = lazy(() =>
   import("./views/apps/freshlist/house/TargetCreation")
@@ -1407,6 +1419,10 @@ class AppRouter extends React.Component {
             path="/app/softNumen/order/placeOrder"
             component={PlaceOrder}
           />
+          <AppRoute
+            path="/app/softNumen/order/confirmedOrder"
+            component={ConfirmedOrder}
+          />
           <AppRoute path="/app/softNumen/order/OrderOne" component={OrderOne} />
           <AppRoute
             path="/app/softNumen/order/OrderSearch"
@@ -1453,10 +1469,6 @@ class AppRouter extends React.Component {
           <AppRoute
             path="/app/freshlist/order/viewPending"
             component={ViewPending}
-          />
-          <AppRoute
-            path="/app/softNumen/order/confirmedOrder"
-            component={ConfirmedOrder}
           />
           <AppRoute
             path="/app/freshlist/order/{viewConfirmed}"
@@ -2027,6 +2039,14 @@ class AppRouter extends React.Component {
             component={CreateAccount}
           />
           <AppRoute
+            path="/app/ajgroup/account/CreateStockTrx"
+            component={CreateStockTrx}
+          />
+          <AppRoute
+            path="/app/ajgroup/account/CreatePromotionalActivity"
+            component={CreatePromotionalActivity}
+          />
+          <AppRoute
             path="/app/SoftNumen/account/CreateTarget"
             component={CreateTarget}
           />
@@ -2163,6 +2183,14 @@ class AppRouter extends React.Component {
           <AppRoute
             path="/app/SoftNumen/accounSearch"
             component={AccounSearch}
+          />
+          <AppRoute
+            path="/app/AjGroup/StockTransferList"
+            component={StockTransferList}
+          />
+          <AppRoute
+            path="/app/AjGroup/PromotionalActivityList"
+            component={PromotionalActivityList}
           />
           <AppRoute
             path="/app/SoftNumen/TargetCreationList"
