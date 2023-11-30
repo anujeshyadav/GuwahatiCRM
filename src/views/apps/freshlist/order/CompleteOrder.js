@@ -16,7 +16,6 @@ import {
   ModalHeader,
   ModalBody,
   Badge,
-  CustomInput,
 } from "reactstrap";
 
 import { ContextLayout } from "../../../../utility/context/Layout";
@@ -28,7 +27,7 @@ import jsPDF from "jspdf";
 import "jspdf-autotable";
 import Logo from "../../../../assets/img/profile/pages/logomain.png";
 import Papa from "papaparse";
-import { Eye, Trash2, ChevronDown, Edit, CornerDownLeft } from "react-feather";
+import { Eye, Trash2, ChevronDown, Edit } from "react-feather";
 import { IoMdRemoveCircleOutline } from "react-icons/io";
 import "../../../../assets/scss/plugins/tables/_agGridStyleOverride.scss";
 import "../../../../assets/scss/pages/users.scss";
@@ -60,7 +59,7 @@ import UserContext from "../../../../context/Context";
 
 const SelectedColums = [];
 
-class OrderList extends React.Component {
+class CompleteOrder extends React.Component {
   static contextType = UserContext;
   constructor(props) {
     super(props);
@@ -73,13 +72,11 @@ class OrderList extends React.Component {
       modal: false,
       modalone: false,
       ViewData: {},
-
       setMySelectedarr: [],
       SelectedCols: [],
       paginationPageSize: 5,
       currenPageSize: "",
       getPageSize: "",
-      // columnDefs: [],
       AllcolumnDefs: [],
       SelectedcolumnDefs: [],
       defaultColDef: {
@@ -102,20 +99,10 @@ class OrderList extends React.Component {
         {
           headerName: "Actions",
           field: "transactions",
-          width: 180,
+          width: 150,
           cellRendererFramework: params => {
             return (
               <div className="actions cursor-pointer">
-                {/* {this.state.Viewpermisson && ( */}
-                <CornerDownLeft
-                  className="mr-50"
-                  size="25px"
-                  color="green"
-                  onClick={() => {
-                    this.setState({ ViewData: params?.data });
-                    this.toggleModal();
-                  }}
-                />
                 <Eye
                   className="mr-50"
                   size="25px"
@@ -125,6 +112,7 @@ class OrderList extends React.Component {
                     this.toggleModal();
                   }}
                 />
+
                 <Edit
                   className="mr-50"
                   size="25px"
@@ -150,28 +138,37 @@ class OrderList extends React.Component {
           },
         },
         {
-          headerName: "Full Name",
+          headerName: "Product_Title",
           field: "orderItems",
           filter: true,
           width: 180,
           valueGetter: params => {
             if (params.data.orderItems && params.data.orderItems.length > 0) {
-              return params.data.fullName;
+              return params.data.orderItems[0].product.Product_Title;
             }
             return null;
           },
         },
-
         {
-          headerName: "Product Name",
+          headerName: "Category",
           field: "orderItems",
           filter: true,
-          width: 220,
+          width: 180,
           valueGetter: params => {
             if (params.data.orderItems && params.data.orderItems.length > 0) {
-              return params?.data?.orderItems?.map(val => {
-                return val?.product?.Product_Title;
-              });
+              return params.data.orderItems[0].product.category;
+            }
+            return null;
+          },
+        },
+        {
+          headerName: "SubCategory",
+          field: "orderItems",
+          filter: true,
+          width: 180,
+          valueGetter: params => {
+            if (params.data.orderItems && params.data.orderItems.length > 0) {
+              return params.data.orderItems[0].product.SubCategory;
             }
             return null;
           },
@@ -225,84 +222,84 @@ class OrderList extends React.Component {
           },
         },
 
-        // {
-        //   headerName: "Country",
-        //   field: "country",
-        //   filter: true,
-        //   width: 200,
-        //   cellRendererFramework: params => {
-        //     return (
-        //       <div>
-        //         <span>{params.data?.country}</span>
-        //       </div>
-        //     );
-        //   },
-        // },
-        // {
-        //   headerName: "State",
-        //   field: "state",
-        //   filter: true,
-        //   width: 200,
-        //   cellRendererFramework: params => {
-        //     return (
-        //       <div>
-        //         <span>{params.data?.state}</span>
-        //       </div>
-        //     );
-        //   },
-        // },
-        // {
-        //   headerName: "City",
-        //   field: "city",
-        //   filter: true,
-        //   width: 200,
-        //   cellRendererFramework: params => {
-        //     return (
-        //       <div>
-        //         <span>{params.data?.city}</span>
-        //       </div>
-        //     );
-        //   },
-        // },
-        // {
-        //   headerName: "MobileNo",
-        //   field: "MobileNo",
-        //   filter: true,
-        //   width: 150,
-        //   cellRendererFramework: params => {
-        //     return (
-        //       <div>
-        //         <span>{params.data?.MobileNo}</span>
-        //       </div>
-        //     );
-        //   },
-        // },
-        // {
-        //   headerName: "Discount",
-        //   field: "discount",
-        //   filter: true,
-        //   width: 200,
-        //   cellRendererFramework: params => {
-        //     return (
-        //       <div>
-        //         <span>{params.data?.discount}</span>
-        //       </div>
-        //     );
-        //   },
-        // },
-        // {
-        //   headerName: "GrandTotal",
-        //   field: "grandTotal",
-        //   filter: true,
-        //   width: 200,
-        //   cellRendererFramework: params => {
-        //     return (
-        //       <div>
-        //         <span>{params.data?.grandTotal}</span>
-        //       </div>
-        //     );
-        //   },
-        // },
+        {
+          headerName: "Country",
+          field: "country",
+          filter: true,
+          width: 200,
+          cellRendererFramework: params => {
+            return (
+              <div>
+                <span>{params.data?.country}</span>
+              </div>
+            );
+          },
+        },
+        {
+          headerName: "State",
+          field: "state",
+          filter: true,
+          width: 200,
+          cellRendererFramework: params => {
+            return (
+              <div>
+                <span>{params.data?.state}</span>
+              </div>
+            );
+          },
+        },
+        {
+          headerName: "City",
+          field: "city",
+          filter: true,
+          width: 200,
+          cellRendererFramework: params => {
+            return (
+              <div>
+                <span>{params.data?.city}</span>
+              </div>
+            );
+          },
+        },
+        {
+          headerName: "MobileNo",
+          field: "MobileNo",
+          filter: true,
+          width: 150,
+          cellRendererFramework: params => {
+            return (
+              <div>
+                <span>{params.data?.MobileNo}</span>
+              </div>
+            );
+          },
+        },
+        {
+          headerName: "Discount",
+          field: "discount",
+          filter: true,
+          width: 200,
+          cellRendererFramework: params => {
+            return (
+              <div>
+                <span>{params.data?.discount}</span>
+              </div>
+            );
+          },
+        },
+        {
+          headerName: "GrandTotal",
+          field: "grandTotal",
+          filter: true,
+          width: 200,
+          cellRendererFramework: params => {
+            return (
+              <div>
+                <span>{params.data?.grandTotal}</span>
+              </div>
+            );
+          },
+        },
 
         {
           headerName: "Status",
@@ -314,15 +311,7 @@ class OrderList extends React.Component {
               <div className="badge badge-pill badge-success">
                 {params.data.status}
               </div>
-            ) : params.value === "pending" ? (
-              <div className="badge badge-pill badge-warning">
-                {params.data.status}
-              </div>
-            ) : (
-              <div className="badge badge-pill badge-success">
-                {params.data.status}
-              </div>
-            );
+            ) : null;
           },
         },
       ],
@@ -355,8 +344,10 @@ class OrderList extends React.Component {
 
     await createOrderhistoryview()
       .then(res => {
-        console.log(res?.orderHistory);
-        this.setState({ rowData: res?.orderHistory });
+        const ComplteStatus = res?.orderHistory?.filter(
+          ele => ele.status == "completed"
+        );
+        this.setState({ rowData: ComplteStatus });
         this.setState({ AllcolumnDefs: this.state.columnDefs });
         this.setState({ SelectedCols: this.state.columnDefs });
 
@@ -379,7 +370,6 @@ class OrderList extends React.Component {
   };
 
   runthisfunction(id) {
-    debugger;
     swal("Warning", "Sure You Want to Delete it", {
       buttons: {
         cancel: "cancel",
@@ -489,6 +479,8 @@ class OrderList extends React.Component {
     }
   };
   processCell = params => {
+    // console.log(params);
+    // Customize cell content as needed
     return params.value;
   };
 
@@ -588,6 +580,10 @@ class OrderList extends React.Component {
         });
 
         xmlString += "</root>";
+
+        // setXmlData(xmlString);
+
+        // Create a download link
         const blob = new Blob([xmlString], { type: "text/xml" });
         const link = document.createElement("a");
         link.href = URL.createObjectURL(blob);
@@ -662,8 +658,6 @@ class OrderList extends React.Component {
                   </Button>
                 </div>
               </Col>
-
-              {/* <EditAccount EditOneData={this.state.EditOneData} /> */}
             </Row>
           ) : (
             <>
@@ -683,7 +677,6 @@ class OrderList extends React.Component {
                         </Button>
                       </div>
                     </Col>
-                    {/* <ViewAccount ViewOneData={this.state.ViewOneData} /> */}
                   </Row>
                 </>
               ) : (
@@ -692,7 +685,7 @@ class OrderList extends React.Component {
                     <Card>
                       <Row className="m-2">
                         <Col>
-                          <h1 className="float-left">Order List</h1>
+                          <h1 className="float-left">Confirmed Order List</h1>
                         </Col>
                         <Col>
                           <span className="mx-1">
@@ -764,24 +757,6 @@ class OrderList extends React.Component {
                               )}
                             </div>
                           </span>
-                          <span>
-                            <Route
-                              render={({ history }) => (
-                                <Badge
-                                  style={{ cursor: "pointer" }}
-                                  className="float-right mr-1"
-                                  color="primary"
-                                  onClick={() =>
-                                    history.push(
-                                      "/app/softnumen/order/createorder"
-                                    )
-                                  }
-                                >
-                                  <FaPlus size={15} /> Create Order
-                                </Badge>
-                              )}
-                            />
-                          </span>
                         </Col>
                       </Row>
                       <CardBody>
@@ -794,15 +769,15 @@ class OrderList extends React.Component {
                                     {this.gridApi
                                       ? this.state.currenPageSize
                                       : "" * this.state.getPageSize -
-                                        (this.state.getPageSize - 1)}{" "}
-                                    -{" "}
+                                        (this.state.getPageSize - 1)}
+                                    -
                                     {this.state.rowData.length -
                                       this.state.currenPageSize *
                                         this.state.getPageSize >
                                     0
                                       ? this.state.currenPageSize *
                                         this.state.getPageSize
-                                      : this.state.rowData.length}{" "}
+                                      : this.state.rowData.length}
                                     of {this.state.rowData.length}
                                     <ChevronDown className="ml-50" size={15} />
                                   </DropdownToggle>
@@ -866,13 +841,17 @@ class OrderList extends React.Component {
                                   animateRows={true}
                                   floatingFilter={false}
                                   pagination={true}
+                                  rowHeight={38}
+                                  // paginationTop={true}
+                                  // paginationBottom={false}
+                                  // paginateChildRows={true}
                                   paginationPageSize={
                                     this.state.paginationPageSize
                                   }
                                   pivotPanelShow="always"
                                   enableRtl={context.state.direction === "rtl"}
-                                  ref={this.gridRef} // Attach the ref to the grid
-                                  domLayout="autoHeight" // Adjust layout as needed
+                                  ref={this.gridRef}
+                                  domLayout="autoHeight"
                                 />
                               )}
                             </ContextLayout.Consumer>
@@ -994,6 +973,17 @@ class OrderList extends React.Component {
                                               SelectedcolumnDefs: SelectedCols, // Update the state with the modified array
                                             });
                                           }
+                                          // const delindex =
+                                          //   SelectedCols.findIndex(
+                                          //     (element) =>
+                                          //       element?.headerName ==
+                                          //       ele?.headerName
+                                          //   );
+
+                                          // SelectedCols?.splice(delindex, 1);
+                                          // this.setState({
+                                          //   SelectedcolumnDefs: SelectedCols,
+                                          // });
                                         }}
                                         style={{ cursor: "pointer" }}
                                         size="25px"
@@ -1035,18 +1025,9 @@ class OrderList extends React.Component {
             <Row>
               <Col>
                 <div className="d-flex justify-content-center">
-                  {/* <Button onClick={this.HandleSetVisibleField} color="primary">
+                  <Button onClick={this.HandleSetVisibleField} color="primary">
                     Submit
-                  </Button> */}
-
-                  <Badge
-                    style={{ cursor: "pointer" }}
-                    className=""
-                    color="primary"
-                    onClick={this.HandleSetVisibleField}
-                  >
-                    Submit
-                  </Badge>
+                  </Button>
                 </div>
               </Col>
             </Row>
@@ -1072,4 +1053,4 @@ class OrderList extends React.Component {
     );
   }
 }
-export default OrderList;
+export default CompleteOrder;

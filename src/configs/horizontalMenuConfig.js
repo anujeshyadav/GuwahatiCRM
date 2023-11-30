@@ -115,7 +115,7 @@ const horizontalMenuConfig = [
         type: "item",
         icon: <FaCircle size={8} />,
         permissions: ["admin", "editor"],
-        navLink: "/app/softNumen/order/OrderSearch",
+        navLink: "/app/softnumen/order/pendingOrder",
       },
       {
         id: "CompleteOrder",
@@ -123,7 +123,7 @@ const horizontalMenuConfig = [
         type: "item",
         icon: <FaCircle size={8} />,
         permissions: ["admin", "editor"],
-        navLink: "/app/softNumen/order/OrderSearch",
+        navLink: "/app/softNumen/order/confirmedOrder",
       },
 
       {
@@ -411,7 +411,7 @@ const horizontalMenuConfig = [
         permissions: ["admin", "editor"],
         navLink: "/app/SoftNumen/ticket/TicketSearch",
       },
-      
+
       {
         id: "TargetAchieved",
         title: "Auto Target Creation",

@@ -38,19 +38,19 @@ export class CustomerDetails extends Component {
     };
   }
 
-  onChangeHandler = (event) => {
+  onChangeHandler = event => {
     this.setState({ selectedFile: event.target.files[0] });
     this.setState({ selectedName: event.target.files[0].name });
     console.log(event.target.files[0]);
   };
 
-  changeHandler1 = (e) => {
+  changeHandler1 = e => {
     this.setState({ status: e.target.value });
   };
-  changeHandler = (e) => {
+  changeHandler = e => {
     this.setState({ [e.target.name]: e.target.value });
   };
-  submitHandler = (e) => {
+  submitHandler = e => {
     e.preventDefault();
     const data = new FormData();
     data.append("name", this.state.name);
