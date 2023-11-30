@@ -60,7 +60,7 @@ class Login extends React.Component {
     };
     window.addEventListener("popstate", this.popstateHandler);
   }
-  handlechange = (e) => {
+  handlechange = e => {
     e.preventDefault();
     this.setState({ [e.target.name]: e.target.value });
   };
@@ -70,17 +70,17 @@ class Login extends React.Component {
   allowBackButton() {
     window.removeEventListener("popstate", this.popstateHandler);
   }
-  loginOTPHandler = async (e) => {
+  loginOTPHandler = async e => {
     e.preventDefault();
     if (this.state.emailotp?.length == 6) {
       let Opt = { otp: this.state.emailotp, username: this.state.email };
 
       await UserOTPVerify(Opt)
-        .then((response) => {
+        .then(response => {
           let basicinfor = response?.user;
           let newinfor = response?.user?.user1;
           let allinfor = { ...basicinfor, ...newinfor };
-console.log(response?.user?.token)
+          console.log(response?.user?.token);
           if (response?.status) {
             this.context?.setUserInformatio(allinfor);
             localStorage.setItem("userData", JSON.stringify(allinfor));
@@ -101,7 +101,7 @@ console.log(response?.user?.token)
                   ok: { text: "Ok", value: "ok" },
                 },
               }
-            ).then((value) => {
+            ).then(value => {
               switch (value) {
                 case "ok":
                   break;
@@ -112,7 +112,7 @@ console.log(response?.user?.token)
             swal("Something Went Wrong");
           }
         })
-        .catch((err) => {
+        .catch(err => {
           console.log(err.response);
           swal(
             `Error`,
@@ -134,12 +134,12 @@ console.log(response?.user?.token)
     }
   };
 
-  loginHandler = async (e) => {
+  loginHandler = async e => {
     e.preventDefault();
     let data = { email: this.state.email, password: this.state.password };
     console.log(data);
     await UserLogin(data)
-      .then((res) => {
+      .then(res => {
         this.props.history.push("/dashboard");
         console.log(res?.user);
         let basicinfor = res?.user;
@@ -180,7 +180,7 @@ console.log(response?.user?.token)
         //   this.props.history.push("/dashboard");
         // }
       })
-      .catch((err) => {
+      .catch(err => {
         console.log(err.response?.data.message);
         // let Incorrectpassword =
         //   err.response?.data.message == "Incorrect password";
@@ -248,19 +248,19 @@ console.log(response?.user?.token)
     //     }
     //   });
   };
-  changepassword = (e) => {
+  changepassword = e => {
     e.preventDefault();
     let formdata = new FormData();
     formdata.append("email", this.state.email);
     formdata.append("base_url", "this.state.password");
     axiosConfig
       .post("/forgetPasswordEmailVerify", formdata)
-      .then((res) => {
+      .then(res => {
         console.log(res);
         this.setState({ resetpassword: false });
         swal("Email has been sent to Your Mail id", "Please Check and verify");
       })
-      .catch((err) => {
+      .catch(err => {
         console.log(err);
       });
   };
@@ -354,12 +354,12 @@ console.log(response?.user?.token)
                                         className="otpinputtype"
                                         value={this.state.emailotp}
                                         name="emailotp"
-                                        onChange={(otp) =>
+                                        onChange={otp =>
                                           this.setState({ emailotp: otp })
                                         }
                                         numInputs={6}
                                         renderSeparator={<span>-</span>}
-                                        renderInput={(props) => (
+                                        renderInput={props => (
                                           <input
                                             className="inputs"
                                             {...props}
@@ -379,12 +379,12 @@ console.log(response?.user?.token)
                                         className="otpinputtype"
                                         value={this.state.whatsappotp}
                                         name="whatsappotp"
-                                        onChange={(otp) =>
+                                        onChange={otp =>
                                           this.setState({ whatsappotp: otp })
                                         }
                                         numInputs={6}
                                         renderSeparator={<span>-</span>}
-                                        renderInput={(props) => (
+                                        renderInput={props => (
                                           <input
                                             className="inputs"
                                             {...props}
@@ -402,12 +402,12 @@ console.log(response?.user?.token)
                                         className="otpinputtype"
                                         value={this.state.smsotp}
                                         name="smsotp"
-                                        onChange={(otp) =>
+                                        onChange={otp =>
                                           this.setState({ smsotp: otp })
                                         }
                                         numInputs={6}
                                         renderSeparator={<span>-</span>}
-                                        renderInput={(props) => (
+                                        renderInput={props => (
                                           <input
                                             className="inputs"
                                             {...props}
@@ -507,27 +507,30 @@ console.log(response?.user?.token)
                                       >
                                         {this.state.type == "text" ? (
                                           <>
-                                            {" "}
                                             <AiFillEyeInvisible
-                                              onClick={(e) => {
+                                              onClick={e => {
                                                 e.preventDefault();
                                                 this.setState({
                                                   type: "password",
                                                 });
                                               }}
                                               size="25px"
-                                              color="blue"
+                                              style={{
+                                                color: "#00c0ef",
+                                              }}
                                             />
                                           </>
                                         ) : (
                                           <>
                                             <AiFillEye
-                                              onClick={(e) => {
+                                              onClick={e => {
                                                 e.preventDefault();
                                                 this.setState({ type: "text" });
                                               }}
                                               size="25px"
-                                              color="blue"
+                                              style={{
+                                                color: "#00c0ef",
+                                              }}
                                             />
                                           </>
                                         )}
@@ -585,7 +588,7 @@ console.log(response?.user?.token)
                                   <Button.Ripple
                                     color="primary"
                                     outline
-                                    onClick={(e) => {
+                                    onClick={e => {
                                       e.preventDefault();
                                       this.setState({ resetpassword: true });
                                     }}
@@ -623,7 +626,7 @@ console.log(response?.user?.token)
     );
   }
 }
-const mapStateToProps = (state) => {
+const mapStateToProps = state => {
   return {
     values: state.auth.login,
   };

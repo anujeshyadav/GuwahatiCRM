@@ -59,7 +59,7 @@ import UserContext from "../../../../context/Context";
 
 const SelectedColums = [];
 
-class OrderList extends React.Component {
+class PendingOrder extends React.Component {
   static contextType = UserContext;
   constructor(props) {
     super(props);
@@ -385,335 +385,6 @@ class OrderList extends React.Component {
             ) : null;
           },
         },
-        // {
-        //   headerName: "Product Assigned",
-        //   field: "Product Name",
-        //   filter: "agSetColumnFilter",
-        //   width: 200,
-        //   cellRendererFramework: params => {
-        //     return (
-        //       <div className="d-flex align-items-center cursor-pointer">
-        //         <div className="">
-        //           <span>
-        //             {params?.data?.products?.length &&
-        //               params?.data?.products?.length}{" "}
-        //             Product
-        //           </span>
-        //    </div>
-        //       </div>
-        //     );
-        //   },
-        // },
-
-        // {
-        //   headerName: "Last Name",
-        //   field: "salesPersonId?.lastName",
-        //   filter: "agSetColumnFilter",
-        //   width: 200,
-        //   cellRendererFramework: params => {
-        //     // console.log(params.data);
-        //     return (
-        //       <div className="d-flex align-items-center cursor-pointer">
-        //         <div className="">
-        //           <span>{params.data?.salesPersonId?.lastName}</span>
-        //         </div>
-        //       </div>
-        //     );
-        //   },
-        // },
-        // {
-        //   headerName: "Target Start Date",
-        //   field: "startDate",
-        //   filter: "agSetColumnFilter",
-        //   width: 200,
-        //   cellRendererFramework: params => {
-        //     // console.log(params.data);
-        //     return (
-        //       <div className="d-flex align-items-center cursor-pointer">
-        //         <div className="">
-        //           <span>{params.data?.startDate?.split("T")[0]}</span>
-        //         </div>
-        //       </div>
-        //     );
-        //   },
-        // },
-        // {
-        //   headerName: "Target End Date",
-        //   field: "endDate",
-        //   filter: "agSetColumnFilter",
-        //   width: 200,
-        //   cellRendererFramework: params => {
-        //     // console.log(params.data);
-        //     return (
-        //       <div className="d-flex align-items-center cursor-pointer">
-        //         <div className="">
-        //           <span>{params.data?.endDate?.split("T")[0]}</span>
-        //         </div>
-        //       </div>
-        //     );
-        //   },
-        // },
-        // {
-        //   headerName: "Products",
-        //   field: "products",
-        //   filter: "agSetColumnFilter",
-        //   width: 500,
-        //   cellRendererFramework: (params) => {
-        //     return (
-        //       <div className="d-flex flex-wrap">
-        //         {params?.data?.products &&
-        //           params?.data?.products?.map((ele, i) => {
-        //             if (params.data?.products.length > 1) {
-        //               return <span key={i}>{ele?.title}, &nbsp;</span>;
-        //             } else {
-        //               return <span key={i}>{ele?.title}</span>;
-        //             }
-        //           })}
-        //       </div>
-        //     );
-        //   },
-        // },
-        // {
-        //   headerName: "Product Name",
-        //   field: "title",
-        //   filter: "agSetColumnFilter",
-        //   width: 200,
-        //   cellRendererFramework: (params) => {
-        //     return (
-        //       <div className="d-flex align-items-center cursor-pointer">
-        //         <div className="">
-        //           <span>{params.data?.title}</span>
-        //         </div>
-        //       </div>
-        //     );
-        //   },
-        // },
-        // {
-        //   headerName: "Assign To",
-        //   field: "assign_full_name",
-        //   filter: "agSetColumnFilter",
-        //   width: 150,
-        //   cellRendererFramework: (params) => {
-        //     return (
-        //       <div className="d-flex align-items-center cursor-pointer">
-        //         <div className="">
-        //           <span>{params.data?.assign_full_name}</span>
-        //         </div>
-        //       </div>
-        //     );
-        //   },
-        // },
-        // {
-        //   headerName: "Assigned By",
-        //   field: "user_full_name",
-        //   filter: "agSetColumnFilter",
-        //   width: 180,
-        //   cellRendererFramework: params => {
-        //     return (
-        //       <div className="d-flex align-items-center cursor-pointer">
-        //         <div className="">
-        //           <span>{params.data?.user_full_name}</span>
-        //         </div>
-        //       </div>
-        //     );
-        //   },
-        // },
-        // {
-        //   headerName: "Product",
-        //   field: "title",
-        //   filter: "agSetColumnFilter",
-        //   width: 150,
-        //   cellRendererFramework: (params) => {
-        //     return (
-        //       <div className="d-flex align-items-center cursor-pointer">
-        //         <div className="">
-        //           <span>{params.data?.title}</span>
-        //         </div>
-        //       </div>
-        //     );
-        //   },
-        // },
-        // {
-        //   headerName: "Assigned User",
-        //   field: "qty",
-        //   filter: "agSetColumnFilter",
-        //   width: 180,
-        //   cellRendererFramework: (params) => {
-        //     return (
-        //       <div className="d-flex align-items-center cursor-pointer">
-        //         <div className="">
-        //           <span>{params?.data?.assign_full_name}</span>
-        //         </div>
-        //       </div>
-        //     );
-        //   },
-        // },
-        // {
-        //   headerName: "CATEGORY",
-        //   field: "category_name",
-        //   filter: "agSetColumnFilter",
-        //   width: 150,
-        //   cellRendererFramework: (params) => {
-        //     return (
-        //       <div className="d-flex align-items-center cursor-pointer">
-        //         <div className="">
-        //           <span>{params.data?.category_name}</span>
-        //         </div>
-        //       </div>
-        //     );
-        //   },
-        // },
-        // {
-        //   headerName: "Description",
-        //   field: "description",
-        //   filter: "agSetColumnFilter",
-        //   width: 120,
-        //   cellRendererFramework: (params) => {
-        //     return (
-        //       <div className="d-flex align-items-center cursor-pointer">
-        //         <div className="">
-        //           <span>{ReactHtmlParser(params.data?.description)}</span>
-        //         </div>
-        //       </div>
-        //     );
-        //   },
-        // },
-        // {
-        //   headerName: "PRICE",
-        //   field: "price",
-        //   filter: "agSetColumnFilter",
-        //   width: 120,
-        //   cellRendererFramework: (params) => {
-        //     return (
-        //       <div className="d-flex align-items-center cursor-pointer">
-        //         <div className="">
-        //           <span>{params?.data?.price}</span>
-        //         </div>
-        //       </div>
-        //     );
-        //   },
-        // },
-        // {
-        //   headerName: "DiscountPrice",
-        //   field: "discountprice",
-        //   filter: "agSetColumnFilter",
-        //   width: 120,
-        //   cellRendererFramework: (params) => {
-        //     return (
-        //       <div className="d-flex align-items-center cursor-pointer">
-        //         <div className="">
-        //           <span>{params.data?.discountprice}</span>
-        //         </div>
-        //       </div>
-        //     );
-        //   },
-        // },
-        // {
-        //   headerName: "Shipping Fee",
-        //   field: "shipping_fee",
-        //   filter: "agSetColumnFilter",
-        //   width: 120,
-        //   cellRendererFramework: (params) => {
-        //     return (
-        //       <div className="d-flex align-items-center cursor-pointer">
-        //         <div className="">
-        //           <span>{params.data?.shipping_fee}</span>
-        //         </div>
-        //       </div>
-        //     );
-        //   },
-        // },
-        // {
-        //   headerName: "Tax Rate",
-        //   field: "tax_rate",
-        //   filter: "agSetColumnFilter",
-        //   width: 120,
-        //   cellRendererFramework: (params) => {
-        //     return (
-        //       <div className="d-flex align-items-center cursor-pointer">
-        //         <div className="">
-        //           <span>{params.data?.tax_rate}</span>
-        //         </div>
-        //       </div>
-        //     );
-        //   },
-        // },
-        // {
-        //   headerName: "Tags",
-        //   field: "tags",
-        //   filter: "agSetColumnFilter",
-        //   width: 120,
-        //   cellRendererFramework: (params) => {
-        //     return (
-        //       <div className="d-flex align-items-center cursor-pointer">
-        //         <div className="">
-        //           <span>{params.data?.tags}</span>
-        //         </div>
-        //       </div>
-        //     );
-        //   },
-        // },
-        // {
-        //   headerName: "STOCK",
-        //   field: "stock",
-
-        //   filter: "agSetColumnFilter",
-        //   width: 150,
-        //   cellRendererFramework: (params) => {
-        //     return (
-        //       <div className="d-flex align-items-center cursor-pointer">
-        //         <div className="">
-        //           <span>{ReactHtmlParser(params.data?.stock)}</span>
-        //         </div>
-        //       </div>
-        //     );
-        //   },
-        // },
-        // {
-        //   headerName: "Created at",
-        //   field: "createdAt",
-        //   filter: "agSetColumnFilter",
-        //   width: 200,
-        //   cellRendererFramework: params => {
-        //     return (
-        //       <div className="d-flex align-items-center cursor-pointer">
-        //         <div className="">
-        //           <span>{params.data?.createdAt?.split(" ")[0]}</span>
-        //         </div>
-        //       </div>
-        //     );
-        //   },
-        // },
-        // {
-        //   headerName: "updatedAt",
-        //   field: "updatedAt",
-        //   filter: "agSetColumnFilter",
-        //   width: 200,
-        //   cellRendererFramework: params => {
-        //     return (
-        //       <div className="d-flex align-items-center cursor-pointer">
-        //         <div className="">
-        //           <span>{params.data?.updatedAt?.split(" ")[0]}</span>
-        //         </div>
-        //       </div>
-        //     );
-        //   },
-        // },
-        // {
-        //   headerName: "SALES",
-        //   field: "pisces",
-        //   filter: "agSetColumnFilter",
-        //   width: 120,
-        //   cellRendererFramework: (params) => {
-        //     return (
-        //       <div className="d-flex align-items-center cursor-pointer">
-        //         <div className="">
-        //           <span>{ReactHtmlParser(params.data.pisces)}</span>
-        //         </div>
-        //       </div>
-        //     );
-        //   },
-        // },
       ],
     };
   }
@@ -1094,7 +765,7 @@ class OrderList extends React.Component {
                     <Card>
                       <Row className="m-2">
                         <Col>
-                          <h1 className="float-left">Order List</h1>
+                          <h1 className="float-left">Pending List</h1>
                         </Col>
                         <Col>
                           <span className="mx-1">
@@ -1165,24 +836,6 @@ class OrderList extends React.Component {
                                 </div>
                               )}
                             </div>
-                          </span>
-                          <span>
-                            <Route
-                              render={({ history }) => (
-                                <Badge
-                                  style={{ cursor: "pointer" }}
-                                  className="float-right mr-1"
-                                  color="primary"
-                                  onClick={() =>
-                                    history.push(
-                                      "/app/SoftNumen/account/CreateTarget"
-                                    )
-                                  }
-                                >
-                                  <FaPlus size={15} /> Create Order
-                                </Badge>
-                              )}
-                            />
                           </span>
                         </Col>
                       </Row>
@@ -1415,6 +1068,17 @@ class OrderList extends React.Component {
                                               SelectedcolumnDefs: SelectedCols, // Update the state with the modified array
                                             });
                                           }
+                                          // const delindex =
+                                          //   SelectedCols.findIndex(
+                                          //     (element) =>
+                                          //       element?.headerName ==
+                                          //       ele?.headerName
+                                          //   );
+
+                                          // SelectedCols?.splice(delindex, 1);
+                                          // this.setState({
+                                          //   SelectedcolumnDefs: SelectedCols,
+                                          // });
                                         }}
                                         style={{ cursor: "pointer" }}
                                         size="25px"
@@ -1456,18 +1120,9 @@ class OrderList extends React.Component {
             <Row>
               <Col>
                 <div className="d-flex justify-content-center">
-                  {/* <Button onClick={this.HandleSetVisibleField} color="primary">
+                  <Button onClick={this.HandleSetVisibleField} color="primary">
                     Submit
-                  </Button> */}
-
-                  <Badge
-                    style={{ cursor: "pointer" }}
-                    className=""
-                    color="primary"
-                    onClick={this.HandleSetVisibleField}
-                  >
-                    Submit
-                  </Badge>
+                  </Button>
                 </div>
               </Col>
             </Row>
@@ -1493,4 +1148,4 @@ class OrderList extends React.Component {
     );
   }
 }
-export default OrderList;
+export default PendingOrder;

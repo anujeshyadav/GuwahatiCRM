@@ -233,8 +233,10 @@ const ViewAll = lazy(() => import("./views/apps/freshlist/order/ViewAll"));
 const ViewPending = lazy(() =>
   import("./views/apps/freshlist/order/ViewPending")
 );
-const Pending = lazy(() => import("./views/apps/freshlist/order/Pending"));
-const Confirmed = lazy(() => import("./views/apps/freshlist/order/Confirmed"));
+// const Pending = lazy(() => import("./views/apps/freshlist/order/Pending"));
+const ConfirmedOrder = lazy(() =>
+  import("./views/apps/freshlist/order/CompleteOrder")
+);
 const ViewConfirmed = lazy(() =>
   import("./views/apps/freshlist/order/ViewConfirmed")
 );
@@ -478,9 +480,10 @@ const SupplierWarranty = lazy(() =>
 const CreateOrder = lazy(() =>
   import("./views/apps/freshlist/order/CreateOrder")
 );
-const OrderList = lazy(() =>
-  import("./views/apps/freshlist/order/OrderList")
+const PendingOrder = lazy(() =>
+  import("./views/apps/freshlist/order/PendingOrder")
 );
+const OrderList = lazy(() => import("./views/apps/freshlist/order/OrderList"));
 const PlaceOrder = lazy(() =>
   import("./views/apps/freshlist/order/PlaceOrder")
 );
@@ -1118,10 +1121,10 @@ const accessControl = lazy(() =>
 const RouteConfig = ({ component: Component, fullLayout, ...rest }) => (
   <Route
     {...rest}
-    render={(props) => {
+    render={props => {
       return (
         <ContextLayout.Consumer>
-          {(context) => {
+          {context => {
             let LayoutTag =
               fullLayout === true
                 ? context.fullLayout
@@ -1141,7 +1144,7 @@ const RouteConfig = ({ component: Component, fullLayout, ...rest }) => (
     }}
   />
 );
-const mapStateToProps = (state) => {
+const mapStateToProps = state => {
   return {
     user: state.auth.login.userRole,
   };
@@ -1393,10 +1396,14 @@ class AppRouter extends React.Component {
             component={CreateOrder}
           />
           <AppRoute
+            path="/app/softnumen/order/pendingOrder"
+            component={PendingOrder}
+          />
+          <AppRoute
             path="/app/softnumen/order/orderList"
             component={OrderList}
           />
-            <AppRoute
+          <AppRoute
             path="/app/softNumen/order/placeOrder"
             component={PlaceOrder}
           />
@@ -1442,14 +1449,14 @@ class AppRouter extends React.Component {
             path="/app/freshlist/order/viewAll/:id"
             component={ViewAll}
           />
-          <AppRoute path="/app/softNumen/order/pending" component={Pending} />
+          {/* <AppRoute path="/app/softNumen/order/pending" component={Pending} /> */}
           <AppRoute
             path="/app/freshlist/order/viewPending"
             component={ViewPending}
           />
           <AppRoute
-            path="/app/softNumen/order/received"
-            component={Confirmed}
+            path="/app/softNumen/order/confirmedOrder"
+            component={ConfirmedOrder}
           />
           <AppRoute
             path="/app/freshlist/order/{viewConfirmed}"
