@@ -15,6 +15,8 @@ import App from "./App";
 import State from "./context/State";
 
 //const LazyApp = lazy(() => import("./App"));
+ 
+// Active for guwahati
 
 // configureDatabase()
 ReactDOM.render(

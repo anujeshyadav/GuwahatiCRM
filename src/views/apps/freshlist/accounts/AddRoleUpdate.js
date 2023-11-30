@@ -215,14 +215,16 @@ export default function AddRoleNew(args) {
               <section className="mt-5 container">
                 <Row className="gy-0 container">
                   {Roles &&
-                    Roles?.map((value, index) => (
+                    Roles?.map((value, index) =>{
+                      console.log("value",value?.TabName)
+                      return(
                       <Col
                         key={index}
                         style={{
                           borderRadius: "12px",
                           // background: "#e5dfdf26",
                           height: `${
-                            show && SelectedIndex === index ? "400px" : "40px"
+                            show && SelectedIndex === index ? "auto" : "40px"
                           }`,
                         }}
                         className="customcol gy-0 mb-2 "
@@ -328,7 +330,8 @@ export default function AddRoleNew(args) {
                           </>
                         ) : null}
                       </Col>
-                    ))}
+                    )
+                    } )}
                 </Row>
                 <Row>
                   <Col>

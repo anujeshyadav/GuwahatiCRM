@@ -322,9 +322,12 @@ const ThemeNavbar = (props) => {
                 />
               </div>
               {props.horizontal ? (
-                <div className="logo d-flex align-items-center">
+                <>
+
                   <HorizontalMenu />
-                </div>
+                {/* <div  className="logo d-flex align-items-center">
+                </div> */}
+                </>
               ) : null}
               {/* working navbar */}
               <>
