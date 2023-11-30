@@ -28,6 +28,7 @@ import "../../../../../src/layouts/assets/scss/pages/users.scss";
 import {
   CreateAccountSave,
   CreateAccountView,
+  Get_RoleList,
 } from "../../../../ApiEndPoint/ApiCalling";
 import { BiEnvelope } from "react-icons/bi";
 import { FcPhoneAndroid } from "react-icons/fc";
@@ -43,7 +44,7 @@ const CreateAccount = () => {
   const [States, setState] = useState({});
   const [Cities, setCities] = useState({});
   const [formData, setFormData] = useState({});
-  const [dropdownValue, setdropdownValue] = useState({});
+  const [dropdownValue, setdropdownValue] = useState([]);
   const [index, setindex] = useState("");
   const [error, setError] = useState("");
   const [permissions, setpermissions] = useState({});
@@ -100,6 +101,12 @@ const CreateAccount = () => {
     console.log(formData);
   }, [formData]);
   useEffect(() => {
+    Get_RoleList().then((res)=>{
+      // console.log(res?.Role)
+      setdropdownValue(res?.Role)
+    }).catch((err)=>{
+      console.log(err)
+    })
     CreateAccountView()
       .then((res) => {
         const jsonData = xmlJs.xml2json(res.data, { compact: true, spaces: 2 });
@@ -159,7 +166,7 @@ const CreateAccount = () => {
                       {/* <FaPlus size={15} /> Create User */}
                     </Button>
                   )}
-                />
+                />        
               </div>
             </Col>
           </Row>
@@ -168,43 +175,36 @@ const CreateAccount = () => {
           <CardBody>
             <Form className="m-1" onSubmit={submitHandler}>
               <Row className="mb-2">
-                {/* <Col lg="6" md="6">
+                <Col lg="4" md="4">
                   <FormGroup>
-                    <Label>
-                      {
-                        dropdownValue.CreateAccount?.MyDropdown?.dropdown?.label
-                          ?._text
-                      }
-                    </Label>
-                    <CustomInput
-                      required
-                      type="select"
-                      name={
-                        dropdownValue.CreateAccount?.MyDropdown?.dropdown?.name
-                          ?._text
-                      }
-                      value={
-                        formData[
-                          dropdownValue.CreateAccount?.MyDropdown?.dropdown
-                            ?.name?._text
-                        ]
-                      }
-                      onChange={handleInputChange}
-                    >
-                      <option value="">--Select Role--</option>
-                      {dropdownValue?.CreateAccount?.MyDropdown?.dropdown?.option.map(
-                        (option, index) => (
-                          <option
-                            key={index}
-                            value={option?._attributes?.value}
-                          >
-                            {option?._attributes?.value}
-                          </option>
-                        )
-                      )}
-                    </CustomInput>
+                 <Label>Role List</Label>
+                 <CustomInput
+                 required
+                 type="select"
+                 name="rolename"
+                 value={formData["rolename"]}
+                 onChange={(e)=>{  
+                  setFormData({
+                  ...formData,
+                  ["rolename"]: e.target.value
+          })}}
+                 >
+                  <option>
+                    --select Role--
+                  </option>
+                  <option>
+                   A
+                  </option>
+                  <option>
+                   B
+                  </option>
+                  <option>
+                    C
+                  </option>
+                 </CustomInput>
+
                   </FormGroup>
-                </Col> */}
+                </Col>
 
                 {CreatAccountView &&
                   CreatAccountView?.map((ele, i) => {

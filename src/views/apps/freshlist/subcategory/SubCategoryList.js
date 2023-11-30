@@ -22,7 +22,7 @@ import { history } from "../../../../history";
 import "../../../../assets/scss/plugins/tables/_agGridStyleOverride.scss";
 import "../../../../assets/scss/pages/users.scss";
 import { Route } from "react-router-dom";
-import { AllCategoryList } from "../../../../ApiEndPoint/ApiCalling";
+import { AllCategoryList, Delete_SubCategory } from "../../../../ApiEndPoint/ApiCalling";
 import swal from "sweetalert";
 
 class SubCategoryList extends React.Component {
@@ -59,7 +59,7 @@ class SubCategoryList extends React.Component {
               {params.data?.image && (
                 <img
                   className="rounded-circle mr-50"
-                  src={`http://65.0.96.247:8000/Images/${params.data?.image}`}
+                  src={`http://64.227.162.41:5000/Images/${params.data?.image}`}
                   alt="user avatar"
                   height="40"
                   width="40"
@@ -163,7 +163,7 @@ class SubCategoryList extends React.Component {
                     color="blue"
                     onClick={() =>
                       history.push(
-                        `/app/freshlist/subcategory/editSubCategory/${params.data._id}`
+                        `/app/freshlist/subcategory/editSubCategory/${this.state.category}/${params.data._id}`
                       )
                     }
                   />
@@ -176,9 +176,8 @@ class SubCategoryList extends React.Component {
                     size="25px"
                     color="red"
                     onClick={() => {
-                      let selectedData = this.gridApi.getSelectedRows();
+
                       this.runthisfunction(params.data._id);
-                      this.gridApi.updateRowData({ remove: selectedData });
                     }}
                   />
                 )}
@@ -221,14 +220,16 @@ class SubCategoryList extends React.Component {
   }
   async runthisfunction(id) {
     console.log(id);
-    await axiosConfig.delete(`/admin/del_subcategory/${id}`).then(
-      (response) => {
-        console.log(response);
-      },
-      (error) => {
-        console.log(error);
-      }
-    );
+
+    Delete_SubCategory(this.state.category,id).then((res)=>{
+     let selectedData = this.gridApi.getSelectedRows();
+      this.gridApi.updateRowData({ remove: selectedData });
+      swal("SubCategory Deleted Successfully")
+    }).catch((err)=>{
+      console.log(err)
+      swal("Something went wrong")
+    })
+  
   }
   onGridReady = (params) => {
     this.gridApi = params.api;
@@ -292,7 +293,7 @@ class SubCategoryList extends React.Component {
                   </Button>
                 </Col> */}
               <Col lg="3" md="3" className="mb-2">
-                <Label>Category *</Label>
+                <Label> Select Category *</Label>
                 <CustomInput
                   required
                   type="select"
