@@ -35,7 +35,12 @@ class HorizontalSidebar extends React.Component {
     };
   }
 
+<<<<<<< HEAD
   openDropdown = id => {
+=======
+  openDropdown = (id) => {
+    // console.log(id);
+>>>>>>> 26eb253bca4ace1fe95132f3a5c9f1abb5958724
     // document.getElementById("showlist").className="show nav-link";
     // console.log(openDrop.className)
     // document.getElementById("showlist").className = "show nav-link dropdown";

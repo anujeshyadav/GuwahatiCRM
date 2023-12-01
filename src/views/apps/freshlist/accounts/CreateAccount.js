@@ -100,30 +100,31 @@ const CreateAccount = () => {
   useEffect(() => {
     console.log(formData);
   }, [formData]);
+
   useEffect(() => {
     Get_RoleList().then((res)=>{
-      // console.log(res?.Role)
       setdropdownValue(res?.Role)
     }).catch((err)=>{
       console.log(err)
+      swal("Roles List Not found")
     })
     CreateAccountView()
       .then((res) => {
         const jsonData = xmlJs.xml2json(res.data, { compact: true, spaces: 2 });
-        // console.log(JSON.parse(jsonData)?.CreateUser?.input);
-
         setCreatAccountView(JSON.parse(jsonData)?.CreateUser?.input);
-
         setdropdownValue(JSON.parse(jsonData));
       })
       .catch((err) => {
         console.log(err);
       });
+      let userdata=JSON.parse(localStorage.getItem("userData"))
+      console.log(userdata?._id)
+      formData["created_by"]=userdata?._id
   }, []);
 
   const submitHandler = (e) => {
     e.preventDefault();
-    // console.log(formData);
+  
     if (error) {
       swal("Error occured while Entering Details");
     } else {
@@ -192,15 +193,15 @@ const CreateAccount = () => {
                   <option>
                     --select Role--
                   </option>
-                  <option>
-                   A
+                 {dropdownValue && dropdownValue?.length && dropdownValue?.map((ele,i)=>{
+                  return(
+                    
+                  <option value={ele?._id}>
+                   {ele?.roleName}
                   </option>
-                  <option>
-                   B
-                  </option>
-                  <option>
-                    C
-                  </option>
+                  )
+                 })}
+                
                  </CustomInput>
 
                   </FormGroup>
@@ -261,7 +262,6 @@ const CreateAccount = () => {
                       );
                     } else if (!!ele?.library) {
                       if (ele?.label._text?.includes("ountry")) {
-                        console.log(ele);
                         return (
                           <Col key={i} lg="4" md="4" sm="12">
                             <FormGroup>

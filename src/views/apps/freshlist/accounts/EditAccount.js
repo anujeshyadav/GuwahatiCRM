@@ -28,6 +28,7 @@ import {
   CreateAccountSave,
   CreateAccountUpdate,
   CreateAccountView,
+  Get_RoleList,
 } from "../../../../ApiEndPoint/ApiCalling";
 import { BiEnvelope } from "react-icons/bi";
 import { FcPhoneAndroid } from "react-icons/fc";
@@ -101,6 +102,12 @@ const EditAccount = ({ EditOneData }) => {
   }, [formData]);
   useEffect(() => {
     setFormData(EditOneData);
+    Get_RoleList().then((res)=>{
+      setdropdownValue(res?.Role)
+    }).catch((err)=>{
+      console.log(err)
+      swal("Roles List Not found")
+    })
     if (EditOneData?.Country) {
       let countryselected = Country?.getAllCountries()?.filter(
         (ele, i) => ele?.name == EditOneData?.Country
@@ -187,7 +194,7 @@ const EditAccount = ({ EditOneData }) => {
           </Row>
           {/* <hr /> */}
 
-          <CardBody>
+        
             <Form className="m-1" onSubmit={submitHandler}>
               <Row className="mb-2">
                 {/* <Col lg="6" md="6">
@@ -227,7 +234,36 @@ const EditAccount = ({ EditOneData }) => {
                     </CustomInput>
                   </FormGroup>
                 </Col> */}
+                <Col lg="4" md="4">
+                  <FormGroup>
+                 <Label>Role List</Label>
+                 <CustomInput
+                 required
+                 type="select"
+                 name="rolename"
+                 value={formData["rolename"]}
+                 onChange={(e)=>{  
+                  setFormData({
+                  ...formData,
+                  ["rolename"]: e.target.value
+          })}}
+                 >
+                  <option>
+                    --select Role--
+                  </option>
+                 {dropdownValue && dropdownValue?.length && dropdownValue?.map((ele,i)=>{
+                  return(
+                    
+                  <option value={ele?._id}>
+                   {ele?.roleName}
+                  </option>
+                  )
+                 })}
+                
+                 </CustomInput>
 
+                  </FormGroup>
+                </Col>
                 {CreatAccountView &&
                   CreatAccountView?.map((ele, i) => {
                     {
@@ -683,7 +719,7 @@ const EditAccount = ({ EditOneData }) => {
                 </Button.Ripple>
               </Row>
             </Form>
-          </CardBody>
+          
         </Card>
       </div>
     </div>

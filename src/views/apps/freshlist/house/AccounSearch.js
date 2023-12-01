@@ -108,7 +108,7 @@ class AccounSearch extends React.Component {
         var adddropdown = [];
         const jsonData = xmlJs.xml2json(res.data, { compact: true, spaces: 2 });
         console.log(JSON.parse(jsonData)?.CreateUser);
-
+        debugger;
         const inputs = JSON.parse(jsonData)?.CreateUser?.input?.map((ele) => {
           return {
             headerName: ele?.label._text,
@@ -187,7 +187,7 @@ class AccounSearch extends React.Component {
                         size="25px"
                         color="green"
                         onClick={() => {
-                          this.handleChangeEdit(params.data, "readonly");
+                          this.handleChangeEdit(params?.data, "readonly");
                         }}
                       />
                     )}
@@ -199,7 +199,7 @@ class AccounSearch extends React.Component {
                         size="25px"
                         color="blue"
                         onClick={() => {
-                          this.handleChangeEdit(params.data, "Editable");
+                          this.handleChangeEdit(params?.data, "Editable");
                         }}
                       />
                     )}
@@ -239,6 +239,37 @@ class AccounSearch extends React.Component {
             },
           },
 
+          {
+            headerName: "Created by",
+            field: "created_by",
+            filter: true,
+            sortable: true,
+            cellRendererFramework: (params) => {
+              return (
+                <>
+                  <div className="actions cursor-pointer">
+                    <span>{params?.data?.created_by}</span>
+                  </div>
+                </>
+              );
+            },
+          },
+          {
+            headerName: "Rolename",
+            field: "rolename.roleName",
+            filter: true,
+            sortable: true,
+            cellRendererFramework: (params) => {
+              console.log(params.data);
+              return (
+                <>
+                  <div className="actions cursor-pointer">
+                    <span>{params?.data?.rolename?.roleName}</span>
+                  </div>
+                </>
+              );
+            },
+          },
           ...myHeadings,
           {
             headerName: "Created date",
@@ -265,7 +296,7 @@ class AccounSearch extends React.Component {
                 <>
                   <div className="actions cursor-pointer">
                     <div className="actions cursor-pointer">
-                      <span>{params?.data?.createdAt}</span>
+                      <span>{params?.data?.updatedAt}</span>
                     </div>
                   </div>
                 </>
@@ -294,12 +325,15 @@ class AccounSearch extends React.Component {
     await CreateAccountList()
       .then((res) => {
         let value = res?.User;
-        this.setState({ rowData: value });
+        if (value.length) {
+          this.setState({ rowData: value });
+        }
       })
       .catch((err) => {
         console.log(err);
       });
   }
+
   toggleDropdown = () => {
     this.setState((prevState) => ({ isOpen: !prevState.isOpen }));
   };
@@ -530,7 +564,6 @@ class AccounSearch extends React.Component {
 
   HandleSetVisibleField = (e) => {
     e.preventDefault();
-    debugger;
     this.gridApi.setColumnDefs(this.state.SelectedcolumnDefs);
     this.setState({ columnDefs: this.state.SelectedcolumnDefs });
     this.setState({ SelectedcolumnDefs: this.state.SelectedcolumnDefs });
@@ -589,8 +622,7 @@ class AccounSearch extends React.Component {
                       this.setState({ EditOneUserView: false });
                       this.componentDidMount();
                     }}
-                    color="danger"
-                  >
+                    color="danger">
                     Back
                   </Button>
                 </div>
@@ -604,14 +636,16 @@ class AccounSearch extends React.Component {
                 <>
                   <Row className="card">
                     <Col>
+                      <h1 className="float-left">View User</h1>
+                    </Col>
+                    <Col>
                       <div className="d-flex justify-content-end p-1">
                         <Button
                           onClick={(e) => {
                             e.preventDefault();
                             this.setState({ ViewOneUserView: false });
                           }}
-                          color="danger"
-                        >
+                          color="danger">
                           Back
                         </Button>
                       </div>
@@ -654,13 +688,11 @@ class AccounSearch extends React.Component {
                                     position: "absolute",
                                     zIndex: "1",
                                   }}
-                                  className="dropdown-content dropdownmy"
-                                >
+                                  className="dropdown-content dropdownmy">
                                   <h5
                                     onClick={() => this.exportToPDF()}
                                     style={{ cursor: "pointer" }}
-                                    className=" mx-1 myactive mt-1"
-                                  >
+                                    className=" mx-1 myactive mt-1">
                                     .PDF
                                   </h5>
                                   <h5
@@ -668,29 +700,25 @@ class AccounSearch extends React.Component {
                                       this.gridApi.exportDataAsCsv()
                                     }
                                     style={{ cursor: "pointer" }}
-                                    className=" mx-1 myactive"
-                                  >
+                                    className=" mx-1 myactive">
                                     .CSV
                                   </h5>
                                   <h5
                                     onClick={this.convertCSVtoExcel}
                                     style={{ cursor: "pointer" }}
-                                    className=" mx-1 myactive"
-                                  >
+                                    className=" mx-1 myactive">
                                     .XLS
                                   </h5>
                                   <h5
                                     onClick={this.exportToExcel}
                                     style={{ cursor: "pointer" }}
-                                    className=" mx-1 myactive"
-                                  >
+                                    className=" mx-1 myactive">
                                     .XLSX
                                   </h5>
                                   <h5
                                     onClick={() => this.convertCsvToXml()}
                                     style={{ cursor: "pointer" }}
-                                    className=" mx-1 myactive"
-                                  >
+                                    className=" mx-1 myactive">
                                     .XML
                                   </h5>
                                 </div>
@@ -708,8 +736,7 @@ class AccounSearch extends React.Component {
                                     history.push(
                                       "/app/SoftNumen/account/CreateAccount"
                                     )
-                                  }
-                                >
+                                  }>
                                   <FaPlus size={15} /> Create User
                                 </Badge>
                               )}
@@ -742,32 +769,27 @@ class AccounSearch extends React.Component {
                                   <DropdownMenu right>
                                     <DropdownItem
                                       tag="div"
-                                      onClick={() => this.filterSize(5)}
-                                    >
+                                      onClick={() => this.filterSize(5)}>
                                       5
                                     </DropdownItem>
                                     <DropdownItem
                                       tag="div"
-                                      onClick={() => this.filterSize(20)}
-                                    >
+                                      onClick={() => this.filterSize(20)}>
                                       20
                                     </DropdownItem>
                                     <DropdownItem
                                       tag="div"
-                                      onClick={() => this.filterSize(50)}
-                                    >
+                                      onClick={() => this.filterSize(50)}>
                                       50
                                     </DropdownItem>
                                     <DropdownItem
                                       tag="div"
-                                      onClick={() => this.filterSize(100)}
-                                    >
+                                      onClick={() => this.filterSize(100)}>
                                       100
                                     </DropdownItem>
                                     <DropdownItem
                                       tag="div"
-                                      onClick={() => this.filterSize(134)}
-                                    >
+                                      onClick={() => this.filterSize(134)}>
                                       134
                                     </DropdownItem>
                                   </DropdownMenu>
@@ -843,8 +865,7 @@ class AccounSearch extends React.Component {
           isOpen={this.state.modal}
           toggle={this.LookupviewStart}
           className={this.props.className}
-          style={{ maxWidth: "1050px" }}
-        >
+          style={{ maxWidth: "1050px" }}>
           <ModalHeader toggle={this.LookupviewStart}>Change Fileds</ModalHeader>
           <ModalBody className="modalbodyhead">
             <Row>
@@ -861,13 +882,11 @@ class AccounSearch extends React.Component {
                                 this.handleChangeHeader(e, ele, i)
                               }
                               key={i}
-                              className="mycustomtag mt-1"
-                            >
+                              className="mycustomtag mt-1">
                               <span className="mt-1">
                                 <h5
                                   style={{ cursor: "pointer" }}
-                                  className="allfields"
-                                >
+                                  className="allfields">
                                   <input
                                     type="checkbox"
                                     // checked={check && check}
@@ -926,8 +945,7 @@ class AccounSearch extends React.Component {
                                             : ""
                                         }`,
                                       }}
-                                      className="allfields"
-                                    >
+                                      className="allfields">
                                       <IoMdRemoveCircleOutline
                                         onClick={() => {
                                           const SelectedCols =

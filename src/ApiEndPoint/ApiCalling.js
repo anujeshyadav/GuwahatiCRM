@@ -6,6 +6,7 @@ import {
   Get_Role,
   Get_Role_by_id,
   Delete_Category,
+  Save_Promotion,
   Delete_Sub_Category,
   View_Cat_by_id,
   Update_Category,
@@ -195,7 +196,17 @@ export const Createtransportersave = async data => {
     .then(res => res.data);
   return response;
 };
+<<<<<<< HEAD
 export const CreatePartysave = async data => {
+=======
+export const SavePromotionsActivity = async (data) => {
+  let response = await axiosConfig
+    .post(`${Save_Promotion}`, data)
+    .then((res) => res.data);
+  return response;
+};
+export const CreatePartysave = async (data) => {
+>>>>>>> 26eb253bca4ace1fe95132f3a5c9f1abb5958724
   let response = await axiosConfig
     .post(`${Create_Party_save}`, data)
     .then(res => res.data);
