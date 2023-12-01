@@ -112,17 +112,35 @@ class OrderList extends React.Component {
                   size="25px"
                   color="green"
                   onClick={() => {
-                    this.setState({ ViewData: params?.data });
-                    this.toggleModal();
+                    localStorage.setItem(
+                      "OrderList",
+                      JSON.stringify(params.data)
+                    );
+                    this.props.history.push({
+                      pathname: `/app/AJGroup/order/salesReturn/${params.data?._id}`,
+                      state: params.data,
+                    });
                   }}
+                  // onClick={() => {
+                  //   this.setState({ ViewData: params?.data });
+                  //   this.toggleModal();
+                  // }}
                 />
-                <Eye
+                {/* <Eye
                   className="mr-50"
                   size="25px"
                   color="green"
                   onClick={() => {
                     this.setState({ ViewData: params?.data });
                     this.toggleModal();
+                  }}
+                /> */}
+                <Eye
+                  className="mr-50"
+                  size="25px"
+                  color="green"
+                  onClick={() => {
+                    this.handleChangeEdit(params.data, "readonly");
                   }}
                 />
                 <Edit
@@ -137,14 +155,14 @@ class OrderList extends React.Component {
                   }
                 />
 
-                <Trash2
+                {/* <Trash2
                   className="mr-50"
                   size="25px"
                   color="Red"
                   onClick={() => {
                     this.runthisfunction(params?.data?._id);
                   }}
-                />
+                /> */}
               </div>
             );
           },
@@ -355,7 +373,6 @@ class OrderList extends React.Component {
 
     await createOrderhistoryview()
       .then(res => {
-        console.log(res?.orderHistory);
         this.setState({ rowData: res?.orderHistory });
         this.setState({ AllcolumnDefs: this.state.columnDefs });
         this.setState({ SelectedCols: this.state.columnDefs });

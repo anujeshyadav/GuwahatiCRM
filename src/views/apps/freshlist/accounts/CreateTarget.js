@@ -48,7 +48,7 @@ import { Route } from "react-router-dom";
 
 let GrandTotal = [];
 let SelectedITems = [];
-const CreateTarget = (args) => {
+const CreateTarget = args => {
   const [formData, setFormData] = useState({});
   const [Index, setIndex] = useState("");
   const [targetStartDate, settargetStartDate] = useState("");
@@ -65,7 +65,7 @@ const CreateTarget = (args) => {
   const [items, setItems] = useState("");
   const [audit, setAudit] = useState(false);
   const [SalesPersonList, setSalesPersonList] = useState([]);
-  const toggle = (item) => {
+  const toggle = item => {
     setItems(item);
     setModal(!modal);
   };
@@ -73,7 +73,7 @@ const CreateTarget = (args) => {
     setAudit(!audit);
     // setModal(!modal);
   };
-  const handleopentoggle = (iteam) => {
+  const handleopentoggle = iteam => {
     toggle(iteam);
   };
   const handleHistory = () => {
@@ -106,7 +106,7 @@ const CreateTarget = (args) => {
     console.log(GrandTotal);
     let amt = 0;
     if (list.length > 0) {
-      const x = list?.map((val) => {
+      const x = list?.map(val => {
         console.log(val.qty * val.price);
         GrandTotal[index] = val.qty * val.price;
 
@@ -141,7 +141,7 @@ const CreateTarget = (args) => {
   };
   const handleSelection = (selectedList, selectedItem, index) => {
     SelectedITems.push(selectedItem);
-    setProduct((prevProductList) => {
+    setProduct(prevProductList => {
       const updatedProductList = [...prevProductList]; // Create a copy of the productList array
       const updatedProduct = { ...updatedProductList[index] }; // Create a copy of the product at the specified index
       updatedProduct.price = selectedItem?.Product_MRP; // Update the price of the copied product
@@ -155,9 +155,9 @@ const CreateTarget = (args) => {
       });
       let amt = myarr.reduce((a, b) => a + b);
       setGrandTotalAmt(amt);
-    return updatedProductList; // Return the updated product list to set the state
+      return updatedProductList; // Return the updated product list to set the state
     });
-    product.map((value) => console.log(value.totalprice));
+    product.map(value => console.log(value.totalprice));
     // onSelect1(selectedList, selectedItem, index);
   };
   const handleInputChange = (e, type, i) => {
@@ -215,25 +215,25 @@ const CreateTarget = (args) => {
 
   useEffect(() => {
     Create_Sales_personList()
-      .then((res) => {
+      .then(res => {
         console.log(res?.SalesPerson);
         setSalesPersonList(res?.SalesPerson);
       })
-      .catch((err) => console.log(err));
+      .catch(err => console.log(err));
     ProductListView()
-      .then((res) => {
+      .then(res => {
         // console.log(res?.Product);
         setProductList(res?.Product);
       })
-      .catch((err) => {
+      .catch(err => {
         console.log(err);
       });
     CreatePartyList()
-      .then((res) => {
+      .then(res => {
         // console.log(res.Party)
         setPartyList(res.Party);
       })
-      .catch((err) => {
+      .catch(err => {
         console.log(err);
       });
   }, []);
@@ -287,7 +287,7 @@ const CreateTarget = (args) => {
       },
     ]);
   };
-  let removeMoreProduct = (i) => {
+  let removeMoreProduct = i => {
     let newFormValues = [...product];
     newFormValues.splice(i, 1);
     GrandTotal.splice(i, 1);
@@ -302,7 +302,7 @@ const CreateTarget = (args) => {
   //   setPart(newFormValues);
   // };
 
-  const submitHandler = (e) => {
+  const submitHandler = e => {
     e.preventDefault();
 
     // console.log(product);
@@ -348,7 +348,7 @@ const CreateTarget = (args) => {
       swal("Error occured while Entering Details");
     } else {
       Create_Targetsave(payload)
-        .then((res) => {
+        .then(res => {
           // if (res.status) {
           //   setFormData({});
           //   window.location.reload();
@@ -356,7 +356,7 @@ const CreateTarget = (args) => {
           // }
           console.log(res);
         })
-        .catch((err) => {
+        .catch(err => {
           console.log(err);
         });
     }
@@ -480,7 +480,7 @@ const CreateTarget = (args) => {
                       placeholder="Date of Delivery"
                       value={targetStartDate}
                       // value={product.price * product.qty}
-                      onChange={(e) => settargetStartDate(e.target.value)}
+                      onChange={e => settargetStartDate(e.target.value)}
                     />
                   </div>
                 </Col>
@@ -494,7 +494,7 @@ const CreateTarget = (args) => {
                       placeholder="Date of Delivery"
                       value={targetEndDate}
                       // value={product.price * product.qty}
-                      onChange={(e) => settargetEndDate(e.target.value)}
+                      onChange={e => settargetEndDate(e.target.value)}
                     />
                   </div>
                 </Col>
@@ -534,7 +534,7 @@ const CreateTarget = (args) => {
                           name="qty"
                           placeholder="Req_Qty"
                           value={product?.qty}
-                          onChange={(e) => handleProductChangeProduct(e, index)}
+                          onChange={e => handleProductChangeProduct(e, index)}
                         />
                       </div>
                     </Col>

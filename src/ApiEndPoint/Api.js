@@ -31,8 +31,8 @@ export const Delete_Unit_List = "/unit/delete-unit/";
 export const Unit_ViewOne = "/unit/update-unit/";
 
 export const Delete_Category = "/categories/delete-category/"; //done
-export const Delete_Sub_Category = "/categories/delete-categories/"; 
-export const View_Cat_by_id = "/categories/view-category-by-id/"; 
+export const Delete_Sub_Category = "/categories/delete-categories/";
+export const View_Cat_by_id = "/categories/view-category-by-id/";
 export const Update_Category = "/categories/update-category/";
 export const Update_Sub_Category = "/categories/update-categories/";
 export const Create_Category = "/categories/save-category";
@@ -45,9 +45,12 @@ export const ProductList_View = "/product/view-product";
 export const Save_Order = "/order/save-create-order";
 export const view_create_order_history = "/order/view-create-order-history";
 
-
 export const Save_Place_Order = "/order/save-place-order";
 export const Create_Order_ListView = "/order/view-place-order";
+// BY OWN
+// export const Sales_Return_Product = "/sales-return/save-sales-return";
+export const Sales_Return_Product =
+  "/sales-return/save-sales-return-createorder";
 
 // Guwahati close
 

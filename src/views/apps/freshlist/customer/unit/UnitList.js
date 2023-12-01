@@ -108,7 +108,6 @@ class UnitList extends React.Component {
 
   handleChangeEdit = (data, types) => {
     console.log(data);
-    // UnitViewOne
     let type = types;
     if (type == "readonly") {
       this.setState({ ViewOneUserView: true });
@@ -127,6 +126,10 @@ class UnitList extends React.Component {
       this.setState({ IsprimaryUnit: false });
       this.setState({ [e.target.name]: e.target.value });
     }
+  };
+  changeHandlerInput = e => {
+    console.log(e.target.value);
+    this.setState({ [e.target.name]: e.target.value });
   };
   async componentDidMount() {
     const UserInformation = this.context?.UserInformatio;
@@ -706,15 +709,27 @@ class UnitList extends React.Component {
                                   style={{ cursor: "pointer" }}
                                   className="float-right mr-1"
                                   color="primary"
-                                  onClick={
-                                    this.LookCreateUnit
-                                    // () =>
-                                    // history.push(
-                                    //   "/app/softNumen/Unit/CreateUnit"
-                                    // )
+                                  onClick={() =>
+                                    history.push(
+                                      "/app/softNumen/Unit/CreateUnit"
+                                    )
                                   }
                                 >
-                                  <FaPlus size={15} /> Create Unit
+                                  Create Unit
+                                </Badge>
+                              )}
+                            />
+                          </span>
+                          <span>
+                            <Route
+                              render={({ history }) => (
+                                <Badge
+                                  style={{ cursor: "pointer" }}
+                                  className="float-right mr-1"
+                                  color="primary"
+                                  onClick={this.LookCreateUnit}
+                                >
+                                  <FaPlus size={15} /> Add Unit
                                 </Badge>
                               )}
                             />
@@ -1093,7 +1108,11 @@ class UnitList extends React.Component {
                       <Col lg="8" md="8" sm="12">
                         <div className="d-flex justify-content-around">
                           <div>
-                            <Input type="radio" className="primarystyle" />
+                            <Input
+                              type="radio"
+                              checked
+                              className="primarystyle"
+                            />
                             <span className="priamryValue">
                               1 {this.state.primaryUnit} =
                             </span>
@@ -1102,9 +1121,11 @@ class UnitList extends React.Component {
                             <Input
                               type="number"
                               className=""
+                              name="inputValue"
                               checked
                               style={{ width: "80px", height: "2px" }}
-                              value="0"
+                              value={this.state.inputValue}
+                              onChange={this.changeHandlerInput}
                             />
                           </div>
                           <div>
