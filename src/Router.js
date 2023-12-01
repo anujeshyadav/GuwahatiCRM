@@ -484,6 +484,9 @@ const PendingOrder = lazy(() =>
   import("./views/apps/freshlist/order/PendingOrder")
 );
 const OrderList = lazy(() => import("./views/apps/freshlist/order/OrderList"));
+const SalesReturnView = lazy(() =>
+  import("./views/apps/freshlist/order/SalesReturnView")
+);
 const PlaceOrder = lazy(() =>
   import("./views/apps/freshlist/order/PlaceOrder")
 );
@@ -1416,6 +1419,10 @@ class AppRouter extends React.Component {
             component={OrderList}
           />
           <AppRoute
+            path="/app/AJGroup/order/salesReturn/:id"
+            component={SalesReturnView}
+          />
+          <AppRoute
             path="/app/softNumen/order/placeOrder"
             component={PlaceOrder}
           />
@@ -1862,11 +1869,11 @@ class AppRouter extends React.Component {
             path="/app/softNumen/transporter/CreateTransporter"
             component={CreateTransporter}
           />
-          <AppRoute path="/app/softNumen/Unit/UnitList" component={UnitList} />
           <AppRoute
             path="/app/softNumen/Unit/CreateUnit"
             component={CreateUnit}
           />
+          <AppRoute path="/app/softNumen/Unit/UnitList" component={UnitList} />
           <AppRoute
             path="/app/softNumen/Unit/editUnit/:id"
             component={EditUnit}

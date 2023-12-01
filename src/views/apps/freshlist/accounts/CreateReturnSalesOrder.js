@@ -36,9 +36,6 @@ import {
   CreatePartyList,
 } from "../../../../ApiEndPoint/ApiCalling";
 import "../../../../assets/scss/pages/users.scss";
-// import Payment from "./payment/Payment";
-// import OrderedList from "./OrderList";
-// import AuditHistory from "./audithistory/AuditHistory";
 let GrandTotal = [];
 let SelectedITems = [];
 const SalesReturn = args => {

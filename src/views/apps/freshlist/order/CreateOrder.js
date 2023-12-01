@@ -36,9 +36,6 @@ import {
   CreatePartyList,
 } from "../../../../ApiEndPoint/ApiCalling";
 import "../../../../assets/scss/pages/users.scss";
-import Payment from "./payment/Payment";
-import OrderedList from "./OrderList";
-import AuditHistory from "./audithistory/AuditHistory";
 let GrandTotal = [];
 let SelectedITems = [];
 const CreateOrder = args => {
@@ -50,7 +47,7 @@ const CreateOrder = args => {
   const [PartyList, setPartyList] = useState([]);
   const [grandTotalAmt, setGrandTotalAmt] = useState(0);
   const [UserInfo, setUserInfo] = useState({});
-
+  const [dateofDelivery, setDateofDelivery] = useState("");
   const [product, setProduct] = useState([
     {
       product: "",
@@ -59,8 +56,8 @@ const CreateOrder = args => {
       qty: 1,
       price: "",
       totalprice: "",
-      DateofDelivery: "",
       partyId: "",
+      DateofDelivery: "",
       // discount: "",
       // Shipping: "",
       // tax: "",
@@ -274,7 +271,7 @@ const CreateOrder = args => {
           <CardBody>
             <Form className="m-1" onSubmit={submitHandler}>
               <Row>
-                <Col className="mb-1" lg="6" md="6" sm="12">
+                <Col className="mb-1" lg="4" md="4" sm="12">
                   <div className="">
                     <Label>Choose Party</Label>
 
@@ -294,8 +291,20 @@ const CreateOrder = args => {
                     />
                   </div>
                 </Col>
-                <Col className="mb-1" lg="6" md="6" sm="12">
+                <Col className="mb-1" lg="4" md="4" sm="12">
                   <div className="">
+                    <Label>Expected Delivery Date</Label>
+                    <Input
+                      required
+                      type="date"
+                      name="DateofDelivery"
+                      value={dateofDelivery}
+                      onChange={e => setDateofDelivery(e.target.value)}
+                    />
+                  </div>
+                </Col>
+                <Col className="mb-1" lg="4" md="4" sm="12">
+                  {/* <div className="">
                     <Label>Expected Delivery Date</Label>
                     <Input
                       required
@@ -304,7 +313,7 @@ const CreateOrder = args => {
                       value={product.DateofDelivery}
                       onChange={e => handleProductChangeProduct(e, index)}
                     />
-                  </div>
+                  </div> */}
                 </Col>
               </Row>
               {product &&
