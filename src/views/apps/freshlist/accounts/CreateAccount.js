@@ -100,6 +100,7 @@ const CreateAccount = () => {
   useEffect(() => {
     console.log(formData);
   }, [formData]);
+
   useEffect(() => {
     Get_RoleList().then((res)=>{
       setdropdownValue(res?.Role)
@@ -116,11 +117,14 @@ const CreateAccount = () => {
       .catch((err) => {
         console.log(err);
       });
+      let userdata=JSON.parse(localStorage.getItem("userData"))
+      console.log(userdata?._id)
+      formData["created_by"]=userdata?._id
   }, []);
 
   const submitHandler = (e) => {
     e.preventDefault();
-    // console.log(formData);
+  
     if (error) {
       swal("Error occured while Entering Details");
     } else {
@@ -190,7 +194,6 @@ const CreateAccount = () => {
                     --select Role--
                   </option>
                  {dropdownValue && dropdownValue?.length && dropdownValue?.map((ele,i)=>{
-                  console.log(ele)
                   return(
                     
                   <option value={ele?._id}>
@@ -259,7 +262,6 @@ const CreateAccount = () => {
                       );
                     } else if (!!ele?.library) {
                       if (ele?.label._text?.includes("ountry")) {
-                        console.log(ele);
                         return (
                           <Col key={i} lg="4" md="4" sm="12">
                             <FormGroup>

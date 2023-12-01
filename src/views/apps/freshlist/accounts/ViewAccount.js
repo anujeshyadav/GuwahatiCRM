@@ -27,6 +27,7 @@ import "../../../../../src/layouts/assets/scss/pages/users.scss";
 import {
   CreateAccountSave,
   CreateAccountView,
+  Get_RoleList,
 } from "../../../../ApiEndPoint/ApiCalling";
 import { BiEnvelope } from "react-icons/bi";
 import { FcPhoneAndroid } from "react-icons/fc";
@@ -101,6 +102,12 @@ const EditAccount = ({ ViewOneData }) => {
   useEffect(() => {
     setFormData(ViewOneData);
     console.log(ViewOneData);
+    Get_RoleList().then((res)=>{
+      setdropdownValue(res?.Role)
+    }).catch((err)=>{
+      console.log(err)
+      swal("Roles List Not found")
+    })
     if (ViewOneData?.Country) {
       let countryselected = Country?.getAllCountries()?.filter(
         (ele, i) => ele?.name == ViewOneData?.Country
@@ -128,7 +135,6 @@ const EditAccount = ({ ViewOneData }) => {
       .then((res) => {
         const jsonData = xmlJs.xml2json(res.data, { compact: true, spaces: 2 });
         console.log(JSON.parse(jsonData)?.CreateUser?.input);
-        debugger;
 
         setCreatAccountView(JSON.parse(jsonData)?.CreateUser?.input);
 
@@ -163,34 +169,11 @@ const EditAccount = ({ ViewOneData }) => {
     <div>
       <div>
         <Card>
-          <Row className="m-2">
-            <Col>
-              <h1 className="float-left">View User</h1>
-            </Col>
-            <Col>
-              <div className="float-right">
-                {/* <Route
-                  render={({ history }) => (
-                    <Button
-                      style={{ cursor: "pointer" }}
-                      className="float-right mr-1"
-                      color="primary"
-                      onClick={() =>
-                        history.push("/app/SoftNumen/accounSearch")
-                      }
-                    >
-                      {" "}
-                      Back
-                    </Button>
-                  )}
-                /> */}
-              </div>
-            </Col>
-          </Row>
+       
           {/* <hr /> */}
 
-          <CardBody>
-            <Form className="m-1" onSubmit={submitHandler}>
+     
+            <Form className="mr-1 ml-1" onSubmit={submitHandler}>
               <Row className="mb-2">
                 {/* <Col lg="6" md="6">
                   <FormGroup>
@@ -229,7 +212,37 @@ const EditAccount = ({ ViewOneData }) => {
                     </CustomInput>
                   </FormGroup>
                 </Col> */}
+                <Col lg="4" md="4">
+                  <FormGroup>
+                 <Label>Selected Role</Label>
+                 <CustomInput
+                 disabled
+                 required
+                 type="select"
+                 name="rolename"
+                 value={formData["rolename"]}
+          //        onChange={(e)=>{  
+          //         setFormData({
+          //         ...formData,
+          //         ["rolename"]: e.target.value
+          // })}}
+                 >
+                  <option>
+                    --select Role--
+                  </option>
+                 {dropdownValue && dropdownValue?.length && dropdownValue?.map((ele,i)=>{
+                  return(
+                    
+                  <option value={ele?._id}>
+                   {ele?.roleName}
+                  </option>
+                  )
+                 })}
+                
+                 </CustomInput>
 
+                  </FormGroup>
+                </Col>
                 {CreatAccountView &&
                   CreatAccountView?.map((ele, i) => {
                     {
@@ -692,7 +705,7 @@ const EditAccount = ({ ViewOneData }) => {
                 </Button.Ripple>
               </Row> */}
             </Form>
-          </CardBody>
+        
         </Card>
       </div>
     </div>

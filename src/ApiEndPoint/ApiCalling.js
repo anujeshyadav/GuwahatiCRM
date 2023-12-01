@@ -5,6 +5,7 @@ import {
   Get_Role,
   Get_Role_by_id,
   Delete_Category,
+  Save_Promotion,
   Delete_Sub_Category,
   View_Cat_by_id,
   Update_Category,
@@ -191,6 +192,12 @@ export const CreatePartyXML = async () => {
 export const Createtransportersave = async (data) => {
   let response = await axiosConfig
     .post(`${Create_transporter_save}`, data)
+    .then((res) => res.data);
+  return response;
+};
+export const SavePromotionsActivity = async (data) => {
+  let response = await axiosConfig
+    .post(`${Save_Promotion}`, data)
     .then((res) => res.data);
   return response;
 };

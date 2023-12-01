@@ -19,6 +19,7 @@ export const Create_Sales_person_List = "/sales-person/view-sales-person";
 export const Create_Sales_person_save = "/sales-person/save-sales-person";
 export const Create_Party_List = "/party/view-party";
 export const Create_Warehouse_List = "/warehouse/view-warehouse";
+export const Save_Promotion = "/promotion/save-promotion";
 export const Create_transporter_xmlView = "/transporter/get-xml";
 export const Create_transporter_save = "/transporter/save-transporter";
 export const Create_Transporter_List = "/transporter/view-transporter";
