@@ -539,12 +539,21 @@
   }
 }
 
-.mycustomereturn.header-navbar.navbar-expand-sm.navbar.navbar-horizontal.navbar-shadow.floating-nav {
+// .mycustomereturn.header-navbar.navbar-expand-sm.navbar.navbar-horizontal.navbar-shadow.floating-nav {
+//     border: none;
+//     background: none;
+//     margin-top: 0px;
+//     margin-right: 21%;
+//     width: 72%;
+//     margin-top: -22px;
+//     /* border-block-style: none; */
+// }
+.mycustomereturn.navbar-expand-sm.navbar.navbar-horizontal.navbar-shadow.floating-nav {
     border: none;
     background: none;
-    margin-top: 0px;
-    margin-right: 21%;
-    margin-top: -22px;
-    width: 72%;
+    // margin-top: 0px;
+      // margin-right: 21%;
+      width: 90%;
+      margin-top: -18px;
     /* border-block-style: none; */
 }
