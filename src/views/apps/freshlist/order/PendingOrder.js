@@ -191,14 +191,14 @@ class PendingOrder extends React.Component {
                 />
                 {/* )} */}
                 {/* {this.state.Deletepermisson && ( */}
-                <Trash2
+                {/* <Trash2
                   className="mr-50"
                   size="25px"
                   color="Red"
                   onClick={() => {
                     this.runthisfunction(params?.data?._id);
                   }}
-                />
+                /> */}
                 {/* )} */}
               </div>
             );

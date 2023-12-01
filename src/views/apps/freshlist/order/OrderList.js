@@ -23,7 +23,8 @@ import { ContextLayout } from "../../../../utility/context/Layout";
 import { AgGridReact } from "ag-grid-react";
 import "ag-grid-community/dist/styles/ag-grid.css";
 import EditAccount from "../accounts/EditAccount";
-import ViewAccount from "../accounts/ViewAccount";
+// import ViewAccount from "../accounts/ViewAccount";
+import ViewOrder from "../order/ViewAll";
 import jsPDF from "jspdf";
 import "jspdf-autotable";
 import Logo from "../../../../assets/img/profile/pages/logomain.png";
@@ -121,10 +122,6 @@ class OrderList extends React.Component {
                       state: params.data,
                     });
                   }}
-                  // onClick={() => {
-                  //   this.setState({ ViewData: params?.data });
-                  //   this.toggleModal();
-                  // }}
                 />
                 {/* <Eye
                   className="mr-50"
@@ -140,19 +137,19 @@ class OrderList extends React.Component {
                   size="25px"
                   color="green"
                   onClick={() => {
-                    this.handleChangeEdit(params.data, "readonly");
+                    this.handleChangeView(params.data, "readonly");
                   }}
                 />
                 <Edit
                   className="mr-50"
                   size="25px"
                   color="blue"
-                  onClick={() =>
-                    this.props.history.push({
-                      pathname: `/app/AJGroup/account/EditTarget/${params.data?._id}`,
-                      state: params.data,
-                    })
-                  }
+                  // onClick={() =>
+                  //   this.props.history.push({
+                  //     pathname: `/app/AJGroup/account/EditTarget/${params.data?._id}`,
+                  //     state: params.data,
+                  //   })
+                  // }
                 />
 
                 {/* <Trash2
@@ -357,7 +354,7 @@ class OrderList extends React.Component {
     }));
   };
 
-  handleChangeEdit = (data, types) => {
+  handleChangeView = (data, types) => {
     let type = types;
     if (type == "readonly") {
       this.setState({ ViewOneUserView: true });
@@ -700,7 +697,7 @@ class OrderList extends React.Component {
                         </Button>
                       </div>
                     </Col>
-                    {/* <ViewAccount ViewOneData={this.state.ViewOneData} /> */}
+                    <ViewOrder ViewOneData={this.state.ViewOneData} />
                   </Row>
                 </>
               ) : (

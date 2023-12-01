@@ -109,11 +109,11 @@ class CompleteOrder extends React.Component {
                   color="green"
                   onClick={() => {
                     this.setState({ ViewData: params?.data });
-                    this.toggleModal();
+                    // this.toggleModal();
                   }}
                 />
 
-                <Edit
+                {/* <Edit
                   className="mr-50"
                   size="25px"
                   color="blue"
@@ -123,16 +123,16 @@ class CompleteOrder extends React.Component {
                       state: params.data,
                     })
                   }
-                />
+                /> */}
 
-                <Trash2
+                {/* <Trash2
                   className="mr-50"
                   size="25px"
                   color="Red"
                   onClick={() => {
                     this.runthisfunction(params?.data?._id);
                   }}
-                />
+                /> */}
               </div>
             );
           },
