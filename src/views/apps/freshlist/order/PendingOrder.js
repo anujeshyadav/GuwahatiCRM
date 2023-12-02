@@ -22,7 +22,7 @@ import { ContextLayout } from "../../../../utility/context/Layout";
 import { AgGridReact } from "ag-grid-react";
 import "ag-grid-community/dist/styles/ag-grid.css";
 import EditAccount from "../accounts/EditAccount";
-import ViewAccount from "../accounts/ViewAccount";
+import PendingView from "../order/Pending";
 import jsPDF from "jspdf";
 import "jspdf-autotable";
 import Logo from "../../../../assets/img/profile/pages/logomain.png";
@@ -96,64 +96,7 @@ class PendingOrder extends React.Component {
           // checkboxSelection: true,
           width: 80,
           filter: true,
-          // cellRendererFramework: (params) => {
-          //   return (
-          //     <div className="d-flex align-items-center cursor-pointer">
-          //       <div className="">
-          //         <input
-          //           className="addinarray"
-          //           onClick={(e) => {
-          //             console.log(e.target.checked);
-          //             if (e.target.checked) {
-          //               console.log(this.state.SelectedProduct);
-          //               this.setState({
-          //                 SelectedProduct: this.state.SelectedProduct.concat(
-          //                   params?.data
-          //                 ),
-          //               });
-          //             } else {
-          //               let data = this.state.SelectedProduct.filter((ele, i) => {
-          //                 if (ele?.id === params?.data?.id) {
-          //                   this.state.SelectedProduct.splice(i, 1);
-          //                 }
-          //               });
-          //             }
-          //           }}
-          //           type="checkbox"
-          //         />
-          //       </div>
-          //     </div>
-          //   );
-          // },
         },
-
-        // {
-        //   headerName: "first Name",
-        //   field: "salesPersonId.firstName",
-        //   filter: "agSetColumnFilter",
-        //   width: 200,
-        //   cellRendererFramework: params => {
-        //     // console.log(params.data);
-        //     return (
-        //       <div className="d-flex align-items-center cursor-pointer">
-        //         <div className="">
-        //           <span>{params.data?.salesPersonId?.firstName}</span>
-        //           {/* {params?.data?.product_images ? (
-        //             <img
-        //               style={{ borderRadius: "12px" }}
-        //               width="60px"
-        //               height="40px"
-        //               src={params?.data?.product_images[0]}
-        //               alt="image"
-        //             />
-        //           ) : (
-        //             "No Image "
-        //           )} */}
-        //         </div>
-        //       </div>
-        //     );
-        //   },
-        // },
         {
           headerName: "Actions",
           field: "transactions",
@@ -166,15 +109,9 @@ class PendingOrder extends React.Component {
                   className="mr-50"
                   size="25px"
                   color="green"
-                  onClick={
-                    () => {
-                      this.setState({ ViewData: params?.data });
-                      this.toggleModal();
-                    }
-                    // history.push(
-                    //   `/app/freshlist/order/viewAll/${params.data._id}`
-                    // )
-                  }
+                  onClick={() => {
+                    this.handleChangeView(params.data, "readonly");
+                  }}
                 />
                 {/* )} */}
                 {/* {this.state.Editpermisson && ( */}
@@ -191,14 +128,14 @@ class PendingOrder extends React.Component {
                 />
                 {/* )} */}
                 {/* {this.state.Deletepermisson && ( */}
-                <Trash2
+                {/* <Trash2
                   className="mr-50"
                   size="25px"
                   color="Red"
                   onClick={() => {
                     this.runthisfunction(params?.data?._id);
                   }}
-                />
+                /> */}
                 {/* )} */}
               </div>
             );
@@ -395,7 +332,7 @@ class PendingOrder extends React.Component {
     }));
   };
 
-  handleChangeEdit = (data, types) => {
+  handleChangeView = (data, types) => {
     let type = types;
     if (type == "readonly") {
       this.setState({ ViewOneUserView: true });
@@ -405,6 +342,16 @@ class PendingOrder extends React.Component {
       this.setState({ EditOneData: data });
     }
   };
+  // handleChangeEdit = (data, types) => {
+  //   let type = types;
+  //   if (type == "readonly") {
+  //     this.setState({ ViewOneUserView: true });
+  //     this.setState({ ViewOneData: data });
+  //   } else {
+  //     this.setState({ EditOneUserView: true });
+  //     this.setState({ EditOneData: data });
+  //   }
+  // };
 
   async componentDidMount() {
     const UserInformation = this.context?.UserInformatio;
@@ -719,7 +666,7 @@ class PendingOrder extends React.Component {
     } = this.state;
     return (
       <>
-        <Row className="app-user-list">
+        <Col className="app-user-list">
           {this.state.EditOneUserView && this.state.EditOneUserView ? (
             <Row className="card">
               <Col>
@@ -756,7 +703,7 @@ class PendingOrder extends React.Component {
                         </Button>
                       </div>
                     </Col>
-                    {/* <ViewAccount ViewOneData={this.state.ViewOneData} /> */}
+                    <PendingView ViewOneData={this.state.ViewOneData} />
                   </Row>
                 </>
               ) : (
@@ -959,7 +906,7 @@ class PendingOrder extends React.Component {
               )}
             </>
           )}
-        </Row>
+        </Col>
 
         <Modal
           isOpen={this.state.modal}

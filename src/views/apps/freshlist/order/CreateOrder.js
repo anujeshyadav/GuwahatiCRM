@@ -184,12 +184,6 @@ const CreateOrder = args => {
       country: UserInfo?.Country,
       state: UserInfo?.State,
       city: UserInfo?.City,
-      // landMark: "Nearby Park",
-      // pincode: 90001,
-      // discount: 10.00,
-      // shippingCost: 5.00,
-      // taxAmount: 7.50,
-
       orderItems: product,
     };
     if (error) {
@@ -278,14 +272,11 @@ const CreateOrder = args => {
                     <Multiselect
                       required
                       selectionLimit={1}
-                      // showCheckbox="true"
                       isObject="false"
-                      options={PartyList} // Options to display in the dropdown
-                      // selectedValues={selectedValue}   // Preselected value to persist in dropdown
+                      options={PartyList}
                       onSelect={(selectedList, selectedItem) =>
                         handleSelectionParty(selectedList, selectedItem, index)
                       }
-                      // onSelect={onSelect1} // Function will trigger on select event
                       onRemove={onRemove1} // Function will trigger on remove event
                       displayValue="firstName" // Property name to display in the dropdown options
                     />
@@ -303,18 +294,7 @@ const CreateOrder = args => {
                     />
                   </div>
                 </Col>
-                <Col className="mb-1" lg="4" md="4" sm="12">
-                  {/* <div className="">
-                    <Label>Expected Delivery Date</Label>
-                    <Input
-                      required
-                      type="date"
-                      name="DateofDelivery"
-                      value={product.DateofDelivery}
-                      onChange={e => handleProductChangeProduct(e, index)}
-                    />
-                  </div> */}
-                </Col>
+                <Col className="mb-1" lg="4" md="4" sm="12"></Col>
               </Row>
               {product &&
                 product?.map((product, index) => (
@@ -325,10 +305,8 @@ const CreateOrder = args => {
                         <Multiselect
                           required
                           selectionLimit={1}
-                          // showCheckbox="true"
                           isObject="false"
                           options={ProductList}
-                          // selectedValues={selectedValue}   // Preselected value to persist in dropdown
                           onSelect={(selectedList, selectedItem) =>
                             handleSelection(selectedList, selectedItem, index)
                           }

@@ -1,8 +1,10 @@
 import {
   Create_warehouse_xmlView,
   Create_warehouse_save,
-  Save_Place_Order,
+  Save_Purchase_Order,
+  Purchase_Order_List,
   Sales_Return_Product,
+  Sales_Return_ProductList,
   Get_Role,
   Get_Role_by_id,
   View_Promotion_List,
@@ -312,13 +314,19 @@ export const SaveOrder = async data => {
 };
 
 // by others
-export const SavePlaceOrder = async data => {
+export const SavePurchaseOrder = async data => {
   let response = await axiosConfig
-    .post(Save_Place_Order, data)
+    .post(Save_Purchase_Order, data)
     .then(res => res.data);
   return response;
 };
 
+export const PurchaseOrderList = async () => {
+  let response = await axiosConfig
+    .get(`${Purchase_Order_List}`)
+    .then(res => res.data);
+  return response;
+};
 export const createOrderhistoryview = async () => {
   let response = await axiosConfig
     .get(`${view_create_order_history}`)
@@ -329,6 +337,12 @@ export const createOrderhistoryview = async () => {
 export const SalesReturnProduct = async data => {
   let response = await axiosConfig
     .post(Sales_Return_Product, data)
+    .then(res => res.data);
+  return response;
+};
+export const SalesReturnProductList = async () => {
+  let response = await axiosConfig
+    .get(`${Sales_Return_ProductList}`)
     .then(res => res.data);
   return response;
 };

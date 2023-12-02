@@ -224,9 +224,7 @@ const ViewOneOrder = lazy(() =>
 const ViewOneReceivedOrder = lazy(() =>
   import("./views/apps/freshlist/order/ViewOneReceivedorder")
 );
-const PurchasedOrder = lazy(() =>
-  import("./views/apps/freshlist/order/PurchasedOrder")
-);
+
 const AddOrder = lazy(() => import("./views/apps/freshlist/order/AddOrder"));
 const EditOrder = lazy(() => import("./views/apps/freshlist/order/EditOrder"));
 const ViewAll = lazy(() => import("./views/apps/freshlist/order/ViewAll"));
@@ -490,6 +488,10 @@ const SalesReturnView = lazy(() =>
 const PlaceOrder = lazy(() =>
   import("./views/apps/freshlist/order/PlaceOrder")
 );
+const PurchasedOrder = lazy(() =>
+  import("./views/apps/freshlist/order/PurchasedOrder")
+);
+
 // app/softNumen/order/OrderSearch
 const InvoiceGenerator = lazy(() =>
   import("./views/apps/freshlist/subcategory/InvoiceGenerator")
@@ -1460,7 +1462,7 @@ class AppRouter extends React.Component {
             component={ViewOneReceivedOrder}
           />
           <AppRoute
-            path="/app/softnumen/order/purchasedOrder"
+            path="/app/AjGroup/order/purchasedOrder"
             component={PurchasedOrder}
           />
           <AppRoute path="/app/freshlist/order/AddOrder" component={AddOrder} />
