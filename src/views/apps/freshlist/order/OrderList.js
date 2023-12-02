@@ -140,25 +140,16 @@ class OrderList extends React.Component {
                     this.handleChangeView(params.data, "readonly");
                   }}
                 />
-                <Edit
+                {/* <Edit
                   className="mr-50"
                   size="25px"
                   color="blue"
-                  // onClick={() =>
-                  //   this.props.history.push({
-                  //     pathname: `/app/AJGroup/account/EditTarget/${params.data?._id}`,
-                  //     state: params.data,
-                  //   })
-                  // }
-                />
-
-                {/* <Trash2
-                  className="mr-50"
-                  size="25px"
-                  color="Red"
-                  onClick={() => {
-                    this.runthisfunction(params?.data?._id);
-                  }}
+                  onClick={() =>
+                    this.props.history.push({
+                      pathname: `/app/freshlist/order/editOrder/${params.data?._id}`,
+                      state: params.data,
+                    })
+                  }
                 /> */}
               </div>
             );
@@ -660,7 +651,7 @@ class OrderList extends React.Component {
     } = this.state;
     return (
       <>
-        <Row className="app-user-list">
+        <Col className="app-user-list">
           {this.state.EditOneUserView && this.state.EditOneUserView ? (
             <Row className="card">
               <Col>
@@ -899,7 +890,7 @@ class OrderList extends React.Component {
               )}
             </>
           )}
-        </Row>
+        </Col>
 
         <Modal
           isOpen={this.state.modal}

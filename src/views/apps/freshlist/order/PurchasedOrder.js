@@ -1,718 +1,429 @@
-import React from "react";
+import React, { useRef } from "react";
+import { Route } from "react-router-dom";
+import xmlJs from "xml-js";
 import {
   Card,
   CardBody,
   Input,
-  Label,
   Row,
-  CustomInput,
+  Modal,
   Col,
-  Form,
   UncontrolledDropdown,
   DropdownMenu,
   DropdownItem,
   DropdownToggle,
   Button,
-  Modal,
   ModalHeader,
   ModalBody,
   Badge,
+  CustomInput,
 } from "reactstrap";
-import { AiOutlineDownload } from "react-icons/ai";
-import { ToWords } from "to-words";
-import "../../../../assets/css/main.css";
-import axiosConfig from "../../../../axiosConfig";
+
 import { ContextLayout } from "../../../../utility/context/Layout";
 import { AgGridReact } from "ag-grid-react";
 import "ag-grid-community/dist/styles/ag-grid.css";
-import { Eye, Trash2, ChevronDown, Edit, CloudLightning } from "react-feather";
-import { history } from "../../../../history";
+import EditAccount from "../accounts/EditAccount";
+// import ViewAccount from "../accounts/ViewAccount";
+import ViewOrder from "../order/ViewAll";
+import jsPDF from "jspdf";
+import "jspdf-autotable";
+import Logo from "../../../../assets/img/profile/pages/logomain.png";
+import Papa from "papaparse";
+import { Eye, Trash2, ChevronDown, Edit, CornerDownLeft } from "react-feather";
+import { IoMdRemoveCircleOutline } from "react-icons/io";
 import "../../../../assets/scss/plugins/tables/_agGridStyleOverride.scss";
 import "../../../../assets/scss/pages/users.scss";
+
+import {
+  FaArrowAltCircleLeft,
+  FaArrowAltCircleRight,
+  FaFilter,
+  FaPlus,
+} from "react-icons/fa";
+import moment from "moment-timezone";
 import swal from "sweetalert";
-import InvoiceGenerator from "../subcategory/PurchaseOrderGenerator";
-// import AnalyticsDashboard from "../../../dashboard/analytics/AnalyticsDashboard";
-import { Route, Link } from "react-router-dom";
+import {
+  CreateAccountList,
+  CreateAccountView,
+  Create_TargetList,
+  DeleteAccount,
+  PurchaseOrderList,
+  Delete_targetINlist,
+} from "../../../../ApiEndPoint/ApiCalling";
+import {
+  BsCloudDownloadFill,
+  BsFillArrowDownSquareFill,
+  BsFillArrowUpSquareFill,
+} from "react-icons/bs";
+import * as XLSX from "xlsx";
+import UserContext from "../../../../context/Context";
+// import TargetAssignedOne from "./TargetAssignedOne";
 
-const toWords = new ToWords({
-  localeCode: "en-IN",
-  converterOptions: {
-    currency: true,
-    ignoreDecimal: false,
-    ignoreZeroCurrency: false,
-    doNotAddOnly: false,
-    currencyOptions: {
-      // can be used to override defaults for the selected locale
-      name: "Rupee",
-      plural: "Rupees",
-      symbol: "₹",
-      fractionalUnit: {
-        name: "Paisa",
-        plural: "Paise",
-        symbol: "",
-      },
-    },
-  },
-});
-class PurchasedOrder extends React.Component {
-  state = {
-    rowData: [],
-    modal: false,
-    sgst: "",
-    wordsNumber: "",
-    ViewBill: true,
-    cgst: "",
-    otherCharges: "",
-    deliveryCharges: "",
-    PrintData: {},
-    Viewpermisson: null,
-    Editpermisson: null,
-    Createpermisson: null,
-    Deletepermisson: null,
-    paginationPageSize: 20,
-    currenPageSize: "",
-    getPageSize: "",
-    info: true,
-    columnDefs: [
-      {
-        headerName: "S.No",
-        valueGetter: "node.rowIndex + 1",
-        field: "node.rowIndex + 1",
-        width: 80,
-        filter: true,
-      },
-      {
-        headerName: "Status",
-        field: "order_status",
-        filter: true,
-        width: 160,
-        cellRendererFramework: (params) => {
-          return params.data?.order_status === "Completed" ? (
-            <div className="badge badge-pill badge-success">Completed</div>
-          ) : params.data?.order_status === "Pending" ? (
-            <div className="badge badge-pill badge-warning">
-              {params.data?.order_status}
-            </div>
-          ) : params.data?.order_status === "Inprogress" ? (
-            <div className="badge badge-pill bg-primary">Inprogress</div>
-          ) : params.data?.order_status === "canceled" ? (
-            <div className="badge badge-pill bg-danger">
-              {params.data.order_status}
-            </div>
-          ) : params.data?.order_status === "Completed" ? (
-            <div className="badge badge-pill bg-success">Completed</div>
-          ) : null;
-        },
-      },
-      {
-        headerName: "order_id",
-        field: "order_id",
-        filter: true,
+const SelectedColums = [];
+
+class PurchasedOrderList extends React.Component {
+  static contextType = UserContext;
+  constructor(props) {
+    super(props);
+    this.gridRef = React.createRef();
+    this.gridApi = null;
+    this.state = {
+      isOpen: false,
+      Arrindex: "",
+      rowData: [],
+      modal: false,
+      modalone: false,
+      ViewData: {},
+
+      setMySelectedarr: [],
+      SelectedCols: [],
+      paginationPageSize: 5,
+      currenPageSize: "",
+      getPageSize: "",
+      // columnDefs: [],
+      AllcolumnDefs: [],
+      SelectedcolumnDefs: [],
+      defaultColDef: {
+        sortable: true,
+        enablePivot: true,
+        enableValue: true,
         resizable: true,
-        width: 150,
-        cellRendererFramework: (params) => {
-          // console.log(params.data?.order_id);
+        suppressMenu: true,
+      },
+      columnDefs: [
+        {
+          headerName: "UID",
+          valueGetter: "node.rowIndex + 1",
+          field: "node.rowIndex + 1",
+          // checkboxSelection: true,
+          width: 80,
+          filter: true,
+        },
 
-          return (
-            <div className="d-flex align-items-center cursor-pointer">
-              <div>
-                {/* <select
-                  // className="form-control"
-                  defaultValue={params.data?.order_status}
-                  onChange={(e) => {
-                    // console.log(e.target.value);
-                    let data = new FormData();
-                    data.append("order_id", params.data?.order_id);
-                    data.append("order_status", e.target.value);
-                    axiosConfig
-                      .post(`/change_order_status`, data)
-                      .then((res) => {
-                        console.log(res?.data.message);
-                        if (res?.data.message) {
-                          this.componentDidMount();
-                          swal("status Updated Succesfully");
-                        }
-                      })
-                      .catch((err) => {
-                        console.log(err);
-                      });
+        {
+          headerName: "Actions",
+          field: "transactions",
+          width: 180,
+          cellRendererFramework: params => {
+            return (
+              <div className="actions cursor-pointer">
+                {/* {this.state.Viewpermisson && ( */}
+                <CornerDownLeft
+                  className="mr-50"
+                  size="25px"
+                  color="green"
+                  onClick={() => {
+                    localStorage.setItem(
+                      "OrderList",
+                      JSON.stringify(params.data)
+                    );
+                    this.props.history.push({
+                      pathname: `/app/AJGroup/order/salesReturn/${params.data?._id}`,
+                      state: params.data,
+                    });
                   }}
-                  name="changestatus"
-                  id="changeStatus"
-                >
-                  <option value={params.data?.order_status}>
-                    {params.data?.order_status}
-                  </option>
-                  <option value="Pending">--UpdateStatus--</option>
-                  <option value="Pending">Pending</option>
-                  <option value="Completed">Completed</option>
-                  <option value="Rejected">Rejected</option>
-                  <option value="Cancelled">Cancelled</option>
-                </select> */}
-                <span>{params?.data?.order_id}</span>
-              </div>
-            </div>
-          );
-        },
-      },
-      {
-        headerName: "Invoice",
-        field: "invoice",
-        filter: true,
-        resizable: true,
-        width: 150,
-        cellRendererFramework: (params) => {
-          return (
-            <div className="d-flex align-items-center justify-content-center cursor-pointer">
-              <div>
-                <span>
-                  <AiOutlineDownload
-                    onClick={() => this.handleBillDownload(params.data)}
-                    fill="green"
-                    size="30px"
-                  />
-                </span>
-              </div>
-            </div>
-          );
-        },
-      },
-      {
-        headerName: "username",
-        field: "user_full_name",
-        filter: true,
-        resizable: true,
-        width: 150,
-        cellRendererFramework: (params) => {
-          return (
-            <div className="d-flex align-items-center justify-content-center cursor-pointer">
-              <div>
-                <span>
-                  {params?.data?.user_full_name}
-                  {/* <AiOutlineDownload
-                    onClick={() => this.handleBillDownload(params.data)}
-                    fill="green"
-                    size="30px"
-                  /> */}
-                </span>
-              </div>
-            </div>
-          );
-        },
-      },
-      // {
-      //   headerName: "order id ",
-      //   field: "user_full_name",
-      //   filter: true,
-      //   resizable: true,
-      //   width: 150,
-      //   cellRendererFramework: (params) => {
-      //     return (
-      //       <div className="d-flex align-items-center cursor-pointer">
-      //         <div>
-      //           <span>{params.data?.user_full_name}</span>
-      //         </div>
-      //       </div>
-      //     );
-      //   },
-      // },
-
-      // {
-      //   headerName: "Product Image",
-      //   field: "product_images",
-      //   filter: true,
-      //   resizable: true,
-      //   width: 160,
-      //   cellRendererFramework: (params) => {
-      //     // console.log(params.data);
-      //     return (
-      //       <div className="d-flex align-items-center cursor-pointer">
-      //         <div>
-      //           {params?.data?.product_images &&
-      //           params.data?.product_images?.length ? (
-      //             <>
-      //               <img
-      //                 style={{ borderRadius: "12px" }}
-      //                 src={params.data?.product_images[0]}
-      //                 alt="image"
-      //                 width="60px"
-      //               />
-      //             </>
-      //           ) : (
-      //             "No image"
-      //           )}
-      //         </div>
-      //       </div>
-      //     );
-      //   },
-      // },
-
-      {
-        headerName: "Actions",
-        field: "sortorder",
-        field: "transactions",
-        width: 120,
-        cellRendererFramework: (params) => {
-          return (
-            <div className="actions cursor-pointer">
-              {this.state.Viewpermisson && (
-                <Route
-                  render={({ history }) => (
-                    <Eye
-                      className="mr-50"
-                      size="25px"
-                      color="green"
-                      onClick={() =>
-                        history.push(
-                          `/app/freshlist/order/EditCompletedorders/${params.data?.order_id}`
-                        )
-                      }
-                    />
-                  )}
                 />
-              )}
-              {/* {this.state.Editpermisson && (
-                <Route
-                  render={({ history }) => (
-                    <Edit
-                      className="mr-50"
-                      size="25px"
-                      color="blue"
-                      onClick={() =>
-                        history.push(
-                          `/app/freshlist/order/editplaceorder/${params.data?.order_id}`
-                        )
-                      }
-                    />
-                  )}
+                {/* <Eye
+                  className="mr-50"
+                  size="25px"
+                  color="green"
+                  onClick={() => {
+                    this.setState({ ViewData: params?.data });
+                    this.toggleModal();
+                  }}
+                /> */}
+                <Eye
+                  className="mr-50"
+                  size="25px"
+                  color="green"
+                  onClick={() => {
+                    this.handleChangeView(params.data, "readonly");
+                  }}
                 />
-              )} */}
-
-              {/* {this.state.Deletepermisson && (
-                <Route
-                  render={() => (
-                    <Trash2
-                      className="mr-50"
-                      size="25px"
-                      color="red"
-                      onClick={() => {
-                        let selectedData = this.gridApi.getSelectedRows();
-                        this.runthisfunction(params.data.id);
-                        this.gridApi.updateRowData({ remove: selectedData });
-                      }}
-                    />
-                  )}
-                />
-              )} */}
-            </div>
-          );
-        },
-      },
-
-      {
-        headerName: "total",
-        field: "total",
-        filter: true,
-        resizable: true,
-        width: 160,
-        cellRendererFramework: (params) => {
-          return (
-            <div className="d-flex align-items-center cursor-pointer">
-              <div>
-                <Badge color="success">{params.data?.total}</Badge>
+                {/* <Edit
+                  className="mr-50"
+                  size="25px"
+                  color="blue"
+                  onClick={() =>
+                    this.props.history.push({
+                      pathname: `/app/freshlist/order/editOrder/${params.data?._id}`,
+                      state: params.data,
+                    })
+                  }
+                /> */}
               </div>
-            </div>
-          );
+            );
+          },
         },
-      },
-      // {
-      //   headerName: "brandname ",
-      //   field: "brand_name",
-      //   filter: true,
-      //   resizable: true,
-      //   width: 180,
-      //   cellRendererFramework: (params) => {
-      //     return (
-      //       <div className="d-flex align-items-center cursor-pointer">
-      //         <div>
-      //           <span>{params.data?.brand_name}</span>
-      //         </div>
-      //       </div>
-      //     );
-      //   },
-      // },
-      // {
-      //   headerName: "city",
-      //   field: "city",
-      //   filter: true,
-      //   resizable: true,
-      //   width: 160,
-      //   cellRendererFramework: (params) => {
-      //     return (
-      //       <div className="d-flex align-items-center cursor-pointer">
-      //         <div>
-      //           <span>{params.data?.city}</span>
-      //         </div>
-      //       </div>
-      //     );
-      //   },
-      // },
-      {
-        headerName: "order Creation date",
-        field: "order_date",
-        filter: true,
-        resizable: true,
-        width: 230,
-        cellRendererFramework: (params) => {
-          return (
-            <div className="d-flex align-items-center cursor-pointer">
-              <div>
-                <span>{params.data?.order_date}</span>
+        {
+          headerName: "Full Name",
+          field: "orderItems",
+          filter: true,
+          width: 180,
+          valueGetter: params => {
+            if (params.data.orderItems && params.data.orderItems.length > 0) {
+              return params.data.fullName;
+            }
+            return null;
+          },
+        },
+
+        {
+          headerName: "Product Name",
+          field: "orderItems",
+          filter: true,
+          width: 220,
+          valueGetter: params => {
+            if (params.data.orderItems && params.data.orderItems.length > 0) {
+              return params?.data?.orderItems?.map(val => {
+                return val?.product?.Product_Title;
+              });
+            }
+            return null;
+          },
+        },
+        {
+          headerName: "Price",
+          field: "orderItems",
+          filter: true,
+          width: 150,
+          valueGetter: params => {
+            if (params.data.orderItems && params.data.orderItems.length > 0) {
+              return params.data.orderItems[0].price;
+            }
+            return null;
+          },
+        },
+        {
+          headerName: "Size",
+          field: "orderItems",
+          filter: true,
+          width: 150,
+          valueGetter: params => {
+            if (params.data.orderItems && params.data.orderItems.length > 0) {
+              return params.data.orderItems[0].qty; // Return the price
+            }
+            return null;
+          },
+        },
+        {
+          headerName: "GST Rate",
+          field: "orderItems",
+          filter: true,
+          width: 180,
+          valueGetter: params => {
+            if (params.data.orderItems && params.data.orderItems.length > 0) {
+              return params.data.orderItems[0].product["GST Rate"]; // Return the price
+            }
+            return null; // Or handle cases where there's no price
+          },
+        },
+        {
+          headerName: "HSN Code",
+          field: "orderItems",
+          filter: true,
+          width: 180,
+          valueGetter: params => {
+            if (params.data.orderItems && params.data.orderItems.length > 0) {
+              return params.data.orderItems[0].product.HSN_Code; // Return the price
+            }
+            return null;
+          },
+        },
+
+        // {
+        //   headerName: "Country",
+        //   field: "country",
+        //   filter: true,
+        //   width: 200,
+        //   cellRendererFramework: params => {
+        //     return (
+        //       <div>
+        //         <span>{params.data?.country}</span>
+        //       </div>
+        //     );
+        //   },
+        // },
+        // {
+        //   headerName: "State",
+        //   field: "state",
+        //   filter: true,
+        //   width: 200,
+        //   cellRendererFramework: params => {
+        //     return (
+        //       <div>
+        //         <span>{params.data?.state}</span>
+        //       </div>
+        //     );
+        //   },
+        // },
+        // {
+        //   headerName: "City",
+        //   field: "city",
+        //   filter: true,
+        //   width: 200,
+        //   cellRendererFramework: params => {
+        //     return (
+        //       <div>
+        //         <span>{params.data?.city}</span>
+        //       </div>
+        //     );
+        //   },
+        // },
+        // {
+        //   headerName: "MobileNo",
+        //   field: "MobileNo",
+        //   filter: true,
+        //   width: 150,
+        //   cellRendererFramework: params => {
+        //     return (
+        //       <div>
+        //         <span>{params.data?.MobileNo}</span>
+        //       </div>
+        //     );
+        //   },
+        // },
+        // {
+        //   headerName: "Discount",
+        //   field: "discount",
+        //   filter: true,
+        //   width: 200,
+        //   cellRendererFramework: params => {
+        //     return (
+        //       <div>
+        //         <span>{params.data?.discount}</span>
+        //       </div>
+        //     );
+        //   },
+        // },
+        // {
+        //   headerName: "GrandTotal",
+        //   field: "grandTotal",
+        //   filter: true,
+        //   width: 200,
+        //   cellRendererFramework: params => {
+        //     return (
+        //       <div>
+        //         <span>{params.data?.grandTotal}</span>
+        //       </div>
+        //     );
+        //   },
+        // },
+
+        {
+          headerName: "Status",
+          field: "status",
+          filter: true,
+          width: 150,
+          cellRendererFramework: params => {
+            return params.value === "completed" ? (
+              <div className="badge badge-pill badge-success">
+                {params.data.status}
               </div>
-            </div>
-          );
+            ) : params.value === "pending" ? (
+              <div className="badge badge-pill badge-warning">
+                {params.data.status}
+              </div>
+            ) : (
+              <div className="badge badge-pill badge-success">
+                {params.data.status}
+              </div>
+            );
+          },
         },
-      },
-      // {
-      //   headerName: "deliverydate",
-      //   field: "delivery_date",
-      //   filter: true,
-      //   resizable: true,
-      //   width: 230,
-      //   cellRendererFramework: (params) => {
-      //     return (
-      //       <div className="d-flex align-items-center cursor-pointer">
-      //         <div>
-      //           <span>{params.data?.delivery_date}</span>
-      //         </div>
-      //       </div>
-      //     );
-      //   },
-      // },
-      // {
-      //   headerName: "description",
-      //   field: "description",
-      //   filter: "true",
-      //   width: 180,
-      //   cellRendererFramework: (params) => {
-      //     return (
-      //       <div className="d-flex align-items-center cursor-pointer">
-      //         <div className="">
-      //           <span>{params.data?.description}</span>
-      //         </div>
-      //       </div>
-      //     );
-      //   },
-      // },
-      // {
-      //   headerName: "discountprice",
-      //   field: "discountprice",
-      //   filter: "true",
-      //   width: 180,
-      //   cellRendererFramework: (params) => {
-      //     return (
-      //       <div className="d-flex align-items-center cursor-pointer">
-      //         <div className="">
-      //           <span>{params.data?.discountprice}</span>
-      //         </div>
-      //       </div>
-      //     );
-      //   },
-      // },
-      // {
-      //   headerName: "email",
-      //   field: "email",
-      //   filter: true,
-      //   resizable: true,
-      //   width: 190,
-      //   cellRendererFramework: (params) => {
-      //     return (
-      //       <div className="d-flex align-items-center cursor-pointer">
-      //         <div>
-      //           <span>{params.data?.email}</span>
-      //         </div>
-      //       </div>
-      //     );
-      //   },
-      // },
-
-      // {
-      //   headerName: "full_name",
-      //   field: "full_name",
-      //   filter: true,
-      //   resizable: true,
-      //   width: 170,
-      //   cellRendererFramework: (params) => {
-      //     return (
-      //       <div className="d-flex align-items-center cursor-pointer">
-      //         <div>
-      //           <span>{params.data?.full_name}</span>
-      //         </div>
-      //       </div>
-      //     );
-      //   },
-      // },
-
-      // {
-      //   headerName: "mobile",
-      //   field: "mobile",
-      //   filter: true,
-      //   resizable: true,
-      //   width: 190,
-      //   cellRendererFramework: (params) => {
-      //     return (
-      //       <div className="d-flex align-items-center cursor-pointer">
-      //         <div>
-      //           <span>{params.data?.mobile}</span>
-      //         </div>
-      //       </div>
-      //     );
-      //   },
-      // },
-      // {
-      //   headerName: "price",
-      //   field: "price",
-      //   filter: true,
-      //   resizable: true,
-      //   width: 150,
-      //   cellRendererFramework: (params) => {
-      //     return (
-      //       <div className="d-flex align-items-center cursor-pointer">
-      //         <div>
-      //           <span>{params.data?.price}</span>
-      //         </div>
-      //       </div>
-      //     );
-      //   },
-      // },
-
-      // {
-      //   headerName: "producttype",
-      //   field: "product_type",
-      //   filter: true,
-      //   resizable: true,
-      //   width: 190,
-      //   cellRendererFramework: (params) => {
-      //     return (
-      //       <div className="d-flex align-items-center cursor-pointer">
-      //         <div>
-      //           <span>{params.data?.product_type}</span>
-      //         </div>
-      //       </div>
-      //     );
-      //   },
-      // },
-      // {
-      //   headerName: "shippingfee",
-      //   field: "shipping_fee",
-      //   filter: true,
-      //   resizable: true,
-      //   width: 190,
-      //   cellRendererFramework: (params) => {
-      //     return (
-      //       <div className="d-flex align-items-center cursor-pointer">
-      //         <div>
-      //           <span>{params.data?.shipping_fee}</span>
-      //         </div>
-      //       </div>
-      //     );
-      //   },
-      // },
-      // {
-      //   headerName: "status",
-      //   field: "status",
-      //   filter: true,
-      //   resizable: true,
-      //   width: 180,
-      //   cellRendererFramework: (params) => {
-      //     return (
-      //       <div className="d-flex align-items-center cursor-pointer">
-      //         <div>
-      //           <span>{params.data?.status}</span>
-      //         </div>
-      //       </div>
-      //     );
-      //   },
-      // },
-      // {
-      //   headerName: "stock",
-      //   field: "stock",
-      //   filter: true,
-      //   resizable: true,
-      //   width: 180,
-      //   cellRendererFramework: (params) => {
-      //     return (
-      //       <div className="d-flex align-items-center cursor-pointer">
-      //         <div>
-      //           <span>{params.data?.stock}</span>
-      //         </div>
-      //       </div>
-      //     );
-      //   },
-      // },
-      // {
-      //   headerName: "subtotal",
-      //   field: "subtotal",
-      //   filter: true,
-      //   resizable: true,
-      //   width: 180,
-      //   cellRendererFramework: (params) => {
-      //     return (
-      //       <div className="d-flex align-items-center cursor-pointer">
-      //         <div>
-      //           <span>{params.data?.subtotal}</span>
-      //         </div>
-      //       </div>
-      //     );
-      //   },
-      // },
-      // {
-      //   headerName: "tags",
-      //   field: "tags",
-      //   filter: true,
-      //   resizable: true,
-      //   width: 180,
-      //   cellRendererFramework: (params) => {
-      //     return (
-      //       <div className="d-flex align-items-center cursor-pointer">
-      //         <div>
-      //           <span>{params.data?.tags}</span>
-      //         </div>
-      //       </div>
-      //     );
-      //   },
-      // },
-      // {
-      //   headerName: "tax_rate",
-      //   field: "tax_rate",
-      //   filter: true,
-      //   resizable: true,
-      //   width: 180,
-      //   cellRendererFramework: (params) => {
-      //     return (
-      //       <div className="d-flex align-items-center cursor-pointer">
-      //         <div>
-      //           <span>{params.data?.tax_rate}</span>
-      //         </div>
-      //       </div>
-      //     );
-      //   },
-      // },
-
-      // {
-      //   headerName: "Permitions",
-      //   field: "permitions",
-      //   filter: true,
-      //   width: 180,
-      //   cellRendererFramework: (params) => {
-      //     return (
-      //       <CustomInput
-      //         type="switch"
-      //         className="mr-1"
-      //         id="primary"
-      //         name="primary"
-      //         inline
-      //         onChange={this.handleSwitchChange}
-      //       ></CustomInput>
-      //     );
-      //   },
-      // },
-    ],
-  };
-  handleSubmit = (e) => {
-    // e.preventDefault();
-    this.setState({ ViewBill: true });
-  };
-  handleBillDownload = (data) => {
-    console.log(data);
-    this.setState({ PrintData: data });
-    const toWords = new ToWords();
-    let words = toWords.convert(Number(data.sub_total), { currency: true });
-    this.setState({ wordsNumber: words });
-    this.toggleModal();
-  };
+      ],
+    };
+  }
   toggleModal = () => {
-    this.setState((prevState) => ({
+    this.setState(prevState => ({
+      modalone: !prevState.modalone,
+    }));
+  };
+  LookupviewStart = () => {
+    this.setState(prevState => ({
       modal: !prevState.modal,
     }));
   };
-  changeHandler = (e) => {
-    this.setState({ [e.target.name]: e.target.value });
+
+  handleChangeView = (data, types) => {
+    let type = types;
+    if (type == "readonly") {
+      this.setState({ ViewOneUserView: true });
+      this.setState({ ViewOneData: data });
+    } else {
+      this.setState({ EditOneUserView: true });
+      this.setState({ EditOneData: data });
+    }
   };
-  handleSwitchChange = () => {
-    return swal("Success!", "Submitted SuccessFully!", "success");
-  };
+
   async componentDidMount() {
-    let pageparmission = JSON.parse(localStorage.getItem("userData"));
-    // console.log(pageparmission?.Userinfo?.id);
-    const formdata = new FormData();
-    formdata.append("user_id", pageparmission?.Userinfo?.id);
-    formdata.append("role", pageparmission?.Userinfo?.role);
-    await axiosConfig
-      .post(`/getallcompleteorders`, formdata)
-      .then((res) => {
-        console.log(res.data.data);
-        let rowData = res.data.data;
-        this.setState({ rowData });
+    const UserInformation = this.context?.UserInformatio;
+
+    await PurchaseOrderList()
+      .then(res => {
+        this.setState({ rowData: res?.orderHistory });
+        this.setState({ AllcolumnDefs: this.state.columnDefs });
+        this.setState({ SelectedCols: this.state.columnDefs });
+
+        let userHeading = JSON.parse(localStorage.getItem("TargetList"));
+        if (userHeading?.length) {
+          this.setState({ columnDefs: userHeading });
+          this.gridApi.setColumnDefs(userHeading);
+          this.setState({ SelectedcolumnDefs: userHeading });
+        } else {
+          this.setState({ columnDefs: this.state.columnDefs });
+          this.setState({ SelectedcolumnDefs: this.state.columnDefs });
+        }
       })
-      .catch((err) => {
+      .catch(err => {
         console.log(err);
       });
-    // const formdata = new FormData();
-    // formdata.append("user_id", pageparmission?.Userinfo?.id);
+  }
+  toggleDropdown = () => {
+    this.setState(prevState => ({ isOpen: !prevState.isOpen }));
+  };
 
-    // await axiosConfig
-    //   .post(`/purchase_order`, formdata)
-    //   .then((res) => {
-    //     console.log(res.data.data);
-    //     let rowData = res.data.data;
-    //     this.setState({ rowData });
-    //   })
-    //   .catch((err) => {
-    //     console.log(err);
-    //   });
-
-    let newparmisson = pageparmission?.role?.find(
-      (value) => value?.pageName === "Purchase Order"
-    );
-
-    this.setState({ Viewpermisson: newparmisson?.permission.includes("View") });
-    this.setState({
-      Createpermisson: newparmisson?.permission.includes("Create"),
+  runthisfunction(id) {
+    debugger;
+    swal("Warning", "Sure You Want to Delete it", {
+      buttons: {
+        cancel: "cancel",
+        catch: { text: "Delete ", value: "delete" },
+      },
+    }).then(value => {
+      switch (value) {
+        case "delete":
+          Delete_targetINlist(id)
+            .then(res => {
+              let selectedData = this.gridApi.getSelectedRows();
+              this.gridApi.updateRowData({ remove: selectedData });
+            })
+            .catch(err => {
+              console.log(err);
+            });
+          break;
+        default:
+      }
     });
-    this.setState({
-      Editpermisson: newparmisson?.permission.includes("Edit"),
-    });
-    this.setState({
-      Deletepermisson: newparmisson?.permission.includes("Delete"),
-    });
-
-    // await axiosConfig.get("/admin/allorder_list").then((response) => {
-
-    //   console.log(rowData);
-    // });
   }
 
-  async runthisfunction(id) {
-    await axiosConfig.delete(`/admin/del_order/${id}`).then((response) => {
-      swal("Row Deleted!", "SuccessFull Deleted!", "error");
-      console.log(response);
-    });
-  }
-  onGridReady = (params) => {
+  onGridReady = params => {
     this.gridApi = params.api;
     this.gridColumnApi = params.columnApi;
+    this.gridRef.current = params.api;
+
     this.setState({
       currenPageSize: this.gridApi.paginationGetCurrentPage() + 1,
       getPageSize: this.gridApi.paginationGetPageSize(),
       totalPages: this.gridApi.paginationGetTotalPages(),
     });
   };
-  updateSearchQuery = (val) => {
+
+  updateSearchQuery = val => {
     this.gridApi.setQuickFilter(val);
   };
 
-  filterSize = (val) => {
+  filterSize = val => {
     if (this.gridApi) {
       this.gridApi.paginationSetPageSize(Number(val));
       this.setState({
@@ -721,231 +432,645 @@ class PurchasedOrder extends React.Component {
       });
     }
   };
-  onChangeHandler = (event) => {
-    this.setState({ selectedFile: event.target.files[0] });
-    this.setState({ selectedName: event.target.files[0].name });
-    console.log(event.target.files[0]);
+  handleChangeHeader = (e, value, index) => {
+    let check = e.target.checked;
+    if (check) {
+      SelectedColums?.push(value);
+    } else {
+      const delindex = SelectedColums?.findIndex(
+        ele => ele?.headerName === value?.headerName
+      );
+
+      SelectedColums?.splice(delindex, 1);
+    }
   };
-  onChangeHandler = (event) => {
-    this.setState({ selectedFile: event.target.files });
-    this.setState({ selectedName: event.target.files.name });
-    console.log(event.target.files);
+  parseCsv(csvData) {
+    return new Promise((resolve, reject) => {
+      Papa.parse(csvData, {
+        header: true,
+        skipEmptyLines: true,
+        complete: result => {
+          if (result.data && result.data.length > 0) {
+            resolve(result.data);
+          } else {
+            reject(new Error("No data found in the CSV"));
+          }
+        },
+        error: error => {
+          reject(error);
+        },
+      });
+    });
+  }
+  generatePDF(parsedData) {
+    let pdfsize = [Object.keys(parsedData[0])][0].length;
+    let size = pdfsize > 15 ? "a1" : pdfsize < 14 > 10 ? "a3" : "a4";
+
+    const doc = new jsPDF("landscape", "mm", size, false);
+    doc.setTextColor(5, 87, 97);
+    const tableData = parsedData.map(row => Object.values(row));
+    doc.addImage(Logo, "JPEG", 10, 10, 50, 30);
+    let date = new Date();
+    doc.setCreationDate(date);
+    doc.text("UserAccount", 14, 51);
+    doc.autoTable({
+      head: [Object.keys(parsedData[0])],
+      body: tableData,
+      startY: 60,
+    });
+
+    doc.save("UserList.pdf");
+  }
+
+  exportToPDF = async () => {
+    const csvData = this.gridApi.getDataAsCsv({
+      processCellCallback: this.processCell,
+    });
+    try {
+      const parsedData = await this.parseCsv(csvData);
+      this.generatePDF(parsedData);
+    } catch (error) {
+      console.error("Error parsing CSV:", error);
+    }
   };
-  changeHandler1 = (e) => {
-    this.setState({ status: e.target.value });
+  processCell = params => {
+    return params.value;
   };
-  changeHandler = (e) => {
-    this.setState({ [e.target.name]: e.target.value });
+
+  convertCsvToExcel(csvData) {
+    return new Promise(resolve => {
+      Papa.parse(csvData, {
+        header: true,
+        dynamicTyping: true,
+        skipEmptyLines: true,
+        complete: function (result) {
+          const worksheet = XLSX.utils.json_to_sheet(result.data);
+          const workbook = XLSX.utils.book_new();
+          XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
+          const excelBuffer = XLSX.write(workbook, {
+            bookType: "xlsx",
+            type: "array",
+          });
+          const blob = new Blob([excelBuffer], {
+            type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+          });
+          resolve(blob);
+        },
+      });
+    });
+  }
+  downloadExcelFile(blob) {
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "Userlist.xlsx";
+    document.body.appendChild(a);
+    a.click();
+    window.URL.revokeObjectURL(url);
+  }
+
+  exportToExcel = async e => {
+    const CsvData = this.gridApi.getDataAsCsv({
+      processCellCallback: this.processCell,
+    });
+    const blob = await this.convertCsvToExcel(CsvData);
+    this.downloadExcelFile(blob);
   };
-  submitHandler = (e) => {
+
+  convertCSVtoExcel = () => {
+    const CsvData = this.gridApi.getDataAsCsv({
+      processCellCallback: this.processCell,
+    });
+    Papa.parse(CsvData, {
+      complete: result => {
+        const ws = XLSX.utils.json_to_sheet(result.data);
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, "Sheet1");
+        const excelType = "xls";
+        XLSX.writeFile(wb, `UserList.${excelType}`);
+      },
+    });
+  };
+
+  shiftElementUp = () => {
+    let currentIndex = this.state.Arrindex;
+    if (currentIndex > 0) {
+      const myArrayCopy = [...this.state.SelectedcolumnDefs];
+      const elementToMove = myArrayCopy.splice(currentIndex, 1)[0];
+      this.setState({ Arrindex: currentIndex - 1 });
+      myArrayCopy.splice(currentIndex - 1, 0, elementToMove);
+      this.setState({ SelectedcolumnDefs: myArrayCopy });
+    }
+  };
+
+  shiftElementDown = () => {
+    let currentIndex = this.state.Arrindex;
+    if (currentIndex < this.state.SelectedcolumnDefs.length - 1) {
+      const myArrayCopy = [...this.state.SelectedcolumnDefs];
+      const elementToMove = myArrayCopy.splice(currentIndex, 1)[0];
+      this.setState({ Arrindex: currentIndex + 1 });
+      myArrayCopy.splice(currentIndex + 1, 0, elementToMove);
+      this.setState({ SelectedcolumnDefs: myArrayCopy });
+    }
+  };
+  convertCsvToXml = () => {
+    const CsvData = this.gridApi.getDataAsCsv({
+      processCellCallback: this.processCell,
+    });
+    Papa.parse(CsvData, {
+      complete: result => {
+        const rows = result.data;
+
+        // Create XML
+        let xmlString = "<root>\n";
+
+        rows.forEach(row => {
+          xmlString += "  <row>\n";
+          row.forEach((cell, index) => {
+            xmlString += `    <field${index + 1}>${cell}</field${index + 1}>\n`;
+          });
+          xmlString += "  </row>\n";
+        });
+
+        xmlString += "</root>";
+        const blob = new Blob([xmlString], { type: "text/xml" });
+        const link = document.createElement("a");
+        link.href = URL.createObjectURL(blob);
+        link.download = "output.xml";
+        link.click();
+      },
+    });
+  };
+
+  HandleSetVisibleField = e => {
     e.preventDefault();
+    this.gridApi.setColumnDefs(this.state.SelectedcolumnDefs);
+    this.setState({ columnDefs: this.state.SelectedcolumnDefs });
+    this.setState({ SelectedcolumnDefs: this.state.SelectedcolumnDefs });
+    this.setState({ rowData: this.state.rowData });
+    localStorage.setItem(
+      "TargetList",
+      JSON.stringify(this.state.SelectedcolumnDefs)
+    );
+    this.LookupviewStart();
+    // this.toggleModal;
   };
 
-  render() {
-    const { rowData, columnDefs, defaultColDef } = this.state;
-    return (
-      <Row className="app-user-list">
-     <Col sm="12">
-          <Card>
-            <Row className="m-2">
-              <Col>
-                <h1 col-sm-6 className="float-left">
-                   Purchased Order
-                </h1>
-              </Col>
-              {/* <Col>
-             
-                  <Route
-                    render={({ history }) => (
-                      <Button
-                        className=" float-right"
-                        color="primary"
-                        onClick={() =>
-                          history.push("/app/freshlist/order/addOrder")
-                        }
-                      >
-                        Add Order
-                      </Button>
-                    )}
-                  />
-             
-              </Col> */}
-            </Row>
-            <CardBody>
-              {this.state.rowData === null ? null : (
-                <div className="ag-theme-material w-100 my-2 ag-grid-table">
-                  <div className="d-flex flex-wrap justify-content-between align-items-center">
-                    <div className="mb-1">
-                      <UncontrolledDropdown className="p-1 ag-dropdown">
-                        <DropdownToggle tag="div">
-                          {this.gridApi
-                            ? this.state.currenPageSize
-                            : "" * this.state.getPageSize -
-                              (this.state.getPageSize - 1)}
-                          -
-                          {this.state.rowData.length -
-                            this.state.currenPageSize * this.state.getPageSize >
-                          0
-                            ? this.state.currenPageSize * this.state.getPageSize
-                            : this.state.rowData.length}
-                          of {this.state.rowData.length}
-                          <ChevronDown className="ml-50" size={15} />
-                        </DropdownToggle>
-                        <DropdownMenu right>
-                          <DropdownItem
-                            tag="div"
-                            onClick={() => this.filterSize(20)}
-                          >
-                            20
-                          </DropdownItem>
-                          <DropdownItem
-                            tag="div"
-                            onClick={() => this.filterSize(50)}
-                          >
-                            50
-                          </DropdownItem>
-                          <DropdownItem
-                            tag="div"
-                            onClick={() => this.filterSize(100)}
-                          >
-                            100
-                          </DropdownItem>
-                          <DropdownItem
-                            tag="div"
-                            onClick={() => this.filterSize(134)}
-                          >
-                            134
-                          </DropdownItem>
-                        </DropdownMenu>
-                      </UncontrolledDropdown>
-                    </div>
-                    <div className="d-flex flex-wrap justify-content-between mb-1">
-                      <div className="table-input mr-1">
-                        <Input
-                          placeholder="Search here..."
-                          onChange={(e) =>
-                            this.updateSearchQuery(e.target.value)
-                          }
-                          value={this.state.value}
-                        />
-                      </div>
+  HeadingRightShift = () => {
+    const updatedSelectedColumnDefs = [
+      ...new Set([
+        ...this.state.SelectedcolumnDefs.map(item => JSON.stringify(item)),
+        ...SelectedColums.map(item => JSON.stringify(item)),
+      ]),
+    ].map(item => JSON.parse(item));
+    this.setState({
+      SelectedcolumnDefs: [...new Set(updatedSelectedColumnDefs)], // Update the state with the combined array
+    });
+  };
+  handleLeftShift = () => {
+    let SelectedCols = this.state.SelectedcolumnDefs?.slice();
+    let delindex = this.state.Arrindex; /* Your delete index here */
 
-                      <div className="export-btn">
-                        <Button.Ripple
-                          color="primary"
-                          onClick={() => this.gridApi.exportDataAsCsv()}
-                        >
-                          Export as CSV
-                        </Button.Ripple>
-                      </div>
-                    </div>
-                  </div>
-                  <ContextLayout.Consumer>
-                    {(context) => (
-                      <AgGridReact
-                        gridOptions={{}}
-                        // rowSelection="multiple"
-                        defaultColDef={defaultColDef}
-                        columnDefs={columnDefs}
-                        rowData={rowData}
-                        onGridReady={this.onGridReady}
-                        colResizeDefault={"shift"}
-                        animateRows={true}
-                        floatingFilter={false}
-                        pagination={true}
-                        paginationPageSize={this.state.paginationPageSize}
-                        pivotPanelShow="always"
-                        enableRtl={context.state.direction === "rtl"}
-                      />
-                    )}
-                  </ContextLayout.Consumer>
+    if (SelectedCols && delindex >= 0) {
+      const splicedElement = SelectedCols?.splice(delindex, 1); // Remove the element
+
+      this.setState({
+        SelectedcolumnDefs: SelectedCols, // Update the state with the modified array
+      });
+    }
+  };
+  render() {
+    const {
+      rowData,
+      columnDefs,
+      defaultColDef,
+      SelectedcolumnDefs,
+      isOpen,
+      SelectedCols,
+      AllcolumnDefs,
+    } = this.state;
+    return (
+      <>
+        <Col className="app-user-list">
+          {this.state.EditOneUserView && this.state.EditOneUserView ? (
+            <Row className="card">
+              <Col>
+                <div className="d-flex justify-content-end p-1">
+                  <Button
+                    onClick={e => {
+                      e.preventDefault();
+                      this.setState({ EditOneUserView: false });
+                    }}
+                    color="danger"
+                  >
+                    Back
+                  </Button>
                 </div>
+              </Col>
+
+              {/* <EditAccount EditOneData={this.state.EditOneData} /> */}
+            </Row>
+          ) : (
+            <>
+              {this.state.ViewOneUserView && this.state.ViewOneUserView ? (
+                <>
+                  <Row className="card">
+                    <Col>
+                      <div className="d-flex justify-content-end p-1">
+                        <Button
+                          onClick={e => {
+                            e.preventDefault();
+                            this.setState({ ViewOneUserView: false });
+                          }}
+                          color="danger"
+                        >
+                          Back
+                        </Button>
+                      </div>
+                    </Col>
+                    <ViewOrder ViewOneData={this.state.ViewOneData} />
+                  </Row>
+                </>
+              ) : (
+                <>
+                  <Col sm="12">
+                    <Card>
+                      <Row className="m-2">
+                        <Col>
+                          <h1 className="float-left">Purchased Order List</h1>
+                        </Col>
+                        <Col>
+                          <span className="mx-1">
+                            <FaFilter
+                              style={{ cursor: "pointer" }}
+                              title="filter coloumn"
+                              size="25px"
+                              onClick={this.LookupviewStart}
+                              color="#39cccc"
+                              className="float-right"
+                            />
+                          </span>
+                          <span className="mx-1">
+                            <div className="dropdown-container float-right">
+                              <BsCloudDownloadFill
+                                style={{ cursor: "pointer" }}
+                                title="download file"
+                                size="25px"
+                                className="dropdown-button "
+                                color="#39cccc"
+                                onClick={this.toggleDropdown}
+                              />
+                              {isOpen && (
+                                <div
+                                  style={{
+                                    position: "absolute",
+                                    zIndex: "1",
+                                  }}
+                                  className="dropdown-content dropdownmy"
+                                >
+                                  <h5
+                                    onClick={() => this.exportToPDF()}
+                                    style={{ cursor: "pointer" }}
+                                    className=" mx-1 myactive mt-1"
+                                  >
+                                    .PDF
+                                  </h5>
+                                  <h5
+                                    onClick={() =>
+                                      this.gridApi.exportDataAsCsv()
+                                    }
+                                    style={{ cursor: "pointer" }}
+                                    className=" mx-1 myactive"
+                                  >
+                                    .CSV
+                                  </h5>
+                                  <h5
+                                    onClick={this.convertCSVtoExcel}
+                                    style={{ cursor: "pointer" }}
+                                    className=" mx-1 myactive"
+                                  >
+                                    .XLS
+                                  </h5>
+                                  <h5
+                                    onClick={this.exportToExcel}
+                                    style={{ cursor: "pointer" }}
+                                    className=" mx-1 myactive"
+                                  >
+                                    .XLSX
+                                  </h5>
+                                  <h5
+                                    onClick={() => this.convertCsvToXml()}
+                                    style={{ cursor: "pointer" }}
+                                    className=" mx-1 myactive"
+                                  >
+                                    .XML
+                                  </h5>
+                                </div>
+                              )}
+                            </div>
+                          </span>
+                          <span>
+                            <Route
+                              render={({ history }) => (
+                                <Badge
+                                  style={{ cursor: "pointer" }}
+                                  className="float-right mr-1"
+                                  color="primary"
+                                  onClick={() =>
+                                    history.push(
+                                      "/app/softNumen/order/placeOrder"
+                                    )
+                                  }
+                                >
+                                  <FaPlus size={15} /> Place Order
+                                </Badge>
+                              )}
+                            />
+                          </span>
+                        </Col>
+                      </Row>
+                      <CardBody>
+                        {this.state.rowData === null ? null : (
+                          <div className="ag-theme-material w-100 my-2 ag-grid-table">
+                            <div className="d-flex flex-wrap justify-content-between align-items-center">
+                              <div className="mb-1">
+                                <UncontrolledDropdown className="p-1 ag-dropdown">
+                                  <DropdownToggle tag="div">
+                                    {this.gridApi
+                                      ? this.state.currenPageSize
+                                      : "" * this.state.getPageSize -
+                                        (this.state.getPageSize - 1)}{" "}
+                                    -{" "}
+                                    {this.state.rowData.length -
+                                      this.state.currenPageSize *
+                                        this.state.getPageSize >
+                                    0
+                                      ? this.state.currenPageSize *
+                                        this.state.getPageSize
+                                      : this.state.rowData.length}{" "}
+                                    of {this.state.rowData.length}
+                                    <ChevronDown className="ml-50" size={15} />
+                                  </DropdownToggle>
+                                  <DropdownMenu right>
+                                    <DropdownItem
+                                      tag="div"
+                                      onClick={() => this.filterSize(5)}
+                                    >
+                                      5
+                                    </DropdownItem>
+                                    <DropdownItem
+                                      tag="div"
+                                      onClick={() => this.filterSize(20)}
+                                    >
+                                      20
+                                    </DropdownItem>
+                                    <DropdownItem
+                                      tag="div"
+                                      onClick={() => this.filterSize(50)}
+                                    >
+                                      50
+                                    </DropdownItem>
+                                    <DropdownItem
+                                      tag="div"
+                                      onClick={() => this.filterSize(100)}
+                                    >
+                                      100
+                                    </DropdownItem>
+                                    <DropdownItem
+                                      tag="div"
+                                      onClick={() => this.filterSize(134)}
+                                    >
+                                      134
+                                    </DropdownItem>
+                                  </DropdownMenu>
+                                </UncontrolledDropdown>
+                              </div>
+                              <div className="d-flex flex-wrap justify-content-end mb-1">
+                                <div className="table-input mr-1">
+                                  <Input
+                                    placeholder="search Item here..."
+                                    onChange={e =>
+                                      this.updateSearchQuery(e.target.value)
+                                    }
+                                    value={this.state.value}
+                                  />
+                                </div>
+                              </div>
+                            </div>
+                            <ContextLayout.Consumer className="ag-theme-alpine">
+                              {context => (
+                                <AgGridReact
+                                  id="myAgGrid"
+                                  gridOptions={this.gridOptions}
+                                  rowSelection="multiple"
+                                  defaultColDef={defaultColDef}
+                                  columnDefs={columnDefs}
+                                  rowData={rowData}
+                                  onGridReady={this.onGridReady}
+                                  colResizeDefault={"shift"}
+                                  animateRows={true}
+                                  floatingFilter={false}
+                                  pagination={true}
+                                  paginationPageSize={
+                                    this.state.paginationPageSize
+                                  }
+                                  pivotPanelShow="always"
+                                  enableRtl={context.state.direction === "rtl"}
+                                  ref={this.gridRef} // Attach the ref to the grid
+                                  domLayout="autoHeight" // Adjust layout as needed
+                                />
+                              )}
+                            </ContextLayout.Consumer>
+                          </div>
+                        )}
+                      </CardBody>
+                    </Card>
+                  </Col>
+                </>
               )}
-            </CardBody>
-          </Card>
+            </>
+          )}
         </Col>
+
         <Modal
           isOpen={this.state.modal}
-          toggle={this.toggleModal}
+          toggle={this.LookupviewStart}
           className={this.props.className}
           style={{ maxWidth: "1050px" }}
         >
-          <ModalHeader toggle={this.toggleModal}>Download Bill</ModalHeader>
-          <ModalBody>
-            {this.state.ViewBill && this.state.ViewBill ? (
-              <>
-                <div style={{ width: "100%" }} className="">
-                  <InvoiceGenerator
-                    PrintData={this.state.PrintData}
-                    wordsNumber={this.state.wordsNumber}
-                    sgst={this.state.sgst}
-                    cgst={this.state.cgst}
-                    deliveryCharges={this.state.deliveryCharges}
-                    otherCharges={this.state.otherCharges}
-                  />
+          <ModalHeader toggle={this.LookupviewStart}>Change Fileds</ModalHeader>
+          <ModalBody className="modalbodyhead">
+            <Row>
+              <Col lg="4" md="4" sm="12" xl="4" xs="12">
+                <h4>Available Columns</h4>
+                <div className="mainshffling">
+                  <div class="ex1">
+                    {AllcolumnDefs &&
+                      AllcolumnDefs?.map((ele, i) => {
+                        return (
+                          <>
+                            <div
+                              onClick={e => this.handleChangeHeader(e, ele, i)}
+                              key={i}
+                              className="mycustomtag mt-1"
+                            >
+                              <span className="mt-1">
+                                <h5
+                                  style={{ cursor: "pointer" }}
+                                  className="allfields"
+                                >
+                                  <input
+                                    type="checkbox"
+                                    // checked={check && check}
+                                    className="mx-1"
+                                  />
+
+                                  {ele?.headerName}
+                                </h5>
+                              </span>
+                            </div>
+                          </>
+                        );
+                      })}
+                  </div>
                 </div>
-              </>
-            ) : (
-              <>
-                <div style={{ width: "100%" }} className="">
-                  <Form onSubmit={() => this.handleSubmit()}>
-                    <Row>
-                      <Col lg="6" className="mb-2">
-                        <Label>SGST</Label>
-                        <Input
-                          required
-                          type="number"
-                          name="sgst"
-                          placeholder="Enter SGST"
-                          value={this.state.sgst}
-                          onChange={this.changeHandler}
-                        ></Input>
-                      </Col>
-                      <Col lg="6" className="mb-2">
-                        <Label>CGST</Label>
-                        <Input
-                          required
-                          type="number"
-                          name="cgst"
-                          placeholder="Enter CGST"
-                          value={this.state.cgst}
-                          onChange={this.changeHandler}
-                        ></Input>
-                      </Col>
-                      <Col lg="6">
-                        <Label>Other Charges</Label>
-                        <Input
-                          type="number"
-                          name="otherCharges"
-                          placeholder="Enter Other Charges"
-                          value={this.state.otherCharges}
-                          onChange={this.changeHandler}
-                        ></Input>
-                      </Col>
-                      <Col lg="6">
-                        <Label>Delivery Charges</Label>
-                        <Input
-                          type="number"
-                          name="deliveryCharges"
-                          placeholder="Enter Delivery Charges"
-                          value={this.state.deliveryCharges}
-                          onChange={this.changeHandler}
-                        ></Input>
-                      </Col>
-                      <Col lg="3" className="mt-2">
-                        <Button color="primary" type="submit">
-                          Submit
-                        </Button>
-                      </Col>
-                    </Row>
-                  </Form>
+              </Col>
+              <Col lg="2" md="2" sm="12" xl="2" xs="12" className="colarrowbtn">
+                <div className="mainarrowbtn">
+                  <div style={{ cursor: "pointer" }}>
+                    <FaArrowAltCircleRight
+                      onClick={this.HeadingRightShift}
+                      className="arrowassign"
+                      size="30px"
+                    />
+                  </div>
+                  <div style={{ cursor: "pointer" }} className="my-2">
+                    <FaArrowAltCircleLeft
+                      onClick={this.handleLeftShift}
+                      className="arrowassign"
+                      size="30px"
+                    />
+                  </div>
                 </div>
-              </>
-            )}
+              </Col>
+              <Col lg="6" md="6" sm="12" xl="6" xs="12">
+                <Row>
+                  <Col lg="8" md="8" sm="12" xs="12">
+                    <h4>Visible Columns</h4>
+                    <div className="mainshffling">
+                      <div class="ex1">
+                        {SelectedcolumnDefs &&
+                          SelectedcolumnDefs?.map((ele, i) => {
+                            return (
+                              <>
+                                <div key={i} className="mycustomtag mt-1">
+                                  <span className="mt-1">
+                                    <h5
+                                      onClick={() =>
+                                        this.setState({ Arrindex: i })
+                                      }
+                                      style={{
+                                        cursor: "pointer",
+                                        backgroundColor: `${
+                                          this.state.Arrindex === i
+                                            ? "#1877f2"
+                                            : ""
+                                        }`,
+                                      }}
+                                      className="allfields"
+                                    >
+                                      <IoMdRemoveCircleOutline
+                                        onClick={() => {
+                                          const SelectedCols =
+                                            this.state.SelectedcolumnDefs?.slice();
+                                          const delindex =
+                                            SelectedCols?.findIndex(
+                                              element =>
+                                                element?.headerName ==
+                                                ele?.headerName
+                                            );
+
+                                          if (SelectedCols && delindex >= 0) {
+                                            const splicedElement =
+                                              SelectedCols?.splice(delindex, 1); // Remove the element
+                                            // splicedElement contains the removed element, if needed
+
+                                            this.setState({
+                                              SelectedcolumnDefs: SelectedCols, // Update the state with the modified array
+                                            });
+                                          }
+                                        }}
+                                        style={{ cursor: "pointer" }}
+                                        size="25px"
+                                        color="red"
+                                        className="mr-1"
+                                      />
+
+                                      {ele?.headerName}
+                                    </h5>
+                                  </span>
+                                </div>
+                              </>
+                            );
+                          })}
+                      </div>
+                    </div>
+                  </Col>
+                  <Col lg="4" md="4" sm="12" xs="12">
+                    <div className="updownbtn justify-content-center">
+                      <div>
+                        <BsFillArrowUpSquareFill
+                          className="arrowassign mb-1"
+                          size="30px"
+                          onClick={this.shiftElementUp}
+                        />
+                      </div>
+                      <div>
+                        <BsFillArrowDownSquareFill
+                          onClick={this.shiftElementDown}
+                          className="arrowassign"
+                          size="30px"
+                        />
+                      </div>
+                    </div>
+                  </Col>
+                </Row>
+              </Col>
+            </Row>
+            <Row>
+              <Col>
+                <div className="d-flex justify-content-center">
+                  <Badge
+                    style={{ cursor: "pointer" }}
+                    className=""
+                    color="primary"
+                    onClick={this.HandleSetVisibleField}
+                  >
+                    Submit
+                  </Badge>
+                </div>
+              </Col>
+            </Row>
           </ModalBody>
         </Modal>
-      </Row>
+        <Modal
+          isOpen={this.state.modalone}
+          toggle={this.toggleModal}
+          className="modal-dialog modal-xl"
+          // className="modal-dialog modal-lg"
+          size="lg"
+          backdrop={true}
+          fullscreen={true}
+        >
+          <ModalHeader toggle={this.toggleModal}>View Details</ModalHeader>
+          <ModalBody className="myproducttable">
+            {/* <div className="container"> */}
+            {/* <TargetAssignedOne ViewData={this.state.ViewData} /> */}
+            {/* </div> */}
+          </ModalBody>
+        </Modal>
+      </>
     );
   }
 }
-export default PurchasedOrder;
+export default PurchasedOrderList;
