@@ -21,6 +21,9 @@ class HorizontalSidebar extends React.Component {
       activeParents: [],
       openDropdown: [],
       dropdownHeight: "auto",
+      userData: {},
+      showpages: [],
+      showpage: [],
       itemHover: null,
       parentHover: null,
       activeChildUrl: null,
@@ -35,12 +38,16 @@ class HorizontalSidebar extends React.Component {
     };
   }
 
+<<<<<<< HEAD
+  openDropdown = (id) => {
+=======
   openDropdown = id => {
     // console.log(id);
     // document.getElementById("showlist").className="show nav-link";
     // console.log(openDrop.className)
     // document.getElementById("showlist").className = "show nav-link dropdown";
 
+>>>>>>> ceedebe03b30a6836e3f993f2cc428a5780ffabb
     let arr = this.state.openDropdown;
     if (!arr.includes(id)) arr.push(id);
     if (id) {
@@ -72,8 +79,19 @@ class HorizontalSidebar extends React.Component {
       parentHover: id,
     });
   };
+  handleshow = () => {
+    let userCredentials = JSON.parse(localStorage.getItem("userData"));
+    let TabparMission = userCredentials?.rolename?.rolePermission?.map(
+      (value) => value?.pagename
+    );
+    // console.log(TabparMission);
+    this.setState({ showpage: TabparMission });
+    this.setState({ userData: userCredentials });
+  };
+  async componentDidMount() {
+    // console.log(this.props)
+    await this.handleshow();
 
-  componentDidMount() {
     this.handleActiveParent(this.activeParentItems);
   }
 
@@ -109,6 +127,7 @@ class HorizontalSidebar extends React.Component {
     return (
       <DropdownMenu
         tag="ul"
+        hidden=""
         className="mt-50"
         onMouseEnter={e => e.preventDefault()}
         modifiers={{
@@ -138,9 +157,17 @@ class HorizontalSidebar extends React.Component {
               };
             },
           },
+<<<<<<< HEAD
+        }}>
+        {submenu.map((child) => {
+          if (child.hidden) {
+            return null; // Skip rendering the hidden tab
+          }
+=======
         }}
       >
         {submenu.map(child => {
+>>>>>>> ceedebe03b30a6836e3f993f2cc428a5780ffabb
           const CustomAnchorTag = child.type === "external-link" ? `a` : Link;
           if (child.navLink && child.navLink === this.props.activePath) {
             this.activeFlag = true;
@@ -150,6 +177,7 @@ class HorizontalSidebar extends React.Component {
           let renderChildItems = (
             <React.Fragment key={child.id}>
               <li
+                hidden=""
                 className={classnames({
                   active: this.state.activeParents.includes(child.id),
                 })}
@@ -186,6 +214,7 @@ class HorizontalSidebar extends React.Component {
                 >
                   {child.children ? (
                     <Dropdown
+                      hidden=""
                       className={classnames("sub-menu w-100", {})}
                       isOpen={this.state.openDropdown.includes(child.id)}
                       direction={this.state.openLeft ? "left" : "right"}
@@ -254,8 +283,41 @@ class HorizontalSidebar extends React.Component {
     );
   };
 
+<<<<<<< HEAD
+  renderDropdown = (arr) => {
+    // console.log(arr);
+    return arr?.map((item, i) => {
+      arr[i].children?.forEach((tab) => {
+        if (tab.children) {
+          tab?.children?.forEach((tab1) => {
+            if (this.state.showpage?.includes(tab1?.title)) {
+              tab1.hidden = false;
+            } else {
+              tab1.hidden = true;
+            }
+          });
+        }
+        if (this.state.showpage?.includes(tab?.title)) {
+          tab.hidden = false;
+        } else {
+          tab.hidden = true;
+        }
+      });
+      arr?.forEach((tab) => {
+        if (this.state.showpage?.includes(tab?.title)) {
+          tab.hidden = false;
+        } else {
+          tab.hidden = true;
+        }
+      });
+
+      if (item.hidden) {
+        return null; // Skip rendering the hidden tab
+      }
+=======
   renderDropdown = arr => {
     return arr?.map(item => {
+>>>>>>> ceedebe03b30a6836e3f993f2cc428a5780ffabb
       if (
         item.type === "item" &&
         item.navLink &&
@@ -267,6 +329,7 @@ class HorizontalSidebar extends React.Component {
       const CustomAnchorTag = item.type === "external-link" ? `a` : Link;
       return (
         <li
+          hidden=""
           className={classnames("nav-item", {
             active: this.state.activeParents.includes(item.id),
             hover: this.state.parentHover === item.id,
@@ -275,6 +338,7 @@ class HorizontalSidebar extends React.Component {
           ref={el => (this.menuDrodpown = el)}
         >
           <div
+            hidden=""
             className={classnames(
               "nav-item-wrapper cursor-pointer customwrapper",
               {
@@ -296,6 +360,7 @@ class HorizontalSidebar extends React.Component {
           >
             {item.children ? (
               <Dropdown
+                hidden=""
                 isOpen={this.state.openDropdown.includes(item.id)}
                 className="nav-link"
                 id="showlist"
@@ -360,6 +425,20 @@ class HorizontalSidebar extends React.Component {
       <div className="">
         <div
           className={classnames(
+<<<<<<< HEAD
+            " mycustomereturn header-navbar navbar-expand-sm navbar navbar-horizontal navbar-shadow"
+            // {
+            //   "navbar-static": this.props.navbarType === "static",
+            //   "fixed-top": this.props.navbarType === "sticky",
+            //   "floating-nav":
+            //     this.props.navbarType === "floating" ||
+            //     !["static", "sticky", "floating"].includes(
+            //       this.props.navbarType
+            //     ),
+            // }
+          )}
+          style={{ width: "100%" }}>
+=======
             " mycustomereturn header-navbar navbar-expand-sm navbar navbar-horizontal navbar-shadow",
             {
               "navbar-static": this.props.navbarType === "static",
@@ -372,6 +451,7 @@ class HorizontalSidebar extends React.Component {
             }
           )}
         >
+>>>>>>> ceedebe03b30a6836e3f993f2cc428a5780ffabb
           <div className="navbar-container main-menu-content mycustomcontent">
             <ul className="nav" id="main-menu-navigation mycustomnavigation">
               {this.renderDropdown(navigationConfig)}

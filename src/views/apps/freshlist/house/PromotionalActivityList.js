@@ -16,6 +16,7 @@ import {
   ModalHeader,
   ModalBody,
   Badge,
+  CustomInput,
 } from "reactstrap";
 import ExcelReader from "../parts/ExcelReader";
 import { ContextLayout } from "../../../../utility/context/Layout";
@@ -44,6 +45,7 @@ import {
   CreateAccountList,
   CreateAccountView,
   DeleteAccount,
+  View_PromotionList,
 } from "../../../../ApiEndPoint/ApiCalling";
 import {
   BsCloudDownloadFill,
@@ -63,9 +65,14 @@ class PromotionalActivityList extends React.Component {
     this.gridApi = null;
     this.state = {
       isOpen: false,
+      Table: false,
+      TableFilterValue: "",
+      SelectedFilter: "",
       Arrindex: "",
       rowData: [],
       setMySelectedarr: [],
+      Dropdown: [],
+      AllData: [],
       SelectedCols: [],
       paginationPageSize: 5,
       currenPageSize: "",
@@ -102,6 +109,18 @@ class PromotionalActivityList extends React.Component {
 
   async componentDidMount() {
     const UserInformation = this.context?.UserInformatio;
+    View_PromotionList()
+      .then((res) => {
+        console.log(res?.Promotion);
+        let keys = Object.keys(res?.Promotion[0]);
+        let myarr = keys.filter((item) => item !== "_id" && item !== "__v");
+        let unique = [...new Set(myarr)];
+        this.setState({ Dropdown: unique });
+        this.setState({ AllData: res?.Promotion });
+      })
+      .catch((err) => {
+        console.log(err);
+      });
     await CreateAccountView()
       .then((res) => {
         var mydropdownArray = [];
@@ -276,7 +295,9 @@ class PromotionalActivityList extends React.Component {
 
         this.setState({ AllcolumnDefs: Product });
 
-        let userHeading = JSON.parse(localStorage.getItem("AccountSearch"));
+        let userHeading = JSON.parse(
+          localStorage.getItem("PromotionalActivity")
+        );
         if (userHeading?.length) {
           this.setState({ columnDefs: userHeading });
           this.gridApi.setColumnDefs(userHeading);
@@ -536,7 +557,7 @@ class PromotionalActivityList extends React.Component {
     this.setState({ SelectedcolumnDefs: this.state.SelectedcolumnDefs });
     this.setState({ rowData: this.state.rowData });
     localStorage.setItem(
-      "AccountSearch",
+      "PromotionalActivity",
       JSON.stringify(this.state.SelectedcolumnDefs)
     );
     this.LookupviewStart();
@@ -565,6 +586,23 @@ class PromotionalActivityList extends React.Component {
       });
     }
   };
+  handleFilter = (e) => {
+    console.log(this.state.AllData);
+    if (e.target.value !== "NA") {
+      let myarr = this.state.AllData?.filter(
+        (ele, i) => ele[e.target.value].length
+      );
+
+      if (myarr.length) {
+        this.setState({ Table: true });
+      } else {
+        this.setState({ Table: false });
+      }
+    } else {
+      this.setState({ Table: false });
+    }
+    this.setState({ SelectedFilter: e.target.value });
+  };
   render() {
     const {
       rowData,
@@ -589,8 +627,7 @@ class PromotionalActivityList extends React.Component {
                       this.setState({ EditOneUserView: false });
                       this.componentDidMount();
                     }}
-                    color="danger"
-                  >
+                    color="danger">
                     Back
                   </Button>
                 </div>
@@ -610,8 +647,7 @@ class PromotionalActivityList extends React.Component {
                             e.preventDefault();
                             this.setState({ ViewOneUserView: false });
                           }}
-                          color="danger"
-                        >
+                          color="danger">
                           Back
                         </Button>
                       </div>
@@ -625,10 +661,57 @@ class PromotionalActivityList extends React.Component {
                     <Card>
                       <Row className="m-2">
                         <Col>
-                          <h1 className="float-left">Promotional Activity list</h1>
+                          <h1 className="float-left">
+                            Promotional Activity list
+                          </h1>
                         </Col>
-                        <Col>
-                          <span className="mx-1">
+                        <Col lg="2" md="2" sm="2" xs="2">
+                          <CustomInput
+                            type="select"
+                            name="typeofpromotion"
+                            className="float-right"
+                            onChange={(e) => this.handleFilter(e)}
+                            // onChange={(e) => {
+                            //   if (e.target.value !== "") {
+                            //     console.log(e.target.value);
+                            //     console.log(this.state.AllData);
+                            //     let SelectedList = this.state.AllData?.map(
+                            //       (ele, i) => {
+                            //         if (ele[e.target.value] == e.target.value) {
+                            //           if (ele[e.target.value]?.length) {
+                            //             debugger;
+                            //             console.log(ele[e.target.value]);
+                            //             console.log(ele[e.target.value]);
+                            //             // return ele[e.target.value];
+                            //           }
+                            //         }
+                            //       }
+                            //     );
+                            //     console.log(SelectedList);
+                            //     this.setState({
+                            //       TableFilterValue: e.target.value,
+                            //     });
+                            //     this.setState({ Table: true });
+                            //   } else {
+                            //     this.setState({ Table: false });
+                            //   }
+                            // }}
+                          >
+                            <option value="NA">
+                              --Select Promotion Type--
+                            </option>
+                            {this.state.Dropdown &&
+                              this.state.Dropdown?.map((ele, i) => {
+                                return (
+                                  <>
+                                    <option value={ele}>{ele}</option>
+                                  </>
+                                );
+                              })}
+                          </CustomInput>
+                        </Col>
+                        <Col lg="2" md="2" sm="2">
+                          <span className="">
                             <FaFilter
                               style={{ cursor: "pointer" }}
                               title="filter coloumn"
@@ -654,13 +737,11 @@ class PromotionalActivityList extends React.Component {
                                     position: "absolute",
                                     zIndex: "1",
                                   }}
-                                  className="dropdown-content dropdownmy"
-                                >
+                                  className="dropdown-content dropdownmy">
                                   <h5
                                     onClick={() => this.exportToPDF()}
                                     style={{ cursor: "pointer" }}
-                                    className=" mx-1 myactive mt-1"
-                                  >
+                                    className=" mx-1 myactive mt-1">
                                     .PDF
                                   </h5>
                                   <h5
@@ -668,29 +749,25 @@ class PromotionalActivityList extends React.Component {
                                       this.gridApi.exportDataAsCsv()
                                     }
                                     style={{ cursor: "pointer" }}
-                                    className=" mx-1 myactive"
-                                  >
+                                    className=" mx-1 myactive">
                                     .CSV
                                   </h5>
                                   <h5
                                     onClick={this.convertCSVtoExcel}
                                     style={{ cursor: "pointer" }}
-                                    className=" mx-1 myactive"
-                                  >
+                                    className=" mx-1 myactive">
                                     .XLS
                                   </h5>
                                   <h5
                                     onClick={this.exportToExcel}
                                     style={{ cursor: "pointer" }}
-                                    className=" mx-1 myactive"
-                                  >
+                                    className=" mx-1 myactive">
                                     .XLSX
                                   </h5>
                                   <h5
                                     onClick={() => this.convertCsvToXml()}
                                     style={{ cursor: "pointer" }}
-                                    className=" mx-1 myactive"
-                                  >
+                                    className=" mx-1 myactive">
                                     .XML
                                   </h5>
                                 </div>
@@ -708,129 +785,132 @@ class PromotionalActivityList extends React.Component {
                                     history.push(
                                       "/app/ajgroup/account/CreatePromotionalActivity"
                                     )
-                                  }
-                                >
-                                  <FaPlus size={15} />  Activiity
+                                  }>
+                                  <FaPlus size={15} /> Activiity
                                 </Badge>
                               )}
                             />
                           </span>
                         </Col>
                       </Row>
-                      <CardBody>
-                        {this.state.rowData === null ? null : (
-                          <div className="ag-theme-material w-100 my-2 ag-grid-table">
-                            <div className="d-flex flex-wrap justify-content-between align-items-center">
-                              <div className="mb-1">
-                                <UncontrolledDropdown className="p-1 ag-dropdown">
-                                  <DropdownToggle tag="div">
-                                    {this.gridApi
-                                      ? this.state.currenPageSize
-                                      : "" * this.state.getPageSize -
-                                        (this.state.getPageSize - 1)}{" "}
-                                    -{" "}
-                                    {this.state.rowData.length -
-                                      this.state.currenPageSize *
-                                        this.state.getPageSize >
-                                    0
-                                      ? this.state.currenPageSize *
-                                        this.state.getPageSize
-                                      : this.state.rowData.length}{" "}
-                                    of {this.state.rowData.length}
-                                    <ChevronDown className="ml-50" size={15} />
-                                  </DropdownToggle>
-                                  <DropdownMenu right>
-                                    <DropdownItem
-                                      tag="div"
-                                      onClick={() => this.filterSize(5)}
-                                    >
-                                      5
-                                    </DropdownItem>
-                                    <DropdownItem
-                                      tag="div"
-                                      onClick={() => this.filterSize(20)}
-                                    >
-                                      20
-                                    </DropdownItem>
-                                    <DropdownItem
-                                      tag="div"
-                                      onClick={() => this.filterSize(50)}
-                                    >
-                                      50
-                                    </DropdownItem>
-                                    <DropdownItem
-                                      tag="div"
-                                      onClick={() => this.filterSize(100)}
-                                    >
-                                      100
-                                    </DropdownItem>
-                                    <DropdownItem
-                                      tag="div"
-                                      onClick={() => this.filterSize(134)}
-                                    >
-                                      134
-                                    </DropdownItem>
-                                  </DropdownMenu>
-                                </UncontrolledDropdown>
-                              </div>
-                              <div className="d-flex flex-wrap justify-content-end mb-1">
-                                <div className="table-input mr-1">
-                                  <Input
-                                    placeholder="search Item here..."
-                                    onChange={(e) =>
-                                      this.updateSearchQuery(e.target.value)
-                                    }
-                                    value={this.state.value}
-                                  />
+                      {this.state.Table ? (
+                        <>
+                          <CardBody>
+                            {this.state.rowData === null ? null : (
+                              <div className="ag-theme-material w-100 my-2 ag-grid-table">
+                                <div className="d-flex flex-wrap justify-content-between align-items-center">
+                                  <div className="mb-1">
+                                    <UncontrolledDropdown className="p-1 ag-dropdown">
+                                      <DropdownToggle tag="div">
+                                        {this.gridApi
+                                          ? this.state.currenPageSize
+                                          : "" * this.state.getPageSize -
+                                            (this.state.getPageSize - 1)}{" "}
+                                        -{" "}
+                                        {this.state.rowData.length -
+                                          this.state.currenPageSize *
+                                            this.state.getPageSize >
+                                        0
+                                          ? this.state.currenPageSize *
+                                            this.state.getPageSize
+                                          : this.state.rowData.length}{" "}
+                                        of {this.state.rowData.length}
+                                        <ChevronDown
+                                          className="ml-50"
+                                          size={15}
+                                        />
+                                      </DropdownToggle>
+                                      <DropdownMenu right>
+                                        <DropdownItem
+                                          tag="div"
+                                          onClick={() => this.filterSize(5)}>
+                                          5
+                                        </DropdownItem>
+                                        <DropdownItem
+                                          tag="div"
+                                          onClick={() => this.filterSize(20)}>
+                                          20
+                                        </DropdownItem>
+                                        <DropdownItem
+                                          tag="div"
+                                          onClick={() => this.filterSize(50)}>
+                                          50
+                                        </DropdownItem>
+                                        <DropdownItem
+                                          tag="div"
+                                          onClick={() => this.filterSize(100)}>
+                                          100
+                                        </DropdownItem>
+                                        <DropdownItem
+                                          tag="div"
+                                          onClick={() => this.filterSize(134)}>
+                                          134
+                                        </DropdownItem>
+                                      </DropdownMenu>
+                                    </UncontrolledDropdown>
+                                  </div>
+                                  <div className="d-flex flex-wrap justify-content-end mb-1">
+                                    <div className="table-input mr-1">
+                                      <Input
+                                        placeholder="search Item here..."
+                                        onChange={(e) =>
+                                          this.updateSearchQuery(e.target.value)
+                                        }
+                                        value={this.state.value}
+                                      />
+                                    </div>
+                                  </div>
                                 </div>
-                              </div>
-                            </div>
-                            <ContextLayout.Consumer className="ag-theme-alpine">
-                              {(context) => (
-                                <AgGridReact
-                                  id="myAgGrid"
-                                  // gridOptions={{
-                                  //   domLayout: "autoHeight",
-                                  //   // or other layout options
-                                  // }}
-                                  gridOptions={this.gridOptions}
-                                  rowSelection="multiple"
-                                  defaultColDef={defaultColDef}
-                                  columnDefs={columnDefs}
-                                  rowData={rowData}
-                                  // onGridReady={(params) => {
-                                  //   this.gridApi = params.api;
-                                  //   this.gridColumnApi = params.columnApi;
-                                  //   this.gridRef.current = params.api;
+                                <ContextLayout.Consumer className="ag-theme-alpine">
+                                  {(context) => (
+                                    <AgGridReact
+                                      id="myAgGrid"
+                                      // gridOptions={{
+                                      //   domLayout: "autoHeight",
+                                      //   // or other layout options
+                                      // }}
+                                      gridOptions={this.gridOptions}
+                                      rowSelection="multiple"
+                                      defaultColDef={defaultColDef}
+                                      columnDefs={columnDefs}
+                                      rowData={rowData}
+                                      // onGridReady={(params) => {
+                                      //   this.gridApi = params.api;
+                                      //   this.gridColumnApi = params.columnApi;
+                                      //   this.gridRef.current = params.api;
 
-                                  //   this.setState({
-                                  //     currenPageSize:
-                                  //       this.gridApi.paginationGetCurrentPage() +
-                                  //       1,
-                                  //     getPageSize:
-                                  //       this.gridApi.paginationGetPageSize(),
-                                  //     totalPages:
-                                  //       this.gridApi.paginationGetTotalPages(),
-                                  //   });
-                                  // }}
-                                  onGridReady={this.onGridReady}
-                                  colResizeDefault={"shift"}
-                                  animateRows={true}
-                                  floatingFilter={false}
-                                  pagination={true}
-                                  paginationPageSize={
-                                    this.state.paginationPageSize
-                                  }
-                                  pivotPanelShow="always"
-                                  enableRtl={context.state.direction === "rtl"}
-                                  ref={this.gridRef} // Attach the ref to the grid
-                                  domLayout="autoHeight" // Adjust layout as needed
-                                />
-                              )}
-                            </ContextLayout.Consumer>
-                          </div>
-                        )}
-                      </CardBody>
+                                      //   this.setState({
+                                      //     currenPageSize:
+                                      //       this.gridApi.paginationGetCurrentPage() +
+                                      //       1,
+                                      //     getPageSize:
+                                      //       this.gridApi.paginationGetPageSize(),
+                                      //     totalPages:
+                                      //       this.gridApi.paginationGetTotalPages(),
+                                      //   });
+                                      // }}
+                                      onGridReady={this.onGridReady}
+                                      colResizeDefault={"shift"}
+                                      animateRows={true}
+                                      floatingFilter={false}
+                                      pagination={true}
+                                      paginationPageSize={
+                                        this.state.paginationPageSize
+                                      }
+                                      pivotPanelShow="always"
+                                      enableRtl={
+                                        context.state.direction === "rtl"
+                                      }
+                                      ref={this.gridRef} // Attach the ref to the grid
+                                      domLayout="autoHeight" // Adjust layout as needed
+                                    />
+                                  )}
+                                </ContextLayout.Consumer>
+                              </div>
+                            )}
+                          </CardBody>
+                        </>
+                      ) : null}
                     </Card>
                   </Col>
                 </>
@@ -843,8 +923,7 @@ class PromotionalActivityList extends React.Component {
           isOpen={this.state.modal}
           toggle={this.LookupviewStart}
           className={this.props.className}
-          style={{ maxWidth: "1050px" }}
-        >
+          style={{ maxWidth: "1050px" }}>
           <ModalHeader toggle={this.LookupviewStart}>Change Fileds</ModalHeader>
           <ModalBody className="modalbodyhead">
             <Row>
@@ -861,13 +940,11 @@ class PromotionalActivityList extends React.Component {
                                 this.handleChangeHeader(e, ele, i)
                               }
                               key={i}
-                              className="mycustomtag mt-1"
-                            >
+                              className="mycustomtag mt-1">
                               <span className="mt-1">
                                 <h5
                                   style={{ cursor: "pointer" }}
-                                  className="allfields"
-                                >
+                                  className="allfields">
                                   <input
                                     type="checkbox"
                                     // checked={check && check}
@@ -926,8 +1003,7 @@ class PromotionalActivityList extends React.Component {
                                             : ""
                                         }`,
                                       }}
-                                      className="allfields"
-                                    >
+                                      className="allfields">
                                       <IoMdRemoveCircleOutline
                                         onClick={() => {
                                           const SelectedCols =

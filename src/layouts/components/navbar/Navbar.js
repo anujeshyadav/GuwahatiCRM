@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   DropdownItem,
   DropdownMenu,
@@ -50,9 +50,24 @@ const PhoneNo = (props) => {
   return phone_no;
 };
 const ThemeNavbar = (props) => {
+  const [screenSize, setScreenSize] = useState();
+
   const { user } = useAuth0();
   const colorsArr = ["primary", "danger", "success", "info", "warning", "dark"];
   const navbarTypes = ["floating", "static", "sticky", "hidden"];
+
+  useEffect(() => {
+    setScreenSize(window.innerWidth);
+    // setScreenSize({
+    //   width: window.innerWidth,
+    //   height: window.innerHeight,
+    // });
+  }, []);
+
+  useEffect(() => {
+    console.log(screenSize);
+  }, [screenSize]);
+
   return (
     <React.Fragment>
       <div className="content-overlay" />
@@ -86,235 +101,22 @@ const ThemeNavbar = (props) => {
             "fixed-top": props.navbarType === "sticky" || props.horizontal,
             scrolling: props.horizontal && props.scrolling,
           }
-        )}
-      >
+        )}>
         <div className="navbar-wrapper">
           {/* <HorizontalMenu /> */}
 
           <div className="navbar-container content">
-            <div
-              className="navbar-collapse d-flex justify-content-between align-items-center"
-              id="navbar-mobile"
-            >
-              {" "}
+            {/* <div class=" navbar-collapse d-flex flex-row" id="navbar-mobile">
               <Route
                 render={({ history }) => (
                   <div
                     title="Click to Go Dashboard"
                     style={{ fontWeight: "800", cursor: "pointer" }}
-                    onClick={() => history.push("/dashboard")}
-                  >
+                    onClick={() => history.push("/dashboard")}>
                     <img src={logo} width="50%" height={35} alt="logo" />
                   </div>
                 )}
               />
-              {/* <span className="d-flex"> */}
-              {/* <img src={logoimg} alt="" width={80} /> */}
-              {/* </span>{" "} */}
-              {/* <div> */}
-              {/* <Nav>
-                  <NavbarBrand>
-                    <img src={logoimg} alt="" width={120} />
-                  </NavbarBrand>
-                  <NavItem>
-                    <NavLink>
-                      <UncontrolledDropdown>
-                        <DropdownToggle
-                          nav
-                          caret
-                          style={{ paddingTop: "0px", color: "#000" }}
-                        >
-                          <Users size={14} style={{ marginRight: "15px" }} />
-                          Users
-                          <FaAngleDown
-                            size={14}
-                            style={{ marginLeft: "2px" }}
-                          />
-                        </DropdownToggle>
-                        <DropdownMenu right>
-                          <DropdownItem tag="a">
-                            <Circle size={10} style={{ marginRight: "10px" }} />
-                            Create User
-                          </DropdownItem>
-                          <DropdownItem tag="a">
-                            <Circle size={10} style={{ marginRight: "10px" }} />
-                            Roles and Persmissions
-                          </DropdownItem>
-                          <DropdownItem tag="a">
-                            <Circle size={10} style={{ marginRight: "10px" }} />
-                            Create Customer
-                          </DropdownItem>
-                        </DropdownMenu>
-                      </UncontrolledDropdown>
-                    </NavLink>
-                  </NavItem>
-                  <NavItem>
-                    <NavLink>
-                      <UncontrolledDropdown>
-                        <DropdownToggle
-                          nav
-                          caret
-                          style={{ paddingTop: "0px", color: "#000" }}
-                        >
-                          <ShoppingCart
-                            size={14}
-                            style={{ marginRight: "15px" }}
-                          />
-                          Sales
-                          <FaAngleDown
-                            size={14}
-                            style={{ marginLeft: "2px" }}
-                          />
-                        </DropdownToggle>
-                        <DropdownMenu right>
-                          <DropdownItem tag="a">
-                            <Circle size={10} style={{ marginRight: "10px" }} />
-                            Create Order
-                          </DropdownItem>
-                          <DropdownItem tag="a">
-                            <Circle size={10} style={{ marginRight: "10px" }} />
-                            Place Order
-                          </DropdownItem>
-                          <DropdownItem tag="a">
-                            <Circle size={10} style={{ marginRight: "10px" }} />
-                            Pending Order
-                          </DropdownItem>
-                          <DropdownItem tag="a">
-                            <Circle size={10} style={{ marginRight: "10px" }} />
-                            Complete Order
-                          </DropdownItem>
-                          <DropdownItem tag="a">
-                            <Circle size={10} style={{ marginRight: "10px" }} />
-                            Create Invoice
-                          </DropdownItem>
-                          <DropdownItem tag="a">
-                            <Circle size={10} style={{ marginRight: "10px" }} />
-                            dispatch details
-                          </DropdownItem>
-                          <DropdownItem tag="a">
-                            <Circle size={10} style={{ marginRight: "10px" }} />
-                            Credit Note
-                          </DropdownItem>
-                        </DropdownMenu>
-                      </UncontrolledDropdown>
-                    </NavLink>
-                  </NavItem>
-                  <NavItem>
-                    <NavLink>
-                      <UncontrolledDropdown>
-                        <DropdownToggle
-                          nav
-                          caret
-                          style={{ paddingTop: "0px", color: "#000" }}
-                        >
-                          <Box size={14} style={{ marginRight: "15px" }} />
-                          Purchase
-                          <FaAngleDown
-                            size={14}
-                            style={{ marginLeft: "2px" }}
-                          />
-                        </DropdownToggle>
-                        <DropdownMenu right>
-                          <DropdownItem tag="a">
-                            <Circle size={10} style={{ marginRight: "10px" }} />
-                            Purchase Order
-                          </DropdownItem>
-                          <DropdownItem tag="a">
-                            <Circle size={10} style={{ marginRight: "10px" }} />
-                            Purchase Invoice
-                          </DropdownItem>
-                          <DropdownItem tag="a">
-                            <Circle size={10} style={{ marginRight: "10px" }} />
-                            Purchase Damage
-                          </DropdownItem>
-                          <DropdownItem tag="a">
-                            <Circle size={10} style={{ marginRight: "10px" }} />
-                            Debit Notes
-                          </DropdownItem>
-                          <DropdownItem tag="a">
-                            <Circle size={10} style={{ marginRight: "10px" }} />
-                            Multivendor
-                          </DropdownItem>
-                          <DropdownItem tag="a">
-                            <Circle size={10} style={{ marginRight: "10px" }} />
-                            Purchase Return
-                          </DropdownItem>
-                        </DropdownMenu>
-                      </UncontrolledDropdown>
-                    </NavLink>
-                  </NavItem>
-                  <NavItem>
-                    <NavLink>
-                      <UncontrolledDropdown>
-                        <DropdownToggle
-                          nav
-                          caret
-                          style={{ paddingTop: "0px", color: "#000" }}
-                        >
-                          <DollarSign
-                            size={14}
-                            style={{ marginRight: "15px" }}
-                          />
-                          Transaction
-                          <FaAngleDown
-                            size={14}
-                            style={{ marginLeft: "2px" }}
-                          />
-                        </DropdownToggle>
-                        <DropdownMenu right>
-                          <DropdownItem tag="a">
-                            <Circle size={10} style={{ marginRight: "10px" }} />
-                            Receipt{" "}
-                          </DropdownItem>
-                          <DropdownItem tag="a">
-                            <Circle size={10} style={{ marginRight: "10px" }} />
-                            Payment{" "}
-                          </DropdownItem>
-                          <DropdownItem tag="a">
-                            <Circle size={10} style={{ marginRight: "10px" }} />
-                            Cashbook
-                          </DropdownItem>
-                        </DropdownMenu>
-                      </UncontrolledDropdown>
-                    </NavLink>
-                  </NavItem>
-                  <NavItem>
-                    <NavLink>
-                      <UncontrolledDropdown>
-                        <DropdownToggle
-                          nav
-                          caret
-                          style={{ paddingTop: "0px", color: "#000" }}
-                        >
-                          <DollarSign
-                            size={14}
-                            style={{ marginRight: "15px" }}
-                          />
-                          Productions
-                          <FaAngleDown
-                            size={14}
-                            style={{ marginLeft: "2px" }}
-                          />
-                        </DropdownToggle>
-                        <DropdownMenu right>
-                          <DropdownItem tag="a">
-                            <Circle size={10} style={{ marginRight: "10px" }} />
-                            StockTransfer
-                          </DropdownItem>
-                          <DropdownItem tag="a">
-                            <Circle size={10} style={{ marginRight: "10px" }} />
-                            Payment
-                          </DropdownItem>
-                          <DropdownItem tag="a">
-                            <Circle size={10} style={{ marginRight: "10px" }} />
-                            Cashbook
-                          </DropdownItem>
-                        </DropdownMenu>
-                      </UncontrolledDropdown>
-                    </NavLink>
-                  </NavItem>
-                </Nav> */}
-              {/* </div> */}
               <div className="bookmark-wrapper">
                 <NavbarBookmarks
                   sidebarVisibility={props.sidebarVisibility}
@@ -323,13 +125,66 @@ const ThemeNavbar = (props) => {
               </div>
               {props.horizontal ? (
                 <>
-
                   <HorizontalMenu />
-                {/* <div  className="logo d-flex align-items-center">
-                </div> */}
                 </>
               ) : null}
-              {/* working navbar */}
+              <>
+                <NavbarUser
+                  handleAppOverlay={props.handleAppOverlay}
+                  changeCurrentLang={props.changeCurrentLang}
+                  phoneNo={<PhoneNo userdata={user} {...props} />}
+                  userImg={
+                    props.user.login.values !== undefined &&
+                    props.user.login.values.loggedInWith !== "jwt" &&
+                    props.user.login.values.photoUrl
+                      ? props.user.login.values.photoUrl
+                      : user !== undefined && user.picture
+                      ? user.picture
+                      : userImg
+                  }
+                  loggedInWith={
+                    props.user !== undefined &&
+                    props.user.login.values !== undefined
+                      ? props.user.login.values.loggedInWith
+                      : null
+                  }
+                  logoutWithJWT={props.logoutWithJWT}
+                  logoutWithFirebase={props.logoutWithFirebase}
+                />
+              </>
+            </div> */}
+            {/* <div
+              className="navbar-collapse d-flex justify-content-between align-items-center"
+              id="navbar-mobile"> */}
+            <div
+              className="navbar-collapse d-flex justify-content-between align-items-center"
+              id="navbar-mobile">
+              {" "}
+              <Route
+                render={({ history }) => (
+                  <div
+                    title="Click to Go Dashboard"
+                    style={{
+                      cursor: "pointer",
+                      width: `${window.innerWidth <= 768 ? "25%" : "8%"}`,
+                    }}
+                    // style={{ cursor: "pointer", width: "8%" }}
+                    onClick={() => history.push("/dashboard")}>
+                    <img src={logo} width="100%" height={35} alt="logo" />
+                  </div>
+                )}
+              />
+              <div className="bookmark-wrapper">
+                <NavbarBookmarks
+                  sidebarVisibility={props.sidebarVisibility}
+                  handleAppOverlay={props.handleAppOverlay}
+                />
+              </div>
+              {props.horizontal ? (
+                <>
+                  <HorizontalMenu />
+                </>
+              ) : null}
               <>
                 <NavbarUser
                   handleAppOverlay={props.handleAppOverlay}
@@ -355,9 +210,6 @@ const ThemeNavbar = (props) => {
                 />
               </>
             </div>
-            {/* <div>
-           
-            </div> */}
           </div>
         </div>
       </Navbar>
