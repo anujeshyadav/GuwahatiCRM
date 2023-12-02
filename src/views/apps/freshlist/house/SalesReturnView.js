@@ -37,7 +37,7 @@ import UserContext from "../../../../context/Context";
 import { CloudLightning } from "react-feather";
 import { FaPlus } from "react-icons/fa";
 
-const OrderView = ({ ViewOneData }) => {
+const SalesReturnView = ({ ViewOneData }) => {
   const [Countries, setCountry] = useState({});
   const [States, setState] = useState({});
   const [Cities, setCities] = useState({});
@@ -64,6 +64,7 @@ const OrderView = ({ ViewOneData }) => {
 
   useEffect(() => {
     console.log(product);
+    console.log(ViewOneData);
     setProduct(ViewOneData);
     // console.log(GrandTotal);
   }, [product]);
@@ -99,9 +100,9 @@ const OrderView = ({ ViewOneData }) => {
     <div>
       <div>
         <Card>
-          <Form className="mr-1 ml-1">
+          <Form className="m-2">
             <Row className="mb-2">
-              <Col lg="4" md="4" sm="12">
+              {/* <Col lg="4" md="4" sm="12">
                 <FormGroup>
                   <Label>FullName</Label>
                   <Input
@@ -112,9 +113,9 @@ const OrderView = ({ ViewOneData }) => {
                     value={formData.fullName}
                   />
                 </FormGroup>
-              </Col>
+              </Col> */}
               {product &&
-                product?.orderItems?.map((ele, index) => (
+                product?.returnItems?.map((ele, index) => (
                   <Row className="" key={index}>
                     <Col lg="4" md="4" sm="12">
                       <FormGroup>
@@ -123,8 +124,8 @@ const OrderView = ({ ViewOneData }) => {
                           disabled
                           type="text"
                           placeholder="ProductName"
-                          name={ele.product.Product_Title}
-                          value={ele.product.Product_Title}
+                          name={ele.productId.Product_Title}
+                          value={ele.productId.Product_Title}
                         />
                       </FormGroup>
                     </Col>
@@ -135,32 +136,32 @@ const OrderView = ({ ViewOneData }) => {
                           disabled
                           type="number"
                           placeholder="Price"
-                          name={ele.price}
-                          value={ele.price}
+                          name={ele.productId.Product_MRP}
+                          value={ele.productId.Product_MRP}
                         />
                       </FormGroup>
                     </Col>
                     <Col lg="4" md="4" sm="12">
                       <FormGroup>
-                        <Label>Size</Label>
+                        <Label>Return Quantity</Label>
                         <Input
                           disabled
                           type="number"
-                          placeholder="Size"
-                          name={ele.qty}
-                          value={ele.qty}
+                          placeholder="ReturnQuantity"
+                          name={ele.Qty_Return}
+                          value={ele.Qty_Return}
                         />
                       </FormGroup>
                     </Col>
                     <Col lg="4" md="4" sm="12">
                       <FormGroup>
-                        <Label>GST Rate</Label>
+                        <Label>Sales Quantity</Label>
                         <Input
                           disabled
                           type="number"
-                          placeholder="Price"
-                          name={ele.product["GST Rate"]}
-                          value={ele.product["GST Rate"]}
+                          placeholder="SalesQuantity"
+                          name={ele.productId.Qty_Sales}
+                          value={ele.productId.Qty_Sales}
                         />
                       </FormGroup>
                     </Col>
@@ -172,8 +173,8 @@ const OrderView = ({ ViewOneData }) => {
                           disabled
                           type="number"
                           placeholder="HSTCode"
-                          name={ele.product.HSN_Code}
-                          value={ele.product.HSN_Code}
+                          name={ele.productId.HSN_Code}
+                          value={ele.productId.HSN_Code}
                         />
                       </FormGroup>
                     </Col>
@@ -186,4 +187,4 @@ const OrderView = ({ ViewOneData }) => {
     </div>
   );
 };
-export default OrderView;
+export default SalesReturnView;

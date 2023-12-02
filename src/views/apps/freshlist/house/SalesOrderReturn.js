@@ -16,18 +16,20 @@ import {
   ModalHeader,
   ModalBody,
   Badge,
+  CustomInput,
 } from "reactstrap";
-import ExcelReader from "../parts/ExcelReader";
+
 import { ContextLayout } from "../../../../utility/context/Layout";
 import { AgGridReact } from "ag-grid-react";
 import "ag-grid-community/dist/styles/ag-grid.css";
 import EditAccount from "../accounts/EditAccount";
-import ViewAccount from "../accounts/ViewAccount";
+// import ViewAccount from "../accounts/ViewAccount";
+import ViewOrder from "../order/ViewAll";
 import jsPDF from "jspdf";
 import "jspdf-autotable";
 import Logo from "../../../../assets/img/profile/pages/logomain.png";
 import Papa from "papaparse";
-import { Eye, Trash2, ChevronDown, Edit } from "react-feather";
+import { Eye, Trash2, ChevronDown, Edit, CornerDownLeft } from "react-feather";
 import { IoMdRemoveCircleOutline } from "react-icons/io";
 import "../../../../assets/scss/plugins/tables/_agGridStyleOverride.scss";
 import "../../../../assets/scss/pages/users.scss";
@@ -43,7 +45,11 @@ import swal from "sweetalert";
 import {
   CreateAccountList,
   CreateAccountView,
+  Create_TargetList,
   DeleteAccount,
+  SalesReturnProductList,
+  createOrderhistoryview,
+  Delete_targetINlist,
 } from "../../../../ApiEndPoint/ApiCalling";
 import {
   BsCloudDownloadFill,
@@ -52,6 +58,8 @@ import {
 } from "react-icons/bs";
 import * as XLSX from "xlsx";
 import UserContext from "../../../../context/Context";
+import SalesReturnView from "./SalesReturnView";
+// import TargetAssignedOne from "./TargetAssignedOne";
 
 const SelectedColums = [];
 
@@ -65,12 +73,15 @@ class SalesOrderReturn extends React.Component {
       isOpen: false,
       Arrindex: "",
       rowData: [],
+      userName: "",
+      modal: false,
+      modalone: false,
+      ViewData: {},
       setMySelectedarr: [],
       SelectedCols: [],
       paginationPageSize: 5,
       currenPageSize: "",
       getPageSize: "",
-      columnDefs: [],
       AllcolumnDefs: [],
       SelectedcolumnDefs: [],
       defaultColDef: {
@@ -80,16 +91,181 @@ class SalesOrderReturn extends React.Component {
         resizable: true,
         suppressMenu: true,
       },
+      columnDefs: [
+        {
+          headerName: "UID",
+          valueGetter: "node.rowIndex + 1",
+          field: "node.rowIndex + 1",
+          // checkboxSelection: true,
+          width: 80,
+          filter: true,
+        },
+
+        {
+          headerName: "Actions",
+          field: "transactions",
+          width: 180,
+          cellRendererFramework: params => {
+            return (
+              <div className="actions cursor-pointer">
+                {/* {this.state.Viewpermisson && ( */}
+                <Eye
+                  className="mr-50"
+                  size="25px"
+                  color="green"
+                  onClick={() => {
+                    this.handleChangeView(params.data, "readonly");
+                  }}
+                />
+              </div>
+            );
+          },
+        },
+        // {
+        //   headerName: "Full Name",
+        //   field: "orderItems",
+        //   filter: true,
+        //   width: 180,
+        //   valueGetter: params => {
+        //     if (params.data.orderItems && params.data.orderItems.length > 0) {
+        //       return params.data.fullName;
+        //     }
+        //     return null;
+        //   },
+        // },
+
+        {
+          headerName: "Product Name",
+          field: "returnItems",
+          filter: true,
+          width: 220,
+          valueGetter: params => {
+            if (params.data.returnItems && params.data.returnItems.length > 0) {
+              return params?.data?.returnItems?.map(val => {
+                return val?.productId.Product_Title;
+              });
+            }
+            return null;
+          },
+        },
+        {
+          headerName: "Size",
+          field: "returnItems",
+          filter: true,
+          width: 220,
+          valueGetter: params => {
+            if (params.data.returnItems && params.data.returnItems.length > 0) {
+              return params?.data?.returnItems?.map(val => {
+                return val?.productId.Size;
+              });
+            }
+            return null;
+          },
+        },
+        {
+          headerName: "HSN_Code",
+          field: "returnItems",
+          filter: true,
+          width: 220,
+          valueGetter: params => {
+            if (params.data.returnItems && params.data.returnItems.length > 0) {
+              return params?.data?.returnItems?.map(val => {
+                return val?.productId.HSN_Code;
+              });
+            }
+            return null;
+          },
+        },
+        // {
+        //   headerName: "email",
+        //   field: "email",
+        //   filter: true,
+        //   width: 150,
+        //   valueGetter: params => {
+        //     if (params.data.orderItems && params.data.orderItems.length > 0) {
+        //       return params.data.orderItems[0].price;
+        //     }
+        //     return null;
+        //   },
+        // },
+
+        // {
+        //   headerName: "GST Rate",
+        //   field: "orderItems",
+        //   filter: true,
+        //   width: 180,
+        //   valueGetter: params => {
+        //     if (params.data.orderItems && params.data.orderItems.length > 0) {
+        //       return params.data.orderItems[0].product["GST Rate"]; // Return the price
+        //     }
+        //     return null; // Or handle cases where there's no price
+        //   },
+        // },
+
+        {
+          headerName: "Email",
+          field: "email",
+          filter: true,
+          width: 200,
+          cellRendererFramework: params => {
+            return (
+              <div>
+                <span>{params.data?.email}</span>
+              </div>
+            );
+          },
+        },
+
+        {
+          headerName: "MobileNo",
+          field: "mobileNumber",
+          filter: true,
+          width: 150,
+          cellRendererFramework: params => {
+            return (
+              <div>
+                <span>{params.data?.mobileNumber}</span>
+              </div>
+            );
+          },
+        },
+
+        // {
+        //   headerName: "Status",
+        //   field: "status",
+        //   filter: true,
+        //   width: 150,
+        //   cellRendererFramework: params => {
+        //     return params.value === "completed" ? (
+        //       <div className="badge badge-pill badge-success">
+        //         {params.data.status}
+        //       </div>
+        //     ) : params.value === "pending" ? (
+        //       <div className="badge badge-pill badge-warning">
+        //         {params.data.status}
+        //       </div>
+        //     ) : (
+        //       <div className="badge badge-pill badge-success">
+        //         {params.data.status}
+        //       </div>
+        //     );
+        //   },
+        // },
+      ],
     };
   }
-
+  toggleModal = () => {
+    this.setState(prevState => ({
+      modalone: !prevState.modalone,
+    }));
+  };
   LookupviewStart = () => {
     this.setState(prevState => ({
       modal: !prevState.modal,
     }));
   };
 
-  handleChangeEdit = (data, types) => {
+  handleChangeView = (data, types) => {
     let type = types;
     if (type == "readonly") {
       this.setState({ ViewOneUserView: true });
@@ -102,141 +278,33 @@ class SalesOrderReturn extends React.Component {
 
   async componentDidMount() {
     const UserInformation = this.context?.UserInformatio;
-    await CreateAccountView()
+    await SalesReturnProductList()
       .then(res => {
-        var mydropdownArray = [];
-        var adddropdown = [];
-        const jsonData = xmlJs.xml2json(res.data, { compact: true, spaces: 2 });
-        console.log(JSON.parse(jsonData)?.CreateUser);
+        console.log(res);
+        console.log(UserInformation.firstName);
 
-        const inputs = JSON.parse(jsonData)?.CreateUser?.input?.map(ele => {
-          return {
-            headerName: ele?.label._text,
-            field: ele?.name._text,
-            filter: true,
-            sortable: true,
-          };
-        });
+        this.setState({ rowData: res?.SalesReturn });
+        // this.setState({ userName: UserInformation.firstName });
+        this.setState({ AllcolumnDefs: this.state.columnDefs });
+        this.setState({ SelectedCols: this.state.columnDefs });
 
-        let myHeadings = [...inputs];
-        let Product = [
-          {
-            headerName: "Actions",
-            field: "sortorder",
-            field: "transactions",
-            width: 190,
-            cellRendererFramework: params => {
-              return (
-                <div className="actions cursor-pointer">
-                  <Route
-                    render={({ history }) => (
-                      <Eye
-                        className="mr-50"
-                        size="25px"
-                        color="green"
-                        onClick={() => {
-                          this.handleChangeEdit(params.data, "readonly");
-                        }}
-                      />
-                    )}
-                  />
-                  <Route
-                    render={({ history }) => (
-                      <Edit
-                        className="mr-50"
-                        size="25px"
-                        color="blue"
-                        onClick={() => {
-                          this.handleChangeEdit(params.data, "Editable");
-                        }}
-                      />
-                    )}
-                  />
-
-                  <Route
-                    render={() => (
-                      <Trash2
-                        className="mr-50"
-                        size="25px"
-                        color="red"
-                        onClick={() => {
-                          this.runthisfunction(params?.data?._id);
-                        }}
-                      />
-                    )}
-                  />
-                </div>
-              );
-            },
-          },
-
-          ...myHeadings,
-          {
-            headerName: "Created date",
-            field: "createdAt",
-            filter: true,
-            sortable: true,
-            cellRendererFramework: params => {
-              return (
-                <>
-                  <div className="actions cursor-pointer">
-                    <span>{params?.data?.createdAt}</span>
-                  </div>
-                </>
-              );
-            },
-          },
-          {
-            headerName: "Updated date",
-            field: "updatedAt",
-            filter: true,
-            sortable: true,
-            cellRendererFramework: params => {
-              return (
-                <>
-                  <div className="actions cursor-pointer">
-                    <div className="actions cursor-pointer">
-                      <span>{params?.data?.createdAt}</span>
-                    </div>
-                  </div>
-                </>
-              );
-            },
-          },
-        ];
-
-        this.setState({ AllcolumnDefs: Product });
-
-        let userHeading = JSON.parse(localStorage.getItem("SalesorderReturn"));
+        let userHeading = JSON.parse(localStorage.getItem("TargetList"));
         if (userHeading?.length) {
           this.setState({ columnDefs: userHeading });
           this.gridApi.setColumnDefs(userHeading);
           this.setState({ SelectedcolumnDefs: userHeading });
         } else {
-          this.setState({ columnDefs: Product });
-          this.setState({ SelectedcolumnDefs: Product });
+          this.setState({ columnDefs: this.state.columnDefs });
+          this.setState({ SelectedcolumnDefs: this.state.columnDefs });
         }
-        this.setState({ SelectedCols: Product });
-      })
-      .catch(err => {
-        console.log(err);
-        swal("Error", "something went wrong try again");
-      });
-    await CreateAccountList()
-      .then(res => {
-        let value = res?.User;
-        console.log(value);
-        this.setState({ rowData: value });
       })
       .catch(err => {
         console.log(err);
       });
   }
-  toggleDropdown = () => {
-    this.setState(prevState => ({ isOpen: !prevState.isOpen }));
-  };
 
   runthisfunction(id) {
+    debugger;
     swal("Warning", "Sure You Want to Delete it", {
       buttons: {
         cancel: "cancel",
@@ -245,7 +313,7 @@ class SalesOrderReturn extends React.Component {
     }).then(value => {
       switch (value) {
         case "delete":
-          DeleteAccount(id)
+          Delete_targetINlist(id)
             .then(res => {
               let selectedData = this.gridApi.getSelectedRows();
               this.gridApi.updateRowData({ remove: selectedData });
@@ -445,10 +513,6 @@ class SalesOrderReturn extends React.Component {
         });
 
         xmlString += "</root>";
-
-        // setXmlData(xmlString);
-
-        // Create a download link
         const blob = new Blob([xmlString], { type: "text/xml" });
         const link = document.createElement("a");
         link.href = URL.createObjectURL(blob);
@@ -466,7 +530,7 @@ class SalesOrderReturn extends React.Component {
     this.setState({ SelectedcolumnDefs: this.state.SelectedcolumnDefs });
     this.setState({ rowData: this.state.rowData });
     localStorage.setItem(
-      "SalesorderReturn",
+      "TargetList",
       JSON.stringify(this.state.SelectedcolumnDefs)
     );
     this.LookupviewStart();
@@ -484,11 +548,11 @@ class SalesOrderReturn extends React.Component {
     });
   };
   handleLeftShift = () => {
-    let SelectedCols = this.state.SelectedcolumnDefs.slice();
+    let SelectedCols = this.state.SelectedcolumnDefs?.slice();
     let delindex = this.state.Arrindex; /* Your delete index here */
 
     if (SelectedCols && delindex >= 0) {
-      const splicedElement = SelectedCols.splice(delindex, 1); // Remove the element
+      const splicedElement = SelectedCols?.splice(delindex, 1); // Remove the element
 
       this.setState({
         SelectedcolumnDefs: SelectedCols, // Update the state with the modified array
@@ -507,7 +571,7 @@ class SalesOrderReturn extends React.Component {
     } = this.state;
     return (
       <>
-        <Row className="app-user-list">
+        <Col className="app-user-list">
           {this.state.EditOneUserView && this.state.EditOneUserView ? (
             <Row className="card">
               <Col>
@@ -518,14 +582,13 @@ class SalesOrderReturn extends React.Component {
                       this.setState({ EditOneUserView: false });
                     }}
                     color="danger"
-                    size="sm"
                   >
                     Back
                   </Button>
                 </div>
               </Col>
 
-              <EditAccount EditOneData={this.state.EditOneData} />
+              {/* <EditAccount EditOneData={this.state.EditOneData} /> */}
             </Row>
           ) : (
             <>
@@ -545,7 +608,7 @@ class SalesOrderReturn extends React.Component {
                         </Button>
                       </div>
                     </Col>
-                    <ViewAccount ViewOneData={this.state.ViewOneData} />
+                    <SalesReturnView ViewOneData={this.state.ViewOneData} />
                   </Row>
                 </>
               ) : (
@@ -554,7 +617,7 @@ class SalesOrderReturn extends React.Component {
                     <Card>
                       <Row className="m-2">
                         <Col>
-                          <h1 className="float-left">Return Order list</h1>
+                          <h1 className="float-left">Sales Return List</h1>
                         </Col>
                         <Col>
                           <span className="mx-1">
@@ -626,7 +689,7 @@ class SalesOrderReturn extends React.Component {
                               )}
                             </div>
                           </span>
-                          <span>
+                          {/* <span>
                             <Route
                               render={({ history }) => (
                                 <Badge
@@ -635,15 +698,15 @@ class SalesOrderReturn extends React.Component {
                                   color="primary"
                                   onClick={() =>
                                     history.push(
-                                      "/app/SoftNumen/account/CreateReturnSalesOrder"
+                                      "/app/softnumen/order/createorder"
                                     )
                                   }
                                 >
-                                  <FaPlus size={15} /> Create Return
+                                  <FaPlus size={15} /> Create Order
                                 </Badge>
                               )}
                             />
-                          </span>
+                          </span> */}
                         </Col>
                       </Row>
                       <CardBody>
@@ -718,30 +781,11 @@ class SalesOrderReturn extends React.Component {
                               {context => (
                                 <AgGridReact
                                   id="myAgGrid"
-                                  // gridOptions={{
-                                  //   domLayout: "autoHeight",
-                                  //   // or other layout options
-                                  // }}
                                   gridOptions={this.gridOptions}
                                   rowSelection="multiple"
                                   defaultColDef={defaultColDef}
                                   columnDefs={columnDefs}
                                   rowData={rowData}
-                                  // onGridReady={(params) => {
-                                  //   this.gridApi = params.api;
-                                  //   this.gridColumnApi = params.columnApi;
-                                  //   this.gridRef.current = params.api;
-
-                                  //   this.setState({
-                                  //     currenPageSize:
-                                  //       this.gridApi.paginationGetCurrentPage() +
-                                  //       1,
-                                  //     getPageSize:
-                                  //       this.gridApi.paginationGetPageSize(),
-                                  //     totalPages:
-                                  //       this.gridApi.paginationGetTotalPages(),
-                                  //   });
-                                  // }}
                                   onGridReady={this.onGridReady}
                                   colResizeDefault={"shift"}
                                   animateRows={true}
@@ -766,7 +810,7 @@ class SalesOrderReturn extends React.Component {
               )}
             </>
           )}
-        </Row>
+        </Col>
 
         <Modal
           isOpen={this.state.modal}
@@ -778,7 +822,7 @@ class SalesOrderReturn extends React.Component {
           <ModalBody className="modalbodyhead">
             <Row>
               <Col lg="4" md="4" sm="12" xl="4" xs="12">
-                <h4>Avilable Columns</h4>
+                <h4>Available Columns</h4>
                 <div className="mainshffling">
                   <div class="ex1">
                     {AllcolumnDefs &&
@@ -858,9 +902,9 @@ class SalesOrderReturn extends React.Component {
                                       <IoMdRemoveCircleOutline
                                         onClick={() => {
                                           const SelectedCols =
-                                            this.state.SelectedcolumnDefs.slice();
+                                            this.state.SelectedcolumnDefs?.slice();
                                           const delindex =
-                                            SelectedCols.findIndex(
+                                            SelectedCols?.findIndex(
                                               element =>
                                                 element?.headerName ==
                                                 ele?.headerName
@@ -868,24 +912,13 @@ class SalesOrderReturn extends React.Component {
 
                                           if (SelectedCols && delindex >= 0) {
                                             const splicedElement =
-                                              SelectedCols.splice(delindex, 1); // Remove the element
+                                              SelectedCols?.splice(delindex, 1); // Remove the element
                                             // splicedElement contains the removed element, if needed
 
                                             this.setState({
                                               SelectedcolumnDefs: SelectedCols, // Update the state with the modified array
                                             });
                                           }
-                                          // const delindex =
-                                          //   SelectedCols.findIndex(
-                                          //     (element) =>
-                                          //       element?.headerName ==
-                                          //       ele?.headerName
-                                          //   );
-
-                                          // SelectedCols?.splice(delindex, 1);
-                                          // this.setState({
-                                          //   SelectedcolumnDefs: SelectedCols,
-                                          // });
                                         }}
                                         style={{ cursor: "pointer" }}
                                         size="25px"
@@ -927,12 +960,37 @@ class SalesOrderReturn extends React.Component {
             <Row>
               <Col>
                 <div className="d-flex justify-content-center">
-                  <Button onClick={this.HandleSetVisibleField} color="primary">
+                  {/* <Button onClick={this.HandleSetVisibleField} color="primary">
                     Submit
-                  </Button>
+                  </Button> */}
+
+                  <Badge
+                    style={{ cursor: "pointer" }}
+                    className=""
+                    color="primary"
+                    onClick={this.HandleSetVisibleField}
+                  >
+                    Submit
+                  </Badge>
                 </div>
               </Col>
             </Row>
+          </ModalBody>
+        </Modal>
+        <Modal
+          isOpen={this.state.modalone}
+          toggle={this.toggleModal}
+          className="modal-dialog modal-xl"
+          // className="modal-dialog modal-lg"
+          size="lg"
+          backdrop={true}
+          fullscreen={true}
+        >
+          <ModalHeader toggle={this.toggleModal}>View Details</ModalHeader>
+          <ModalBody className="myproducttable">
+            {/* <div className="container"> */}
+            {/* <TargetAssignedOne ViewData={this.state.ViewData} /> */}
+            {/* </div> */}
           </ModalBody>
         </Modal>
       </>

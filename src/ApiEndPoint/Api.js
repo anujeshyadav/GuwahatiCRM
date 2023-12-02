@@ -46,12 +46,16 @@ export const ProductList_View = "/product/view-product";
 export const Save_Order = "/order/save-create-order";
 export const view_create_order_history = "/order/view-create-order-history";
 
-export const Save_Place_Order = "/order/save-place-order";
+export const Save_Purchase_Order = "/purchase-order/save-purchase-order";
+export const Purchase_Order_List =
+  "/purchase-order/view-purchase-order-history";
 export const Create_Order_ListView = "/order/view-place-order";
 // BY OWN
 // export const Sales_Return_Product = "/sales-return/save-sales-return";
 export const Sales_Return_Product =
   "/sales-return/save-sales-return-createorder";
+export const Sales_Return_ProductList =
+  "/sales-return/view-sales-return-createorder";
 
 // Guwahati close
 
