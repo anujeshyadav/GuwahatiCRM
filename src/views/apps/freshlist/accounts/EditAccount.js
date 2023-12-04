@@ -102,12 +102,17 @@ const EditAccount = ({ EditOneData }) => {
   }, [formData]);
   useEffect(() => {
     setFormData(EditOneData);
-    Get_RoleList().then((res)=>{
-      setdropdownValue(res?.Role)
-    }).catch((err)=>{
-      console.log(err)
-      swal("Roles List Not found")
-    })
+    console.log(EditOneData);
+
+    Get_RoleList()
+      .then((res) => {
+        setdropdownValue(res?.Role);
+        formData["rolename"] = EditOneData?.rolename?._id;
+      })
+      .catch((err) => {
+        console.log(err);
+        swal("Roles List Not found");
+      });
     if (EditOneData?.Country) {
       let countryselected = Country?.getAllCountries()?.filter(
         (ele, i) => ele?.name == EditOneData?.Country

@@ -361,7 +361,8 @@ const CreateTarget = args => {
         });
     }
   };
-  const onSelect1 = (selectedList, selectedItem, index) => {
+  const onSelect1 = (selectedList, selectedItem) => {
+    debugger;
     // console.log(selectedList);
     setSalesperson(selectedList);
     // console.log(index);

@@ -21,6 +21,9 @@ class HorizontalSidebar extends React.Component {
       activeParents: [],
       openDropdown: [],
       dropdownHeight: "auto",
+      userData: {},
+      showpages: [],
+      showpage: [],
       itemHover: null,
       parentHover: null,
       activeChildUrl: null,
@@ -35,12 +38,7 @@ class HorizontalSidebar extends React.Component {
     };
   }
 
-  openDropdown = id => {
-    // console.log(id);
-    // document.getElementById("showlist").className="show nav-link";
-    // console.log(openDrop.className)
-    // document.getElementById("showlist").className = "show nav-link dropdown";
-
+  openDropdown = (id) => {
     let arr = this.state.openDropdown;
     if (!arr.includes(id)) arr.push(id);
     if (id) {
@@ -53,7 +51,7 @@ class HorizontalSidebar extends React.Component {
     });
   };
 
-  closeDropdown = id => {
+  closeDropdown = (id) => {
     let arr = this.state.openDropdown;
     arr.splice(arr.indexOf(id), 1);
     return this.setState({
@@ -61,19 +59,30 @@ class HorizontalSidebar extends React.Component {
     });
   };
 
-  handleItemHover = id => {
+  handleItemHover = (id) => {
     this.setState({
       itemHover: id,
     });
   };
 
-  handleParentHover = id => {
+  handleParentHover = (id) => {
     this.setState({
       parentHover: id,
     });
   };
+  handleshow = () => {
+    let userCredentials = JSON.parse(localStorage.getItem("userData"));
+    let TabparMission = userCredentials?.rolename?.rolePermission?.map(
+      (value) => value?.pagename
+    );
+    // console.log(TabparMission);
+    this.setState({ showpage: TabparMission });
+    this.setState({ userData: userCredentials });
+  };
+  async componentDidMount() {
+    // console.log(this.props)
+    await this.handleshow();
 
-  componentDidMount() {
     this.handleActiveParent(this.activeParentItems);
   }
 
@@ -98,7 +107,7 @@ class HorizontalSidebar extends React.Component {
     }
   };
 
-  handleActiveParent = arr => {
+  handleActiveParent = (arr) => {
     this.setState({
       activeParents: arr,
     });
@@ -109,12 +118,13 @@ class HorizontalSidebar extends React.Component {
     return (
       <DropdownMenu
         tag="ul"
+        hidden=""
         className="mt-50"
-        onMouseEnter={e => e.preventDefault()}
+        onMouseEnter={(e) => e.preventDefault()}
         modifiers={{
           setMaxHeight: {
             enabled: true,
-            fn: data => {
+            fn: (data) => {
               let pageHeight = window.innerHeight,
                 ddTop = data.instance.reference.getBoundingClientRect().top,
                 ddHeight = data.popper.height,
@@ -138,9 +148,11 @@ class HorizontalSidebar extends React.Component {
               };
             },
           },
-        }}
-      >
-        {submenu.map(child => {
+        }}>
+        {submenu.map((child) => {
+          if (child.hidden) {
+            return null; // Skip rendering the hidden tab
+          }
           const CustomAnchorTag = child.type === "external-link" ? `a` : Link;
           if (child.navLink && child.navLink === this.props.activePath) {
             this.activeFlag = true;
@@ -150,10 +162,10 @@ class HorizontalSidebar extends React.Component {
           let renderChildItems = (
             <React.Fragment key={child.id}>
               <li
+                hidden=""
                 className={classnames({
                   active: this.state.activeParents.includes(child.id),
-                })}
-              >
+                })}>
                 <DropdownItem
                   className={classnames("w-100", {
                     hover: this.state.itemHover === child.id,
@@ -182,23 +194,21 @@ class HorizontalSidebar extends React.Component {
                   target={child.newTab ? "_blank" : undefined}
                   onClick={() => this.handleItemHover(child.id)}
                   // onMouseEnter={() => this.handleItemHover(child.id)}
-                  onMouseLeave={() => this.handleItemHover(null)}
-                >
+                  onMouseLeave={() => this.handleItemHover(null)}>
                   {child.children ? (
                     <Dropdown
+                      hidden=""
                       className={classnames("sub-menu w-100", {})}
                       isOpen={this.state.openDropdown.includes(child.id)}
                       direction={this.state.openLeft ? "left" : "right"}
                       toggle={() => true}
                       onClick={() => this.openDropdown(child.id)}
                       // onMouseEnter={() => this.openDropdown(child.id)}
-                      onMouseLeave={() => this.closeDropdown(child.id)}
-                    >
+                      onMouseLeave={() => this.closeDropdown(child.id)}>
                       <DropdownToggle
                         className="d-flex justify-content-between align-items-center item-content mydropdowntoggle"
                         tag={"div"}
-                        onClick={() => this.closeDropdown(child.id)}
-                      >
+                        onClick={() => this.closeDropdown(child.id)}>
                         <div className="dropdown-toggle-sub text-truncate mytruncate">
                           <span className="menu-icon align-bottom mr-1">
                             {child.icon}
@@ -254,8 +264,36 @@ class HorizontalSidebar extends React.Component {
     );
   };
 
-  renderDropdown = arr => {
-    return arr?.map(item => {
+  renderDropdown = (arr) => {
+    // console.log(arr);
+    return arr?.map((item, i) => {
+      arr[i].children?.forEach((tab) => {
+        if (tab.children) {
+          tab?.children?.forEach((tab1) => {
+            if (this.state.showpage?.includes(tab1?.title)) {
+              tab1.hidden = false;
+            } else {
+              tab1.hidden = true;
+            }
+          });
+        }
+        if (this.state.showpage?.includes(tab?.title)) {
+          tab.hidden = false;
+        } else {
+          tab.hidden = true;
+        }
+      });
+      arr?.forEach((tab) => {
+        if (this.state.showpage?.includes(tab?.title)) {
+          tab.hidden = false;
+        } else {
+          tab.hidden = true;
+        }
+      });
+
+      if (item.hidden) {
+        return null; // Skip rendering the hidden tab
+      }
       if (
         item.type === "item" &&
         item.navLink &&
@@ -267,14 +305,15 @@ class HorizontalSidebar extends React.Component {
       const CustomAnchorTag = item.type === "external-link" ? `a` : Link;
       return (
         <li
+          hidden=""
           className={classnames("nav-item", {
             active: this.state.activeParents.includes(item.id),
             hover: this.state.parentHover === item.id,
           })}
           key={item.id}
-          ref={el => (this.menuDrodpown = el)}
-        >
+          ref={(el) => (this.menuDrodpown = el)}>
           <div
+            hidden=""
             className={classnames(
               "nav-item-wrapper cursor-pointer customwrapper",
               {
@@ -292,16 +331,15 @@ class HorizontalSidebar extends React.Component {
             onMouseLeave={() => {
               this.closeDropdown(item.id);
               this.handleParentHover(null);
-            }}
-          >
+            }}>
             {item.children ? (
               <Dropdown
+                hidden=""
                 isOpen={this.state.openDropdown.includes(item.id)}
                 className="nav-link"
                 id="showlist"
                 //  className={classnames("nav-link",this.state.isClassAdded==true ? 'show' : '')}
-                toggle={() => this.openDropdown(item.id)}
-              >
+                toggle={() => this.openDropdown(item.id)}>
                 <DropdownToggle className="d-flex align-items-center" tag="div">
                   <div className="dropdown-text">
                     <span className="menu-icon align-middle mr-75">
@@ -336,8 +374,7 @@ class HorizontalSidebar extends React.Component {
                     : "#"
                 }
                 href={item.type === "external-link" ? item.navLink : undefined}
-                target={item.newTab ? "_blank" : undefined}
-              >
+                target={item.newTab ? "_blank" : undefined}>
                 <span className="menu-icon align-middle mr-75">
                   {item.icon}
                 </span>
@@ -360,18 +397,18 @@ class HorizontalSidebar extends React.Component {
       <div className="">
         <div
           className={classnames(
-            " mycustomereturn header-navbar navbar-expand-sm navbar navbar-horizontal navbar-shadow",
-            {
-              "navbar-static": this.props.navbarType === "static",
-              "fixed-top": this.props.navbarType === "sticky",
-              "floating-nav":
-                this.props.navbarType === "floating" ||
-                !["static", "sticky", "floating"].includes(
-                  this.props.navbarType
-                ),
-            }
+            " mycustomereturn header-navbar navbar-expand-sm navbar navbar-horizontal navbar-shadow"
+            // {
+            //   "navbar-static": this.props.navbarType === "static",
+            //   "fixed-top": this.props.navbarType === "sticky",
+            //   "floating-nav":
+            //     this.props.navbarType === "floating" ||
+            //     !["static", "sticky", "floating"].includes(
+            //       this.props.navbarType
+            //     ),
+            // }
           )}
-        >
+          style={{ width: "100%" }}>
           <div className="navbar-container main-menu-content mycustomcontent">
             <ul className="nav" id="main-menu-navigation mycustomnavigation">
               {this.renderDropdown(navigationConfig)}
@@ -382,7 +419,7 @@ class HorizontalSidebar extends React.Component {
     );
   }
 }
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
   return {
     currentUser: state.auth.login.userRole,
   };

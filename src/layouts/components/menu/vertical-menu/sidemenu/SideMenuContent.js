@@ -111,9 +111,10 @@ class SideMenuContent extends React.Component {
   };
   handleshow = () => {
     let userCredentials = JSON.parse(localStorage.getItem("userData"));
-
-    let TabparMission = userCredentials?.role?.map((value) => value?.pageName);
-    // console.log(TabparMission);
+    let TabparMission = userCredentials?.rolename?.rolePermission?.map(
+      (value) => value?.pagename
+    );
+    console.log(TabparMission);
     this.setState({ showpage: TabparMission });
     this.setState({ userData: userCredentials });
   };
@@ -137,36 +138,43 @@ class SideMenuContent extends React.Component {
 
   render() {
     // Loop over sidebar items
-    // console.log(this.state.showpage);
+    
 
     const menuItems = navigationConfig?.map((item, i) => {
-      // navigationConfig[i].children?.forEach((tab) => {
-      //   if (this.state.showpage?.includes(tab?.title)) {
-      //     tab.hidden = false;
-      //   } else {
-      //     tab.hidden = true;
-      //   }
-      // });
-      // navigationConfig?.forEach((tab) => {
-      //   if (this.state.showpage?.includes(tab?.title)) {
-      //     tab.hidden = false;
-      //   } else {
-      //     tab.hidden = true;
-      //   }
-      // });
+      navigationConfig[i].children?.forEach((tab) => {
+        if (tab.children) {
+          tab?.children?.forEach((tab1) => {
+            if (this.state.showpage?.includes(tab1?.title)) {
+              tab1.hidden = false;
+            } else {
+              tab1.hidden = true;
+            }
+          });
+        }
+        if (this.state.showpage?.includes(tab?.title)) {
+          tab.hidden = false;
+        } else {
+          tab.hidden = true;
+        }
+      });
+      navigationConfig?.forEach((tab) => {
+        if (this.state.showpage?.includes(tab?.title)) {
+          tab.hidden = false;
+        } else {
+          tab.hidden = true;
+        }
+      });
 
-      // if (item.hidden) {
-      //   return null; // Skip rendering the hidden tab
-      // }
+      if (item.hidden) {
+        return null; // Skip rendering the hidden tab
+      }
       const CustomAnchorTag = item.type === "external-link" ? `a` : Link;
       // checks if item has groupheader
       if (item.type === "groupHeader") {
         return (
           <li
-            // hidden="true"
             className="navigation-header"
-            key={`group-header-${item.groupTitle}`}
-          >
+            key={`group-header-${item.groupTitle}`}>
             <span>{item.groupTitle}</span>
           </li>
         );
@@ -201,8 +209,7 @@ class SideMenuContent extends React.Component {
             } else {
               this.handleGroupClick(item.id, null, item.type);
             }
-          }}
-        >
+          }}>
           <CustomAnchorTag
             to={
               item.filterBase
@@ -227,8 +234,7 @@ class SideMenuContent extends React.Component {
             onClick={(e) => {
               return item.type === "collapse" ? e.preventDefault() : "";
             }}
-            target={item.newTab ? "_blank" : undefined}
-          >
+            target={item.newTab ? "_blank" : undefined}>
             <li hidden="" className="menu-text">
               {item?.icon}
               <span className="menu-item menu-title">
