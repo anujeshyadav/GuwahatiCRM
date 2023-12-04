@@ -45,7 +45,8 @@ export const ProductList_View = "/product/view-product";
 
 export const Save_Order = "/order/save-create-order";
 export const view_create_order_history = "/order/view-create-order-history";
-
+// By other
+export const Save_Place_Order = "/order/save-place-order";
 export const Save_Purchase_Order = "/purchase-order/save-purchase-order";
 export const Purchase_Order_List =
   "/purchase-order/view-purchase-order-history";

@@ -697,7 +697,7 @@ class PurchasedOrderList extends React.Component {
                     <Card>
                       <Row className="m-2">
                         <Col>
-                          <h1 className="float-left">Purchased Order List</h1>
+                          <h1 className="float-left">Place Order List</h1>
                         </Col>
                         <Col>
                           <span className="mx-1">

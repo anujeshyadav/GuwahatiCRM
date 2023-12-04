@@ -107,7 +107,7 @@ const horizontalMenuConfig = [
         type: "item",
         icon: <FaCircle size={8} />,
         permissions: ["admin", "editor"],
-        navLink: "/app/AjGroup/order/purchasedOrder",
+        navLink: "/app/AjGroup/order/placeOrderList",
         // navLink: "/app/softNumen/order/placeOrder",
       },
       {

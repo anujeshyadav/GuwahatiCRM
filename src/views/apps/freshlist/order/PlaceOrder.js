@@ -29,7 +29,7 @@ import { FiSend } from "react-icons/fi";
 
 import "../../../../assets/scss/pages/users.scss";
 import {
-  SavePurchaseOrder,
+  SavePlaceOrder,
   ProductListView,
   CreatePartyList,
 } from "../../../../ApiEndPoint/ApiCalling";
@@ -187,13 +187,13 @@ const PlaceOrder = args => {
     if (error) {
       swal("Error occured while Entering Details");
     } else {
-      SavePurchaseOrder(ObjOrder)
+      SavePlaceOrder(ObjOrder)
         .then(res => {
           console.log(res);
           // if (res.status) {
           //   setFormData({});
           //   window.location.reload();
-          swal("Order Purchased Successfully");
+          swal("Order Place Successfully");
           // }
         })
         .catch(err => {

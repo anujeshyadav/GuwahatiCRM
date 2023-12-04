@@ -2,6 +2,7 @@ import {
   Create_warehouse_xmlView,
   Create_warehouse_save,
   Save_Purchase_Order,
+  Save_Place_Order,
   Purchase_Order_List,
   Sales_Return_Product,
   Sales_Return_ProductList,
@@ -307,9 +308,15 @@ export const SaveOrder = async data => {
 };
 
 // by others
-export const SavePurchaseOrder = async data => {
+// export const SavePurchaseOrder = async data => {
+//   let response = await axiosConfig
+//     .post(Save_Purchase_Order, data)
+//     .then(res => res.data);
+//   return response;
+// };
+export const SavePlaceOrder = async data => {
   let response = await axiosConfig
-    .post(Save_Purchase_Order, data)
+    .post(Save_Place_Order, data)
     .then(res => res.data);
   return response;
 };
