@@ -16,7 +16,6 @@ import {
   ModalHeader,
   ModalBody,
   Badge,
-  CustomInput,
 } from "reactstrap";
 
 import { ContextLayout } from "../../../../../utility/context/Layout";
@@ -38,7 +37,6 @@ import {
   FaArrowAltCircleLeft,
   FaArrowAltCircleRight,
   FaFilter,
-  FaPlus,
 } from "react-icons/fa";
 import swal from "sweetalert";
 import {
