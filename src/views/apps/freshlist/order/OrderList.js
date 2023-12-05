@@ -140,7 +140,7 @@ class OrderList extends React.Component {
                     this.handleChangeView(params.data, "readonly");
                   }}
                 />
-                {/* <Edit
+                <Edit
                   className="mr-50"
                   size="25px"
                   color="blue"
@@ -150,7 +150,7 @@ class OrderList extends React.Component {
                       state: params.data,
                     })
                   }
-                /> */}
+                />
               </div>
             );
           },
@@ -231,96 +231,17 @@ class OrderList extends React.Component {
           },
         },
 
-        // {
-        //   headerName: "Country",
-        //   field: "country",
-        //   filter: true,
-        //   width: 200,
-        //   cellRendererFramework: params => {
-        //     return (
-        //       <div>
-        //         <span>{params.data?.country}</span>
-        //       </div>
-        //     );
-        //   },
-        // },
-        // {
-        //   headerName: "State",
-        //   field: "state",
-        //   filter: true,
-        //   width: 200,
-        //   cellRendererFramework: params => {
-        //     return (
-        //       <div>
-        //         <span>{params.data?.state}</span>
-        //       </div>
-        //     );
-        //   },
-        // },
-        // {
-        //   headerName: "City",
-        //   field: "city",
-        //   filter: true,
-        //   width: 200,
-        //   cellRendererFramework: params => {
-        //     return (
-        //       <div>
-        //         <span>{params.data?.city}</span>
-        //       </div>
-        //     );
-        //   },
-        // },
-        // {
-        //   headerName: "MobileNo",
-        //   field: "MobileNo",
-        //   filter: true,
-        //   width: 150,
-        //   cellRendererFramework: params => {
-        //     return (
-        //       <div>
-        //         <span>{params.data?.MobileNo}</span>
-        //       </div>
-        //     );
-        //   },
-        // },
-        // {
-        //   headerName: "Discount",
-        //   field: "discount",
-        //   filter: true,
-        //   width: 200,
-        //   cellRendererFramework: params => {
-        //     return (
-        //       <div>
-        //         <span>{params.data?.discount}</span>
-        //       </div>
-        //     );
-        //   },
-        // },
-        // {
-        //   headerName: "GrandTotal",
-        //   field: "grandTotal",
-        //   filter: true,
-        //   width: 200,
-        //   cellRendererFramework: params => {
-        //     return (
-        //       <div>
-        //         <span>{params.data?.grandTotal}</span>
-        //       </div>
-        //     );
-        //   },
-        // },
-
         {
           headerName: "Status",
           field: "status",
           filter: true,
           width: 150,
           cellRendererFramework: params => {
-            return params.value === "completed" ? (
+            return params.value == "comleted" ? (
               <div className="badge badge-pill badge-success">
                 {params.data.status}
               </div>
-            ) : params.value === "pending" ? (
+            ) : params.value == "pending" ? (
               <div className="badge badge-pill badge-warning">
                 {params.data.status}
               </div>
@@ -362,6 +283,7 @@ class OrderList extends React.Component {
     await createOrderhistoryview()
       .then(res => {
         this.setState({ rowData: res?.orderHistory });
+        console.log(res?.orderHistory);
         this.setState({ AllcolumnDefs: this.state.columnDefs });
         this.setState({ SelectedCols: this.state.columnDefs });
 

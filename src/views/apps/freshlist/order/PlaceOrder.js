@@ -29,7 +29,7 @@ import { FiSend } from "react-icons/fi";
 
 import "../../../../assets/scss/pages/users.scss";
 import {
-  SavePurchaseOrder,
+  SavePlaceOrder,
   ProductListView,
   CreatePartyList,
 } from "../../../../ApiEndPoint/ApiCalling";
@@ -62,26 +62,30 @@ const PlaceOrder = args => {
     },
   ]);
 
-  const handleProductChangeProduct = (e, index) => {
-    setIndex(index);
-    const { name, value } = e.target;
-    const list = [...product];
-    list[index][name] = value;
+  const handleProductChangeProduct = (e, index, availableSize) => {
+    if (availableSize >= e.target.value) {
+      setIndex(index);
+      const { name, value } = e.target;
+      const list = [...product];
+      list[index][name] = value;
 
-    let amt = 0;
-    if (list.length > 0) {
-      const x = list?.map(val => {
-        console.log(val.qty * val.price);
-        list[index]["totalprice"] = val.qty * val.price;
-        return val.qty * val.price;
-      });
-      amt = x.reduce((a, b) => a + b);
-      console.log("GrandTotal", amt);
+      let amt = 0;
+      if (list.length > 0) {
+        const x = list?.map(val => {
+          console.log(val.qty * val.price);
+          list[index]["totalprice"] = val.qty * val.price;
+          return val.qty * val.price;
+        });
+        amt = x.reduce((a, b) => a + b);
+        console.log("GrandTotal", amt);
+      }
+      console.log(list);
+      setProduct(list);
+      setGrandTotalAmt(amt);
+      console.log(GrandTotal);
+    } else {
+      return null;
     }
-    console.log(list);
-    setProduct(list);
-    setGrandTotalAmt(amt);
-    console.log(GrandTotal);
   };
 
   const handleSelectionParty = (selectedList, selectedItem, index) => {
@@ -100,6 +104,7 @@ const PlaceOrder = args => {
       const updatedProduct = { ...updatedProductList[index] }; // Create a copy of the product at the specified index
       updatedProduct.price = selectedItem.Product_MRP; // Update the price of the copied product
       updatedProduct.productId = selectedItem._id;
+      updatedProduct.availableQty = selectedItem.Size;
       updatedProductList[index] = updatedProduct; // Replace the product at the specified index with the updated one
       let myarr = prevProductList?.map((ele, i) => {
         let indextotal = ele?.qty * SelectedITems[i]?.Product_MRP;
@@ -187,13 +192,13 @@ const PlaceOrder = args => {
     if (error) {
       swal("Error occured while Entering Details");
     } else {
-      SavePurchaseOrder(ObjOrder)
+      SavePlaceOrder(ObjOrder)
         .then(res => {
           console.log(res);
           // if (res.status) {
           //   setFormData({});
           //   window.location.reload();
-          swal("Order Purchased Successfully");
+          swal("Order Place Successfully");
           // }
         })
         .catch(err => {
@@ -276,13 +281,32 @@ const PlaceOrder = args => {
                     </Col>
                     <Col className="mb-1" lg="2" md="2" sm="12">
                       <div className="">
+                        <Label>Available Size</Label>
+                        <Input
+                          type="number"
+                          name="qty"
+                          placeholder="Req_Qty"
+                          value={product?.availableQty}
+                          onChange={e => handleProductChangeProduct(e, index)}
+                        />
+                      </div>
+                    </Col>
+                    <Col className="mb-1" lg="2" md="2" sm="12">
+                      <div className="">
                         <Label>Required Qty</Label>
                         <Input
                           type="number"
                           name="qty"
                           placeholder="Req_Qty"
+                          autocomplete="off"
                           value={product?.qty}
-                          onChange={e => handleProductChangeProduct(e, index)}
+                          onChange={e =>
+                            handleProductChangeProduct(
+                              e,
+                              index,
+                              product?.availableQty
+                            )
+                          }
                         />
                       </div>
                     </Col>

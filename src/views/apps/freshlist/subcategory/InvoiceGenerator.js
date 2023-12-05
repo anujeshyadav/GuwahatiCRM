@@ -21,7 +21,6 @@ import {
 } from "reactstrap";
 import { AiOutlineDownload } from "react-icons/ai";
 import axiosConfig from "../../../../axiosConfig";
-import axios from "axios";
 import { ToWords } from "to-words";
 import { ContextLayout } from "../../../../utility/context/Layout";
 import { AgGridReact } from "ag-grid-react";
@@ -102,7 +101,7 @@ class InvoiceGenerator extends React.Component {
         headerName: "Add Bills",
         width: 160,
         filter: true,
-        cellRendererFramework: (params) => {
+        cellRendererFramework: params => {
           return (
             <div className="d-flex align-items-center justify-content-center cursor-pointer">
               <div>
@@ -110,7 +109,7 @@ class InvoiceGenerator extends React.Component {
                   <input
                     type="checkbox"
                     className="customcheckbox"
-                    onClick={(e) => {
+                    onClick={e => {
                       this.handleMultipleBillsAdd(
                         params?.data,
                         e.target.checked
@@ -134,7 +133,7 @@ class InvoiceGenerator extends React.Component {
         field: "order_status",
         filter: true,
         width: 160,
-        cellRendererFramework: (params) => {
+        cellRendererFramework: params => {
           return params.data?.order_status === "Completed" ? (
             <div className="badge badge-pill badge-success">Completed</div>
           ) : params.data?.order_status === "Pending" ? (
@@ -158,7 +157,7 @@ class InvoiceGenerator extends React.Component {
         filter: true,
         resizable: true,
         width: 150,
-        cellRendererFramework: (params) => {
+        cellRendererFramework: params => {
           // console.log(params.data?.order_id);
 
           return (
@@ -231,7 +230,7 @@ class InvoiceGenerator extends React.Component {
         filter: true,
         resizable: true,
         width: 150,
-        cellRendererFramework: (params) => {
+        cellRendererFramework: params => {
           return (
             <div className="d-flex align-items-center justify-content-center cursor-pointer">
               <div>
@@ -254,7 +253,7 @@ class InvoiceGenerator extends React.Component {
         filter: true,
         resizable: true,
         width: 210,
-        cellRendererFramework: (params) => {
+        cellRendererFramework: params => {
           return (
             <div className="d-flex align-items-center cursor-pointer">
               <div>
@@ -300,7 +299,7 @@ class InvoiceGenerator extends React.Component {
         field: "sortorder",
         field: "transactions",
         width: 120,
-        cellRendererFramework: (params) => {
+        cellRendererFramework: params => {
           return (
             <div className="actions cursor-pointer">
               {this.state.Viewpermisson && (
@@ -363,7 +362,7 @@ class InvoiceGenerator extends React.Component {
         filter: true,
         resizable: true,
         width: 160,
-        cellRendererFramework: (params) => {
+        cellRendererFramework: params => {
           return (
             <div className="d-flex align-items-center cursor-pointer">
               <div>
@@ -411,7 +410,7 @@ class InvoiceGenerator extends React.Component {
         filter: true,
         resizable: true,
         width: 230,
-        cellRendererFramework: (params) => {
+        cellRendererFramework: params => {
           return (
             <div className="d-flex align-items-center cursor-pointer">
               <div>
@@ -678,20 +677,18 @@ class InvoiceGenerator extends React.Component {
         role: pageparmission?.Userinfo?.role,
       });
     } else {
-      let index = AddedBill.findIndex(
-        (ele) => ele?.order_id === data?.order_id
-      );
+      let index = AddedBill.findIndex(ele => ele?.order_id === data?.order_id);
       AddedBill.splice(index, 1);
     }
     // console.log(AddedBill);
     this.setState({ Mergebilllength: AddedBill?.length });
   };
-  MergeBillNow = (e) => {
+  MergeBillNow = e => {
     e.preventDefault();
-   this.toggleModal();
+    this.toggleModal();
   };
 
-  handleSubmit = (e) => {
+  handleSubmit = e => {
     e.preventDefault();
     this.setState({ ButtonText: "InProcess" });
     // debugger;
@@ -710,9 +707,9 @@ class InvoiceGenerator extends React.Component {
       formdata.append("discount_value", this.state.discount);
       formdata.append("delivery_charges", this.state.deliveryCharges);
       formdata.append("other_charges", this.state.otherCharges);
-       axiosConfig
+      axiosConfig
         .post(`/createmergebillapi`, formdata)
-        .then((res) => {
+        .then(res => {
           // console.log(res.data?.data?.applied_charges);
           this.setState({ Applied_Charges: res.data?.data?.applied_charges });
           // console.log(res.data.data?.items);
@@ -730,7 +727,7 @@ class InvoiceGenerator extends React.Component {
 
           this.setState({ wordsNumber: words });
         })
-        .catch((err) => {
+        .catch(err => {
           console.log(err);
           this.setState({ ButtonText: "Submit" });
         });
@@ -740,7 +737,7 @@ class InvoiceGenerator extends React.Component {
       swal("Enter Values in field");
     }
   };
-  handleBillDownload = (data) => {
+  handleBillDownload = data => {
     // console.log(data);
     this.setState({ PrintData: data });
     const toWords = new ToWords();
@@ -749,7 +746,7 @@ class InvoiceGenerator extends React.Component {
     this.toggleModal();
   };
   toggleModal = () => {
-    this.setState((prevState) => ({
+    this.setState(prevState => ({
       modal: !prevState.modal,
     }));
   };
@@ -761,20 +758,21 @@ class InvoiceGenerator extends React.Component {
     // AddedBill = [];
     // console.log(AddedBill);
   };
-  changeHandler = (e) => {
+  changeHandler = e => {
     this.setState({ [e.target.name]: e.target.value });
   };
   async componentDidMount() {
     let pageparmission = JSON.parse(localStorage.getItem("userData"));
     // console.log(pageparmission.role);
     let userchoice = JSON.parse(localStorage.getItem("billUI"));
+    console.log(userchoice);
     if (userchoice) {
       this.setState({ logoposition: userchoice?.imagePosition });
       this.setState({ Billtoposition: userchoice?.billTo });
       this.setState({ shipto: userchoice?.shipto });
     }
     let newparmisson = pageparmission?.role?.find(
-      (value) => value?.pageName === "invoice Generator"
+      value => value?.pageName === "invoice Generator"
     );
     // console.log(newparmisson);
     this.setState({ Viewpermisson: newparmisson?.permission.includes("View") });
@@ -797,27 +795,27 @@ class InvoiceGenerator extends React.Component {
     formdata.append("role", pageparmission?.Userinfo?.role);
     await axiosConfig
       .post(`/getallcompleteorders`, formdata)
-      .then((res) => {
+      .then(res => {
         // console.log(res.data.data);
         let rowData = res.data.data;
         this.setState({ rowData });
       })
-      .catch((err) => {
+      .catch(err => {
         console.log(err);
       });
   }
   async runthisfunction(id) {
     // console.log(id);
     await axiosConfig.delete(`/admin/del_subcategory/${id}`).then(
-      (response) => {
+      response => {
         console.log(response);
       },
-      (error) => {
+      error => {
         console.log(error);
       }
     );
   }
-  submitHandler = (e) => {
+  submitHandler = e => {
     e.preventDefault();
     let mychoice = {
       imagePosition: this.state.logoposition,
@@ -832,7 +830,7 @@ class InvoiceGenerator extends React.Component {
       this.setState({ ShowMyBill: true });
     }
   };
-  onGridReady = (params) => {
+  onGridReady = params => {
     this.gridApi = params.api;
     this.gridColumnApi = params.columnApi;
     this.setState({
@@ -841,10 +839,10 @@ class InvoiceGenerator extends React.Component {
       totalPages: this.gridApi.paginationGetTotalPages(),
     });
   };
-  updateSearchQuery = (val) => {
+  updateSearchQuery = val => {
     this.gridApi.setQuickFilter(val);
   };
-  filterSize = (val) => {
+  filterSize = val => {
     if (this.gridApi) {
       this.gridApi.paginationSetPageSize(Number(val));
       this.setState({
@@ -866,15 +864,14 @@ class InvoiceGenerator extends React.Component {
                   Generate invoice
                 </h1>
               </Col>
-                 <Col>
+              <Col>
                 <Button
                   className=" btn btn-danger float-right"
-                 onClick={this.MergeBillNow}
+                  onClick={this.MergeBillNow}
                 >
                   Create Invoice
                 </Button>
               </Col>
-          
             </Row>
             <CardBody>
               {this.state.rowData === null ? null : (
@@ -928,9 +925,7 @@ class InvoiceGenerator extends React.Component {
                       <div className="table-input mr-1">
                         <Input
                           placeholder="search..."
-                          onChange={(e) =>
-                            this.updateSearchQuery(e.target.value)
-                          }
+                          onChange={e => this.updateSearchQuery(e.target.value)}
                           value={this.state.value}
                         />
                       </div>
@@ -945,7 +940,7 @@ class InvoiceGenerator extends React.Component {
                     </div>
                   </div>
                   <ContextLayout.Consumer>
-                    {(context) => (
+                    {context => (
                       <AgGridReact
                         gridOptions={{}}
                         rowSelection="multiple"
@@ -993,14 +988,14 @@ class InvoiceGenerator extends React.Component {
                         deliveryCharges={this.state.deliveryCharges}
                         otherCharges={this.state.otherCharges}
                         discount={this.state.discount}
-                        AddedBill={AddedBill}
+                        // AddedBill={AddedBill}
                       />
                     </div>
                   </>
                 ) : (
                   <>
                     <div style={{ width: "100%" }} className="">
-                      <Form onSubmit={(e) => this.handleSubmit(e)}>
+                      <Form onSubmit={e => this.handleSubmit(e)}>
                         <Row className="main div heading px-3 py-3">
                           <Col lg="6" className="mb-2">
                             <Label>SGST</Label>

@@ -17,33 +17,27 @@ import {
   ModalBody,
   Badge,
 } from "reactstrap";
-
 import { ContextLayout } from "../../../../utility/context/Layout";
 import { AgGridReact } from "ag-grid-react";
 import "ag-grid-community/dist/styles/ag-grid.css";
-import EditAccount from "../accounts/EditAccount";
-import ViewAccount from "../accounts/ViewAccount";
 import jsPDF from "jspdf";
 import "jspdf-autotable";
 import Logo from "../../../../assets/img/profile/pages/logomain.png";
 import Papa from "papaparse";
-import { Eye, Trash2, ChevronDown, Edit } from "react-feather";
+import { Eye, Trash2, ChevronDown, CornerDownLeft } from "react-feather";
 import { IoMdRemoveCircleOutline } from "react-icons/io";
 import "../../../../assets/scss/plugins/tables/_agGridStyleOverride.scss";
 import "../../../../assets/scss/pages/users.scss";
-
+import ViewOrder from "../order/ViewAll";
+import CompletedOrder from "../order/completed/ViewCompleted";
 import {
   FaArrowAltCircleLeft,
   FaArrowAltCircleRight,
   FaFilter,
   FaPlus,
 } from "react-icons/fa";
-import moment from "moment-timezone";
 import swal from "sweetalert";
 import {
-  CreateAccountList,
-  CreateAccountView,
-  Create_TargetList,
   DeleteAccount,
   createOrderhistoryview,
   Delete_targetINlist,
@@ -55,7 +49,6 @@ import {
 } from "react-icons/bs";
 import * as XLSX from "xlsx";
 import UserContext from "../../../../context/Context";
-// import TargetAssignedOne from "./TargetAssignedOne";
 
 const SelectedColums = [];
 
@@ -91,7 +84,6 @@ class CompleteOrder extends React.Component {
           headerName: "UID",
           valueGetter: "node.rowIndex + 1",
           field: "node.rowIndex + 1",
-          // checkboxSelection: true,
           width: 80,
           filter: true,
         },
@@ -108,22 +100,25 @@ class CompleteOrder extends React.Component {
                   size="25px"
                   color="green"
                   onClick={() => {
-                    this.setState({ ViewData: params?.data });
-                    // this.toggleModal();
+                    this.handleChangeView(params.data, "readonly");
                   }}
                 />
 
-                {/* <Edit
+                <CornerDownLeft
                   className="mr-50"
                   size="25px"
-                  color="blue"
-                  onClick={() =>
+                  color="green"
+                  onClick={() => {
+                    localStorage.setItem(
+                      "OrderList",
+                      JSON.stringify(params.data)
+                    );
                     this.props.history.push({
-                      pathname: `/app/AJGroup/account/EditTarget/${params.data?._id}`,
+                      pathname: `/app/AJGroup/order/salesReturn/${params.data?._id}`,
                       state: params.data,
-                    })
-                  }
-                /> */}
+                    });
+                  }}
+                />
 
                 {/* <Trash2
                   className="mr-50"
@@ -149,30 +144,7 @@ class CompleteOrder extends React.Component {
             return null;
           },
         },
-        {
-          headerName: "Category",
-          field: "orderItems",
-          filter: true,
-          width: 180,
-          valueGetter: params => {
-            if (params.data.orderItems && params.data.orderItems.length > 0) {
-              return params.data.orderItems[0].product.category;
-            }
-            return null;
-          },
-        },
-        {
-          headerName: "SubCategory",
-          field: "orderItems",
-          filter: true,
-          width: 180,
-          valueGetter: params => {
-            if (params.data.orderItems && params.data.orderItems.length > 0) {
-              return params.data.orderItems[0].product.SubCategory;
-            }
-            return null;
-          },
-        },
+
         {
           headerName: "Price",
           field: "orderItems",
@@ -223,45 +195,6 @@ class CompleteOrder extends React.Component {
         },
 
         {
-          headerName: "Country",
-          field: "country",
-          filter: true,
-          width: 200,
-          cellRendererFramework: params => {
-            return (
-              <div>
-                <span>{params.data?.country}</span>
-              </div>
-            );
-          },
-        },
-        {
-          headerName: "State",
-          field: "state",
-          filter: true,
-          width: 200,
-          cellRendererFramework: params => {
-            return (
-              <div>
-                <span>{params.data?.state}</span>
-              </div>
-            );
-          },
-        },
-        {
-          headerName: "City",
-          field: "city",
-          filter: true,
-          width: 200,
-          cellRendererFramework: params => {
-            return (
-              <div>
-                <span>{params.data?.city}</span>
-              </div>
-            );
-          },
-        },
-        {
           headerName: "MobileNo",
           field: "MobileNo",
           filter: true,
@@ -283,19 +216,6 @@ class CompleteOrder extends React.Component {
             return (
               <div>
                 <span>{params.data?.discount}</span>
-              </div>
-            );
-          },
-        },
-        {
-          headerName: "GrandTotal",
-          field: "grandTotal",
-          filter: true,
-          width: 200,
-          cellRendererFramework: params => {
-            return (
-              <div>
-                <span>{params.data?.grandTotal}</span>
               </div>
             );
           },
@@ -339,14 +259,26 @@ class CompleteOrder extends React.Component {
     }
   };
 
+  handleChangeView = (data, types) => {
+    let type = types;
+    if (type == "readonly") {
+      this.setState({ ViewOneUserView: true });
+      this.setState({ ViewOneData: data });
+    } else {
+      this.setState({ EditOneUserView: true });
+      this.setState({ EditOneData: data });
+    }
+  };
   async componentDidMount() {
     const UserInformation = this.context?.UserInformatio;
 
     await createOrderhistoryview()
       .then(res => {
+        console.log(res.orderHistory);
         const ComplteStatus = res?.orderHistory?.filter(
           ele => ele.status == "completed"
         );
+        // console.log(ComplteStatus);
         this.setState({ rowData: ComplteStatus });
         this.setState({ AllcolumnDefs: this.state.columnDefs });
         this.setState({ SelectedCols: this.state.columnDefs });
@@ -642,7 +574,7 @@ class CompleteOrder extends React.Component {
     } = this.state;
     return (
       <>
-        <Row className="app-user-list">
+        <Col className="app-user-list">
           {this.state.EditOneUserView && this.state.EditOneUserView ? (
             <Row className="card">
               <Col>
@@ -677,6 +609,7 @@ class CompleteOrder extends React.Component {
                         </Button>
                       </div>
                     </Col>
+                    <CompletedOrder ViewOneData={this.state.ViewOneData} />
                   </Row>
                 </>
               ) : (
@@ -864,7 +797,7 @@ class CompleteOrder extends React.Component {
               )}
             </>
           )}
-        </Row>
+        </Col>
 
         <Modal
           isOpen={this.state.modal}

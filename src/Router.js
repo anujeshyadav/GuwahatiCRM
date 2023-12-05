@@ -481,17 +481,28 @@ const CreateOrder = lazy(() =>
 const PendingOrder = lazy(() =>
   import("./views/apps/freshlist/order/PendingOrder")
 );
+const EditPending = lazy(() =>
+  import("./views/apps/freshlist/order/pending/EditPending")
+);
 const OrderList = lazy(() => import("./views/apps/freshlist/order/OrderList"));
+const PurchaseOrderList = lazy(() =>
+  import("./views/apps/freshlist/order/purchase/PurchaseOrderList")
+);
+const PurchaseReturn = lazy(() =>
+  import("./views/apps/freshlist/order/purchase/PurchaseReturn")
+);
 const SalesReturnView = lazy(() =>
   import("./views/apps/freshlist/order/SalesReturnView")
 );
 const PlaceOrder = lazy(() =>
   import("./views/apps/freshlist/order/PlaceOrder")
 );
-const PurchasedOrder = lazy(() =>
-  import("./views/apps/freshlist/order/PurchasedOrder")
+const PlaceOrderList = lazy(() =>
+  import("./views/apps/freshlist/order/PlaceOrderList")
 );
-
+const PlaceOrderReturn = lazy(() =>
+  import("./views/apps/freshlist/order/PlaceOrderReturn")
+);
 // app/softNumen/order/OrderSearch
 const InvoiceGenerator = lazy(() =>
   import("./views/apps/freshlist/subcategory/InvoiceGenerator")
@@ -1417,12 +1428,28 @@ class AppRouter extends React.Component {
             component={PendingOrder}
           />
           <AppRoute
+            path="/app/AJGroup/order/editPending/:id"
+            component={EditPending}
+          />
+          <AppRoute
             path="/app/softnumen/order/orderList"
             component={OrderList}
           />
           <AppRoute
+            path="/app/AJgroup/order/purchaseOrderList"
+            component={PurchaseOrderList}
+          />
+          <AppRoute
             path="/app/AJGroup/order/salesReturn/:id"
             component={SalesReturnView}
+          />
+          <AppRoute
+            path="/app/AJGroup/order/purchaseReturn/:id"
+            component={PurchaseReturn}
+          />
+          <AppRoute
+            path="/app/AJGroup/order/placeOrderReturn/:id"
+            component={PlaceOrderReturn}
           />
           <AppRoute
             path="/app/softNumen/order/placeOrder"
@@ -1462,8 +1489,8 @@ class AppRouter extends React.Component {
             component={ViewOneReceivedOrder}
           />
           <AppRoute
-            path="/app/AjGroup/order/purchasedOrder"
-            component={PurchasedOrder}
+            path="/app/AjGroup/order/placeOrderList"
+            component={PlaceOrderList}
           />
           <AppRoute path="/app/freshlist/order/AddOrder" component={AddOrder} />
           <AppRoute

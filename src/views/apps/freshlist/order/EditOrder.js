@@ -10,25 +10,15 @@ import {
   Label,
   Button,
   FormGroup,
-  CustomInput,
-  ModalBody,
-  ModalHeader,
-  Modal,
-  InputGroup,
 } from "reactstrap";
-import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
-import { BiEnvelope } from "react-icons/bi";
-import { BsFillChatDotsFill, BsWhatsapp } from "react-icons/bs";
-import { FaHistory } from "react-icons/fa";
-import { FcPhoneAndroid } from "react-icons/fc";
-import { AiOutlineSearch } from "react-icons/ai";
-import Flatpickr from "react-flatpickr";
+
 import { useParams, useLocation } from "react-router-dom";
 import "../../../../assets/scss/pages/users.scss";
 import {
   ProductListView,
   Create_Sales_personList,
+  SalesEditOrder,
 } from "../../../../ApiEndPoint/ApiCalling";
 import "../../../../assets/scss/pages/users.scss";
 import { Route } from "react-router-dom";
@@ -36,7 +26,7 @@ import { Route } from "react-router-dom";
 let GrandTotal = [];
 
 const EditTarget = args => {
-  const [Index, setIndex] = useState("");
+  const [Index, setIndex] = useState(-1);
   const [targetStartDate, settargetStartDate] = useState("");
   const [targetEndDate, settargetEndDate] = useState("");
   const [error, setError] = useState("");
@@ -56,44 +46,46 @@ const EditTarget = args => {
       qty: 1, //
       price: "", //
       grandTotal: "",
-      // fullName: "",
     },
   ]);
   const handleChange = e => {
-    setUserName(e.target.value);
     console.log(e.target.value);
+    setUserName(e.target.value);
+  };
+  const myFun = () => {
+    setProduct(location.state);
   };
   const handleProductChangeProduct = (e, index) => {
+    // debugger;
+    myFun();
     setIndex(index);
     const { name, value } = e.target;
-    const list = [...product];
-    console.log("before", list);
-    list[index][name] = value;
-    console.log("after", list);
-    // let amt = 0;
-    // if (list.length > 0) {
-    //   const x = list?.map(val => {
-    //     console.log(val.qty * val.price);
-    //     GrandTotal[index] = val.qty * val.price;
 
-    //     list[index]["totalprice"] = val.qty * val.price;
-    //     return val.qty * val.price;
-    //   });
-    //   amt = x.reduce((a, b) => a + b);
-    //   console.log("GrandTotal", amt);
-    // }
-    // console.log(list)
+    const list = [...product];
+    if (index < 0 || index >= list.length) {
+      return;
+    }
+
+    list.orderItems[index] = {
+      ...list[index],
+      [name]: value,
+    };
+
     setProduct(list);
-    setGrandTotalAmt(amt);
-    // setAmount(amt);
   };
 
   useEffect(() => {
-    console.log(location.state);
     setProduct(location.state);
+    console.log(location.state);
+    setUserName(location.state.fullName);
     setEditdata(location?.state);
     setGrandTotalAmt(location?.state?.grandTotal);
   }, []);
+
+  useEffect(() => {
+    setProduct(location.state);
+    setEditdata(location?.state);
+  }, [product]);
 
   // useEffect(() => {
   //   // console.log(Params.id);
@@ -117,33 +109,34 @@ const EditTarget = args => {
 
   useEffect(() => {
     const userInfo = JSON.parse(localStorage.getItem("userData"));
-    console.log(userInfo);
     setUserInfo(userInfo);
   }, []);
 
   const submitHandler = e => {
-    // e.preventDefault();
-    // console.log(userName);
-    // let payload = {
-    //   fullName: userName,
-    //   orderItems: product,
-    // };
-    // if (error) {
-    //   swal("Error occured while Entering Details");
-    // } else {
-    //   Create_Targetsave(payload)
-    //     .then(res => {
-    //       // if (res.status) {
-    //       //   setFormData({});
-    //       //   window.location.reload();
-    //       swal("Target Created Successfully");
-    //       // }
-    //       console.log(res);
-    //     })
-    //     .catch(err => {
-    //       console.log(err);
-    //     });
-    // }
+    e.preventDefault();
+    console.log(product, product.orderItems);
+    let editedproduct = product.orderItems.map(ele => {
+      return {
+        productId: ele?.product?._id,
+        qty: 5,
+      };
+    });
+    let payload = {
+      fullName: userName,
+      orderItems: editedproduct,
+    };
+    if (error) {
+      swal("Error occured while Entering Details");
+    } else {
+      SalesEditOrder(payload, product._id)
+        .then(res => {
+          console.log(res);
+          swal("Order  Edit Successfully");
+        })
+        .catch(err => {
+          console.log(err);
+        });
+    }
   };
 
   return (
@@ -185,16 +178,17 @@ const EditTarget = args => {
                     type="text"
                     name="FullName"
                     placeholder="FullName"
-                    value={product.fullName}
+                    value={userName}
                     onChange={handleChange}
-                    // onChange={e => settargetStartDate(e.target.value)}
                   />
                 </div>
               </Col>
 
               {product &&
                 product?.orderItems?.map((product, index) => {
-                  console.log(product);
+                  {
+                    /* console.log(product); */
+                  }
                   return (
                     <Row className="" key={index}>
                       <Col className="mb-1">
@@ -204,58 +198,58 @@ const EditTarget = args => {
                             type="text"
                             placeholder="ProductName"
                             name="Product_Title"
+                            readOnly
                             value={product.product.Product_Title}
-                            // onChange={e => handleProductChangeProduct(e, index)}
                             onChange={e => handleChange(e, index)}
                           />
                         </div>
                       </Col>
-                      <Col lg="4" md="4" sm="12">
+                      <Col>
                         <FormGroup>
                           <Label>Price</Label>
                           <Input
                             type="number"
+                            readOnly
                             placeholder="Price"
-                            name={product.price}
+                            name="Price"
                             value={product.price}
-                            onChange={e => handleProductChangeProduct(e, index)}
                           />
                         </FormGroup>
                       </Col>
-                      <Col lg="4" md="4" sm="12">
+                      <Col>
                         <FormGroup>
                           <Label>Size</Label>
                           <Input
                             type="number"
                             placeholder="Size"
-                            name={product.qty}
+                            name="qty"
                             value={product.qty}
                             onChange={e => handleProductChangeProduct(e, index)}
                           />
                         </FormGroup>
                       </Col>
-                      <Col lg="4" md="4" sm="12">
+                      <Col>
                         <FormGroup>
                           <Label>GST Rate</Label>
                           <Input
                             type="number"
-                            placeholder="Price"
-                            name={product.product["GST Rate"]}
+                            placeholder="GST Rate"
+                            name="GSTRate"
                             value={product.product["GST Rate"]}
-                            onChange={e => handleProductChangeProduct(e, index)}
+                            // onChange={e => handleProductChangeProduct(e, index)}
                           />
                         </FormGroup>
                       </Col>
 
-                      <Col lg="4" md="4" sm="12">
+                      <Col>
                         <FormGroup>
                           <Label>HST Code</Label>
                           <Input
                             type="number"
                             placeholder="HSTCode"
-                            name={product.product.HSN_Code}
+                            name="HSTCode"
                             value={product.product.HSN_Code}
-                            onChange={e => handleProductChangeProduct(e, index)}
+                            // onChange={e => handleProductChangeProduct(e, index)}
                           />
                         </FormGroup>
                       </Col>
