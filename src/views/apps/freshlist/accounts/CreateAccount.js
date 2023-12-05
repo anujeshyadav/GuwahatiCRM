@@ -124,21 +124,25 @@ const CreateAccount = () => {
 
   const submitHandler = (e) => {
     e.preventDefault();
-  
-    if (error) {
-      swal("Error occured while Entering Details");
+    console.log(formData);
+    if (formData?.rolename && formData?.email && formData?.firstName) {
+      if (error) {
+        swal("Error occured while Entering Details");
+      } else {
+        CreateAccountSave(formData)
+          .then((res) => {
+            setFormData({});
+            if (res.status) {
+              // window.location.reload();
+              swal("User Created Successfully");
+            }
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+      }
     } else {
-      CreateAccountSave(formData)
-        .then((res) => {
-          setFormData({});
-          if (res.status) {
-            // window.location.reload();
-            swal("User Created Successfully");
-          }
-        })
-        .catch((err) => {
-          console.log(err);
-        });
+      swal("Enter User Name Email and Select Role");
     }
   };
 
@@ -160,50 +164,44 @@ const CreateAccount = () => {
                       color="primary"
                       onClick={() =>
                         history.push("/app/SoftNumen/accounSearch")
-                      }
-                    >
+                      }>
                       {" "}
                       Back
                       {/* <FaPlus size={15} /> Create User */}
                     </Button>
                   )}
-                />        
+                />
               </div>
             </Col>
           </Row>
           {/* <hr /> */}
 
-          <CardBody>
+          <div className="px-1 ">
             <Form className="m-1" onSubmit={submitHandler}>
               <Row className="mb-2">
                 <Col lg="4" md="4">
                   <FormGroup>
-                 <Label>Role List</Label>
-                 <CustomInput
-                 required
-                 type="select"
-                 name="rolename"
-                 value={formData["rolename"]}
-                 onChange={(e)=>{  
-                  setFormData({
-                  ...formData,
-                  ["rolename"]: e.target.value
-          })}}
-                 >
-                  <option>
-                    --select Role--
-                  </option>
-                 {dropdownValue && dropdownValue?.length && dropdownValue?.map((ele,i)=>{
-                  return(
-                    
-                  <option value={ele?._id}>
-                   {ele?.roleName}
-                  </option>
-                  )
-                 })}
-                
-                 </CustomInput>
-
+                    <Label>Role List</Label>
+                    <CustomInput
+                      required
+                      type="select"
+                      name="rolename"
+                      value={formData["rolename"]}
+                      onChange={(e) => {
+                        setFormData({
+                          ...formData,
+                          ["rolename"]: e.target.value,
+                        });
+                      }}>
+                      <option>--select Role--</option>
+                      {dropdownValue &&
+                        dropdownValue?.length &&
+                        dropdownValue?.map((ele, i) => {
+                          return (
+                            <option value={ele?._id}>{ele?.roleName}</option>
+                          );
+                        })}
+                    </CustomInput>
                   </FormGroup>
                 </Col>
 
@@ -626,9 +624,9 @@ const CreateAccount = () => {
                       ...formData,
                       ["status"]: e.target.value,
                     });
-                  }}
-                >
+                  }}>
                   <input
+                    required
                     style={{ marginRight: "3px" }}
                     type="radio"
                     name="status"
@@ -637,6 +635,7 @@ const CreateAccount = () => {
                   <span style={{ marginRight: "20px" }}>Active</span>
 
                   <input
+                    required
                     style={{ marginRight: "3px" }}
                     type="radio"
                     name="status"
@@ -649,13 +648,12 @@ const CreateAccount = () => {
                 <Button.Ripple
                   color="primary"
                   type="submit"
-                  className="mr-1 mt-2 mx-2"
-                >
+                  className="mr-1 mt-2 mx-2">
                   Submit
                 </Button.Ripple>
               </Row>
             </Form>
-          </CardBody>
+          </div>
         </Card>
       </div>
     </div>

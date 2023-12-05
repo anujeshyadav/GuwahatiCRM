@@ -108,7 +108,6 @@ class AccounSearch extends React.Component {
         var adddropdown = [];
         const jsonData = xmlJs.xml2json(res.data, { compact: true, spaces: 2 });
         console.log(JSON.parse(jsonData)?.CreateUser);
-        debugger;
         const inputs = JSON.parse(jsonData)?.CreateUser?.input?.map((ele) => {
           return {
             headerName: ele?.label._text,
@@ -241,14 +240,14 @@ class AccounSearch extends React.Component {
 
           {
             headerName: "Created by",
-            field: "created_by",
+            field: "created_by.firstName",
             filter: true,
             sortable: true,
             cellRendererFramework: (params) => {
               return (
                 <>
                   <div className="actions cursor-pointer">
-                    <span>{params?.data?.created_by}</span>
+                    <span>{params?.data?.created_by?.firstName}</span>
                   </div>
                 </>
               );

@@ -40,6 +40,9 @@ class Login extends React.Component {
     this.state = {
       email: "",
       Otp: "",
+      Location: {latitude:"",longitude:"",timestamp:""},
+      Error: "",
+      Otp: "",
       emailotp: "",
       type: "password",
       whatsappotp: "",
@@ -52,6 +55,7 @@ class Login extends React.Component {
   }
   componentDidMount() {
     this.preventBackButton();
+    this.handleUserLocation();
   }
   preventBackButton() {
     window.history.pushState(null, null, window.location.href);
@@ -88,7 +92,7 @@ class Login extends React.Component {
               "userToken",
               JSON.stringify(response?.user?.token)
             );
-            debugger;
+            
             setTimeout(() => {
               this.props.history.push("/dashboard");
             }, 1500);
@@ -133,21 +137,70 @@ class Login extends React.Component {
       // });
     }
   };
-
+     handleUserLocation=()=>{
+   if (navigator.geolocation) {
+     navigator.geolocation.getCurrentPosition(
+       (position) => {
+        const date = new Date(position.timestamp);
+        let CurentTime = date.toLocaleString();
+        console.log(CurentTime);
+        //  console.log(
+        //    position.coords.latitude,
+        //    position.coords.longitude,
+        //    position.timestamp
+        //  );
+         this.state.Location.latitude = position.coords.latitude;
+         this.state.Location.longitude = position.coords.longitude;
+         this.state.Location.timestamp = CurentTime;
+           
+       },
+       (error) => {
+         this.setState({ Error: `Error: ${error.message}` });
+       }
+     );
+   } else {
+     this.setState({
+       Error: "Geolocation is not supported by this browser.",
+     });
+   }
+   }
   loginHandler = async e => {
     e.preventDefault();
+    // await this.handleUserLocation();
     // this.props.history.push("/dashboard");
     let data = { email: this.state.email, password: this.state.password };
+    console.log(this.state.Location)
+    // if(this.state.Location.latitude && this.state.latitude){
 
+    // }
     await UserLogin(data)
-      .then(res => {
-        this.props.history.push("/dashboard");
+      .then((res) => {
         let basicinfor = res?.user;
-        this.context?.setUserInformatio(basicinfor);
         localStorage.setItem("userData", JSON.stringify(basicinfor));
-        this.props.history.push("/dashboard");
+        this.context?.setUserInformatio(basicinfor);
+       
+        swal(
+          "Sucessfully login",
+          "You are LoggedIn!",
+          "Success",
+
+          {
+            buttons: {
+              ok: { text: "Ok", value: "ok" },
+            },
+          }
+        ).then((value) => {
+          switch (value) {
+            case "ok":
+              break;
+            default:
+          }
+        });
+        setTimeout(() => {
+          this.props.history.push("/dashboard");
+        }, 2000);
       })
-      .catch(err => {
+      .catch((err) => {
         console.log(err.response?.data.message);
 
         if (err.response?.data.message == "Incorrect password") {
@@ -244,8 +297,7 @@ class Login extends React.Component {
             xl="5"
             lg="5"
             md="5"
-            className="d-flex justify-content-center"
-          >
+            className="d-flex justify-content-center">
             <Card className="bg-authentication login-card rounded-0 mb-0 w-100">
               <Row className="m-0">
                 <Col lg="12" md="12" className="p-1">
@@ -305,6 +357,14 @@ class Login extends React.Component {
                               <p className="px-2 auth-title">
                                 Welcome , Enter OTP to Login your Account.
                               </p>
+                              <p className="px-2 auth-title">
+                                {this.state.Error}{" "}
+                                {
+                                  (this.state.Location.latitude,
+                                  this.state.Location.longitude,
+                                  this.state.Location.timestamp)
+                                }
+                              </p>
                               <Form onSubmit={this.loginOTPHandler}>
                                 <FormGroup className="otpscreeen d-flex justify-content-center"></FormGroup>
                                 <div className="py-1 d-flex justify-content-center">
@@ -319,12 +379,12 @@ class Login extends React.Component {
                                         className="otpinputtype"
                                         value={this.state.emailotp}
                                         name="emailotp"
-                                        onChange={otp =>
+                                        onChange={(otp) =>
                                           this.setState({ emailotp: otp })
                                         }
                                         numInputs={6}
                                         renderSeparator={<span>-</span>}
-                                        renderInput={props => (
+                                        renderInput={(props) => (
                                           <input
                                             className="inputs"
                                             {...props}
@@ -344,12 +404,12 @@ class Login extends React.Component {
                                         className="otpinputtype"
                                         value={this.state.whatsappotp}
                                         name="whatsappotp"
-                                        onChange={otp =>
+                                        onChange={(otp) =>
                                           this.setState({ whatsappotp: otp })
                                         }
                                         numInputs={6}
                                         renderSeparator={<span>-</span>}
-                                        renderInput={props => (
+                                        renderInput={(props) => (
                                           <input
                                             className="inputs"
                                             {...props}
@@ -367,12 +427,12 @@ class Login extends React.Component {
                                         className="otpinputtype"
                                         value={this.state.smsotp}
                                         name="smsotp"
-                                        onChange={otp =>
+                                        onChange={(otp) =>
                                           this.setState({ smsotp: otp })
                                         }
                                         numInputs={6}
                                         renderSeparator={<span>-</span>}
-                                        renderInput={props => (
+                                        renderInput={(props) => (
                                           <input
                                             className="inputs"
                                             {...props}
@@ -400,8 +460,7 @@ class Login extends React.Component {
                                   <Button.Ripple
                                     width="80%"
                                     color="primary"
-                                    type="submit"
-                                  >
+                                    type="submit">
                                     Login
                                   </Button.Ripple>
                                   <TabContent activeTab={this.state.activeTab}>
@@ -461,19 +520,17 @@ class Login extends React.Component {
                                     />
                                     <button
                                       style={{ width: "34px", border: "none" }}
-                                      className="viewbuttonheading"
-                                    >
+                                      className="viewbuttonheading">
                                       <span
                                         className="eyeviewpassword"
                                         style={{
                                           position: "absolute",
                                           cursor: "pointer",
-                                        }}
-                                      >
+                                        }}>
                                         {this.state.type == "text" ? (
                                           <>
                                             <AiFillEyeInvisible
-                                              onClick={e => {
+                                              onClick={(e) => {
                                                 e.preventDefault();
                                                 this.setState({
                                                   type: "password",
@@ -488,7 +545,7 @@ class Login extends React.Component {
                                         ) : (
                                           <>
                                             <AiFillEye
-                                              onClick={e => {
+                                              onClick={(e) => {
                                                 e.preventDefault();
                                                 this.setState({ type: "text" });
                                               }}
@@ -553,7 +610,7 @@ class Login extends React.Component {
                                   <Button.Ripple
                                     color="primary"
                                     outline
-                                    onClick={e => {
+                                    onClick={(e) => {
                                       e.preventDefault();
                                       this.setState({ resetpassword: true });
                                     }}

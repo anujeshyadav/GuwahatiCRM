@@ -47,11 +47,12 @@ class SideMenuGroup extends React.Component {
       <ul className="menu-content">
         {item.children
           ? item.children.map(child => {
-              {
-                /* if (child.hidden) {
-                return null; // Skip rendering the hidden tab
-              } */
-              }
+        
+
+          if (child.hidden) {
+            return null; // Skip rendering the hidden tab
+          } 
+              
               const CustomAnchorTag =
                 child.type === "external-link" ? `a` : Link;
               if (!this.parentArray.includes(item.id) && this.flag) {
