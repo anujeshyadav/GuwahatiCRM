@@ -694,6 +694,9 @@ const EditProductAttribute = lazy(() =>
 const AddRoleNew = lazy(() =>
   import("./views/apps/freshlist/accounts/AddRoleNew")
 );
+const CreateHeirarchy = lazy(() =>
+  import("./views/apps/freshlist/accounts/CreateHeirarchy")
+);
 const EditRole = lazy(() => import("./views/apps/freshlist/accounts/EditRole"));
 
 const UpdateExistingRole = lazy(() =>
@@ -1160,10 +1163,10 @@ const accessControl = lazy(() =>
 const RouteConfig = ({ component: Component, fullLayout, ...rest }) => (
   <Route
     {...rest}
-    render={props => {
+    render={(props) => {
       return (
         <ContextLayout.Consumer>
-          {context => {
+          {(context) => {
             let LayoutTag =
               fullLayout === true
                 ? context.fullLayout
@@ -1183,7 +1186,7 @@ const RouteConfig = ({ component: Component, fullLayout, ...rest }) => (
     }}
   />
 );
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
   return {
     user: state.auth.login.userRole,
   };
@@ -2079,6 +2082,10 @@ class AppRouter extends React.Component {
           <AppRoute
             path="/app/freshlist/account/addRoleNew"
             component={AddRoleNew}
+          />
+          <AppRoute
+            path="/app/freshlist/account/CreateHeirarchy"
+            component={CreateHeirarchy}
           />
           <AppRoute
             path="/app/freshlist/account/editRole/:id"

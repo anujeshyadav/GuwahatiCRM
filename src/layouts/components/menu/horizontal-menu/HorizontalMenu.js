@@ -10,6 +10,7 @@ import {
   Button,
   Col,
   Row,
+  Badge,
 } from "reactstrap";
 import classnames from "classnames";
 import { ChevronDown, ChevronRight, Edit, Trash2 } from "react-feather";
@@ -25,6 +26,7 @@ import {
   BsFillArrowUpSquareFill,
 } from "react-icons/bs";
 import { IoMdRemoveCircleOutline } from "react-icons/io";
+import swal from "sweetalert";
 let allList = [];
 const SelectedColums = [];
 class HorizontalSidebar extends React.Component {
@@ -63,10 +65,14 @@ class HorizontalSidebar extends React.Component {
         ...SelectedColums.map((item) => JSON.stringify(item)),
       ]),
     ].map((item) => JSON.parse(item));
-    this.setState({
-      SelectedcolumnDefs: [...new Set(updatedSelectedColumnDefs)], // Update the state with the combined array
-    });
-    console.log([...new Set(updatedSelectedColumnDefs)]);
+    let myArr = [...new Set(updatedSelectedColumnDefs)];
+    if (myArr.length < 12) {
+      this.setState({
+        SelectedcolumnDefs: [...new Set(updatedSelectedColumnDefs)], // Update the state with the combined array
+      });
+    } else {
+      swal("Select only 11 headings");
+    }
   };
   handleLeftShift = () => {
     let SelectedCols = this.state.SelectedcolumnDefs.slice();
@@ -112,7 +118,11 @@ class HorizontalSidebar extends React.Component {
   handleChangeHeader = (e, value, index) => {
     let check = e.target.checked;
     if (check) {
-      SelectedColums?.push(value);
+      if (SelectedColums?.length < 12) {
+        SelectedColums?.push(value);
+      } else {
+        swal("You can Select only six element");
+      }
     } else {
       const delindex = SelectedColums?.findIndex(
         (ele) => ele?.title === value?.title
@@ -126,7 +136,7 @@ class HorizontalSidebar extends React.Component {
       parentHover: id,
     });
   };
-// Active for guwahati
+  // Active for guwahati
   componentDidMount() {
     this.handleActiveParent(this.activeParentItems);
   }
@@ -213,8 +223,7 @@ class HorizontalSidebar extends React.Component {
               };
             },
           },
-        }}
-      >
+        }}>
         {submenu.map((child) => {
           const CustomAnchorTag = child.type === "external-link" ? `a` : Link;
           if (child.navLink && child.navLink === this.props.activePath) {
@@ -227,8 +236,7 @@ class HorizontalSidebar extends React.Component {
               <li
                 className={classnames({
                   active: this.state.activeParents.includes(child.id),
-                })}
-              >
+                })}>
                 <DropdownItem
                   className={classnames("w-100", {
                     hover: this.state.itemHover === child.id,
@@ -257,8 +265,7 @@ class HorizontalSidebar extends React.Component {
                   target={child.newTab ? "_blank" : undefined}
                   onClick={() => this.handleItemHover(child.id)}
                   // onMouseEnter={() => this.handleItemHover(child.id)}
-                  onMouseLeave={() => this.handleItemHover(null)}
-                >
+                  onMouseLeave={() => this.handleItemHover(null)}>
                   {child.children ? (
                     <Dropdown
                       className={classnames("sub-menu w-100", {})}
@@ -267,13 +274,11 @@ class HorizontalSidebar extends React.Component {
                       toggle={() => true}
                       onClick={() => this.openDropdown(child.id)}
                       // onMouseEnter={() => this.openDropdown(child.id)}
-                      onMouseLeave={() => this.closeDropdown(child.id)}
-                    >
+                      onMouseLeave={() => this.closeDropdown(child.id)}>
                       <DropdownToggle
                         className="d-flex justify-content-between align-items-center item-content"
                         tag={"div"}
-                        onClick={() => this.closeDropdown(child.id)}
-                      >
+                        onClick={() => this.closeDropdown(child.id)}>
                         <div className="dropdown-toggle-sub text-truncate">
                           <span className="menu-icon align-bottom mr-1">
                             {child.icon}
@@ -330,6 +335,10 @@ class HorizontalSidebar extends React.Component {
   };
 
   componentDidMount() {
+    let myheadings = JSON.parse(localStorage.getItem("myHeadings"));
+    if (myheadings?.length) {
+      this.setState({ SelectedcolumnDefs: myheadings });
+    }
     let MyTotalList = navigationConfig?.map((ele, i) => {
       if (!!ele?.children) {
         allList.push(ele?.children);
@@ -343,23 +352,30 @@ class HorizontalSidebar extends React.Component {
   }
 
   renderDropdown = (arr) => {
+    console.log(arr);
     // console.log(this.state.SelectedcolumnDefs);
     let myownlink = this.state.SelectedcolumnDefs;
+    if (this.state.SelectedcolumnDefs?.length) {
+      localStorage.setItem(
+        "myHeadings",
+        JSON.stringify(this.state.SelectedcolumnDefs)
+      );
+    }
     return myownlink?.map((ele, i) => {
       return (
         <>
           <Route
             render={({ history }) => (
-              <Button
-                className="mr-2"
+              <Badge
+                className="mr-1"
+                style={{ cursor: "pointer" }}
                 size="25px"
-                color="red"
+                color="primary"
                 onClick={() => {
                   history.push(ele?.navLink);
-                }}
-              >
+                }}>
                 {ele?.title}
-              </Button>
+              </Badge>
             )}
           />
         </>
@@ -485,11 +501,10 @@ class HorizontalSidebar extends React.Component {
                   this.props.navbarType
                 ),
             }
-          )}
-        >
+          )}>
           <div className="navbar-container main-menu-content">
             {/* <ul className="nav navbar-nav" id="main-menu-navigation"> */}
-            {this.renderDropdown(navigationConfig)}
+            {this.renderDropdown(this.state.SelectedcolumnDefs)}
             {/* </ul> */}
           </div>
           <span>
@@ -505,12 +520,14 @@ class HorizontalSidebar extends React.Component {
             isOpen={this.state.modal}
             toggle={this.LookupviewStart}
             className={this.props.className}
-            style={{ maxWidth: "1050px" }}
-          >
+            style={{ maxWidth: "1050px" }}>
             <ModalHeader toggle={this.LookupviewStart}>
               Change Fileds
             </ModalHeader>
             <ModalBody className="modalbodyhead">
+              <div className="d-flex justify-content-center mb-1">
+                <h4>Select Only Eleven Heading which is most visited</h4>
+              </div>
               <Row>
                 <Col lg="4" md="4" sm="12" xl="4" xs="12">
                   <h4>Avilable Columns</h4>
@@ -525,13 +542,11 @@ class HorizontalSidebar extends React.Component {
                                   this.handleChangeHeader(e, ele, i)
                                 }
                                 key={i}
-                                className="mycustomtag mt-1"
-                              >
+                                className="mycustomtag mt-1">
                                 <span className="mt-1">
                                   <h5
                                     style={{ cursor: "pointer" }}
-                                    className="allfields"
-                                  >
+                                    className="allfields">
                                     <input
                                       type="checkbox"
                                       // checked={check && check}
@@ -554,8 +569,7 @@ class HorizontalSidebar extends React.Component {
                   sm="12"
                   xl="2"
                   xs="12"
-                  className="colarrowbtn"
-                >
+                  className="colarrowbtn">
                   <div className="mainarrowbtn">
                     <div style={{ cursor: "pointer" }}>
                       <FaArrowAltCircleRight
@@ -597,8 +611,7 @@ class HorizontalSidebar extends React.Component {
                                               : ""
                                           }`,
                                         }}
-                                        className="allfields"
-                                      >
+                                        className="allfields">
                                         <IoMdRemoveCircleOutline
                                           onClick={() => {
                                             const SelectedCols =
@@ -675,8 +688,11 @@ class HorizontalSidebar extends React.Component {
                 <Col>
                   <div className="d-flex justify-content-center">
                     <Button
-                    //  onClick={this.HandleSetVisibleField} color="primary"
-                    >
+                      color="primary"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        this.LookupviewStart();
+                      }}>
                       Submit
                     </Button>
                   </div>

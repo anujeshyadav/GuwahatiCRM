@@ -119,7 +119,8 @@ class HorizontalSidebar extends React.Component {
       <DropdownMenu
         tag="ul"
         hidden=""
-        className="mt-50"
+        // className="mt-50"
+        style={{ marginTop: "-8px" }}
         onMouseEnter={(e) => e.preventDefault()}
         modifiers={{
           setMaxHeight: {
@@ -338,11 +339,10 @@ class HorizontalSidebar extends React.Component {
                 isOpen={this.state.openDropdown.includes(item.id)}
                 className="nav-link"
                 id="showlist"
-                //  className={classnames("nav-link",this.state.isClassAdded==true ? 'show' : '')}
                 toggle={() => this.openDropdown(item.id)}>
                 <DropdownToggle className="d-flex align-items-center" tag="div">
                   <div className="dropdown-text">
-                    <span className="menu-icon align-middle mr-75">
+                    <span className="menu-icon align-middle mr-50">
                       {item.icon}
                     </span>
                     <span className="menu-title align-middle">

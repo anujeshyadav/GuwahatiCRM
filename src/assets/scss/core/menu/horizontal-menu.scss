@@ -389,7 +389,8 @@
         display: none;
       }
       .dropdown-menu {
-        min-width: 215px;
+        min-width: 180px;
+          // min-width: 215px;
         border: none;
         min-height: 52px;
         .disabled {
