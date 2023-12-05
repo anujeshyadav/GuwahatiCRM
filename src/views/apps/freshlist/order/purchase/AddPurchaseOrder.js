@@ -1,5 +1,7 @@
 import React, { useEffect, useState, useContext } from "react";
 import xmlJs from "xml-js";
+import { Route } from "react-router-dom";
+import { history } from "../../../../../history";
 import {
   Card,
   CardBody,
@@ -9,26 +11,20 @@ import {
   Input,
   Label,
   Button,
-  FormGroup,
-  CustomInput,
-  ModalBody,
-  ModalHeader,
-  Modal,
-  InputGroup,
 } from "reactstrap";
 import "react-phone-input-2/lib/style.css";
 import Multiselect from "multiselect-react-dropdown";
-import "../../../../assets/scss/pages/users.scss";
-import {
-  SavePlaceOrder,
-  ProductListView,
-  CreatePartyList,
-} from "../../../../ApiEndPoint/ApiCalling";
-import "../../../../assets/scss/pages/users.scss";
+import "../../../../../assets/scss/pages/users.scss";
 
+import {
+  SavePurchaseOrder,
+  CreatePartyList,
+  ProductListView,
+} from "../../../../../ApiEndPoint/ApiCalling";
+import "../../../../../assets/scss/pages/users.scss";
 let GrandTotal = [];
 let SelectedITems = [];
-const PlaceOrder = args => {
+const AddPurchaseOrder = args => {
   const [Index, setIndex] = useState("");
   const [index, setindex] = useState("");
   const [error, setError] = useState("");
@@ -46,16 +42,17 @@ const PlaceOrder = args => {
       price: "",
       totalprice: "",
       partyId: "",
+      DateofDelivery: "",
     },
   ]);
 
-  const handleProductChangeProduct = (e, index, availableSize) => {
-    if (availableSize >= e.target.value) {
+  const handleProductChangeProduct = (e, index, avalaibleSize) => {
+    if (avalaibleSize >= e.target.value) {
       setIndex(index);
       const { name, value } = e.target;
       const list = [...product];
       list[index][name] = value;
-
+      product.map(ele => {});
       let amt = 0;
       if (list.length > 0) {
         const x = list?.map(val => {
@@ -63,13 +60,11 @@ const PlaceOrder = args => {
           list[index]["totalprice"] = val.qty * val.price;
           return val.qty * val.price;
         });
-        amt = x.reduce((a, b) => a + b);
+        amt = x.reduce((a, b) => a + b, 0);
         console.log("GrandTotal", amt);
       }
-      console.log(list);
       setProduct(list);
       setGrandTotalAmt(amt);
-      console.log(GrandTotal);
     } else {
       return null;
     }
@@ -86,6 +81,7 @@ const PlaceOrder = args => {
   };
   const handleSelection = (selectedList, selectedItem, index) => {
     SelectedITems.push(selectedItem);
+    console.log(selectedItem);
     setProduct(prevProductList => {
       const updatedProductList = [...prevProductList];
       const updatedProduct = { ...updatedProductList[index] }; // Create a copy of the product at the specified index
@@ -99,7 +95,7 @@ const PlaceOrder = args => {
         return indextotal;
       });
       console.log(myarr);
-      let amt = myarr.reduce((a, b) => a + b);
+      let amt = myarr.reduce((a, b) => a + b, 0);
       setGrandTotalAmt(amt);
       return updatedProductList; // Return the updated product list to set the state
     });
@@ -144,11 +140,8 @@ const PlaceOrder = args => {
         qty: 1,
         price: "",
         totalprice: "",
-        // DateofDelivery: "",
-        // partyId: "",
-        // discount: "",
-        // Shipping: "",
-        // tax: "",
+        DateofDelivery: "",
+        partyId: "",
       },
     ]);
   };
@@ -156,15 +149,18 @@ const PlaceOrder = args => {
     let newFormValues = [...product];
     newFormValues.splice(i, 1);
     GrandTotal.splice(i, 1);
-    let amt = GrandTotal.reduce((a, b) => a + b);
+    let amt = GrandTotal.reduce((a, b) => a + b, 0);
     setGrandTotalAmt(amt);
     setProduct(newFormValues);
   };
 
   const submitHandler = e => {
     e.preventDefault();
-    console.log("Final ", product);
+    // product?.map(ele => {
+    //   return {};
+    // });
     let fullname = UserInfo.firstName + " " + UserInfo?.lastName;
+    console.log(UserInfo?.UserName);
     const ObjOrder = {
       userId: UserInfo?._id,
       fullName: fullname,
@@ -174,19 +170,20 @@ const PlaceOrder = args => {
       country: UserInfo?.Country,
       state: UserInfo?.State,
       city: UserInfo?.City,
-
       orderItems: product,
     };
     if (error) {
       swal("Error occured while Entering Details");
     } else {
-      SavePlaceOrder(ObjOrder)
+      SavePurchaseOrder(ObjOrder)
         .then(res => {
           console.log(res);
           // if (res.status) {
           //   setFormData({});
           //   window.location.reload();
-          swal("Order Place Successfully");
+          swal(" Add Purchase Order  Successfully");
+          history.push("/app/AJgroup/order/purchaseOrderList");
+
           // }
         })
         .catch(err => {
@@ -206,8 +203,24 @@ const PlaceOrder = args => {
           <Row className="m-2">
             <Col className="">
               <div>
-                <h1 className="">Place Order</h1>
+                <h1 className="">Add PurchaseOrder</h1>
               </div>
+            </Col>
+            <Col>
+              <Route
+                render={({ history }) => (
+                  <Button
+                    className="btn float-right"
+                    color="danger"
+                    size="sm"
+                    onClick={() =>
+                      history.push("/app/AJgroup/order/purchaseOrderList")
+                    }
+                  >
+                    Back
+                  </Button>
+                )}
+              />
             </Col>
           </Row>
 
@@ -217,6 +230,7 @@ const PlaceOrder = args => {
                 <Col className="mb-1" lg="4" md="4" sm="12">
                   <div className="">
                     <Label>Choose Party</Label>
+
                     <Multiselect
                       required
                       selectionLimit={1}
@@ -253,10 +267,8 @@ const PlaceOrder = args => {
                         <Multiselect
                           required
                           selectionLimit={1}
-                          // showCheckbox="true"
                           isObject="false"
                           options={ProductList}
-                          // selectedValues={selectedValue}   // Preselected value to persist in dropdown
                           onSelect={(selectedList, selectedItem) =>
                             handleSelection(selectedList, selectedItem, index)
                           }
@@ -272,16 +284,15 @@ const PlaceOrder = args => {
                         <Label>Available Size</Label>
                         <Input
                           type="number"
-                          name="qty"
-                          placeholder="Req_Qty"
+                          name="availableQty"
+                          placeholder="AvailableSize"
                           value={product?.availableQty}
-                          onChange={e => handleProductChangeProduct(e, index)}
                         />
                       </div>
                     </Col>
                     <Col className="mb-1" lg="2" md="2" sm="12">
                       <div className="">
-                        <Label>Required Qty</Label>
+                        <Label>Required Size</Label>
                         <Input
                           type="number"
                           name="qty"
@@ -322,7 +333,6 @@ const PlaceOrder = args => {
                         />
                       </div>
                     </Col>
-
                     <Col className="d-flex mt-1 abb" lg="3" md="3" sm="12">
                       <div className="btnStyle">
                         {index ? (
@@ -330,6 +340,7 @@ const PlaceOrder = args => {
                             type="button"
                             color="danger"
                             className="button remove "
+                            size="sm"
                             onClick={() => removeMoreProduct(index)}
                           >
                             -
@@ -342,6 +353,7 @@ const PlaceOrder = args => {
                           className="ml-1 mb-1"
                           color="primary"
                           type="button"
+                          size="sm"
                           onClick={() => addMoreProduct()}
                         >
                           +
@@ -405,4 +417,4 @@ const PlaceOrder = args => {
     </div>
   );
 };
-export default PlaceOrder;
+export default AddPurchaseOrder;

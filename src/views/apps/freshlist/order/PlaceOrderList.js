@@ -1,6 +1,5 @@
 import React, { useRef } from "react";
 import { Route } from "react-router-dom";
-import xmlJs from "xml-js";
 import {
   Card,
   CardBody,
@@ -43,11 +42,7 @@ import {
 import moment from "moment-timezone";
 import swal from "sweetalert";
 import {
-  CreateAccountList,
-  CreateAccountView,
-  Create_TargetList,
-  DeleteAccount,
-  PurchaseOrderList,
+  PlaceOrderViewList,
   Delete_targetINlist,
 } from "../../../../ApiEndPoint/ApiCalling";
 import {
@@ -131,17 +126,17 @@ class PlaceOrderList extends React.Component {
                     this.handleChangeView(params.data, "readonly");
                   }}
                 />
-                {/* <Edit
+                <Edit
                   className="mr-50"
                   size="25px"
                   color="blue"
                   onClick={() =>
                     this.props.history.push({
-                      pathname: `/app/freshlist/order/editOrder/${params.data?._id}`,
+                      pathname: `/app/freshlist/order/editplaceorder/${params.data?._id}`,
                       state: params.data,
                     })
                   }
-                /> */}
+                />
               </div>
             );
           },
@@ -350,8 +345,9 @@ class PlaceOrderList extends React.Component {
   async componentDidMount() {
     const UserInformation = this.context?.UserInformatio;
 
-    await PurchaseOrderList()
+    await PlaceOrderViewList()
       .then(res => {
+        console.log(res);
         this.setState({ rowData: res?.orderHistory });
         this.setState({ AllcolumnDefs: this.state.columnDefs });
         this.setState({ SelectedCols: this.state.columnDefs });
@@ -769,11 +765,12 @@ class PlaceOrderList extends React.Component {
                                   color="primary"
                                   onClick={() =>
                                     history.push(
-                                      "/app/softNumen/order/placeOrder"
+                                      "/app/softNumen/order/addplaceOrder"
                                     )
                                   }
                                 >
-                                  <FaPlus size={15} /> Place Order
+                                  <FaPlus size={15} />
+                                  Add Place Order
                                 </Badge>
                               )}
                             />

@@ -7,6 +7,7 @@ import Spinner from "./components/@vuexy/spinner/Loading-spinner";
 import knowledgeBaseCategory from "./views/pages/knowledge-base/Category";
 import knowledgeBaseQuestion from "./views/pages/knowledge-base/Questions";
 import { ContextLayout } from "./utility/context/Layout";
+import AddPurchaseOrder from "./views/apps/freshlist/order/purchase/AddPurchaseOrder";
 
 // const analyticsDashboard = lazy(() =>
 //   import("./views/dashboard/analytics/AnalyticsDashboard")
@@ -488,13 +489,17 @@ const OrderList = lazy(() => import("./views/apps/freshlist/order/OrderList"));
 const PurchaseOrderList = lazy(() =>
   import("./views/apps/freshlist/order/purchase/PurchaseOrderList")
 );
+const EditPurchase = lazy(() =>
+  import("./views/apps/freshlist/order/purchase/EditPurchase")
+);
 const PurchaseReturn = lazy(() =>
   import("./views/apps/freshlist/order/purchase/PurchaseReturn")
 );
+
 const SalesReturnView = lazy(() =>
   import("./views/apps/freshlist/order/SalesReturnView")
 );
-const PlaceOrder = lazy(() =>
+const AddPlaceOrder = lazy(() =>
   import("./views/apps/freshlist/order/PlaceOrder")
 );
 const PlaceOrderList = lazy(() =>
@@ -729,6 +734,12 @@ const CreateSalesManag = lazy(() =>
 );
 const CreateDispach = lazy(() =>
   import("./views/apps/freshlist/accounts/CreateDispach")
+);
+const CreditNoteList = lazy(() =>
+  import("./views/apps/freshlist/customer/notes/CreditNoteList")
+);
+const DebitNoteList = lazy(() =>
+  import("./views/apps/freshlist/customer/notes/DebitNoteList")
 );
 
 const EditAccount = lazy(() =>
@@ -1443,6 +1454,14 @@ class AppRouter extends React.Component {
             component={PurchaseOrderList}
           />
           <AppRoute
+            path="/app/AJgroup/order/AddPurchaseOrder"
+            component={AddPurchaseOrder}
+          />
+          <AppRoute
+            path="/app/AJgroup/order/editPurchase/:id"
+            component={EditPurchase}
+          />
+          <AppRoute
             path="/app/AJGroup/order/salesReturn/:id"
             component={SalesReturnView}
           />
@@ -1455,8 +1474,8 @@ class AppRouter extends React.Component {
             component={PlaceOrderReturn}
           />
           <AppRoute
-            path="/app/softNumen/order/placeOrder"
-            component={PlaceOrder}
+            path="/app/softNumen/order/addplaceOrder"
+            component={AddPlaceOrder}
           />
           <AppRoute
             path="/app/softNumen/order/confirmedOrder"
@@ -2121,6 +2140,14 @@ class AppRouter extends React.Component {
           <AppRoute
             path="/app/AjGroup/dispatch/CreateDispach"
             component={CreateDispach}
+          />
+          <AppRoute
+            path="/app/AjGroup/note/CreditNoteList"
+            component={CreditNoteList}
+          />
+          <AppRoute
+            path="/app/AjGroup/note/DebitNoteList"
+            component={DebitNoteList}
           />
           <AppRoute
             path="/app/SoftNumen/account/EditAccount/:id"
