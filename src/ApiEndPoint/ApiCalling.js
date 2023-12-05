@@ -1,12 +1,17 @@
 import {
   Create_warehouse_xmlView,
   Create_warehouse_save,
-  Save_Purchase_Order,
   Purchase_Order_List,
-  Save_Place_Order,
+  Debit_note_Order_List,
+  GoodDispatch_xmlView,
+  Purchase_Return,
+  Purchase_Edit_Order,
   Place_Order_List,
+  Save_Place_Order,
+  SavePurchase_Order,
   Sales_Return_Product,
   Place_ORder_Return_Product,
+  Place_Order_Edit,
   Sales_Pending_StatusChange,
   Sales_Return_ProductList,
   Get_Role,
@@ -317,42 +322,15 @@ export const SaveOrder = async data => {
   let response = await axiosConfig.post(Save_Order, data).then(res => res.data);
   return response;
 };
-
-// by others
-// export const SavePurchaseOrder = async data => {
-//   let response = await axiosConfig
-//     .post(Save_Purchase_Order, data)
-//     .then(res => res.data);
-//   return response;
-// };
-export const SavePlaceOrder = async data => {
-  let response = await axiosConfig
-    .post(Save_Place_Order, data)
-    .then(res => res.data);
-  return response;
-};
-
-// export const PurchaseOrderList = async () => {
-//   let response = await axiosConfig
-//     .get(`${Place_Order_List}`)
-//     .then(res => res.data);
-//   return response;
-// };
-export const PurchaseOrderList = async () => {
-  let response = await axiosConfig
-    .get(`${Purchase_Order_List}`)
-    .then(res => res.data);
-  return response;
-};
 export const createOrderhistoryview = async () => {
   let response = await axiosConfig
     .get(`${view_create_order_history}`)
     .then(res => res.data);
   return response;
 };
-export const SalesEditOrder = async (payload, id) => {
+export const SalesReturnProductList = async () => {
   let response = await axiosConfig
-    .put(`${Sales_Edit_Order}` + id, payload)
+    .get(`${Sales_Return_ProductList}`)
     .then(res => res.data);
   return response;
 };
@@ -369,15 +347,78 @@ export const SalesReturnProduct = async data => {
     .then(res => res.data);
   return response;
 };
+export const SalesEditOrder = async (payload, id) => {
+  let response = await axiosConfig
+    .put(`${Sales_Edit_Order}` + id, payload)
+    .then(res => res.data);
+  return response;
+};
+
+// by others (place order)
+
+export const SavePlaceOrder = async data => {
+  let response = await axiosConfig
+    .post(Save_Place_Order, data)
+    .then(res => res.data);
+  return response;
+};
+export const PlaceOrderViewList = async () => {
+  let response = await axiosConfig
+    .get(`${Place_Order_List}`)
+    .then(res => res.data);
+  return response;
+};
+// purchase api
+export const SavePurchaseOrder = async data => {
+  let response = await axiosConfig
+    .post(SavePurchase_Order, data)
+    .then(res => res.data);
+  return response;
+};
+
+export const PurchaseOrderList = async () => {
+  let response = await axiosConfig
+    .get(`${Purchase_Order_List}`)
+    .then(res => res.data);
+  return response;
+};
+
+export const PurchaseReturn = async data => {
+  let response = await axiosConfig
+    .post(Purchase_Return, data)
+    .then(res => res.data);
+  return response;
+};
+export const PurchaseEdit_Order = async (payload, id) => {
+  let response = await axiosConfig
+    .put(`${Purchase_Edit_Order}` + id, payload)
+    .then(res => res.data);
+  return response;
+};
+
 export const PlaceOrderReturn_Product = async data => {
   let response = await axiosConfig
     .post(Place_ORder_Return_Product, data)
     .then(res => res.data);
   return response;
 };
-export const SalesReturnProductList = async () => {
+
+export const PlaceOrder_Edit = async (payload, id) => {
   let response = await axiosConfig
-    .get(`${Sales_Return_ProductList}`)
+    .put(`${Place_Order_Edit}` + id, payload)
+    .then(res => res.data);
+  return response;
+};
+
+export const DebitnoteOrderList = async () => {
+  let response = await axiosConfig
+    .get(`${Debit_note_Order_List}`)
+    .then(res => res.data);
+  return response;
+};
+export const GoodDispatchxmlView = async () => {
+  let response = await axiosConfig
+    .get(`${GoodDispatch_xmlView}`)
     .then(res => res.data);
   return response;
 };

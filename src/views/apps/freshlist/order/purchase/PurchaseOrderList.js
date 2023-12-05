@@ -37,6 +37,7 @@ import {
   FaArrowAltCircleLeft,
   FaArrowAltCircleRight,
   FaFilter,
+  FaPlus,
 } from "react-icons/fa";
 import swal from "sweetalert";
 import {
@@ -130,7 +131,7 @@ class OrderList extends React.Component {
                   color="blue"
                   onClick={() =>
                     this.props.history.push({
-                      pathname: `/app/freshlist/order/editOrder/${params.data?._id}`,
+                      pathname: `/app/AJgroup/order/editPurchase/${params.data?._id}`,
                       state: params.data,
                     })
                   }
@@ -266,8 +267,8 @@ class OrderList extends React.Component {
 
     await PurchaseOrderList()
       .then(res => {
+        console.log(res);
         this.setState({ rowData: res?.orderHistory });
-        console.log(res?.orderHistory);
         this.setState({ AllcolumnDefs: this.state.columnDefs });
         this.setState({ SelectedCols: this.state.columnDefs });
 
@@ -290,7 +291,6 @@ class OrderList extends React.Component {
   };
 
   runthisfunction(id) {
-    debugger;
     swal("Warning", "Sure You Want to Delete it", {
       buttons: {
         cancel: "cancel",
@@ -675,7 +675,7 @@ class OrderList extends React.Component {
                               )}
                             </div>
                           </span>
-                          {/* <span>
+                          <span>
                             <Route
                               render={({ history }) => (
                                 <Badge
@@ -684,15 +684,15 @@ class OrderList extends React.Component {
                                   color="primary"
                                   onClick={() =>
                                     history.push(
-                                      "/app/softnumen/order/createorder"
+                                      "/app/AJgroup/order/AddPurchaseOrder"
                                     )
                                   }
                                 >
-                                  <FaPlus size={15} /> Create Purchase Order
+                                  <FaPlus size={15} /> Add Purchase Order
                                 </Badge>
                               )}
                             />
-                          </span> */}
+                          </span>
                         </Col>
                       </Row>
                       <CardBody>

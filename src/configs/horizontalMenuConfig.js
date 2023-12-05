@@ -240,7 +240,7 @@ const horizontalMenuConfig = [
         type: "item",
         icon: <FaCircle size={8} />,
         permissions: ["admin", "editor"],
-        navLink: "/app/softNumen/warranty/Campaignlist",
+        navLink: "/app/AjGroup/note/DebitNoteList",
       },
       {
         id: "multivendor",
@@ -491,7 +491,7 @@ const horizontalMenuConfig = [
         type: "item",
         icon: <FaList size={15} />,
         permissions: ["admin", "editor"],
-        navLink: "/app/SoftNumen/ticket/CreateTicket",
+        navLink: "/app/SoftNumen/PartyList",
       },
       // {
       //   id: "TransporterList",

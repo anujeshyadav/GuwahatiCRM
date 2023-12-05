@@ -25,7 +25,7 @@ import { Route } from "react-router-dom";
 
 let GrandTotal = [];
 
-const EditTarget = args => {
+const EditOrder = args => {
   const [Index, setIndex] = useState(-1);
   const [targetStartDate, settargetStartDate] = useState("");
   const [targetEndDate, settargetEndDate] = useState("");
@@ -52,25 +52,16 @@ const EditTarget = args => {
     console.log(e.target.value);
     setUserName(e.target.value);
   };
-  const myFun = () => {
-    setProduct(location.state);
-  };
+
   const handleProductChangeProduct = (e, index) => {
     // debugger;
-    myFun();
     setIndex(index);
     const { name, value } = e.target;
+    let orderitem = product?.orderItems;
 
-    const list = [...product];
-    if (index < 0 || index >= list.length) {
-      return;
-    }
-
-    list.orderItems[index] = {
-      ...list[index],
-      [name]: value,
-    };
-
+    const list = [...orderitem];
+    list[index][name] = value;
+    console.log(list);
     setProduct(list);
   };
 
@@ -87,26 +78,6 @@ const EditTarget = args => {
     setEditdata(location?.state);
   }, [product]);
 
-  // useEffect(() => {
-  //   // console.log(Params.id);
-  //   if (location?.state) {
-  //     localStorage.setItem("EditoneProduct", location?.state);
-  //     setEditdata(location?.state);
-  //     debugger;
-
-  //     setProduct(location?.state?.products);
-  //     setGrandTotalAmt(location?.state?.grandTotal);
-  //     // console.log(location?.state?.salesPersonId._id);
-  //   } else {
-  //     let mydata = localStorage.getItem("EditoneProduct");
-  //     setEditdata(mydata);
-
-  //     setProduct(mydata?.products);
-  //     setGrandTotalAmt(mydata?.grandTotal);
-  //   }
-  //   console.log(product);
-  // }, [product]);
-
   useEffect(() => {
     const userInfo = JSON.parse(localStorage.getItem("userData"));
     setUserInfo(userInfo);
@@ -114,17 +85,19 @@ const EditTarget = args => {
 
   const submitHandler = e => {
     e.preventDefault();
+    debugger;
     console.log(product, product.orderItems);
     let editedproduct = product.orderItems.map(ele => {
       return {
         productId: ele?.product?._id,
-        qty: 5,
+        qty: Number(ele?.qty),
       };
     });
     let payload = {
       fullName: userName,
       orderItems: editedproduct,
     };
+    console.log(payload);
     if (error) {
       swal("Error occured while Entering Details");
     } else {
@@ -285,4 +258,4 @@ const EditTarget = args => {
     </div>
   );
 };
-export default EditTarget;
+export default EditOrder;

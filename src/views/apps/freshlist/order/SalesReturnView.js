@@ -114,7 +114,7 @@ const SalesReturnView = args => {
 
     let payload = {
       userId: userData?._id,
-      status: "pending",
+      // status: "pending",
       returnItems: myarr,
       mobileNumber: userData?.mobileNumber,
       email: userData.email,

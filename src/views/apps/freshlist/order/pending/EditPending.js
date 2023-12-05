@@ -71,7 +71,7 @@ const EditPending = args => {
           <Row className="m-2">
             <Col className="">
               <div>
-                <h1 className="">Change Status Pending Order</h1>
+                <h2 className="">Change Pending Order Status</h2>
               </div>
             </Col>
             <Col>
@@ -95,27 +95,33 @@ const EditPending = args => {
 
           <CardBody>
             <Form className="m-1" onSubmit={submitHandler}>
-              <Col lg="6" md="6" sm="6" className="mb-2">
-                <Label>Status</Label>
-                <CustomInput
-                  required
-                  type="select"
-                  placeholder="City"
-                  name="city"
-                  value={status}
-                  onChange={handleChange}
-                >
-                  <option value="pending">pending</option>
-                  <option value="canceled">canceled</option>
-                </CustomInput>
-              </Col>
-              <Col>
-                <div className="d-flex justify-content-center">
-                  <Button.Ripple color="primary" type="submit" className="mt-2">
-                    Submit
-                  </Button.Ripple>
-                </div>
-              </Col>
+              <Row>
+                <Col lg="6" md="6" sm="6" className="mb-2">
+                  <Label>Status</Label>
+                  <CustomInput
+                    required
+                    type="select"
+                    placeholder="City"
+                    name="city"
+                    value={status}
+                    onChange={handleChange}
+                  >
+                    <option value="pending">pending</option>
+                    <option value="canceled">cancelled</option>
+                  </CustomInput>
+                </Col>
+                <Col lg="6" md="6" sm="6" className="mb-2">
+                  <div className="d-flex justify-content-center">
+                    <Button.Ripple
+                      color="primary"
+                      type="submit"
+                      className="mt-2"
+                    >
+                      Submit
+                    </Button.Ripple>
+                  </div>
+                </Col>
+              </Row>
             </Form>
           </CardBody>
         </Card>
