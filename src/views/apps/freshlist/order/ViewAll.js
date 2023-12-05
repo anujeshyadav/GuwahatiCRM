@@ -70,12 +70,10 @@ const OrderView = ({ ViewOneData }) => {
     console.log(ViewOneData);
   }, []);
   const handleProductChangeProduct = (e, index) => {
-    // product.price * product?.qty
     setIndex(index);
     const { name, value } = e.target;
     const list = [...product];
     list[index][name] = value;
-    // console.log(GrandTotal);
     let amt = 0;
     if (list.length > 0) {
       const x = list?.map(val => {
@@ -89,7 +87,6 @@ const OrderView = ({ ViewOneData }) => {
       console.log("GrandTotal", amt);
     }
     setProduct(list);
-    // setGrandTotalAmt(amt);
   };
   return (
     <div>
