@@ -2,9 +2,12 @@ import {
   Create_warehouse_xmlView,
   Create_warehouse_save,
   Save_Purchase_Order,
-  Save_Place_Order,
   Purchase_Order_List,
+  Save_Place_Order,
+  Place_Order_List,
   Sales_Return_Product,
+  Place_ORder_Return_Product,
+  Sales_Pending_StatusChange,
   Sales_Return_ProductList,
   Get_Role,
   Get_Role_by_id,
@@ -16,6 +19,7 @@ import {
   Update_Category,
   Update_Role,
   view_create_order_history,
+  Sales_Edit_Order,
   Update_Sub_Category,
   Delete_Sales_person,
   Create_Warehouse_List,
@@ -165,52 +169,52 @@ dotenv.config();
 export const Createwarehousexml = async () => {
   let response = await axiosConfig
     .get(`${Create_warehouse_xmlView}`)
-    .then((res) => res.data);
+    .then(res => res.data);
   return response;
 };
 
-export const CreateWarehousesave = async (data) => {
+export const CreateWarehousesave = async data => {
   let response = await axiosConfig
     .post(`${Create_warehouse_save}`, data)
-    .then((res) => res.data);
+    .then(res => res.data);
   return response;
 };
 
 export const CreateWarehouseList = async () => {
   let response = await axiosConfig
     .get(`${Create_Warehouse_List}`)
-    .then((res) => res.data);
+    .then(res => res.data);
   return response;
 };
 export const Createtransporterxml = async () => {
   let response = await axiosConfig
     .get(`${Create_transporter_xmlView}`)
-    .then((res) => res.data);
+    .then(res => res.data);
   return response;
 };
 export const CreatePartyXML = async () => {
   let response = await axiosConfig
     .get(`${Create_Party_XML}`)
-    .then((res) => res.data);
+    .then(res => res.data);
   return response;
 };
-export const Createtransportersave = async (data) => {
+export const Createtransportersave = async data => {
   let response = await axiosConfig
     .post(`${Create_transporter_save}`, data)
-    .then((res) => res.data);
+    .then(res => res.data);
   return response;
 };
 
-export const SavePromotionsActivity = async (data) => {
+export const SavePromotionsActivity = async data => {
   let response = await axiosConfig
     .post(`${Save_Promotion}`, data)
-    .then((res) => res.data);
+    .then(res => res.data);
   return response;
 };
-export const View_PromotionList = async (data) => {
+export const View_PromotionList = async data => {
   let response = await axiosConfig
     .get(`${View_Promotion_List}`)
-    .then((res) => res.data);
+    .then(res => res.data);
   return response;
 };
 export const CreatePartysave = async data => {
@@ -328,6 +332,12 @@ export const SavePlaceOrder = async data => {
   return response;
 };
 
+// export const PurchaseOrderList = async () => {
+//   let response = await axiosConfig
+//     .get(`${Place_Order_List}`)
+//     .then(res => res.data);
+//   return response;
+// };
 export const PurchaseOrderList = async () => {
   let response = await axiosConfig
     .get(`${Purchase_Order_List}`)
@@ -340,10 +350,28 @@ export const createOrderhistoryview = async () => {
     .then(res => res.data);
   return response;
 };
+export const SalesEditOrder = async (payload, id) => {
+  let response = await axiosConfig
+    .put(`${Sales_Edit_Order}` + id, payload)
+    .then(res => res.data);
+  return response;
+};
+export const SalesPendingStatusChange = async (payload, id) => {
+  let response = await axiosConfig
+    .put(`${Sales_Pending_StatusChange}` + id, payload)
+    .then(res => res.data);
+  return response;
+};
 
 export const SalesReturnProduct = async data => {
   let response = await axiosConfig
     .post(Sales_Return_Product, data)
+    .then(res => res.data);
+  return response;
+};
+export const PlaceOrderReturn_Product = async data => {
+  let response = await axiosConfig
+    .post(Place_ORder_Return_Product, data)
     .then(res => res.data);
   return response;
 };
@@ -444,12 +472,7 @@ export const CreateMySalesManager = async () => {
     .then(res => res.data);
   return response;
 };
-export const SaveOrderList = async () => {
-  let response = await axiosConfig
-    .get(`${SaveOrder_List}`)
-    .then(res => res.data);
-  return response;
-};
+
 export const CreateTargetXmlView = async () => {
   let response = await axiosConfig
     .get(`${Create_Target_xml_view}`)

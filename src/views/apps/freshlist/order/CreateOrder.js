@@ -11,24 +11,9 @@ import {
   Input,
   Label,
   Button,
-  FormGroup,
-  CustomInput,
-  ModalBody,
-  ModalHeader,
-  Modal,
-  InputGroup,
 } from "reactstrap";
-import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
-import { BiEnvelope } from "react-icons/bi";
-import { BsFillChatDotsFill, BsWhatsapp } from "react-icons/bs";
-import { FaHistory } from "react-icons/fa";
-import { FcPhoneAndroid } from "react-icons/fc";
-import { AiOutlineSearch } from "react-icons/ai";
 import Multiselect from "multiselect-react-dropdown";
-
-import { FiSend } from "react-icons/fi";
-
 import "../../../../assets/scss/pages/users.scss";
 import {
   SaveOrder,
@@ -39,7 +24,6 @@ import "../../../../assets/scss/pages/users.scss";
 let GrandTotal = [];
 let SelectedITems = [];
 const CreateOrder = args => {
-  const [formData, setFormData] = useState({});
   const [Index, setIndex] = useState("");
   const [index, setindex] = useState("");
   const [error, setError] = useState("");
@@ -64,26 +48,28 @@ const CreateOrder = args => {
     },
   ]);
 
-  const handleProductChangeProduct = (e, index) => {
-    setIndex(index);
-    const { name, value } = e.target;
-    const list = [...product];
-    list[index][name] = value;
-
-    let amt = 0;
-    if (list.length > 0) {
-      const x = list?.map(val => {
-        console.log(val.qty * val.price);
-        list[index]["totalprice"] = val.qty * val.price;
-        return val.qty * val.price;
-      });
-      amt = x.reduce((a, b) => a + b, 0);
-      console.log("GrandTotal", amt);
+  const handleProductChangeProduct = (e, index, avalaibleSize) => {
+    if (avalaibleSize >= e.target.value) {
+      setIndex(index);
+      const { name, value } = e.target;
+      const list = [...product];
+      list[index][name] = value;
+      product.map(ele => {});
+      let amt = 0;
+      if (list.length > 0) {
+        const x = list?.map(val => {
+          console.log(val.qty * val.price);
+          list[index]["totalprice"] = val.qty * val.price;
+          return val.qty * val.price;
+        });
+        amt = x.reduce((a, b) => a + b, 0);
+        console.log("GrandTotal", amt);
+      }
+      setProduct(list);
+      setGrandTotalAmt(amt);
+    } else {
+      return null;
     }
-    console.log(list);
-    setProduct(list);
-    setGrandTotalAmt(amt);
-    console.log(GrandTotal);
   };
 
   const handleSelectionParty = (selectedList, selectedItem, index) => {
@@ -97,11 +83,13 @@ const CreateOrder = args => {
   };
   const handleSelection = (selectedList, selectedItem, index) => {
     SelectedITems.push(selectedItem);
+    console.log(selectedItem);
     setProduct(prevProductList => {
       const updatedProductList = [...prevProductList];
       const updatedProduct = { ...updatedProductList[index] }; // Create a copy of the product at the specified index
       updatedProduct.price = selectedItem.Product_MRP; // Update the price of the copied product
       updatedProduct.productId = selectedItem._id;
+      updatedProduct.availableQty = selectedItem.Size;
       updatedProductList[index] = updatedProduct; // Replace the product at the specified index with the updated one
       let myarr = prevProductList?.map((ele, i) => {
         let indextotal = ele?.qty * SelectedITems[i]?.Product_MRP;
@@ -172,9 +160,11 @@ const CreateOrder = args => {
   };
 
   const submitHandler = e => {
-    debugger;
     e.preventDefault();
-    console.log("Final ", product);
+    // product?.map(ele => {
+    //   return {};
+    // });
+    console.log(UserInfo?.UserName);
     const ObjOrder = {
       userId: UserInfo?._id,
       fullName: UserInfo?.UserName,
@@ -207,19 +197,6 @@ const CreateOrder = args => {
   const onRemove1 = (selectedList, removedItem, index) => {
     console.log(selectedList);
     console.log(index);
-    // setmultiSelect(selectedList);
-
-    // let arr = selectedList.map((ele) => ele.id);
-    // console.log(arr);
-    // setmultiSelect(arr);
-    // console.log(multiSelect);
-    // if (selectedList.length) {
-    //   for (var i = 0; i < selectedList.length; i++) {
-    //     selectedOptions.push(selectedList[i].id);
-    //   }
-    // }
-    // let uniqueChars = [...new Set(selectedOptions)];
-    // console.log(uniqueChars);
   };
   return (
     <div>
@@ -319,13 +296,31 @@ const CreateOrder = args => {
                     </Col>
                     <Col className="mb-1" lg="2" md="2" sm="12">
                       <div className="">
-                        <Label>Required Qty</Label>
+                        <Label>Available Size</Label>
+                        <Input
+                          type="number"
+                          name="availableQty"
+                          placeholder="AvailableSize"
+                          value={product?.availableQty}
+                        />
+                      </div>
+                    </Col>
+                    <Col className="mb-1" lg="2" md="2" sm="12">
+                      <div className="">
+                        <Label>Required Size</Label>
                         <Input
                           type="number"
                           name="qty"
                           placeholder="Req_Qty"
+                          autocomplete="off"
                           value={product?.qty}
-                          onChange={e => handleProductChangeProduct(e, index)}
+                          onChange={e =>
+                            handleProductChangeProduct(
+                              e,
+                              index,
+                              product?.availableQty
+                            )
+                          }
                         />
                       </div>
                     </Col>

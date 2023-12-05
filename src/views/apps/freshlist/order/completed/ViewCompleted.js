@@ -13,7 +13,7 @@ import {
   CustomInput,
   Badge,
 } from "reactstrap";
-import { history } from "../../../../history";
+import { history } from "../../../../../history";
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
 import { Country, State, City } from "country-state-city";
@@ -22,22 +22,22 @@ import moment from "moment-timezone";
 import { Route } from "react-router-dom";
 
 import swal from "sweetalert";
-import "../../../../../src/layouts/assets/scss/pages/users.scss";
+import "../../../../../../src/layouts/assets/scss/pages/users.scss";
 
 import {
   CreateAccountSave,
   CreateAccountView,
   Get_RoleList,
-} from "../../../../ApiEndPoint/ApiCalling";
+} from "../../../../../ApiEndPoint/ApiCalling";
 import { BiEnvelope } from "react-icons/bi";
 import { FcPhoneAndroid } from "react-icons/fc";
 import { BsWhatsapp } from "react-icons/bs";
-import "../../../../assets/scss/pages/users.scss";
-import UserContext from "../../../../context/Context";
+import "../../../../../assets/scss/pages/users.scss";
+import UserContext from "../../../../../context/Context";
 import { CloudLightning } from "react-feather";
 import { FaPlus } from "react-icons/fa";
 
-const OrderView = ({ ViewOneData }) => {
+const ViewCompleted = ({ ViewOneData }) => {
   const [formData, setFormData] = useState({});
   const [grandTotalAmt, setGrandTotalAmt] = useState(0);
   // const [permissions, setpermissions] = useState({});
@@ -95,20 +95,8 @@ const OrderView = ({ ViewOneData }) => {
     <div>
       <div>
         <Card>
-          <Form className="mr-1 ml-1">
+          <Form className="m-2">
             <Row className="mb-2">
-              <Col lg="4" md="4" sm="12">
-                <FormGroup>
-                  <Label>FullName</Label>
-                  <Input
-                    disabled
-                    type="text"
-                    placeholder="Full Name"
-                    name="FullName"
-                    value={formData.fullName}
-                  />
-                </FormGroup>
-              </Col>
               {product &&
                 product?.orderItems?.map((ele, index) => (
                   <Row className="" key={index}>
@@ -182,4 +170,4 @@ const OrderView = ({ ViewOneData }) => {
     </div>
   );
 };
-export default OrderView;
+export default ViewCompleted;

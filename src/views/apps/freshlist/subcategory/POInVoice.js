@@ -9,7 +9,8 @@ import {
   Image,
   Rect,
 } from "@react-pdf/renderer";
-import logo from "../../../../assets/img/logo/paravilogo.png";
+// import logo from "../../../../assets/img/logo/paravilogo.png";
+import logo from "../../../../assets/img/logo/logowithoutback.png";
 import signature from "../../../../assets/img/logo/signature.png";
 
 const styles = StyleSheet.create({
@@ -76,10 +77,10 @@ const POInVoice = ({
   tableList,
   AllCharges,
 }) => {
-  console.log(UserChoice);
-  console.log(UserChoice?.billTo);
-  console.log(UserChoice?.imagePosition);
-  console.log(UserChoice?.shipto);
+  // console.log(UserChoice);
+  // console.log(UserChoice?.billTo);
+  // console.log(UserChoice?.imagePosition);
+  // console.log(UserChoice?.shipto);
   // console.log(invoiceData);
   // console.log(BilData);
   // console.log(CurrentWords);
@@ -110,11 +111,10 @@ const POInVoice = ({
                   <Image
                     style={{ width: "200px", padding: "25px 10px" }}
                     src={logo}
-                    // style={styles.image}
                   ></Image>
                   <View style={{ padding: "10px" }}>
                     <Text style={{ fontSize: "10px", fontWeight: "bold" }}>
-                      PRAVARI CORPORATE MANAGEMENT SERVICES PVT. LTD.
+                      Guwahati CORPORATE MANAGEMENT SERVICES PVT. LTD.
                     </Text>
 
                     <Text
@@ -127,7 +127,7 @@ const POInVoice = ({
                       ROOM 7,A-WING,Shree Datta Digambar CHS Ltd.
                     </Text>
                     <Text style={styles.header}>
-                      Guru Datta Mandir Road ,Gaurishankarwadi No. 1{" "}
+                      Guru Datta Mandir Road ,Gaurishankarwadi No. 1
                     </Text>
                     <Text style={styles.header}>
                       Opp. Yashomandir,Pant Nagar ,Ghatkopar East,
@@ -142,7 +142,7 @@ const POInVoice = ({
                 <>
                   <View style={{ padding: "10px" }}>
                     <Text style={{ fontSize: "10px", fontWeight: "bold" }}>
-                      PRAVARI CORPORATE MANAGEMENT SERVICES PVT. LTD.
+                      Guwahati CORPORATE MANAGEMENT SERVICES PVT. LTD.
                     </Text>
 
                     <Text
@@ -155,7 +155,7 @@ const POInVoice = ({
                       ROOM 7,A-WING,Shree Datta Digambar CHS Ltd.
                     </Text>
                     <Text style={styles.header}>
-                      Guru Datta Mandir Road ,Gaurishankarwadi No. 1{" "}
+                      Guru Datta Mandir Road ,Gaurishankarwadi No. 1
                     </Text>
                     <Text style={styles.header}>
                       Opp. Yashomandir,Pant Nagar ,Ghatkopar East,
@@ -168,7 +168,6 @@ const POInVoice = ({
                   <Image
                     style={{ width: "200px", padding: "25px 10px" }}
                     src={logo}
-                    // style={styles.image}
                   ></Image>
                 </>
               )}
@@ -785,7 +784,7 @@ const POInVoice = ({
                     }}
                   >
                     {ele?.title}
-                    {/* {invoiceData?.price} */}
+                    {invoiceData?.price}123
                   </Text>
                 </View>
                 <View
@@ -855,7 +854,7 @@ const POInVoice = ({
                       marginLeft: "5px",
                     }}
                   >
-                    {ele?.amount}
+                    {ele?.amount}789
                   </Text>
                 </View>
               </View>
@@ -1270,7 +1269,7 @@ const POInVoice = ({
                           marginBottom: "6px",
                         }}
                       >
-                        {AllCharges?.subtotal}
+                        {AllCharges?.subtotal}1312
                       </Text>
                     </View>
                     <View
@@ -1301,7 +1300,7 @@ const POInVoice = ({
                           marginBottom: "6px",
                         }}
                       >
-                        {AllCharges?.totcgst}
+                        {AllCharges?.totcgst}560
                       </Text>
                     </View>
                     <View
@@ -1332,7 +1331,7 @@ const POInVoice = ({
                           marginBottom: "6px",
                         }}
                       >
-                        {AllCharges?.totsgst}
+                        {AllCharges?.totsgst}1421
                       </Text>
                     </View>
                     <View

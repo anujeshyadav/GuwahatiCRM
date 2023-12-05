@@ -24,7 +24,7 @@ import { AgGridReact } from "ag-grid-react";
 import "ag-grid-community/dist/styles/ag-grid.css";
 import EditAccount from "../accounts/EditAccount";
 // import ViewAccount from "../accounts/ViewAccount";
-import ViewOrder from "../order/ViewAll";
+import ViewOrder from "./ViewAll";
 import jsPDF from "jspdf";
 import "jspdf-autotable";
 import Logo from "../../../../assets/img/profile/pages/logomain.png";
@@ -61,7 +61,7 @@ import UserContext from "../../../../context/Context";
 
 const SelectedColums = [];
 
-class PurchasedOrderList extends React.Component {
+class PlaceOrderList extends React.Component {
   static contextType = UserContext;
   constructor(props) {
     super(props);
@@ -118,20 +118,11 @@ class PurchasedOrderList extends React.Component {
                       JSON.stringify(params.data)
                     );
                     this.props.history.push({
-                      pathname: `/app/AJGroup/order/salesReturn/${params.data?._id}`,
+                      pathname: `/app/AJGroup/order/placeOrderReturn/${params.data?._id}`,
                       state: params.data,
                     });
                   }}
                 />
-                {/* <Eye
-                  className="mr-50"
-                  size="25px"
-                  color="green"
-                  onClick={() => {
-                    this.setState({ ViewData: params?.data });
-                    this.toggleModal();
-                  }}
-                /> */}
                 <Eye
                   className="mr-50"
                   size="25px"
@@ -1073,4 +1064,4 @@ class PurchasedOrderList extends React.Component {
     );
   }
 }
-export default PurchasedOrderList;
+export default PlaceOrderList;
