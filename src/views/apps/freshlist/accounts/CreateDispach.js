@@ -31,7 +31,7 @@ import {
   CreateCustomersave,
   CreateCustomerxmlView,
   CreateMySalesManager,
-  CreateSalesManagerXMlView,
+  GoodDispatchxmlView,
   Create_Salesmanagersave,
 } from "../../../../ApiEndPoint/ApiCalling";
 import { BiEnvelope } from "react-icons/bi";
@@ -88,13 +88,7 @@ const CreateDispach = () => {
           });
           setError("");
         }
-        //  else {
-        //   setError(
-        //     "Please enter a valid number with a maximum length of 10 digits"
-        //   );
-        // }
       } else if (type == "file") {
-        // debugger;
         if (e.target.files) {
           setFormData({
             ...formData,
@@ -123,23 +117,24 @@ const CreateDispach = () => {
     console.log(formData);
   }, [formData]);
   useEffect(() => {
-    CreateSalesManagerXMlView()
-      .then((res) => {
+    GoodDispatchxmlView()
+      .then(res => {
         const jsonData = xmlJs.xml2json(res.data, { compact: true, spaces: 2 });
-        console.log(JSON.parse(jsonData)?.Createsalesmanager);
-        setCreatAccountView(JSON.parse(jsonData)?.Createsalesmanager?.input);
+        console.log(JSON.parse(jsonData));
+        console.log(JSON.parse(jsonData)?.GoodDispatch);
+        setCreatAccountView(JSON.parse(jsonData)?.GoodDispatch?.input);
 
         setdropdownValue(
-          JSON.parse(jsonData)?.CreateCustomer?.MyDropDown?.dropdown
+          JSON.parse(jsonData)?.GoodDispatch?.MyDropDown?.dropdown
         );
       })
-      .catch((err) => {
+      .catch(err => {
         console.log(err);
         swal("Something Went Wrong");
       });
   }, []);
 
-  const submitHandler = (e) => {
+  const submitHandler = e => {
     e.preventDefault();
     // console.log(CreatAccountView);
     // console.log(dropdownValue);
@@ -171,7 +166,7 @@ const CreateDispach = () => {
       swal("Error occured while Entering Details");
     } else {
       Create_Salesmanagersave(formData)
-        .then((res) => {
+        .then(res => {
           console.log(res);
           // setFormData({});
           if (res.status) {
@@ -179,7 +174,7 @@ const CreateDispach = () => {
             swal("SalesManager Created Successfully");
           }
         })
-        .catch((err) => {
+        .catch(err => {
           console.log(err.response);
         });
     }
@@ -220,7 +215,7 @@ const CreateDispach = () => {
           <CardBody>
             <Form className="m-1" onSubmit={submitHandler}>
               <Row className="mb-2">
-                {/* {dropdownValue && (
+                {dropdownValue && (
                   <Col lg="4" md="4" sm="12">
                     <FormGroup>
                       <Label className="mb-1">
@@ -245,19 +240,10 @@ const CreateDispach = () => {
                       </CustomInput>
                     </FormGroup>
                   </Col>
-                )} */}
+                )}
 
                 {CreatAccountView &&
                   CreatAccountView?.map((ele, i) => {
-                    {
-                      /* console.log(Context?.UserInformatio?.dateFormat); */
-                    }
-                    // console.log(Countries);
-                    // console.log(States);
-                    const convertedTime = moment("2022-08-05T12:00:00")
-                      .tz("America/New_York")
-                      .format("D MMM, YYYY HH:mm");
-
                     if (!!ele?.phoneinput) {
                       return (
                         <>
@@ -269,7 +255,7 @@ const CreateDispach = () => {
                               <PhoneInput
                                 inputClass="myphoneinput"
                                 country={"in"}
-                                onKeyDown={(e) => {
+                                onKeyDown={e => {
                                   if (
                                     ele?.type?._attributes?.type == "number"
                                   ) {
@@ -280,7 +266,7 @@ const CreateDispach = () => {
                                 countryCodeEditable={false}
                                 name={ele?.name?._text}
                                 value={formData[ele?.name?._text]}
-                                onChange={(phone) => {
+                                onChange={phone => {
                                   setFormData({
                                     ...formData,
                                     [ele?.name?._text]: phone,
@@ -315,14 +301,14 @@ const CreateDispach = () => {
                                 inputClass="countryclass"
                                 className="countryclassnw"
                                 options={Country.getAllCountries()}
-                                getOptionLabel={(options) => {
+                                getOptionLabel={options => {
                                   return options["name"];
                                 }}
-                                getOptionValue={(options) => {
+                                getOptionValue={options => {
                                   return options["name"];
                                 }}
                                 value={Countries}
-                                onChange={(country) => {
+                                onChange={country => {
                                   setCountry(country);
                                   setFormData({
                                     ...formData,
@@ -346,7 +332,7 @@ const CreateDispach = () => {
                         );
                       } else if (ele?.label._text?.includes("tate")) {
                         return (
-                          <Col key={i} lg="4" md="4" sm="12">
+                          <Col key={i} lg="3" md="3" sm="12">
                             <FormGroup>
                               <Label className="mb-1">
                                 {ele?.label?._text}
@@ -355,14 +341,14 @@ const CreateDispach = () => {
                                 options={State?.getStatesOfCountry(
                                   Countries?.isoCode
                                 )}
-                                getOptionLabel={(options) => {
+                                getOptionLabel={options => {
                                   return options["name"];
                                 }}
-                                getOptionValue={(options) => {
+                                getOptionValue={options => {
                                   return options["name"];
                                 }}
                                 value={States}
-                                onChange={(State) => {
+                                onChange={State => {
                                   setState(State);
                                   setFormData({
                                     ...formData,
@@ -386,7 +372,7 @@ const CreateDispach = () => {
                         );
                       } else if (ele?.label._text?.includes("ity")) {
                         return (
-                          <Col key={i} lg="4" md="4" sm="12">
+                          <Col key={i} lg="3" md="3" sm="12">
                             <FormGroup>
                               <Label className="mb-1">
                                 {ele?.label?._text}
@@ -396,14 +382,14 @@ const CreateDispach = () => {
                                   States?.countryCode,
                                   States?.isoCode
                                 )}
-                                getOptionLabel={(options) => {
+                                getOptionLabel={options => {
                                   return options["name"];
                                 }}
-                                getOptionValue={(options) => {
+                                getOptionValue={options => {
                                   return options["name"];
                                 }}
                                 value={Cities}
-                                onChange={(City) => {
+                                onChange={City => {
                                   setCities(City);
                                   setFormData({
                                     ...formData,
@@ -430,14 +416,14 @@ const CreateDispach = () => {
                           <>
                             {ele?.type?._attributes?.type == "date" ? (
                               <>
-                                <Col key={i} lg="4" md="4" sm="12">
+                                <Col key={i} lg="3" md="3" sm="12">
                                   <FormGroup key={i}>
                                     <Label className="mb-1">
                                       {ele?.label?._text}
                                     </Label>
 
                                     <Input
-                                      onKeyDown={(e) => {
+                                      onKeyDown={e => {
                                         if (
                                           ele?.type?._attributes?.type ==
                                           "number"
@@ -462,7 +448,7 @@ const CreateDispach = () => {
                                         // formData[ele?.name?._text]
                                       }
                                       // value={formData[ele?.name?._text]}
-                                      onChange={(e) =>
+                                      onChange={e =>
                                         handleInputChange(
                                           e,
                                           ele?.type?._attributes?.type,
@@ -486,14 +472,14 @@ const CreateDispach = () => {
                               </>
                             ) : (
                               <>
-                                <Col key={i} lg="4" md="4" sm="12">
+                                <Col key={i} lg="3" md="3" sm="12">
                                   <FormGroup key={i}>
                                     <Label className="mb-1">
                                       {ele?.label?._text}
                                     </Label>
 
                                     <Input
-                                      onKeyDown={(e) => {
+                                      onKeyDown={e => {
                                         if (
                                           ele?.type?._attributes?.type ==
                                           "number"
@@ -507,7 +493,7 @@ const CreateDispach = () => {
                                       placeholder={ele?.placeholder?._text}
                                       name={ele?.name?._text}
                                       value={formData[ele?.name?._text]}
-                                      onChange={(e) =>
+                                      onChange={e =>
                                         handleInputChange(
                                           e,
                                           ele?.type?._attributes?.type,
@@ -538,17 +524,17 @@ const CreateDispach = () => {
                         <>
                           {!!ele?.number ? (
                             <>
-                              <Col key={i} lg="4" md="4" sm="12">
+                              <Col key={i} lg="3" md="3" sm="12">
                                 <FormGroup key={i}>
                                   <Label className="mb-1">
                                     {ele?.label?._text}
                                   </Label>
 
                                   <Input
-                                    onWheel={(e) => {
+                                    onWheel={e => {
                                       e.preventDefault(); // Prevent the mouse wheel scroll event
                                     }}
-                                    onKeyDown={(e) => {
+                                    onKeyDown={e => {
                                       if (
                                         ele?.type?._attributes?.type == "number"
                                       ) {
@@ -560,7 +546,7 @@ const CreateDispach = () => {
                                     placeholder={ele?.placeholder?._text}
                                     name={ele?.name?._text}
                                     value={formData[ele?.name?._text]}
-                                    onChange={(e) =>
+                                    onChange={e =>
                                       handleInputChange(
                                         e,
                                         ele?.type?._attributes?.type,
@@ -583,7 +569,7 @@ const CreateDispach = () => {
                               </Col>
                             </>
                           ) : (
-                            <Col key={i} lg="4" md="4" sm="12">
+                            <Col key={i} lg="3" md="3" sm="12">
                               <FormGroup key={i}>
                                 {ele?.type?._attributes?.type &&
                                 ele?.type?._attributes?.type == "file" ? (
@@ -599,13 +585,7 @@ const CreateDispach = () => {
                                       placeholder={ele?.placeholder?._text}
                                       name={ele?.name?._text}
                                       //   value={formData[ele?.name?._text]}
-                                      onChange={(e) => {
-                                        // const value = e.target.value;
-                                        // // Use regular expression to allow only numbers
-                                        // const numericValue = value.replace(
-                                        //   /\D/g,
-                                        //   ""
-                                        // );
+                                      onChange={e => {
                                         handleFileChange(
                                           e,
                                           ele?.type?._attributes?.type,
@@ -633,7 +613,7 @@ const CreateDispach = () => {
 
                                     <Input
                                       className="form-control"
-                                      onKeyDown={(e) => {
+                                      onKeyDown={e => {
                                         if (
                                           ele?.type?._attributes?.type ==
                                           "number"
@@ -647,7 +627,7 @@ const CreateDispach = () => {
                                       placeholder={ele?.placeholder?._text}
                                       name={ele?.name?._text}
                                       value={formData[ele?.name?._text]}
-                                      onChange={(e) => {
+                                      onChange={e => {
                                         // const value = e.target.value;
                                         // // Use regular expression to allow only numbers
                                         // const numericValue = value.replace(
@@ -769,7 +749,7 @@ const CreateDispach = () => {
                 <Label className="mb-0">Status</Label>
                 <div
                   className="form-label-group"
-                  onChange={(e) => {
+                  onChange={e => {
                     setFormData({
                       ...formData,
                       ["status"]: e.target.value,

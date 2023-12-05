@@ -1,6 +1,5 @@
 import React, { useRef } from "react";
 import { Route } from "react-router-dom";
-import xmlJs from "xml-js";
 import {
   Card,
   CardBody,
@@ -16,20 +15,22 @@ import {
   ModalHeader,
   ModalBody,
   Badge,
-  CustomInput,
 } from "reactstrap";
-import { ContextLayout } from "../../../../utility/context/Layout";
+
+import { ContextLayout } from "../../../../../utility/context/Layout";
 import { AgGridReact } from "ag-grid-react";
 import "ag-grid-community/dist/styles/ag-grid.css";
-import ViewOrder from "../order/ViewAll";
+// import EditAccount from "../../accounts/EditAccount";
+// import ViewAccount from "../accounts/ViewAccount";
+import ViewOrder from "../../order/ViewAll";
 import jsPDF from "jspdf";
 import "jspdf-autotable";
-import Logo from "../../../../assets/img/profile/pages/logomain.png";
+import Logo from "../../../../../assets/img/profile/pages/logomain.png";
 import Papa from "papaparse";
 import { Eye, Trash2, ChevronDown, Edit, CornerDownLeft } from "react-feather";
 import { IoMdRemoveCircleOutline } from "react-icons/io";
-import "../../../../assets/scss/plugins/tables/_agGridStyleOverride.scss";
-import "../../../../assets/scss/pages/users.scss";
+import "../../../../../assets/scss/plugins/tables/_agGridStyleOverride.scss";
+import "../../../../../assets/scss/pages/users.scss";
 
 import {
   FaArrowAltCircleLeft,
@@ -37,28 +38,22 @@ import {
   FaFilter,
   FaPlus,
 } from "react-icons/fa";
-import moment from "moment-timezone";
 import swal from "sweetalert";
 import {
-  CreateAccountList,
-  CreateAccountView,
-  Create_TargetList,
-  DeleteAccount,
-  createOrderhistoryview,
+  DebitnoteOrderList,
   Delete_targetINlist,
-} from "../../../../ApiEndPoint/ApiCalling";
+} from "../../../../../ApiEndPoint/ApiCalling";
 import {
   BsCloudDownloadFill,
   BsFillArrowDownSquareFill,
   BsFillArrowUpSquareFill,
 } from "react-icons/bs";
 import * as XLSX from "xlsx";
-import UserContext from "../../../../context/Context";
-// import TargetAssignedOne from "./TargetAssignedOne";
+import UserContext from "../../../../../context/Context";
 
 const SelectedColums = [];
 
-class OrderList extends React.Component {
+class DebitNoteList extends React.Component {
   static contextType = UserContext;
   constructor(props) {
     super(props);
@@ -71,13 +66,11 @@ class OrderList extends React.Component {
       modal: false,
       modalone: false,
       ViewData: {},
-
       setMySelectedarr: [],
       SelectedCols: [],
       paginationPageSize: 5,
       currenPageSize: "",
       getPageSize: "",
-      // columnDefs: [],
       AllcolumnDefs: [],
       SelectedcolumnDefs: [],
       defaultColDef: {
@@ -92,7 +85,6 @@ class OrderList extends React.Component {
           headerName: "UID",
           valueGetter: "node.rowIndex + 1",
           field: "node.rowIndex + 1",
-          // checkboxSelection: true,
           width: 80,
           filter: true,
         },
@@ -115,11 +107,12 @@ class OrderList extends React.Component {
                       JSON.stringify(params.data)
                     );
                     this.props.history.push({
-                      pathname: `/app/AJGroup/order/salesReturn/${params.data?._id}`,
+                      pathname: `/app/AJGroup/order/purchaseReturn/${params.data?._id}`,
                       state: params.data,
                     });
                   }}
                 />
+
                 <Eye
                   className="mr-50"
                   size="25px"
@@ -134,7 +127,7 @@ class OrderList extends React.Component {
                   color="blue"
                   onClick={() =>
                     this.props.history.push({
-                      pathname: `/app/freshlist/order/editOrder/${params.data?._id}`,
+                      pathname: `/app/AJgroup/order/editPurchase/${params.data?._id}`,
                       state: params.data,
                     })
                   }
@@ -143,103 +136,95 @@ class OrderList extends React.Component {
             );
           },
         },
+
         {
-          headerName: "Full Name",
-          field: "orderItems",
+          headerName: "Product Name",
+          field: "productItems",
           filter: true,
-          width: 180,
+          width: 220,
           valueGetter: params => {
-            if (params.data.orderItems && params.data.orderItems.length > 0) {
-              return params.data.fullName;
+            if (
+              params.data.productItems &&
+              params.data.productItems.length > 0
+            ) {
+              return params?.data?.productItems?.map(val => {
+                return val?.productId?.Product_Title;
+              });
             }
             return null;
           },
         },
 
         {
-          headerName: "Product Name",
-          field: "orderItems",
+          headerName: "GST Rate",
+          field: "productId",
           filter: true,
           width: 220,
           valueGetter: params => {
-            if (params.data.orderItems && params.data.orderItems.length > 0) {
-              return params?.data?.orderItems?.map(val => {
-                return val?.product?.Product_Title;
+            if (
+              params.data.productItems &&
+              params.data.productItems.length > 0
+            ) {
+              return params?.data?.productItems?.map(val => {
+                return val?.productId["GST Rate"];
+              });
+            }
+            return null;
+          },
+        },
+
+        {
+          headerName: "Product MRP",
+          field: "productId",
+          filter: true,
+          width: 180,
+          valueGetter: params => {
+            if (
+              params.data.productItems &&
+              params.data.productItems.length > 0
+            ) {
+              return params?.data?.productItems?.map(val => {
+                return val?.productId?.Product_MRP;
               });
             }
             return null;
           },
         },
         {
-          headerName: "Price",
-          field: "orderItems",
-          filter: true,
-          width: 150,
-          valueGetter: params => {
-            if (params.data.orderItems && params.data.orderItems.length > 0) {
-              return params.data.orderItems[0].price;
-            }
-            return null;
-          },
-        },
-        {
-          headerName: "Size",
-          field: "orderItems",
-          filter: true,
-          width: 150,
-          valueGetter: params => {
-            if (params.data.orderItems && params.data.orderItems.length > 0) {
-              return params.data.orderItems[0].qty; // Return the price
-            }
-            return null;
-          },
-        },
-        {
-          headerName: "GST Rate",
-          field: "orderItems",
-          filter: true,
-          width: 180,
-          valueGetter: params => {
-            if (params.data.orderItems && params.data.orderItems.length > 0) {
-              return params.data.orderItems[0].product["GST Rate"]; // Return the price
-            }
-            return null; // Or handle cases where there's no price
-          },
-        },
-        {
-          headerName: "HSN Code",
-          field: "orderItems",
-          filter: true,
-          width: 180,
-          valueGetter: params => {
-            if (params.data.orderItems && params.data.orderItems.length > 0) {
-              return params.data.orderItems[0].product.HSN_Code; // Return the price
-            }
-            return null;
-          },
-        },
-
-        {
-          headerName: "Status",
-          field: "status",
+          headerName: "Total Amount",
+          field: "totalAmount",
           filter: true,
           width: 150,
           cellRendererFramework: params => {
-            return params.value == "comleted" ? (
-              <div className="badge badge-pill badge-success">
-                {params.data.status}
-              </div>
-            ) : params.value == "pending" ? (
-              <div className="badge badge-pill badge-warning">
-                {params.data.status}
-              </div>
-            ) : (
-              <div className="badge badge-pill badge-success">
-                {params.data.status}
+            return (
+              <div>
+                <span>{params.data?.totalAmount}</span>
               </div>
             );
           },
         },
+
+        // {
+        //   headerName: "Status",
+        //   field: "status",
+        //   filter: true,
+        //   width: 150,
+        //   cellRendererFramework: params => {
+        //     return params.value == "comleted" ? (
+        //       <div className="badge badge-pill badge-success">
+        //         {params.data.status}
+        //       </div>
+        //     ) : params.value == "pending" ? (
+        //       <div className="badge badge-pill badge-warning">
+        //         {params.data.status}
+        //       </div>
+        //     ) : (
+        //       <div className="badge badge-pill badge-success">
+        //         {params.data.status}
+        //       </div>
+        //     );
+        //   },
+        // },
       ],
     };
   }
@@ -268,10 +253,10 @@ class OrderList extends React.Component {
   async componentDidMount() {
     const UserInformation = this.context?.UserInformatio;
 
-    await createOrderhistoryview()
+    await DebitnoteOrderList()
       .then(res => {
-        this.setState({ rowData: res?.orderHistory });
-        console.log(res?.orderHistory);
+        console.log(res.DebitNote);
+        this.setState({ rowData: res?.DebitNote });
         this.setState({ AllcolumnDefs: this.state.columnDefs });
         this.setState({ SelectedCols: this.state.columnDefs });
 
@@ -294,7 +279,6 @@ class OrderList extends React.Component {
   };
 
   runthisfunction(id) {
-    debugger;
     swal("Warning", "Sure You Want to Delete it", {
       buttons: {
         cancel: "cancel",
@@ -607,7 +591,7 @@ class OrderList extends React.Component {
                     <Card>
                       <Row className="m-2">
                         <Col>
-                          <h1 className="float-left">Order List</h1>
+                          <h1 className="float-left">Purchased List</h1>
                         </Col>
                         <Col>
                           <span className="mx-1">
@@ -688,11 +672,11 @@ class OrderList extends React.Component {
                                   color="primary"
                                   onClick={() =>
                                     history.push(
-                                      "/app/softnumen/order/createorder"
+                                      "/app/AJgroup/order/AddPurchaseOrder"
                                     )
                                   }
                                 >
-                                  <FaPlus size={15} /> Create Order
+                                  <FaPlus size={15} /> Add Purchase Order
                                 </Badge>
                               )}
                             />
@@ -987,4 +971,4 @@ class OrderList extends React.Component {
     );
   }
 }
-export default OrderList;
+export default DebitNoteList;

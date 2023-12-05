@@ -15,7 +15,7 @@ import { useParams, useLocation } from "react-router-dom";
 
 import "../../../../../assets/scss/pages/users.scss";
 import {
-  SalesReturnProduct,
+  PurchaseReturn,
   ProductListView,
   Create_Sales_personList,
 } from "../../../../../ApiEndPoint/ApiCalling";
@@ -55,6 +55,7 @@ const SalesReturnView = args => {
       localStorage.getItem("OrderList")
     ).orderItems;
     if (location?.state) {
+      console.log(location?.state);
       setOrderedListData(location?.state.orderItems);
       let grandTotal = location?.state.orderItems.reduce(
         (a, b) => a + b.price,
@@ -75,7 +76,9 @@ const SalesReturnView = args => {
       setGrandTotalAmt(grandTotal);
     }
   }, []);
-  useEffect(() => {}, [OrderedListData]);
+  useEffect(() => {
+    console.log(OrderedListData);
+  }, [OrderedListData]);
 
   useEffect(() => {
     Create_Sales_personList()
@@ -99,14 +102,15 @@ const SalesReturnView = args => {
 
   const submitHandler = e => {
     e.preventDefault();
+    debugger;
     console.log(OrderedListData);
     let userData = JSON.parse(localStorage.getItem("userData"));
-    console.log(userData);
+    // console.log(userData);
 
     let myarr = OrderedListData?.map((ele, i) => {
       return {
         productId: ele?.product?._id,
-        Qty_Sales: ele?.qty,
+        Qty_Purchased: ele?.qty,
         Qty_Return: Number(ele?.returnQty),
         Product_Price: ele?.price,
       };
@@ -114,7 +118,7 @@ const SalesReturnView = args => {
 
     let payload = {
       userId: userData?._id,
-      status: "pending",
+      // status: "return",
       returnItems: myarr,
       mobileNumber: userData?.mobileNumber,
       email: userData.email,
@@ -125,10 +129,11 @@ const SalesReturnView = args => {
     if (error) {
       swal("Error occured while Entering Details");
     } else {
-      SalesReturnProduct(payload)
+      console.log(payload);
+      PurchaseReturn(payload)
         .then(res => {
           swal("Purchase Returned Successfully");
-
+          history.push("/app/AJgroup/order/purchaseOrderList");
           console.log(res);
         })
         .catch(err => {

@@ -1,5 +1,4 @@
 import React, { useEffect, useState, useContext } from "react";
-import xmlJs from "xml-js";
 import {
   Card,
   CardBody,
@@ -9,127 +8,97 @@ import {
   Input,
   Label,
   Button,
+  FormGroup,
 } from "reactstrap";
 import "react-phone-input-2/lib/style.css";
-import { useParams, useLocation } from "react-router-dom";
 
-import "../../../../assets/scss/pages/users.scss";
+import { useParams, useLocation } from "react-router-dom";
+import "../../../../../assets/scss/pages/users.scss";
 import {
-  SalesReturnProduct,
-  PlaceOrderReturn_Product,
   ProductListView,
   Create_Sales_personList,
-} from "../../../../ApiEndPoint/ApiCalling";
-import "../../../../assets/scss/pages/users.scss";
+  PurchaseEdit_Order,
+} from "../../../../../ApiEndPoint/ApiCalling";
+import "../../../../../assets/scss/pages/users.scss";
 import { Route } from "react-router-dom";
 
-const PlaceOrderReturn = args => {
-  const [Index, setIndex] = useState("");
+let GrandTotal = [];
+
+const EditPurchase = args => {
+  const [Index, setIndex] = useState(-1);
   const [error, setError] = useState("");
-  const [ProductList, setProductList] = useState([]);
   const [grandTotalAmt, setGrandTotalAmt] = useState(0);
   const [Editdata, setEditdata] = useState({});
   const [UserInfo, setUserInfo] = useState({});
-  const [SalesPersonList, setSalesPersonList] = useState([]);
+  const [userName, setUserName] = useState("");
   const Params = useParams();
   const location = useLocation();
 
-  const [OrderedListData, setOrderedListData] = useState([
+  const [product, setProduct] = useState([
     {
+      product: "", //
       productId: "",
-      Product_Title: "",
-      Qty_Sales: "",
-      Qty_Return: 0,
-      Product_Price: "",
+      availableQty: "",
+      qty: 1, //
+      price: "", //
+      grandTotal: "",
     },
   ]);
+  const handleChange = e => {
+    console.log(e.target.value);
+    setUserName(e.target.value);
+  };
 
   const handleProductChangeProduct = (e, index) => {
     setIndex(index);
     const { name, value } = e.target;
-    const list = [...OrderedListData];
+    let orderitem = product?.orderItems;
+
+    const list = [...orderitem];
     list[index][name] = value;
-    setOrderedListData(list);
+    console.log(list);
+    setProduct(list);
   };
-  useEffect(() => {
-    let getFromLocalData = JSON.parse(
-      localStorage.getItem("OrderList")
-    ).orderItems;
-    if (location?.state) {
-      setOrderedListData(location?.state.orderItems);
-      let grandTotal = location?.state.orderItems.reduce(
-        (a, b) => a + b.price,
-        0
-      );
-
-      setGrandTotalAmt(grandTotal);
-      localStorage.setItem("EditoneProduct", location?.state);
-      setEditdata(location?.state);
-    } else {
-      // let mydata = localStorage.getItem("EditoneProduct");
-      setOrderedListData(getFromLocalData);
-      let grandTotal = location?.state.orderItems.reduce(
-        (a, b) => a + b.price,
-        0
-      );
-
-      setGrandTotalAmt(grandTotal);
-    }
-  }, []);
-  useEffect(() => {}, [OrderedListData]);
 
   useEffect(() => {
-    Create_Sales_personList()
-      .then(res => {
-        setSalesPersonList(res?.SalesPerson);
-      })
-      .catch(err => console.log(err));
-    ProductListView()
-      .then(res => {
-        setProductList(res?.Product);
-      })
-      .catch(err => {
-        console.log(err);
-      });
+    setProduct(location.state);
+    setUserName(location.state.fullName);
+    setEditdata(location?.state);
+    setGrandTotalAmt(location?.state?.grandTotal);
   }, []);
+
+  useEffect(() => {
+    setProduct(location.state);
+    setEditdata(location?.state);
+  }, [product]);
+
   useEffect(() => {
     const userInfo = JSON.parse(localStorage.getItem("userData"));
-    console.log(userInfo);
     setUserInfo(userInfo);
   }, []);
 
   const submitHandler = e => {
     e.preventDefault();
-    console.log(OrderedListData);
-    let userData = JSON.parse(localStorage.getItem("userData"));
-    console.log(userData);
-
-    let myarr = OrderedListData?.map((ele, i) => {
+    debugger;
+    console.log(product, product.orderItems);
+    let editedproduct = product.orderItems.map(ele => {
       return {
         productId: ele?.product?._id,
-        Qty_Sales: ele?.qty,
-        Qty_Return: Number(ele?.returnQty),
-        Product_Price: ele?.price,
+        qty: Number(ele?.qty),
       };
     });
-
     let payload = {
-      userId: userData?._id,
-      returnItems: myarr,
-      mobileNumber: userData?.mobileNumber,
-      email: userData.email,
-      Return_amount: grandTotalAmt,
-      orderId: location?.state?._id,
+      fullName: userName,
+      orderItems: editedproduct,
     };
-
+    console.log(payload);
     if (error) {
       swal("Error occured while Entering Details");
     } else {
-      PlaceOrderReturn_Product(payload)
+      PurchaseEdit_Order(payload, product._id)
         .then(res => {
-          swal(" PlaceOrder Returned Successfully");
-
           console.log(res);
+          swal("PurchaseOrder  Edited Successfully");
         })
         .catch(err => {
           console.log(err);
@@ -144,7 +113,7 @@ const PlaceOrderReturn = args => {
           <Row className="m-2">
             <Col className="">
               <div>
-                <h1 className="">PlaceOrder Return</h1>
+                <h1 className="">Edit PurchaseOrder</h1>
               </div>
             </Col>
             <Col>
@@ -154,7 +123,7 @@ const PlaceOrderReturn = args => {
                     <Button
                       style={{ cursor: "pointer" }}
                       className="float-right mr-1"
-                      color="danger"
+                      color="primary"
                       size="sm"
                       onClick={() => history.goBack()}
                     >
@@ -168,58 +137,87 @@ const PlaceOrderReturn = args => {
 
           <CardBody>
             <Form className="m-1" onSubmit={submitHandler}>
-              {OrderedListData &&
-                OrderedListData?.map((item, index) => {
+              <Col className="mb-1" lg="4" md="4" sm="12">
+                <div className="">
+                  <Label>FullName</Label>
+                  <Input
+                    required
+                    type="text"
+                    name="FullName"
+                    placeholder="FullName"
+                    value={userName}
+                    onChange={handleChange}
+                  />
+                </div>
+              </Col>
+
+              {product &&
+                product?.orderItems?.map((product, index) => {
                   return (
                     <Row className="" key={index}>
-                      <Col className="mb-1" lg="2" md="2" sm="12">
+                      <Col className="mb-1">
                         <div className="">
                           <Label>Product Name</Label>
                           <Input
                             type="text"
+                            placeholder="ProductName"
                             name="Product_Title"
-                            readOnly
-                            placeholder="Product Name"
-                            value={item?.product?.Product_Title}
+                            disabled
+                            value={product.product.Product_Title}
+                            onChange={e => handleChange(e, index)}
                           />
                         </div>
                       </Col>
-                      <Col className="mb-1" lg="2" md="2" sm="12">
-                        <div className="">
+                      <Col>
+                        <FormGroup>
                           <Label>Price</Label>
                           <Input
-                            type="text"
-                            name="price"
-                            readOnly
+                            type="number"
+                            disabled
                             placeholder="Price"
-                            value={item?.price}
+                            name="Price"
+                            value={product.price}
                           />
-                        </div>
+                        </FormGroup>
                       </Col>
-                      <Col className="mb-1" lg="2" md="2" sm="12">
-                        <div className="">
-                          <Label>Purchased Quantity</Label>
+                      <Col>
+                        <FormGroup>
+                          <Label>Size</Label>
                           <Input
                             type="number"
-                            readOnly
+                            placeholder="Size"
                             name="qty"
-                            placeholder="Req_Qty"
-                            value={item?.qty}
+                            value={product.qty}
                             onChange={e => handleProductChangeProduct(e, index)}
                           />
-                        </div>
+                        </FormGroup>
                       </Col>
-                      <Col className="mb-1" lg="2" md="2" sm="12">
-                        <div className="">
-                          <Label>Return Quantity</Label>
+                      <Col>
+                        <FormGroup>
+                          <Label>GST Rate</Label>
                           <Input
                             type="number"
-                            name="returnQty"
-                            placeholder="Return Quantity"
-                            value={OrderedListData.returnQty}
-                            onChange={e => handleProductChangeProduct(e, index)}
+                            placeholder="GST Rate"
+                            disabled
+                            name="GSTRate"
+                            value={product.product["GST Rate"]}
+                            // onChange={e => handleProductChangeProduct(e, index)}
                           />
-                        </div>
+                        </FormGroup>
+                      </Col>
+
+                      <Col>
+                        <FormGroup>
+                          <Label>HST Code</Label>
+                          <Input
+                            type="number"
+                            placeholder="HSTCode"
+                            name="HSTCode"
+                            disabled
+                            value={product.product.HSN_Code}
+                            // onChange={e => handleProductChangeProduct(e, index)}
+                          />
+                        </FormGroup>
                       </Col>
                     </Row>
                   );
@@ -253,4 +251,4 @@ const PlaceOrderReturn = args => {
     </div>
   );
 };
-export default PlaceOrderReturn;
+export default EditPurchase;
