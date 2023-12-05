@@ -1,29 +1,1235 @@
-import React from "react";
+// import React from "react";
+// import {
+//   Card,
+//   CardBody,
+//   Input,
+//   Label,
+//   Row,
+//   CustomInput,
+//   Col,
+//   Form,
+//   UncontrolledDropdown,
+//   DropdownMenu,
+//   DropdownItem,
+//   DropdownToggle,
+//   Button,
+//   Modal,
+//   ModalHeader,
+//   ModalBody,
+//   Badge,
+//   FormGroup,
+// } from "reactstrap";
+// import { AiOutlineDownload } from "react-icons/ai";
+// import axiosConfig from "../../../../axiosConfig";
+// import { ToWords } from "to-words";
+// import { ContextLayout } from "../../../../utility/context/Layout";
+// import { AgGridReact } from "ag-grid-react";
+// import { Eye, Trash2, ChevronDown, Edit, CloudLightning } from "react-feather";
+// import { history } from "../../../../history";
+// import "../../../../assets/scss/plugins/tables/_agGridStyleOverride.scss";
+// import "../../../../assets/scss/pages/users.scss";
+// import InvoicGenerator from "../subcategory/InvoiceGeneratorone";
+// import { Route, Link } from "react-router-dom";
+// import swal from "sweetalert";
+// import { createOrderhistoryview } from "../../../../ApiEndPoint/ApiCalling";
+
+// const toWords = new ToWords({
+//   localeCode: "en-IN",
+//   converterOptions: {
+//     currency: true,
+//     ignoreDecimal: false,
+//     ShowMyBill: false,
+//     ignoreZeroCurrency: false,
+
+//     doNotAddOnly: false,
+//     currencyOptions: {
+//       // can be used to override defaults for the selected locale
+//       name: "Rupee",
+//       plural: "Rupees",
+//       symbol: "₹",
+//       fractionalUnit: {
+//         name: "Paisa",
+//         plural: "Paise",
+//         symbol: "",
+//       },
+//     },
+//   },
+// });
+// const AddedBill = [];
+// const AllProduct = [];
+
+// class InvoiceGenerator extends React.Component {
+//   state = {
+//     AllbillMerged: [],
+//     rowData: [],
+//     Applied_Charges: {},
+//     paginationPageSize: 20,
+//     currenPageSize: "",
+//     Billtoposition: "Left",
+//     shipto: "right",
+//     logoposition: "Left",
+//     ButtonText: "Submit",
+//     Mergebilllength: "",
+//     modal: false,
+//     sgst: "",
+//     discount: "",
+//     ViewBill: true,
+//     wordsNumber: "",
+//     cgst: "",
+//     otherCharges: "",
+//     deliveryCharges: "",
+//     PrintData: {},
+//     Viewpermisson: null,
+//     Editpermisson: null,
+//     Createpermisson: null,
+//     Deletepermisson: null,
+//     getPageSize: "",
+//     defaultColDef: {
+//       sortable: true,
+//       // editable: true,
+//       resizable: true,
+//       suppressMenu: true,
+//     },
+//     columnDefs: [
+//       {
+//         headerName: "S.No",
+//         valueGetter: "node.rowIndex + 1",
+//         field: "node.rowIndex + 1",
+//         width: 80,
+//         filter: true,
+//       },
+//       // {
+//       //   headerName: "Add Bills",
+//       //   width: 160,
+//       //   filter: true,
+//       //   cellRendererFramework: (params) => {
+//       //     return (
+//       //       <div className="d-flex align-items-center justify-content-center cursor-pointer">
+//       //         <div>
+//       //           <span>
+//       //             <input
+//       //               type="checkbox"
+//       //               className="customcheckbox"
+//       //               onClick={(e) => {
+//       //                 this.handleMultipleBillsAdd(
+//       //                   params?.data,
+//       //                   e.target.checked
+//       //                 );
+//       //                 // console.log(e.target.checked);
+//       //               }}
+//       //             />
+//       //             {/* <AiOutlineDownload
+//       //               onClick={() => this.handleBillDownload(params.data)}
+//       //               fill="green"
+//       //               size="30px"
+//       //             /> */}
+//       //           </span>
+//       //         </div>
+//       //       </div>
+//       //     );
+//       //   },
+//       // },
+//       {
+//         headerName: "Status",
+//         field: "order_status",
+//         filter: true,
+//         width: 140,
+//         cellRendererFramework: (params) => {
+//           return params.data?.order_status === "completed" ? (
+//             <div className="badge badge-pill badge-success">Completed</div>
+//           ) : params.data?.order_status === "pending" ? (
+//             <div className="badge badge-pill badge-warning">
+//               {params.data?.order_status}
+//             </div>
+//           ) : params.data?.order_status === "return" ? (
+//             <div className="badge badge-pill bg-primary">Inprogress</div>
+//           ) : params.data?.order_status === "cancelled" ? (
+//             <div className="badge badge-pill bg-danger">
+//               {params.data.order_status}
+//             </div>
+//           ) : params.data?.order_status === "completed" ? (
+//             <div className="badge badge-pill bg-success">Completed</div>
+//           ) : null;
+//         },
+//       },
+//       {
+//         headerName: "Orderid",
+//         field: "_id",
+//         filter: true,
+//         resizable: true,
+//         width: 180,
+//         cellRendererFramework: (params) => {
+//           // console.log(params.data?.order_id);
+
+//           return (
+//             <div className="d-flex align-items-center cursor-pointer">
+//               <div>
+//                 {/* <select
+//                   // className="form-control"
+//                   defaultValue={params.data?.order_status}
+//                   onChange={(e) => {
+//                     // console.log(e.target.value);
+//                     let data = new FormData();
+//                     data.append("order_id", params.data?.order_id);
+//                     data.append("order_status", e.target.value);
+//                     axiosConfig
+//                       .post(`/change_order_status`, data)
+//                       .then((res) => {
+//                         console.log(res?.data.message);
+//                         if (res?.data.message) {
+//                           this.componentDidMount();
+//                           swal("status Updated Succesfully");
+//                         }
+//                       })
+//                       .catch((err) => {
+//                         console.log(err);
+//                       });
+//                   }}
+//                   name="changestatus"
+//                   id="changeStatus"
+//                 >
+//                   <option value={params.data?.order_status}>
+//                     {params.data?.order_status}
+//                   </option>
+//                   <option value="Pending">--UpdateStatus--</option>
+//                   <option value="Pending">Pending</option>
+//                   <option value="Completed">Completed</option>
+//                   <option value="Rejected">Rejected</option>
+//                   <option value="Cancelled">Cancelled</option>
+//                 </select> */}
+//                 <span>{params?.data?._id}</span>
+//               </div>
+//             </div>
+//           );
+//         },
+//       },
+//       {
+//         headerName: "Invoice",
+//         field: "invoice",
+//         filter: true,
+//         resizable: true,
+//         width: 140,
+//         cellRendererFramework: (params) => {
+//           return (
+//             <div className="d-flex align-items-center justify-content-center cursor-pointer">
+//               <div>
+//                 <span>
+//                   <AiOutlineDownload
+//                     onClick={() => this.handleBillDownload(params.data)}
+//                     fill="green"
+//                     size="30px"
+//                   />
+//                 </span>
+//               </div>
+//             </div>
+//           );
+//         },
+//       },
+//       {
+//         headerName: "FullName",
+//         field: "fullName",
+//         filter: true,
+//         resizable: true,
+//         width: 150,
+//         cellRendererFramework: (params) => {
+//           return (
+//             <div className="d-flex align-items-center justify-content-center cursor-pointer">
+//               <div>
+//                 <span>{params?.data?.fullName}</span>
+//               </div>
+//             </div>
+//           );
+//         },
+//       },
+//       {
+//         headerName: "MobileNo",
+//         field: "MobileNo",
+//         filter: true,
+//         resizable: true,
+//         width: 160,
+//         cellRendererFramework: (params) => {
+//           return (
+//             <div className="d-flex align-items-center justify-content-center cursor-pointer">
+//               <div>
+//                 <span>{params?.data?.MobileNo}</span>
+//               </div>
+//             </div>
+//           );
+//         },
+//       },
+//       {
+//         headerName: "Address",
+//         field: "address",
+//         filter: true,
+//         resizable: true,
+//         width: 200,
+//         cellRendererFramework: (params) => {
+//           return (
+//             <div className="d-flex align-items-center justify-content-center cursor-pointer">
+//               <div>
+//                 <span>{params?.data?.address}</span>
+//               </div>
+//             </div>
+//           );
+//         },
+//       },
+//       {
+//         headerName: "GrandTotal",
+//         field: "grandTotal",
+//         filter: true,
+//         resizable: true,
+//         width: 150,
+//         cellRendererFramework: (params) => {
+//           return (
+//             <div className="d-flex align-items-center justify-content-center cursor-pointer">
+//               <div>
+//                 <span>{params?.data?.grandTotal}</span>
+//               </div>
+//             </div>
+//           );
+//         },
+//       },
+//       {
+//         headerName: "Tax Amount",
+//         field: "taxAmount",
+//         filter: true,
+//         resizable: true,
+//         width: 150,
+//         cellRendererFramework: (params) => {
+//           return (
+//             <div className="d-flex align-items-center justify-content-center cursor-pointer">
+//               <div>
+//                 <span>{params?.data?.taxAmount}</span>
+//               </div>
+//             </div>
+//           );
+//         },
+//       },
+//       {
+//         headerName: "Party Name",
+//         field: "partyId.firstName",
+//         filter: true,
+//         resizable: true,
+//         width: 210,
+//         cellRendererFramework: (params) => {
+//           return (
+//             <div className="d-flex align-items-center cursor-pointer">
+//               <div>
+//                 <span>{params.data?.partyId?.firstName}</span>
+//               </div>
+//             </div>
+//           );
+//         },
+//       },
+
+//       {
+//         headerName: "Total Product",
+//         field: "params?.data?.orderItems?.length",
+//         filter: true,
+//         resizable: true,
+//         width: 400,
+//         cellRendererFramework: (params) => {
+//           // console.log(params.data);
+//           return (
+//             <div className="d-flex cursor-pointer">
+//               <div>{params?.data?.orderItems?.length} Products</div>
+//             </div>
+//           );
+//         },
+//       },
+
+//       {
+//         headerName: "Actions",
+//         field: "sortorder",
+//         field: "transactions",
+//         width: 120,
+//         cellRendererFramework: (params) => {
+//           return (
+//             <div className="actions cursor-pointer">
+//               {this.state.Viewpermisson && (
+//                 <Route
+//                   render={({ history }) => (
+//                     <Eye
+//                       className="mr-50"
+//                       size="25px"
+//                       color="green"
+//                       onClick={() =>
+//                         history.push(
+//                           `/app/freshlist/order/EditCompletedorders/${params.data?.order_id}`
+//                         )
+//                       }
+//                     />
+//                   )}
+//                 />
+//               )}
+//               {/* {this.state.Editpermisson && (
+//                 <Route
+//                   render={({ history }) => (
+//                     <Edit
+//                       className="mr-50"
+//                       size="25px"
+//                       color="blue"
+//                       onClick={() =>
+//                         history.push(
+//                           `/app/freshlist/order/editplaceorder/${params.data?.order_id}`
+//                         )
+//                       }
+//                     />
+//                   )}
+//                 />
+//               )} */}
+
+//               {/* {this.state.Deletepermisson && (
+//                 <Route
+//                   render={() => (
+//                     <Trash2
+//                       className="mr-50"
+//                       size="25px"
+//                       color="red"
+//                       onClick={() => {
+//                         let selectedData = this.gridApi.getSelectedRows();
+//                         this.runthisfunction(params.data.id);
+//                         this.gridApi.updateRowData({ remove: selectedData });
+//                       }}
+//                     />
+//                   )}
+//                 />
+//               )} */}
+//             </div>
+//           );
+//         },
+//       },
+
+//       // {
+//       //   headerName: "total",
+//       //   field: "total",
+//       //   filter: true,
+//       //   resizable: true,
+//       //   width: 160,
+//       //   cellRendererFramework: (params) => {
+//       //     return (
+//       //       <div className="d-flex align-items-center cursor-pointer">
+//       //         <div>
+//       //           <Badge color="success">{params.data?.total}</Badge>
+//       //         </div>
+//       //       </div>
+//       //     );
+//       //   },
+//       // },
+//       // {
+//       //   headerName: "brandname ",
+//       //   field: "brand_name",
+//       //   filter: true,
+//       //   resizable: true,
+//       //   width: 180,
+//       //   cellRendererFramework: (params) => {
+//       //     return (
+//       //       <div className="d-flex align-items-center cursor-pointer">
+//       //         <div>
+//       //           <span>{params.data?.brand_name}</span>
+//       //         </div>
+//       //       </div>
+//       //     );
+//       //   },
+//       // },
+//       // {
+//       //   headerName: "city",
+//       //   field: "city",
+//       //   filter: true,
+//       //   resizable: true,
+//       //   width: 160,
+//       //   cellRendererFramework: (params) => {
+//       //     return (
+//       //       <div className="d-flex align-items-center cursor-pointer">
+//       //         <div>
+//       //           <span>{params.data?.city}</span>
+//       //         </div>
+//       //       </div>
+//       //     );
+//       //   },
+//       // },
+//       {
+//         headerName: "order Creation date",
+//         field: "order_date",
+//         filter: true,
+//         resizable: true,
+//         width: 230,
+//         cellRendererFramework: (params) => {
+//           return (
+//             <div className="d-flex align-items-center cursor-pointer">
+//               <div>
+//                 <span>{params.data?.order_date}</span>
+//               </div>
+//             </div>
+//           );
+//         },
+//       },
+//       // {
+//       //   headerName: "deliverydate",
+//       //   field: "delivery_date",
+//       //   filter: true,
+//       //   resizable: true,
+//       //   width: 230,
+//       //   cellRendererFramework: (params) => {
+//       //     return (
+//       //       <div className="d-flex align-items-center cursor-pointer">
+//       //         <div>
+//       //           <span>{params.data?.delivery_date}</span>
+//       //         </div>
+//       //       </div>
+//       //     );
+//       //   },
+//       // },
+//       // {
+//       //   headerName: "description",
+//       //   field: "description",
+//       //   filter: "true",
+//       //   width: 180,
+//       //   cellRendererFramework: (params) => {
+//       //     return (
+//       //       <div className="d-flex align-items-center cursor-pointer">
+//       //         <div className="">
+//       //           <span>{params.data?.description}</span>
+//       //         </div>
+//       //       </div>
+//       //     );
+//       //   },
+//       // },
+//       // {
+//       //   headerName: "discountprice",
+//       //   field: "discountprice",
+//       //   filter: "true",
+//       //   width: 180,
+//       //   cellRendererFramework: (params) => {
+//       //     return (
+//       //       <div className="d-flex align-items-center cursor-pointer">
+//       //         <div className="">
+//       //           <span>{params.data?.discountprice}</span>
+//       //         </div>
+//       //       </div>
+//       //     );
+//       //   },
+//       // },
+//       // {
+//       //   headerName: "email",
+//       //   field: "email",
+//       //   filter: true,
+//       //   resizable: true,
+//       //   width: 190,
+//       //   cellRendererFramework: (params) => {
+//       //     return (
+//       //       <div className="d-flex align-items-center cursor-pointer">
+//       //         <div>
+//       //           <span>{params.data?.email}</span>
+//       //         </div>
+//       //       </div>
+//       //     );
+//       //   },
+//       // },
+
+//       // {
+//       //   headerName: "full_name",
+//       //   field: "full_name",
+//       //   filter: true,
+//       //   resizable: true,
+//       //   width: 170,
+//       //   cellRendererFramework: (params) => {
+//       //     return (
+//       //       <div className="d-flex align-items-center cursor-pointer">
+//       //         <div>
+//       //           <span>{params.data?.full_name}</span>
+//       //         </div>
+//       //       </div>
+//       //     );
+//       //   },
+//       // },
+
+//       // {
+//       //   headerName: "mobile",
+//       //   field: "mobile",
+//       //   filter: true,
+//       //   resizable: true,
+//       //   width: 190,
+//       //   cellRendererFramework: (params) => {
+//       //     return (
+//       //       <div className="d-flex align-items-center cursor-pointer">
+//       //         <div>
+//       //           <span>{params.data?.mobile}</span>
+//       //         </div>
+//       //       </div>
+//       //     );
+//       //   },
+//       // },
+//       // {
+//       //   headerName: "price",
+//       //   field: "price",
+//       //   filter: true,
+//       //   resizable: true,
+//       //   width: 150,
+//       //   cellRendererFramework: (params) => {
+//       //     return (
+//       //       <div className="d-flex align-items-center cursor-pointer">
+//       //         <div>
+//       //           <span>{params.data?.price}</span>
+//       //         </div>
+//       //       </div>
+//       //     );
+//       //   },
+//       // },
+
+//       // {
+//       //   headerName: "producttype",
+//       //   field: "product_type",
+//       //   filter: true,
+//       //   resizable: true,
+//       //   width: 190,
+//       //   cellRendererFramework: (params) => {
+//       //     return (
+//       //       <div className="d-flex align-items-center cursor-pointer">
+//       //         <div>
+//       //           <span>{params.data?.product_type}</span>
+//       //         </div>
+//       //       </div>
+//       //     );
+//       //   },
+//       // },
+//       // {
+//       //   headerName: "shippingfee",
+//       //   field: "shipping_fee",
+//       //   filter: true,
+//       //   resizable: true,
+//       //   width: 190,
+//       //   cellRendererFramework: (params) => {
+//       //     return (
+//       //       <div className="d-flex align-items-center cursor-pointer">
+//       //         <div>
+//       //           <span>{params.data?.shipping_fee}</span>
+//       //         </div>
+//       //       </div>
+//       //     );
+//       //   },
+//       // },
+//       // {
+//       //   headerName: "status",
+//       //   field: "status",
+//       //   filter: true,
+//       //   resizable: true,
+//       //   width: 180,
+//       //   cellRendererFramework: (params) => {
+//       //     return (
+//       //       <div className="d-flex align-items-center cursor-pointer">
+//       //         <div>
+//       //           <span>{params.data?.status}</span>
+//       //         </div>
+//       //       </div>
+//       //     );
+//       //   },
+//       // },
+//       // {
+//       //   headerName: "stock",
+//       //   field: "stock",
+//       //   filter: true,
+//       //   resizable: true,
+//       //   width: 180,
+//       //   cellRendererFramework: (params) => {
+//       //     return (
+//       //       <div className="d-flex align-items-center cursor-pointer">
+//       //         <div>
+//       //           <span>{params.data?.stock}</span>
+//       //         </div>
+//       //       </div>
+//       //     );
+//       //   },
+//       // },
+//       // {
+//       //   headerName: "subtotal",
+//       //   field: "subtotal",
+//       //   filter: true,
+//       //   resizable: true,
+//       //   width: 180,
+//       //   cellRendererFramework: (params) => {
+//       //     return (
+//       //       <div className="d-flex align-items-center cursor-pointer">
+//       //         <div>
+//       //           <span>{params.data?.subtotal}</span>
+//       //         </div>
+//       //       </div>
+//       //     );
+//       //   },
+//       // },
+//       // {
+//       //   headerName: "tags",
+//       //   field: "tags",
+//       //   filter: true,
+//       //   resizable: true,
+//       //   width: 180,
+//       //   cellRendererFramework: (params) => {
+//       //     return (
+//       //       <div className="d-flex align-items-center cursor-pointer">
+//       //         <div>
+//       //           <span>{params.data?.tags}</span>
+//       //         </div>
+//       //       </div>
+//       //     );
+//       //   },
+//       // },
+//       // {
+//       //   headerName: "tax_rate",
+//       //   field: "tax_rate",
+//       //   filter: true,
+//       //   resizable: true,
+//       //   width: 180,
+//       //   cellRendererFramework: (params) => {
+//       //     return (
+//       //       <div className="d-flex align-items-center cursor-pointer">
+//       //         <div>
+//       //           <span>{params.data?.tax_rate}</span>
+//       //         </div>
+//       //       </div>
+//       //     );
+//       //   },
+//       // },
+
+//       // {
+//       //   headerName: "Permitions",
+//       //   field: "permitions",
+//       //   filter: true,
+//       //   width: 180,
+//       //   cellRendererFramework: (params) => {
+//       //     return (
+//       //       <CustomInput
+//       //         type="switch"
+//       //         className="mr-1"
+//       //         id="primary"
+//       //         name="primary"
+//       //         inline
+//       //         onChange={this.handleSwitchChange}
+//       //       ></CustomInput>
+//       //     );
+//       //   },
+//       // },
+//     ],
+//   };
+//   handleMultipleBillsAdd = (data, check) => {
+//     this.setState({ PrintData: data });
+
+//     let pageparmission = JSON.parse(localStorage.getItem("userData"));
+//     if (check) {
+//       AddedBill.push({
+//         order_id: data?.order_id,
+//         user_id: pageparmission?.Userinfo?.id,
+//         role: pageparmission?.Userinfo?.role,
+//       });
+//     } else {
+//       let index = AddedBill.findIndex(
+//         (ele) => ele?.order_id === data?.order_id
+//       );
+//       AddedBill.splice(index, 1);
+//     }
+//     // console.log(AddedBill);
+//     this.setState({ Mergebilllength: AddedBill?.length });
+//   };
+//   MergeBillNow = (e) => {
+//     e.preventDefault();
+//     this.toggleModal();
+//   };
+
+//   handleSubmit = (e) => {
+//     e.preventDefault();
+//     this.setState({ ButtonText: "InProcess" });
+//     // debugger;
+//     // console.log(this.state.sgst);
+//     // console.log(this.state.cgst);
+//     // console.log(this.state.deliveryCharges);
+//     if (this.state.sgst && this.state.cgst) {
+//       let pageparmission = JSON.parse(localStorage.getItem("userData"));
+//       let formdata = new FormData();
+
+//       formdata.append("user_id", pageparmission?.Userinfo?.id);
+//       formdata.append("order_id", JSON.stringify(AddedBill));
+//       formdata.append("role", pageparmission?.Userinfo?.role);
+//       formdata.append("sgst", this.state.sgst);
+//       formdata.append("cgst", this.state.cgst);
+//       formdata.append("discount_value", this.state.discount);
+//       formdata.append("delivery_charges", this.state.deliveryCharges);
+//       formdata.append("other_charges", this.state.otherCharges);
+//       axiosConfig
+//         .post(`/createmergebillapi`, formdata)
+//         .then((res) => {
+//           // console.log(res.data?.data?.applied_charges);
+//           this.setState({ Applied_Charges: res.data?.data?.applied_charges });
+//           // console.log(res.data.data?.items);
+//           this.setState({ AllbillMerged: res.data.data?.items });
+//           this.setState({ ViewBill: true });
+
+//           // this.setState({ PrintData: res.data });
+//           const toWords = new ToWords();
+//           let words = toWords.convert(
+//             Number(res.data?.data?.applied_charges?.grandtotal),
+//             {
+//               currency: true,
+//             }
+//           );
+
+//           this.setState({ wordsNumber: words });
+//         })
+//         .catch((err) => {
+//           console.log(err);
+//           this.setState({ ButtonText: "Submit" });
+//         });
+//     } else {
+//       this.setState({ ButtonText: "Submit" });
+
+//       swal("Enter Values in field");
+//     }
+//   };
+//   handleBillDownload = (data) => {
+//     // console.log(data);
+//     this.setState({ PrintData: data });
+//     const toWords = new ToWords();
+//     let words = toWords.convert(Number(data.sub_total), { currency: true });
+//     this.setState({ wordsNumber: words });
+//     this.toggleModal();
+//   };
+//   toggleModal = () => {
+//     this.setState((prevState) => ({
+//       modal: !prevState.modal,
+//     }));
+//   };
+//   toggleModalclose = () => {
+//     // debugger;
+//     this.setState({ modal: false });
+//     this.setState({ ShowMyBill: false });
+//     // window.location.reload();
+//     // AddedBill = [];
+//     // console.log(AddedBill);
+//   };
+//   changeHandler = (e) => {
+//     this.setState({ [e.target.name]: e.target.value });
+//   };
+//   async componentDidMount() {
+//     createOrderhistoryview()
+//       .then((res) => {
+//         console.log(res?.orderHistory);
+//         this.setState({ rowData: res?.orderHistory });
+//       })
+//       .catch((err) => {
+//         console.log(err);
+//       });
+//     let pageparmission = JSON.parse(localStorage.getItem("userData"));
+//     // console.log(pageparmission.role);
+//     let userchoice = JSON.parse(localStorage.getItem("billUI"));
+//     console.log(userchoice);
+//     if (userchoice) {
+//       this.setState({ logoposition: userchoice?.imagePosition });
+//       this.setState({ Billtoposition: userchoice?.billTo });
+//       this.setState({ shipto: userchoice?.shipto });
+//     }
+//     let newparmisson = pageparmission?.role?.find(
+//       (value) => value?.pageName === "invoice Generator"
+//     );
+//     // console.log(newparmisson);
+//     this.setState({ Viewpermisson: newparmisson?.permission.includes("View") });
+//     this.setState({
+//       Createpermisson: newparmisson?.permission.includes("Create"),
+//     });
+//     this.setState({
+//       Editpermisson: newparmisson?.permission.includes("Edit"),
+//     });
+//     this.setState({
+//       Deletepermisson: newparmisson?.permission.includes("Delete"),
+//     });
+//     // console.log(newparmisson?.permission.includes("View"));
+//     // console.log(newparmisson?.permission.includes("Create"));
+//     // console.log(newparmisson?.permission.includes("Edit"));
+//     // console.log(newparmisson?.permission.includes("Delete"));
+
+//     // const formdata = new FormData();
+//     // formdata.append("user_id", pageparmission?.Userinfo?.id);
+//     // formdata.append("role", pageparmission?.Userinfo?.role);
+//     // await axiosConfig
+//     //   .post(`/getallcompleteorders`, formdata)
+//     //   .then((res) => {
+//     //     // console.log(res.data.data);
+//     //     let rowData = res.data.data;
+//     //     this.setState({ rowData });
+//     //   })
+//     //   .catch((err) => {
+//     //     console.log(err);
+//     //   });
+//   }
+//   async runthisfunction(id) {
+//     // console.log(id);
+//     await axiosConfig.delete(`/admin/del_subcategory/${id}`).then(
+//       (response) => {
+//         console.log(response);
+//       },
+//       (error) => {
+//         console.log(error);
+//       }
+//     );
+//   }
+//   submitHandler = (e) => {
+//     e.preventDefault();
+//     let mychoice = {
+//       imagePosition: this.state.logoposition,
+//       billTo: this.state.Billtoposition,
+//       shipto: this.state.shipto,
+//     };
+
+//     if (mychoice.billTo == mychoice.shipto) {
+//       swal("Can not set Bill to and Ship to on one Same side");
+//     } else {
+//       localStorage.setItem("billUI", JSON.stringify(mychoice));
+//       this.setState({ ShowMyBill: true });
+//     }
+//   };
+//   onGridReady = (params) => {
+//     this.gridApi = params.api;
+//     this.gridColumnApi = params.columnApi;
+//     this.setState({
+//       currenPageSize: this.gridApi.paginationGetCurrentPage() + 1,
+//       getPageSize: this.gridApi.paginationGetPageSize(),
+//       totalPages: this.gridApi.paginationGetTotalPages(),
+//     });
+//   };
+//   updateSearchQuery = (val) => {
+//     this.gridApi.setQuickFilter(val);
+//   };
+//   filterSize = (val) => {
+//     if (this.gridApi) {
+//       this.gridApi.paginationSetPageSize(Number(val));
+//       this.setState({
+//         currenPageSize: val,
+//         getPageSize: val,
+//       });
+//     }
+//   };
+//   render() {
+//     const { rowData, columnDefs, defaultColDef } = this.state;
+//     return (
+//       <Row className="app-user-list">
+//         <Col sm="12"></Col>
+//         <Col sm="12">
+//           <Card>
+//             <Row className="m-2">
+//               <Col>
+//                 <h1 sm="6" className="float-left">
+//                   Generate invoice
+//                 </h1>
+//               </Col>
+//               <Col>
+//                 <Button
+//                   className=" btn btn-danger float-right"
+//                   onClick={this.MergeBillNow}>
+//                   Create Invoice
+//                 </Button>
+//               </Col>
+//             </Row>
+//             <CardBody>
+//               {this.state.rowData === null ? null : (
+//                 <div className="ag-theme-material w-100 my-2 ag-grid-table">
+//                   <div className="d-flex flex-wrap justify-content-between align-items-center">
+//                     <div className="mb-1">
+//                       <UncontrolledDropdown className="p-1 ag-dropdown">
+//                         <DropdownToggle tag="div">
+//                           {this.gridApi
+//                             ? this.state.currenPageSize
+//                             : "" * this.state.getPageSize -
+//                               (this.state.getPageSize - 1)}{" "}
+//                           -{" "}
+//                           {this.state.rowData.length -
+//                             this.state.currenPageSize * this.state.getPageSize >
+//                           0
+//                             ? this.state.currenPageSize * this.state.getPageSize
+//                             : this.state.rowData.length}{" "}
+//                           of {this.state.rowData.length}
+//                           <ChevronDown className="ml-50" size={15} />
+//                         </DropdownToggle>
+//                         <DropdownMenu right>
+//                           <DropdownItem
+//                             tag="div"
+//                             onClick={() => this.filterSize(20)}>
+//                             20
+//                           </DropdownItem>
+//                           <DropdownItem
+//                             tag="div"
+//                             onClick={() => this.filterSize(50)}>
+//                             50
+//                           </DropdownItem>
+//                           <DropdownItem
+//                             tag="div"
+//                             onClick={() => this.filterSize(100)}>
+//                             100
+//                           </DropdownItem>
+//                           <DropdownItem
+//                             tag="div"
+//                             onClick={() => this.filterSize(134)}>
+//                             134
+//                           </DropdownItem>
+//                         </DropdownMenu>
+//                       </UncontrolledDropdown>
+//                     </div>
+//                     <div className="d-flex flex-wrap justify-content-between mb-1">
+//                       <div className="table-input mr-1">
+//                         <Input
+//                           placeholder="search..."
+//                           onChange={(e) =>
+//                             this.updateSearchQuery(e.target.value)
+//                           }
+//                           value={this.state.value}
+//                         />
+//                       </div>
+//                       <div className="export-btn">
+//                         <Button.Ripple
+//                           color="primary"
+//                           onClick={() => this.gridApi.exportDataAsCsv()}>
+//                           Export as CSV
+//                         </Button.Ripple>
+//                       </div>
+//                     </div>
+//                   </div>
+//                   <ContextLayout.Consumer>
+//                     {(context) => (
+//                       <AgGridReact
+//                         gridOptions={{}}
+//                         rowSelection="multiple"
+//                         defaultColDef={defaultColDef}
+//                         columnDefs={columnDefs}
+//                         rowData={rowData}
+//                         onGridReady={this.onGridReady}
+//                         colResizeDefault={"shift"}
+//                         animateRows={true}
+//                         floatingFilter={false}
+//                         pagination={true}
+//                         paginationPageSize={this.state.paginationPageSize}
+//                         pivotPanelShow="always"
+//                         enableRtl={context.state.direction === "rtl"}
+//                       />
+//                     )}
+//                   </ContextLayout.Consumer>
+//                 </div>
+//               )}
+//             </CardBody>
+//           </Card>
+//         </Col>
+//         <Modal
+//           isOpen={this.state.modal}
+//           toggle={this.toggleModal}
+//           className={this.props.className}
+//           style={{ maxWidth: "1050px" }}>
+//           <ModalHeader toggle={this.toggleModalclose}>
+//             Download Bill
+//           </ModalHeader>
+//           <ModalBody>
+//             {this.state.ShowMyBill && this.state.ShowMyBill ? (
+//               <>
+//                 {this.state.ViewBill && this.state.ViewBill ? (
+//                   <>
+//                     <div style={{ width: "100%" }} className="">
+//                       <InvoicGenerator
+//                         PrintData={this.state.PrintData}
+//                         Applied_Charges={this.state.Applied_Charges}
+//                         AllbillMerged={this.state.AllbillMerged}
+//                         wordsNumber={this.state.wordsNumber}
+//                         sgst={this.state.sgst}
+//                         cgst={this.state.cgst}
+//                         deliveryCharges={this.state.deliveryCharges}
+//                         otherCharges={this.state.otherCharges}
+//                         discount={this.state.discount}
+//                         // AddedBill={AddedBill}
+//                       />
+//                     </div>
+//                   </>
+//                 ) : (
+//                   <>
+//                     <div style={{ width: "100%" }} className="">
+//                       <Form onSubmit={(e) => this.handleSubmit(e)}>
+//                         <Row className="main div heading px-3 py-3">
+//                           <Col lg="6" className="mb-2">
+//                             <Label>SGST</Label>
+//                             <select
+//                               required
+//                               className="form-control"
+//                               value={this.state.sgst}
+//                               onChange={this.changeHandler}
+//                               name="sgst">
+//                               <option value="not selected">--Select--</option>
+//                               <option value="5">5%</option>
+//                               <option value="9">9%</option>
+//                               <option value="12">12%</option>
+//                             </select>
+//                           </Col>
+//                           <Col lg="6" className="mb-2">
+//                             <Label>CGST</Label>
+//                             <select
+//                               required
+//                               className="form-control"
+//                               name="cgst"
+//                               placeholder="Enter CGST"
+//                               value={this.state.cgst}
+//                               onChange={this.changeHandler}>
+//                               <option value="not selected">--Select--</option>
+//                               <option value="5">5%</option>
+//                               <option value="9">9%</option>
+//                               <option value="12">12%</option>
+//                             </select>
+//                           </Col>
+//                           <Col lg="6">
+//                             <Label className="mt-2">Other Charges</Label>
+//                             <Input
+//                               type="number"
+//                               name="otherCharges"
+//                               placeholder="Enter Other Charges"
+//                               value={this.state.otherCharges}
+//                               onChange={this.changeHandler}></Input>
+//                           </Col>
+//                           <Col lg="6">
+//                             <Label className="mt-2">Delivery Charges</Label>
+//                             <Input
+//                               type="number"
+//                               name="deliveryCharges"
+//                               placeholder="Enter Delivery Charges"
+//                               value={this.state.deliveryCharges}
+//                               onChange={this.changeHandler}></Input>
+//                           </Col>
+//                           <Col lg="6">
+//                             <Label className="mt-2">Discount </Label>
+//                             <Input
+//                               type="number"
+//                               name="discount"
+//                               placeholder="Enter discount value"
+//                               value={this.state.discount}
+//                               onChange={this.changeHandler}></Input>
+//                           </Col>
+//                         </Row>
+//                         <Row>
+//                           <Col lg="12" className="mt-2 mb-2">
+//                             <div className="d-flex justify-content-center">
+//                               <Button
+//                                 disabled={
+//                                   this.state.ButtonText === "InProcess"
+//                                     ? true
+//                                     : false
+//                                 }
+//                                 color="primary"
+//                                 type="submit">
+//                                 {this.state.ButtonText}
+//                               </Button>
+//                             </div>
+//                           </Col>
+//                         </Row>
+//                       </Form>
+//                     </div>
+//                   </>
+//                 )}
+//               </>
+//             ) : (
+//               <>
+//                 <Form className="m-1" onSubmit={this.submitHandler}>
+//                   <Row className="mb-2">
+//                     <Col lg="4" md="4" className="mb-2">
+//                       <Label>Logo Position</Label>
+//                       <CustomInput
+//                         type="select"
+//                         placeholder="Select Type"
+//                         name="logoposition"
+//                         value={this.state.logoposition}
+//                         onChange={this.changeHandler}>
+//                         <option>---Select---</option>
+//                         <option value="Left">Left</option>
+//                         <option value="right">Right</option>
+//                       </CustomInput>
+//                     </Col>
+//                     <Col lg="4" md="4" className="mb-2">
+//                       <Label>ship to position</Label>
+//                       <CustomInput
+//                         type="select"
+//                         placeholder="Select Type"
+//                         name="shipto"
+//                         value={this.state.shipto}
+//                         onChange={this.changeHandler}>
+//                         <option>---Select---</option>
+//                         <option value="Left">Left</option>
+//                         <option value="right">Right</option>
+//                       </CustomInput>
+//                       <span>
+//                         {this.state.shipto == this.state.Billtoposition ? (
+//                           <span style={{ color: "red" }}>
+//                             Bill to and ship to cannot be same
+//                           </span>
+//                         ) : null}
+//                       </span>
+//                     </Col>
+
+//                     <Col lg="4" md="4" className="mb-2">
+//                       <Label>Bill to position</Label>
+//                       <CustomInput
+//                         type="select"
+//                         placeholder="Select Type"
+//                         name="Billtoposition"
+//                         value={this.state.Billtoposition}
+//                         onChange={this.changeHandler}>
+//                         <option>---Select---</option>
+//                         <option value="Left">Left</option>
+//                         <option value="right">Right</option>
+//                       </CustomInput>
+//                       <span>
+//                         {this.state.shipto == this.state.Billtoposition ? (
+//                           <span style={{ color: "red" }}>
+//                             Bill to and ship to cannot be same
+//                           </span>
+//                         ) : null}
+//                       </span>
+//                     </Col>
+//                   </Row>
+
+//                   <Row>
+//                     <Col>
+//                       <div className="d-flex justify-content-center">
+//                         <Button.Ripple
+//                           color="primary"
+//                           type="submit"
+//                           className="mr-1 mb-1">
+//                           Submit
+//                         </Button.Ripple>
+//                       </div>
+//                     </Col>
+//                   </Row>
+//                 </Form>
+//               </>
+//             )}
+//           </ModalBody>
+//         </Modal>
+//       </Row>
+//     );
+//   }
+// }
+// export default InvoiceGenerator;
+
+import React, { useRef } from "react";
+import xmlJs from "xml-js";
 import {
   Card,
   CardBody,
   Input,
-  Label,
   Row,
-  CustomInput,
+  Modal,
   Col,
-  Form,
   UncontrolledDropdown,
   DropdownMenu,
   DropdownItem,
   DropdownToggle,
   Button,
-  Modal,
   ModalHeader,
   ModalBody,
   Badge,
-  FormGroup,
+  Label,
+  Form,
+  CustomInput,
 } from "reactstrap";
 import { AiOutlineDownload } from "react-icons/ai";
-import axiosConfig from "../../../../axiosConfig";
 import { ToWords } from "to-words";
-import { ContextLayout } from "../../../../utility/context/Layout";
-import { AgGridReact } from "ag-grid-react";
 import { Eye, Trash2, ChevronDown, Edit, CloudLightning } from "react-feather";
 import { history } from "../../../../history";
 import "../../../../assets/scss/plugins/tables/_agGridStyleOverride.scss";
@@ -31,7 +1237,42 @@ import "../../../../assets/scss/pages/users.scss";
 import InvoicGenerator from "../subcategory/InvoiceGeneratorone";
 import { Route, Link } from "react-router-dom";
 import swal from "sweetalert";
+import { createOrderhistoryview } from "../../../../ApiEndPoint/ApiCalling";
 
+import { ContextLayout } from "../../../../utility/context/Layout";
+import { AgGridReact } from "ag-grid-react";
+import "ag-grid-community/dist/styles/ag-grid.css";
+import EditAccount from "../accounts/EditAccount";
+import ViewAccount from "../accounts/ViewAccount";
+import jsPDF from "jspdf";
+import "jspdf-autotable";
+import Logo from "../../../../assets/img/profile/pages/logomain.png";
+import Papa from "papaparse";
+import { IoMdRemoveCircleOutline } from "react-icons/io";
+import "../../../../assets/scss/plugins/tables/_agGridStyleOverride.scss";
+import "../../../../assets/scss/pages/users.scss";
+
+import {
+  FaArrowAltCircleLeft,
+  FaArrowAltCircleRight,
+  FaFilter,
+  FaPlus,
+} from "react-icons/fa";
+import moment from "moment-timezone";
+import {
+  CreateAccountList,
+  CreateAccountView,
+  DeleteAccount,
+} from "../../../../ApiEndPoint/ApiCalling";
+import {
+  BsCloudDownloadFill,
+  BsFillArrowDownSquareFill,
+  BsFillArrowUpSquareFill,
+} from "react-icons/bs";
+import * as XLSX from "xlsx";
+import UserContext from "../../../../context/Context";
+
+const SelectedColums = [];
 const toWords = new ToWords({
   localeCode: "en-IN",
   converterOptions: {
@@ -56,114 +1297,113 @@ const toWords = new ToWords({
 });
 const AddedBill = [];
 const AllProduct = [];
-
 class InvoiceGenerator extends React.Component {
-  state = {
-    AllbillMerged: [],
-    rowData: [],
-    Applied_Charges: {},
-    paginationPageSize: 20,
-    currenPageSize: "",
-    Billtoposition: "Left",
-    shipto: "right",
-    logoposition: "Left",
-    ButtonText: "Submit",
-    Mergebilllength: "",
-    modal: false,
-    sgst: "",
-    discount: "",
-    ViewBill: true,
-    wordsNumber: "",
-    cgst: "",
-    otherCharges: "",
-    deliveryCharges: "",
-    PrintData: {},
-    Viewpermisson: null,
-    Editpermisson: null,
-    Createpermisson: null,
-    Deletepermisson: null,
-    getPageSize: "",
-    defaultColDef: {
-      sortable: true,
-      // editable: true,
-      resizable: true,
-      suppressMenu: true,
-    },
-    columnDefs: [
-      {
-        headerName: "S.No",
-        valueGetter: "node.rowIndex + 1",
-        field: "node.rowIndex + 1",
-        width: 80,
-        filter: true,
-      },
-      {
-        headerName: "Add Bills",
-        width: 160,
-        filter: true,
-        cellRendererFramework: params => {
-          return (
-            <div className="d-flex align-items-center justify-content-center cursor-pointer">
-              <div>
-                <span>
-                  <input
-                    type="checkbox"
-                    className="customcheckbox"
-                    onClick={e => {
-                      this.handleMultipleBillsAdd(
-                        params?.data,
-                        e.target.checked
-                      );
-                      // console.log(e.target.checked);
-                    }}
-                  />
-                  {/* <AiOutlineDownload
-                    onClick={() => this.handleBillDownload(params.data)}
-                    fill="green"
-                    size="30px"
-                  /> */}
-                </span>
+  static contextType = UserContext;
+  constructor(props) {
+    super(props);
+    this.gridRef = React.createRef();
+    this.gridApi = null;
+    this.state = {
+      isOpen: false,
+      Arrindex: "",
+      AllbillMerged: [],
+      rowData: [],
+      Applied_Charges: {},
+      Billtoposition: "Left",
+      shipto: "right",
+      logoposition: "Left",
+      ButtonText: "Submit",
+      Mergebilllength: "",
+      modal: false,
+      modalOne: false,
+      sgst: "",
+      discount: "",
+      ViewBill: true,
+      wordsNumber: "",
+      cgst: "",
+      otherCharges: "",
+      deliveryCharges: "",
+      PrintData: {},
+      Viewpermisson: null,
+      Editpermisson: null,
+      Createpermisson: null,
+      Deletepermisson: null,
+      getPageSize: "",
+      columnDefs: [
+        {
+          headerName: "S.No",
+          valueGetter: "node.rowIndex + 1",
+          field: "node.rowIndex + 1",
+          width: 80,
+          filter: true,
+        },
+        // {
+        //   headerName: "Add Bills",
+        //   width: 160,
+        //   filter: true,
+        //   cellRendererFramework: (params) => {
+        //     return (
+        //       <div className="d-flex align-items-center justify-content-center cursor-pointer">
+        //         <div>
+        //           <span>
+        //             <input
+        //               type="checkbox"
+        //               className="customcheckbox"
+        //               onClick={(e) => {
+        //                 this.handleMultipleBillsAdd(
+        //                   params?.data,
+        //                   e.target.checked
+        //                 );
+        //                 // console.log(e.target.checked);
+        //               }}
+        //             />
+        //             {/* <AiOutlineDownload
+        //               onClick={() => this.handleBillDownload(params.data)}
+        //               fill="green"
+        //               size="30px"
+        //             /> */}
+        //           </span>
+        //         </div>
+        //       </div>
+        //     );
+        //   },
+        // },
+        {
+          headerName: "Status",
+          field: "order_status",
+          filter: true,
+          width: 140,
+          cellRendererFramework: (params) => {
+            return params.data?.order_status === "completed" ? (
+              <div className="badge badge-pill badge-success">Completed</div>
+            ) : params.data?.order_status === "pending" ? (
+              <div className="badge badge-pill badge-warning">
+                {params.data?.order_status}
               </div>
-            </div>
-          );
+            ) : params.data?.order_status === "return" ? (
+              <div className="badge badge-pill bg-primary">Inprogress</div>
+            ) : params.data?.order_status === "cancelled" ? (
+              <div className="badge badge-pill bg-danger">
+                {params.data.order_status}
+              </div>
+            ) : params.data?.order_status === "completed" ? (
+              <div className="badge badge-pill bg-success">Completed</div>
+            ) : null;
+          },
         },
-      },
-      {
-        headerName: "Status",
-        field: "order_status",
-        filter: true,
-        width: 160,
-        cellRendererFramework: params => {
-          return params.data?.order_status === "Completed" ? (
-            <div className="badge badge-pill badge-success">Completed</div>
-          ) : params.data?.order_status === "Pending" ? (
-            <div className="badge badge-pill badge-warning">
-              {params.data?.order_status}
-            </div>
-          ) : params.data?.order_status === "Inprogress" ? (
-            <div className="badge badge-pill bg-primary">Inprogress</div>
-          ) : params.data?.order_status === "canceled" ? (
-            <div className="badge badge-pill bg-danger">
-              {params.data.order_status}
-            </div>
-          ) : params.data?.order_status === "Completed" ? (
-            <div className="badge badge-pill bg-success">Completed</div>
-          ) : null;
-        },
-      },
-      {
-        headerName: "order_id",
-        field: "order_id",
-        filter: true,
-        resizable: true,
-        width: 150,
-        cellRendererFramework: params => {
-          // console.log(params.data?.order_id);
+        {
+          headerName: "Orderid",
+          field: "_id",
+          filter: true,
+          resizable: true,
+          width: 180,
+          cellRendererFramework: (params) => {
+            // console.log(params.data?.order_id);
 
-          return (
-            <div className="d-flex align-items-center cursor-pointer">
-              <div>
-                {/* <select
+            return (
+              <div className="d-flex align-items-center cursor-pointer">
+                <div>
+                  {/* <select
                   // className="form-control"
                   defaultValue={params.data?.order_status}
                   onChange={(e) => {
@@ -196,129 +1436,173 @@ class InvoiceGenerator extends React.Component {
                   <option value="Rejected">Rejected</option>
                   <option value="Cancelled">Cancelled</option>
                 </select> */}
-                <span>{params?.data?.order_id}</span>
+                  <span>{params?.data?._id}</span>
+                </div>
               </div>
-            </div>
-          );
+            );
+          },
         },
-      },
-      // {
-      //   headerName: "Invoice",
-      //   field: "invoice",
-      //   filter: true,
-      //   resizable: true,
-      //   width: 150,
-      //   cellRendererFramework: (params) => {
-      //     return (
-      //       <div className="d-flex align-items-center justify-content-center cursor-pointer">
-      //         <div>
-      //           <span>
-      //             <AiOutlineDownload
-      //               onClick={() => this.handleBillDownload(params.data)}
-      //               fill="green"
-      //               size="30px"
-      //             />
-      //           </span>
-      //         </div>
-      //       </div>
-      //     );
-      //   },
-      // },
-      {
-        headerName: "username",
-        field: "user_full_name",
-        filter: true,
-        resizable: true,
-        width: 150,
-        cellRendererFramework: params => {
-          return (
-            <div className="d-flex align-items-center justify-content-center cursor-pointer">
-              <div>
-                <span>
-                  {params?.data?.user_full_name}
-                  {/* <AiOutlineDownload
-                    onClick={() => this.handleBillDownload(params.data)}
-                    fill="green"
-                    size="30px"
-                  /> */}
-                </span>
-              </div>
-            </div>
-          );
-        },
-      },
-      {
-        headerName: "supplier_name",
-        field: "supplier_name",
-        filter: true,
-        resizable: true,
-        width: 210,
-        cellRendererFramework: params => {
-          return (
-            <div className="d-flex align-items-center cursor-pointer">
-              <div>
-                <span>{params.data?.supplier_name}</span>
-              </div>
-            </div>
-          );
-        },
-      },
-
-      // {
-      //   headerName: "Product Image",
-      //   field: "product_images",
-      //   filter: true,
-      //   resizable: true,
-      //   width: 160,
-      //   cellRendererFramework: (params) => {
-      //     // console.log(params.data);
-      //     return (
-      //       <div className="d-flex align-items-center cursor-pointer">
-      //         <div>
-      //           {params?.data?.product_images &&
-      //           params.data?.product_images?.length ? (
-      //             <>
-      //               <img
-      //                 style={{ borderRadius: "12px" }}
-      //                 src={params.data?.product_images[0]}
-      //                 alt="image"
-      //                 width="60px"
-      //               />
-      //             </>
-      //           ) : (
-      //             "No image"
-      //           )}
-      //         </div>
-      //       </div>
-      //     );
-      //   },
-      // },
-
-      {
-        headerName: "Actions",
-        field: "sortorder",
-        field: "transactions",
-        width: 120,
-        cellRendererFramework: params => {
-          return (
-            <div className="actions cursor-pointer">
-              {this.state.Viewpermisson && (
-                <Route
-                  render={({ history }) => (
-                    <Eye
-                      className="mr-50"
-                      size="25px"
-                      color="green"
-                      onClick={() =>
-                        history.push(
-                          `/app/freshlist/order/EditCompletedorders/${params.data?.order_id}`
-                        )
-                      }
+        {
+          headerName: "Invoice",
+          field: "invoice",
+          filter: true,
+          resizable: true,
+          width: 140,
+          cellRendererFramework: (params) => {
+            return (
+              <div className="d-flex align-items-center justify-content-center cursor-pointer">
+                <div>
+                  <span>
+                    <AiOutlineDownload
+                      // onClick={() => this.handleBillDownload(params.data)}
+                      onClick={() => this.MergeBillNow(params.data)}
+                      fill="green"
+                      size="30px"
                     />
-                  )}
-                />
-              )}
-              {/* {this.state.Editpermisson && (
+                  </span>
+                </div>
+              </div>
+            );
+          },
+        },
+        {
+          headerName: "FullName",
+          field: "fullName",
+          filter: true,
+          resizable: true,
+          width: 150,
+          cellRendererFramework: (params) => {
+            return (
+              <div className="d-flex align-items-center justify-content-center cursor-pointer">
+                <div>
+                  <span>{params?.data?.fullName}</span>
+                </div>
+              </div>
+            );
+          },
+        },
+        {
+          headerName: "MobileNo",
+          field: "MobileNo",
+          filter: true,
+          resizable: true,
+          width: 160,
+          cellRendererFramework: (params) => {
+            return (
+              <div className="d-flex align-items-center justify-content-center cursor-pointer">
+                <div>
+                  <span>{params?.data?.MobileNo}</span>
+                </div>
+              </div>
+            );
+          },
+        },
+        {
+          headerName: "Address",
+          field: "address",
+          filter: true,
+          resizable: true,
+          width: 200,
+          cellRendererFramework: (params) => {
+            return (
+              <div className="d-flex align-items-center justify-content-center cursor-pointer">
+                <div>
+                  <span>{params?.data?.address}</span>
+                </div>
+              </div>
+            );
+          },
+        },
+        {
+          headerName: "GrandTotal",
+          field: "grandTotal",
+          filter: true,
+          resizable: true,
+          width: 150,
+          cellRendererFramework: (params) => {
+            return (
+              <div className="d-flex align-items-center justify-content-center cursor-pointer">
+                <div>
+                  <span>{params?.data?.grandTotal}</span>
+                </div>
+              </div>
+            );
+          },
+        },
+        {
+          headerName: "Tax Amount",
+          field: "taxAmount",
+          filter: true,
+          resizable: true,
+          width: 150,
+          cellRendererFramework: (params) => {
+            return (
+              <div className="d-flex align-items-center justify-content-center cursor-pointer">
+                <div>
+                  <span>{params?.data?.taxAmount}</span>
+                </div>
+              </div>
+            );
+          },
+        },
+        {
+          headerName: "Party Name",
+          field: "partyId.firstName",
+          filter: true,
+          resizable: true,
+          width: 210,
+          cellRendererFramework: (params) => {
+            return (
+              <div className="d-flex align-items-center cursor-pointer">
+                <div>
+                  <span>{params.data?.partyId?.firstName}</span>
+                </div>
+              </div>
+            );
+          },
+        },
+
+        {
+          headerName: "Total Product",
+          field: "params?.data?.orderItems?.length",
+          filter: true,
+          resizable: true,
+          width: 400,
+          cellRendererFramework: (params) => {
+            // console.log(params.data);
+            return (
+              <div className="d-flex cursor-pointer">
+                <div>{params?.data?.orderItems?.length} Products</div>
+              </div>
+            );
+          },
+        },
+
+        {
+          headerName: "Actions",
+          field: "sortorder",
+          field: "transactions",
+          width: 120,
+          cellRendererFramework: (params) => {
+            return (
+              <div className="actions cursor-pointer">
+                {this.state.Viewpermisson && (
+                  <Route
+                    render={({ history }) => (
+                      <Eye
+                        className="mr-50"
+                        size="25px"
+                        color="green"
+                        onClick={() =>
+                          history.push(
+                            `/app/freshlist/order/EditCompletedorders/${params.data?.order_id}`
+                          )
+                        }
+                      />
+                    )}
+                  />
+                )}
+                {/* {this.state.Editpermisson && (
                 <Route
                   render={({ history }) => (
                     <Edit
@@ -335,7 +1619,7 @@ class InvoiceGenerator extends React.Component {
                 />
               )} */}
 
-              {/* {this.state.Deletepermisson && (
+                {/* {this.state.Deletepermisson && (
                 <Route
                   render={() => (
                     <Trash2
@@ -351,324 +1635,338 @@ class InvoiceGenerator extends React.Component {
                   )}
                 />
               )} */}
-            </div>
-          );
-        },
-      },
-
-      {
-        headerName: "total",
-        field: "total",
-        filter: true,
-        resizable: true,
-        width: 160,
-        cellRendererFramework: params => {
-          return (
-            <div className="d-flex align-items-center cursor-pointer">
-              <div>
-                <Badge color="success">{params.data?.total}</Badge>
               </div>
-            </div>
-          );
+            );
+          },
         },
-      },
-      // {
-      //   headerName: "brandname ",
-      //   field: "brand_name",
-      //   filter: true,
-      //   resizable: true,
-      //   width: 180,
-      //   cellRendererFramework: (params) => {
-      //     return (
-      //       <div className="d-flex align-items-center cursor-pointer">
-      //         <div>
-      //           <span>{params.data?.brand_name}</span>
-      //         </div>
-      //       </div>
-      //     );
-      //   },
-      // },
-      // {
-      //   headerName: "city",
-      //   field: "city",
-      //   filter: true,
-      //   resizable: true,
-      //   width: 160,
-      //   cellRendererFramework: (params) => {
-      //     return (
-      //       <div className="d-flex align-items-center cursor-pointer">
-      //         <div>
-      //           <span>{params.data?.city}</span>
-      //         </div>
-      //       </div>
-      //     );
-      //   },
-      // },
-      {
-        headerName: "order Creation date",
-        field: "order_date",
-        filter: true,
-        resizable: true,
-        width: 230,
-        cellRendererFramework: params => {
-          return (
-            <div className="d-flex align-items-center cursor-pointer">
-              <div>
-                <span>{params.data?.order_date}</span>
+
+        // {
+        //   headerName: "total",
+        //   field: "total",
+        //   filter: true,
+        //   resizable: true,
+        //   width: 160,
+        //   cellRendererFramework: (params) => {
+        //     return (
+        //       <div className="d-flex align-items-center cursor-pointer">
+        //         <div>
+        //           <Badge color="success">{params.data?.total}</Badge>
+        //         </div>
+        //       </div>
+        //     );
+        //   },
+        // },
+        // {
+        //   headerName: "brandname ",
+        //   field: "brand_name",
+        //   filter: true,
+        //   resizable: true,
+        //   width: 180,
+        //   cellRendererFramework: (params) => {
+        //     return (
+        //       <div className="d-flex align-items-center cursor-pointer">
+        //         <div>
+        //           <span>{params.data?.brand_name}</span>
+        //         </div>
+        //       </div>
+        //     );
+        //   },
+        // },
+        // {
+        //   headerName: "city",
+        //   field: "city",
+        //   filter: true,
+        //   resizable: true,
+        //   width: 160,
+        //   cellRendererFramework: (params) => {
+        //     return (
+        //       <div className="d-flex align-items-center cursor-pointer">
+        //         <div>
+        //           <span>{params.data?.city}</span>
+        //         </div>
+        //       </div>
+        //     );
+        //   },
+        // },
+        {
+          headerName: "order Creation date",
+          field: "order_date",
+          filter: true,
+          resizable: true,
+          width: 230,
+          cellRendererFramework: (params) => {
+            return (
+              <div className="d-flex align-items-center cursor-pointer">
+                <div>
+                  <span>{params.data?.order_date}</span>
+                </div>
               </div>
-            </div>
-          );
+            );
+          },
         },
+        // {
+        //   headerName: "deliverydate",
+        //   field: "delivery_date",
+        //   filter: true,
+        //   resizable: true,
+        //   width: 230,
+        //   cellRendererFramework: (params) => {
+        //     return (
+        //       <div className="d-flex align-items-center cursor-pointer">
+        //         <div>
+        //           <span>{params.data?.delivery_date}</span>
+        //         </div>
+        //       </div>
+        //     );
+        //   },
+        // },
+        // {
+        //   headerName: "description",
+        //   field: "description",
+        //   filter: "true",
+        //   width: 180,
+        //   cellRendererFramework: (params) => {
+        //     return (
+        //       <div className="d-flex align-items-center cursor-pointer">
+        //         <div className="">
+        //           <span>{params.data?.description}</span>
+        //         </div>
+        //       </div>
+        //     );
+        //   },
+        // },
+        // {
+        //   headerName: "discountprice",
+        //   field: "discountprice",
+        //   filter: "true",
+        //   width: 180,
+        //   cellRendererFramework: (params) => {
+        //     return (
+        //       <div className="d-flex align-items-center cursor-pointer">
+        //         <div className="">
+        //           <span>{params.data?.discountprice}</span>
+        //         </div>
+        //       </div>
+        //     );
+        //   },
+        // },
+        // {
+        //   headerName: "email",
+        //   field: "email",
+        //   filter: true,
+        //   resizable: true,
+        //   width: 190,
+        //   cellRendererFramework: (params) => {
+        //     return (
+        //       <div className="d-flex align-items-center cursor-pointer">
+        //         <div>
+        //           <span>{params.data?.email}</span>
+        //         </div>
+        //       </div>
+        //     );
+        //   },
+        // },
+
+        // {
+        //   headerName: "full_name",
+        //   field: "full_name",
+        //   filter: true,
+        //   resizable: true,
+        //   width: 170,
+        //   cellRendererFramework: (params) => {
+        //     return (
+        //       <div className="d-flex align-items-center cursor-pointer">
+        //         <div>
+        //           <span>{params.data?.full_name}</span>
+        //         </div>
+        //       </div>
+        //     );
+        //   },
+        // },
+
+        // {
+        //   headerName: "mobile",
+        //   field: "mobile",
+        //   filter: true,
+        //   resizable: true,
+        //   width: 190,
+        //   cellRendererFramework: (params) => {
+        //     return (
+        //       <div className="d-flex align-items-center cursor-pointer">
+        //         <div>
+        //           <span>{params.data?.mobile}</span>
+        //         </div>
+        //       </div>
+        //     );
+        //   },
+        // },
+        // {
+        //   headerName: "price",
+        //   field: "price",
+        //   filter: true,
+        //   resizable: true,
+        //   width: 150,
+        //   cellRendererFramework: (params) => {
+        //     return (
+        //       <div className="d-flex align-items-center cursor-pointer">
+        //         <div>
+        //           <span>{params.data?.price}</span>
+        //         </div>
+        //       </div>
+        //     );
+        //   },
+        // },
+
+        // {
+        //   headerName: "producttype",
+        //   field: "product_type",
+        //   filter: true,
+        //   resizable: true,
+        //   width: 190,
+        //   cellRendererFramework: (params) => {
+        //     return (
+        //       <div className="d-flex align-items-center cursor-pointer">
+        //         <div>
+        //           <span>{params.data?.product_type}</span>
+        //         </div>
+        //       </div>
+        //     );
+        //   },
+        // },
+        // {
+        //   headerName: "shippingfee",
+        //   field: "shipping_fee",
+        //   filter: true,
+        //   resizable: true,
+        //   width: 190,
+        //   cellRendererFramework: (params) => {
+        //     return (
+        //       <div className="d-flex align-items-center cursor-pointer">
+        //         <div>
+        //           <span>{params.data?.shipping_fee}</span>
+        //         </div>
+        //       </div>
+        //     );
+        //   },
+        // },
+        // {
+        //   headerName: "status",
+        //   field: "status",
+        //   filter: true,
+        //   resizable: true,
+        //   width: 180,
+        //   cellRendererFramework: (params) => {
+        //     return (
+        //       <div className="d-flex align-items-center cursor-pointer">
+        //         <div>
+        //           <span>{params.data?.status}</span>
+        //         </div>
+        //       </div>
+        //     );
+        //   },
+        // },
+        // {
+        //   headerName: "stock",
+        //   field: "stock",
+        //   filter: true,
+        //   resizable: true,
+        //   width: 180,
+        //   cellRendererFramework: (params) => {
+        //     return (
+        //       <div className="d-flex align-items-center cursor-pointer">
+        //         <div>
+        //           <span>{params.data?.stock}</span>
+        //         </div>
+        //       </div>
+        //     );
+        //   },
+        // },
+        // {
+        //   headerName: "subtotal",
+        //   field: "subtotal",
+        //   filter: true,
+        //   resizable: true,
+        //   width: 180,
+        //   cellRendererFramework: (params) => {
+        //     return (
+        //       <div className="d-flex align-items-center cursor-pointer">
+        //         <div>
+        //           <span>{params.data?.subtotal}</span>
+        //         </div>
+        //       </div>
+        //     );
+        //   },
+        // },
+        // {
+        //   headerName: "tags",
+        //   field: "tags",
+        //   filter: true,
+        //   resizable: true,
+        //   width: 180,
+        //   cellRendererFramework: (params) => {
+        //     return (
+        //       <div className="d-flex align-items-center cursor-pointer">
+        //         <div>
+        //           <span>{params.data?.tags}</span>
+        //         </div>
+        //       </div>
+        //     );
+        //   },
+        // },
+        // {
+        //   headerName: "tax_rate",
+        //   field: "tax_rate",
+        //   filter: true,
+        //   resizable: true,
+        //   width: 180,
+        //   cellRendererFramework: (params) => {
+        //     return (
+        //       <div className="d-flex align-items-center cursor-pointer">
+        //         <div>
+        //           <span>{params.data?.tax_rate}</span>
+        //         </div>
+        //       </div>
+        //     );
+        //   },
+        // },
+
+        // {
+        //   headerName: "Permitions",
+        //   field: "permitions",
+        //   filter: true,
+        //   width: 180,
+        //   cellRendererFramework: (params) => {
+        //     return (
+        //       <CustomInput
+        //         type="switch"
+        //         className="mr-1"
+        //         id="primary"
+        //         name="primary"
+        //         inline
+        //         onChange={this.handleSwitchChange}
+        //       ></CustomInput>
+        //     );
+        //   },
+        // },
+      ],
+      setMySelectedarr: [],
+      SelectedCols: [],
+      paginationPageSize: 5,
+      currenPageSize: "",
+      getPageSize: "",
+      AllcolumnDefs: [],
+      SelectedcolumnDefs: [],
+      defaultColDef: {
+        sortable: true,
+        enablePivot: true,
+        enableValue: true,
+        resizable: true,
+        suppressMenu: true,
       },
-      // {
-      //   headerName: "deliverydate",
-      //   field: "delivery_date",
-      //   filter: true,
-      //   resizable: true,
-      //   width: 230,
-      //   cellRendererFramework: (params) => {
-      //     return (
-      //       <div className="d-flex align-items-center cursor-pointer">
-      //         <div>
-      //           <span>{params.data?.delivery_date}</span>
-      //         </div>
-      //       </div>
-      //     );
-      //   },
-      // },
-      // {
-      //   headerName: "description",
-      //   field: "description",
-      //   filter: "true",
-      //   width: 180,
-      //   cellRendererFramework: (params) => {
-      //     return (
-      //       <div className="d-flex align-items-center cursor-pointer">
-      //         <div className="">
-      //           <span>{params.data?.description}</span>
-      //         </div>
-      //       </div>
-      //     );
-      //   },
-      // },
-      // {
-      //   headerName: "discountprice",
-      //   field: "discountprice",
-      //   filter: "true",
-      //   width: 180,
-      //   cellRendererFramework: (params) => {
-      //     return (
-      //       <div className="d-flex align-items-center cursor-pointer">
-      //         <div className="">
-      //           <span>{params.data?.discountprice}</span>
-      //         </div>
-      //       </div>
-      //     );
-      //   },
-      // },
-      // {
-      //   headerName: "email",
-      //   field: "email",
-      //   filter: true,
-      //   resizable: true,
-      //   width: 190,
-      //   cellRendererFramework: (params) => {
-      //     return (
-      //       <div className="d-flex align-items-center cursor-pointer">
-      //         <div>
-      //           <span>{params.data?.email}</span>
-      //         </div>
-      //       </div>
-      //     );
-      //   },
-      // },
-
-      // {
-      //   headerName: "full_name",
-      //   field: "full_name",
-      //   filter: true,
-      //   resizable: true,
-      //   width: 170,
-      //   cellRendererFramework: (params) => {
-      //     return (
-      //       <div className="d-flex align-items-center cursor-pointer">
-      //         <div>
-      //           <span>{params.data?.full_name}</span>
-      //         </div>
-      //       </div>
-      //     );
-      //   },
-      // },
-
-      // {
-      //   headerName: "mobile",
-      //   field: "mobile",
-      //   filter: true,
-      //   resizable: true,
-      //   width: 190,
-      //   cellRendererFramework: (params) => {
-      //     return (
-      //       <div className="d-flex align-items-center cursor-pointer">
-      //         <div>
-      //           <span>{params.data?.mobile}</span>
-      //         </div>
-      //       </div>
-      //     );
-      //   },
-      // },
-      // {
-      //   headerName: "price",
-      //   field: "price",
-      //   filter: true,
-      //   resizable: true,
-      //   width: 150,
-      //   cellRendererFramework: (params) => {
-      //     return (
-      //       <div className="d-flex align-items-center cursor-pointer">
-      //         <div>
-      //           <span>{params.data?.price}</span>
-      //         </div>
-      //       </div>
-      //     );
-      //   },
-      // },
-
-      // {
-      //   headerName: "producttype",
-      //   field: "product_type",
-      //   filter: true,
-      //   resizable: true,
-      //   width: 190,
-      //   cellRendererFramework: (params) => {
-      //     return (
-      //       <div className="d-flex align-items-center cursor-pointer">
-      //         <div>
-      //           <span>{params.data?.product_type}</span>
-      //         </div>
-      //       </div>
-      //     );
-      //   },
-      // },
-      // {
-      //   headerName: "shippingfee",
-      //   field: "shipping_fee",
-      //   filter: true,
-      //   resizable: true,
-      //   width: 190,
-      //   cellRendererFramework: (params) => {
-      //     return (
-      //       <div className="d-flex align-items-center cursor-pointer">
-      //         <div>
-      //           <span>{params.data?.shipping_fee}</span>
-      //         </div>
-      //       </div>
-      //     );
-      //   },
-      // },
-      // {
-      //   headerName: "status",
-      //   field: "status",
-      //   filter: true,
-      //   resizable: true,
-      //   width: 180,
-      //   cellRendererFramework: (params) => {
-      //     return (
-      //       <div className="d-flex align-items-center cursor-pointer">
-      //         <div>
-      //           <span>{params.data?.status}</span>
-      //         </div>
-      //       </div>
-      //     );
-      //   },
-      // },
-      // {
-      //   headerName: "stock",
-      //   field: "stock",
-      //   filter: true,
-      //   resizable: true,
-      //   width: 180,
-      //   cellRendererFramework: (params) => {
-      //     return (
-      //       <div className="d-flex align-items-center cursor-pointer">
-      //         <div>
-      //           <span>{params.data?.stock}</span>
-      //         </div>
-      //       </div>
-      //     );
-      //   },
-      // },
-      // {
-      //   headerName: "subtotal",
-      //   field: "subtotal",
-      //   filter: true,
-      //   resizable: true,
-      //   width: 180,
-      //   cellRendererFramework: (params) => {
-      //     return (
-      //       <div className="d-flex align-items-center cursor-pointer">
-      //         <div>
-      //           <span>{params.data?.subtotal}</span>
-      //         </div>
-      //       </div>
-      //     );
-      //   },
-      // },
-      // {
-      //   headerName: "tags",
-      //   field: "tags",
-      //   filter: true,
-      //   resizable: true,
-      //   width: 180,
-      //   cellRendererFramework: (params) => {
-      //     return (
-      //       <div className="d-flex align-items-center cursor-pointer">
-      //         <div>
-      //           <span>{params.data?.tags}</span>
-      //         </div>
-      //       </div>
-      //     );
-      //   },
-      // },
-      // {
-      //   headerName: "tax_rate",
-      //   field: "tax_rate",
-      //   filter: true,
-      //   resizable: true,
-      //   width: 180,
-      //   cellRendererFramework: (params) => {
-      //     return (
-      //       <div className="d-flex align-items-center cursor-pointer">
-      //         <div>
-      //           <span>{params.data?.tax_rate}</span>
-      //         </div>
-      //       </div>
-      //     );
-      //   },
-      // },
-
-      // {
-      //   headerName: "Permitions",
-      //   field: "permitions",
-      //   filter: true,
-      //   width: 180,
-      //   cellRendererFramework: (params) => {
-      //     return (
-      //       <CustomInput
-      //         type="switch"
-      //         className="mr-1"
-      //         id="primary"
-      //         name="primary"
-      //         inline
-      //         onChange={this.handleSwitchChange}
-      //       ></CustomInput>
-      //     );
-      //   },
-      // },
-    ],
-  };
+    };
+  }
   handleMultipleBillsAdd = (data, check) => {
     this.setState({ PrintData: data });
-
     let pageparmission = JSON.parse(localStorage.getItem("userData"));
     if (check) {
       AddedBill.push({
@@ -677,67 +1975,26 @@ class InvoiceGenerator extends React.Component {
         role: pageparmission?.Userinfo?.role,
       });
     } else {
-      let index = AddedBill.findIndex(ele => ele?.order_id === data?.order_id);
+      let index = AddedBill.findIndex(
+        (ele) => ele?.order_id === data?.order_id
+      );
       AddedBill.splice(index, 1);
     }
     // console.log(AddedBill);
     this.setState({ Mergebilllength: AddedBill?.length });
   };
-  MergeBillNow = e => {
-    e.preventDefault();
-    this.toggleModal();
+
+  MergeBillNow = (data) => {
+    console.log(data);
+    this.setState({PrintData :data})
+    // e.preventDefault();
+    const toWords = new ToWords();
+    let words = toWords.convert(Number(data?.grandTotal), { currency: true });
+    this.setState({ wordsNumber: words });
+    this.toggleModalOne();
   };
 
-  handleSubmit = e => {
-    e.preventDefault();
-    this.setState({ ButtonText: "InProcess" });
-    // debugger;
-    // console.log(this.state.sgst);
-    // console.log(this.state.cgst);
-    // console.log(this.state.deliveryCharges);
-    if (this.state.sgst && this.state.cgst) {
-      let pageparmission = JSON.parse(localStorage.getItem("userData"));
-      let formdata = new FormData();
-
-      formdata.append("user_id", pageparmission?.Userinfo?.id);
-      formdata.append("order_id", JSON.stringify(AddedBill));
-      formdata.append("role", pageparmission?.Userinfo?.role);
-      formdata.append("sgst", this.state.sgst);
-      formdata.append("cgst", this.state.cgst);
-      formdata.append("discount_value", this.state.discount);
-      formdata.append("delivery_charges", this.state.deliveryCharges);
-      formdata.append("other_charges", this.state.otherCharges);
-      axiosConfig
-        .post(`/createmergebillapi`, formdata)
-        .then(res => {
-          // console.log(res.data?.data?.applied_charges);
-          this.setState({ Applied_Charges: res.data?.data?.applied_charges });
-          // console.log(res.data.data?.items);
-          this.setState({ AllbillMerged: res.data.data?.items });
-          this.setState({ ViewBill: true });
-
-          // this.setState({ PrintData: res.data });
-          const toWords = new ToWords();
-          let words = toWords.convert(
-            Number(res.data?.data?.applied_charges?.grandtotal),
-            {
-              currency: true,
-            }
-          );
-
-          this.setState({ wordsNumber: words });
-        })
-        .catch(err => {
-          console.log(err);
-          this.setState({ ButtonText: "Submit" });
-        });
-    } else {
-      this.setState({ ButtonText: "Submit" });
-
-      swal("Enter Values in field");
-    }
-  };
-  handleBillDownload = data => {
+  handleBillDownload = (data) => {
     // console.log(data);
     this.setState({ PrintData: data });
     const toWords = new ToWords();
@@ -746,22 +2003,66 @@ class InvoiceGenerator extends React.Component {
     this.toggleModal();
   };
   toggleModal = () => {
-    this.setState(prevState => ({
+    this.setState((prevState) => ({
       modal: !prevState.modal,
     }));
   };
+  toggleModalOne = () => {
+    this.setState((prevState) => ({
+      modalOne: !prevState.modalOne,
+    }));
+  };
+  changeHandler = (e) => {
+    this.setState({ [e.target.name]: e.target.value });
+  };
   toggleModalclose = () => {
     // debugger;
-    this.setState({ modal: false });
+    this.setState({ modalOne: false });
     this.setState({ ShowMyBill: false });
     // window.location.reload();
     // AddedBill = [];
     // console.log(AddedBill);
   };
-  changeHandler = e => {
-    this.setState({ [e.target.name]: e.target.value });
+
+  LookupviewStart = () => {
+    this.setState((prevState) => ({
+      modal: !prevState.modal,
+    }));
   };
+
+  handleChangeEdit = (data, types) => {
+    let type = types;
+    if (type == "readonly") {
+      this.setState({ ViewOneUserView: true });
+      this.setState({ ViewOneData: data });
+    } else {
+      this.setState({ EditOneUserView: true });
+      this.setState({ EditOneData: data });
+    }
+  };
+
   async componentDidMount() {
+    const UserInformation = this.context?.UserInformatio;
+    createOrderhistoryview()
+      .then((res) => {
+        console.log(res?.orderHistory);
+        this.setState({ rowData: res?.orderHistory });
+        this.setState({ AllcolumnDefs: this.state.columnDefs });
+
+        let userHeading = JSON.parse(localStorage.getItem("SalesOrderList"));
+        if (userHeading?.length) {
+          this.setState({ columnDefs: userHeading });
+          this.gridApi.setColumnDefs(userHeading);
+          this.setState({ SelectedcolumnDefs: userHeading });
+        } else {
+          this.setState({ columnDefs: this.state.columnDefs });
+          this.setState({ SelectedcolumnDefs: this.state.columnDefs });
+        }
+        this.setState({ SelectedCols: this.state.columnDefs });
+      })
+      .catch((err) => {
+        console.log(err);
+      });
     let pageparmission = JSON.parse(localStorage.getItem("userData"));
     // console.log(pageparmission.role);
     let userchoice = JSON.parse(localStorage.getItem("billUI"));
@@ -772,7 +2073,7 @@ class InvoiceGenerator extends React.Component {
       this.setState({ shipto: userchoice?.shipto });
     }
     let newparmisson = pageparmission?.role?.find(
-      value => value?.pageName === "invoice Generator"
+      (value) => value?.pageName === "invoice Generator"
     );
     // console.log(newparmisson);
     this.setState({ Viewpermisson: newparmisson?.permission.includes("View") });
@@ -785,37 +2086,238 @@ class InvoiceGenerator extends React.Component {
     this.setState({
       Deletepermisson: newparmisson?.permission.includes("Delete"),
     });
-    // console.log(newparmisson?.permission.includes("View"));
-    // console.log(newparmisson?.permission.includes("Create"));
-    // console.log(newparmisson?.permission.includes("Edit"));
-    // console.log(newparmisson?.permission.includes("Delete"));
+    // await CreateAccountView()
+    //   .then((res) => {
+    //     var mydropdownArray = [];
+    //     var adddropdown = [];
+    //     const jsonData = xmlJs.xml2json(res.data, { compact: true, spaces: 2 });
+    //     console.log(JSON.parse(jsonData)?.CreateUser);
+    //     const inputs = JSON.parse(jsonData)?.CreateUser?.input?.map((ele) => {
+    //       return {
+    //         headerName: ele?.label._text,
+    //         field: ele?.name._text,
+    //         filter: true,
+    //         sortable: true,
+    //       };
+    //     });
+    //     // let Radioinput =
+    //     //   JSON.parse(jsonData).CreateAccount?.Radiobutton?.input[0]?.name
+    //     //     ?._text;
+    //     // const addRadio = [
+    //     //   {
+    //     //     headerName: Radioinput,
+    //     //     field: Radioinput,
+    //     //     filter: true,
+    //     //     sortable: true,
+    //     //     cellRendererFramework: (params) => {
+    //     //       return params.data?.Status === "Active" ? (
+    //     //         <div className="badge badge-pill badge-success">
+    //     //           {params.data.Status}
+    //     //         </div>
+    //     //       ) : params.data?.Status === "Deactive" ? (
+    //     //         <div className="badge badge-pill badge-warning">
+    //     //           {params.data.Status}
+    //     //         </div>
+    //     //       ) : (
+    //     //         "NA"
+    //     //       );
+    //     //     },
+    //     //   },
+    //     // ];
 
-    const formdata = new FormData();
-    formdata.append("user_id", pageparmission?.Userinfo?.id);
-    formdata.append("role", pageparmission?.Userinfo?.role);
-    await axiosConfig
-      .post(`/getallcompleteorders`, formdata)
-      .then(res => {
-        // console.log(res.data.data);
-        let rowData = res.data.data;
-        this.setState({ rowData });
-      })
-      .catch(err => {
-        console.log(err);
-      });
+    //     // let dropdown = JSON.parse(jsonData).CreateAccount?.MyDropdown?.dropdown;
+    //     // if (dropdown.length) {
+    //     //   var mydropdownArray = dropdown?.map((ele) => {
+    //     //     return {
+    //     //       headerName: ele?.label,
+    //     //       field: ele?.name,
+    //     //       filter: true,
+    //     //       sortable: true,
+    //     //     };
+    //     //   });
+    //     // } else {
+    //     //   var adddropdown = [
+    //     //     {
+    //     //       headerName: dropdown?.label._text,
+    //     //       field: dropdown?.name._text,
+    //     //       filter: true,
+    //     //       sortable: true,
+    //     //     },
+    //     //   ];
+    //     // }
+
+    //     let myHeadings = [
+    //       // ...checkboxinput,
+    //       ...inputs,
+    //       // ...adddropdown,
+    //       // ...addRadio,
+    //       // ...mydropdownArray,
+    //     ];
+    //     // console.log(myHeadings);
+    //     let Product = [
+    //       {
+    //         headerName: "Actions",
+    //         field: "sortorder",
+    //         field: "transactions",
+    //         width: 190,
+    //         cellRendererFramework: (params) => {
+    //           return (
+    //             <div className="actions cursor-pointer">
+    //               <Route
+    //                 render={({ history }) => (
+    //                   <Eye
+    //                     className="mr-50"
+    //                     size="25px"
+    //                     color="green"
+    //                     onClick={() => {
+    //                       this.handleChangeEdit(params?.data, "readonly");
+    //                     }}
+    //                   />
+    //                 )}
+    //               />
+    //               <Route
+    //                 render={({ history }) => (
+    //                   <Edit
+    //                     className="mr-50"
+    //                     size="25px"
+    //                     color="blue"
+    //                     onClick={() => {
+    //                       this.handleChangeEdit(params?.data, "Editable");
+    //                     }}
+    //                   />
+    //                 )}
+    //               />
+
+    //               <Route
+    //                 render={() => (
+    //                   <Trash2
+    //                     className="mr-50"
+    //                     size="25px"
+    //                     color="red"
+    //                     onClick={() => {
+    //                       this.runthisfunction(params?.data?._id);
+    //                     }}
+    //                   />
+    //                 )}
+    //               />
+    //             </div>
+    //           );
+    //         },
+    //       },
+    //       {
+    //         headerName: "Status",
+    //         field: "status",
+    //         filter: true,
+    //         width: 150,
+    //         cellRendererFramework: (params) => {
+    //           return params.data?.status === "Active" ? (
+    //             <div className="badge badge-pill badge-success">
+    //               {params.data?.status}
+    //             </div>
+    //           ) : params.data?.status === "Deactive" ? (
+    //             <div className="badge badge-pill badge-warning">
+    //               {params.data?.status}
+    //             </div>
+    //           ) : null;
+    //         },
+    //       },
+
+    //       {
+    //         headerName: "Created by",
+    //         field: "created_by.firstName",
+    //         filter: true,
+    //         sortable: true,
+    //         cellRendererFramework: (params) => {
+    //           return (
+    //             <>
+    //               <div className="actions cursor-pointer">
+    //                 <span>{params?.data?.created_by?.firstName}</span>
+    //               </div>
+    //             </>
+    //           );
+    //         },
+    //       },
+    //       {
+    //         headerName: "Rolename",
+    //         field: "rolename.roleName",
+    //         filter: true,
+    //         sortable: true,
+    //         cellRendererFramework: (params) => {
+    //           console.log(params.data);
+    //           return (
+    //             <>
+    //               <div className="actions cursor-pointer">
+    //                 <span>{params?.data?.rolename?.roleName}</span>
+    //               </div>
+    //             </>
+    //           );
+    //         },
+    //       },
+    //       ...myHeadings,
+    //       {
+    //         headerName: "Created date",
+    //         field: "createdAt",
+    //         filter: true,
+    //         sortable: true,
+    //         cellRendererFramework: (params) => {
+    //           return (
+    //             <>
+    //               <div className="actions cursor-pointer">
+    //                 <span>{params?.data?.createdAt}</span>
+    //               </div>
+    //             </>
+    //           );
+    //         },
+    //       },
+    //       {
+    //         headerName: "Updated date",
+    //         field: "updatedAt",
+    //         filter: true,
+    //         sortable: true,
+    //         cellRendererFramework: (params) => {
+    //           return (
+    //             <>
+    //               <div className="actions cursor-pointer">
+    //                 <div className="actions cursor-pointer">
+    //                   <span>{params?.data?.updatedAt}</span>
+    //                 </div>
+    //               </div>
+    //             </>
+    //           );
+    //         },
+    //       },
+    //     ];
+
+    //     this.setState({ AllcolumnDefs: Product });
+
+    //     let userHeading = JSON.parse(localStorage.getItem("SalesOrderList"));
+    //     if (userHeading?.length) {
+    //       this.setState({ columnDefs: userHeading });
+    //       this.gridApi.setColumnDefs(userHeading);
+    //       this.setState({ SelectedcolumnDefs: userHeading });
+    //     } else {
+    //       this.setState({ columnDefs: Product });
+    //       this.setState({ SelectedcolumnDefs: Product });
+    //     }
+    //     this.setState({ SelectedCols: Product });
+    //   })
+    //   .catch((err) => {
+    //     console.log(err);
+    //     swal("Error", "something went wrong try again");
+    //   });
+    // await CreateAccountList()
+    //   .then((res) => {
+    //     let value = res?.User;
+    //     if (value.length) {
+    //       this.setState({ rowData: value });
+    //     }
+    //   })
+    //   .catch((err) => {
+    //     console.log(err);
+    //   });
   }
-  async runthisfunction(id) {
-    // console.log(id);
-    await axiosConfig.delete(`/admin/del_subcategory/${id}`).then(
-      response => {
-        console.log(response);
-      },
-      error => {
-        console.log(error);
-      }
-    );
-  }
-  submitHandler = e => {
+
+  submitHandler = (e) => {
     e.preventDefault();
     let mychoice = {
       imagePosition: this.state.logoposition,
@@ -830,19 +2332,50 @@ class InvoiceGenerator extends React.Component {
       this.setState({ ShowMyBill: true });
     }
   };
-  onGridReady = params => {
+  toggleDropdown = () => {
+    this.setState((prevState) => ({ isOpen: !prevState.isOpen }));
+  };
+
+  runthisfunction(id) {
+    swal("Warning", "Sure You Want to Delete it", {
+      buttons: {
+        cancel: "cancel",
+        catch: { text: "Delete ", value: "delete" },
+      },
+    }).then((value) => {
+      switch (value) {
+        case "delete":
+          DeleteAccount(id)
+            .then((res) => {
+              let selectedData = this.gridApi.getSelectedRows();
+              this.gridApi.updateRowData({ remove: selectedData });
+            })
+            .catch((err) => {
+              console.log(err);
+            });
+          break;
+        default:
+      }
+    });
+  }
+
+  onGridReady = (params) => {
     this.gridApi = params.api;
     this.gridColumnApi = params.columnApi;
+    this.gridRef.current = params.api;
+
     this.setState({
       currenPageSize: this.gridApi.paginationGetCurrentPage() + 1,
       getPageSize: this.gridApi.paginationGetPageSize(),
       totalPages: this.gridApi.paginationGetTotalPages(),
     });
   };
-  updateSearchQuery = val => {
+
+  updateSearchQuery = (val) => {
     this.gridApi.setQuickFilter(val);
   };
-  filterSize = val => {
+
+  filterSize = (val) => {
     if (this.gridApi) {
       this.gridApi.paginationSetPageSize(Number(val));
       this.setState({
@@ -851,124 +2384,642 @@ class InvoiceGenerator extends React.Component {
       });
     }
   };
+  handleChangeHeader = (e, value, index) => {
+    let check = e.target.checked;
+    if (check) {
+      SelectedColums?.push(value);
+    } else {
+      const delindex = SelectedColums?.findIndex(
+        (ele) => ele?.headerName === value?.headerName
+      );
+
+      SelectedColums?.splice(delindex, 1);
+    }
+  };
+  parseCsv(csvData) {
+    return new Promise((resolve, reject) => {
+      Papa.parse(csvData, {
+        header: true,
+        skipEmptyLines: true,
+        complete: (result) => {
+          if (result.data && result.data.length > 0) {
+            resolve(result.data);
+          } else {
+            reject(new Error("No data found in the CSV"));
+          }
+        },
+        error: (error) => {
+          reject(error);
+        },
+      });
+    });
+  }
+  generatePDF(parsedData) {
+    let pdfsize = [Object.keys(parsedData[0])][0].length;
+    let size = pdfsize > 15 ? "a1" : pdfsize < 14 > 10 ? "a3" : "a4";
+
+    const doc = new jsPDF("landscape", "mm", size, false);
+    doc.setTextColor(5, 87, 97);
+    const tableData = parsedData.map((row) => Object.values(row));
+    doc.addImage(Logo, "JPEG", 10, 10, 50, 30);
+    let date = new Date();
+    doc.setCreationDate(date);
+    doc.text("OrderList", 14, 51);
+    doc.autoTable({
+      head: [Object.keys(parsedData[0])],
+      body: tableData,
+      startY: 60,
+    });
+
+    doc.save("OrderList.pdf");
+  }
+
+  exportToPDF = async () => {
+    const csvData = this.gridApi.getDataAsCsv({
+      processCellCallback: this.processCell,
+    });
+    try {
+      const parsedData = await this.parseCsv(csvData);
+      this.generatePDF(parsedData);
+    } catch (error) {
+      console.error("Error parsing CSV:", error);
+    }
+  };
+  processCell = (params) => {
+    // console.log(params);
+    // Customize cell content as needed
+    return params.value;
+  };
+
+  convertCsvToExcel(csvData) {
+    return new Promise((resolve) => {
+      Papa.parse(csvData, {
+        header: true,
+        dynamicTyping: true,
+        skipEmptyLines: true,
+        complete: function (result) {
+          const worksheet = XLSX.utils.json_to_sheet(result.data);
+          const workbook = XLSX.utils.book_new();
+          XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
+          const excelBuffer = XLSX.write(workbook, {
+            bookType: "xlsx",
+            type: "array",
+          });
+          const blob = new Blob([excelBuffer], {
+            type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+          });
+          resolve(blob);
+        },
+      });
+    });
+  }
+  downloadExcelFile(blob) {
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "OrderList.xlsx";
+    document.body.appendChild(a);
+    a.click();
+    window.URL.revokeObjectURL(url);
+  }
+
+  exportToExcel = async (e) => {
+    const CsvData = this.gridApi.getDataAsCsv({
+      processCellCallback: this.processCell,
+    });
+    const blob = await this.convertCsvToExcel(CsvData);
+    this.downloadExcelFile(blob);
+  };
+
+  convertCSVtoExcel = () => {
+    const CsvData = this.gridApi.getDataAsCsv({
+      processCellCallback: this.processCell,
+    });
+    Papa.parse(CsvData, {
+      complete: (result) => {
+        const ws = XLSX.utils.json_to_sheet(result.data);
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, "Sheet1");
+        const excelType = "xls";
+        XLSX.writeFile(wb, `OrderList.${excelType}`);
+      },
+    });
+  };
+
+  shiftElementUp = () => {
+    let currentIndex = this.state.Arrindex;
+    if (currentIndex > 0) {
+      const myArrayCopy = [...this.state.SelectedcolumnDefs];
+      const elementToMove = myArrayCopy.splice(currentIndex, 1)[0];
+      this.setState({ Arrindex: currentIndex - 1 });
+      myArrayCopy.splice(currentIndex - 1, 0, elementToMove);
+      this.setState({ SelectedcolumnDefs: myArrayCopy });
+    }
+  };
+
+  shiftElementDown = () => {
+    let currentIndex = this.state.Arrindex;
+    if (currentIndex < this.state.SelectedcolumnDefs.length - 1) {
+      const myArrayCopy = [...this.state.SelectedcolumnDefs];
+      const elementToMove = myArrayCopy.splice(currentIndex, 1)[0];
+      this.setState({ Arrindex: currentIndex + 1 });
+      myArrayCopy.splice(currentIndex + 1, 0, elementToMove);
+      this.setState({ SelectedcolumnDefs: myArrayCopy });
+    }
+  };
+  convertCsvToXml = () => {
+    const CsvData = this.gridApi.getDataAsCsv({
+      processCellCallback: this.processCell,
+    });
+    Papa.parse(CsvData, {
+      complete: (result) => {
+        const rows = result.data;
+
+        // Create XML
+        let xmlString = "<root>\n";
+
+        rows.forEach((row) => {
+          xmlString += "  <row>\n";
+          row.forEach((cell, index) => {
+            xmlString += `    <field${index + 1}>${cell}</field${index + 1}>\n`;
+          });
+          xmlString += "  </row>\n";
+        });
+
+        xmlString += "</root>";
+
+        // setXmlData(xmlString);
+
+        // Create a download link
+        const blob = new Blob([xmlString], { type: "text/xml" });
+        const link = document.createElement("a");
+        link.href = URL.createObjectURL(blob);
+        link.download = "OrderList.xml";
+        link.click();
+      },
+    });
+  };
+
+  HandleSetVisibleField = (e) => {
+    e.preventDefault();
+    this.gridApi.setColumnDefs(this.state.SelectedcolumnDefs);
+    this.setState({ columnDefs: this.state.SelectedcolumnDefs });
+    this.setState({ SelectedcolumnDefs: this.state.SelectedcolumnDefs });
+    this.setState({ rowData: this.state.rowData });
+    localStorage.setItem(
+      "SalesOrderList",
+      JSON.stringify(this.state.SelectedcolumnDefs)
+    );
+    this.LookupviewStart();
+  };
+
+  HeadingRightShift = () => {
+    const updatedSelectedColumnDefs = [
+      ...new Set([
+        ...this.state.SelectedcolumnDefs.map((item) => JSON.stringify(item)),
+        ...SelectedColums.map((item) => JSON.stringify(item)),
+      ]),
+    ].map((item) => JSON.parse(item));
+    this.setState({
+      SelectedcolumnDefs: [...new Set(updatedSelectedColumnDefs)], // Update the state with the combined array
+    });
+  };
+  handleLeftShift = () => {
+    let SelectedCols = this.state.SelectedcolumnDefs.slice();
+    let delindex = this.state.Arrindex; /* Your delete index here */
+
+    if (SelectedCols && delindex >= 0) {
+      const splicedElement = SelectedCols.splice(delindex, 1); // Remove the element
+
+      this.setState({
+        SelectedcolumnDefs: SelectedCols, // Update the state with the modified array
+      });
+    }
+  };
   render() {
-    const { rowData, columnDefs, defaultColDef } = this.state;
+    const {
+      rowData,
+      columnDefs,
+      defaultColDef,
+      SelectedcolumnDefs,
+      isOpen,
+      SelectedCols,
+      AllcolumnDefs,
+    } = this.state;
     return (
-      <Row className="app-user-list">
-        <Col sm="12"></Col>
-        <Col sm="12">
-          <Card>
-            <Row className="m-2">
+      <>
+        {/* <ExcelReader /> */}
+        <Row className="app-user-list">
+          {this.state.EditOneUserView && this.state.EditOneUserView ? (
+            <Row className="card">
               <Col>
-                <h1 sm="6" className="float-left">
-                  Generate invoice
-                </h1>
-              </Col>
-              <Col>
-                <Button
-                  className=" btn btn-danger float-right"
-                  onClick={this.MergeBillNow}
-                >
-                  Create Invoice
-                </Button>
-              </Col>
-            </Row>
-            <CardBody>
-              {this.state.rowData === null ? null : (
-                <div className="ag-theme-material w-100 my-2 ag-grid-table">
-                  <div className="d-flex flex-wrap justify-content-between align-items-center">
-                    <div className="mb-1">
-                      <UncontrolledDropdown className="p-1 ag-dropdown">
-                        <DropdownToggle tag="div">
-                          {this.gridApi
-                            ? this.state.currenPageSize
-                            : "" * this.state.getPageSize -
-                              (this.state.getPageSize - 1)}{" "}
-                          -{" "}
-                          {this.state.rowData.length -
-                            this.state.currenPageSize * this.state.getPageSize >
-                          0
-                            ? this.state.currenPageSize * this.state.getPageSize
-                            : this.state.rowData.length}{" "}
-                          of {this.state.rowData.length}
-                          <ChevronDown className="ml-50" size={15} />
-                        </DropdownToggle>
-                        <DropdownMenu right>
-                          <DropdownItem
-                            tag="div"
-                            onClick={() => this.filterSize(20)}
-                          >
-                            20
-                          </DropdownItem>
-                          <DropdownItem
-                            tag="div"
-                            onClick={() => this.filterSize(50)}
-                          >
-                            50
-                          </DropdownItem>
-                          <DropdownItem
-                            tag="div"
-                            onClick={() => this.filterSize(100)}
-                          >
-                            100
-                          </DropdownItem>
-                          <DropdownItem
-                            tag="div"
-                            onClick={() => this.filterSize(134)}
-                          >
-                            134
-                          </DropdownItem>
-                        </DropdownMenu>
-                      </UncontrolledDropdown>
-                    </div>
-                    <div className="d-flex flex-wrap justify-content-between mb-1">
-                      <div className="table-input mr-1">
-                        <Input
-                          placeholder="search..."
-                          onChange={e => this.updateSearchQuery(e.target.value)}
-                          value={this.state.value}
-                        />
-                      </div>
-                      <div className="export-btn">
-                        <Button.Ripple
-                          color="primary"
-                          onClick={() => this.gridApi.exportDataAsCsv()}
-                        >
-                          Export as CSV
-                        </Button.Ripple>
-                      </div>
-                    </div>
-                  </div>
-                  <ContextLayout.Consumer>
-                    {context => (
-                      <AgGridReact
-                        gridOptions={{}}
-                        rowSelection="multiple"
-                        defaultColDef={defaultColDef}
-                        columnDefs={columnDefs}
-                        rowData={rowData}
-                        onGridReady={this.onGridReady}
-                        colResizeDefault={"shift"}
-                        animateRows={true}
-                        floatingFilter={false}
-                        pagination={true}
-                        paginationPageSize={this.state.paginationPageSize}
-                        pivotPanelShow="always"
-                        enableRtl={context.state.direction === "rtl"}
-                      />
-                    )}
-                  </ContextLayout.Consumer>
+                <div className="d-flex justify-content-end p-1">
+                  <Button
+                    onClick={(e) => {
+                      e.preventDefault();
+                      this.setState({ EditOneUserView: false });
+                      this.componentDidMount();
+                    }}
+                    color="danger">
+                    Back
+                  </Button>
                 </div>
+              </Col>
+
+              <EditAccount EditOneData={this.state.EditOneData} />
+            </Row>
+          ) : (
+            <>
+              {this.state.ViewOneUserView && this.state.ViewOneUserView ? (
+                <>
+                  <Row className="card">
+                    <Col>
+                      <h1 className="float-left">View User</h1>
+                    </Col>
+                    <Col>
+                      <div className="d-flex justify-content-end p-1">
+                        <Button
+                          onClick={(e) => {
+                            e.preventDefault();
+                            this.setState({ ViewOneUserView: false });
+                          }}
+                          color="danger">
+                          Back
+                        </Button>
+                      </div>
+                    </Col>
+                    <ViewAccount ViewOneData={this.state.ViewOneData} />
+                  </Row>
+                </>
+              ) : (
+                <>
+                  <Col sm="12">
+                    <Card>
+                      <Row className="m-2">
+                        <Col>
+                          <h1 className="float-left">Order List</h1>
+                        </Col>
+                        <Col>
+                          <span className="mx-1">
+                            <FaFilter
+                              style={{ cursor: "pointer" }}
+                              title="filter coloumn"
+                              size="25px"
+                              onClick={this.LookupviewStart}
+                              color="#39cccc"
+                              className="float-right"
+                            />
+                          </span>
+                          <span className="mx-1">
+                            <div className="dropdown-container float-right">
+                              <BsCloudDownloadFill
+                                style={{ cursor: "pointer" }}
+                                title="download file"
+                                size="25px"
+                                className="dropdown-button "
+                                color="#39cccc"
+                                onClick={this.toggleDropdown}
+                              />
+                              {isOpen && (
+                                <div
+                                  style={{
+                                    position: "absolute",
+                                    zIndex: "1",
+                                  }}
+                                  className="dropdown-content dropdownmy">
+                                  <h5
+                                    onClick={() => this.exportToPDF()}
+                                    style={{ cursor: "pointer" }}
+                                    className=" mx-1 myactive mt-1">
+                                    .PDF
+                                  </h5>
+                                  <h5
+                                    onClick={() =>
+                                      this.gridApi.exportDataAsCsv()
+                                    }
+                                    style={{ cursor: "pointer" }}
+                                    className=" mx-1 myactive">
+                                    .CSV
+                                  </h5>
+                                  <h5
+                                    onClick={this.convertCSVtoExcel}
+                                    style={{ cursor: "pointer" }}
+                                    className=" mx-1 myactive">
+                                    .XLS
+                                  </h5>
+                                  <h5
+                                    onClick={this.exportToExcel}
+                                    style={{ cursor: "pointer" }}
+                                    className=" mx-1 myactive">
+                                    .XLSX
+                                  </h5>
+                                  <h5
+                                    onClick={() => this.convertCsvToXml()}
+                                    style={{ cursor: "pointer" }}
+                                    className=" mx-1 myactive">
+                                    .XML
+                                  </h5>
+                                </div>
+                              )}
+                            </div>
+                          </span>
+                          <span></span>
+                        </Col>
+                        {/* <Col>
+                          <Button
+                            className=" btn btn-danger float-right"
+                            onClick={this.MergeBillNow}>
+                            Create Invoice
+                          </Button>
+                        </Col> */}
+                      </Row>
+                      <CardBody>
+                        {this.state.rowData === null ? null : (
+                          <div className="ag-theme-material w-100 my-2 ag-grid-table">
+                            <div className="d-flex flex-wrap justify-content-between align-items-center">
+                              <div className="mb-1">
+                                <UncontrolledDropdown className="p-1 ag-dropdown">
+                                  <DropdownToggle tag="div">
+                                    {this.gridApi
+                                      ? this.state.currenPageSize
+                                      : "" * this.state.getPageSize -
+                                        (this.state.getPageSize - 1)}{" "}
+                                    -{" "}
+                                    {this.state.rowData.length -
+                                      this.state.currenPageSize *
+                                        this.state.getPageSize >
+                                    0
+                                      ? this.state.currenPageSize *
+                                        this.state.getPageSize
+                                      : this.state.rowData.length}{" "}
+                                    of {this.state.rowData.length}
+                                    <ChevronDown className="ml-50" size={15} />
+                                  </DropdownToggle>
+                                  <DropdownMenu right>
+                                    <DropdownItem
+                                      tag="div"
+                                      onClick={() => this.filterSize(5)}>
+                                      5
+                                    </DropdownItem>
+                                    <DropdownItem
+                                      tag="div"
+                                      onClick={() => this.filterSize(20)}>
+                                      20
+                                    </DropdownItem>
+                                    <DropdownItem
+                                      tag="div"
+                                      onClick={() => this.filterSize(50)}>
+                                      50
+                                    </DropdownItem>
+                                    <DropdownItem
+                                      tag="div"
+                                      onClick={() => this.filterSize(100)}>
+                                      100
+                                    </DropdownItem>
+                                    <DropdownItem
+                                      tag="div"
+                                      onClick={() => this.filterSize(134)}>
+                                      134
+                                    </DropdownItem>
+                                  </DropdownMenu>
+                                </UncontrolledDropdown>
+                              </div>
+                              <div className="d-flex flex-wrap justify-content-end mb-1">
+                                <div className="table-input mr-1">
+                                  <Input
+                                    placeholder="search Item here..."
+                                    onChange={(e) =>
+                                      this.updateSearchQuery(e.target.value)
+                                    }
+                                    value={this.state.value}
+                                  />
+                                </div>
+                              </div>
+                            </div>
+                            <ContextLayout.Consumer className="ag-theme-alpine">
+                              {(context) => (
+                                <AgGridReact
+                                  id="myAgGrid"
+                                  // gridOptions={{
+                                  //   domLayout: "autoHeight",
+                                  //   // or other layout options
+                                  // }}
+                                  gridOptions={this.gridOptions}
+                                  rowSelection="multiple"
+                                  defaultColDef={defaultColDef}
+                                  columnDefs={columnDefs}
+                                  rowData={rowData}
+                                  // onGridReady={(params) => {
+                                  //   this.gridApi = params.api;
+                                  //   this.gridColumnApi = params.columnApi;
+                                  //   this.gridRef.current = params.api;
+
+                                  //   this.setState({
+                                  //     currenPageSize:
+                                  //       this.gridApi.paginationGetCurrentPage() +
+                                  //       1,
+                                  //     getPageSize:
+                                  //       this.gridApi.paginationGetPageSize(),
+                                  //     totalPages:
+                                  //       this.gridApi.paginationGetTotalPages(),
+                                  //   });
+                                  // }}
+                                  onGridReady={this.onGridReady}
+                                  colResizeDefault={"shift"}
+                                  animateRows={true}
+                                  floatingFilter={false}
+                                  pagination={true}
+                                  paginationPageSize={
+                                    this.state.paginationPageSize
+                                  }
+                                  pivotPanelShow="always"
+                                  enableRtl={context.state.direction === "rtl"}
+                                  ref={this.gridRef} // Attach the ref to the grid
+                                  domLayout="autoHeight" // Adjust layout as needed
+                                />
+                              )}
+                            </ContextLayout.Consumer>
+                          </div>
+                        )}
+                      </CardBody>
+                    </Card>
+                  </Col>
+                </>
               )}
-            </CardBody>
-          </Card>
-        </Col>
+            </>
+          )}
+        </Row>
+
         <Modal
           isOpen={this.state.modal}
-          toggle={this.toggleModal}
+          toggle={this.LookupviewStart}
           className={this.props.className}
-          style={{ maxWidth: "1050px" }}
-        >
+          style={{ maxWidth: "1050px" }}>
+          <ModalHeader toggle={this.LookupviewStart}>Change Fileds</ModalHeader>
+          <ModalBody className="modalbodyhead">
+            <Row>
+              <Col lg="4" md="4" sm="12" xl="4" xs="12">
+                <h4>Avilable Columns</h4>
+                <div className="mainshffling">
+                  <div class="ex1">
+                    {AllcolumnDefs &&
+                      AllcolumnDefs?.map((ele, i) => {
+                        return (
+                          <>
+                            <div
+                              onClick={(e) =>
+                                this.handleChangeHeader(e, ele, i)
+                              }
+                              key={i}
+                              className="mycustomtag mt-1">
+                              <span className="mt-1">
+                                <h5
+                                  style={{ cursor: "pointer" }}
+                                  className="allfields">
+                                  <input
+                                    type="checkbox"
+                                    // checked={check && check}
+                                    className="mx-1"
+                                  />
+
+                                  {ele?.headerName}
+                                </h5>
+                              </span>
+                            </div>
+                          </>
+                        );
+                      })}
+                  </div>
+                </div>
+              </Col>
+              <Col lg="2" md="2" sm="12" xl="2" xs="12" className="colarrowbtn">
+                <div className="mainarrowbtn">
+                  <div style={{ cursor: "pointer" }}>
+                    <FaArrowAltCircleRight
+                      onClick={this.HeadingRightShift}
+                      className="arrowassign"
+                      size="30px"
+                    />
+                  </div>
+                  <div style={{ cursor: "pointer" }} className="my-2">
+                    <FaArrowAltCircleLeft
+                      onClick={this.handleLeftShift}
+                      className="arrowassign"
+                      size="30px"
+                    />
+                  </div>
+                </div>
+              </Col>
+              <Col lg="6" md="6" sm="12" xl="6" xs="12">
+                <Row>
+                  <Col lg="8" md="8" sm="12" xs="12">
+                    <h4>Visible Columns</h4>
+                    <div className="mainshffling">
+                      <div class="ex1">
+                        {SelectedcolumnDefs &&
+                          SelectedcolumnDefs?.map((ele, i) => {
+                            return (
+                              <>
+                                <div key={i} className="mycustomtag mt-1">
+                                  <span className="mt-1">
+                                    <h5
+                                      onClick={() =>
+                                        this.setState({ Arrindex: i })
+                                      }
+                                      style={{
+                                        cursor: "pointer",
+                                        backgroundColor: `${
+                                          this.state.Arrindex === i
+                                            ? "#1877f2"
+                                            : ""
+                                        }`,
+                                      }}
+                                      className="allfields">
+                                      <IoMdRemoveCircleOutline
+                                        onClick={() => {
+                                          const SelectedCols =
+                                            this.state.SelectedcolumnDefs.slice();
+                                          const delindex =
+                                            SelectedCols.findIndex(
+                                              (element) =>
+                                                element?.headerName ==
+                                                ele?.headerName
+                                            );
+
+                                          if (SelectedCols && delindex >= 0) {
+                                            const splicedElement =
+                                              SelectedCols.splice(delindex, 1); // Remove the element
+                                            // splicedElement contains the removed element, if needed
+
+                                            this.setState({
+                                              SelectedcolumnDefs: SelectedCols, // Update the state with the modified array
+                                            });
+                                          }
+                                          // const delindex =
+                                          //   SelectedCols.findIndex(
+                                          //     (element) =>
+                                          //       element?.headerName ==
+                                          //       ele?.headerName
+                                          //   );
+
+                                          // SelectedCols?.splice(delindex, 1);
+                                          // this.setState({
+                                          //   SelectedcolumnDefs: SelectedCols,
+                                          // });
+                                        }}
+                                        style={{ cursor: "pointer" }}
+                                        size="25px"
+                                        color="red"
+                                        className="mr-1"
+                                      />
+
+                                      {ele?.headerName}
+                                    </h5>
+                                  </span>
+                                </div>
+                              </>
+                            );
+                          })}
+                      </div>
+                    </div>
+                  </Col>
+                  <Col lg="4" md="4" sm="12" xs="12">
+                    <div className="updownbtn justify-content-center">
+                      <div>
+                        <BsFillArrowUpSquareFill
+                          className="arrowassign mb-1"
+                          size="30px"
+                          onClick={this.shiftElementUp}
+                        />
+                      </div>
+                      <div>
+                        <BsFillArrowDownSquareFill
+                          onClick={this.shiftElementDown}
+                          className="arrowassign"
+                          size="30px"
+                        />
+                      </div>
+                    </div>
+                  </Col>
+                </Row>
+              </Col>
+            </Row>
+            <Row>
+              <Col>
+                <div className="d-flex justify-content-center">
+                  <Button onClick={this.HandleSetVisibleField} color="primary">
+                    Submit
+                  </Button>
+                </div>
+              </Col>
+            </Row>
+          </ModalBody>
+        </Modal>
+        <Modal
+          isOpen={this.state.modalOne}
+          toggle={this.toggleModalOne}
+          className={this.props.className}
+          style={{ maxWidth: "1050px" }}>
           <ModalHeader toggle={this.toggleModalclose}>
             Download Bill
           </ModalHeader>
@@ -995,7 +3046,7 @@ class InvoiceGenerator extends React.Component {
                 ) : (
                   <>
                     <div style={{ width: "100%" }} className="">
-                      <Form onSubmit={e => this.handleSubmit(e)}>
+                      <Form onSubmit={(e) => this.handleSubmit(e)}>
                         <Row className="main div heading px-3 py-3">
                           <Col lg="6" className="mb-2">
                             <Label>SGST</Label>
@@ -1004,8 +3055,7 @@ class InvoiceGenerator extends React.Component {
                               className="form-control"
                               value={this.state.sgst}
                               onChange={this.changeHandler}
-                              name="sgst"
-                            >
+                              name="sgst">
                               <option value="not selected">--Select--</option>
                               <option value="5">5%</option>
                               <option value="9">9%</option>
@@ -1020,8 +3070,7 @@ class InvoiceGenerator extends React.Component {
                               name="cgst"
                               placeholder="Enter CGST"
                               value={this.state.cgst}
-                              onChange={this.changeHandler}
-                            >
+                              onChange={this.changeHandler}>
                               <option value="not selected">--Select--</option>
                               <option value="5">5%</option>
                               <option value="9">9%</option>
@@ -1035,8 +3084,7 @@ class InvoiceGenerator extends React.Component {
                               name="otherCharges"
                               placeholder="Enter Other Charges"
                               value={this.state.otherCharges}
-                              onChange={this.changeHandler}
-                            ></Input>
+                              onChange={this.changeHandler}></Input>
                           </Col>
                           <Col lg="6">
                             <Label className="mt-2">Delivery Charges</Label>
@@ -1045,8 +3093,7 @@ class InvoiceGenerator extends React.Component {
                               name="deliveryCharges"
                               placeholder="Enter Delivery Charges"
                               value={this.state.deliveryCharges}
-                              onChange={this.changeHandler}
-                            ></Input>
+                              onChange={this.changeHandler}></Input>
                           </Col>
                           <Col lg="6">
                             <Label className="mt-2">Discount </Label>
@@ -1055,8 +3102,7 @@ class InvoiceGenerator extends React.Component {
                               name="discount"
                               placeholder="Enter discount value"
                               value={this.state.discount}
-                              onChange={this.changeHandler}
-                            ></Input>
+                              onChange={this.changeHandler}></Input>
                           </Col>
                         </Row>
                         <Row>
@@ -1069,8 +3115,7 @@ class InvoiceGenerator extends React.Component {
                                     : false
                                 }
                                 color="primary"
-                                type="submit"
-                              >
+                                type="submit">
                                 {this.state.ButtonText}
                               </Button>
                             </div>
@@ -1092,8 +3137,7 @@ class InvoiceGenerator extends React.Component {
                         placeholder="Select Type"
                         name="logoposition"
                         value={this.state.logoposition}
-                        onChange={this.changeHandler}
-                      >
+                        onChange={this.changeHandler}>
                         <option>---Select---</option>
                         <option value="Left">Left</option>
                         <option value="right">Right</option>
@@ -1106,8 +3150,7 @@ class InvoiceGenerator extends React.Component {
                         placeholder="Select Type"
                         name="shipto"
                         value={this.state.shipto}
-                        onChange={this.changeHandler}
-                      >
+                        onChange={this.changeHandler}>
                         <option>---Select---</option>
                         <option value="Left">Left</option>
                         <option value="right">Right</option>
@@ -1128,8 +3171,7 @@ class InvoiceGenerator extends React.Component {
                         placeholder="Select Type"
                         name="Billtoposition"
                         value={this.state.Billtoposition}
-                        onChange={this.changeHandler}
-                      >
+                        onChange={this.changeHandler}>
                         <option>---Select---</option>
                         <option value="Left">Left</option>
                         <option value="right">Right</option>
@@ -1150,8 +3192,7 @@ class InvoiceGenerator extends React.Component {
                         <Button.Ripple
                           color="primary"
                           type="submit"
-                          className="mr-1 mb-1"
-                        >
+                          className="mr-1 mb-1">
                           Submit
                         </Button.Ripple>
                       </div>
@@ -1162,7 +3203,7 @@ class InvoiceGenerator extends React.Component {
             )}
           </ModalBody>
         </Modal>
-      </Row>
+      </>
     );
   }
 }

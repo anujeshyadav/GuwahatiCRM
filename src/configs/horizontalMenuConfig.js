@@ -502,8 +502,8 @@ const horizontalMenuConfig = [
       //   navLink: "/app/softNumen/transporter/TransporterList",
       // },
       {
-        id: "Receipt and payment customized",
-        title: "Receipt and Payment Customized",
+        id: "Receipt and payment customise",
+        title: "Receipt/Payment Customise",
         type: "item",
         icon: <FaCircle size={8} />,
         permissions: ["admin", "editor"],

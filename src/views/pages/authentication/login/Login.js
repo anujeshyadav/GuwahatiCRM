@@ -31,6 +31,7 @@ import swal from "sweetalert";
 import axiosConfig from "../../../../axiosConfig";
 import { UserLogin, UserOTPVerify } from "../../../../ApiEndPoint/ApiCalling";
 import { AiFillEye, AiFillEyeInvisible } from "react-icons/ai";
+import axios from "axios";
 
 class Login extends React.Component {
   static contextType = UserContext;
@@ -40,7 +41,7 @@ class Login extends React.Component {
     this.state = {
       email: "",
       Otp: "",
-      Location: {latitude:"",longitude:"",timestamp:""},
+      Location: { latitude: "", longitude: "", timestamp: "" },
       Error: "",
       Otp: "",
       emailotp: "",
@@ -64,7 +65,7 @@ class Login extends React.Component {
     };
     window.addEventListener("popstate", this.popstateHandler);
   }
-  handlechange = e => {
+  handlechange = (e) => {
     e.preventDefault();
     this.setState({ [e.target.name]: e.target.value });
   };
@@ -74,13 +75,13 @@ class Login extends React.Component {
   allowBackButton() {
     window.removeEventListener("popstate", this.popstateHandler);
   }
-  loginOTPHandler = async e => {
+  loginOTPHandler = async (e) => {
     e.preventDefault();
     if (this.state.emailotp?.length == 6) {
       let Opt = { otp: this.state.emailotp, username: this.state.email };
 
       await UserOTPVerify(Opt)
-        .then(response => {
+        .then((response) => {
           let basicinfor = response?.user;
           let newinfor = response?.user?.user1;
           let allinfor = { ...basicinfor, ...newinfor };
@@ -92,7 +93,7 @@ class Login extends React.Component {
               "userToken",
               JSON.stringify(response?.user?.token)
             );
-            
+
             setTimeout(() => {
               this.props.history.push("/dashboard");
             }, 1500);
@@ -105,7 +106,7 @@ class Login extends React.Component {
                   ok: { text: "Ok", value: "ok" },
                 },
               }
-            ).then(value => {
+            ).then((value) => {
               switch (value) {
                 case "ok":
                   break;
@@ -116,7 +117,7 @@ class Login extends React.Component {
             swal("Something Went Wrong");
           }
         })
-        .catch(err => {
+        .catch((err) => {
           console.log(err.response);
           swal(
             `Error`,
@@ -137,96 +138,112 @@ class Login extends React.Component {
       // });
     }
   };
-     handleUserLocation=()=>{
-   if (navigator.geolocation) {
-     navigator.geolocation.getCurrentPosition(
-       (position) => {
-        const date = new Date(position.timestamp);
-        let CurentTime = date.toLocaleString();
-        console.log(CurentTime);
-        //  console.log(
-        //    position.coords.latitude,
-        //    position.coords.longitude,
-        //    position.timestamp
-        //  );
-         this.state.Location.latitude = position.coords.latitude;
-         this.state.Location.longitude = position.coords.longitude;
-         this.state.Location.timestamp = CurentTime;
-           
-       },
-       (error) => {
-         this.setState({ Error: `Error: ${error.message}` });
-       }
-     );
-   } else {
-     this.setState({
-       Error: "Geolocation is not supported by this browser.",
-     });
-   }
-   }
-  loginHandler = async e => {
+  handleUserLocation = () => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const date = new Date(position.timestamp);
+          let CurentTime = date.toLocaleString();
+          // console.log(CurentTimes
+          // debugger;
+          this.state.Location.latitude = position.coords.latitude;
+          this.state.Location.longitude = position.coords.longitude;
+          this.state.Location.timestamp = CurentTime;
+        },
+        (error) => {
+          this.setState({ Error: `Error: ${error.message}` });
+        },
+        { timeout: 10000, enableHighAccuracy: true }
+      );
+    } else {
+      this.setState({
+        Error: "Geolocation is not supported by this browser.",
+      });
+    }
+  };
+  loginHandler = async (e) => {
     e.preventDefault();
     // await this.handleUserLocation();
     // this.props.history.push("/dashboard");
-    let data = { email: this.state.email, password: this.state.password };
-    console.log(this.state.Location)
-    // if(this.state.Location.latitude && this.state.latitude){
 
-    // }
-    await UserLogin(data)
-      .then((res) => {
-        let basicinfor = res?.user;
-        localStorage.setItem("userData", JSON.stringify(basicinfor));
-        this.context?.setUserInformatio(basicinfor);
-       
-        swal(
-          "Sucessfully login",
-          "You are LoggedIn!",
-          "Success",
+    console.log(this.state.Location);
+    if (this.state.Location.latitude && this.state.Location?.longitude) {
+      try {
+        const apiUrl = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${this.state.Location.latitude}&lon=${this.state.Location?.longitude}`;
+        const response = await axios.get(apiUrl);
+        // console.log(response);
+        if (response.data.display_name) {
+          // setAddress(response.data.display_name);
+          let data = {
+            email: this.state.email,
+            password: this.state.password,
+            latitude: this.state.Location.latitude,
+            longitude: this.state.Location?.longitude,
+            currentAddress: response.data.display_name,
+          };
+          await UserLogin(data)
+            .then((res) => {
+              let basicinfor = res?.user;
+              localStorage.setItem("userData", JSON.stringify(basicinfor));
+              this.context?.setUserInformatio(basicinfor);
 
-          {
-            buttons: {
-              ok: { text: "Ok", value: "ok" },
-            },
-          }
-        ).then((value) => {
-          switch (value) {
-            case "ok":
-              break;
-            default:
-          }
-        });
-        setTimeout(() => {
-          this.props.history.push("/dashboard");
-        }, 2000);
-      })
-      .catch((err) => {
-        console.log(err.response?.data.message);
+              swal(
+                "Sucessfully login",
+                "You are LoggedIn!",
+                "Success",
 
-        if (err.response?.data.message == "Incorrect password") {
-          swal({
-            title: "Some Error Occurred",
-            text: `Incorrect Password`,
-            icon: "warning",
-            dangerMode: false,
-          });
-        } else if (err.response?.data.message == "Incorrect Email") {
-          // swal("Error", "Please Enter Correct Password");
-          swal({
-            title: "Some Error Occurred",
-            text: `Incorrect Email`,
-            icon: "warning",
-            dangerMode: false,
-          });
+                {
+                  buttons: {
+                    ok: { text: "Ok", value: "ok" },
+                  },
+                }
+              ).then((value) => {
+                switch (value) {
+                  case "ok":
+                    break;
+                  default:
+                }
+              });
+              setTimeout(() => {
+                this.props.history.push("/dashboard");
+              }, 2000);
+            })
+            .catch((err) => {
+              console.log(err.response?.data.message);
+
+              if (err.response?.data.message == "Incorrect password") {
+                swal({
+                  title: "Some Error Occurred",
+                  text: `Incorrect Password`,
+                  icon: "warning",
+                  dangerMode: false,
+                });
+              } else if (err.response?.data.message == "Incorrect Email") {
+                // swal("Error", "Please Enter Correct Password");
+                swal({
+                  title: "Some Error Occurred",
+                  text: `Incorrect Email`,
+                  icon: "warning",
+                  dangerMode: false,
+                });
+              } else {
+                swal({
+                  title: "Please Enter Correct Username",
+                  text: `Incorrect username`,
+                  icon: "warning",
+                  dangerMode: false,
+                });
+              }
+            });
         } else {
-          swal({
-            title: "Please Enter Correct Username",
-            text: `Incorrect username`,
-            icon: "warning",
-            dangerMode: false,
-          });
+          // setAddress("No address found");
         }
-      });
+      } catch (error) {
+        console.error("Error fetching geo-Location data:", error);
+      }
+    } else {
+      swal("Please Give Persmission of your Current Location");
+    }
 
     // const fromdata = new FormData();
     // fromdata.append("username", this.state.email);
@@ -266,19 +283,19 @@ class Login extends React.Component {
     //     }
     //   });
   };
-  changepassword = e => {
+  changepassword = (e) => {
     e.preventDefault();
     let formdata = new FormData();
     formdata.append("email", this.state.email);
     formdata.append("base_url", "this.state.password");
     axiosConfig
       .post("/forgetPasswordEmailVerify", formdata)
-      .then(res => {
+      .then((res) => {
         console.log(res);
         this.setState({ resetpassword: false });
         swal("Email has been sent to Your Mail id", "Please Check and verify");
       })
-      .catch(err => {
+      .catch((err) => {
         console.log(err);
       });
   };

@@ -121,205 +121,197 @@ class PromotionalActivityList extends React.Component {
       .catch((err) => {
         console.log(err);
       });
-    await CreateAccountView()
-      .then((res) => {
-        var mydropdownArray = [];
-        var adddropdown = [];
-        const jsonData = xmlJs.xml2json(res.data, { compact: true, spaces: 2 });
-        console.log(JSON.parse(jsonData)?.CreateUser);
+    // await CreateAccountView()
+    //   .then((res) => {
+    //     var mydropdownArray = [];
+    //     var adddropdown = [];
+    //     const jsonData = xmlJs.xml2json(res.data, { compact: true, spaces: 2 });
+    //     console.log(JSON.parse(jsonData)?.CreateUser);
 
-        const inputs = JSON.parse(jsonData)?.CreateUser?.input?.map((ele) => {
-          return {
-            headerName: ele?.label._text,
-            field: ele?.name._text,
-            filter: true,
-            sortable: true,
-          };
-        });
-        // let Radioinput =
-        //   JSON.parse(jsonData).CreateAccount?.Radiobutton?.input[0]?.name
-        //     ?._text;
-        // const addRadio = [
-        //   {
-        //     headerName: Radioinput,
-        //     field: Radioinput,
-        //     filter: true,
-        //     sortable: true,
-        //     cellRendererFramework: (params) => {
-        //       return params.data?.Status === "Active" ? (
-        //         <div className="badge badge-pill badge-success">
-        //           {params.data.Status}
-        //         </div>
-        //       ) : params.data?.Status === "Deactive" ? (
-        //         <div className="badge badge-pill badge-warning">
-        //           {params.data.Status}
-        //         </div>
-        //       ) : (
-        //         "NA"
-        //       );
-        //     },
-        //   },
-        // ];
+    //     const inputs = JSON.parse(jsonData)?.CreateUser?.input?.map((ele) => {
+    //       return {
+    //         headerName: ele?.label._text,
+    //         field: ele?.name._text,
+    //         filter: true,
+    //         sortable: true,
+    //       };
+    //     });
+    //     // let Radioinput =
+    //     //   JSON.parse(jsonData).CreateAccount?.Radiobutton?.input[0]?.name
+    //     //     ?._text;
+    //     // const addRadio = [
+    //     //   {
+    //     //     headerName: Radioinput,
+    //     //     field: Radioinput,
+    //     //     filter: true,
+    //     //     sortable: true,
+    //     //     cellRendererFramework: (params) => {
+    //     //       return params.data?.Status === "Active" ? (
+    //     //         <div className="badge badge-pill badge-success">
+    //     //           {params.data.Status}
+    //     //         </div>
+    //     //       ) : params.data?.Status === "Deactive" ? (
+    //     //         <div className="badge badge-pill badge-warning">
+    //     //           {params.data.Status}
+    //     //         </div>
+    //     //       ) : (
+    //     //         "NA"
+    //     //       );
+    //     //     },
+    //     //   },
+    //     // ];
 
-        // let dropdown = JSON.parse(jsonData).CreateAccount?.MyDropdown?.dropdown;
-        // if (dropdown.length) {
-        //   var mydropdownArray = dropdown?.map((ele) => {
-        //     return {
-        //       headerName: ele?.label,
-        //       field: ele?.name,
-        //       filter: true,
-        //       sortable: true,
-        //     };
-        //   });
-        // } else {
-        //   var adddropdown = [
-        //     {
-        //       headerName: dropdown?.label._text,
-        //       field: dropdown?.name._text,
-        //       filter: true,
-        //       sortable: true,
-        //     },
-        //   ];
-        // }
+    //     // let dropdown = JSON.parse(jsonData).CreateAccount?.MyDropdown?.dropdown;
+    //     // if (dropdown.length) {
+    //     //   var mydropdownArray = dropdown?.map((ele) => {
+    //     //     return {
+    //     //       headerName: ele?.label,
+    //     //       field: ele?.name,
+    //     //       filter: true,
+    //     //       sortable: true,
+    //     //     };
+    //     //   });
+    //     // } else {
+    //     //   var adddropdown = [
+    //     //     {
+    //     //       headerName: dropdown?.label._text,
+    //     //       field: dropdown?.name._text,
+    //     //       filter: true,
+    //     //       sortable: true,
+    //     //     },
+    //     //   ];
+    //     // }
 
-        let myHeadings = [
-          // ...checkboxinput,
-          ...inputs,
-          // ...adddropdown,
-          // ...addRadio,
-          // ...mydropdownArray,
-        ];
-        // console.log(myHeadings);
-        let Product = [
-          {
-            headerName: "Actions",
-            field: "sortorder",
-            field: "transactions",
-            width: 190,
-            cellRendererFramework: (params) => {
-              return (
-                <div className="actions cursor-pointer">
-                  <Route
-                    render={({ history }) => (
-                      <Eye
-                        className="mr-50"
-                        size="25px"
-                        color="green"
-                        onClick={() => {
-                          this.handleChangeEdit(params.data, "readonly");
-                        }}
-                      />
-                    )}
-                  />
-                  <Route
-                    render={({ history }) => (
-                      <Edit
-                        className="mr-50"
-                        size="25px"
-                        color="blue"
-                        onClick={() => {
-                          this.handleChangeEdit(params.data, "Editable");
-                        }}
-                      />
-                    )}
-                  />
+    //     let myHeadings = [
+    //       // ...checkboxinput,
+    //       ...inputs,
+    //       // ...adddropdown,
+    //       // ...addRadio,
+    //       // ...mydropdownArray,
+    //     ];
+    //     // console.log(myHeadings);
+    //     let Product = [
+    //       {
+    //         headerName: "Actions",
+    //         field: "sortorder",
+    //         field: "transactions",
+    //         width: 190,
+    //         cellRendererFramework: (params) => {
+    //           return (
+    //             <div className="actions cursor-pointer">
+    //               <Route
+    //                 render={({ history }) => (
+    //                   <Eye
+    //                     className="mr-50"
+    //                     size="25px"
+    //                     color="green"
+    //                     onClick={() => {
+    //                       this.handleChangeEdit(params.data, "readonly");
+    //                     }}
+    //                   />
+    //                 )}
+    //               />
+    //               <Route
+    //                 render={({ history }) => (
+    //                   <Edit
+    //                     className="mr-50"
+    //                     size="25px"
+    //                     color="blue"
+    //                     onClick={() => {
+    //                       this.handleChangeEdit(params.data, "Editable");
+    //                     }}
+    //                   />
+    //                 )}
+    //               />
 
-                  <Route
-                    render={() => (
-                      <Trash2
-                        className="mr-50"
-                        size="25px"
-                        color="red"
-                        onClick={() => {
-                          this.runthisfunction(params?.data?._id);
-                        }}
-                      />
-                    )}
-                  />
-                </div>
-              );
-            },
-          },
-          {
-            headerName: "Status",
-            field: "status",
-            filter: true,
-            width: 150,
-            cellRendererFramework: (params) => {
-              return params.data?.status === "Active" ? (
-                <div className="badge badge-pill badge-success">
-                  {params.data?.status}
-                </div>
-              ) : params.data?.status === "Deactive" ? (
-                <div className="badge badge-pill badge-warning">
-                  {params.data?.status}
-                </div>
-              ) : null;
-            },
-          },
+    //               <Route
+    //                 render={() => (
+    //                   <Trash2
+    //                     className="mr-50"
+    //                     size="25px"
+    //                     color="red"
+    //                     onClick={() => {
+    //                       this.runthisfunction(params?.data?._id);
+    //                     }}
+    //                   />
+    //                 )}
+    //               />
+    //             </div>
+    //           );
+    //         },
+    //       },
+    //       {
+    //         headerName: "Status",
+    //         field: "status",
+    //         filter: true,
+    //         width: 150,
+    //         cellRendererFramework: (params) => {
+    //           return params.data?.status === "Active" ? (
+    //             <div className="badge badge-pill badge-success">
+    //               {params.data?.status}
+    //             </div>
+    //           ) : params.data?.status === "Deactive" ? (
+    //             <div className="badge badge-pill badge-warning">
+    //               {params.data?.status}
+    //             </div>
+    //           ) : null;
+    //         },
+    //       },
 
-          ...myHeadings,
-          {
-            headerName: "Created date",
-            field: "createdAt",
-            filter: true,
-            sortable: true,
-            cellRendererFramework: (params) => {
-              return (
-                <>
-                  <div className="actions cursor-pointer">
-                    <span>{params?.data?.createdAt}</span>
-                  </div>
-                </>
-              );
-            },
-          },
-          {
-            headerName: "Updated date",
-            field: "updatedAt",
-            filter: true,
-            sortable: true,
-            cellRendererFramework: (params) => {
-              return (
-                <>
-                  <div className="actions cursor-pointer">
-                    <div className="actions cursor-pointer">
-                      <span>{params?.data?.createdAt}</span>
-                    </div>
-                  </div>
-                </>
-              );
-            },
-          },
-        ];
+    //       ...myHeadings,
+    //       {
+    //         headerName: "Created date",
+    //         field: "createdAt",
+    //         filter: true,
+    //         sortable: true,
+    //         cellRendererFramework: (params) => {
+    //           return (
+    //             <>
+    //               <div className="actions cursor-pointer">
+    //                 <span>{params?.data?.createdAt}</span>
+    //               </div>
+    //             </>
+    //           );
+    //         },
+    //       },
+    //       {
+    //         headerName: "Updated date",
+    //         field: "updatedAt",
+    //         filter: true,
+    //         sortable: true,
+    //         cellRendererFramework: (params) => {
+    //           return (
+    //             <>
+    //               <div className="actions cursor-pointer">
+    //                 <div className="actions cursor-pointer">
+    //                   <span>{params?.data?.createdAt}</span>
+    //                 </div>
+    //               </div>
+    //             </>
+    //           );
+    //         },
+    //       },
+    //     ];
 
-        this.setState({ AllcolumnDefs: Product });
+    //     this.setState({ AllcolumnDefs: Product });
 
-        let userHeading = JSON.parse(
-          localStorage.getItem("PromotionalActivity")
-        );
-        if (userHeading?.length) {
-          this.setState({ columnDefs: userHeading });
-          this.gridApi.setColumnDefs(userHeading);
-          this.setState({ SelectedcolumnDefs: userHeading });
-        } else {
-          this.setState({ columnDefs: Product });
-          this.setState({ SelectedcolumnDefs: Product });
-        }
-        this.setState({ SelectedCols: Product });
-      })
-      .catch((err) => {
-        console.log(err);
-        swal("Error", "something went wrong try again");
-      });
-    await CreateAccountList()
-      .then((res) => {
-        let value = res?.User;
-        this.setState({ rowData: value });
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+    //     let userHeading = JSON.parse(
+    //       localStorage.getItem("PromotionalActivity")
+    //     );
+    //     if (userHeading?.length) {
+    //       this.setState({ columnDefs: userHeading });
+    //       this.gridApi.setColumnDefs(userHeading);
+    //       this.setState({ SelectedcolumnDefs: userHeading });
+    //     } else {
+    //       this.setState({ columnDefs: Product });
+    //       this.setState({ SelectedcolumnDefs: Product });
+    //     }
+    //     this.setState({ SelectedCols: Product });
+    //   })
+    //   .catch((err) => {
+    //     console.log(err);
+    //     swal("Error", "something went wrong try again");
+    //   });
   }
   toggleDropdown = () => {
     this.setState((prevState) => ({ isOpen: !prevState.isOpen }));
@@ -551,7 +543,7 @@ class PromotionalActivityList extends React.Component {
 
   HandleSetVisibleField = (e) => {
     e.preventDefault();
-    debugger;
+
     this.gridApi.setColumnDefs(this.state.SelectedcolumnDefs);
     this.setState({ columnDefs: this.state.SelectedcolumnDefs });
     this.setState({ SelectedcolumnDefs: this.state.SelectedcolumnDefs });
@@ -587,12 +579,188 @@ class PromotionalActivityList extends React.Component {
     }
   };
   handleFilter = (e) => {
+    let headings;
+    let maxKeys = 0;
+    let elementWithMaxKeys = null;
+    let AllMainData = [];
     console.log(this.state.AllData);
     if (e.target.value !== "NA") {
       let myarr = this.state.AllData?.filter(
-        (ele, i) => ele[e.target.value].length
+        (ele, i) => ele[e.target.value]?.length
       );
+      // console.log(myarr);
+      let mydata = myarr?.map((ele, i) => {
+        AllMainData?.push(ele[e.target.value]);
+      });
+      console.log(AllMainData.flat());
+      let flatarr = AllMainData?.flat();
 
+      for (const element of flatarr) {
+        const numKeys = Object.keys(element).length; // Get the number of keys in the current element
+        if (numKeys > maxKeys) {
+          maxKeys = numKeys; // Update the maximum number of keys
+          elementWithMaxKeys = element; // Update the element with maximum keys
+        }
+      }
+      let findheading = Object.keys(elementWithMaxKeys);
+      let index = findheading.indexOf("_id");
+      if (index > -1) {
+        findheading.splice(index, 1);
+      }
+      let index1 = findheading.indexOf("status");
+      if (index1 > -1) {
+        findheading.splice(index1, 1);
+      }
+      // if(findheading.indexOf("productId")){
+
+        let index2 = findheading.indexOf("productId");
+        if (index2 > -1) {
+          findheading.splice(index2, 1);
+        }
+      // }
+      headings = findheading?.map((ele) => {
+        if (ele == "freeOtherProducts") {
+          return {
+            headerName: "freeOtherProducts",
+            field: "freeOtherProducts",
+            filter: true,
+            width: 180,
+            cellRendererFramework: (params) => {
+              return (
+                <>
+                  <div className="d-flex justify-content-center">
+                    <span>
+                      {params.data?.freeOtherProducts?.length} Product
+                    </span>
+                  </div>
+                </>
+              );
+            },
+          };
+        }
+        return {
+          headerName: ele,
+          field: ele,
+          filter: true,
+          sortable: true,
+        };
+      });
+      let myHeadings = [...headings];
+
+      console.log(headings);
+      let Product = [
+        {
+          headerName: "Actions",
+          field: "sortorder",
+          field: "transactions",
+          width: 190,
+          cellRendererFramework: (params) => {
+            return (
+              <div className="actions cursor-pointer">
+                <Route
+                  render={({ history }) => (
+                    <Eye
+                      className="mr-50"
+                      size="25px"
+                      color="green"
+                      onClick={() => {
+                        //   this.handleChangeEdit(params.data, "readonly");
+                      }}
+                    />
+                  )}
+                />
+                <Route
+                  render={({ history }) => (
+                    <Edit
+                      className="mr-50"
+                      size="25px"
+                      color="blue"
+                      onClick={() => {
+                        //   this.handleChangeEdit(params.data, "Editable");
+                      }}
+                    />
+                  )}
+                />
+
+                <Route
+                  render={() => (
+                    <Trash2
+                      className="mr-50"
+                      size="25px"
+                      color="red"
+                      onClick={() => {
+                        this.runthisfunction(params?.data?._id);
+                      }}
+                    />
+                  )}
+                />
+              </div>
+            );
+          },
+        },
+
+        ...myHeadings,
+         {
+            headerName: "Status",
+            field: "status",
+            filter: true,
+            width: 150,
+            cellRendererFramework: (params) => {
+              return params.data?.status === "Active" ? (
+                <div className="badge badge-pill badge-success">
+                  {params.data?.status}
+                </div>
+              ) : params.data?.status === "Deactive" ? (
+                <div className="badge badge-pill badge-warning">
+                  {params.data?.status}
+                </div>
+              ) : null;
+            },
+          },
+        // {
+        //   headerName: "Created date",
+        //   field: "createdAt",
+        //   filter: true,
+        //   sortable: true,
+        //   cellRendererFramework: (params) => {
+        //     return (
+        //       <>
+        //         <div className="actions cursor-pointer"></div>
+        //       </>
+        //     );
+        //   },
+        // },
+        // {
+        //   headerName: "Updated date",
+        //   field: "updatedAt",
+        //   filter: true,
+        //   sortable: true,
+        //   cellRendererFramework: (params) => {
+        //     return (
+        //       <>
+        //         <div className="actions cursor-pointer"></div>
+        //       </>
+        //     );
+        //   },
+        // },
+      ];
+      if (flatarr) {
+        this.setState({ rowData: flatarr });
+      } else {
+        swal("No Data Found");
+      }
+      this.setState({ AllcolumnDefs: Product });
+
+      let userHeading = JSON.parse(localStorage.getItem("PromotionalActivity"));
+      if (userHeading?.length) {
+        this.setState({ columnDefs: userHeading });
+        this.gridApi.setColumnDefs(userHeading);
+        this.setState({ SelectedcolumnDefs: userHeading });
+      } else {
+        this.setState({ columnDefs: Product });
+        this.setState({ SelectedcolumnDefs: Product });
+      }
+      this.setState({ SelectedCols: Product });
       if (myarr.length) {
         this.setState({ Table: true });
       } else {
@@ -671,31 +839,7 @@ class PromotionalActivityList extends React.Component {
                             name="typeofpromotion"
                             className="float-right"
                             onChange={(e) => this.handleFilter(e)}
-                            // onChange={(e) => {
-                            //   if (e.target.value !== "") {
-                            //     console.log(e.target.value);
-                            //     console.log(this.state.AllData);
-                            //     let SelectedList = this.state.AllData?.map(
-                            //       (ele, i) => {
-                            //         if (ele[e.target.value] == e.target.value) {
-                            //           if (ele[e.target.value]?.length) {
-                            //             debugger;
-                            //             console.log(ele[e.target.value]);
-                            //             console.log(ele[e.target.value]);
-                            //             // return ele[e.target.value];
-                            //           }
-                            //         }
-                            //       }
-                            //     );
-                            //     console.log(SelectedList);
-                            //     this.setState({
-                            //       TableFilterValue: e.target.value,
-                            //     });
-                            //     this.setState({ Table: true });
-                            //   } else {
-                            //     this.setState({ Table: false });
-                            //   }
-                            // }}
+                            
                           >
                             <option value="NA">
                               --Select Promotion Type--

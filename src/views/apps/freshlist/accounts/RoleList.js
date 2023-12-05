@@ -157,7 +157,7 @@ class RoleList extends React.Component {
     //   .then((res) => {
     //     var mydropdownArray = [];
     //     var adddropdown = [];
-    //     const jsonData = xmlJs.xml2json(res.data, { compact: true, spaces: 2 });
+    //     const jsonData = xmlJs.xml2json(res.data, { compact: true, spaces: 1 });
     //     console.log(JSON.parse(jsonData));
     //     // const checkboxinput = JSON.parse(
     //     //   jsonData
@@ -440,13 +440,27 @@ class RoleList extends React.Component {
                   render={({ history }) => (
                     <Badge
                       style={{ cursor: "pointer" }}
-                      className=" float-right"
+                      className=" float-right mr-2"
                       color="primary"
                       onClick={() =>
                         history.push("/app/freshlist/account/addRoleNew")
-                      }
-                    >
+                      }>
                       <FaPlus size={15} /> Create Role
+                    </Badge>
+                  )}
+                />
+              </Col>
+              <Col lg="1" sm="1" md="1" ms="12">
+                <Route
+                  render={({ history }) => (
+                    <Badge
+                      style={{ cursor: "pointer" }}
+                      className=" float-right"
+                      color="primary"
+                      onClick={() =>
+                        history.push("/app/freshlist/account/CreateHeirarchy")
+                      }>
+                      <FaPlus size={15} /> Create Hierarchy
                     </Badge>
                   )}
                 />
@@ -454,7 +468,7 @@ class RoleList extends React.Component {
             </Row>
             <CardBody>
               {this.state.rowData === null ? null : (
-                <div className="ag-theme-material w-100 my-2 ag-grid-table">
+                <div className="ag-theme-material w-100 my-1 ag-grid-table">
                   <div className="d-flex flex-wrap justify-content-between align-items-center">
                     <div className="mb-1">
                       <UncontrolledDropdown className="p-1 ag-dropdown">
@@ -475,26 +489,22 @@ class RoleList extends React.Component {
                         <DropdownMenu right>
                           <DropdownItem
                             tag="div"
-                            onClick={() => this.filterSize(20)}
-                          >
+                            onClick={() => this.filterSize(20)}>
                             20
                           </DropdownItem>
                           <DropdownItem
                             tag="div"
-                            onClick={() => this.filterSize(50)}
-                          >
+                            onClick={() => this.filterSize(50)}>
                             50
                           </DropdownItem>
                           <DropdownItem
                             tag="div"
-                            onClick={() => this.filterSize(100)}
-                          >
+                            onClick={() => this.filterSize(100)}>
                             100
                           </DropdownItem>
                           <DropdownItem
                             tag="div"
-                            onClick={() => this.filterSize(134)}
-                          >
+                            onClick={() => this.filterSize(134)}>
                             134
                           </DropdownItem>
                         </DropdownMenu>
