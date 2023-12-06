@@ -20,27 +20,17 @@ import { Country, State, City } from "country-state-city";
 import Select from "react-select";
 import moment from "moment-timezone";
 import { Route } from "react-router-dom";
-import createSalesManager from "../../../../xmlfiles/CreateSalesManager";
 
 import swal from "sweetalert";
 import "../../../../../src/layouts/assets/scss/pages/users.scss";
 
 import {
-  CreateAccountSave,
-  CreateAccountView,
-  CreateCustomersave,
-  CreateCustomerxmlView,
-  CreateMySalesManager,
   GoodDispatchxmlView,
-  Create_Salesmanagersave,
+  Save_GoodDispatch,
 } from "../../../../ApiEndPoint/ApiCalling";
-import { BiEnvelope } from "react-icons/bi";
-import { FcPhoneAndroid } from "react-icons/fc";
-import { BsWhatsapp } from "react-icons/bs";
+
 import "../../../../assets/scss/pages/users.scss";
 import UserContext from "../../../../context/Context";
-import { CloudLightning } from "react-feather";
-import { FaPlus } from "react-icons/fa";
 
 const CreateDispach = () => {
   const [CreatAccountView, setCreatAccountView] = useState([]);
@@ -48,7 +38,6 @@ const CreateDispach = () => {
   const [States, setState] = useState({});
   const [Cities, setCities] = useState({});
   const [formData, setFormData] = useState({});
-  const [dropdownValue, setdropdownValue] = useState({});
   const [index, setindex] = useState("");
   const [error, setError] = useState("");
   const [permissions, setpermissions] = useState({});
@@ -101,7 +90,6 @@ const CreateDispach = () => {
             ...formData,
             [name]: value,
           });
-          // console.log(value);
           setError("");
         } else {
           setFormData({
@@ -120,13 +108,9 @@ const CreateDispach = () => {
     GoodDispatchxmlView()
       .then(res => {
         const jsonData = xmlJs.xml2json(res.data, { compact: true, spaces: 2 });
-        console.log(JSON.parse(jsonData));
-        console.log(JSON.parse(jsonData)?.GoodDispatch);
+        // console.log(JSON.parse(jsonData));
+        // console.log(JSON.parse(jsonData)?.GoodDispatch);
         setCreatAccountView(JSON.parse(jsonData)?.GoodDispatch?.input);
-
-        setdropdownValue(
-          JSON.parse(jsonData)?.GoodDispatch?.MyDropDown?.dropdown
-        );
       })
       .catch(err => {
         console.log(err);
@@ -136,42 +120,36 @@ const CreateDispach = () => {
 
   const submitHandler = e => {
     e.preventDefault();
-    // console.log(CreatAccountView);
-    // console.log(dropdownValue);
-    // let formdata = new FormData();
-    // CreatAccountView?.map((ele, i) => {
-    //   if (ele?.type?._attributes?.type == "text") {
-    //     formdata.append(`${ele?.name._text}`, formData[ele?.name?._text]);
-    //   } else if (ele?.type?._attributes?.type == "file") {
-    //     if (ele?.name?._text == "Shopphoto") {
-    //       formData[ele?.name?._text]?.map((val, index) => {
-    //         formdata.append("file", formData[ele?.name?._text][index]);
-    //       });
-    //     }
-    //     if (ele?.name?._text == "photo") {
-    //       formData[ele?.name?._text]?.map((val, index) => {
-    //         formdata.append("files", formData[ele?.name?._text][index]);
-    //       });
-    //     }
-    //   }
-    // });
-    // formdata.append(
-    //   `${dropdownValue?.name?._text}`,
-    //   formData[dropdownValue?.name?._text]
-    // );
-    // formdata.forEach((value, key) => {
-    //   console.log(key, value);
-    // });
+    let formdata = new FormData();
+    CreatAccountView?.map((ele, i) => {
+      console.log(ele);
+
+      if (ele?.type?._attributes?.type == "text") {
+        formdata.append(`${ele?.name._text}`, formData[ele?.name?._text]);
+      } else if (ele?.type?._attributes?.type == "file") {
+        if (ele?.name?._text == "CNUpload") {
+          formData.append("files", formData?.CNUpload[0]);
+        }
+        if (ele?.name?._text == "FetchSalesInvoice") {
+          formData.append("invoice", formData?.FetchSalesInvoice[0]);
+        }
+      }
+    });
+
+    formdata.append("status", formData.status);
+    formdata.forEach((value, key) => {
+      console.log(key, value);
+    });
     if (error) {
       swal("Error occured while Entering Details");
     } else {
-      Create_Salesmanagersave(formData)
+      Save_GoodDispatch(formData)
         .then(res => {
           console.log(res);
           // setFormData({});
           if (res.status) {
             // window.location.reload();
-            swal("SalesManager Created Successfully");
+            swal("Good Dispatch Created Successfully");
           }
         })
         .catch(err => {
@@ -196,14 +174,9 @@ const CreateDispach = () => {
                       style={{ cursor: "pointer" }}
                       className="float-right mr-1"
                       color="primary"
-                      onClick={
-                        () => history.goBack()
-                        // history.push("/app/SoftNumen/CreateSalesManager")
-                      }
+                      onClick={() => history.goBack()}
                     >
-                      {" "}
                       Back
-                      {/* <FaPlus size={15} /> Create User */}
                     </Button>
                   )}
                 />
@@ -215,33 +188,6 @@ const CreateDispach = () => {
           <CardBody>
             <Form className="m-1" onSubmit={submitHandler}>
               <Row className="mb-2">
-                {dropdownValue && (
-                  <Col lg="4" md="4" sm="12">
-                    <FormGroup>
-                      <Label className="mb-1">
-                        {dropdownValue && dropdownValue?.label?._text}
-                      </Label>
-                      <CustomInput
-                        required
-                        type="select"
-                        name={dropdownValue && dropdownValue?.name?._text}
-                        value={formData[dropdownValue?.name?._text]}
-                        onChange={handleInputChange}
-                      >
-                        <option value="">--Select --</option>
-                        {dropdownValue?.option?.map((option, index) => (
-                          <option
-                            key={index}
-                            value={option?._attributes?.value}
-                          >
-                            {option?._attributes?.value}
-                          </option>
-                        ))}
-                      </CustomInput>
-                    </FormGroup>
-                  </Col>
-                )}
-
                 {CreatAccountView &&
                   CreatAccountView?.map((ele, i) => {
                     if (!!ele?.phoneinput) {
@@ -313,87 +259,6 @@ const CreateDispach = () => {
                                   setFormData({
                                     ...formData,
                                     ["Country"]: country?.name,
-                                  });
-                                }}
-                              />
-                              {index === i ? (
-                                <>
-                                  {error && (
-                                    <span style={{ color: "red" }}>
-                                      {error}
-                                    </span>
-                                  )}
-                                </>
-                              ) : (
-                                <></>
-                              )}
-                            </FormGroup>
-                          </Col>
-                        );
-                      } else if (ele?.label._text?.includes("tate")) {
-                        return (
-                          <Col key={i} lg="3" md="3" sm="12">
-                            <FormGroup>
-                              <Label className="mb-1">
-                                {ele?.label?._text}
-                              </Label>
-                              <Select
-                                options={State?.getStatesOfCountry(
-                                  Countries?.isoCode
-                                )}
-                                getOptionLabel={options => {
-                                  return options["name"];
-                                }}
-                                getOptionValue={options => {
-                                  return options["name"];
-                                }}
-                                value={States}
-                                onChange={State => {
-                                  setState(State);
-                                  setFormData({
-                                    ...formData,
-                                    ["State"]: State?.name,
-                                  });
-                                }}
-                              />
-                              {index === i ? (
-                                <>
-                                  {error && (
-                                    <span style={{ color: "red" }}>
-                                      {error}
-                                    </span>
-                                  )}
-                                </>
-                              ) : (
-                                <></>
-                              )}
-                            </FormGroup>
-                          </Col>
-                        );
-                      } else if (ele?.label._text?.includes("ity")) {
-                        return (
-                          <Col key={i} lg="3" md="3" sm="12">
-                            <FormGroup>
-                              <Label className="mb-1">
-                                {ele?.label?._text}
-                              </Label>
-                              <Select
-                                options={City?.getCitiesOfState(
-                                  States?.countryCode,
-                                  States?.isoCode
-                                )}
-                                getOptionLabel={options => {
-                                  return options["name"];
-                                }}
-                                getOptionValue={options => {
-                                  return options["name"];
-                                }}
-                                value={Cities}
-                                onChange={City => {
-                                  setCities(City);
-                                  setFormData({
-                                    ...formData,
-                                    ["City"]: City?.name,
                                   });
                                 }}
                               />

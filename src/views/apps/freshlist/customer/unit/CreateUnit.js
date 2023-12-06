@@ -2,7 +2,6 @@ import React, { useEffect, useState, useRef, useContext } from "react";
 import xmlJs from "xml-js";
 import PhoneInput from "react-phone-input-2";
 import Multiselect from "multiselect-react-dropdown";
-import { Country, State, City } from "country-state-city";
 import {
   Card,
   CardBody,
@@ -104,9 +103,6 @@ const CreateUnit = () => {
   };
 
   const submitHandler = e => {
-    // if (formRef.current) {
-    //     formRef.current.reset();
-    //   }
     e.preventDefault();
     console.log(formData);
     if (error) {

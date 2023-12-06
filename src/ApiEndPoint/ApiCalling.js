@@ -4,6 +4,7 @@ import {
   Purchase_Order_List,
   Debit_note_Order_List,
   GoodDispatch_xmlView,
+  SAVE_GoodDispatch,
   Purchase_Return,
   Purchase_Edit_Order,
   Place_Order_List,
@@ -49,6 +50,8 @@ import {
   Create_SalesManager_xmlView,
   Create_Target_xml_view,
   Create_unit_xmlView,
+  AddPrimaryUnit,
+  BaseUnitList,
   Create_unit_save,
   Create_unit_List,
   Delete_Unit_List,
@@ -284,6 +287,17 @@ export const CreateunitxmlView = async () => {
     .then(res => res.data);
   return response;
 };
+export const SaveAddPrimary_Unit = async data => {
+  let response = await axiosConfig
+    .post(AddPrimaryUnit, data)
+    .then(res => res.data);
+  return response;
+};
+export const BaseUnitListView = async () => {
+  let response = await axiosConfig.get(`${BaseUnitList}`).then(res => res.data);
+  return response;
+};
+
 export const SaveUnit = async data => {
   let response = await axiosConfig
     .post(Create_unit_save, data)
@@ -419,6 +433,12 @@ export const DebitnoteOrderList = async () => {
 export const GoodDispatchxmlView = async () => {
   let response = await axiosConfig
     .get(`${GoodDispatch_xmlView}`)
+    .then(res => res.data);
+  return response;
+};
+export const Save_GoodDispatch = async data => {
+  let response = await axiosConfig
+    .post(SAVE_GoodDispatch, data)
     .then(res => res.data);
   return response;
 };
