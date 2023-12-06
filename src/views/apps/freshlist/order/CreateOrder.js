@@ -11,6 +11,7 @@ import {
   Input,
   Label,
   Button,
+  CustomInput,
 } from "reactstrap";
 import "react-phone-input-2/lib/style.css";
 import Multiselect from "multiselect-react-dropdown";
@@ -19,6 +20,7 @@ import {
   SaveOrder,
   ProductListView,
   CreatePartyList,
+  BaseUnitListView,
 } from "../../../../ApiEndPoint/ApiCalling";
 import "../../../../assets/scss/pages/users.scss";
 let GrandTotal = [];
@@ -29,6 +31,8 @@ const CreateOrder = args => {
   const [error, setError] = useState("");
   const [ProductList, setProductList] = useState([]);
   const [PartyList, setPartyList] = useState([]);
+  const [UnitList, setUnitList] = useState([]);
+  const [unitOne, setUnitOne] = useState([]);
   const [grandTotalAmt, setGrandTotalAmt] = useState(0);
   const [UserInfo, setUserInfo] = useState({});
   const [dateofDelivery, setDateofDelivery] = useState("");
@@ -42,9 +46,6 @@ const CreateOrder = args => {
       totalprice: "",
       partyId: "",
       DateofDelivery: "",
-      // discount: "",
-      // Shipping: "",
-      // tax: "",
     },
   ]);
 
@@ -81,9 +82,30 @@ const CreateOrder = args => {
       return updatedProductList;
     });
   };
+
+  const handleUnitSelection = (selectedList, selectedItem, index) => {
+    console.log(selectedItem.primaryUnit);
+    // SelectedITems.push(selectedItem);
+    // setProduct(prevProductList => {
+    //   const updatedProductList = [...prevProductList];
+    //   const updatedProduct = { ...updatedProductList[index] };
+    //   updatedProduct.price = selectedItem.Product_MRP;
+    //   updatedProduct.productId = selectedItem._id;
+    //   updatedProduct.availableQty = selectedItem.Size;
+    //   updatedProductList[index] = updatedProduct;
+    //   let myarr = prevProductList?.map((ele, i) => {
+    //     let indextotal = ele?.qty * SelectedITems[i]?.Product_MRP;
+    //     GrandTotal[index] = indextotal;
+    //     return indextotal;
+    //   });
+    //   console.log(myarr);
+    //   let amt = myarr.reduce((a, b) => a + b, 0);
+    //   setGrandTotalAmt(amt);
+    //   return updatedProductList; // Return the updated product list to set the state
+    // });
+  };
   const handleSelection = (selectedList, selectedItem, index) => {
     SelectedITems.push(selectedItem);
-    console.log(selectedItem);
     setProduct(prevProductList => {
       const updatedProductList = [...prevProductList];
       const updatedProduct = { ...updatedProductList[index] }; // Create a copy of the product at the specified index
@@ -105,13 +127,11 @@ const CreateOrder = args => {
 
   useEffect(() => {
     console.log(product);
-    console.log(GrandTotal);
   }, [product, GrandTotal]);
 
   useEffect(() => {
     ProductListView()
       .then(res => {
-        console.log(res.Product);
         setProductList(res?.Product);
       })
       .catch(err => {
@@ -119,8 +139,14 @@ const CreateOrder = args => {
       });
     CreatePartyList()
       .then(res => {
-        console.log(res.Party);
         setPartyList(res.Party);
+      })
+      .catch(err => {
+        console.log(err);
+      });
+    BaseUnitListView()
+      .then(res => {
+        setUnitList(res.PrimaryUnit);
       })
       .catch(err => {
         console.log(err);
@@ -299,6 +325,7 @@ const CreateOrder = args => {
                         <Label>Available Size</Label>
                         <Input
                           type="number"
+                          disabled
                           name="availableQty"
                           placeholder="AvailableSize"
                           value={product?.availableQty}
@@ -312,6 +339,7 @@ const CreateOrder = args => {
                           type="number"
                           name="qty"
                           placeholder="Req_Qty"
+                          required
                           autocomplete="off"
                           value={product?.qty}
                           onChange={e =>
@@ -324,13 +352,36 @@ const CreateOrder = args => {
                         />
                       </div>
                     </Col>
+
+                    <Col className="mb-1" lg="2" md="2" sm="12">
+                      <Label>Choose Unit</Label>
+                      <CustomInput
+                        type="select"
+                        placeholder="Select Type"
+                        name="type"
+                        value={unitOne}
+                        onChange={e => {
+                          setUnitOne(e.target.value);
+                        }}
+                      >
+                        <option value="None">None</option>
+                        {UnitList?.map(val => {
+                          return (
+                            <option value={val.primaryUnit}>
+                              {val.primaryUnit}
+                            </option>
+                          );
+                        })}
+                      </CustomInput>
+                    </Col>
+
                     <Col className="mb-1" lg="2" md="2" sm="12">
                       <div className="">
                         <Label>Price</Label>
                         <Input
                           type="number"
                           name="price"
-                          readOnly
+                          disabled
                           placeholder="Price"
                           value={product.price}
                         />
@@ -342,7 +393,7 @@ const CreateOrder = args => {
                         <Input
                           type="number"
                           name="totalprice"
-                          readOnly
+                          disabled
                           placeholder="TtlPrice"
                           value={product.price * product?.qty}
                         />

@@ -10,8 +10,6 @@ import {
   Label,
   Button,
   FormGroup,
-  CustomInput,
-  Badge,
 } from "reactstrap";
 import { history } from "../../../../history";
 import PhoneInput from "react-phone-input-2";
