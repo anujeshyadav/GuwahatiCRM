@@ -54,9 +54,22 @@ class Login extends React.Component {
       resetpassword: false,
     };
   }
-  componentDidMount() {
+  // async componentDidMount() {
+  //   this.preventBackButton();
+  //   await this.handleUserLocation();
+  // }
+  async getLocationAndUpdateState() {
+    try {
+      await this.handleUserLocation();
+      // Additional logic after obtaining location, if needed
+    } catch (error) {
+      console.error("Error obtaining location:", error);
+      // Handle the error or update state accordingly
+    }
+  }
+  async componentDidMount() {
     this.preventBackButton();
-    this.handleUserLocation();
+    await this.getLocationAndUpdateState();
   }
   preventBackButton() {
     window.history.pushState(null, null, window.location.href);
@@ -139,111 +152,207 @@ class Login extends React.Component {
     }
   };
   handleUserLocation = () => {
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          const date = new Date(position.timestamp);
-          let CurentTime = date.toLocaleString();
-          // console.log(CurentTimes
-          // debugger;
-          this.state.Location.latitude = position.coords.latitude;
-          this.state.Location.longitude = position.coords.longitude;
-          this.state.Location.timestamp = CurentTime;
-        },
-        (error) => {
-          this.setState({ Error: `Error: ${error.message}` });
-        },
-        { timeout: 10000, enableHighAccuracy: true }
-      );
-    } else {
-      this.setState({
-        Error: "Geolocation is not supported by this browser.",
-      });
-    }
+    return new Promise((resolve, reject) => {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          (position) => {
+            const date = new Date(position.timestamp);
+            const CurentTime = date.toLocaleString();
+
+            this.state.Location.latitude = position.coords.latitude;
+            this.state.Location.longitude = position.coords.longitude;
+            this.state.Location.timestamp = CurentTime;
+            // this.setState((prevState) => ({
+            //   Location: {
+            //     ...prevState.Location,
+            //     latitude: position.coords.latitude,
+            //     longitude: position.coords.longitude,
+            //     timestamp: currentTime,
+            //   },
+            //   Error: null, // Reset error if successful
+            // }));
+
+            resolve(); // Resolve the promise when location is obtained
+          },
+          (error) => {
+            this.setState({ Error: `Error: ${error.message}` });
+            reject(error); // Reject the promise if there's an error
+          },
+          { timeout: 10000, enableHighAccuracy: true }
+        );
+      } else {
+        this.setState({
+          Error: "Geolocation is not supported by this browser.",
+        });
+        reject(new Error("Geolocation is not supported by this browser."));
+      }
+    });
   };
+  // handleUserLocation = () => {
+  //   if (navigator.geolocation) {
+  //     navigator.geolocation.getCurrentPosition(
+  //       (position) => {
+  //         const date = new Date(position.timestamp);
+  //         const CurentTime = date.toLocaleString();
+
+  //         this.state.Location.latitude = position.coords.latitude;
+  //         this.state.Location.longitude = position.coords.longitude;
+  //         this.state.Location.timestamp = CurentTime;
+  //       },
+  //       (error) => {
+  //         this.setState({ Error: `Error: ${error}` });
+  //       },
+  //       { timeout: 10000, enableHighAccuracy: true }
+  //     );
+  //   } else {
+  //     this.setState({
+  //       Error: "Geolocation is not supported by this browser.",
+  //     });
+  //   }
+  // };
   loginHandler = async (e) => {
     e.preventDefault();
     // await this.handleUserLocation();
     // this.props.history.push("/dashboard");
+    let data = {
+      email: this.state.email,
+      password: this.state.password,
+      // latitude: this.state.Location.latitude,
+      // longitude: this.state.Location?.longitude,
+      // currentAddress: response.data.display_name,
+    };
+    await UserLogin(data)
+      .then((res) => {
+        let basicinfor = res?.user;
+        localStorage.setItem("userData", JSON.stringify(basicinfor));
+        this.context?.setUserInformatio(basicinfor);
 
-    console.log(this.state.Location);
-    if (this.state.Location.latitude && this.state.Location?.longitude) {
-      try {
-        const apiUrl = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${this.state.Location.latitude}&lon=${this.state.Location?.longitude}`;
-        const response = await axios.get(apiUrl);
-        // console.log(response);
-        if (response.data.display_name) {
-          // setAddress(response.data.display_name);
-          let data = {
-            email: this.state.email,
-            password: this.state.password,
-            latitude: this.state.Location.latitude,
-            longitude: this.state.Location?.longitude,
-            currentAddress: response.data.display_name,
-          };
-          await UserLogin(data)
-            .then((res) => {
-              let basicinfor = res?.user;
-              localStorage.setItem("userData", JSON.stringify(basicinfor));
-              this.context?.setUserInformatio(basicinfor);
+        swal(
+          "Sucessfully login",
+          "You are LoggedIn!",
+          "Success",
 
-              swal(
-                "Sucessfully login",
-                "You are LoggedIn!",
-                "Success",
+          {
+            buttons: {
+              ok: { text: "Ok", value: "ok" },
+            },
+          }
+        ).then((value) => {
+          switch (value) {
+            case "ok":
+              break;
+            default:
+          }
+        });
+        setTimeout(() => {
+          this.props.history.push("/dashboard");
+        }, 2000);
+      })
+      .catch((err) => {
+        console.log(err.response?.data.message);
 
-                {
-                  buttons: {
-                    ok: { text: "Ok", value: "ok" },
-                  },
-                }
-              ).then((value) => {
-                switch (value) {
-                  case "ok":
-                    break;
-                  default:
-                }
-              });
-              setTimeout(() => {
-                this.props.history.push("/dashboard");
-              }, 2000);
-            })
-            .catch((err) => {
-              console.log(err.response?.data.message);
-
-              if (err.response?.data.message == "Incorrect password") {
-                swal({
-                  title: "Some Error Occurred",
-                  text: `Incorrect Password`,
-                  icon: "warning",
-                  dangerMode: false,
-                });
-              } else if (err.response?.data.message == "Incorrect Email") {
-                // swal("Error", "Please Enter Correct Password");
-                swal({
-                  title: "Some Error Occurred",
-                  text: `Incorrect Email`,
-                  icon: "warning",
-                  dangerMode: false,
-                });
-              } else {
-                swal({
-                  title: "Please Enter Correct Username",
-                  text: `Incorrect username`,
-                  icon: "warning",
-                  dangerMode: false,
-                });
-              }
-            });
+        if (err.response?.data.message == "Incorrect password") {
+          swal({
+            title: "Some Error Occurred",
+            text: `Incorrect Password`,
+            icon: "warning",
+            dangerMode: false,
+          });
+        } else if (err.response?.data.message == "Incorrect Email") {
+          // swal("Error", "Please Enter Correct Password");
+          swal({
+            title: "Some Error Occurred",
+            text: `Incorrect Email`,
+            icon: "warning",
+            dangerMode: false,
+          });
         } else {
-          // setAddress("No address found");
+          swal({
+            title: "Please Enter Correct Username",
+            text: `Incorrect username`,
+            icon: "warning",
+            dangerMode: false,
+          });
         }
-      } catch (error) {
-        console.error("Error fetching geo-Location data:", error);
-      }
-    } else {
-      swal("Please Give Persmission of your Current Location");
-    }
+      });
+    // console.log(this.state.Location);
+    // if (this.state.Location.latitude && this.state.Location?.longitude) {
+    //   try {
+    //     const apiUrl = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${this.state.Location.latitude}&lon=${this.state.Location?.longitude}`;
+    //     const response = await axios.get(apiUrl);
+    //     // console.log(response);
+    //     if (response.data.display_name) {
+    //       // setAddress(response.data.display_name);
+    //       let data = {
+    //         email: this.state.email,
+    //         password: this.state.password,
+    //         latitude: this.state.Location.latitude,
+    //         longitude: this.state.Location?.longitude,
+    //         currentAddress: response.data.display_name,
+    //       };
+    //       await UserLogin(data)
+    //         .then((res) => {
+    //           let basicinfor = res?.user;
+    //           localStorage.setItem("userData", JSON.stringify(basicinfor));
+    //           this.context?.setUserInformatio(basicinfor);
+
+    //           swal(
+    //             "Sucessfully login",
+    //             "You are LoggedIn!",
+    //             "Success",
+
+    //             {
+    //               buttons: {
+    //                 ok: { text: "Ok", value: "ok" },
+    //               },
+    //             }
+    //           ).then((value) => {
+    //             switch (value) {
+    //               case "ok":
+    //                 break;
+    //               default:
+    //             }
+    //           });
+    //           setTimeout(() => {
+    //             this.props.history.push("/dashboard");
+    //           }, 2000);
+    //         })
+    //         .catch((err) => {
+    //           console.log(err.response?.data.message);
+
+    //           if (err.response?.data.message == "Incorrect password") {
+    //             swal({
+    //               title: "Some Error Occurred",
+    //               text: `Incorrect Password`,
+    //               icon: "warning",
+    //               dangerMode: false,
+    //             });
+    //           } else if (err.response?.data.message == "Incorrect Email") {
+    //             // swal("Error", "Please Enter Correct Password");
+    //             swal({
+    //               title: "Some Error Occurred",
+    //               text: `Incorrect Email`,
+    //               icon: "warning",
+    //               dangerMode: false,
+    //             });
+    //           } else {
+    //             swal({
+    //               title: "Please Enter Correct Username",
+    //               text: `Incorrect username`,
+    //               icon: "warning",
+    //               dangerMode: false,
+    //             });
+    //           }
+    //         });
+    //     } else {
+    //       // setAddress("No address found");
+    //     }
+    //   } catch (error) {
+    //     console.error("Error fetching geo-Location data:", error);
+    //   }
+    // } else {
+    //   swal("Please Give Persmission of your Current Location");
+    // }
 
     // const fromdata = new FormData();
     // fromdata.append("username", this.state.email);

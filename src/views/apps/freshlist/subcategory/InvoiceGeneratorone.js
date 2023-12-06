@@ -6,6 +6,7 @@ import ReactPDF from "@react-pdf/renderer";
 import POInVoice from "./POInVoice";
 // import POInVoice from "./POInVoice";
 import axiosConfig from "../../../../axiosConfig";
+import POInvoiceone from "./POInvoiceone";
 const InvoiceGenerator = (props) => {
   console.log(props);
   const [Printview, setPrintview] = useState({});
@@ -15,7 +16,7 @@ const InvoiceGenerator = (props) => {
 
   useEffect(() => {
     console.log(props);
-    debugger;
+    // debugger;
     let userchoice = JSON.parse(localStorage.getItem("billUI"));
     setUserChoice(userchoice);
     if (props?.AddedBill?.length > 0) {
@@ -47,7 +48,16 @@ const InvoiceGenerator = (props) => {
     <div>
       {/* {/ Use PDFViewer to preview the generated PDF /} */}
       <PDFViewer width="1000" height="800">
-        <POInVoice
+        {/* <POInVoice
+          UserChoice={UserChoice}
+          invoiceData={Printview}
+          CurrentWords={props.wordsNumber}
+          BilData={props}
+          tableList={details}
+          AllCharges={AllCharges}
+          fileName="invoice.pdf"
+        /> */}
+        <POInvoiceone
           UserChoice={UserChoice}
           invoiceData={Printview}
           CurrentWords={props.wordsNumber}
