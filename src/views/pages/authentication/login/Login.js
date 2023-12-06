@@ -54,9 +54,9 @@ class Login extends React.Component {
       resetpassword: false,
     };
   }
-  componentDidMount() {
+  async componentDidMount() {
     this.preventBackButton();
-    this.handleUserLocation();
+    await this.handleUserLocation();
   }
   preventBackButton() {
     window.history.pushState(null, null, window.location.href);
@@ -151,7 +151,7 @@ class Login extends React.Component {
           this.state.Location.timestamp = CurentTime;
         },
         (error) => {
-          this.setState({ Error: `Error: ${error.message}` });
+          this.setState({ Error: `Error: ${error}` });
         },
         { timeout: 10000, enableHighAccuracy: true }
       );
@@ -165,85 +165,145 @@ class Login extends React.Component {
     e.preventDefault();
     // await this.handleUserLocation();
     // this.props.history.push("/dashboard");
+    let data = {
+      email: this.state.email,
+      password: this.state.password,
+      latitude: this.state.Location.latitude,
+      longitude: this.state.Location?.longitude,
+      currentAddress: response.data.display_name,
+    };
+    await UserLogin(data)
+      .then((res) => {
+        let basicinfor = res?.user;
+        localStorage.setItem("userData", JSON.stringify(basicinfor));
+        this.context?.setUserInformatio(basicinfor);
 
-    console.log(this.state.Location);
-    if (this.state.Location.latitude && this.state.Location?.longitude) {
-      try {
-        const apiUrl = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${this.state.Location.latitude}&lon=${this.state.Location?.longitude}`;
-        const response = await axios.get(apiUrl);
-        // console.log(response);
-        if (response.data.display_name) {
-          // setAddress(response.data.display_name);
-          let data = {
-            email: this.state.email,
-            password: this.state.password,
-            latitude: this.state.Location.latitude,
-            longitude: this.state.Location?.longitude,
-            currentAddress: response.data.display_name,
-          };
-          await UserLogin(data)
-            .then((res) => {
-              let basicinfor = res?.user;
-              localStorage.setItem("userData", JSON.stringify(basicinfor));
-              this.context?.setUserInformatio(basicinfor);
+        swal(
+          "Sucessfully login",
+          "You are LoggedIn!",
+          "Success",
 
-              swal(
-                "Sucessfully login",
-                "You are LoggedIn!",
-                "Success",
+          {
+            buttons: {
+              ok: { text: "Ok", value: "ok" },
+            },
+          }
+        ).then((value) => {
+          switch (value) {
+            case "ok":
+              break;
+            default:
+          }
+        });
+        setTimeout(() => {
+          this.props.history.push("/dashboard");
+        }, 2000);
+      })
+      .catch((err) => {
+        console.log(err.response?.data.message);
 
-                {
-                  buttons: {
-                    ok: { text: "Ok", value: "ok" },
-                  },
-                }
-              ).then((value) => {
-                switch (value) {
-                  case "ok":
-                    break;
-                  default:
-                }
-              });
-              setTimeout(() => {
-                this.props.history.push("/dashboard");
-              }, 2000);
-            })
-            .catch((err) => {
-              console.log(err.response?.data.message);
-
-              if (err.response?.data.message == "Incorrect password") {
-                swal({
-                  title: "Some Error Occurred",
-                  text: `Incorrect Password`,
-                  icon: "warning",
-                  dangerMode: false,
-                });
-              } else if (err.response?.data.message == "Incorrect Email") {
-                // swal("Error", "Please Enter Correct Password");
-                swal({
-                  title: "Some Error Occurred",
-                  text: `Incorrect Email`,
-                  icon: "warning",
-                  dangerMode: false,
-                });
-              } else {
-                swal({
-                  title: "Please Enter Correct Username",
-                  text: `Incorrect username`,
-                  icon: "warning",
-                  dangerMode: false,
-                });
-              }
-            });
+        if (err.response?.data.message == "Incorrect password") {
+          swal({
+            title: "Some Error Occurred",
+            text: `Incorrect Password`,
+            icon: "warning",
+            dangerMode: false,
+          });
+        } else if (err.response?.data.message == "Incorrect Email") {
+          // swal("Error", "Please Enter Correct Password");
+          swal({
+            title: "Some Error Occurred",
+            text: `Incorrect Email`,
+            icon: "warning",
+            dangerMode: false,
+          });
         } else {
-          // setAddress("No address found");
+          swal({
+            title: "Please Enter Correct Username",
+            text: `Incorrect username`,
+            icon: "warning",
+            dangerMode: false,
+          });
         }
-      } catch (error) {
-        console.error("Error fetching geo-Location data:", error);
-      }
-    } else {
-      swal("Please Give Persmission of your Current Location");
-    }
+      });
+    // console.log(this.state.Location);
+    // if (this.state.Location.latitude && this.state.Location?.longitude) {
+    //   try {
+    //     const apiUrl = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${this.state.Location.latitude}&lon=${this.state.Location?.longitude}`;
+    //     const response = await axios.get(apiUrl);
+    //     // console.log(response);
+    //     if (response.data.display_name) {
+    //       // setAddress(response.data.display_name);
+    //       let data = {
+    //         email: this.state.email,
+    //         password: this.state.password,
+    //         latitude: this.state.Location.latitude,
+    //         longitude: this.state.Location?.longitude,
+    //         currentAddress: response.data.display_name,
+    //       };
+    //       await UserLogin(data)
+    //         .then((res) => {
+    //           let basicinfor = res?.user;
+    //           localStorage.setItem("userData", JSON.stringify(basicinfor));
+    //           this.context?.setUserInformatio(basicinfor);
+
+    //           swal(
+    //             "Sucessfully login",
+    //             "You are LoggedIn!",
+    //             "Success",
+
+    //             {
+    //               buttons: {
+    //                 ok: { text: "Ok", value: "ok" },
+    //               },
+    //             }
+    //           ).then((value) => {
+    //             switch (value) {
+    //               case "ok":
+    //                 break;
+    //               default:
+    //             }
+    //           });
+    //           setTimeout(() => {
+    //             this.props.history.push("/dashboard");
+    //           }, 2000);
+    //         })
+    //         .catch((err) => {
+    //           console.log(err.response?.data.message);
+
+    //           if (err.response?.data.message == "Incorrect password") {
+    //             swal({
+    //               title: "Some Error Occurred",
+    //               text: `Incorrect Password`,
+    //               icon: "warning",
+    //               dangerMode: false,
+    //             });
+    //           } else if (err.response?.data.message == "Incorrect Email") {
+    //             // swal("Error", "Please Enter Correct Password");
+    //             swal({
+    //               title: "Some Error Occurred",
+    //               text: `Incorrect Email`,
+    //               icon: "warning",
+    //               dangerMode: false,
+    //             });
+    //           } else {
+    //             swal({
+    //               title: "Please Enter Correct Username",
+    //               text: `Incorrect username`,
+    //               icon: "warning",
+    //               dangerMode: false,
+    //             });
+    //           }
+    //         });
+    //     } else {
+    //       // setAddress("No address found");
+    //     }
+    //   } catch (error) {
+    //     console.error("Error fetching geo-Location data:", error);
+    //   }
+    // } else {
+    //   swal("Please Give Persmission of your Current Location");
+    // }
 
     // const fromdata = new FormData();
     // fromdata.append("username", this.state.email);
