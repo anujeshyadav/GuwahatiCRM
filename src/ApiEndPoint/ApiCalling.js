@@ -322,252 +322,256 @@ export const SaveOrder = async data => {
   let response = await axiosConfig.post(Save_Order, data).then(res => res.data);
   return response;
 };
-export const createOrderhistoryview = async () => {
+export const createOrderhistoryview = async (id) => {
   let response = await axiosConfig
-    .get(`${view_create_order_history}`)
-    .then(res => res.data);
+    .get(`${view_create_order_history}` + id)
+    .then((res) => res.data);
   return response;
 };
 export const SalesReturnProductList = async () => {
   let response = await axiosConfig
     .get(`${Sales_Return_ProductList}`)
-    .then(res => res.data);
+    .then((res) => res.data);
   return response;
 };
 export const SalesPendingStatusChange = async (payload, id) => {
   let response = await axiosConfig
     .put(`${Sales_Pending_StatusChange}` + id, payload)
-    .then(res => res.data);
+    .then((res) => res.data);
   return response;
 };
 
-export const SalesReturnProduct = async data => {
+export const SalesReturnProduct = async (data) => {
   let response = await axiosConfig
     .post(Sales_Return_Product, data)
-    .then(res => res.data);
+    .then((res) => res.data);
   return response;
 };
 export const SalesEditOrder = async (payload, id) => {
   let response = await axiosConfig
     .put(`${Sales_Edit_Order}` + id, payload)
-    .then(res => res.data);
+    .then((res) => res.data);
   return response;
 };
 
 // by others (place order)
 
-export const SavePlaceOrder = async data => {
+export const SavePlaceOrder = async (data) => {
   let response = await axiosConfig
     .post(Save_Place_Order, data)
-    .then(res => res.data);
+    .then((res) => res.data);
   return response;
 };
 export const PlaceOrderViewList = async () => {
   let response = await axiosConfig
     .get(`${Place_Order_List}`)
-    .then(res => res.data);
+    .then((res) => res.data);
   return response;
 };
 // purchase api
-export const SavePurchaseOrder = async data => {
+export const SavePurchaseOrder = async (data) => {
   let response = await axiosConfig
     .post(SavePurchase_Order, data)
-    .then(res => res.data);
+    .then((res) => res.data);
   return response;
 };
 
 export const PurchaseOrderList = async () => {
   let response = await axiosConfig
     .get(`${Purchase_Order_List}`)
-    .then(res => res.data);
+    .then((res) => res.data);
   return response;
 };
 
-export const PurchaseReturn = async data => {
+export const PurchaseReturn = async (data) => {
   let response = await axiosConfig
     .post(Purchase_Return, data)
-    .then(res => res.data);
+    .then((res) => res.data);
   return response;
 };
 export const PurchaseEdit_Order = async (payload, id) => {
   let response = await axiosConfig
     .put(`${Purchase_Edit_Order}` + id, payload)
-    .then(res => res.data);
+    .then((res) => res.data);
   return response;
 };
 
-export const PlaceOrderReturn_Product = async data => {
+export const PlaceOrderReturn_Product = async (data) => {
   let response = await axiosConfig
     .post(Place_ORder_Return_Product, data)
-    .then(res => res.data);
+    .then((res) => res.data);
   return response;
 };
 
 export const PlaceOrder_Edit = async (payload, id) => {
   let response = await axiosConfig
     .put(`${Place_Order_Edit}` + id, payload)
-    .then(res => res.data);
+    .then((res) => res.data);
   return response;
 };
 
 export const DebitnoteOrderList = async () => {
   let response = await axiosConfig
     .get(`${Debit_note_Order_List}`)
-    .then(res => res.data);
+    .then((res) => res.data);
   return response;
 };
 export const GoodDispatchxmlView = async () => {
   let response = await axiosConfig
     .get(`${GoodDispatch_xmlView}`)
-    .then(res => res.data);
+    .then((res) => res.data);
   return response;
 };
 // guwahati api calling close
 export const Get_RoleList = async () => {
-  let response = await axiosConfig.get(`${Get_Role}`).then(res => res.data);
+  let response = await axiosConfig.get(`${Get_Role}`).then((res) => res.data);
   return response;
 };
-export const Get_Role_byid = async id => {
+export const Get_Role_byid = async (id) => {
   let response = await axiosConfig
     .get(`${Get_Role_by_id}` + id)
-    .then(res => res.data);
+    .then((res) => res.data);
   return response;
 };
-export const DeleteCategory = async id => {
+export const DeleteCategory = async (id) => {
   let response = await axiosConfig
     .get(`${Delete_Category}` + id)
-    .then(res => res.data);
+    .then((res) => res.data);
   return response;
 };
 export const Delete_SubCategory = async (cid, sid) => {
   let response = await axiosConfig
     .delete(`${Delete_Sub_Category}` + cid + "/subcategories/" + sid)
-    .then(res => res.data);
+    .then((res) => res.data);
   return response;
 };
 export const UpdateCategory = async (id, data) => {
   let response = await axiosConfig
     .put(`${Update_Category}` + id, data)
-    .then(res => res.data);
+    .then((res) => res.data);
   return response;
 };
-export const View_Catby_id = async id => {
+export const View_Catby_id = async (id) => {
   let response = await axiosConfig
     .get(`${View_Cat_by_id}` + id)
-    .then(res => res.data);
+    .then((res) => res.data);
   return response;
 };
 export const Update_SubCategory = async (cid, sid, data) => {
   let response = await axiosConfig
     .put(`${Update_Sub_Category}` + cid + "/subcategories/" + sid, data)
-    .then(res => res.data);
+    .then((res) => res.data);
   return response;
 };
 export const Update_Role_list = async (id, payload) => {
   let response = await axiosConfig
     .put(`${Update_Role}` + id, payload)
-    .then(res => res.data);
+    .then((res) => res.data);
   return response;
 };
-export const UserLogin = async data => {
-  let response = await axiosConfig.post(Login_User, data).then(res => res.data);
+export const UserLogin = async (data) => {
+  let response = await axiosConfig
+    .post(Login_User, data)
+    .then((res) => res.data);
   return response;
 };
-export const UserOTPVerify = async data => {
-  let response = await axiosConfig.post(Login_OTP, data).then(res => res.data);
+export const UserOTPVerify = async (data) => {
+  let response = await axiosConfig
+    .post(Login_OTP, data)
+    .then((res) => res.data);
   return response;
 };
 export const EditUserProfile = async (id, data) => {
   let response = await axiosConfig
     .post(Edit_Profile + id, data)
-    .then(res => res.data);
+    .then((res) => res.data);
   return response;
 };
 export const CreateRole = async () => {
   let response = await axiosConfig
     .post(`/admin/getProduct`)
-    .then(res => res.data);
+    .then((res) => res.data);
   return response;
 };
 export const CreateAccountView = async () => {
   let response = await axiosConfig
     .get(`${Create_Account_xmlView}`)
-    .then(res => res.data);
+    .then((res) => res.data);
   return response;
 };
 export const CreateCustomerxmlView = async () => {
   let response = await axiosConfig
     .get(`${Create_Customer_xmlView}`)
-    .then(res => res.data);
+    .then((res) => res.data);
   return response;
 };
 export const CreateMySalesTeam = async () => {
   let response = await axiosConfig
     .get(`${Create_SalesMan_xmlView}`)
-    .then(res => res.data);
+    .then((res) => res.data);
   return response;
 };
 export const CreateMySalesManager = async () => {
   let response = await axiosConfig
     .get(`${Create_SalesManager_xmlView}`)
-    .then(res => res.data);
+    .then((res) => res.data);
   return response;
 };
 
 export const CreateTargetXmlView = async () => {
   let response = await axiosConfig
     .get(`${Create_Target_xml_view}`)
-    .then(res => res.data);
+    .then((res) => res.data);
   return response;
 };
 export const CreateSalespersonXMlView = async () => {
   let response = await axiosConfig
     .get(`${Create_Sales_personXMlView}`)
-    .then(res => res.data);
+    .then((res) => res.data);
   return response;
 };
 export const Create_Sales_personList = async () => {
   let response = await axiosConfig
     .get(`${Create_Sales_person_List}`)
-    .then(res => res.data);
+    .then((res) => res.data);
   return response;
 };
-export const Create_Sales_personsave = async data => {
+export const Create_Sales_personsave = async (data) => {
   let response = await axiosConfig
     .post(`${Create_Sales_person_save}`, data)
-    .then(res => res.data);
+    .then((res) => res.data);
   return response;
 };
-export const CreateAccountSave = async data => {
+export const CreateAccountSave = async (data) => {
   let response = await axiosConfig
     .post(`${Create_Account_save}`, data)
-    .then(res => res.data);
+    .then((res) => res.data);
   return response;
 };
-export const CreateCustomersave = async data => {
+export const CreateCustomersave = async (data) => {
   let response = await axiosConfig
     .post(`${Create_Customer_save}`, data)
-    .then(res => res.data);
+    .then((res) => res.data);
   return response;
 };
 // export const DeleteAccount = async id => {
 //   console.log(id);
-export const DeleteAccount = async id => {
+export const DeleteAccount = async (id) => {
   let response = await axiosConfig
     .get(`${Delete_Account_List}` + id)
-    .then(res => res.data);
+    .then((res) => res.data);
   return response;
 };
-export const DeleteCustomerList = async id => {
+export const DeleteCustomerList = async (id) => {
   let response = await axiosConfig
     .get(`${Delete_Customer_List}` + id)
-    .then(res => res.data);
+    .then((res) => res.data);
   return response;
 };
-export const CreateAccountList = async data => {
+export const CreateAccountList = async (id) => {
   let response = await axiosConfig
-    .get(`${Create_Account_List}`, data)
-    .then(res => res.data);
+    .get(`${Create_Account_List}` + id)
+    .then((res) => res.data);
   return response;
 };
 export const CreateCustomerList = async data => {

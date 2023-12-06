@@ -180,7 +180,7 @@ const POInVoice = ({
                     style={{
                       fontSize: "10px",
                       fontWeight: "bold",
-                      width: "50%",
+                      width: "30%",
                     }}>
                     Receipt No.
                   </Text>{" "}
@@ -193,7 +193,7 @@ const POInVoice = ({
                     style={{
                       fontSize: "10px",
                       fontWeight: "bold",
-                      width: "50%",
+                      width: "30%",
                     }}>
                     Receipt Date.
                   </Text>{" "}
@@ -206,7 +206,20 @@ const POInVoice = ({
                     style={{
                       fontSize: "10px",
                       fontWeight: "bold",
-                      width: "50%",
+                      width: "30%",
+                    }}>
+                    Receipt Time.
+                  </Text>{" "}
+                  <Text style={{ fontSize: "10px", fontWeight: "bold" }}>
+                    : {currentDate && curentDate.toTimeString().split(" ")[0]}
+                  </Text>
+                </View>
+                <View style={{ flexDirection: "row", paddingBottom: "3px" }}>
+                  <Text
+                    style={{
+                      fontSize: "10px",
+                      fontWeight: "bold",
+                      width: "30%",
                     }}>
                     Term
                   </Text>{" "}
@@ -322,7 +335,7 @@ const POInVoice = ({
                         fontSize: "13px",
                         fontWeight: "bold",
                       }}>
-                      {/* {invoiceData?.company_name} */}
+                      {`${invoiceData?.adminDetail?.firstName} ${invoiceData?.adminDetail?.lastName} `}
                     </Text>{" "}
                     <Text
                       style={{
@@ -330,10 +343,8 @@ const POInVoice = ({
                         width: "45%",
                         fontWeight: "bold",
                       }}>
-                      {/* {invoiceData?.billing_street},
-                      {invoiceData?.billing_city_name}
-                      {invoiceData?.billing_state_name} ,
-                      {invoiceData?.billing_pincode} */}
+                      {`${invoiceData?.adminDetail?.currentAddress} `}
+                      {`${invoiceData?.adminDetail?.State} `}
                     </Text>{" "}
                   </View>
                 )}
@@ -344,7 +355,7 @@ const POInVoice = ({
                         fontSize: "13px",
                         fontWeight: "bold",
                       }}>
-                      {/* {invoiceData?.company_name} */}
+                      {`${invoiceData?.fullName} `}
                     </Text>{" "}
                     <Text
                       style={{
@@ -352,10 +363,9 @@ const POInVoice = ({
                         width: "45%",
                         fontWeight: "bold",
                       }}>
-                      {/* {invoiceData?.shipping_street}
-                      {invoiceData?.shippingcity_city_name}{" "}
-                      {invoiceData?.shippingstate_state_name} ,
-                      {invoiceData?.shipping_pincode} */}
+                      {`${invoiceData?.address} `}
+                      {`${invoiceData?.landMark} `}
+                      Mobile No: {`${invoiceData?.MobileNo} `}
                     </Text>{" "}
                   </View>
                 )}
@@ -369,7 +379,7 @@ const POInVoice = ({
                         fontSize: "13px",
                         fontWeight: "bold",
                       }}>
-                      {/* {invoiceData?.company_name} */}
+                      {`${invoiceData?.adminDetail?.firstName} ${invoiceData?.adminDetail?.lastName} `}
                     </Text>{" "}
                     <Text
                       style={{
@@ -377,10 +387,8 @@ const POInVoice = ({
                         width: "45%",
                         fontWeight: "bold",
                       }}>
-                      {/* {invoiceData?.billing_street},
-                      {invoiceData?.billing_city_name}
-                      {invoiceData?.billing_state_name} ,
-                      {invoiceData?.billing_pincode} */}
+                      {`${invoiceData?.adminDetail?.currentAddress} `}
+                      {`${invoiceData?.adminDetail?.State} `}
                     </Text>{" "}
                   </View>
                 )}
@@ -391,7 +399,7 @@ const POInVoice = ({
                         fontSize: "13px",
                         fontWeight: "bold",
                       }}>
-                      {/* {invoiceData?.company_name} */}
+                      {`${invoiceData?.fullName} `}
                     </Text>{" "}
                     <Text
                       style={{
@@ -399,58 +407,12 @@ const POInVoice = ({
                         width: "45%",
                         fontWeight: "bold",
                       }}>
-                      {/* {invoiceData?.shipping_street}
-                      {invoiceData?.shippingcity_city_name}{" "}
-                      {invoiceData?.shippingstate_state_name} ,
-                      {invoiceData?.shipping_pincode} */}
+                      {`${invoiceData?.address} `}
+                      {`${invoiceData?.landMark} `}
+                      Mobile No: {`${invoiceData?.MobileNo} `}
                     </Text>{" "}
                   </View>
                 )}
-              </View>
-            </View>
-            <View
-              style={{
-                flexDirection: "row",
-                borderBottom: "1px solid black",
-                borderRight: "1px solid black",
-                borderLeft: "1px solid black",
-                height: "50px",
-              }}>
-              <View
-                style={{
-                  width: "50%",
-                  padding: "2px 2px",
-                  borderRight: "1px solid black",
-                }}>
-                <View
-                  style={{ flexDirection: "row", paddingBottom: "3px 3px" }}>
-                  <Text
-                    style={{
-                      fontSize: "13px",
-                      fontWeight: "1000",
-                      padding: "12px 12px",
-
-                      width: "90%",
-                    }}>
-                    Client Code : &nbsp; {invoiceData?.partyId?.firstName}{" "}
-                    {invoiceData?.partyId?.lastName}
-                  </Text>
-                </View>
-              </View>
-
-              <View style={{ padding: "2px", width: "50%" }}>
-                <View style={{ flexDirection: "row", paddingBottom: "3px" }}>
-                  <Text
-                    style={{
-                      fontSize: "13px",
-                      fontWeight: "1000",
-                      padding: "12px 12px",
-                      width: "80%",
-                    }}>
-                    User Code : &nbsp;
-                    {/* {invoiceData?.display_code} */}
-                  </Text>
-                </View>
               </View>
             </View>
 
@@ -497,7 +459,7 @@ const POInVoice = ({
                   PO Number
                 </Text>
               </View> */}
-              <View
+              {/* <View
                 style={{
                   width: "12%",
                   padding: "5px 2px",
@@ -514,8 +476,8 @@ const POInVoice = ({
                   }}>
                   PO No.
                 </Text>
-              </View>
-              <View
+              </View> */}
+              {/* <View
                 style={{
                   width: "13%",
                   padding: "5px 2px",
@@ -531,8 +493,8 @@ const POInVoice = ({
                   }}>
                   Client Code
                 </Text>
-              </View>
-              <View
+              </View> */}
+              {/* <View
                 style={{
                   width: "13%",
                   padding: "5px 2px",
@@ -548,7 +510,7 @@ const POInVoice = ({
                   }}>
                   State name
                 </Text>
-              </View>
+              </View> */}
               <View
                 style={{
                   width: "15%",
@@ -659,7 +621,7 @@ const POInVoice = ({
                     {i + 1}
                   </Text>
                 </View>
-                <View
+                {/* <View
                   style={{
                     width: "12%",
                     padding: "5px 2px",
@@ -673,8 +635,8 @@ const POInVoice = ({
                     }}>
                     {ele?.po_no && ele?.po_no ? <>{ele?.po_no}</> : null}
                   </Text>
-                </View>
-                <View
+                </View> */}
+                {/* <View
                   style={{
                     width: "12%",
                     padding: "5px 2px",
@@ -684,13 +646,11 @@ const POInVoice = ({
                       fontSize: "10px",
 
                       fontWeight: "1000",
-                      // marginLeft: "5px",
                     }}>
-                    {/* {invoiceData?.supplier_name} */}
                     supplier
                   </Text>
-                </View>
-                <View
+                </View> */}
+                {/* <View
                   style={{
                     width: "13%",
                     padding: "5px 2px",
@@ -702,10 +662,9 @@ const POInVoice = ({
                       fontWeight: "1000",
                       marginLeft: "5px",
                     }}>
-                    {/* {invoiceData?.state_title} */}
                     statetitle
                   </Text>
-                </View>
+                </View> */}
                 <View
                   style={{
                     width: "15%",

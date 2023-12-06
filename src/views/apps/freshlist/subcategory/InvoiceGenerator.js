@@ -2043,7 +2043,9 @@ class InvoiceGenerator extends React.Component {
 
   async componentDidMount() {
     const UserInformation = this.context?.UserInformatio;
-    createOrderhistoryview()
+    let pageparmission = JSON.parse(localStorage.getItem("userData"));
+    let userid = pageparmission?._id;
+    createOrderhistoryview(userid)
       .then((res) => {
         console.log(res?.orderHistory);
         this.setState({ rowData: res?.orderHistory });
@@ -2063,7 +2065,6 @@ class InvoiceGenerator extends React.Component {
       .catch((err) => {
         console.log(err);
       });
-    let pageparmission = JSON.parse(localStorage.getItem("userData"));
     // console.log(pageparmission.role);
     let userchoice = JSON.parse(localStorage.getItem("billUI"));
     console.log(userchoice);
