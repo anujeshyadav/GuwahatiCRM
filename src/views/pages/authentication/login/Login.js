@@ -54,9 +54,22 @@ class Login extends React.Component {
       resetpassword: false,
     };
   }
+  // async componentDidMount() {
+  //   this.preventBackButton();
+  //   await this.handleUserLocation();
+  // }
+  async getLocationAndUpdateState() {
+    try {
+      await this.handleUserLocation();
+      // Additional logic after obtaining location, if needed
+    } catch (error) {
+      console.error("Error obtaining location:", error);
+      // Handle the error or update state accordingly
+    }
+  }
   async componentDidMount() {
     this.preventBackButton();
-    await this.handleUserLocation();
+    await this.getLocationAndUpdateState();
   }
   preventBackButton() {
     window.history.pushState(null, null, window.location.href);
@@ -139,28 +152,64 @@ class Login extends React.Component {
     }
   };
   handleUserLocation = () => {
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          const date = new Date(position.timestamp);
-          let CurentTime = date.toLocaleString();
-          // console.log(CurentTimes
-          // debugger;
-          this.state.Location.latitude = position.coords.latitude;
-          this.state.Location.longitude = position.coords.longitude;
-          this.state.Location.timestamp = CurentTime;
-        },
-        (error) => {
-          this.setState({ Error: `Error: ${error}` });
-        },
-        { timeout: 10000, enableHighAccuracy: true }
-      );
-    } else {
-      this.setState({
-        Error: "Geolocation is not supported by this browser.",
-      });
-    }
+    return new Promise((resolve, reject) => {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          (position) => {
+            const date = new Date(position.timestamp);
+            const CurentTime = date.toLocaleString();
+
+            this.state.Location.latitude = position.coords.latitude;
+            this.state.Location.longitude = position.coords.longitude;
+            this.state.Location.timestamp = CurentTime;
+            // this.setState((prevState) => ({
+            //   Location: {
+            //     ...prevState.Location,
+            //     latitude: position.coords.latitude,
+            //     longitude: position.coords.longitude,
+            //     timestamp: currentTime,
+            //   },
+            //   Error: null, // Reset error if successful
+            // }));
+
+            resolve(); // Resolve the promise when location is obtained
+          },
+          (error) => {
+            this.setState({ Error: `Error: ${error.message}` });
+            reject(error); // Reject the promise if there's an error
+          },
+          { timeout: 10000, enableHighAccuracy: true }
+        );
+      } else {
+        this.setState({
+          Error: "Geolocation is not supported by this browser.",
+        });
+        reject(new Error("Geolocation is not supported by this browser."));
+      }
+    });
   };
+  // handleUserLocation = () => {
+  //   if (navigator.geolocation) {
+  //     navigator.geolocation.getCurrentPosition(
+  //       (position) => {
+  //         const date = new Date(position.timestamp);
+  //         const CurentTime = date.toLocaleString();
+
+  //         this.state.Location.latitude = position.coords.latitude;
+  //         this.state.Location.longitude = position.coords.longitude;
+  //         this.state.Location.timestamp = CurentTime;
+  //       },
+  //       (error) => {
+  //         this.setState({ Error: `Error: ${error}` });
+  //       },
+  //       { timeout: 10000, enableHighAccuracy: true }
+  //     );
+  //   } else {
+  //     this.setState({
+  //       Error: "Geolocation is not supported by this browser.",
+  //     });
+  //   }
+  // };
   loginHandler = async (e) => {
     e.preventDefault();
     // await this.handleUserLocation();
@@ -168,9 +217,9 @@ class Login extends React.Component {
     let data = {
       email: this.state.email,
       password: this.state.password,
-      latitude: this.state.Location.latitude,
-      longitude: this.state.Location?.longitude,
-      currentAddress: response.data.display_name,
+      // latitude: this.state.Location.latitude,
+      // longitude: this.state.Location?.longitude,
+      // currentAddress: response.data.display_name,
     };
     await UserLogin(data)
       .then((res) => {
