@@ -16,9 +16,8 @@ import {
   Badge,
   Label,
   CustomInput,
-  FormGroup,
+  Form,
 } from "reactstrap";
-import ExcelReader from "../../parts/ExcelReader";
 import { ContextLayout } from "../../../../../utility/context/Layout";
 import { AgGridReact } from "ag-grid-react";
 import "ag-grid-community/dist/styles/ag-grid.css";
@@ -29,7 +28,7 @@ import "jspdf-autotable";
 import Logo from "../../../../../assets/img/profile/pages/logomain.png";
 import Papa from "papaparse";
 import { FaPlus } from "react-icons/fa";
-import { Eye, Trash2, ChevronDown, Edit, CloudLightning } from "react-feather";
+import { Eye, Trash2, ChevronDown, Edit } from "react-feather";
 import { IoMdRemoveCircleOutline } from "react-icons/io";
 import { history } from "../../../../../history";
 import "../../../../../assets/scss/plugins/tables/_agGridStyleOverride.scss";
@@ -43,12 +42,14 @@ import {
   FaArrowAltCircleRight,
   FaFilter,
 } from "react-icons/fa";
-import moment from "moment-timezone";
 import swal from "sweetalert";
 import {
   DeleteUnitList,
   CreateunitxmlView,
   UnitListView,
+  SaveUnit,
+  SaveAddPrimary_Unit,
+  BaseUnitListView,
   UnitViewOne,
 } from "../../../../../ApiEndPoint/ApiCalling";
 import {
@@ -71,9 +72,13 @@ class UnitList extends React.Component {
       isOpen: false,
       Arrindex: "",
       rowData: [],
+      baseubitListView: [],
+      baseUnit: "",
       primaryUnit: "",
-      IsprimaryUnit: false,
       secondaryUnit: "",
+      unitQty: "",
+      formData: {},
+      IsprimaryUnit: false,
       setMySelectedarr: [],
       SelectedCols: [],
       paginationPageSize: 5,
@@ -93,7 +98,7 @@ class UnitList extends React.Component {
   }
 
   componentDidMount() {
-    console.log(this.state.primaryUnit, this.state.secondaryUnit);
+    console.log(this.state.baseUnit, this.state.secondaryUnit);
   }
   LookupviewStart = () => {
     this.setState(prevState => ({
@@ -103,6 +108,14 @@ class UnitList extends React.Component {
   LookCreateUnit = () => {
     this.setState(prevState => ({
       unitModal: !prevState.unitModal,
+    }));
+  };
+  LookAddUnit = () => {
+    this.setState(prevState => ({
+      unitModal: !prevState.unitModal,
+    }));
+    this.setState(prevState => ({
+      AddunitModal: !prevState.AddunitModal,
     }));
   };
 
@@ -121,22 +134,66 @@ class UnitList extends React.Component {
     console.log(e.target.value);
     if (e.target.value !== "None") {
       this.setState({ IsprimaryUnit: true });
-      this.setState({ [e.target.name]: e.target.value });
     } else {
       this.setState({ IsprimaryUnit: false });
-      this.setState({ [e.target.name]: e.target.value });
     }
+    this.setState({ [e.target.name]: e.target.value });
   };
   changeHandlerInput = e => {
     console.log(e.target.value);
     this.setState({ [e.target.name]: e.target.value });
+  };
+  handleAddUnit = e => {
+    e.preventDefault();
+    const payload = {
+      primaryUnit: this.state.primaryUnit,
+    };
+    SaveAddPrimary_Unit(payload)
+      .then(res => {
+        console.log(res);
+        if (res.status) {
+          swal(`${res.message}`);
+        }
+        this.setState(prevState => ({
+          AddunitModal: !prevState.AddunitModal,
+        }));
+      })
+      .catch(err => {
+        console.log(err);
+      });
+  };
+  handleSave = e => {
+    e.preventDefault();
+    const payload = {
+      primaryUnit: this.state.baseUnit,
+      secondaryUnit: this.state.secondaryUnit,
+      unitQty: Number(this.state.unitQty),
+    };
+    SaveUnit(payload)
+      .then(res => {
+        console.log(res);
+        if (res.status) {
+          swal(`${res.message}`);
+        }
+      })
+      .catch(err => {
+        console.log(err);
+      });
   };
   async componentDidMount() {
     const UserInformation = this.context?.UserInformatio;
 
     await UnitListView()
       .then(res => {
+        console.log(res?.Unit);
         this.setState({ rowData: res?.Unit });
+      })
+      .catch(err => {
+        console.log(err);
+      });
+    await BaseUnitListView()
+      .then(res => {
+        this.setState({ baseubitListView: res.PrimaryUnit });
       })
       .catch(err => {
         console.log(err);
@@ -206,83 +263,47 @@ class UnitList extends React.Component {
           },
 
           ...myHeadings,
+
           {
-            headerName: "Created date",
-            field: "createdAt",
+            headerName: "PrimaryUnit",
+            field: "primaryUnit",
             filter: true,
             sortable: true,
             cellRendererFramework: params => {
-              let convertedTime = "NA";
-              if (params?.data?.createdAt == undefined) {
-                convertedTime = "NA";
-              }
-              if (params?.data?.createdAt) {
-                convertedTime = params?.data?.createdAt;
-              }
-              if (
-                UserInformation?.timeZone !== undefined &&
-                params?.data?.createdAt !== undefined
-              ) {
-                if (params?.data?.createdAt != undefined) {
-                  convertedTime = moment(params?.data?.createdAt?.split(".")[0])
-                    .tz(UserInformation?.timeZone.split("-")[0])
-                    .format(UserInformation?.dateTimeFormat);
-                }
-              }
-
               return (
                 <>
                   <div className="actions cursor-pointer">
-                    {convertedTime == "NA" ? (
-                      "NA"
-                    ) : (
-                      <span>
-                        {convertedTime} &nbsp;
-                        {UserInformation?.timeZone &&
-                          UserInformation?.timeZone.split("-")[1]}
-                      </span>
-                    )}
+                    <span>{params?.data?.primaryUnit}</span>
                   </div>
                 </>
               );
             },
           },
           {
-            headerName: "Updated date",
-            field: "updatedAt",
+            headerName: "Quantity",
+            field: "Quantity",
             filter: true,
             sortable: true,
             cellRendererFramework: params => {
-              let convertedTime = "NA";
-              if (params?.data?.updatedAt == undefined) {
-                convertedTime = "NA";
-              }
-              if (params?.data?.updatedAt) {
-                convertedTime = params?.data?.updatedAt;
-              }
-              if (
-                UserInformation?.timeZone !== undefined &&
-                params?.data?.updatedAt !== undefined
-              ) {
-                if (params?.data?.updatedAt != undefined) {
-                  convertedTime = moment(params?.data?.updatedAt?.split(".")[0])
-                    .tz(UserInformation?.timeZone.split("-")[0])
-                    .format(UserInformation?.dateTimeFormat);
-                }
-              }
-
               return (
                 <>
                   <div className="actions cursor-pointer">
-                    {convertedTime == "NA" ? (
-                      "NA"
-                    ) : (
-                      <span>
-                        {convertedTime} &nbsp;
-                        {UserInformation?.timeZone &&
-                          UserInformation?.timeZone.split("-")[1]}
-                      </span>
-                    )}
+                    <span>{params?.data?.unitQty}</span>
+                  </div>
+                </>
+              );
+            },
+          },
+          {
+            headerName: "SecondaryUnit",
+            field: "secondaryUnit",
+            filter: true,
+            sortable: true,
+            cellRendererFramework: params => {
+              return (
+                <>
+                  <div className="actions cursor-pointer">
+                    <span>{params?.data?.secondaryUnit}</span>
                   </div>
                 </>
               );
@@ -702,7 +723,7 @@ class UnitList extends React.Component {
                               )}
                             </div>
                           </span>
-                          <span>
+                          {/* <span>
                             <Route
                               render={({ history }) => (
                                 <Badge
@@ -719,7 +740,7 @@ class UnitList extends React.Component {
                                 </Badge>
                               )}
                             />
-                          </span>
+                          </span> */}
                           <span>
                             <Route
                               render={({ history }) => (
@@ -729,7 +750,7 @@ class UnitList extends React.Component {
                                   color="primary"
                                   onClick={this.LookCreateUnit}
                                 >
-                                  <FaPlus size={15} /> Add Unit
+                                  <FaPlus size={15} /> Create Unit
                                 </Badge>
                               )}
                             />
@@ -808,10 +829,6 @@ class UnitList extends React.Component {
                               {context => (
                                 <AgGridReact
                                   id="myAgGrid"
-                                  // gridOptions={{
-                                  //   domLayout: "autoHeight",
-                                  //   // or other layout options
-                                  // }}
                                   gridOptions={this.gridOptions}
                                   rowSelection="multiple"
                                   defaultColDef={defaultColDef}
@@ -1015,97 +1032,64 @@ class UnitList extends React.Component {
           isOpen={this.state.unitModal}
           toggle={this.LookCreateUnit}
           className={this.props.className}
-          //   style={{ maxWidth: "1050px" }}
         >
           <ModalHeader toggle={this.LookCreateUnit}>Select Unit</ModalHeader>
           <ModalBody className="modalbodyheadunit">
-            <Row className="justifyContent-around">
-              <Col
-                lg="6"
-                md="6"
-                sm="12"
-                // xl="4" xs="12"
-              >
-                <Label>Primary Unit</Label>
-                <CustomInput
-                  type="select"
-                  placeholder="Select Type"
-                  name="primaryUnit"
-                  value={this.state.primaryUnit}
-                  defaultValue="None"
-                  onChange={this.changeHandler}
-                >
-                  <option value="None">None</option>
-                  <option value="Bag">BAGS(Bag)</option>
-                  <option value="Btl">BOTTLES(Btl)</option>
-                  <option value="Box">BOX(Box)</option>
-                  <option value="Bdl">BUNDLES(Bdl)</option>
-                  <option value="Can">CANS(Can)</option>
-                  <option value="Ctn">CARTONS(Ctn)</option>
-                  <option value="Dzn">DOZENS(Dzn)</option>
-                  <option value="Gm">GRAMMES(Gm)</option>
-                  <option value="Kg">KILOGRAMS(Kg)</option>
-                  <option value="Ltr">LITRE(Ltr)</option>
-                  <option value="Mtr">METERS(Mtr)</option>
-                  <option value="Ml">MILILITRE(Ml)</option>
-                  <option value="Nos">NUMBERS(Nos)</option>
-                  <option value="Pac">PACKS(Pac)</option>
-                  <option value="Prs">PAIRS(Prs)</option>
-                  <option value="Pcs">PIECES(Pcs)</option>
-                  <option value="Qtl">QUINTAL(Qtl)</option>
-                  <option value="Rol">ROLLS(Rol)</option>
-                  <option value="Sqf">SQUARE FEET(Sqf)</option>
-                </CustomInput>
-              </Col>
+            <Form className="m-1" onSubmit={this.handleSave}>
+              <Row className="justifyContent-around">
+                <Col lg="6" md="6" sm="12">
+                  <Label>Primary Unit</Label>
+                  <CustomInput
+                    type="select"
+                    placeholder="Select Type"
+                    name="baseUnit"
+                    value={this.state.baseUnit}
+                    defaultValue="None"
+                    onChange={e => this.setState({ baseUnit: e.target.value })}
+                  >
+                    <option value="None">None</option>
+                    {this.state.baseubitListView?.map(val => {
+                      return (
+                        <option value={val.primaryUnit}>
+                          {val.primaryUnit}
+                        </option>
+                      );
+                    })}
+                  </CustomInput>
+                </Col>
 
-              <Col
-                lg="6"
-                md="6"
-                sm="12"
-                // xl="4" xs="12"
-              >
-                <Label>Secondary Unit</Label>
-                <CustomInput
-                  type="select"
-                  placeholder="Select Type"
-                  name="secondaryUnit"
-                  value={this.state.secondaryUnit}
-                  defaultValue="None"
-                  onChange={this.changeHandler}
-                >
-                  <option value="None">None</option>
-                  <option value="Bag">BAGS(Bag)</option>
-                  <option value="Btl">BOTTLES(Btl)</option>
-                  <option value="Box">BOX(Box)</option>
-                  <option value="Bdl">BUNDLES(Bdl)</option>
-                  <option value="Can">CANS(Can)</option>
-                  <option value="Ctn">CARTONS(Ctn)</option>
-                  <option value="Dzn">DOZENS(Dzn)</option>
-                  <option value="Gm">GRAMMES(Gm)</option>
-                  <option value="Kg">KILOGRAMS(Kg)</option>
-                  <option value="Ltr">LITRE(Ltr)</option>
-                  <option value="Mtr">METERS(Mtr)</option>
-                  <option value="Ml">MILILITRE(Ml)</option>
-                  <option value="Nos">NUMBERS(Nos)</option>
-                  <option value="Pac">PACKS(Pac)</option>
-                  <option value="Prs">PAIRS(Prs)</option>
-                  <option value="Pcs">PIECES(Pcs)</option>
-                  <option value="Qtl">QUINTAL(Qtl)</option>
-                  <option value="Rol">ROLLS(Rol)</option>
-                  <option value="Sqf">SQUARE FEET(Sqf)</option>
-                </CustomInput>
-              </Col>
-            </Row>
-            {/* || (this.state.primaryUnit && this.state.secondaryUnit) */}
-            {this.state.primaryUnit !== this.state.secondaryUnit &&
-            this.state.IsprimaryUnit == true ? (
+                <Col lg="6" md="6" sm="12">
+                  <Label>Secondary Unit</Label>
+                  <CustomInput
+                    type="select"
+                    placeholder="Select Type"
+                    name="secondaryUnit"
+                    value={this.state.secondaryUnit}
+                    defaultValue="None"
+                    onChange={e =>
+                      this.setState({ secondaryUnit: e.target.value })
+                    }
+                  >
+                    <option value="None">None</option>
+                    {this.state.baseubitListView?.map(val => {
+                      return (
+                        <option value={val.primaryUnit}>
+                          {val.primaryUnit}
+                        </option>
+                      );
+                    })}
+                  </CustomInput>
+                </Col>
+              </Row>
+              {/* {this.state.baseUnit !== this.state.secondaryUnit &&
+              this.state.IsprimaryUnit == true ? ( */}
               <>
                 <Row>
                   <Col md="12" lg="12" sm="12">
                     <h6 className="py-2">Conversion Rate</h6>
                     <Row>
-                      <Col className="" lg="2" md="2" sm="12"></Col>
-                      <Col lg="8" md="8" sm="12">
+                      <Col className="" lg="1" md="2" sm="12"></Col>
+                      <Col lg="10" md="8" sm="12">
                         <div className="d-flex justify-content-around">
                           <div>
                             <Input
@@ -1114,7 +1098,7 @@ class UnitList extends React.Component {
                               className="primarystyle"
                             />
                             <span className="priamryValue">
-                              1 {this.state.primaryUnit} =
+                              1 {this.state.baseUnit} =
                             </span>
                           </div>
                           <div className="">
@@ -1125,7 +1109,13 @@ class UnitList extends React.Component {
                               checked
                               style={{ width: "80px", height: "2px" }}
                               value={this.state.inputValue}
-                              onChange={this.changeHandlerInput}
+                              // onChange={this.changeHandlerInput}
+                              // onChange={this.changeHandler}
+                              onChange={e =>
+                                this.setState({
+                                  unitQty: e.target.value,
+                                })
+                              }
                             />
                           </div>
                           <div>
@@ -1133,25 +1123,73 @@ class UnitList extends React.Component {
                           </div>
                         </div>
                       </Col>
-                      <Col className="" lg="2" md="2" sm="12"></Col>
+                      <Col className="" lg="1" md="2" sm="12"></Col>
                     </Row>
                   </Col>
                 </Row>
               </>
-            ) : null}
-            <hr></hr>
-            <Row className="justify-content-end modalbodyheadunit">
-              <Button
-                // onClick={e => {
-                //   e.preventDefault();
-                //   this.setState({ EditOneUserView: false });
-                // }}
-                size="sm"
-                color="primary"
-              >
-                Save
-              </Button>
-            </Row>
+              {/* ) : null} */}
+              <hr></hr>
+              <Row className="justify-content-end modalbodyheadunit">
+                <Col>
+                  <span>
+                    <Route
+                      render={({ history }) => (
+                        <Badge
+                          style={{ cursor: "pointer" }}
+                          className="float-right mr-1"
+                          color="primary"
+                          onClick={this.LookAddUnit}
+                        >
+                          <FaPlus size={15} /> Add Unit
+                        </Badge>
+                      )}
+                    />
+                  </span>
+                </Col>
+                <Col>
+                  <Button type="submit" size="sm" color="primary">
+                    Save
+                  </Button>
+                </Col>
+              </Row>
+            </Form>
+          </ModalBody>
+        </Modal>
+
+        {/* Add unit */}
+        <Modal
+          isOpen={this.state.AddunitModal}
+          toggle={this.LookAddUnit}
+          className={this.props.className}
+          //   style={{ maxWidth: "1050px" }}
+        >
+          <ModalHeader toggle={this.LookAddUnit}>Add New Unit</ModalHeader>
+          <ModalBody className="modalbodyheadunit">
+            <Form className="m-1" onSubmit={this.handleAddUnit}>
+              <Col>
+                <Label>Unit Name</Label>
+                <Input
+                  type="text"
+                  className=""
+                  name="unitName"
+                  // style={{ width: "80px", height: "2px" }}
+                  value={this.state.unitName}
+                  onChange={e => {
+                    console.log(e.target.value);
+                    this.setState({
+                      primaryUnit: e.target.value,
+                    });
+                  }}
+                />
+              </Col>
+              <hr></hr>
+              <Row className="justify-content-end modalbodyheadunit">
+                <Button type="submit" size="sm" color="primary">
+                  Save Unit
+                </Button>
+              </Row>
+            </Form>
           </ModalBody>
         </Modal>
       </>
