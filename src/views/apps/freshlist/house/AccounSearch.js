@@ -17,7 +17,7 @@ import {
   ModalBody,
   Badge,
 } from "reactstrap";
-import ExcelReader from "../parts/ExcelReader";
+
 import { ContextLayout } from "../../../../utility/context/Layout";
 import { AgGridReact } from "ag-grid-react";
 import "ag-grid-community/dist/styles/ag-grid.css";
@@ -102,11 +102,16 @@ class AccounSearch extends React.Component {
 
   async componentDidMount() {
     const UserInformation = this.context?.UserInformatio;
+    let pageparmission = JSON.parse(localStorage.getItem("userData"));
+    let userid = pageparmission?._id;
     await CreateAccountView()
       .then((res) => {
         var mydropdownArray = [];
         var adddropdown = [];
-        const jsonData = xmlJs.xml2json(res.data, { compact: true, spaces: 2 });
+        const jsonData = xmlJs.xml2json(res.data, {
+          compact: true,
+          spaces: 2,
+        });
         console.log(JSON.parse(jsonData)?.CreateUser);
         const inputs = JSON.parse(jsonData)?.CreateUser?.input?.map((ele) => {
           return {
@@ -244,6 +249,7 @@ class AccounSearch extends React.Component {
             filter: true,
             sortable: true,
             cellRendererFramework: (params) => {
+              // console.log(params?.data);
               return (
                 <>
                   <div className="actions cursor-pointer">
@@ -259,7 +265,7 @@ class AccounSearch extends React.Component {
             filter: true,
             sortable: true,
             cellRendererFramework: (params) => {
-              console.log(params.data);
+              // console.log(params.data);
               return (
                 <>
                   <div className="actions cursor-pointer">
@@ -321,9 +327,10 @@ class AccounSearch extends React.Component {
         console.log(err);
         swal("Error", "something went wrong try again");
       });
-    await CreateAccountList()
+    await CreateAccountList(userid)
       .then((res) => {
-        let value = res?.User;
+        // console.log(res.adminDetail);
+        let value = res?.adminDetail;
         if (value.length) {
           this.setState({ rowData: value });
         }

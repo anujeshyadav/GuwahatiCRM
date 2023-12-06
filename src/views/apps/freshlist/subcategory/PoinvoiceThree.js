@@ -67,7 +67,7 @@ const styles = StyleSheet.create({
   },
 });
 
-const POInvoiceone = ({
+const PoinvoiceThree = ({
   UserChoice,
   invoiceData,
   CurrentWords,
@@ -103,7 +103,7 @@ const POInvoiceone = ({
                 UserChoice?.imagePosition == "Left" ? (
                   <>
                     <Image
-                      style={{ width: "200px", padding: "25px 10px" }}
+                      style={{ width: "230px", padding: "25px 10px" }}
                       src={logo}></Image>
                     <View style={{ padding: "10px" }}>
                       <Text style={{ fontSize: "10px", fontWeight: "bold" }}>
@@ -157,44 +157,52 @@ const POInvoiceone = ({
                       <Text style={styles.GSTIN}>GSTIN: 27AAHCP2196E1ZB</Text>
                     </View>
                     <Image
-                      style={{ width: "200px", padding: "25px 10px" }}
+                      style={{ width: "230px", padding: "25px 10px" }}
                       src={logo}></Image>
                   </>
                 )}
               </View>
-              {/* <View
-              style={{
-                flexDirection: "row",
-                borderBottom: "1px solid black",
-                borderRight: "1px solid black",
-                borderLeft: "1px solid black",
-                height: "70px",
-              }}>
-              <View style={{ padding: "10px", width: "50%" }}>
-                <View style={{ flexDirection: "row", paddingBottom: "3px" }}>
-                  <Text
-                    style={{
-                      fontSize: "10px",
-                      fontWeight: "bold",
-                      width: "50%",
-                    }}>
-                    Place of Supply
-                  </Text>{" "}
-                  <Text style={{ fontSize: "10px", fontWeight: "bold" }}>
-                    : {invoiceData?.city}
-                  </Text>
-                </View>
-              </View>
-            </View> */}
+
               <View
                 style={{
                   flexDirection: "row",
-                  backgroundColor: "#00c0ef",
+                  //   backgroundColor: "#00c0ef",
                   borderBottom: "1px solid black",
                   borderRight: "1px solid black",
                   borderLeft: "1px solid black",
                   height: "20px",
                 }}>
+                <View
+                  style={{
+                    padding: "2px",
+                    width: "33%",
+                    borderRight: "1px solid black",
+                  }}>
+                  <View style={{ flexDirection: "row", paddingBottom: "3px" }}>
+                    {UserChoice?.billTo == "right" && (
+                      <Text
+                        style={{
+                          fontSize: "10px",
+                          fontWeight: "1000",
+                          marginLeft: "5px",
+                          width: "50%",
+                        }}>
+                        invoice Detail
+                      </Text>
+                    )}
+                    {UserChoice?.shipto == "right" && (
+                      <Text
+                        style={{
+                          fontSize: "10px",
+                          fontWeight: "1000",
+                          marginLeft: "5px",
+                          width: "50%",
+                        }}>
+                        Invoice Detail
+                      </Text>
+                    )}
+                  </View>
+                </View>
                 <View
                   style={{
                     width: "33%",
@@ -231,9 +239,12 @@ const POInvoiceone = ({
                   style={{
                     padding: "2px",
                     width: "33%",
-                    borderRight: "1px solid black",
                   }}>
-                  <View style={{ flexDirection: "row", paddingBottom: "3px" }}>
+                  <View
+                    style={{
+                      flexDirection: "row",
+                      paddingBottom: "3px",
+                    }}>
                     {UserChoice?.billTo == "right" && (
                       <Text
                         style={{
@@ -258,32 +269,6 @@ const POInvoiceone = ({
                     )}
                   </View>
                 </View>
-                <View style={{ padding: "2px", width: "33%" }}>
-                  <View style={{ flexDirection: "row", paddingBottom: "3px" }}>
-                    {UserChoice?.billTo == "right" && (
-                      <Text
-                        style={{
-                          fontSize: "10px",
-                          fontWeight: "1000",
-                          marginLeft: "5px",
-                          width: "50%",
-                        }}>
-                        invoice Detail
-                      </Text>
-                    )}
-                    {UserChoice?.shipto == "right" && (
-                      <Text
-                        style={{
-                          fontSize: "10px",
-                          fontWeight: "1000",
-                          marginLeft: "5px",
-                          width: "50%",
-                        }}>
-                        invoice Detail
-                      </Text>
-                    )}
-                  </View>
-                </View>
               </View>
               <View
                 style={{
@@ -295,108 +280,10 @@ const POInvoiceone = ({
                 }}>
                 <View
                   style={{
-                    width: "33%",
-                    padding: "10px 10px",
-                    borderRight: "1px solid black",
-                  }}>
-                  {UserChoice?.billTo == "Left" && (
-                    <View style={{ flexDirection: "", paddingBottom: "3px" }}>
-                      <Text
-                        style={{
-                          fontSize: "13px",
-                          fontWeight: "bold",
-                        }}>
-                        {/* {invoiceData?.company_name} */}
-                      </Text>{" "}
-                      <Text
-                        style={{
-                          fontSize: "10px",
-                          width: "45%",
-                          fontWeight: "bold",
-                        }}>
-                        {/* {invoiceData?.billing_street},
-                      {invoiceData?.billing_city_name}
-                      {invoiceData?.billing_state_name} ,
-                      {invoiceData?.billing_pincode} */}
-                      </Text>{" "}
-                    </View>
-                  )}
-                  {UserChoice?.shipto == "Left" && (
-                    <View style={{ flexDirection: "", paddingBottom: "3px" }}>
-                      <Text
-                        style={{
-                          fontSize: "13px",
-                          fontWeight: "bold",
-                        }}>
-                        {/* {invoiceData?.company_name} */}
-                      </Text>{" "}
-                      <Text
-                        style={{
-                          fontSize: "10px",
-                          width: "45%",
-                          fontWeight: "bold",
-                        }}>
-                        {/* {invoiceData?.shipping_street}
-                      {invoiceData?.shippingcity_city_name}{" "}
-                      {invoiceData?.shippingstate_state_name} ,
-                      {invoiceData?.shipping_pincode} */}
-                      </Text>{" "}
-                    </View>
-                  )}
-                </View>
-
-                <View
-                  style={{
-                    padding: "10px",
+                    padding: "4px",
                     width: "33%",
                     borderRight: "1px solid black",
                   }}>
-                  {UserChoice?.billTo == "right" && (
-                    <View style={{ flexDirection: "", paddingBottom: "3px" }}>
-                      <Text
-                        style={{
-                          fontSize: "13px",
-                          fontWeight: "bold",
-                        }}>
-                        {/* {invoiceData?.company_name} */}
-                      </Text>{" "}
-                      <Text
-                        style={{
-                          fontSize: "10px",
-                          width: "45%",
-                          fontWeight: "bold",
-                        }}>
-                        {/* {invoiceData?.billing_street},
-                      {invoiceData?.billing_city_name}
-                      {invoiceData?.billing_state_name} ,
-                      {invoiceData?.billing_pincode} */}
-                      </Text>{" "}
-                    </View>
-                  )}
-                  {UserChoice?.shipto == "right" && (
-                    <View style={{ flexDirection: "", paddingBottom: "3px" }}>
-                      <Text
-                        style={{
-                          fontSize: "13px",
-                          fontWeight: "bold",
-                        }}>
-                        {/* {invoiceData?.company_name} */}
-                      </Text>{" "}
-                      <Text
-                        style={{
-                          fontSize: "10px",
-                          width: "45%",
-                          fontWeight: "bold",
-                        }}>
-                        {/* {invoiceData?.shipping_street}
-                      {invoiceData?.shippingcity_city_name}{" "}
-                      {invoiceData?.shippingstate_state_name} ,
-                      {invoiceData?.shipping_pincode} */}
-                      </Text>{" "}
-                    </View>
-                  )}
-                </View>
-                <View style={{ padding: "7px", width: "33%" }}>
                   <View
                     style={{
                       padding: "3px 3px",
@@ -459,6 +346,108 @@ const POInvoiceone = ({
                     </View>
                   </View>
                 </View>
+                <View
+                  style={{
+                    width: "33%",
+                    padding: "10px 10px",
+                    borderRight: "1px solid black",
+                  }}>
+                  {UserChoice?.billTo == "Left" && (
+                    <View style={{ flexDirection: "", paddingBottom: "3px" }}>
+                      <Text
+                        style={{
+                          fontSize: "13px",
+                          fontWeight: "bold",
+                        }}>
+                        {/* {invoiceData?.company_name} */}
+                      </Text>{" "}
+                      <Text
+                        style={{
+                          fontSize: "10px",
+                          width: "45%",
+                          fontWeight: "bold",
+                        }}>
+                        {/* {invoiceData?.billing_street},
+                      {invoiceData?.billing_city_name}
+                      {invoiceData?.billing_state_name} ,
+                      {invoiceData?.billing_pincode} */}
+                      </Text>{" "}
+                    </View>
+                  )}
+                  {UserChoice?.shipto == "Left" && (
+                    <View style={{ flexDirection: "", paddingBottom: "3px" }}>
+                      <Text
+                        style={{
+                          fontSize: "13px",
+                          fontWeight: "bold",
+                        }}>
+                        {/* {invoiceData?.company_name} */}
+                      </Text>{" "}
+                      <Text
+                        style={{
+                          fontSize: "10px",
+                          width: "45%",
+                          fontWeight: "bold",
+                        }}>
+                        {/* {invoiceData?.shipping_street}
+                      {invoiceData?.shippingcity_city_name}{" "}
+                      {invoiceData?.shippingstate_state_name} ,
+                      {invoiceData?.shipping_pincode} */}
+                      </Text>{" "}
+                    </View>
+                  )}
+                </View>
+                <View
+                  style={{
+                    padding: "10px",
+                    width: "33%",
+                    // borderRight: "1px solid black",
+                  }}>
+                  {UserChoice?.billTo == "right" && (
+                    <View style={{ flexDirection: "", paddingBottom: "3px" }}>
+                      <Text
+                        style={{
+                          fontSize: "13px",
+                          fontWeight: "bold",
+                        }}>
+                        {/* {invoiceData?.company_name} */}
+                      </Text>{" "}
+                      <Text
+                        style={{
+                          fontSize: "10px",
+                          width: "45%",
+                          fontWeight: "bold",
+                        }}>
+                        {/* {invoiceData?.billing_street},
+                      {invoiceData?.billing_city_name}
+                      {invoiceData?.billing_state_name} ,
+                      {invoiceData?.billing_pincode} */}
+                      </Text>{" "}
+                    </View>
+                  )}
+                  {UserChoice?.shipto == "right" && (
+                    <View style={{ flexDirection: "", paddingBottom: "3px" }}>
+                      <Text
+                        style={{
+                          fontSize: "13px",
+                          fontWeight: "bold",
+                        }}>
+                        {/* {invoiceData?.company_name} */}
+                      </Text>{" "}
+                      <Text
+                        style={{
+                          fontSize: "10px",
+                          width: "45%",
+                          fontWeight: "bold",
+                        }}>
+                        {/* {invoiceData?.shipping_street}
+                      {invoiceData?.shippingcity_city_name}{" "}
+                      {invoiceData?.shippingstate_state_name} ,
+                      {invoiceData?.shipping_pincode} */}
+                      </Text>{" "}
+                    </View>
+                  )}
+                </View>
               </View>
               <View
                 style={{
@@ -508,7 +497,7 @@ const POInvoiceone = ({
               <View
                 style={{
                   flexDirection: "row",
-                  backgroundColor: "#00c0ef",
+                  //   backgroundColor: "#00c0ef",
                   borderBottom: "1px solid black",
                   borderRight: "1px solid black",
                   borderLeft: "1px solid black",
@@ -523,7 +512,7 @@ const POInvoiceone = ({
                   <Text
                     style={{
                       fontSize: "10px",
-                      color: "white",
+                      color: "black",
                       fontWeight: "1000",
                       marginLeft: "5px",
                     }}>
@@ -540,7 +529,7 @@ const POInvoiceone = ({
                 <Text
                   style={{
                     fontSize: "10px",
-                    color: "white",
+                    color: "black",
                     fontWeight: "1000",
                     marginLeft: "5px",
                   }}
@@ -559,7 +548,7 @@ const POInvoiceone = ({
                     style={{
                       fontSize: "10px",
                       fontWeight: "1000",
-                      color: "white",
+                      color: "black",
 
                       marginLeft: "5px",
                     }}>
@@ -576,7 +565,7 @@ const POInvoiceone = ({
                   <Text
                     style={{
                       fontSize: "10px",
-                      color: "white",
+                      color: "black",
                       fontWeight: "1000",
                       marginLeft: "5px",
                     }}>
@@ -593,7 +582,7 @@ const POInvoiceone = ({
                   <Text
                     style={{
                       fontSize: "10px",
-                      color: "white",
+                      color: "black",
                       fontWeight: "1000",
                       marginLeft: "5px",
                     }}>
@@ -610,7 +599,7 @@ const POInvoiceone = ({
                   <Text
                     style={{
                       fontSize: "10px",
-                      color: "white",
+                      color: "black",
                       fontWeight: "1000",
                       marginLeft: "5px",
                     }}>
@@ -627,7 +616,7 @@ const POInvoiceone = ({
                   <Text
                     style={{
                       fontSize: "10px",
-                      color: "white",
+                      color: "black",
                       fontWeight: "1000",
                       marginLeft: "5px",
                     }}>
@@ -644,7 +633,7 @@ const POInvoiceone = ({
                   <Text
                     style={{
                       fontSize: "10px",
-                      color: "white",
+                      color: "black",
                       fontWeight: "1000",
                       marginLeft: "5px",
                     }}>
@@ -661,7 +650,7 @@ const POInvoiceone = ({
                   <Text
                     style={{
                       fontSize: "10px",
-                      color: "white",
+                      color: "black",
                       fontWeight: "1000",
                       marginLeft: "5px",
                     }}>
@@ -678,7 +667,7 @@ const POInvoiceone = ({
                   <Text
                     style={{
                       fontSize: "10px",
-                      color: "white",
+                      color: "black",
                       fontWeight: "1000",
                       marginLeft: "5px",
                     }}>
@@ -691,15 +680,14 @@ const POInvoiceone = ({
                   key={i}
                   style={{
                     flexDirection: "row",
-                    //   borderBottom: "1px solid black",
                     borderRight: "1px solid black",
                     borderLeft: "1px solid black",
-                    height: "21px",
+                    height: "20px",
                   }}>
                   <View
                     style={{
                       width: "3%",
-                      padding: "5px 2px",
+                      padding: "2px 2px",
                     }}>
                     <Text
                       style={{
@@ -713,13 +701,13 @@ const POInvoiceone = ({
                   <View
                     style={{
                       width: "12%",
-                      padding: "5px 2px",
+                      padding: "2px 2px",
                     }}>
                     <Text
                       style={{
                         fontSize: "10px",
                         fontWeight: "1000",
-
+                        color: "black",
                         marginLeft: "5px",
                       }}>
                       {ele?.po_no && ele?.po_no ? <>{ele?.po_no}</> : null}
@@ -727,13 +715,13 @@ const POInvoiceone = ({
                   </View>
                   <View
                     style={{
-                      width: "12%",
-                      padding: "5px 2px",
+                      width: "13%",
+                      padding: "2px 2px",
                     }}>
                     <Text
                       style={{
                         fontSize: "10px",
-
+                        color: "black",
                         fontWeight: "1000",
                         // marginLeft: "5px",
                       }}>
@@ -744,7 +732,7 @@ const POInvoiceone = ({
                   <View
                     style={{
                       width: "13%",
-                      padding: "5px 2px",
+                      padding: "2px 2px",
                     }}>
                     <Text
                       style={{
@@ -760,7 +748,7 @@ const POInvoiceone = ({
                   <View
                     style={{
                       width: "15%",
-                      padding: "5px 2px",
+                      padding: "2px 2px",
                     }}>
                     <Text
                       style={{
@@ -774,8 +762,8 @@ const POInvoiceone = ({
                   </View>
                   <View
                     style={{
-                      width: "13%",
-                      padding: "5px 2px",
+                      width: "12%",
+                      padding: "2px 2px",
                     }}>
                     <Text
                       style={{
@@ -791,7 +779,7 @@ const POInvoiceone = ({
                     style={{
                       width: "12%",
                       marginRight: "2px",
-                      padding: "5px 2px",
+                      padding: "2px 2px",
                     }}>
                     <Text
                       style={{
@@ -806,7 +794,7 @@ const POInvoiceone = ({
                     style={{
                       width: "12%",
                       marginRight: "2px",
-                      padding: "5px 2px",
+                      padding: "2px 2px",
                     }}>
                     <Text
                       style={{
@@ -822,7 +810,7 @@ const POInvoiceone = ({
                     style={{
                       //   width: "12%",
                       marginRight: "2px",
-                      padding: "5px 2px",
+                      padding: "2px 2px",
                     }}>
                     <Text
                       style={{
@@ -1184,4 +1172,4 @@ const POInvoiceone = ({
   );
 };
 
-export default POInvoiceone;
+export default PoinvoiceThree;
