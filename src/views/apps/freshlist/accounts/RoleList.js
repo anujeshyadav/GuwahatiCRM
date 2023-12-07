@@ -30,16 +30,14 @@ import { Route } from "react-router-dom";
 import { BsEye, BsTrash } from "react-icons/bs";
 import { CreateAccountView, Get_RoleList } from "../../../../ApiEndPoint/ApiCalling";
 import { FaPlus } from "react-icons/fa";
+import { CheckPermission } from "../house/CheckPermission";
 
 class RoleList extends React.Component {
   static contextType = UserContext;
 
   state = {
     rowData: [],
-    Viewpermisson: null,
-    Editpermisson: null,
-    Createpermisson: null,
-    Deletepermisson: null,
+    InsiderPermissions: {},
     paginationPageSize: 20,
     currenPageSize: "",
     getPageSize: "",
@@ -99,35 +97,38 @@ class RoleList extends React.Component {
         cellRendererFramework: (params) => {
           return (
             <div className="actions cursor-pointer">
-              {this.state.Viewpermisson && (
-                <BsEye
-                  className="mr-50"
-                  size="25px"
-                  color="green"
-                  onClick={() =>
-                    history.push(
-                      `/app/freshlist/account/updateexistingrole/${params.data._id}`
-                    )
-                  }
-                />
-              )}
+              {/* {this.state.InsiderPermissions &&
+                this.state.InsiderPermissions.View && (
+                  <BsEye
+                    className="mr-50"
+                    size="25px"
+                    color="green"
+                    onClick={() =>
+                      history.push(
+                        `/app/freshlist/account/updateexistingrole/${params.data._id}`
+                      )
+                    }
+                  />
+                )} */}
 
-              {/* {this.state.Editpermisson && ( */}
-                <Route
-                  render={({ history }) => (
-                    <Edit
-                      className="mr-50"
-                      size="25px"
-                      color="blue"
-                      onClick={() =>
-                        history.push({
-                          pathname: `/app/freshlist/account/editRole/${params?.data?._id}`,
-                          data: params,
-                        })
-                      }
-                    />
-                  )}
-                />
+              {this.state.InsiderPermissions &&
+                this.state.InsiderPermissions.Delete && (
+                  <Route
+                    render={({ history }) => (
+                      <Edit
+                        className="mr-50"
+                        size="25px"
+                        color="blue"
+                        onClick={() =>
+                          history.push({
+                            pathname: `/app/freshlist/account/editRole/${params?.data?._id}`,
+                            data: params,
+                          })
+                        }
+                      />
+                    )}
+                  />
+                )}
               {/* )} */}
               {/* {this.state.Deletepermisson && (
                 <BsTrash
@@ -146,186 +147,19 @@ class RoleList extends React.Component {
     ],
   };
   async componentDidMount() {
-    Get_RoleList().then((res)=>{
-      console.log(res?.Role)
-      this.setState({rowData:res?.Role})
-    }).catch((err)=>{
-      console.log(err)
-    })
+    Get_RoleList()
+      .then((res) => {
+        console.log(res?.Role);
+        this.setState({ rowData: res?.Role });
+      })
+      .catch((err) => {
+        console.log(err);
+      });
 
-    // CreateAccountView()
-    //   .then((res) => {
-    //     var mydropdownArray = [];
-    //     var adddropdown = [];
-    //     const jsonData = xmlJs.xml2json(res.data, { compact: true, spaces: 1 });
-    //     console.log(JSON.parse(jsonData));
-    //     // const checkboxinput = JSON.parse(
-    //     //   jsonData
-    //     // ).CreateAccount?.CheckBox?.input?.map((ele) => {
-    //     //   return {
-    //     //     headerName: ele?.label?._text,
-    //     //     field: ele?.name?._text,
-    //     //     filter: true,
-    //     //     sortable: true,
-    //     //     cellRendererFramework: (params) => {
-    //     //       console.log(params.data);
-    //     //       debugger;
-    //     //       return params.data?.Status === "Active" ? (
-    //     //         <div className="badge badge-pill badge-success">
-    //     //           {params.data.Status}
-    //     //         </div>
-    //     //       ) : params.data?.Status === "Deactive" ? (
-    //     //         <div className="badge badge-pill badge-warning">
-    //     //           {params.data.Status}
-    //     //         </div>
-    //     //       ) : (
-    //     //         "NA"
-    //     //       );
-    //     //     },
-    //     //   };
-    //     // });
-    //     // const inputs = JSON.parse(jsonData).CreateAccount?.input?.map((ele) => {
-    //     //   return {
-    //     //     headerName: ele?.label._text,
-    //     //     field: ele?.name._text,
-    //     //     filter: true,
-    //     //     sortable: true,
-    //     //   };
-    //     // });
-    //     // let Radioinput =
-    //     //   JSON.parse(jsonData).CreateAccount?.Radiobutton?.input[0]?.name
-    //     //     ?._text;
-    //     // const addRadio = [
-    //     //   {
-    //     //     headerName: Radioinput,
-    //     //     field: Radioinput,
-    //     //     filter: true,
-    //     //     sortable: true,
-    //     //     cellRendererFramework: (params) => {
-    //     //       // debugger;
-    //     //       // console.log(params.data);
-    //     //       return params.data?.Status === "Active" ? (
-    //     //         <div className="badge badge-pill badge-success">
-    //     //           {params.data.Status}
-    //     //         </div>
-    //     //       ) : params.data?.Status === "Deactive" ? (
-    //     //         <div className="badge badge-pill badge-warning">
-    //     //           {params.data.Status}
-    //     //         </div>
-    //     //       ) : (
-    //     //         "NA"
-    //     //       );
-    //     //     },
-    //     //   },
-    //     // ];
-
-    //     let dropdown = JSON.parse(jsonData).CreateAccount?.MyDropdown?.dropdown;
-    //     if (dropdown.length) {
-    //       var mydropdownArray = dropdown?.map((ele) => {
-    //         return {
-    //           headerName: ele?.label,
-    //           field: ele?.name,
-    //           filter: true,
-    //           sortable: true,
-    //         };
-    //       });
-    //     } else {
-    //       var adddropdown = [
-    //         {
-    //           headerName: dropdown?.label._text,
-    //           field: dropdown?.name._text,
-    //           filter: true,
-    //           sortable: true,
-    //         },
-    //       ];
-    //     }
-
-    //     let myHeadings = [
-    //       // ...checkboxinput,
-    //       // ...inputs,
-    //       ...adddropdown,
-    //       // ...addRadio,
-    //       ...mydropdownArray,
-    //     ];
-    //     console.log(myHeadings);
-    //     let Product = [
-    //       {
-    //         headerName: "Actions",
-    //         field: "sortorder",
-    //         field: "transactions",
-    //         width: 190,
-    //         cellRendererFramework: (params) => {
-    //           return (
-    //             <div className="actions cursor-pointer">
-    //               <Route
-    //                 render={({ history }) => (
-    //                   <Eye
-    //                     className="mr-50"
-    //                     size="25px"
-    //                     color="green"
-    //                     // onClick={() => {
-    //                     //   this.handleChangeEdit(params.data, "readonly");
-    //                     // }}
-    //                   />
-    //                 )}
-    //               />
-    //               <Route
-    //                 render={({ history }) => (
-    //                   <Edit
-    //                     className="mr-50"
-    //                     size="25px"
-    //                     color="blue"
-    //                     // onClick={() => {
-    //                     //   this.handleChangeEdit(params.data, "Editable");
-    //                     // }}
-    //                   />
-    //                 )}
-    //               />
-
-    //               <Route
-    //                 render={() => (
-    //                   <Trash2
-    //                     className="mr-50"
-    //                     size="25px"
-    //                     color="red"
-    //                     // onClick={() => {
-    //                     //   this.runthisfunction(params?.data?._id);
-    //                     // }}
-    //                   />
-    //                 )}
-    //               />
-    //             </div>
-    //           );
-    //         },
-    //       },
-    //       ...myHeadings,
-    //     ];
-    //     console.log(dropdown?.option);
-    //     this.setState({ columnDefs: Product });
-    //     this.setState({ rowData: dropdown?.option });
-
-    //     // this.setState({ AllcolumnDefs: Product });
-    //   })
-    //   .catch((err) => {
-    //     console.log(err);
-    //     swal("Error", "something went wrong try again");
-    //   });
+    const InsidePermissions = CheckPermission("Create User");
+    console.log(InsidePermissions);
+    this.setState({ InsiderPermissions: InsidePermissions });
     let pageparmission = JSON.parse(localStorage.getItem("userData"));
-
-    let newparmisson = pageparmission?.role?.find(
-      (value) => value?.pageName === "Role List"
-    );
-
-    this.setState({ Viewpermisson: newparmisson?.permission.includes("View") });
-    this.setState({
-      Createpermisson: newparmisson?.permission.includes("Create"),
-    });
-    this.setState({
-      Editpermisson: newparmisson?.permission.includes("Edit"),
-    });
-    this.setState({
-      Deletepermisson: newparmisson?.permission.includes("Delete"),
-    });
 
     const formdata = new FormData();
     formdata.append("user_id", pageparmission?.Userinfo?.id);
@@ -333,9 +167,8 @@ class RoleList extends React.Component {
     await axiosConfig
       .post("/getrolelist", formdata)
       .then((response) => {
-        // console.log(response.data?.data);
         const propertyNames = Object.values(response.data?.data);
-        // console.log(propertyNames);
+
         this.setState({ rowData: propertyNames });
       })
       .catch((error) => {
@@ -435,36 +268,45 @@ class RoleList extends React.Component {
               <Col>
                 <h1 className="float-left">Created Role List</h1>
               </Col>
-              <Col>
-                <Route
-                  render={({ history }) => (
-                    <Badge
-                      style={{ cursor: "pointer" }}
-                      className=" float-right mr-2"
-                      color="primary"
-                      onClick={() =>
-                        history.push("/app/freshlist/account/addRoleNew")
-                      }>
-                      <FaPlus size={15} /> Create Role
-                    </Badge>
-                  )}
-                />
-              </Col>
-              <Col lg="1" sm="1" md="1" ms="12">
-                <Route
-                  render={({ history }) => (
-                    <Badge
-                      style={{ cursor: "pointer" }}
-                      className=" float-right"
-                      color="primary"
-                      onClick={() =>
-                        history.push("/app/freshlist/account/CreateHeirarchy")
-                      }>
-                      <FaPlus size={15} /> Create Hierarchy
-                    </Badge>
-                  )}
-                />
-              </Col>
+              {this.state.InsiderPermissions &&
+                this.state.InsiderPermissions?.Create && (
+                  <Col>
+                    <Route
+                      render={({ history }) => (
+                        <Badge
+                          style={{ cursor: "pointer" }}
+                          className=" float-right mr-3"
+                          color="primary"
+                          onClick={() =>
+                            history.push("/app/freshlist/account/addRoleNew")
+                          }>
+                          <FaPlus size={15} /> Create Role
+                        </Badge>
+                      )}
+                    />
+                  </Col>
+                )}
+
+              {this.state.InsiderPermissions &&
+                this.state.InsiderPermissions?.Create && (
+                  <Col lg="1" sm="1" md="1" ms="12">
+                    <Route
+                      render={({ history }) => (
+                        <Badge
+                          style={{ cursor: "pointer" }}
+                          className=" float-right"
+                          color="primary"
+                          onClick={() =>
+                            history.push(
+                              "/app/freshlist/account/CreateHeirarchy"
+                            )
+                          }>
+                          <FaPlus size={15} /> Create Hierarchy
+                        </Badge>
+                      )}
+                    />
+                  </Col>
+                )}
             </Row>
             <CardBody>
               {this.state.rowData === null ? null : (

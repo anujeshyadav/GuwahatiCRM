@@ -1,6 +1,7 @@
 // Guwahati open
 export const Get_Role = "/role/get-role";
 export const Get_Role_by_id = "/role/get-role-by-id/";
+export const Create_Company_Details = "/company-detail/save-company-details";
 export const Update_Role = "/role/update-role/";
 export const Create_warehouse_xmlView = "/warehouse/get-xml";
 export const Create_warehouse_save = "/warehouse/save-warehouse";
@@ -93,7 +94,7 @@ export const Create_Customer_Update = "/customer/update-customer/";
 export const Create_Account_save = "/user/save-user";
 export const Create_Account_List = "/user/view-user-by-id/";
 // export const Create_Account_List = "/user/view-user/";
-export const Create_Customer_List = "/customer/view-customer";
+export const Create_Customer_List = "/customer/view-customer/";
 export const Create_Account_Update = "/user/update-user/";
 export const Delete_Account_List = "/user/delete-user/";
 export const Delete_Customer_List = "/customer/delete-customer/";

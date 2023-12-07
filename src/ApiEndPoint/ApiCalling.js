@@ -38,6 +38,7 @@ import {
   Create_transporter_xmlView,
   Create_Sales_person_save,
   Update_Sales_person_save,
+  Create_Company_Details,
   Create_Sales_person_List,
   Create_transporter_save,
   Create_Target_List,
@@ -177,163 +178,173 @@ dotenv.config();
 export const Createwarehousexml = async () => {
   let response = await axiosConfig
     .get(`${Create_warehouse_xmlView}`)
-    .then(res => res.data);
+    .then((res) => res.data);
   return response;
 };
 
-export const CreateWarehousesave = async data => {
+export const CreateWarehousesave = async (data) => {
   let response = await axiosConfig
     .post(`${Create_warehouse_save}`, data)
-    .then(res => res.data);
+    .then((res) => res.data);
   return response;
 };
 
 export const CreateWarehouseList = async () => {
   let response = await axiosConfig
     .get(`${Create_Warehouse_List}`)
-    .then(res => res.data);
+    .then((res) => res.data);
   return response;
 };
 export const Createtransporterxml = async () => {
   let response = await axiosConfig
     .get(`${Create_transporter_xmlView}`)
-    .then(res => res.data);
+    .then((res) => res.data);
   return response;
 };
 export const CreatePartyXML = async () => {
   let response = await axiosConfig
     .get(`${Create_Party_XML}`)
-    .then(res => res.data);
+    .then((res) => res.data);
   return response;
 };
-export const Createtransportersave = async data => {
+export const Createtransportersave = async (data) => {
   let response = await axiosConfig
     .post(`${Create_transporter_save}`, data)
-    .then(res => res.data);
+    .then((res) => res.data);
   return response;
 };
 
-export const SavePromotionsActivity = async data => {
+export const SavePromotionsActivity = async (data) => {
   let response = await axiosConfig
     .post(`${Save_Promotion}`, data)
-    .then(res => res.data);
+    .then((res) => res.data);
   return response;
 };
-export const View_PromotionList = async data => {
+export const View_PromotionList = async (data) => {
   let response = await axiosConfig
     .get(`${View_Promotion_List}`)
-    .then(res => res.data);
+    .then((res) => res.data);
   return response;
 };
-export const CreatePartysave = async data => {
+export const CreatePartysave = async (data) => {
   let response = await axiosConfig
     .post(`${Create_Party_save}`, data)
-    .then(res => res.data);
+    .then((res) => res.data);
   return response;
 };
 export const CreateTransporterList = async () => {
   let response = await axiosConfig
     .get(`${Create_Transporter_List}`)
-    .then(res => res.data);
+    .then((res) => res.data);
   return response;
 };
-export const DeleteTransporterList = async id => {
+export const DeleteTransporterList = async (id) => {
   let response = await axiosConfig
     .delete(`${Delete_Transporter_List}` + id)
 
-    .then(res => res.data);
+    .then((res) => res.data);
   return response;
 };
-export const CreateCategory = async data => {
+export const CreateCategory = async (data) => {
   let response = await axiosConfig
     .post(Create_Category, data)
-    .then(res => res.data);
+    .then((res) => res.data);
   return response;
 };
 export const CreateProductXMLView = async () => {
   let response = await axiosConfig
     .get(Create_Product_XMLView)
-    .then(res => res.data);
+    .then((res) => res.data);
   return response;
 };
 export const CreatePartyList = async () => {
-  let response = await axiosConfig.get(Create_Party_List).then(res => res.data);
+  let response = await axiosConfig
+    .get(Create_Party_List)
+    .then((res) => res.data);
   return response;
 };
-export const CreateSubCategory = async data => {
+export const CreateSubCategory = async (data) => {
   let response = await axiosConfig
     .post(Create_SubCategory, data)
-    .then(res => res.data);
+    .then((res) => res.data);
   return response;
 };
-export const SaveProduct = async data => {
+export const SaveProduct = async (data) => {
   let response = await axiosConfig
     .post(Save_Product, data)
-    .then(res => res.data);
+    .then((res) => res.data);
   return response;
 };
 
 export const AllCategoryList = async () => {
-  let response = await axiosConfig.get(Category_List).then(res => res.data);
+  let response = await axiosConfig.get(Category_List).then((res) => res.data);
   return response;
 };
 export const ProductListView = async () => {
-  let response = await axiosConfig.get(ProductList_View).then(res => res.data);
+  let response = await axiosConfig
+    .get(ProductList_View)
+    .then((res) => res.data);
   return response;
 };
 export const CreateunitxmlView = async () => {
   let response = await axiosConfig
     .get(`${Create_unit_xmlView}`)
-    .then(res => res.data);
+    .then((res) => res.data);
   return response;
 };
-export const SaveAddPrimary_Unit = async data => {
+export const SaveAddPrimary_Unit = async (data) => {
   let response = await axiosConfig
     .post(AddPrimaryUnit, data)
-    .then(res => res.data);
+    .then((res) => res.data);
   return response;
 };
 export const BaseUnitListView = async () => {
-  let response = await axiosConfig.get(`${BaseUnitList}`).then(res => res.data);
+  let response = await axiosConfig
+    .get(`${BaseUnitList}`)
+    .then((res) => res.data);
   return response;
 };
 
-export const SaveUnit = async data => {
+export const SaveUnit = async (data) => {
   let response = await axiosConfig
     .post(Create_unit_save, data)
-    .then(res => res.data);
+    .then((res) => res.data);
   return response;
 };
 
 export const UnitListView = async () => {
-  let response = await axiosConfig.get(Create_unit_List).then(res => res.data);
+  let response = await axiosConfig
+    .get(Create_unit_List)
+    .then((res) => res.data);
   return response;
 };
 
-export const DeleteUnitList = async id => {
+export const DeleteUnitList = async (id) => {
   let response = await axiosConfig
     .delete(`${Delete_Unit_List}` + id)
 
-    .then(res => res.data);
+    .then((res) => res.data);
   return response;
 };
-export const DeleteSalesperson = async id => {
+export const DeleteSalesperson = async (id) => {
   let response = await axiosConfig
     .delete(`${Delete_Sales_person}` + id)
 
-    .then(res => res.data);
+    .then((res) => res.data);
   return response;
 };
-export const UnitViewOne = async id => {
+export const UnitViewOne = async (id) => {
   let response = await axiosConfig
     .put(`${Unit_ViewOne}` + id)
 
-    .then(res => res.data);
+    .then((res) => res.data);
   return response;
 };
 // by own
-export const SaveOrder = async data => {
-  let response = await axiosConfig.post(Save_Order, data).then(res => res.data);
+export const SaveOrder = async (data) => {
+  let response = await axiosConfig
+    .post(Save_Order, data)
+    .then((res) => res.data);
   return response;
 };
 export const createOrderhistoryview = async (id) => {
@@ -436,10 +447,10 @@ export const GoodDispatchxmlView = async () => {
     .then((res) => res.data);
   return response;
 };
-export const Save_GoodDispatch = async data => {
+export const Save_GoodDispatch = async (data) => {
   let response = await axiosConfig
     .post(SAVE_GoodDispatch, data)
-    .then(res => res.data);
+    .then((res) => res.data);
   return response;
 };
 // guwahati api calling close
@@ -574,6 +585,12 @@ export const CreateCustomersave = async (data) => {
     .then((res) => res.data);
   return response;
 };
+export const Create_CompanyDetails = async (data) => {
+  let response = await axiosConfig
+    .post(`${Create_Company_Details}`, data)
+    .then((res) => res.data);
+  return response;
+};
 // export const DeleteAccount = async id => {
 //   console.log(id);
 export const DeleteAccount = async (id) => {
@@ -594,10 +611,10 @@ export const CreateAccountList = async (id) => {
     .then((res) => res.data);
   return response;
 };
-export const CreateCustomerList = async data => {
+export const CreateCustomerList = async (id) => {
   let response = await axiosConfig
-    .get(`${Create_Customer_List}`, data)
-    .then(res => res.data);
+    .get(`${Create_Customer_List}` + id)
+    .then((res) => res.data);
   return response;
 };
 export const CreateAccountUpdate = async (id, formdata) => {
