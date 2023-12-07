@@ -4,11 +4,16 @@ import {
   Col,
   Button,
   Form,
+  Modal,
+  ModalHeader,
+  ModalBody,
   Label,
   Input,
   Card,
   CardTitle,
-  CustomInput, FormGroup,
+  CustomInput,
+  FormGroup,
+  Badge,
 } from "reactstrap";
 import Select from "react-select";
 import { Country, State, City } from "country-state-city";
@@ -16,7 +21,10 @@ import CheckBoxesVuexy from "../../../components/@vuexy/checkbox/CheckboxesVuexy
 import { Check } from "react-feather";
 import Breadcrumbs from "../../../components/@vuexy/breadCrumbs/BreadCrumb";
 import swal from "sweetalert";
-import { EditUserProfile } from "../../../ApiEndPoint/ApiCalling";
+import {
+  Create_CompanyDetails,
+  EditUserProfile,
+} from "../../../ApiEndPoint/ApiCalling";
 import "../../../assets/scss/pages/users-profile.scss";
 import UserContext from "../../../context/Context";
 import moment from "moment-timezone";
@@ -28,23 +36,34 @@ class UserProfile extends React.Component {
     this.state = {
       firstName: "",
       lastName: "",
+      modal: false,
       // formData: {
       //   Country: '',
       //   State: '',
       //   City: '',
       // },
-
+      Loading: "Submit",
       selectedCountry: null,
       selectedState: null,
       selectedCity: null,
       name: "",
       LoginData: {},
+      Companylogo: {},
+      CompanyAddress: "",
       formData: "",
+      CompanyNumber: "",
+      gstNumber: "",
+      companyName: "",
       email: "",
       cnfmPassword: "",
       password: "",
     };
   }
+  toggleModal = () => {
+    this.setState((prevState) => ({
+      modal: !prevState.modal,
+    }));
+  };
 
   //Image Submit Handler
   onChangeHandler = (event) => {
@@ -56,7 +75,9 @@ class UserProfile extends React.Component {
     if (this.state.selectedCountry !== prevState.selectedCountry) {
       console.log(this.state.selectedCountry);
       console.log(this.state.selectedCountry?.isoCode);
-      console.log(State?.getStatesOfCountry(this.state.selectedCountry?.isoCode));
+      console.log(
+        State?.getStatesOfCountry(this.state.selectedCountry?.isoCode)
+      );
     }
   }
   componentDidMount() {
@@ -82,7 +103,6 @@ class UserProfile extends React.Component {
     // }
     // console.log(this.context);
   }
-
 
   // handleCountryChange = (selectedOption) => {
   //   this.setState({
@@ -194,8 +214,31 @@ class UserProfile extends React.Component {
         });
     }
   };
+  HandleUploadLogo = async (e) => {
+    e.preventDefault();
+
+    let formData = new FormData();
+    formData.append("email", this.state.email);
+    formData.append("name", this.state.companyName);
+    formData.append("mobileNo", this.state.CompanyNumber);
+    formData.append("file", this.state.Companylogo);
+    formData.append("gstNo", this.state.gstNumber);
+    formData.append("address", this.state.CompanyAddress);
+
+    await Create_CompanyDetails(formData)
+      .then((res) => {
+        console.log(res);
+        swal("Company Details are Added Successfully");
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+
+    console.log(this.state.Loading);
+    this.toggleModal();
+  };
   render() {
-    console.log(this.context?.UserInformatio);
+    // console.log(this.context?.UserInformatio);
     const { selectedCountry, selectedState, selectedCity } = this.state;
     return (
       <React.Fragment>
@@ -211,12 +254,13 @@ class UserProfile extends React.Component {
                 <div className="profile-img text-center st-1">
                   <ul
                     style={{ listStyleType: "none" }}
-                    className="lst-1 usrdatlist"
-                  >
+                    className="lst-1 usrdatlist">
                     <li className="lst-2 p-1">
                       FirstName:
                       <span className="lst-3">
-                        <strong>{this.context?.UserInformatio.firstName}</strong>
+                        <strong>
+                          {this.context?.UserInformatio.firstName}
+                        </strong>
                       </span>
                     </li>
                     <li className="lst-2 p-1">
@@ -249,7 +293,6 @@ class UserProfile extends React.Component {
                         <strong>{this.context?.UserInformatio?.City}</strong>
                       </span>
                     </li>
-
                   </ul>
                 </div>
               </Card>
@@ -259,15 +302,33 @@ class UserProfile extends React.Component {
               xl="8"
               lg="8"
               md="8"
-              className="d-flex justify-content-center"
-            >
+              className="d-flex justify-content-center">
               <Card className="bg-authentication rounded-0 mb-0 w-100">
+                <Row className="container">
+                  <Col>
+                    <span className="mb-3">Edit Profile</span>
+                  </Col>
+                  {this.state.LoginData?.rolename?.position == 1 ? (
+                    <>
+                      <Col>
+                        <div className="d-flex justify-content-end">
+                          <Badge
+                            style={{ cursor: "pointer" }}
+                            onClick={(e) => {
+                              e.preventDefault();
+                              this.toggleModal();
+                            }}
+                            color="primary">
+                            Add Company Details
+                          </Badge>
+                        </div>
+                      </Col>
+                    </>
+                  ) : null}
+                </Row>
                 <Form className="m-1" onSubmit={this.submitHandler}>
                   <div className="st-2">
-                    <CardTitle>
-                      <h4 className="mb-3">Edit Profile</h4>
-                      <Col></Col>
-                    </CardTitle>
+                    <CardTitle></CardTitle>
 
                     <Row className="m-0">
                       <Col sm="12" lg="6" md="6" className="p-1">
@@ -280,7 +341,7 @@ class UserProfile extends React.Component {
                           onChange={this.changeHandler}
                         />
                       </Col>
-                    
+
                       <Col sm="12" lg="6" md="6" className="p-1">
                         <Label>LastName</Label>
                         <Input
@@ -319,20 +380,24 @@ class UserProfile extends React.Component {
                         <FormGroup>
                           <Label>Select State</Label>
                           <Select
-                            options={State?.getStatesOfCountry(selectedCountry?.isoCode)}
+                            options={State?.getStatesOfCountry(
+                              selectedCountry?.isoCode
+                            )}
                             getOptionLabel={(option) => option.name}
                             getOptionValue={(option) => option.name}
                             value={selectedState}
                             onChange={this.handleStateChange}
                           />
-
                         </FormGroup>
                       </Col>
                       <Col lg="6" md="6" sm="12">
                         <FormGroup>
                           <Label>Select City</Label>
                           <Select
-                            options={City.getCitiesOfState(selectedState?.countryCode, selectedState?.isoCode)}
+                            options={City.getCitiesOfState(
+                              selectedState?.countryCode,
+                              selectedState?.isoCode
+                            )}
                             getOptionLabel={(option) => option.name}
                             getOptionValue={(option) => option.name}
                             value={selectedCity}
@@ -385,6 +450,120 @@ class UserProfile extends React.Component {
             </Col>
           </Row>
         </div>
+        <Modal
+          isOpen={this.state.modal}
+          toggle={this.toggleModal}
+          className={this.props.className}
+          style={{ maxWidth: "1050px" }}>
+          <ModalHeader toggle={this.toggleModal}>
+            Add Company Details
+          </ModalHeader>
+          <ModalBody>
+            {this.state.LoginData?.rolename?.position == 1 ? (
+              <>
+                <Card className="bg-authentication rounded-0 mb-0 w-100">
+                  <Form className="p-1" onSubmit={this.HandleUploadLogo}>
+                    <div className="st-2">
+                      <CardTitle>
+                        <h4 className="mb-3">Add Company Details</h4>
+                      </CardTitle>
+
+                      <Row className="m-0">
+                        <Col sm="12" lg="6" md="6" className="p-1">
+                          <Label>Company Logo</Label>
+                          <CustomInput
+                            required
+                            type="file"
+                            placeholder="Companylogo"
+                            onChange={(e) =>
+                              this.setState({ Companylogo: e.target.files[0] })
+                            }
+                          />
+                        </Col>
+                        <Col sm="12" lg="6" md="6" className="p-1">
+                          <Label>Company Address</Label>
+                          <textarea
+                            required
+                            type="textarea"
+                            className="form-control"
+                            name="CompanyAddress"
+                            placeholder="Company Address"
+                            value={this.state.CompanyAddress}
+                            onChange={this.changeHandler}
+                          />
+                        </Col>
+                        <Col sm="12" lg="6" md="6" className="p-1">
+                          <Label>Company Name</Label>
+                          <input
+                            required
+                            type="text"
+                            className="form-control"
+                            name="companyName"
+                            placeholder="Company Address"
+                            value={this.state.companyName}
+                            onChange={this.changeHandler}
+                          />
+                        </Col>
+                        <Col sm="12" lg="6" md="6" className="p-1">
+                          <Label>Company Number</Label>
+                          <Input
+                            required
+                            type="text"
+                            className="formControl"
+                            name="CompanyNumber"
+                            placeholder="Company Number"
+                            value={this.state.CompanyNumber}
+                            onChange={this.changeHandler}
+                          />
+                        </Col>
+
+                        <Col sm="12" lg="6" md="6" className="p-1">
+                          <Label>Company Email</Label>
+                          <Input
+                            required
+                            type="email"
+                            className="form-control"
+                            name="email"
+                            placeholder="email"
+                            value={this.state.email}
+                            onChange={this.changeHandler}
+                          />
+                        </Col>
+                        <Col sm="12" lg="6" md="6" className="p-1">
+                          <Label>GST Number</Label>
+                          <Input
+                            required
+                            name="gstNumber"
+                            className="from-control"
+                            placeholder="gstNumber"
+                            value={this.state.gstNumber}
+                            onChange={this.changeHandler}
+                          />
+                        </Col>
+                      </Row>
+                      <Row>
+                        <Col>
+                          <CheckBoxesVuexy
+                            color="primary"
+                            className="mb-1 mx-1"
+                            icon={<Check className="vx-icon" size={16} />}
+                            label=" I accept the terms & conditions."
+                            defaultChecked={true}
+                          />
+                        </Col>
+                      </Row>
+                      <div className="d-flex justify-content-center">
+                        <Button.Ripple color="primary" type="submit">
+                          {this.state.Loading}
+                        </Button.Ripple>
+                      </div>
+                    </div>
+                  </Form>
+                </Card>
+              </>
+            ) : null}
+          </ModalBody>
+        </Modal>
       </React.Fragment>
     );
   }

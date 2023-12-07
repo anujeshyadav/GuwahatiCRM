@@ -17,8 +17,8 @@ const InvoiceGenerator = (props) => {
   const [details, setDetails] = useState([]);
 
   useEffect(() => {
-    console.log(props);
-    // debugger;
+    // console.log(props?.BillNumber);
+
     let userchoice = JSON.parse(localStorage.getItem("billUI"));
     setUserChoice(userchoice);
     if (props?.AddedBill?.length > 0) {
@@ -50,42 +50,61 @@ const InvoiceGenerator = (props) => {
     <div>
       {/* {/ Use PDFViewer to preview the generated PDF /} */}
       <PDFViewer width="1000" height="800">
-        {/* <POInVoice
-          UserChoice={UserChoice}
-          invoiceData={Printview}
-          CurrentWords={props.wordsNumber}
-          BilData={props}
-          tableList={details}
-          AllCharges={AllCharges}
-          fileName="invoice.pdf"
-        /> */}
-        {/* <POInvoiceone
-          UserChoice={UserChoice}
-          invoiceData={Printview}
-          CurrentWords={props.wordsNumber}
-          BilData={props}
-          tableList={details}
-          AllCharges={AllCharges}
-          fileName="invoice.pdf"
-        /> */}
-        {/* <POInvoiceTwo
-          UserChoice={UserChoice}
-          invoiceData={Printview}
-          CurrentWords={props.wordsNumber}
-          BilData={props}
-          tableList={details}
-          AllCharges={AllCharges}
-          fileName="invoice.pdf"
-        /> */}
-        <PoinvoiceThree
-          UserChoice={UserChoice}
-          invoiceData={Printview}
-          CurrentWords={props.wordsNumber}
-          BilData={props}
-          tableList={details}
-          AllCharges={AllCharges}
-          fileName="invoice.pdf"
-        />
+        {props?.BillNumber == undefined && (
+          <POInVoice
+            UserChoice={UserChoice}
+            invoiceData={Printview}
+            CurrentWords={props.wordsNumber}
+            BilData={props}
+            tableList={details}
+            AllCharges={AllCharges}
+            fileName="invoice.pdf"
+          />
+        )}
+        {props?.BillNumber == 4 && (
+          <POInVoice
+            UserChoice={UserChoice}
+            invoiceData={Printview}
+            CurrentWords={props.wordsNumber}
+            BilData={props}
+            tableList={details}
+            AllCharges={AllCharges}
+            fileName="invoice.pdf"
+          />
+        )}
+        {props?.BillNumber == 3 && (
+          <POInvoiceone
+            UserChoice={UserChoice}
+            invoiceData={Printview}
+            CurrentWords={props.wordsNumber}
+            BilData={props}
+            tableList={details}
+            AllCharges={AllCharges}
+            fileName="invoice.pdf"
+          />
+        )}
+        {props?.BillNumber == 1 && (
+          <POInvoiceTwo
+            UserChoice={UserChoice}
+            invoiceData={Printview}
+            CurrentWords={props.wordsNumber}
+            BilData={props}
+            tableList={details}
+            AllCharges={AllCharges}
+            fileName="invoice.pdf"
+          />
+        )}
+        {props?.BillNumber == 2 && (
+          <PoinvoiceThree
+            UserChoice={UserChoice}
+            invoiceData={Printview}
+            CurrentWords={props.wordsNumber}
+            BilData={props}
+            tableList={details}
+            AllCharges={AllCharges}
+            fileName="invoice.pdf"
+          />
+        )}
       </PDFViewer>
     </div>
   );

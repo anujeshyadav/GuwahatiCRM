@@ -142,6 +142,8 @@ const CreateCustomer = () => {
     e.preventDefault();
     // console.log(CreatAccountView);
     // console.log(dropdownValue);
+    debugger;
+    let userdata = JSON.parse(localStorage.getItem("userData"));
     let formdata = new FormData();
     CreatAccountView?.map((ele, i) => {
       if (ele?.type?._attributes?.type == "text") {
@@ -166,19 +168,39 @@ const CreateCustomer = () => {
       formData[dropdownValue?.name?._text]
     );
     formdata.append("status", formData.status);
+    formdata.append("created_by", userdata?._id);
+    formdata.append("rolename", userdata?.rolename?._id);
+
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const date = new Date(position.timestamp);
+          const CurentTime = date.toLocaleString();
+          formdata.append("latitude", position.coords.latitude);
+          formdata.append("longitude", position.coords.longitude);
+        },
+        (error) => {
+          // this.setState({ Error: `Error: ${error}` });
+          swal(`Error: ${error}`);
+        },
+        { timeout: 10000, enableHighAccuracy: true }
+      );
+    } else {
+      swal(`Error: Geolocation not found`);
+    }
 
     formdata.forEach((value, key) => {
       // console.log(key, value);
     });
     if (error) {
-      swal("Error occured while Entering Details");
+      // swal("Error occured while Entering Details");
     } else {
       CreateCustomersave(formdata)
         .then((res) => {
           console.log(res);
           setFormData({});
           if (res.status) {
-            // window.location.reload();
+            // window.location.goBack();
             swal("Customer Created Successfully");
           }
         })
@@ -207,8 +229,7 @@ const CreateCustomer = () => {
                       color="primary"
                       onClick={() =>
                         history.push("/app/SoftNumen/CustomerSearch")
-                      }
-                    >
+                      }>
                       {" "}
                       Back
                       {/* <FaPlus size={15} /> Create User */}
@@ -234,14 +255,12 @@ const CreateCustomer = () => {
                         type="select"
                         name={dropdownValue?.name?._text}
                         value={formData[dropdownValue?.name?._text]}
-                        onChange={handleInputChange}
-                      >
-                        <option value="">--Select Role--</option>
+                        onChange={handleInputChange}>
+                        <option value="">--Select --</option>
                         {dropdownValue?.option?.map((option, index) => (
                           <option
                             key={index}
-                            value={option?._attributes?.value}
-                          >
+                            value={option?._attributes?.value}>
                             {option?._attributes?.value}
                           </option>
                         ))}
@@ -743,8 +762,7 @@ const CreateCustomer = () => {
                         ...formData,
                         ["status"]: e.target.value,
                       });
-                    }}
-                  >
+                    }}>
                     <input
                       style={{ marginRight: "3px" }}
                       type="radio"
@@ -805,8 +823,7 @@ const CreateCustomer = () => {
                 <Button.Ripple
                   color="primary"
                   type="submit"
-                  className="mr-1 mt-2 mx-2"
-                >
+                  className="mr-1 mt-2 mx-2">
                   Submit
                 </Button.Ripple>
               </Row>
