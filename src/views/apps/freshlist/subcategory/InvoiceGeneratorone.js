@@ -7,6 +7,8 @@ import POInVoice from "./POInVoice";
 // import POInVoice from "./POInVoice";
 import axiosConfig from "../../../../axiosConfig";
 import POInvoiceone from "./POInvoiceone";
+import POInvoiceTwo from "./POInvoiceTwo";
+import PoinvoiceThree from "./PoinvoiceThree";
 const InvoiceGenerator = (props) => {
   console.log(props);
   const [Printview, setPrintview] = useState({});
@@ -57,7 +59,25 @@ const InvoiceGenerator = (props) => {
           AllCharges={AllCharges}
           fileName="invoice.pdf"
         /> */}
-        <POInvoiceone
+        {/* <POInvoiceone
+          UserChoice={UserChoice}
+          invoiceData={Printview}
+          CurrentWords={props.wordsNumber}
+          BilData={props}
+          tableList={details}
+          AllCharges={AllCharges}
+          fileName="invoice.pdf"
+        /> */}
+        {/* <POInvoiceTwo
+          UserChoice={UserChoice}
+          invoiceData={Printview}
+          CurrentWords={props.wordsNumber}
+          BilData={props}
+          tableList={details}
+          AllCharges={AllCharges}
+          fileName="invoice.pdf"
+        /> */}
+        <PoinvoiceThree
           UserChoice={UserChoice}
           invoiceData={Printview}
           CurrentWords={props.wordsNumber}

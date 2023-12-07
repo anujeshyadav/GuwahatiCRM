@@ -47,7 +47,7 @@ export const Save_Product = "/product/save-product";
 export const ProductList_View = "/product/view-product";
 
 export const Save_Order = "/order/save-create-order";
-export const view_create_order_history = "/order/view-create-order-history";
+export const view_create_order_history = "/order/view-create-order-history/";
 // By other
 export const Save_Place_Order = "/order/save-place-order";
 export const Place_Order_List = "/order/view-place-order";
@@ -93,7 +93,8 @@ export const Create_Target_save = "/target-creation/save-target-creation";
 export const Create_Customer_save = "/customer/save-customer";
 export const Create_Customer_Update = "/customer/update-customer/";
 export const Create_Account_save = "/user/save-user";
-export const Create_Account_List = "/user/view-user";
+export const Create_Account_List = "/user/view-user-by-id/";
+// export const Create_Account_List = "/user/view-user/";
 export const Create_Customer_List = "/customer/view-customer";
 export const Create_Account_Update = "/user/update-user/";
 export const Delete_Account_List = "/user/delete-user/";
