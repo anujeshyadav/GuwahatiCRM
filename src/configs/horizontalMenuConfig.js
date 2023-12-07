@@ -133,7 +133,8 @@ const horizontalMenuConfig = [
         type: "item",
         icon: <FaCircle size={8} />,
         permissions: ["admin", "editor"],
-        navLink: "/app/Ajgroup/order/OrderDispatchList",
+        // navLink: "/app/Ajgroup/order/OrderDispatchList",
+        navLink: "/app/AjGroup/dispatch/goodDispatchList",
       },
 
       {

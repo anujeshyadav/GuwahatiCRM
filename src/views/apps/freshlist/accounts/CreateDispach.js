@@ -45,12 +45,12 @@ const CreateDispach = () => {
   const Context = useContext(UserContext);
 
   const handleFileChange = (e, type, i) => {
-    const { name, value, checked } = e.target;
-    let allimages = Array.from(e.target.files);
+    const { name, value, files } = e.target;
+    let allimages = Array.from(e.target.files[0]);
     setindex(i);
     setFormData({
       ...formData,
-      [name]: allimages,
+      [name]: e.target.files[0],
     });
   };
   const handleInputChange = (e, type, i) => {
@@ -109,7 +109,7 @@ const CreateDispach = () => {
       .then(res => {
         const jsonData = xmlJs.xml2json(res.data, { compact: true, spaces: 2 });
         // console.log(JSON.parse(jsonData));
-        // console.log(JSON.parse(jsonData)?.GoodDispatch);
+        console.log(JSON.parse(jsonData)?.GoodDispatch);
         setCreatAccountView(JSON.parse(jsonData)?.GoodDispatch?.input);
       })
       .catch(err => {
@@ -120,19 +120,23 @@ const CreateDispach = () => {
 
   const submitHandler = e => {
     e.preventDefault();
-    let formdata = new FormData();
-    CreatAccountView?.map((ele, i) => {
-      console.log(ele);
 
+    let formdata = new FormData();
+
+    console.log(CreatAccountView);
+
+    CreatAccountView?.map((ele, i) => {
       if (ele?.type?._attributes?.type == "text") {
         formdata.append(`${ele?.name._text}`, formData[ele?.name?._text]);
       } else if (ele?.type?._attributes?.type == "file") {
         if (ele?.name?._text == "CNUpload") {
-          formData.append("files", formData?.CNUpload[0]);
+          formdata.append("file", formData?.CNUpload);
         }
         if (ele?.name?._text == "FetchSalesInvoice") {
-          formData.append("invoice", formData?.FetchSalesInvoice[0]);
+          formdata.append("invoice", formData?.FetchSalesInvoice);
         }
+      } else {
+        formdata.append(`${ele?.name._text}`, formData[ele?.name?._text]);
       }
     });
 
@@ -140,22 +144,18 @@ const CreateDispach = () => {
     formdata.forEach((value, key) => {
       console.log(key, value);
     });
-    if (error) {
-      swal("Error occured while Entering Details");
-    } else {
-      Save_GoodDispatch(formData)
-        .then(res => {
-          console.log(res);
-          // setFormData({});
-          if (res.status) {
-            // window.location.reload();
-            swal("Good Dispatch Created Successfully");
-          }
-        })
-        .catch(err => {
-          console.log(err.response);
-        });
-    }
+
+    Save_GoodDispatch(formdata)
+      .then(res => {
+        console.log(res);
+        setFormData({});
+        if (res.status) {
+          swal("Good Dispatch Created Successfully");
+        }
+      })
+      .catch(err => {
+        console.log(err.response);
+      });
   };
 
   return (
@@ -493,12 +493,6 @@ const CreateDispach = () => {
                                       name={ele?.name?._text}
                                       value={formData[ele?.name?._text]}
                                       onChange={e => {
-                                        // const value = e.target.value;
-                                        // // Use regular expression to allow only numbers
-                                        // const numericValue = value.replace(
-                                        //   /\D/g,
-                                        //   ""
-                                        // );
                                         handleInputChange(
                                           e,
                                           ele?.type?._attributes?.type,
@@ -519,50 +513,6 @@ const CreateDispach = () => {
                                     )}
                                   </>
                                 )}
-
-                                {/* <Label className="mb-1">
-                                  {ele?.label?._text}
-                                </Label>
-
-                                <Input
-                                  className="form-control"
-                                  onKeyDown={(e) => {
-                                    if (
-                                      ele?.type?._attributes?.type == "number"
-                                    ) {
-                                      ["e", "E", "+", "-"].includes(e.key) &&
-                                        e.preventDefault();
-                                    }
-                                  }}
-                                  type={ele?.type?._attributes?.type}
-                                  placeholder={ele?.placeholder?._text}
-                                  name={ele?.name?._text}
-                                  value={formData[ele?.name?._text]}
-                                  onChange={(e) => {
-                                    // const value = e.target.value;
-                                    // // Use regular expression to allow only numbers
-                                    // const numericValue = value.replace(
-                                    //   /\D/g,
-                                    //   ""
-                                    // );
-                                    handleInputChange(
-                                      e,
-                                      ele?.type?._attributes?.type,
-                                      i
-                                    );
-                                  }}
-                                />
-                                {index === i ? (
-                                  <>
-                                    {error && (
-                                      <span style={{ color: "red" }}>
-                                        {error}
-                                      </span>
-                                    )}
-                                  </>
-                                ) : (
-                                  <></>
-                                )} */}
                               </FormGroup>
                             </Col>
                           )}
@@ -571,45 +521,7 @@ const CreateDispach = () => {
                     }
                   })}
               </Row>
-
               <hr />
-              {/* <Row className="mt-2 ">
-                <Col lg="6" md="6" sm="6" className="mb-2">
-                  <Label className="">
-                    <h4>Status</h4>
-                  </Label>
-                  <div className="form-label-group mx-1">
-                    {CreatAccountView &&
-                      CreatAccountView?.CreateAccount?.Radiobutton?.input?.map(
-                        (ele, i) => {
-                          return (
-                            <FormGroup key={i}>
-                              <Input
-                                key={i}
-                                style={{ marginRight: "3px" }}
-                                required
-                                type={ele?.type?._attributes?.type}
-                                name={ele?.name?._text}
-                                value={`${
-                                  ele?.label?._text == "Active"
-                                    ? "Active"
-                                    : "Deactive"
-                                }`}
-                                onChange={handleInputChange}
-                              />{" "}
-                              <span
-                                className="mx-1 mt-1"
-                                style={{ marginRight: "20px" }}
-                              >
-                                {ele?.label?._text}
-                              </span>
-                            </FormGroup>
-                          );
-                        }
-                      )}
-                  </div>
-                </Col>
-              </Row> */}
               <Col lg="6" md="6" sm="6" className="mb-2 mt-1">
                 <Label className="mb-0">Status</Label>
                 <div
