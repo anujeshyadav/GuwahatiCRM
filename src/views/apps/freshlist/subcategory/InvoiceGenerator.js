@@ -260,18 +260,26 @@ class InvoiceGenerator extends React.Component {
           resizable: true,
           width: 140,
           cellRendererFramework: (params) => {
+            console.log(params?.data?.status);
+
             return (
               <div className="d-flex align-items-center justify-content-center cursor-pointer">
                 <div>
-                  {this.state.InsiderPermissions &&
-                    this.state.InsiderPermissions?.View && (
-                      <AiOutlineDownload
-                        // onClick={() => this.handleBillDownload(params.data)}
-                        onClick={() => this.MergeBillNow(params.data)}
-                        fill="green"
-                        size="30px"
-                      />
-                    )}
+                  {params?.data?.status == "completed" ? (
+                    <>
+                      {this.state.InsiderPermissions &&
+                        this.state.InsiderPermissions?.View && (
+                          <AiOutlineDownload
+                            // onClick={() => this.handleBillDownload(params.data)}
+                            onClick={() => this.MergeBillNow(params.data)}
+                            fill="green"
+                            size="30px"
+                          />
+                        )}
+                    </>
+                  ) : (
+                    "NA"
+                  )}
                   <span></span>
                 </div>
               </div>
