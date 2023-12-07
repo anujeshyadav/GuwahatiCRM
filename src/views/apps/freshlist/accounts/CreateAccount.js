@@ -102,12 +102,21 @@ const CreateAccount = () => {
   }, [formData]);
 
   useEffect(() => {
-    Get_RoleList().then((res)=>{
-      setdropdownValue(res?.Role)
-    }).catch((err)=>{
-      console.log(err)
-      swal("Roles List Not found")
-    })
+    let userdata = JSON.parse(localStorage.getItem("userData"));
+    Get_RoleList()
+      .then((res) => {
+        console.log(res?.Role);
+        let ShowList = res?.Role?.filter(
+          (item, i) => item?.position > userdata?.rolename?.position
+        );
+        // console.log(userdata?.rolename?.position);
+        // console.log(ShowList);
+        setdropdownValue(ShowList);
+      })
+      .catch((err) => {
+        console.log(err);
+        swal("Roles List Not found");
+      });
     CreateAccountView()
       .then((res) => {
         const jsonData = xmlJs.xml2json(res.data, { compact: true, spaces: 2 });
@@ -117,7 +126,7 @@ const CreateAccount = () => {
       .catch((err) => {
         console.log(err);
       });
-      let userdata=JSON.parse(localStorage.getItem("userData"))
+      
       console.log(userdata?._id)
       formData["created_by"]=userdata?._id
   }, []);
