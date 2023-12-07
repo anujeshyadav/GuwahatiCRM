@@ -71,6 +71,8 @@ export const Purchase_Edit_Order = "/purchase-order/update-purchase-order/";
 export const Debit_note_Order_List = "/debit-note/view-debit-note";
 export const GoodDispatch_xmlView = "/good-dispatch/get-xml";
 export const SAVE_GoodDispatch = "/good-dispatch/save-good-dispatch";
+export const GoodDispatch_List = "/good-dispatch/view-good-dispatch/";
+export const Edit_GoodDispatch = "/good-dispatch/update-good-dispatch/";
 
 // Guwahati close
 

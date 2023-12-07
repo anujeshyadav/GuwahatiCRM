@@ -5,6 +5,8 @@ import {
   Debit_note_Order_List,
   GoodDispatch_xmlView,
   SAVE_GoodDispatch,
+  GoodDispatch_List,
+  Edit_GoodDispatch,
   Purchase_Return,
   Purchase_Edit_Order,
   Place_Order_List,
@@ -442,6 +444,21 @@ export const Save_GoodDispatch = async data => {
     .then(res => res.data);
   return response;
 };
+
+export const GoodDispatchListView = async () => {
+  let response = await axiosConfig
+    .get(`${GoodDispatch_List}`)
+    .then(res => res.data);
+  return response;
+};
+
+export const EditGoodDispatch = async (payload, id) => {
+  let response = await axiosConfig
+    .put(`${Edit_GoodDispatch}` + id, payload)
+    .then(res => res.data);
+  return response;
+};
+
 // guwahati api calling close
 export const Get_RoleList = async () => {
   let response = await axiosConfig.get(`${Get_Role}`).then((res) => res.data);

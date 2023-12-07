@@ -735,6 +735,9 @@ const CreateSalesManag = lazy(() =>
 const CreateDispach = lazy(() =>
   import("./views/apps/freshlist/accounts/CreateDispach")
 );
+const GoodDispatchList = lazy(() =>
+  import("./views/apps/freshlist/accounts/GoodDispatchList")
+);
 const CreditNoteList = lazy(() =>
   import("./views/apps/freshlist/customer/notes/CreditNoteList")
 );
@@ -1163,10 +1166,10 @@ const accessControl = lazy(() =>
 const RouteConfig = ({ component: Component, fullLayout, ...rest }) => (
   <Route
     {...rest}
-    render={(props) => {
+    render={props => {
       return (
         <ContextLayout.Consumer>
-          {(context) => {
+          {context => {
             let LayoutTag =
               fullLayout === true
                 ? context.fullLayout
@@ -1186,7 +1189,7 @@ const RouteConfig = ({ component: Component, fullLayout, ...rest }) => (
     }}
   />
 );
-const mapStateToProps = (state) => {
+const mapStateToProps = state => {
   return {
     user: state.auth.login.userRole,
   };
@@ -2140,6 +2143,10 @@ class AppRouter extends React.Component {
           <AppRoute
             path="/app/AjGroup/dispatch/CreateDispach"
             component={CreateDispach}
+          />
+          <AppRoute
+            path="/app/AjGroup/dispatch/goodDispatchList"
+            component={GoodDispatchList}
           />
           <AppRoute
             path="/app/AjGroup/note/CreditNoteList"

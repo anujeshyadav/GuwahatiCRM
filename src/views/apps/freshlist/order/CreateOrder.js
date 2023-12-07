@@ -23,6 +23,7 @@ import {
   BaseUnitListView,
 } from "../../../../ApiEndPoint/ApiCalling";
 import "../../../../assets/scss/pages/users.scss";
+import { set } from "date-fns";
 let GrandTotal = [];
 let SelectedITems = [];
 const CreateOrder = args => {
@@ -32,81 +33,62 @@ const CreateOrder = args => {
   const [ProductList, setProductList] = useState([]);
   const [PartyList, setPartyList] = useState([]);
   const [UnitList, setUnitList] = useState([]);
-  const [unitOne, setUnitOne] = useState([]);
-  const [grandTotalAmt, setGrandTotalAmt] = useState(0);
+  const [priceTotal, setPriceTotal] = useState(0);
   const [UserInfo, setUserInfo] = useState({});
   const [dateofDelivery, setDateofDelivery] = useState("");
   const [product, setProduct] = useState([
     {
-      product: "",
       productId: "",
       availableQty: "",
       qty: 1,
       price: "",
-      totalprice: "",
-      partyId: "",
-      DateofDelivery: "",
+      totalprice: "", //no
+      partyId: "", //no
+      DateofDelivery: "", //no
+      unitQty: "",
     },
   ]);
 
-  const handleProductChangeProduct = (e, index, avalaibleSize) => {
+  const handleRequredQty = (e, index, avalaibleSize) => {
     if (avalaibleSize >= e.target.value) {
       setIndex(index);
       const { name, value } = e.target;
       const list = [...product];
       list[index][name] = value;
-      product.map(ele => {});
-      let amt = 0;
+
       if (list.length > 0) {
-        const x = list?.map(val => {
-          console.log(val.qty * val.price);
+        let totalPrice = list?.map(val => {
           list[index]["totalprice"] = val.qty * val.price;
           return val.qty * val.price;
         });
-        amt = x.reduce((a, b) => a + b, 0);
-        console.log("GrandTotal", amt);
       }
       setProduct(list);
-      setGrandTotalAmt(amt);
     } else {
       return null;
     }
   };
-
+  const handleUnit = (e, index) => {
+    let unt = [...product];
+    unt[index].unitQty = e.target.value;
+    console.log(unt);
+    setProduct(unt);
+  };
   const handleSelectionParty = (selectedList, selectedItem, index) => {
+    debugger;
     setProduct(prevProductList => {
       const updatedProductList = [...prevProductList];
       const updatedProduct = { ...updatedProductList[index] };
       updatedProduct.partyId = selectedItem?._id;
       updatedProductList[index] = updatedProduct;
-      return updatedProductList;
+      // return updatedProductList;
     });
+    console.log(product);
   };
 
-  const handleUnitSelection = (selectedList, selectedItem, index) => {
-    console.log(selectedItem.primaryUnit);
-    // SelectedITems.push(selectedItem);
-    // setProduct(prevProductList => {
-    //   const updatedProductList = [...prevProductList];
-    //   const updatedProduct = { ...updatedProductList[index] };
-    //   updatedProduct.price = selectedItem.Product_MRP;
-    //   updatedProduct.productId = selectedItem._id;
-    //   updatedProduct.availableQty = selectedItem.Size;
-    //   updatedProductList[index] = updatedProduct;
-    //   let myarr = prevProductList?.map((ele, i) => {
-    //     let indextotal = ele?.qty * SelectedITems[i]?.Product_MRP;
-    //     GrandTotal[index] = indextotal;
-    //     return indextotal;
-    //   });
-    //   console.log(myarr);
-    //   let amt = myarr.reduce((a, b) => a + b, 0);
-    //   setGrandTotalAmt(amt);
-    //   return updatedProductList; // Return the updated product list to set the state
-    // });
-  };
   const handleSelection = (selectedList, selectedItem, index) => {
     SelectedITems.push(selectedItem);
     setProduct(prevProductList => {
+      debugger;
       const updatedProductList = [...prevProductList];
       const updatedProduct = { ...updatedProductList[index] }; // Create a copy of the product at the specified index
       updatedProduct.price = selectedItem.Product_MRP; // Update the price of the copied product
@@ -118,17 +100,19 @@ const CreateOrder = args => {
         GrandTotal[index] = indextotal;
         return indextotal;
       });
-      console.log(myarr);
       let amt = myarr.reduce((a, b) => a + b, 0);
-      setGrandTotalAmt(amt);
+      setPriceTotal(amt);
       return updatedProductList; // Return the updated product list to set the state
     });
   };
 
-  useEffect(() => {
-    console.log(product);
-  }, [product, GrandTotal]);
-
+  let subtotal = product?.reduce((acc, product) => acc + product.price, 0);
+  console.log(product);
+  let taxRate = 0.1; // 10%
+  let tax = subtotal * taxRate;
+  let discountRate = 0.2;
+  let discountAmount = subtotal * discountRate;
+  let Grandtotals = subtotal + tax;
   useEffect(() => {
     ProductListView()
       .then(res => {
@@ -162,7 +146,6 @@ const CreateOrder = args => {
     setProduct([
       ...product,
       {
-        product: "",
         productId: "",
         availableQty: "",
         qty: 1,
@@ -170,9 +153,7 @@ const CreateOrder = args => {
         totalprice: "",
         DateofDelivery: "",
         partyId: "",
-        discount: "",
-        Shipping: "",
-        tax: "",
+        unitQty: "",
       },
     ]);
   };
@@ -187,37 +168,31 @@ const CreateOrder = args => {
 
   const submitHandler = e => {
     e.preventDefault();
-    // product?.map(ele => {
-    //   return {};
-    // });
-    console.log(UserInfo?.UserName);
+    const fullname = UserInfo?.firstName + " " + UserInfo?.lastName;
     const ObjOrder = {
       userId: UserInfo?._id,
-      fullName: UserInfo?.UserName,
-      address: UserInfo?.Address,
-      grandTotal: grandTotalAmt,
+      fullName: fullname,
+      address: UserInfo?.currentAddress,
+      grandTotal: Grandtotals,
       MobileNo: UserInfo?.mobileNumber,
       country: UserInfo?.Country,
       state: UserInfo?.State,
       city: UserInfo?.City,
       orderItems: product,
     };
-    if (error) {
-      swal("Error occured while Entering Details");
-    } else {
-      SaveOrder(ObjOrder)
-        .then(res => {
-          console.log(res);
-          // if (res.status) {
-          //   setFormData({});
-          //   window.location.reload();
-          swal("Order Created Successfully");
-          // }
-        })
-        .catch(err => {
-          console.log(err);
-        });
-    }
+    console.log(ObjOrder);
+    // if (error) {
+    //   swal("Error occured while Entering Details");
+    // } else {
+    //   SaveOrder(ObjOrder)
+    //     .then(res => {
+    //      swal("Order Created Successfully");
+
+    //     })
+    //     .catch(err => {
+    //       console.log(err);
+    //     });
+    // }
   };
 
   const onRemove1 = (selectedList, removedItem, index) => {
@@ -234,19 +209,6 @@ const CreateOrder = args => {
                 <h1 className="">Create Order</h1>
               </div>
             </Col>
-            {/* <Col>
-              <Route
-                render={({ history }) => (
-                  <Button
-                    className=" float-right"
-                    color="danger"
-                    onClick={history.push("/app/softnumen/order/orderList")}
-                  >
-                    Back
-                  </Button>
-                )}
-              />
-            </Col> */}
             <Col>
               <Route
                 render={({ history }) => (
@@ -280,8 +242,8 @@ const CreateOrder = args => {
                       onSelect={(selectedList, selectedItem) =>
                         handleSelectionParty(selectedList, selectedItem, index)
                       }
-                      onRemove={onRemove1} // Function will trigger on remove event
-                      displayValue="firstName" // Property name to display in the dropdown options
+                      onRemove={onRemove1}
+                      displayValue="firstName"
                     />
                   </div>
                 </Col>
@@ -302,7 +264,7 @@ const CreateOrder = args => {
               {product &&
                 product?.map((product, index) => (
                   <Row className="" key={index}>
-                    <Col className="mb-1" lg="2" md="2" sm="12">
+                    <Col className="mb-1">
                       <div className="">
                         <Label>ProductName</Label>
                         <Multiselect
@@ -320,7 +282,7 @@ const CreateOrder = args => {
                         />
                       </div>
                     </Col>
-                    <Col className="mb-1" lg="2" md="2" sm="12">
+                    <Col className="mb-1">
                       <div className="">
                         <Label>Available Size</Label>
                         <Input
@@ -332,7 +294,7 @@ const CreateOrder = args => {
                         />
                       </div>
                     </Col>
-                    <Col className="mb-1" lg="2" md="2" sm="12">
+                    <Col className="mb-1">
                       <div className="">
                         <Label>Required Size</Label>
                         <Input
@@ -343,26 +305,20 @@ const CreateOrder = args => {
                           autocomplete="off"
                           value={product?.qty}
                           onChange={e =>
-                            handleProductChangeProduct(
-                              e,
-                              index,
-                              product?.availableQty
-                            )
+                            handleRequredQty(e, index, product?.availableQty)
                           }
                         />
                       </div>
                     </Col>
 
-                    <Col className="mb-1" lg="2" md="2" sm="12">
+                    <Col className="mb-1">
                       <Label>Choose Unit</Label>
                       <CustomInput
                         type="select"
                         placeholder="Select Type"
                         name="type"
-                        value={unitOne}
-                        onChange={e => {
-                          setUnitOne(e.target.value);
-                        }}
+                        value={product.unitQty}
+                        onChange={e => handleUnit(e, index)}
                       >
                         <option value="None">None</option>
                         {UnitList?.map(val => {
@@ -375,7 +331,7 @@ const CreateOrder = args => {
                       </CustomInput>
                     </Col>
 
-                    <Col className="mb-1" lg="2" md="2" sm="12">
+                    <Col className="mb-1">
                       <div className="">
                         <Label>Price</Label>
                         <Input
@@ -387,7 +343,7 @@ const CreateOrder = args => {
                         />
                       </div>
                     </Col>
-                    <Col className="mb-1" lg="2" md="2" sm="12">
+                    <Col className="mb-1">
                       <div className="">
                         <Label>Total Price</Label>
                         <Input
@@ -399,7 +355,7 @@ const CreateOrder = args => {
                         />
                       </div>
                     </Col>
-                    <Col className="d-flex mt-1 abb" lg="3" md="3" sm="12">
+                    <Col className="d-flex mt-1 abb">
                       <div className="btnStyle">
                         {index ? (
                           <Button
@@ -434,29 +390,30 @@ const CreateOrder = args => {
                     <ul className="subtotal">
                       <li>
                         <Label className="">
-                          SubTotal : <strong>{grandTotalAmt}</strong>
+                          SubTotal:
+                          <strong>
+                            {subtotal && subtotal?.length >= 0 ? subtotal : 0}
+                          </strong>
                         </Label>
                       </li>
                       <li>
                         <Label className="">
-                          Shipping Cost : <strong>RS 50</strong>
+                          Shipping Cost : <strong>RS {subtotal}</strong>
                         </Label>
                       </li>
                       <li>
                         <Label className="">
-                          Tax: <strong>RS 25</strong>
+                          Tax: <strong>RS {tax}</strong>
                         </Label>
                       </li>
                       <li>
                         <Label className="">
-                          Discount : <strong>RS 5</strong>
+                          Discount : <strong>RS {discountAmount}</strong>
                         </Label>
                       </li>
                       <li>
-                        {" "}
                         <Label className="pr-5">
-                          Grand Total :{" "}
-                          <strong>{grandTotalAmt + 50 + 25 + 5}</strong>
+                          Grand Total :<strong>{Grandtotals}</strong>
                         </Label>
                       </li>
                     </ul>
