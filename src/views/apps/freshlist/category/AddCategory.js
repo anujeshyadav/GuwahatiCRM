@@ -67,7 +67,7 @@ export class AddCategory extends Component {
     e.preventDefault();
     let pageparmission = JSON.parse(localStorage.getItem("userData"));
     const data = new FormData();
-    // data.append("user_id", pageparmission?.Userinfo?.id);
+    data.append("created_by", pageparmission?._id);
     data.append("name", this.state.category_name);
     data.append("description", this.state.feature);
     data.append("status", this.state.status);

@@ -207,10 +207,10 @@ class SubCategoryList extends React.Component {
       Deletepermisson: newparmisson?.permission.includes("Delete"),
     });
 
-    await AllCategoryList()
+    await AllCategoryList(pageparmission?._id)
       .then((res) => {
         console.log(res);
-        if (res?.Category) {
+        if (res?.Category?.length) {
           this.setState({ CatList: res?.Category });
         }
       })

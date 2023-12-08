@@ -763,16 +763,18 @@ useEffect(() => {
     if (error) {
       swal("Error occured while Entering Details");
     } else {
-      SaveUnit(formData)
-        .then(res => {
-            console.log(res)
-          if (res.status) {
-             swal(`${res.message}`)
-           }
-        })
-        .catch(err => {
-          console.log(err);
-        });
+     let userData = JSON.parse(localStorage.getItem("userData"));
+     formData["created_by"] = userData?._id;
+     SaveUnit(formData)
+       .then((res) => {
+         console.log(res);
+         if (res.status) {
+           swal(`${res.message}`);
+         }
+       })
+       .catch((err) => {
+         console.log(err);
+       });
     }
   };
 

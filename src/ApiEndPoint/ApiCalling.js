@@ -279,8 +279,10 @@ export const SaveProduct = async (data) => {
   return response;
 };
 
-export const AllCategoryList = async () => {
-  let response = await axiosConfig.get(Category_List).then((res) => res.data);
+export const AllCategoryList = async (id) => {
+  let response = await axiosConfig
+    .get(`${Category_List}` + id)
+    .then((res) => res.data);
   return response;
 };
 export const ProductListView = async () => {
@@ -310,14 +312,14 @@ export const BaseUnitListView = async () => {
 
 export const SaveUnit = async (data) => {
   let response = await axiosConfig
-    .post(Create_unit_save, data)
+    .post(`${Create_unit_save}`, data)
     .then((res) => res.data);
   return response;
 };
 
-export const UnitListView = async () => {
+export const UnitListView = async (id) => {
   let response = await axiosConfig
-    .get(Create_unit_List)
+    .get(`${Create_unit_List}` + id)
     .then((res) => res.data);
   return response;
 };
@@ -613,7 +615,7 @@ export const Create_CompanyDetails = async (data) => {
 //   console.log(id);
 export const ViewCompanyDetails = async (id) => {
   let response = await axiosConfig
-    .get(`${View_Company_Details}`)
+    .get(`${View_Company_Details}` + id)
     .then((res) => res.data);
   return response;
 };
