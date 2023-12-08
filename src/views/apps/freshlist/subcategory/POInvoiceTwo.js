@@ -76,9 +76,11 @@ const POInvoiceone = ({
   AllCharges,
 }) => {
   console.log(invoiceData);
-  console.log(BilData);
+  
+  console.log("BilData", BilData?.CompanyDetails);
   console.log(CurrentWords);
   console.log(AllCharges);
+
   // const { items, customerName, date, total, place_supply } = invoiceData;
   const curentDate = new Date();
   console.log(curentDate.toTimeString().split(" ")[0]);
@@ -102,12 +104,28 @@ const POInvoiceone = ({
                 {UserChoice?.imagePosition &&
                 UserChoice?.imagePosition == "Left" ? (
                   <>
-                    <Image
+                    {/* <Image
                       style={{ width: "230px", padding: "25px 10px" }}
-                      src={logo}></Image>
+                      src={logo}></Image> */}
+                    {BilData?.CompanyDetails?.logo &&
+                    BilData?.CompanyDetails?.logo ? (
+                      <>
+                        <Image
+                          style={{ width: "230px", padding: "25px 10px" }}
+                          src={`http://64.227.162.41:5000/Images/${BilData?.CompanyDetails?.logo}`}></Image>
+                      </>
+                    ) : (
+                      <>
+                        <Image
+                          style={{ width: "230px", padding: "25px 10px" }}
+                          src={logo}></Image>
+                      </>
+                    )}
+
                     <View style={{ padding: "10px" }}>
-                      <Text style={{ fontSize: "10px", fontWeight: "bold" }}>
-                        Guwahati CORPORATE MANAGEMENT SERVICES PVT. LTD.
+                      <Text style={{ fontSize: "13px", fontWeight: "bold" }}>
+                        {BilData?.CompanyDetails?.name &&
+                          BilData?.CompanyDetails?.name}
                       </Text>
 
                       <Text
@@ -116,25 +134,33 @@ const POInvoiceone = ({
                           marginTop: "5px",
                           marginBottom: "2px",
                         }}>
-                        ROOM 7,A-WING,Shree Datta Digambar CHS Ltd.
+                        {BilData?.CompanyDetails?.address &&
+                          BilData?.CompanyDetails?.address}
+                      </Text>
+                      <Text style={styles.header}></Text>
+                      <Text style={styles.header}>
+                        Email :
+                        {BilData?.CompanyDetails?.email &&
+                          BilData?.CompanyDetails?.email}
                       </Text>
                       <Text style={styles.header}>
-                        Guru Datta Mandir Road ,Gaurishankarwadi No. 1
+                        MobileNo :
+                        {BilData?.CompanyDetails?.mobileNo &&
+                          BilData?.CompanyDetails?.mobileNo}
                       </Text>
-                      <Text style={styles.header}>
-                        Opp. Yashomandir,Pant Nagar ,Ghatkopar East,
+                      <Text style={styles.GSTIN}>
+                        GSTIN :
+                        {BilData?.CompanyDetails?.gstNo &&
+                          BilData?.CompanyDetails?.gstNo}
                       </Text>
-                      <Text style={styles.header}>
-                        Mumbai,Maharastra, 400075. india
-                      </Text>
-                      <Text style={styles.GSTIN}>GSTIN: 27AAHCP2196E1ZB</Text>
                     </View>
                   </>
                 ) : (
                   <>
                     <View style={{ padding: "10px" }}>
-                      <Text style={{ fontSize: "10px", fontWeight: "bold" }}>
-                        Guwahati CORPORATE MANAGEMENT SERVICES PVT. LTD.
+                      <Text style={{ fontSize: "13px", fontWeight: "bold" }}>
+                        {BilData?.CompanyDetails?.name &&
+                          BilData?.CompanyDetails?.name}
                       </Text>
 
                       <Text
@@ -143,22 +169,40 @@ const POInvoiceone = ({
                           marginTop: "5px",
                           marginBottom: "2px",
                         }}>
-                        ROOM 7,A-WING,Shree Datta Digambar CHS Ltd.
+                        {BilData?.CompanyDetails?.address &&
+                          BilData?.CompanyDetails?.address}
+                      </Text>
+                      <Text style={styles.header}></Text>
+                      <Text style={styles.header}>
+                        Email :
+                        {BilData?.CompanyDetails?.email &&
+                          BilData?.CompanyDetails?.email}
                       </Text>
                       <Text style={styles.header}>
-                        Guru Datta Mandir Road ,Gaurishankarwadi No. 1
+                        MobileNo :
+                        {BilData?.CompanyDetails?.mobileNo &&
+                          BilData?.CompanyDetails?.mobileNo}
                       </Text>
-                      <Text style={styles.header}>
-                        Opp. Yashomandir,Pant Nagar ,Ghatkopar East,
+                      <Text style={styles.GSTIN}>
+                        GSTIN :
+                        {BilData?.CompanyDetails?.gstNo &&
+                          BilData?.CompanyDetails?.gstNo}
                       </Text>
-                      <Text style={styles.header}>
-                        Mumbai,Maharastra, 400075. india
-                      </Text>
-                      <Text style={styles.GSTIN}>GSTIN: 27AAHCP2196E1ZB</Text>
                     </View>
-                    <Image
-                      style={{ width: "230px", padding: "25px 10px" }}
-                      src={logo}></Image>
+                    {BilData?.CompanyDetails?.logo &&
+                    BilData?.CompanyDetails?.logo ? (
+                      <>
+                        <Image
+                          style={{ width: "230px", padding: "25px 10px" }}
+                          src={`http://64.227.162.41:5000/Images/${BilData?.CompanyDetails?.logo}`}></Image>
+                      </>
+                    ) : (
+                      <>
+                        <Image
+                          style={{ width: "230px", padding: "25px 10px" }}
+                          src={logo}></Image>
+                      </>
+                    )}
                   </>
                 )}
               </View>

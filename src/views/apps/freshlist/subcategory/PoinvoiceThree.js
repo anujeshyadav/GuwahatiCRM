@@ -79,6 +79,8 @@ const PoinvoiceThree = ({
   console.log(BilData);
   console.log(CurrentWords);
   console.log(AllCharges);
+  console.log("poinvoicethree");
+
   // const { items, customerName, date, total, place_supply } = invoiceData;
   const curentDate = new Date();
   console.log(curentDate.toTimeString().split(" ")[0]);
