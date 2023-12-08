@@ -113,6 +113,7 @@ class InvoiceGenerator extends React.Component {
       AllbillMerged: [],
       rowData: [],
       InsiderPermissions: {},
+      CompanyDetails: {},
       ShowBill: false,
       Applied_Charges: {},
       Billtoposition: "Left",
@@ -180,7 +181,7 @@ class InvoiceGenerator extends React.Component {
           filter: true,
           width: 140,
           cellRendererFramework: (params) => {
-            console.log(params.data);
+            // console.log(params.data);
             return params.data?.status === "completed" ? (
               <div className="badge badge-pill badge-success">Completed</div>
             ) : params.data?.status === "pending" ? (
@@ -260,7 +261,7 @@ class InvoiceGenerator extends React.Component {
           resizable: true,
           width: 140,
           cellRendererFramework: (params) => {
-            console.log(params?.data?.status);
+            // console.log(params?.data?.status);
 
             return (
               <div className="d-flex align-items-center justify-content-center cursor-pointer">
@@ -876,7 +877,12 @@ class InvoiceGenerator extends React.Component {
   };
 
   async componentDidMount() {
-    const UserInformation = this.context?.UserInformatio;
+    const UserInformation = this.context;
+    // console.log(UserInformation?.CompanyDetails);
+    if (UserInformation?.CompanyDetails){
+     this.setState({ CompanyDetails: UserInformation?.CompanyDetails });
+    } 
+    debugger;
     let billnumner = localStorage.getItem("billnumber");
     if (billnumner) {
       this.setState({ ShowBill: false });
@@ -1676,12 +1682,12 @@ class InvoiceGenerator extends React.Component {
                   <Col lg="3" md="3" s="3">
                     <div className="imagebackground p-1">
                       <img
-                        onClick={(e) => this.handleBillSet(3)}
+                        onClick={(e) => this.handleBillSet(2)}
                         className="imagebackground"
                         style={{ cursor: "pointer" }}
                         width={130}
                         height={150}
-                        src={templatefour}
+                        src={Templatetwo}
                         alt="template"
                       />
                     </div>
@@ -1707,7 +1713,7 @@ class InvoiceGenerator extends React.Component {
                         style={{ cursor: "pointer" }}
                         width={130}
                         height={150}
-                        src={Templatetwo}
+                        src={templatefour}
                         alt="template"
                       />
                     </div>
@@ -1722,6 +1728,7 @@ class InvoiceGenerator extends React.Component {
                       <>
                         <div style={{ width: "100%" }} className="">
                           <InvoicGenerator
+                            CompanyDetails={this.state.CompanyDetails}
                             BillNumber={this.state.BillNumber}
                             PrintData={this.state.PrintData}
                             Applied_Charges={this.state.Applied_Charges}

@@ -342,11 +342,12 @@ class AccounSearch extends React.Component {
         console.log(err);
         swal("Error", "something went wrong try again");
       });
+
     await CreateAccountList(userid)
       .then((res) => {
-        // console.log(res.adminDetail);
-        let value = res?.adminDetail;
-        if (value.length) {
+        // console.log(res.adminDetails);
+        let value = res?.adminDetails;
+        if (value?.length) {
           this.setState({ rowData: value });
         }
       })
