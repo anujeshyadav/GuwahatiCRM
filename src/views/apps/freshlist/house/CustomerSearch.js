@@ -51,6 +51,7 @@ import {
 } from "react-icons/bs";
 import * as XLSX from "xlsx";
 import UserContext from "../../../../context/Context";
+import { CheckPermission } from "./CheckPermission";
 
 const SelectedColums = [];
 
@@ -64,6 +65,7 @@ class CustomerSearch extends React.Component {
       isOpen: false,
       Arrindex: "",
       rowData: [],
+      InsiderPermissions: {},
       setMySelectedarr: [],
       SelectedCols: [],
       paginationPageSize: 5,
@@ -101,206 +103,268 @@ class CustomerSearch extends React.Component {
 
   async componentDidMount() {
     const UserInformation = this.context?.UserInformatio;
-
-    await CreateCustomerxmlView()
-      .then((res) => {
-        var mydropdownArray = [];
-        var adddropdown = [];
-        const jsonData = xmlJs.xml2json(res.data, { compact: true, spaces: 2 });
-        console.log(JSON.parse(jsonData));
-        let allinput = JSON.parse(jsonData).CreateCustomer?.input?.filter(
-          (ele, i) => ele?.type?._attributes?.type !== "file"
-        );
-        const inputs = allinput?.map((ele) => {
-          return {
-            headerName: ele?.label._text,
-            field: ele?.name._text,
-            filter: true,
-            sortable: true,
-          };
+    let userData = JSON.parse(localStorage.getItem("userData"));
+    const InsidePermissions = CheckPermission("Create Customer");
+    this.setState({ InsiderPermissions: InsidePermissions });
+      await CreateCustomerList(userData?._id)
+        .then((res) => {
+          let value = res?.Customer;
+          if (value?.length) {
+            this.setState({ rowData: value });
+          }
+        })
+        .catch((err) => {
+          console.log(err);
         });
-        // let Radioinput =
-        //   JSON.parse(jsonData).CreateAccount?.Radiobutton?.input[0]?.name
-        //     ?._text;
-        // const addRadio = [
-        //   {
-        //     headerName: Radioinput,
-        //     field: Radioinput,
-        //     filter: true,
-        //     sortable: true,
-        //     cellRendererFramework: (params) => {
-        //       return params.data?.Status === "Active" ? (
-        //         <div className="badge badge-pill badge-success">
-        //           {params.data.Status}
-        //         </div>
-        //       ) : params.data?.Status === "Deactive" ? (
-        //         <div className="badge badge-pill badge-warning">
-        //           {params.data.Status}
-        //         </div>
-        //       ) : (
-        //         "NA"
-        //       );
-        //     },
-        //   },
-        // ];
+      await CreateCustomerxmlView()
+        .then((res) => {
+          var mydropdownArray = [];
+          var adddropdown = [];
+          const jsonData = xmlJs.xml2json(res.data, {
+            compact: true,
+            spaces: 2,
+          });
+          console.log(JSON.parse(jsonData));
+          let allinput = JSON.parse(jsonData).CreateCustomer?.input?.filter(
+            (ele, i) => ele?.type?._attributes?.type !== "file"
+          );
 
-        let dropdown =
-          JSON.parse(jsonData).CreateCustomer?.MyDropDown?.dropdown;
-        if (dropdown?.length) {
-          var mydropdownArray = dropdown?.map((ele) => {
+          const inputs = allinput?.map((ele) => {
             return {
-              headerName: ele?.label,
-              field: ele?.name,
+              headerName: ele?.label._text,
+              field: ele?.name._text,
               filter: true,
               sortable: true,
             };
           });
-        } else {
-          var adddropdown = [
+          // let Radioinput =
+          //   JSON.parse(jsonData).CreateAccount?.Radiobutton?.input[0]?.name
+          //     ?._text;
+          // const addRadio = [
+          //   {
+          //     headerName: Radioinput,
+          //     field: Radioinput,
+          //     filter: true,
+          //     sortable: true,
+          //     cellRendererFramework: (params) => {
+          //       return params.data?.Status === "Active" ? (
+          //         <div className="badge badge-pill badge-success">
+          //           {params.data.Status}
+          //         </div>
+          //       ) : params.data?.Status === "Deactive" ? (
+          //         <div className="badge badge-pill badge-warning">
+          //           {params.data.Status}
+          //         </div>
+          //       ) : (
+          //         "NA"
+          //       );
+          //     },
+          //   },
+          // ];
+
+          let dropdown =
+            JSON.parse(jsonData).CreateCustomer?.MyDropDown?.dropdown;
+          if (dropdown?.length) {
+            var mydropdownArray = dropdown?.map((ele) => {
+              return {
+                headerName: ele?.label,
+                field: ele?.name,
+                filter: true,
+                sortable: true,
+              };
+            });
+          } else {
+            var adddropdown = [
+              {
+                headerName: dropdown?.label._text,
+                field: dropdown?.name._text,
+                filter: true,
+                sortable: true,
+              },
+            ];
+          }
+
+          let myHeadings = [
+            // ...checkboxinput,
+            ...inputs,
+            ...adddropdown,
+            //   ...addRadio,
+            ...mydropdownArray,
+          ];
+          // console.log(myHeadings);
+          let Product = [
             {
-              headerName: dropdown?.label._text,
-              field: dropdown?.name._text,
+              headerName: "Actions",
+              field: "sortorder",
+              field: "transactions",
+              width: 190,
+              cellRendererFramework: (params) => {
+                return (
+                  <div className="actions cursor-pointer">
+                    {this.state.InsiderPermissions &&
+                      this.state.InsiderPermissions?.View && (
+                        <Route
+                          render={({ history }) => (
+                            <Eye
+                              className="mr-50"
+                              size="25px"
+                              color="green"
+                              onClick={() => {
+                                this.handleChangeEdit(params.data, "readonly");
+                              }}
+                            />
+                          )}
+                        />
+                      )}
+                    {this.state.InsiderPermissions &&
+                      this.state.InsiderPermissions?.Edit && (
+                        <Route
+                          render={({ history }) => (
+                            <Edit
+                              className="mr-50"
+                              size="25px"
+                              color="blue"
+                              onClick={() => {
+                                this.handleChangeEdit(params.data, "Editable");
+                              }}
+                            />
+                          )}
+                        />
+                      )}
+                    {this.state.InsiderPermissions &&
+                      this.state.InsiderPermissions?.Delete && (
+                        <Route
+                          render={() => (
+                            <Trash2
+                              className="mr-50"
+                              size="25px"
+                              color="red"
+                              onClick={() => {
+                                this.runthisfunction(params?.data?._id);
+                              }}
+                            />
+                          )}
+                        />
+                      )}
+                  </div>
+                );
+              },
+            },
+            {
+              headerName: "Status",
+              field: "status",
+              filter: true,
+              width: 150,
+              cellRendererFramework: (params) => {
+                return params.data?.status === "Active" ? (
+                  <div className="badge badge-pill badge-success">
+                    {params.data.status}
+                  </div>
+                ) : params.data?.status === "Deactive" ? (
+                  <div className="badge badge-pill badge-warning">
+                    {params.data.status}
+                  </div>
+                ) : null;
+              },
+            },
+            {
+              headerName: "Shopphoto",
+              field: "Shopphoto",
               filter: true,
               sortable: true,
+              cellRendererFramework: (params) => {
+                return (
+                  <>
+                    <div className="actions cursor-pointer">
+                      {params?.data?.Shopphoto && (
+                        <img
+                          width={40}
+                          height={40}
+                          src={`http://64.227.162.41:5000/Images/${params?.data?.Shopphoto[0]}`}
+                          alt="dddd"
+                        />
+                      )}
+                    </div>
+                  </>
+                );
+              },
             },
-          ];
-        }
+            {
+              headerName: "photo",
+              field: "photo",
+              filter: true,
+              sortable: true,
+              cellRendererFramework: (params) => {
+                return (
+                  <>
+                    <div className="actions cursor-pointer">
+                      {params?.data?.photo && (
+                        <img
+                          width={40}
+                          height={40}
+                          src={`http://64.227.162.41:5000/Images/${params?.data?.photo[0]}`}
+                          alt="dddd"
+                        />
+                      )}
+                    </div>
+                  </>
+                );
+              },
+            },
 
-        let myHeadings = [
-          // ...checkboxinput,
-          ...inputs,
-          ...adddropdown,
-          //   ...addRadio,
-          ...mydropdownArray,
-        ];
-        console.log(myHeadings);
-        let Product = [
-          {
-            headerName: "Actions",
-            field: "sortorder",
-            field: "transactions",
-            width: 190,
-            cellRendererFramework: (params) => {
-              return (
-                <div className="actions cursor-pointer">
-                  <Route
-                    render={({ history }) => (
-                      <Eye
-                        className="mr-50"
-                        size="25px"
-                        color="green"
-                        onClick={() => {
-                          this.handleChangeEdit(params.data, "readonly");
-                        }}
-                      />
-                    )}
-                  />
-                  <Route
-                    render={({ history }) => (
-                      <Edit
-                        className="mr-50"
-                        size="25px"
-                        color="blue"
-                        onClick={() => {
-                          this.handleChangeEdit(params.data, "Editable");
-                        }}
-                      />
-                    )}
-                  />
-
-                  <Route
-                    render={() => (
-                      <Trash2
-                        className="mr-50"
-                        size="25px"
-                        color="red"
-                        onClick={() => {
-                          this.runthisfunction(params?.data?._id);
-                        }}
-                      />
-                    )}
-                  />
-                </div>
-              );
-            },
-          },
-          {
-            headerName: "Status",
-            field: "status",
-            filter: true,
-            width: 150,
-            cellRendererFramework: (params) => {
-              return params.data?.status === "Active" ? (
-                <div className="badge badge-pill badge-success">
-                  {params.data.status}
-                </div>
-              ) : params.data?.status === "Deactive" ? (
-                <div className="badge badge-pill badge-warning">
-                  {params.data.status}
-                </div>
-              ) : null;
-            },
-          },
-
-          ...myHeadings,
-          {
-            headerName: "Created date",
-            field: "createdAt",
-            filter: true,
-            sortable: true,
-            cellRendererFramework: (params) => {
-              return (
-                <>
-                  <div className="actions cursor-pointer">
-                    <span>{params?.data?.createdAt}</span>
-                  </div>
-                </>
-              );
-            },
-          },
-          {
-            headerName: "Updated date",
-            field: "updatedAt",
-            filter: true,
-            sortable: true,
-            cellRendererFramework: (params) => {
-              return (
-                <>
-                  <div className="actions cursor-pointer">
+            ...myHeadings,
+            {
+              headerName: "Created date",
+              field: "createdAt",
+              filter: true,
+              sortable: true,
+              cellRendererFramework: (params) => {
+                return (
+                  <>
                     <div className="actions cursor-pointer">
                       <span>{params?.data?.createdAt}</span>
                     </div>
-                  </div>
-                </>
-              );
+                  </>
+                );
+              },
             },
-          },
-        ];
+            {
+              headerName: "Updated date",
+              field: "updatedAt",
+              filter: true,
+              sortable: true,
+              cellRendererFramework: (params) => {
+                return (
+                  <>
+                    <div className="actions cursor-pointer">
+                      <div className="actions cursor-pointer">
+                        <span>{params?.data?.createdAt}</span>
+                      </div>
+                    </div>
+                  </>
+                );
+              },
+            },
+          ];
 
-        this.setState({ AllcolumnDefs: Product });
-        let userHeading = JSON.parse(localStorage.getItem("CustomerSearch"));
-        if (userHeading?.length) {
-          this.setState({ columnDefs: userHeading });
-          this.gridApi.setColumnDefs(userHeading);
-          this.setState({ SelectedcolumnDefs: userHeading });
-        } else {
-          this.setState({ columnDefs: Product });
-          this.setState({ SelectedcolumnDefs: Product });
-        }
-        this.setState({ SelectedCols: Product });
-      })
-      .catch((err) => {
-        console.log(err);
-        swal("Error", "something went wrong try again");
-      });
-    await CreateCustomerList()
-      .then((res) => {
-        let value = res?.Customer;
-        this.setState({ rowData: value });
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+          this.setState({ AllcolumnDefs: Product });
+          let userHeading = JSON.parse(localStorage.getItem("CustomerSearch"));
+          if (userHeading?.length) {
+            this.setState({ columnDefs: userHeading });
+            this.gridApi.setColumnDefs(userHeading);
+            this.setState({ SelectedcolumnDefs: userHeading });
+          } else {
+            this.setState({ columnDefs: Product });
+            this.setState({ SelectedcolumnDefs: Product });
+          }
+          this.setState({ SelectedCols: Product });
+        })
+        .catch((err) => {
+          console.log(err);
+          swal("Error", "something went wrong try again");
+        });
+
+  
   }
   toggleDropdown = () => {
     this.setState((prevState) => ({ isOpen: !prevState.isOpen }));
@@ -575,6 +639,7 @@ class CustomerSearch extends React.Component {
       isOpen,
       SelectedCols,
       AllcolumnDefs,
+      InsiderPermissions,
     } = this.state;
     return (
       <>
@@ -590,8 +655,7 @@ class CustomerSearch extends React.Component {
                       this.setState({ EditOneUserView: false });
                       this.componentDidMount();
                     }}
-                    color="danger"
-                  >
+                    color="danger">
                     Back
                   </Button>
                 </div>
@@ -611,8 +675,7 @@ class CustomerSearch extends React.Component {
                             e.preventDefault();
                             this.setState({ ViewOneUserView: false });
                           }}
-                          color="danger"
-                        >
+                          color="danger">
                           Back
                         </Button>
                       </div>
@@ -628,95 +691,93 @@ class CustomerSearch extends React.Component {
                         <Col>
                           <h1 className="float-left">Customer List</h1>
                         </Col>
-                        <Col>
-                          <span className="mx-1">
-                            <FaFilter
-                              style={{ cursor: "pointer" }}
-                              title="filter coloumn"
-                              size="25px"
-                              onClick={this.LookupviewStart}
-                              color="#39cccc"
-                              className="float-right"
-                            />
-                          </span>
-                          <span className="mx-1">
-                            <div className="dropdown-container float-right">
-                              <BsCloudDownloadFill
+                        {InsiderPermissions && InsiderPermissions?.View && (
+                          <Col>
+                            <span className="mx-1">
+                              <FaFilter
                                 style={{ cursor: "pointer" }}
-                                title="download file"
+                                title="filter coloumn"
                                 size="25px"
-                                className="dropdown-button "
+                                onClick={this.LookupviewStart}
                                 color="#39cccc"
-                                onClick={this.toggleDropdown}
+                                className="float-right"
                               />
-                              {isOpen && (
-                                <div
-                                  style={{
-                                    position: "absolute",
-                                    zIndex: "1",
-                                  }}
-                                  className="dropdown-content dropdownmy"
-                                >
-                                  <h5
-                                    onClick={() => this.exportToPDF()}
-                                    style={{ cursor: "pointer" }}
-                                    className=" mx-1 myactive mt-1"
-                                  >
-                                    .PDF
-                                  </h5>
-                                  <h5
-                                    onClick={() =>
-                                      this.gridApi.exportDataAsCsv()
-                                    }
-                                    style={{ cursor: "pointer" }}
-                                    className=" mx-1 myactive"
-                                  >
-                                    .CSV
-                                  </h5>
-                                  <h5
-                                    onClick={this.convertCSVtoExcel}
-                                    style={{ cursor: "pointer" }}
-                                    className=" mx-1 myactive"
-                                  >
-                                    .XLS
-                                  </h5>
-                                  <h5
-                                    onClick={this.exportToExcel}
-                                    style={{ cursor: "pointer" }}
-                                    className=" mx-1 myactive"
-                                  >
-                                    .XLSX
-                                  </h5>
-                                  <h5
-                                    onClick={() => this.convertCsvToXml()}
-                                    style={{ cursor: "pointer" }}
-                                    className=" mx-1 myactive"
-                                  >
-                                    .XML
-                                  </h5>
-                                </div>
-                              )}
-                            </div>
-                          </span>
-                          <span>
-                            <Route
-                              render={({ history }) => (
-                                <Badge
+                            </span>
+                            <span className="mx-1">
+                              <div className="dropdown-container float-right">
+                                <BsCloudDownloadFill
                                   style={{ cursor: "pointer" }}
-                                  className="float-right mr-1"
-                                  color="primary"
-                                  onClick={() =>
-                                    history.push(
-                                      "/app/SoftNumen/account/CreateCustomer"
-                                    )
-                                  }
-                                >
-                                  <FaPlus size={15} /> Create Customer
-                                </Badge>
-                              )}
-                            />
-                          </span>
-                        </Col>
+                                  title="download file"
+                                  size="25px"
+                                  className="dropdown-button "
+                                  color="#39cccc"
+                                  onClick={this.toggleDropdown}
+                                />
+                                {isOpen && (
+                                  <div
+                                    style={{
+                                      position: "absolute",
+                                      zIndex: "1",
+                                    }}
+                                    className="dropdown-content dropdownmy">
+                                    <h5
+                                      onClick={() => this.exportToPDF()}
+                                      style={{ cursor: "pointer" }}
+                                      className=" mx-1 myactive mt-1">
+                                      .PDF
+                                    </h5>
+                                    <h5
+                                      onClick={() =>
+                                        this.gridApi.exportDataAsCsv()
+                                      }
+                                      style={{ cursor: "pointer" }}
+                                      className=" mx-1 myactive">
+                                      .CSV
+                                    </h5>
+                                    <h5
+                                      onClick={this.convertCSVtoExcel}
+                                      style={{ cursor: "pointer" }}
+                                      className=" mx-1 myactive">
+                                      .XLS
+                                    </h5>
+                                    <h5
+                                      onClick={this.exportToExcel}
+                                      style={{ cursor: "pointer" }}
+                                      className=" mx-1 myactive">
+                                      .XLSX
+                                    </h5>
+                                    <h5
+                                      onClick={() => this.convertCsvToXml()}
+                                      style={{ cursor: "pointer" }}
+                                      className=" mx-1 myactive">
+                                      .XML
+                                    </h5>
+                                  </div>
+                                )}
+                              </div>
+                            </span>
+                            <span>
+                              {InsiderPermissions &&
+                                InsiderPermissions?.Create && (
+                                  <Route
+                                    render={({ history }) => (
+                                      <Badge
+                                        style={{ cursor: "pointer" }}
+                                        className="float-right mr-1"
+                                        color="primary"
+                                        onClick={() =>
+                                          history.push(
+                                            "/app/SoftNumen/account/CreateCustomer"
+                                          )
+                                        }>
+                                        <FaPlus size={15} /> Create Customer
+                                      </Badge>
+                                    )}
+                                  />
+                                )}
+                            </span>
+                          </Col>
+                        )}
                       </Row>
                       <CardBody>
                         {this.state.rowData === null ? null : (
@@ -743,32 +804,27 @@ class CustomerSearch extends React.Component {
                                   <DropdownMenu right>
                                     <DropdownItem
                                       tag="div"
-                                      onClick={() => this.filterSize(5)}
-                                    >
+                                      onClick={() => this.filterSize(5)}>
                                       5
                                     </DropdownItem>
                                     <DropdownItem
                                       tag="div"
-                                      onClick={() => this.filterSize(20)}
-                                    >
+                                      onClick={() => this.filterSize(20)}>
                                       20
                                     </DropdownItem>
                                     <DropdownItem
                                       tag="div"
-                                      onClick={() => this.filterSize(50)}
-                                    >
+                                      onClick={() => this.filterSize(50)}>
                                       50
                                     </DropdownItem>
                                     <DropdownItem
                                       tag="div"
-                                      onClick={() => this.filterSize(100)}
-                                    >
+                                      onClick={() => this.filterSize(100)}>
                                       100
                                     </DropdownItem>
                                     <DropdownItem
                                       tag="div"
-                                      onClick={() => this.filterSize(134)}
-                                    >
+                                      onClick={() => this.filterSize(134)}>
                                       134
                                     </DropdownItem>
                                   </DropdownMenu>
@@ -844,8 +900,7 @@ class CustomerSearch extends React.Component {
           isOpen={this.state.modal}
           toggle={this.LookupviewStart}
           className={this.props.className}
-          style={{ maxWidth: "1050px" }}
-        >
+          style={{ maxWidth: "1050px" }}>
           <ModalHeader toggle={this.LookupviewStart}>Change Fileds</ModalHeader>
           <ModalBody className="modalbodyhead">
             <Row>
@@ -862,13 +917,11 @@ class CustomerSearch extends React.Component {
                                 this.handleChangeHeader(e, ele, i)
                               }
                               key={i}
-                              className="mycustomtag mt-1"
-                            >
+                              className="mycustomtag mt-1">
                               <span className="mt-1">
                                 <h5
                                   style={{ cursor: "pointer" }}
-                                  className="allfields"
-                                >
+                                  className="allfields">
                                   <input
                                     type="checkbox"
                                     // checked={check && check}
@@ -927,8 +980,7 @@ class CustomerSearch extends React.Component {
                                             : ""
                                         }`,
                                       }}
-                                      className="allfields"
-                                    >
+                                      className="allfields">
                                       <IoMdRemoveCircleOutline
                                         onClick={() => {
                                           const SelectedCols =

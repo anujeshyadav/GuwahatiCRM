@@ -132,7 +132,6 @@ export const Roles = [
         title: "Cashbook",
         permission: ["View", "Create", "Edit", "Delete"],
       },
-    
     ],
   },
   {
@@ -370,8 +369,6 @@ export const Roles = [
         title: "Product Creation",
         permission: ["View", "Create", "Edit", "Delete"],
       },
-     
-    
     ],
   },
   {
@@ -389,9 +386,9 @@ export const Roles = [
         title: "Product Creation",
         permission: ["View", "Create", "Edit", "Delete"],
       },
-  ]
-},
- 
+    ],
+  },
+
   {
     title: "Warehouse",
     TabName: [
@@ -427,8 +424,8 @@ export const Roles = [
         title: "Dispatch Detail",
         permission: ["View", "Create", "Edit", "Delete"],
       },
-  ]
-},
+    ],
+  },
 
   {
     title: "Others",
@@ -453,7 +450,6 @@ export const Roles = [
         title: "WareHouseStock",
         permission: ["View", "Create", "Edit", "Delete"],
       },
-     
     ],
   },
   // {

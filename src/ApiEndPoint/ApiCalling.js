@@ -7,6 +7,7 @@ import {
   SAVE_GoodDispatch,
   GoodDispatch_List,
   Edit_GoodDispatch,
+  View_Company_Details,
   Purchase_Return,
   Purchase_Edit_Order,
   Place_Order_List,
@@ -40,6 +41,7 @@ import {
   Create_transporter_xmlView,
   Create_Sales_person_save,
   Update_Sales_person_save,
+  Create_Company_Details,
   Create_Sales_person_List,
   Create_transporter_save,
   Create_Target_List,
@@ -323,7 +325,6 @@ export const DeleteUnitList = async id => {
 export const DeleteSalesperson = async id => {
   let response = await axiosConfig
     .delete(`${Delete_Sales_person}` + id)
-
     .then(res => res.data);
   return response;
 };
@@ -587,8 +588,21 @@ export const CreateCustomersave = async data => {
     .then(res => res.data);
   return response;
 };
+export const Create_CompanyDetails = async data => {
+  let response = await axiosConfig
+    .post(`${Create_Company_Details}`, data)
+    .then(res => res.data);
+  return response;
+};
 // export const DeleteAccount = async id => {
 //   console.log(id);
+export const ViewCompanyDetails = async id => {
+  let response = await axiosConfig
+    .get(`${View_Company_Details}`)
+    .then(res => res.data);
+  return response;
+};
+
 export const DeleteAccount = async id => {
   let response = await axiosConfig
     .get(`${Delete_Account_List}` + id)
@@ -607,9 +621,9 @@ export const CreateAccountList = async id => {
     .then(res => res.data);
   return response;
 };
-export const CreateCustomerList = async data => {
+export const CreateCustomerList = async id => {
   let response = await axiosConfig
-    .get(`${Create_Customer_List}`, data)
+    .get(`${Create_Customer_List}` + id)
     .then(res => res.data);
   return response;
 };
@@ -1211,5 +1225,3 @@ export const Update_targetINlist = async (id, data) => {
     .then(res => res.data);
   return response;
 };
-// Create_Target_save
-//

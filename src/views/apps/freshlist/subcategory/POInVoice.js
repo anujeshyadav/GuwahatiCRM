@@ -74,11 +74,11 @@ const POInVoice = ({
   tableList,
   AllCharges,
 }) => {
- 
   console.log(invoiceData);
   console.log(BilData);
   console.log(CurrentWords);
   console.log(AllCharges);
+  // console.log("poinvoice");
   // const { items, customerName, date, total, place_supply } = invoiceData;
   const curentDate = new Date();
 
