@@ -2,7 +2,7 @@
 export const Get_Role = "/role/get-role";
 export const Get_Role_by_id = "/role/get-role-by-id/";
 export const Create_Company_Details = "/company-detail/save-company-details";
-export const View_Company_Details = "/company-detail/view-company-details";
+export const View_Company_Details = "/company-detail/view-company-details/";
 export const Update_Role = "/role/update-role/";
 export const Create_warehouse_xmlView = "/warehouse/get-xml";
 export const Create_warehouse_save = "/warehouse/save-warehouse";
@@ -32,7 +32,7 @@ export const Create_unit_xmlView = "/unit/get-xml";
 export const AddPrimaryUnit = "/primary-unit/save-primary-unit";
 export const BaseUnitList = "/primary-unit/view-primary-unit";
 export const Create_unit_save = "/unit/save-unit";
-export const Create_unit_List = "/unit/view-unit";
+export const Create_unit_List = "/unit/view-unit/";
 export const Delete_Unit_List = "/unit/delete-unit/";
 export const Unit_ViewOne = "/unit/update-unit/";
 
@@ -42,7 +42,7 @@ export const View_Cat_by_id = "/categories/view-category-by-id/";
 export const Update_Category = "/categories/update-category/";
 export const Update_Sub_Category = "/categories/update-categories/";
 export const Create_Category = "/categories/save-category";
-export const Category_List = "/categories/view-category";
+export const Category_List = "/categories/view-category/";
 export const Create_SubCategory = "/categories/save-subcategory";
 export const Create_Product_XMLView = "/product/get-xml";
 export const Save_Product = "/product/save-product";

@@ -77,7 +77,7 @@ const POInvoiceone = ({
 }) => {
   console.log(invoiceData);
   
-  console.log("BilData", BilData?.CompanyDetails);
+  console.log("BilData", BilData);
   console.log(CurrentWords);
   console.log(AllCharges);
 
@@ -1118,19 +1118,33 @@ const POInvoiceone = ({
                 <Text style={{ fontSize: "11px" }}> For</Text>
                 <Text
                   style={{
-                    fontSize: "8px",
+                    fontSize: "12px",
                     marginTop: "8px",
                     marginBottom: "8px",
                   }}>
                   {" "}
-                  JUPITECH CORPORATE MANAGEMENT SERVICES PVT. LTD.
+                  {BilData?.CompanyDetails?.name &&
+                    BilData?.CompanyDetails?.name}
                 </Text>
                 <View>
-                  <Image
-                    style={{ height: "50px", marginTop: "15px" }}
-                    src={signature}
-                    width="200px"
-                    height="200px"></Image>
+                  {BilData?.CompanyDetails?.signature &&
+                  BilData?.CompanyDetails?.signature ? (
+                    <>
+                      <Image
+                        style={{ height: "50px", marginTop: "15px" }}
+                        src={`http://64.227.162.41:5000/Images/${BilData?.CompanyDetails?.signature}`}
+                        width="200px"
+                        height="200px"></Image>
+                    </>
+                  ) : (
+                    <>
+                      <Image
+                        style={{ height: "50px", marginTop: "15px" }}
+                        src={signature}
+                        width="200px"
+                        height="200px"></Image>
+                    </>
+                  )}
                 </View>
                 <View
                   style={{

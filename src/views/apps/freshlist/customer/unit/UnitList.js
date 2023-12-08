@@ -164,31 +164,34 @@ class UnitList extends React.Component {
   };
   handleSave = e => {
     e.preventDefault();
+    let userData = JSON.parse(localStorage.getItem("userData"));
     const payload = {
       primaryUnit: this.state.baseUnit,
       secondaryUnit: this.state.secondaryUnit,
       unitQty: Number(this.state.unitQty),
+      created_by: userData?._id,
     };
+
     SaveUnit(payload)
-      .then(res => {
+      .then((res) => {
         console.log(res);
         if (res.status) {
           swal(`${res.message}`);
         }
       })
-      .catch(err => {
+      .catch((err) => {
         console.log(err);
       });
   };
   async componentDidMount() {
     const UserInformation = this.context?.UserInformatio;
-
-    await UnitListView()
-      .then(res => {
+      let userData = JSON.parse(localStorage.getItem("userData"));
+    await UnitListView(userData?._id)
+      .then((res) => {
         console.log(res?.Unit);
         this.setState({ rowData: res?.Unit });
       })
-      .catch(err => {
+      .catch((err) => {
         console.log(err);
       });
     await BaseUnitListView()

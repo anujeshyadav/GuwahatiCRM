@@ -39,7 +39,10 @@ import "../../../../assets/scss/pages/users.scss";
 import InvoicGenerator from "../subcategory/InvoiceGeneratorone";
 import { Route, Link } from "react-router-dom";
 import swal from "sweetalert";
-import { createOrderhistoryview } from "../../../../ApiEndPoint/ApiCalling";
+import {
+  ViewCompanyDetails,
+  createOrderhistoryview,
+} from "../../../../ApiEndPoint/ApiCalling";
 
 import { ContextLayout } from "../../../../utility/context/Layout";
 import { AgGridReact } from "ag-grid-react";
@@ -879,17 +882,24 @@ class InvoiceGenerator extends React.Component {
   async componentDidMount() {
     const UserInformation = this.context;
     // console.log(UserInformation?.CompanyDetails);
-    if (UserInformation?.CompanyDetails){
-     this.setState({ CompanyDetails: UserInformation?.CompanyDetails });
-    } 
-    debugger;
+    let pageparmission = JSON.parse(localStorage.getItem("userData"));
+    let userid = pageparmission?._id;
+    await ViewCompanyDetails(userid)
+      .then((res) => {
+        debugger;
+        console.log(res?.CompanyDetail);
+        this.setState({ CompanyDetails: res?.CompanyDetail });
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+
     let billnumner = localStorage.getItem("billnumber");
     if (billnumner) {
       this.setState({ ShowBill: false });
       this.setState({ BillNumber: billnumner });
     }
-    let pageparmission = JSON.parse(localStorage.getItem("userData"));
-    let userid = pageparmission?._id;
+
     const InsidePermissions = CheckPermission("Sales Invoice");
     console.log(InsidePermissions);
     this.setState({ InsiderPermissions: InsidePermissions });

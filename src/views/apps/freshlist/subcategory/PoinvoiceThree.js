@@ -75,11 +75,11 @@ const PoinvoiceThree = ({
   tableList,
   AllCharges,
 }) => {
-  console.log(invoiceData);
-  console.log(BilData);
-  console.log(CurrentWords);
-  console.log(AllCharges);
-  console.log("poinvoicethree");
+  // console.log(invoiceData);
+  console.log("BilData", BilData);
+  // console.log(CurrentWords);
+  // console.log(AllCharges);
+  // console.log("poinvoicethree");
 
   // const { items, customerName, date, total, place_supply } = invoiceData;
   const curentDate = new Date();
@@ -104,12 +104,28 @@ const PoinvoiceThree = ({
                 {UserChoice?.imagePosition &&
                 UserChoice?.imagePosition == "Left" ? (
                   <>
-                    <Image
+                    {/* <Image
                       style={{ width: "230px", padding: "25px 10px" }}
-                      src={logo}></Image>
+                      src={logo}></Image> */}
+                    {BilData?.CompanyDetails?.logo &&
+                    BilData?.CompanyDetails?.logo ? (
+                      <>
+                        <Image
+                          style={{ width: "230px", padding: "25px 10px" }}
+                          src={`http://64.227.162.41:5000/Images/${BilData?.CompanyDetails?.logo}`}></Image>
+                      </>
+                    ) : (
+                      <>
+                        <Image
+                          style={{ width: "230px", padding: "25px 10px" }}
+                          src={logo}></Image>
+                      </>
+                    )}
+
                     <View style={{ padding: "10px" }}>
-                      <Text style={{ fontSize: "10px", fontWeight: "bold" }}>
-                        Guwahati CORPORATE MANAGEMENT SERVICES PVT. LTD.
+                      <Text style={{ fontSize: "13px", fontWeight: "bold" }}>
+                        {BilData?.CompanyDetails?.name &&
+                          BilData?.CompanyDetails?.name}
                       </Text>
 
                       <Text
@@ -118,25 +134,33 @@ const PoinvoiceThree = ({
                           marginTop: "5px",
                           marginBottom: "2px",
                         }}>
-                        ROOM 7,A-WING,Shree Datta Digambar CHS Ltd.
+                        {BilData?.CompanyDetails?.address &&
+                          BilData?.CompanyDetails?.address}
+                      </Text>
+                      <Text style={styles.header}></Text>
+                      <Text style={styles.header}>
+                        Email :
+                        {BilData?.CompanyDetails?.email &&
+                          BilData?.CompanyDetails?.email}
                       </Text>
                       <Text style={styles.header}>
-                        Guru Datta Mandir Road ,Gaurishankarwadi No. 1
+                        MobileNo :
+                        {BilData?.CompanyDetails?.mobileNo &&
+                          BilData?.CompanyDetails?.mobileNo}
                       </Text>
-                      <Text style={styles.header}>
-                        Opp. Yashomandir,Pant Nagar ,Ghatkopar East,
+                      <Text style={styles.GSTIN}>
+                        GSTIN :
+                        {BilData?.CompanyDetails?.gstNo &&
+                          BilData?.CompanyDetails?.gstNo}
                       </Text>
-                      <Text style={styles.header}>
-                        Mumbai,Maharastra, 400075. india
-                      </Text>
-                      <Text style={styles.GSTIN}>GSTIN: 27AAHCP2196E1ZB</Text>
                     </View>
                   </>
                 ) : (
                   <>
                     <View style={{ padding: "10px" }}>
-                      <Text style={{ fontSize: "10px", fontWeight: "bold" }}>
-                        Guwahati CORPORATE MANAGEMENT SERVICES PVT. LTD.
+                      <Text style={{ fontSize: "13px", fontWeight: "bold" }}>
+                        {BilData?.CompanyDetails?.name &&
+                          BilData?.CompanyDetails?.name}
                       </Text>
 
                       <Text
@@ -145,22 +169,40 @@ const PoinvoiceThree = ({
                           marginTop: "5px",
                           marginBottom: "2px",
                         }}>
-                        ROOM 7,A-WING,Shree Datta Digambar CHS Ltd.
+                        {BilData?.CompanyDetails?.address &&
+                          BilData?.CompanyDetails?.address}
+                      </Text>
+                      <Text style={styles.header}></Text>
+                      <Text style={styles.header}>
+                        Email :
+                        {BilData?.CompanyDetails?.email &&
+                          BilData?.CompanyDetails?.email}
                       </Text>
                       <Text style={styles.header}>
-                        Guru Datta Mandir Road ,Gaurishankarwadi No. 1
+                        MobileNo :
+                        {BilData?.CompanyDetails?.mobileNo &&
+                          BilData?.CompanyDetails?.mobileNo}
                       </Text>
-                      <Text style={styles.header}>
-                        Opp. Yashomandir,Pant Nagar ,Ghatkopar East,
+                      <Text style={styles.GSTIN}>
+                        GSTIN :
+                        {BilData?.CompanyDetails?.gstNo &&
+                          BilData?.CompanyDetails?.gstNo}
                       </Text>
-                      <Text style={styles.header}>
-                        Mumbai,Maharastra, 400075. india
-                      </Text>
-                      <Text style={styles.GSTIN}>GSTIN: 27AAHCP2196E1ZB</Text>
                     </View>
-                    <Image
-                      style={{ width: "230px", padding: "25px 10px" }}
-                      src={logo}></Image>
+                    {BilData?.CompanyDetails?.logo &&
+                    BilData?.CompanyDetails?.logo ? (
+                      <>
+                        <Image
+                          style={{ width: "230px", padding: "25px 10px" }}
+                          src={`http://64.227.162.41:5000/Images/${BilData?.CompanyDetails?.logo}`}></Image>
+                      </>
+                    ) : (
+                      <>
+                        <Image
+                          style={{ width: "230px", padding: "25px 10px" }}
+                          src={logo}></Image>
+                      </>
+                    )}
                   </>
                 )}
               </View>
@@ -1142,19 +1184,33 @@ const PoinvoiceThree = ({
                 <Text style={{ fontSize: "11px" }}> For</Text>
                 <Text
                   style={{
-                    fontSize: "8px",
+                    fontSize: "12px",
                     marginTop: "8px",
                     marginBottom: "8px",
                   }}>
                   {" "}
-                  JUPITECH CORPORATE MANAGEMENT SERVICES PVT. LTD.
+                  {BilData?.CompanyDetails?.name &&
+                    BilData?.CompanyDetails?.name}
                 </Text>
                 <View>
-                  <Image
-                    style={{ height: "50px", marginTop: "15px" }}
-                    src={signature}
-                    width="200px"
-                    height="200px"></Image>
+                  {BilData?.CompanyDetails?.signature &&
+                  BilData?.CompanyDetails?.signature ? (
+                    <>
+                      <Image
+                        style={{ height: "50px", marginTop: "15px" }}
+                        src={`http://64.227.162.41:5000/Images/${BilData?.CompanyDetails?.signature}`}
+                        width="200px"
+                        height="200px"></Image>
+                    </>
+                  ) : (
+                    <>
+                      <Image
+                        style={{ height: "50px", marginTop: "15px" }}
+                        src={signature}
+                        width="200px"
+                        height="200px"></Image>
+                    </>
+                  )}
                 </View>
                 <View
                   style={{
