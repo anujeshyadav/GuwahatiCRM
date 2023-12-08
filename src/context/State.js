@@ -22,14 +22,22 @@ const State = (props) => {
 
   useEffect(() => {
     let user = JSON.parse(localStorage.getItem("userData"));
-    ViewCompanyDetails()
-      .then((res) => {
-        console.log(res?.CompanyDetail[0]);
-        setCompanyDetails(res?.CompanyDetail[0]);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+    const fetchData = async () => {
+      try {
+        // Perform asynchronous operations here, e.g., fetching data from an API
+        await ViewCompanyDetails(user?._id)
+          .then((res) => {
+            console.log(res?.CompanyDetail);
+            setCompanyDetails(res?.CompanyDetail);
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+
     setUserlanguage(user?.locale);
     setUserInformatio(user);
     // console.log(user?.currency?.split("_")[0]);
@@ -48,6 +56,7 @@ const State = (props) => {
       .catch((err) => {
         console.log(err);
       });
+    fetchData();
   }, [user?.currency]);
 
   return (

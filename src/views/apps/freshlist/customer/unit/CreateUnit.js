@@ -108,6 +108,8 @@ const CreateUnit = () => {
     if (error) {
       swal("Error occured while Entering Details");
     } else {
+      let userData = JSON.parse(localStorage.getItem("userData"));
+      formData["created_by"] = userData?._id;
       SaveUnit(formData)
         .then(res => {
           console.log(res);

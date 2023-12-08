@@ -277,8 +277,10 @@ export const SaveProduct = async data => {
   return response;
 };
 
-export const AllCategoryList = async () => {
-  let response = await axiosConfig.get(Category_List).then(res => res.data);
+export const AllCategoryList = async id => {
+  let response = await axiosConfig
+    .get(`${Category_List}` + id)
+    .then(res => res.data);
   return response;
 };
 export const ProductListView = async () => {
@@ -597,7 +599,7 @@ export const Create_CompanyDetails = async data => {
 
 export const ViewCompanyDetails = async id => {
   let response = await axiosConfig
-    .get(`${View_Company_Details}`)
+    .get(`${View_Company_Details}` + id)
     .then(res => res.data);
   return response;
 };

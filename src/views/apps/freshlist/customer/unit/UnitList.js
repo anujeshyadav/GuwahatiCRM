@@ -164,11 +164,14 @@ class UnitList extends React.Component {
   };
   handleSave = e => {
     e.preventDefault();
+    let userData = JSON.parse(localStorage.getItem("userData"));
     const payload = {
       primaryUnit: this.state.baseUnit,
       secondaryUnit: this.state.secondaryUnit,
       unitQty: Number(this.state.unitQty),
+      created_by: userData?._id,
     };
+
     SaveUnit(payload)
       .then(res => {
         console.log(res);
@@ -182,11 +185,11 @@ class UnitList extends React.Component {
   };
   async componentDidMount() {
     const UserInformation = this.context?.UserInformatio;
-    const userId = JSON.parse(localStorage.getItem("userData"))._id;
-    console.log(userId);
-    await UnitListView(userId)
+
+    let userData = JSON.parse(localStorage.getItem("userData"));
+    await UnitListView(userData?._id)
       .then(res => {
-        console.log(res);
+        console.log(res?.Unit);
         this.setState({ rowData: res?.Unit });
       })
       .catch(err => {

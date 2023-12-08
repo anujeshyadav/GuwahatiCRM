@@ -24,6 +24,7 @@ import swal from "sweetalert";
 import {
   Create_CompanyDetails,
   EditUserProfile,
+  ViewCompanyDetails,
 } from "../../../ApiEndPoint/ApiCalling";
 import "../../../assets/scss/pages/users-profile.scss";
 import UserContext from "../../../context/Context";
@@ -37,6 +38,7 @@ class UserProfile extends React.Component {
       firstName: "",
       lastName: "",
       modal: false,
+      Createmode: false,
       // formData: {
       //   Country: '',
       //   State: '',
@@ -49,7 +51,9 @@ class UserProfile extends React.Component {
       name: "",
       LoginData: {},
       Companylogo: {},
+      CompanyDetails: {},
       CompanyAddress: "",
+      Signature: {},
       formData: "",
       CompanyNumber: "",
       gstNumber: "",
@@ -80,27 +84,29 @@ class UserProfile extends React.Component {
       );
     }
   }
-  componentDidMount() {
-    // const countries = Country.getAllCountries();
-    // this.setState({ countries });
-    console.log(this.context);
-    let pageparmission = JSON.parse(localStorage.getItem("userData"));
-
-    // console.log(pageparmission);
+  async componentDidMount() {
+    let pageparmission = await JSON.parse(localStorage.getItem("userData"));
     this.setState({ LoginData: pageparmission });
-
     this.setState({
       // data: response.data.data,
       name: pageparmission?.name,
       email: pageparmission?.email,
       cnfmPassword: pageparmission?.Userinfo?.password,
     });
-    // if (
-    //   pageparmission?.currency == undefined ||
-    //   pageparmission?.currency == null
-    // ) {
-    //   this.setState({ Currency: "USD" });
-    // }
+    await ViewCompanyDetails(pageparmission?._id)
+      .then((res) => {
+        this.setState({ CompanyDetails: res?.CompanyDetail });
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+    // const countries = Country.getAllCountries();
+    // this.setState({ countries });
+    // const UserInformation = this.context;
+    // console.log(UserInformation?.CompanyDetails);
+
+    // console.log(pageparmission);
+
     // console.log(this.context);
   }
 
@@ -216,14 +222,16 @@ class UserProfile extends React.Component {
   };
   HandleUploadLogo = async (e) => {
     e.preventDefault();
-
+    let pageparmission = JSON.parse(localStorage.getItem("userData"));
     let formData = new FormData();
+    formData.append("created_by", pageparmission?._id);
     formData.append("email", this.state.email);
     formData.append("name", this.state.companyName);
     formData.append("mobileNo", this.state.CompanyNumber);
     formData.append("file", this.state.Companylogo);
     formData.append("gstNo", this.state.gstNumber);
     formData.append("address", this.state.CompanyAddress);
+    formData.append("signature", this.state.Signature);
 
     await Create_CompanyDetails(formData)
       .then((res) => {
@@ -317,9 +325,20 @@ class UserProfile extends React.Component {
                             onClick={(e) => {
                               e.preventDefault();
                               this.toggleModal();
+                              this.setState({ Createmode: false });
                             }}
                             color="primary">
                             Add Company Details
+                          </Badge>
+                          <Badge
+                            onClick={async (e) => {
+                              e.preventDefault();
+                              this.toggleModal();
+                              this.setState({ Createmode: true });
+                            }}
+                            color="primary"
+                            className=" ml-3">
+                            View
                           </Badge>
                         </div>
                       </Col>
@@ -459,109 +478,172 @@ class UserProfile extends React.Component {
             Add Company Details
           </ModalHeader>
           <ModalBody>
-            {this.state.LoginData?.rolename?.position == 1 ? (
+            {this.state.Createmode && this.state.Createmode ? (
               <>
-                <Card className="bg-authentication rounded-0 mb-0 w-100">
-                  <Form className="p-1" onSubmit={this.HandleUploadLogo}>
-                    <div className="st-2">
-                      <CardTitle>
-                        <h4 className="mb-3">Add Company Details</h4>
-                      </CardTitle>
-
-                      <Row className="m-0">
-                        <Col sm="12" lg="6" md="6" className="p-1">
-                          <Label>Company Logo</Label>
-                          <CustomInput
-                            required
-                            type="file"
-                            placeholder="Companylogo"
-                            onChange={(e) =>
-                              this.setState({ Companylogo: e.target.files[0] })
-                            }
-                          />
-                        </Col>
-                        <Col sm="12" lg="6" md="6" className="p-1">
-                          <Label>Company Address</Label>
-                          <textarea
-                            required
-                            type="textarea"
-                            className="form-control"
-                            name="CompanyAddress"
-                            placeholder="Company Address"
-                            value={this.state.CompanyAddress}
-                            onChange={this.changeHandler}
-                          />
-                        </Col>
-                        <Col sm="12" lg="6" md="6" className="p-1">
-                          <Label>Company Name</Label>
-                          <input
-                            required
-                            type="text"
-                            className="form-control"
-                            name="companyName"
-                            placeholder="Company Address"
-                            value={this.state.companyName}
-                            onChange={this.changeHandler}
-                          />
-                        </Col>
-                        <Col sm="12" lg="6" md="6" className="p-1">
-                          <Label>Company Number</Label>
-                          <Input
-                            required
-                            type="text"
-                            className="formControl"
-                            name="CompanyNumber"
-                            placeholder="Company Number"
-                            value={this.state.CompanyNumber}
-                            onChange={this.changeHandler}
-                          />
-                        </Col>
-
-                        <Col sm="12" lg="6" md="6" className="p-1">
-                          <Label>Company Email</Label>
-                          <Input
-                            required
-                            type="email"
-                            className="form-control"
-                            name="email"
-                            placeholder="email"
-                            value={this.state.email}
-                            onChange={this.changeHandler}
-                          />
-                        </Col>
-                        <Col sm="12" lg="6" md="6" className="p-1">
-                          <Label>GST Number</Label>
-                          <Input
-                            required
-                            name="gstNumber"
-                            className="from-control"
-                            placeholder="gstNumber"
-                            value={this.state.gstNumber}
-                            onChange={this.changeHandler}
-                          />
-                        </Col>
-                      </Row>
-                      <Row>
-                        <Col>
-                          <CheckBoxesVuexy
-                            color="primary"
-                            className="mb-1 mx-1"
-                            icon={<Check className="vx-icon" size={16} />}
-                            label=" I accept the terms & conditions."
-                            defaultChecked={true}
-                          />
-                        </Col>
-                      </Row>
-                      <div className="d-flex justify-content-center">
-                        <Button.Ripple color="primary" type="submit">
-                          {this.state.Loading}
-                        </Button.Ripple>
-                      </div>
-                    </div>
-                  </Form>
-                </Card>
+                <h2>Existing Details</h2>
+                <div className="p-1">
+                  Name: {this.state.CompanyDetails?.name}
+                </div>
+                <div className="p-1">
+                  GST Number: {this.state.CompanyDetails?.gstNo}
+                </div>
+                <div className="p-1">
+                  Address: {this.state.CompanyDetails?.address}
+                </div>
+                <div className="p-1">
+                  mobileNo: {this.state.CompanyDetails?.mobileNo}
+                </div>
+                <div className="p-1">
+                  Email: {this.state.CompanyDetails?.email}
+                </div>
+                <div className="p-1">
+                  Logo:{" "}
+                  {this.state.CompanyDetails?.logo && (
+                    <img
+                      width={100}
+                      className="mx-1"
+                      height={80}
+                      src={`http://64.227.162.41:5000/Images/${this.state.CompanyDetails?.logo}`}
+                      alt="NA"
+                    />
+                  )}
+                </div>
+                <div className="p-1">
+                  signature:{" "}
+                  {this.state.CompanyDetails?.signature &&
+                    this.state.CompanyDetails?.signature && (
+                      <img
+                        className="mx-1"
+                        width={60}
+                        height={60}
+                        src={`http://64.227.162.41:5000/Images/${this.state.CompanyDetails?.signature}`}
+                        alt="NA"
+                      />
+                    )}
+                </div>
               </>
-            ) : null}
+            ) : (
+              <>
+                {this.state.LoginData?.rolename?.position == 1 ? (
+                  <>
+                    <Card className="bg-authentication rounded-0 mb-0 w-100">
+                      <Form className="p-1" onSubmit={this.HandleUploadLogo}>
+                        <div className="st-2">
+                          <CardTitle>
+                            <h4 className="mb-3">Add Company Details</h4>
+                          </CardTitle>
+
+                          <Row className="m-0">
+                            <Col sm="12" lg="6" md="6" className="p-1">
+                              <Label>signature</Label>
+                              <CustomInput
+                                required
+                                type="file"
+                                placeholder="Signature"
+                                onChange={(e) =>
+                                  this.setState({
+                                    Signature: e.target.files[0],
+                                  })
+                                }
+                              />
+                            </Col>
+                            <Col sm="12" lg="6" md="6" className="p-1">
+                              <Label>Company Logo</Label>
+                              <CustomInput
+                                required
+                                type="file"
+                                placeholder="Companylogo"
+                                onChange={(e) =>
+                                  this.setState({
+                                    Companylogo: e.target.files[0],
+                                  })
+                                }
+                              />
+                            </Col>
+                            <Col sm="12" lg="6" md="6" className="p-1">
+                              <Label>Company Address</Label>
+                              <textarea
+                                required
+                                type="textarea"
+                                className="form-control"
+                                name="CompanyAddress"
+                                placeholder="Company Address"
+                                value={this.state.CompanyAddress}
+                                onChange={this.changeHandler}
+                              />
+                            </Col>
+                            <Col sm="12" lg="6" md="6" className="p-1">
+                              <Label>Company Name</Label>
+                              <input
+                                required
+                                type="text"
+                                className="form-control"
+                                name="companyName"
+                                placeholder="Company Address"
+                                value={this.state.companyName}
+                                onChange={this.changeHandler}
+                              />
+                            </Col>
+                            <Col sm="12" lg="6" md="6" className="p-1">
+                              <Label>Company Number</Label>
+                              <Input
+                                required
+                                type="text"
+                                className="formControl"
+                                name="CompanyNumber"
+                                placeholder="Company Number"
+                                value={this.state.CompanyNumber}
+                                onChange={this.changeHandler}
+                              />
+                            </Col>
+
+                            <Col sm="12" lg="6" md="6" className="p-1">
+                              <Label>Company Email</Label>
+                              <Input
+                                required
+                                type="email"
+                                className="form-control"
+                                name="email"
+                                placeholder="email"
+                                value={this.state.email}
+                                onChange={this.changeHandler}
+                              />
+                            </Col>
+                            <Col sm="12" lg="6" md="6" className="p-1">
+                              <Label>GST Number</Label>
+                              <Input
+                                required
+                                name="gstNumber"
+                                className="from-control"
+                                placeholder="gstNumber"
+                                value={this.state.gstNumber}
+                                onChange={this.changeHandler}
+                              />
+                            </Col>
+                          </Row>
+                          <Row>
+                            <Col>
+                              <CheckBoxesVuexy
+                                color="primary"
+                                className="mb-1 mx-1"
+                                icon={<Check className="vx-icon" size={16} />}
+                                label=" I accept the terms & conditions."
+                                defaultChecked={true}
+                              />
+                            </Col>
+                          </Row>
+                          <div className="d-flex justify-content-center">
+                            <Button.Ripple color="primary" type="submit">
+                              {this.state.Loading}
+                            </Button.Ripple>
+                          </div>
+                        </div>
+                      </Form>
+                    </Card>
+                  </>
+                ) : null}
+              </>
+            )}
           </ModalBody>
         </Modal>
       </React.Fragment>

@@ -73,22 +73,26 @@ export class AddSubCategory extends Component {
   // All Category Api
 
   async componentDidMount() {
-    await AllCategoryList()
-      .then((res) => {
-        console.log(res);
-        if (res?.Category) {
-          this.setState({ CatList: res?.Category });
-        }
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+   let pageparmission = JSON.parse(localStorage.getItem("userData"));
+debugger
+  await AllCategoryList(pageparmission?._id)
+     .then((res) => {
+       console.log(res);
+       if (res?.Category) {
+         this.setState({ CatList: res?.Category });
+       }
+     })
+     .catch((err) => {
+       console.log(err);
+     });
   }
 
   // Submit Sub-Category Api
   submitHandler = async (e) => {
     e.preventDefault();
+    let pageparmission = JSON.parse(localStorage.getItem("userData"));
     const data = new FormData();
+    data.append("created_by", pageparmission?._id);
     data.append("name", this.state.subcategory_name);
     data.append("category", this.state.category);
     data.append("description", this.state.Description);

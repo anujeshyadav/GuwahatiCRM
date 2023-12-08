@@ -232,9 +232,8 @@ class CategoryList extends React.Component {
 
     const data = new FormData();
 
-    data.append("user_id", pageparmission?.Userinfo?.id);
-    data.append("role", pageparmission?.Userinfo?.role);
-    await AllCategoryList()
+    data.append("user_id", pageparmission?._id);
+    await AllCategoryList(pageparmission?._id)
       .then((res) => {
         console.log(res?.Category);
         if (res?.Category) {

@@ -17,7 +17,7 @@ const InvoiceGenerator = (props) => {
   const [details, setDetails] = useState([]);
 
   useEffect(() => {
-    // console.log(props?.BillNumber);
+    console.log(props);
 
     let userchoice = JSON.parse(localStorage.getItem("billUI"));
     setUserChoice(userchoice);
