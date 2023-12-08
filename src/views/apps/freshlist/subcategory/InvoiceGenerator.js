@@ -991,8 +991,8 @@ class InvoiceGenerator extends React.Component {
   handleBillSet = (i) => {
     this.setState({ BillNumber: i });
     localStorage.setItem("billnumber", i);
-    // this.toggleModalOne();
-    this.setState({ ShowBill: false });
+    this.toggleModalOne();
+    // this.setState({ ShowBill: false });
   };
   onGridReady = (params) => {
     this.gridApi = params.api;
@@ -1369,7 +1369,9 @@ class InvoiceGenerator extends React.Component {
                                   let billnumber =
                                     localStorage.getItem("billnumber");
                                   if (billnumber) {
-                                    swal("You already Selected Bill Type");
+                                    // swal("You already Selected Bill Type");
+                                    this.setState({ ShowBill: true });
+                                    this.toggleModalOne();
                                   } else {
                                     this.setState({ ShowBill: true });
                                     this.toggleModalOne();

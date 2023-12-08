@@ -132,7 +132,7 @@ class HorizontalSidebar extends React.Component {
                 maxHeight,
                 stylesObj;
 
-              if (pageHeight - ddTop - ddHeight - 28 < 1) {
+              if (pageHeight - ddTop - ddHeight - 15 < 1) {
                 maxHeight = pageHeight - ddTop - 25;
                 stylesObj = {
                   maxHeight: maxHeight,
@@ -193,8 +193,8 @@ class HorizontalSidebar extends React.Component {
                     child.type === "external-link" ? child.navLink : undefined
                   }
                   target={child.newTab ? "_blank" : undefined}
-                  onClick={() => this.handleItemHover(child.id)}
-                  // onMouseEnter={() => this.handleItemHover(child.id)}
+                  // onClick={() => this.handleItemHover(child.id)}
+                  onMouseEnter={() => this.handleItemHover(child.id)}
                   onMouseLeave={() => this.handleItemHover(null)}>
                   {child.children ? (
                     <Dropdown
