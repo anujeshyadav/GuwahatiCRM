@@ -12,7 +12,6 @@ import {
   FormGroup,
   CustomInput,
 } from "reactstrap";
-import Select from "react-select";
 import swal from "sweetalert";
 import { Route } from "react-router-dom";
 import PhoneInput from "react-phone-input-2";
@@ -27,7 +26,7 @@ import {
 } from "../../../../../ApiEndPoint/ApiCalling";
 
 import "../../../../../assets/scss/pages/users.scss";
-import UserContext from "../../../../../context/Context";
+// import UserContext from "../../../../../context/Context";
 
 const CreateWareHouse = () => {
   const [CreatWarehouseView, setCreatWarehouseView] = useState({});
@@ -40,8 +39,8 @@ const CreateWareHouse = () => {
 
   const handleInputChange = (e, type, i) => {
     const { name, value } = e.target;
-  setindex(i);
- if (type == "number") {
+    setindex(i);
+    if (type == "number") {
       if (/^\d{0,10}$/.test(value)) {
         setFormData({
           ...formData,
@@ -69,13 +68,12 @@ const CreateWareHouse = () => {
         // setError("Input length exceeds the maximum of 10 characters");
       }
     }
-
   };
-useEffect(() => {
-  Createwarehousexml()
+  useEffect(() => {
+    Createwarehousexml()
       .then(res => {
         const jsonData = xmlJs.xml2json(res.data, { compact: true, spaces: 2 });
-        setCreatWarehouseView(JSON.parse(jsonData))
+        setCreatWarehouseView(JSON.parse(jsonData));
       })
       .catch(err => {
         console.log(err);
@@ -90,7 +88,7 @@ useEffect(() => {
       CreateWarehousesave(formData)
         .then(res => {
           if (res.status) {
-            setFormData({WarehouseName:"",mobileno:"",email:""});
+            setFormData({ WarehouseName: "", mobileno: "", email: "" });
             swal(`Warehouse  ${res.message}`);
           }
         })
@@ -132,7 +130,6 @@ useEffect(() => {
                     if (!!ele?.phoneinput) {
                       return (
                         <>
-
                           <>
                             <Col key={i} lg="6" md="6" sm="12">
                               <FormGroup>
@@ -157,7 +154,7 @@ useEffect(() => {
                                       [ele?.name?._text]: phone,
                                     });
                                   }}
-                                // onChange={handleInputChange}
+                                  // onChange={handleInputChange}
                                 />
                                 {index === i ? (
                                   <>
@@ -175,9 +172,7 @@ useEffect(() => {
                           </>
                         </>
                       );
-                    }
-
-                    else {
+                    } else {
                       return (
                         <>
                           <Col key={i} lg="4" md="4" sm="12">
@@ -218,7 +213,6 @@ useEffect(() => {
                               )}
                             </FormGroup>
                           </Col>
-
                         </>
                       );
                     }

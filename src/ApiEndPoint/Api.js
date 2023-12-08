@@ -27,10 +27,10 @@ export const Create_Transporter_List = "/transporter/view-transporter";
 export const Delete_Transporter_List = "/transporter/delete-transporter/";
 
 export const Create_unit_xmlView = "/unit/get-xml";
-export const AddPrimaryUnit = "/primary-unit/save-primary-unit";
-export const BaseUnitList = "/primary-unit/view-primary-unit";
-export const Create_unit_save = "/unit/save-unit";
-export const Create_unit_List = "/unit/view-unit";
+export const AddPrimaryUnit = "/primary-unit/save-primary-unit/";
+export const BaseUnitList = "/primary-unit/view-primary-unit/";
+export const Create_unit_save = "/unit/save-unit/";
+export const Create_unit_List = "/unit/view-unit/";
 export const Delete_Unit_List = "/unit/delete-unit/";
 export const Unit_ViewOne = "/unit/update-unit/";
 

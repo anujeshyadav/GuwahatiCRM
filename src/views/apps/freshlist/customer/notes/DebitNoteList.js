@@ -16,19 +16,17 @@ import {
   ModalBody,
   Badge,
 } from "reactstrap";
-
-import { ContextLayout } from "../../../../../utility/context/Layout";
 import { AgGridReact } from "ag-grid-react";
 import "ag-grid-community/dist/styles/ag-grid.css";
-// import EditAccount from "../../accounts/EditAccount";
-// import ViewAccount from "../accounts/ViewAccount";
-import ViewOrder from "../../order/ViewAll";
 import jsPDF from "jspdf";
 import "jspdf-autotable";
-import Logo from "../../../../../assets/img/profile/pages/logomain.png";
+
 import Papa from "papaparse";
-import { Eye, Trash2, ChevronDown, Edit, CornerDownLeft } from "react-feather";
+import { Eye, ChevronDown, Edit, CornerDownLeft } from "react-feather";
 import { IoMdRemoveCircleOutline } from "react-icons/io";
+import DebitView from "./DebitView";
+import Logo from "../../../../../assets/img/profile/pages/logomain.png";
+import { ContextLayout } from "../../../../../utility/context/Layout";
 import "../../../../../assets/scss/plugins/tables/_agGridStyleOverride.scss";
 import "../../../../../assets/scss/pages/users.scss";
 
@@ -36,7 +34,6 @@ import {
   FaArrowAltCircleLeft,
   FaArrowAltCircleRight,
   FaFilter,
-  FaPlus,
 } from "react-icons/fa";
 import swal from "sweetalert";
 import {
@@ -96,23 +93,6 @@ class DebitNoteList extends React.Component {
           cellRendererFramework: params => {
             return (
               <div className="actions cursor-pointer">
-                {/* {this.state.Viewpermisson && ( */}
-                <CornerDownLeft
-                  className="mr-50"
-                  size="25px"
-                  color="green"
-                  onClick={() => {
-                    localStorage.setItem(
-                      "OrderList",
-                      JSON.stringify(params.data)
-                    );
-                    this.props.history.push({
-                      pathname: `/app/AJGroup/order/purchaseReturn/${params.data?._id}`,
-                      state: params.data,
-                    });
-                  }}
-                />
-
                 <Eye
                   className="mr-50"
                   size="25px"
@@ -121,7 +101,7 @@ class DebitNoteList extends React.Component {
                     this.handleChangeView(params.data, "readonly");
                   }}
                 />
-                <Edit
+                {/* <Edit
                   className="mr-50"
                   size="25px"
                   color="blue"
@@ -131,7 +111,7 @@ class DebitNoteList extends React.Component {
                       state: params.data,
                     })
                   }
-                />
+                /> */}
               </div>
             );
           },
@@ -556,6 +536,7 @@ class DebitNoteList extends React.Component {
                       this.setState({ EditOneUserView: false });
                     }}
                     color="danger"
+                    size="sm"
                   >
                     Back
                   </Button>
@@ -577,12 +558,13 @@ class DebitNoteList extends React.Component {
                             this.setState({ ViewOneUserView: false });
                           }}
                           color="danger"
+                          size="sm"
                         >
                           Back
                         </Button>
                       </div>
                     </Col>
-                    <ViewOrder ViewOneData={this.state.ViewOneData} />
+                    <DebitView ViewOneData={this.state.ViewOneData} />
                   </Row>
                 </>
               ) : (
@@ -591,7 +573,7 @@ class DebitNoteList extends React.Component {
                     <Card>
                       <Row className="m-2">
                         <Col>
-                          <h1 className="float-left">Purchased List</h1>
+                          <h1 className="float-left">DebitNote List</h1>
                         </Col>
                         <Col>
                           <span className="mx-1">
@@ -663,7 +645,7 @@ class DebitNoteList extends React.Component {
                               )}
                             </div>
                           </span>
-                          <span>
+                          {/* <span>
                             <Route
                               render={({ history }) => (
                                 <Badge
@@ -680,7 +662,7 @@ class DebitNoteList extends React.Component {
                                 </Badge>
                               )}
                             />
-                          </span>
+                          </span> */}
                         </Col>
                       </Row>
                       <CardBody>

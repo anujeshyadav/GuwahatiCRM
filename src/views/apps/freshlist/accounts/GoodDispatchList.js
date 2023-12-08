@@ -696,7 +696,7 @@ class GoodDispatchList extends React.Component {
                                   color="primary"
                                   onClick={() =>
                                     history.push(
-                                      "/app/SoftNumen/account/PartyCreation"
+                                      "/app/AjGroup/dispatch/CreateDispach"
                                     )
                                   }
                                 >

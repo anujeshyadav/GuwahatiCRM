@@ -40,10 +40,6 @@ import {
 import moment from "moment-timezone";
 import swal from "sweetalert";
 import {
-  CreateAccountList,
-  CreateAccountView,
-  Create_TargetList,
-  DeleteAccount,
   createOrderhistoryview,
   Delete_targetINlist,
 } from "../../../../ApiEndPoint/ApiCalling";
@@ -266,9 +262,10 @@ class OrderList extends React.Component {
   };
 
   async componentDidMount() {
+    const userId = JSON.parse(localStorage.getItem("userData"))._id;
     const UserInformation = this.context?.UserInformatio;
 
-    await createOrderhistoryview()
+    await createOrderhistoryview(userId)
       .then(res => {
         this.setState({ rowData: res?.orderHistory });
         console.log(res?.orderHistory);
@@ -607,7 +604,7 @@ class OrderList extends React.Component {
                     <Card>
                       <Row className="m-2">
                         <Col>
-                          <h1 className="float-left">Order List</h1>
+                          <h1 className="float-left"> Sales Order List</h1>
                         </Col>
                         <Col>
                           <span className="mx-1">
