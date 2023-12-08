@@ -594,8 +594,7 @@ export const Create_CompanyDetails = async data => {
     .then(res => res.data);
   return response;
 };
-// export const DeleteAccount = async id => {
-//   console.log(id);
+
 export const ViewCompanyDetails = async id => {
   let response = await axiosConfig
     .get(`${View_Company_Details}`)
