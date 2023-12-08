@@ -7,6 +7,7 @@ import {
   SAVE_GoodDispatch,
   GoodDispatch_List,
   Edit_GoodDispatch,
+  View_Company_Details,
   Purchase_Return,
   Purchase_Edit_Order,
   Place_Order_List,
@@ -459,14 +460,14 @@ export const Save_GoodDispatch = async (data) => {
 export const GoodDispatchListView = async () => {
   let response = await axiosConfig
     .get(`${GoodDispatch_List}`)
-    .then(res => res.data);
+    .then((res) => res.data);
   return response;
 };
 
 export const EditGoodDispatch = async (payload, id) => {
   let response = await axiosConfig
     .put(`${Edit_GoodDispatch}` + id, payload)
-    .then(res => res.data);
+    .then((res) => res.data);
   return response;
 };
 
@@ -610,6 +611,12 @@ export const Create_CompanyDetails = async (data) => {
 };
 // export const DeleteAccount = async id => {
 //   console.log(id);
+export const ViewCompanyDetails = async (id) => {
+  let response = await axiosConfig
+    .get(`${View_Company_Details}`)
+    .then((res) => res.data);
+  return response;
+};
 export const DeleteAccount = async (id) => {
   let response = await axiosConfig
     .get(`${Delete_Account_List}` + id)

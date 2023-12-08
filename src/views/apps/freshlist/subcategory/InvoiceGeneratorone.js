@@ -58,11 +58,23 @@ const InvoiceGenerator = (props) => {
             BilData={props}
             tableList={details}
             AllCharges={AllCharges}
+            fileName="Salesinvoice.pdf"
+          />
+        )}
+
+        {props?.BillNumber == 1 && (
+          <POInvoiceTwo
+            UserChoice={UserChoice}
+            invoiceData={Printview}
+            CurrentWords={props.wordsNumber}
+            BilData={props}
+            tableList={details}
+            AllCharges={AllCharges}
             fileName="invoice.pdf"
           />
         )}
-        {props?.BillNumber == 4 && (
-          <POInVoice
+        {props?.BillNumber == 2 && (
+          <PoinvoiceThree
             UserChoice={UserChoice}
             invoiceData={Printview}
             CurrentWords={props.wordsNumber}
@@ -83,19 +95,8 @@ const InvoiceGenerator = (props) => {
             fileName="invoice.pdf"
           />
         )}
-        {props?.BillNumber == 1 && (
-          <POInvoiceTwo
-            UserChoice={UserChoice}
-            invoiceData={Printview}
-            CurrentWords={props.wordsNumber}
-            BilData={props}
-            tableList={details}
-            AllCharges={AllCharges}
-            fileName="invoice.pdf"
-          />
-        )}
-        {props?.BillNumber == 2 && (
-          <PoinvoiceThree
+        {props?.BillNumber == 4 && (
+          <POInVoice
             UserChoice={UserChoice}
             invoiceData={Printview}
             CurrentWords={props.wordsNumber}

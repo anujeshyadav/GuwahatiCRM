@@ -2,6 +2,7 @@
 export const Get_Role = "/role/get-role";
 export const Get_Role_by_id = "/role/get-role-by-id/";
 export const Create_Company_Details = "/company-detail/save-company-details";
+export const View_Company_Details = "/company-detail/view-company-details";
 export const Update_Role = "/role/update-role/";
 export const Create_warehouse_xmlView = "/warehouse/get-xml";
 export const Create_warehouse_save = "/warehouse/save-warehouse";

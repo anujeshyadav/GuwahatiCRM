@@ -76,9 +76,11 @@ const POInvoiceone = ({
   AllCharges,
 }) => {
   console.log(invoiceData);
-  console.log(BilData);
+  
+  console.log("BilData", BilData?.CompanyDetails);
   console.log(CurrentWords);
   console.log(AllCharges);
+
   // const { items, customerName, date, total, place_supply } = invoiceData;
   const curentDate = new Date();
   console.log(curentDate.toTimeString().split(" ")[0]);
