@@ -20,10 +20,10 @@ import {
   SaveOrder,
   ProductListView,
   CreatePartyList,
+  UnitListView,
   BaseUnitListView,
 } from "../../../../ApiEndPoint/ApiCalling";
 import "../../../../assets/scss/pages/users.scss";
-import { set } from "date-fns";
 let GrandTotal = [];
 let SelectedITems = [];
 const CreateOrder = args => {
@@ -32,6 +32,7 @@ const CreateOrder = args => {
   const [error, setError] = useState("");
   const [ProductList, setProductList] = useState([]);
   const [PartyList, setPartyList] = useState([]);
+  const [PartyId, setPartyId] = useState("");
   const [UnitList, setUnitList] = useState([]);
   const [priceTotal, setPriceTotal] = useState(0);
   const [UserInfo, setUserInfo] = useState({});
@@ -43,9 +44,9 @@ const CreateOrder = args => {
       qty: 1,
       price: "",
       totalprice: "", //no
-      partyId: "", //no
-      DateofDelivery: "", //no
       unitQty: "",
+      // partyId: "", //no
+      // DateofDelivery: "", //no
     },
   ]);
 
@@ -61,8 +62,10 @@ const CreateOrder = args => {
           list[index]["totalprice"] = val.qty * val.price;
           return val.qty * val.price;
         });
+        // setProduct((pre) =>);
+        // totalPrice
+        // setPriceTotal(totalPrice);
       }
-      setProduct(list);
     } else {
       return null;
     }
@@ -74,63 +77,58 @@ const CreateOrder = args => {
     setProduct(unt);
   };
   const handleSelectionParty = (selectedList, selectedItem, index) => {
-    debugger;
-    setProduct(prevProductList => {
-      const updatedProductList = [...prevProductList];
-      const updatedProduct = { ...updatedProductList[index] };
-      updatedProduct.partyId = selectedItem?._id;
-      updatedProductList[index] = updatedProduct;
-      // return updatedProductList;
-    });
-    console.log(product);
+    setPartyId(selectedItem._id);
   };
 
   const handleSelection = (selectedList, selectedItem, index) => {
     SelectedITems.push(selectedItem);
     setProduct(prevProductList => {
-      debugger;
       const updatedProductList = [...prevProductList];
       const updatedProduct = { ...updatedProductList[index] }; // Create a copy of the product at the specified index
       updatedProduct.price = selectedItem.Product_MRP; // Update the price of the copied product
       updatedProduct.productId = selectedItem._id;
       updatedProduct.availableQty = selectedItem.Size;
       updatedProductList[index] = updatedProduct; // Replace the product at the specified index with the updated one
+      ProductList;
       let myarr = prevProductList?.map((ele, i) => {
         let indextotal = ele?.qty * SelectedITems[i]?.Product_MRP;
         GrandTotal[index] = indextotal;
         return indextotal;
       });
       let amt = myarr.reduce((a, b) => a + b, 0);
+      console.log(amt);
       setPriceTotal(amt);
       return updatedProductList; // Return the updated product list to set the state
     });
   };
 
   let subtotal = product?.reduce((acc, product) => acc + product.price, 0);
-  console.log(product);
+  // console.log(product);
   let taxRate = 0.1; // 10%
   let tax = subtotal * taxRate;
   let discountRate = 0.2;
   let discountAmount = subtotal * discountRate;
   let Grandtotals = subtotal + tax;
   useEffect(() => {
-    ProductListView()
+    const userId = JSON.parse(localStorage.getItem("userData"))._id;
+    ProductListView(userId)
       .then(res => {
+        console.log(res?.Product);
         setProductList(res?.Product);
       })
       .catch(err => {
         console.log(err);
       });
-    CreatePartyList()
+    CreatePartyList(userId)
       .then(res => {
         setPartyList(res.Party);
       })
       .catch(err => {
         console.log(err);
       });
-    BaseUnitListView()
+    UnitListView(userId)
       .then(res => {
-        setUnitList(res.PrimaryUnit);
+        setUnitList(res.Unit);
       })
       .catch(err => {
         console.log(err);
@@ -138,7 +136,7 @@ const CreateOrder = args => {
   }, []);
   useEffect(() => {
     const userInfo = JSON.parse(localStorage.getItem("userData"));
-    console.log(userInfo);
+    // console.log(userInfo);
     setUserInfo(userInfo);
   }, []);
 
@@ -151,9 +149,9 @@ const CreateOrder = args => {
         qty: 1,
         price: "",
         totalprice: "",
-        DateofDelivery: "",
-        partyId: "",
         unitQty: "",
+        // DateofDelivery: "",
+        // partyId: "",
       },
     ]);
   };
@@ -179,20 +177,21 @@ const CreateOrder = args => {
       state: UserInfo?.State,
       city: UserInfo?.City,
       orderItems: product,
+      DateofDelivery: dateofDelivery,
+      partyId: PartyId,
     };
     console.log(ObjOrder);
-    // if (error) {
-    //   swal("Error occured while Entering Details");
-    // } else {
-    //   SaveOrder(ObjOrder)
-    //     .then(res => {
-    //      swal("Order Created Successfully");
-
-    //     })
-    //     .catch(err => {
-    //       console.log(err);
-    //     });
-    // }
+    if (error) {
+      swal("Error occured while Entering Details");
+    } else {
+      SaveOrder(ObjOrder)
+        .then(res => {
+          swal("Order Created Successfully");
+        })
+        .catch(err => {
+          console.log(err);
+        });
+    }
   };
 
   const onRemove1 = (selectedList, removedItem, index) => {

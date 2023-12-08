@@ -173,25 +173,26 @@ class UnitList extends React.Component {
     };
 
     SaveUnit(payload)
-      .then((res) => {
+      .then(res => {
         console.log(res);
         if (res.status) {
           swal(`${res.message}`);
         }
       })
-      .catch((err) => {
+      .catch(err => {
         console.log(err);
       });
   };
   async componentDidMount() {
     const UserInformation = this.context?.UserInformatio;
-      let userData = JSON.parse(localStorage.getItem("userData"));
+
+    let userData = JSON.parse(localStorage.getItem("userData"));
     await UnitListView(userData?._id)
-      .then((res) => {
+      .then(res => {
         console.log(res?.Unit);
         this.setState({ rowData: res?.Unit });
       })
-      .catch((err) => {
+      .catch(err => {
         console.log(err);
       });
     await BaseUnitListView()
@@ -726,24 +727,6 @@ class UnitList extends React.Component {
                               )}
                             </div>
                           </span>
-                          {/* <span>
-                            <Route
-                              render={({ history }) => (
-                                <Badge
-                                  style={{ cursor: "pointer" }}
-                                  className="float-right mr-1"
-                                  color="primary"
-                                  onClick={() =>
-                                    history.push(
-                                      "/app/softNumen/Unit/CreateUnit"
-                                    )
-                                  }
-                                >
-                                  Create Unit
-                                </Badge>
-                              )}
-                            />
-                          </span> */}
                           <span>
                             <Route
                               render={({ history }) => (
@@ -1084,54 +1067,53 @@ class UnitList extends React.Component {
                   </CustomInput>
                 </Col>
               </Row>
-              {/* {this.state.baseUnit !== this.state.secondaryUnit &&
-              this.state.IsprimaryUnit == true ? ( */}
-              <>
-                <Row>
-                  <Col md="12" lg="12" sm="12">
-                    <h6 className="py-2">Conversion Rate</h6>
-                    <Row>
-                      <Col className="" lg="1" md="2" sm="12"></Col>
-                      <Col lg="10" md="8" sm="12">
-                        <div className="d-flex justify-content-around">
-                          <div>
-                            <Input
-                              type="radio"
-                              checked
-                              className="primarystyle"
-                            />
-                            <span className="priamryValue">
-                              1 {this.state.baseUnit} =
-                            </span>
+
+              {this.state.baseUnit !== this.state.secondaryUnit &&
+              this.state.IsprimaryUnit == true ? (
+                <>
+                  <Row>
+                    <Col md="12" lg="12" sm="12">
+                      <h6 className="py-2">Conversion Rate</h6>
+                      <Row>
+                        <Col className="" lg="1" md="2" sm="12"></Col>
+                        <Col lg="10" md="8" sm="12">
+                          <div className="d-flex justify-content-around">
+                            <div>
+                              <Input
+                                type="radio"
+                                checked
+                                className="primarystyle"
+                              />
+                              <span className="priamryValue">
+                                1 {this.state.baseUnit} =
+                              </span>
+                            </div>
+                            <div className="">
+                              <Input
+                                type="number"
+                                className=""
+                                name="inputValue"
+                                checked
+                                style={{ width: "80px", height: "2px" }}
+                                value={this.state.inputValue}
+                                onChange={e =>
+                                  this.setState({
+                                    unitQty: e.target.value,
+                                  })
+                                }
+                              />
+                            </div>
+                            <div>
+                              <span>{this.state.secondaryUnit}</span>
+                            </div>
                           </div>
-                          <div className="">
-                            <Input
-                              type="number"
-                              className=""
-                              name="inputValue"
-                              checked
-                              style={{ width: "80px", height: "2px" }}
-                              value={this.state.inputValue}
-                              // onChange={this.changeHandlerInput}
-                              // onChange={this.changeHandler}
-                              onChange={e =>
-                                this.setState({
-                                  unitQty: e.target.value,
-                                })
-                              }
-                            />
-                          </div>
-                          <div>
-                            <span>{this.state.secondaryUnit}</span>
-                          </div>
-                        </div>
-                      </Col>
-                      <Col className="" lg="1" md="2" sm="12"></Col>
-                    </Row>
-                  </Col>
-                </Row>
-              </>
-              {/* ) : null} */}
+                        </Col>
+                        <Col className="" lg="1" md="2" sm="12"></Col>
+                      </Row>
+                    </Col>
+                  </Row>
+                </>
+              ) : null}
               <hr></hr>
               <Row className="justify-content-end modalbodyheadunit">
                 <Col>
@@ -1176,6 +1158,7 @@ class UnitList extends React.Component {
                   type="text"
                   className=""
                   name="unitName"
+                  placeholder="Unit Name"
                   // style={{ width: "80px", height: "2px" }}
                   value={this.state.unitName}
                   onChange={e => {

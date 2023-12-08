@@ -24,6 +24,7 @@ import UserContext from "../../../../context/Context";
 
 const GoodDispatchView = ({ ViewOneData }) => {
   const [CreatAccountView, setCreatAccountView] = useState([]);
+  const [dropdownValue, setdropdownValue] = useState({});
   const [formData, setFormData] = useState({});
   const [index, setindex] = useState("");
   const [error, setError] = useState("");
@@ -65,7 +66,6 @@ const GoodDispatchView = ({ ViewOneData }) => {
             ...formData,
             [name]: value,
           });
-          // console.log(value);
           setError("");
         } else {
           setFormData({
@@ -85,13 +85,12 @@ const GoodDispatchView = ({ ViewOneData }) => {
     setFormData(ViewOneData);
   }, []);
   useEffect(() => {
-    // console.log(ViewOneData);
-
     GoodDispatchxmlView()
       .then(res => {
         const jsonData = xmlJs.xml2json(res.data, { compact: true, spaces: 2 });
-        console.log(JSON.parse(jsonData)?.GoodDispatch?.input);
+        // console.log(JSON.parse(jsonData)?.GoodDispatch?.input);
         setCreatAccountView(JSON.parse(jsonData)?.GoodDispatch?.input);
+        setdropdownValue(JSON.parse(jsonData)?.GoodDispatch);
       })
       .catch(err => {
         console.log(err);
@@ -106,15 +105,13 @@ const GoodDispatchView = ({ ViewOneData }) => {
             <Row className="mb-2">
               {CreatAccountView &&
                 CreatAccountView?.map((ele, i) => {
-                  console.log(ele?.type?._attributes?.type);
-
                   if (ele?.type?._attributes?.type == "text") {
-                    console.log(ele?.name?._text);
                     return (
                       <Col key={i} lg="3" md="3" sm="12">
                         <FormGroup key={i}>
                           <Label>{ele?.label?._text}</Label>
                           <Input
+                            disabled
                             type={ele?.type?._attributes?.type}
                             placeholder={ele?.placeholder?._text}
                             name={ele?.name?._text}
@@ -133,7 +130,6 @@ const GoodDispatchView = ({ ViewOneData }) => {
                       </Col>
                     );
                   } else if (ele?.type?._attributes?.type == "file") {
-                    console.log("fill", ele?.name?._text);
                     return (
                       <Col key={i} lg="3" md="3" sm="12">
                         <FormGroup key={i}>
@@ -166,6 +162,7 @@ const GoodDispatchView = ({ ViewOneData }) => {
                           <Label>{ele?.label?._text}</Label>
                           <Input
                             type={ele?.type?._attributes?.type}
+                            disabled
                             placeholder={ele?.placeholder?._text}
                             name={ele?.name?._text}
                             value={formData[ele?.name?._text]}
@@ -184,6 +181,33 @@ const GoodDispatchView = ({ ViewOneData }) => {
                     );
                   }
                 })}
+              <Col lg="6" md="6">
+                <FormGroup>
+                  <Label>
+                    {dropdownValue?.MyDropdown?.dropdown?.label?._text}
+                  </Label>
+                  <CustomInput
+                    required
+                    type="select"
+                    name={dropdownValue?.MyDropdown?.dropdown?.name?._text}
+                    value={
+                      formData[dropdownValue?.MyDropdown?.dropdown?.name?._text]
+                    }
+                    disabled
+                    onChange={handleInputChange}
+                  >
+                    <option value="">{formData.AssignDeliveryBoy}</option>
+                    {/* <option value="">--DeliveryAuthentication--</option> */}
+                    {/* {dropdownValue?.MyDropdown?.dropdown?.option.map(
+                      (option, index) => (
+                        <option key={index} value={option?._attributes?.value}>
+                          {option?._attributes?.value}
+                        </option>
+                      )
+                    )} */}
+                  </CustomInput>
+                </FormGroup>
+              </Col>
             </Row>
           </Form>
         </Card>

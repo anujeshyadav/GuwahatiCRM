@@ -21,4 +21,17 @@
     <placeholder>Enter Email</placeholder>
 	</input>
 
+	<input>
+	<label>Location</label>
+	<type type="textarea">location</type>
+    <name>locaton</name>
+    <placeholder>Enter Warehouse Location </placeholder>
+	</input>
+
+	<input>
+	<label>Warehouse Photo</label>
+	<type type="file">location</type>
+    <name>WarehousePhoto</name>
+	</input>
+
 </AddWareHouse>

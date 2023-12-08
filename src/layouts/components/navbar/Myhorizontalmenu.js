@@ -193,8 +193,8 @@ class HorizontalSidebar extends React.Component {
                     child.type === "external-link" ? child.navLink : undefined
                   }
                   target={child.newTab ? "_blank" : undefined}
-                  // onClick={() => this.handleItemHover(child.id)}
-                  onMouseEnter={() => this.handleItemHover(child.id)}
+                  onClick={() => this.handleItemHover(child.id)}
+                  // onMouseEnter={() => this.handleItemHover(child.id)}
                   onMouseLeave={() => this.handleItemHover(null)}>
                   {child.children ? (
                     <Dropdown
@@ -203,8 +203,8 @@ class HorizontalSidebar extends React.Component {
                       isOpen={this.state.openDropdown.includes(child.id)}
                       direction={this.state.openLeft ? "left" : "right"}
                       toggle={() => true}
-                      onClick={() => this.openDropdown(child.id)}
-                      // onMouseEnter={() => this.openDropdown(child.id)}
+                      // onClick={() => this.openDropdown(child.id)}
+                      onMouseEnter={() => this.openDropdown(child.id)}
                       onMouseLeave={() => this.closeDropdown(child.id)}>
                       <DropdownToggle
                         className="d-flex justify-content-between align-items-center item-content mydropdowntoggle"
@@ -215,12 +215,12 @@ class HorizontalSidebar extends React.Component {
                             {child.icon}
                           </span>
                           <FormattedMessage
-                            className="menu-title align-middle"
+                            className="menu-title "
                             id={child.title}
                           />
                         </div>
                         <ChevronRight
-                          className="has-sub-arrow align-middle ml-50"
+                          className="has-sub-arrow ml-50"
                           size={15}
                         />
                       </DropdownToggle>
