@@ -35,9 +35,8 @@ import UserContext from "../../../../context/Context";
 const CreateDispach = () => {
   const [CreatAccountView, setCreatAccountView] = useState([]);
   const [Countries, setCountry] = useState({});
-  const [States, setState] = useState({});
-  const [Cities, setCities] = useState({});
   const [formData, setFormData] = useState({});
+  const [dropdownValue, setdropdownValue] = useState({});
   const [index, setindex] = useState("");
   const [error, setError] = useState("");
   const [permissions, setpermissions] = useState({});
@@ -108,9 +107,15 @@ const CreateDispach = () => {
     GoodDispatchxmlView()
       .then(res => {
         const jsonData = xmlJs.xml2json(res.data, { compact: true, spaces: 2 });
-        // console.log(JSON.parse(jsonData));
-        console.log(JSON.parse(jsonData)?.GoodDispatch);
+        // console.log(
+        //   JSON.parse(jsonData)?.GoodDispatch.MyDropdown.dropdown.label._text
+        // );
+        console.log(
+          JSON.parse(jsonData)?.GoodDispatch.MyDropdown.dropdown.label._text
+        );
+
         setCreatAccountView(JSON.parse(jsonData)?.GoodDispatch?.input);
+        setdropdownValue(JSON.parse(jsonData)?.GoodDispatch);
       })
       .catch(err => {
         console.log(err);
@@ -122,9 +127,6 @@ const CreateDispach = () => {
     e.preventDefault();
 
     let formdata = new FormData();
-
-    console.log(CreatAccountView);
-
     CreatAccountView?.map((ele, i) => {
       if (ele?.type?._attributes?.type == "text") {
         formdata.append(`${ele?.name._text}`, formData[ele?.name?._text]);
@@ -139,11 +141,14 @@ const CreateDispach = () => {
         formdata.append(`${ele?.name._text}`, formData[ele?.name?._text]);
       }
     });
-
+    formdata.append(
+      `${dropdownValue?.MyDropdown?.dropdown.name?._text}`,
+      formData.AssignDeliveryBoy
+    );
     formdata.append("status", formData.status);
-    formdata.forEach((value, key) => {
-      console.log(key, value);
-    });
+    // formdata.forEach((value, key) => {
+    //   console.log(key, value);
+    // });
 
     Save_GoodDispatch(formdata)
       .then(res => {
@@ -173,7 +178,8 @@ const CreateDispach = () => {
                     <Button
                       style={{ cursor: "pointer" }}
                       className="float-right mr-1"
-                      color="primary"
+                      color="danger"
+                      size="sm"
                       onClick={() => history.goBack()}
                     >
                       Back
@@ -389,7 +395,7 @@ const CreateDispach = () => {
                         <>
                           {!!ele?.number ? (
                             <>
-                              <Col key={i} lg="3" md="3" sm="12">
+                              <Col key={i} lg="4" md="4" sm="12">
                                 <FormGroup key={i}>
                                   <Label className="mb-1">
                                     {ele?.label?._text}
@@ -434,7 +440,7 @@ const CreateDispach = () => {
                               </Col>
                             </>
                           ) : (
-                            <Col key={i} lg="3" md="3" sm="12">
+                            <Col key={i} lg="4" md="4" sm="12">
                               <FormGroup key={i}>
                                 {ele?.type?._attributes?.type &&
                                 ele?.type?._attributes?.type == "file" ? (
@@ -520,6 +526,38 @@ const CreateDispach = () => {
                       );
                     }
                   })}
+                <Col lg="4" md="4">
+                  <FormGroup>
+                    <Label>
+                      {dropdownValue?.MyDropdown?.dropdown?.label?._text}
+                    </Label>
+                    <CustomInput
+                      required
+                      type="select"
+                      name={dropdownValue?.MyDropdown?.dropdown?.name?._text}
+                      value={
+                        formData[
+                          dropdownValue?.MyDropdown?.dropdown?.name?._text
+                        ]
+                      }
+                      onChange={handleInputChange}
+                    >
+                      <option value="">--Assign Delivery Boy--</option>
+                      {dropdownValue?.MyDropdown?.dropdown?.option.map(
+                        (option, index) => {
+                          return (
+                            <option
+                              key={index}
+                              value={option?._attributes?.value}
+                            >
+                              {option?._attributes?.value}
+                            </option>
+                          );
+                        }
+                      )}
+                    </CustomInput>
+                  </FormGroup>
+                </Col>
               </Row>
               <hr />
               <Col lg="6" md="6" sm="6" className="mb-2 mt-1">

@@ -40,10 +40,6 @@ import {
 import moment from "moment-timezone";
 import swal from "sweetalert";
 import {
-  CreateAccountList,
-  CreateAccountView,
-  Create_TargetList,
-  DeleteAccount,
   createOrderhistoryview,
   Delete_targetINlist,
 } from "../../../../ApiEndPoint/ApiCalling";
@@ -144,6 +140,27 @@ class OrderList extends React.Component {
           },
         },
         {
+          headerName: "Status",
+          field: "status",
+          filter: true,
+          width: 150,
+          cellRendererFramework: params => {
+            return params.value == "completed" ? (
+              <div className="badge badge-pill badge-success">
+                {params.data.status}
+              </div>
+            ) : params.value == "pending" ? (
+              <div className="badge badge-pill badge-warning">
+                {params.data.status}
+              </div>
+            ) : params.value == "return" ? (
+              <div className="badge badge-pill badge-danger">
+                {params.data.status}
+              </div>
+            ) : null;
+          },
+        },
+        {
           headerName: "Full Name",
           field: "orderItems",
           filter: true,
@@ -218,28 +235,6 @@ class OrderList extends React.Component {
             return null;
           },
         },
-
-        {
-          headerName: "Status",
-          field: "status",
-          filter: true,
-          width: 150,
-          cellRendererFramework: params => {
-            return params.value == "comleted" ? (
-              <div className="badge badge-pill badge-success">
-                {params.data.status}
-              </div>
-            ) : params.value == "pending" ? (
-              <div className="badge badge-pill badge-warning">
-                {params.data.status}
-              </div>
-            ) : (
-              <div className="badge badge-pill badge-success">
-                {params.data.status}
-              </div>
-            );
-          },
-        },
       ],
     };
   }
@@ -266,9 +261,10 @@ class OrderList extends React.Component {
   };
 
   async componentDidMount() {
+    const userId = JSON.parse(localStorage.getItem("userData"))._id;
     const UserInformation = this.context?.UserInformatio;
 
-    await createOrderhistoryview()
+    await createOrderhistoryview(userId)
       .then(res => {
         this.setState({ rowData: res?.orderHistory });
         console.log(res?.orderHistory);
@@ -607,7 +603,7 @@ class OrderList extends React.Component {
                     <Card>
                       <Row className="m-2">
                         <Col>
-                          <h1 className="float-left">Order List</h1>
+                          <h1 className="float-left"> Sales Order List</h1>
                         </Col>
                         <Col>
                           <span className="mx-1">
