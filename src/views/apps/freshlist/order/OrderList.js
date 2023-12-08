@@ -140,6 +140,27 @@ class OrderList extends React.Component {
           },
         },
         {
+          headerName: "Status",
+          field: "status",
+          filter: true,
+          width: 150,
+          cellRendererFramework: params => {
+            return params.value == "completed" ? (
+              <div className="badge badge-pill badge-success">
+                {params.data.status}
+              </div>
+            ) : params.value == "pending" ? (
+              <div className="badge badge-pill badge-warning">
+                {params.data.status}
+              </div>
+            ) : params.value == "return" ? (
+              <div className="badge badge-pill badge-danger">
+                {params.data.status}
+              </div>
+            ) : null;
+          },
+        },
+        {
           headerName: "Full Name",
           field: "orderItems",
           filter: true,
@@ -212,28 +233,6 @@ class OrderList extends React.Component {
               return params.data.orderItems[0].product.HSN_Code; // Return the price
             }
             return null;
-          },
-        },
-
-        {
-          headerName: "Status",
-          field: "status",
-          filter: true,
-          width: 150,
-          cellRendererFramework: params => {
-            return params.value == "comleted" ? (
-              <div className="badge badge-pill badge-success">
-                {params.data.status}
-              </div>
-            ) : params.value == "pending" ? (
-              <div className="badge badge-pill badge-warning">
-                {params.data.status}
-              </div>
-            ) : (
-              <div className="badge badge-pill badge-success">
-                {params.data.status}
-              </div>
-            );
           },
         },
       ],

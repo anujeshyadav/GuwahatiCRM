@@ -41,7 +41,6 @@ const GoodDispatchEdit = ({ EditOneData }) => {
       });
     } else if (type == "file") {
       console.log(e.target.name);
-      debugger;
       setFormData({
         ...formData,
         [name]: files[0],
@@ -78,8 +77,6 @@ const GoodDispatchEdit = ({ EditOneData }) => {
     console.log(EditOneData?._id);
     const formdata = new FormData();
     CreatAccountView.map(el => {
-      debugger;
-      console.log(el?.name?._text);
       if (el?.name?._text == "CNUpload") {
         formdata.append(`${el?.name?._text}`, formData[el?.name?._text]);
       }

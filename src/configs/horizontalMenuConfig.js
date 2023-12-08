@@ -127,7 +127,7 @@ const horizontalMenuConfig = [
 
       {
         id: "dispatch",
-        title: "dispatch details",
+        title: "Dispatch details",
         type: "item",
         icon: <FaCircle size={8} />,
         permissions: ["admin", "editor"],
