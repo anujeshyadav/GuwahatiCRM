@@ -120,7 +120,7 @@ class HorizontalSidebar extends React.Component {
         tag="ul"
         hidden=""
         // className="mt-50"
-        style={{ marginTop: "-8px" }}
+        style={{ marginTop: "-9px", marginLeft: "0px" }}
         onMouseEnter={(e) => e.preventDefault()}
         modifiers={{
           setMaxHeight: {
@@ -168,7 +168,7 @@ class HorizontalSidebar extends React.Component {
                   active: this.state.activeParents.includes(child.id),
                 })}>
                 <DropdownItem
-                  className={classnames("w-100", {
+                  className={classnames("w-120", {
                     hover: this.state.itemHover === child.id,
                     "has-sub": child.children,
                     active:
@@ -199,7 +199,7 @@ class HorizontalSidebar extends React.Component {
                   {child.children ? (
                     <Dropdown
                       hidden=""
-                      className={classnames("sub-menu w-100", {})}
+                      className={classnames("sub-menu w-130", {})}
                       isOpen={this.state.openDropdown.includes(child.id)}
                       direction={this.state.openLeft ? "left" : "right"}
                       toggle={() => true}

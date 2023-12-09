@@ -293,6 +293,7 @@ const CreatePromotionalActivity = (args) => {
   const handleSubmitPromocode = async (e) => {
     e.preventDefault();
     // SavePromotionsActivity()
+    let pageparmission = JSON.parse(localStorage.getItem("userData"));
 
     let promo = [
       {
@@ -305,6 +306,7 @@ const CreatePromotionalActivity = (args) => {
     ];
     let mypromot = {
       promoCodeWise: promo,
+      created_by: pageparmission?._id,
       status: Status,
     };
     await SavePromotionsActivity(mypromot)
@@ -320,22 +322,7 @@ const CreatePromotionalActivity = (args) => {
   const submitHandler = async (e) => {
     e.preventDefault();
     // SavePromotionsActivity();
-
-    console.log(DiscountType);
-    console.log(Salesperson);
-    console.log(TotalAmount);
-    console.log(Discountpercent);
-    console.log(startdate);
-    console.log(Enddate);
-    console.log(Discount);
-    console.log(NumberofProduct);
-    console.log(product);
-    console.log(Status);
-    console.log(FreeSelectedProduct);
-    console.log(AddAnotherProduct);
-    console.log(FreeNumberofProduct);
-    console.log(Promocode);
-    console.log(Status);
+    let pageparmission = JSON.parse(localStorage.getItem("userData"));
 
     if (DiscountType == "Percentage Wise") {
       let percentage = [
@@ -349,6 +336,8 @@ const CreatePromotionalActivity = (args) => {
       ];
       let payload = {
         percentageWise: percentage,
+        created_by: pageparmission?._id,
+
         status: Status,
       };
       await SavePromotionsActivity(payload)
@@ -373,6 +362,7 @@ const CreatePromotionalActivity = (args) => {
       let payload = {
         amountWise: amount,
         status: Status,
+        created_by: pageparmission?._id,
       };
       await SavePromotionsActivity(payload)
         .then((res) => {
@@ -398,6 +388,8 @@ const CreatePromotionalActivity = (args) => {
         ];
         let payload = {
           productWise: productWise,
+          created_by: pageparmission?._id,
+
           status: Status,
         };
         await SavePromotionsActivity(payload)
@@ -426,6 +418,7 @@ const CreatePromotionalActivity = (args) => {
         ];
         let payload = {
           productWise: productWise,
+          created_by: pageparmission?._id,
           status: Status,
         };
 
@@ -440,12 +433,7 @@ const CreatePromotionalActivity = (args) => {
           });
       }
     }
-    // console.log(product);
-    // console.log(GrandTotal);
-    // console.log(Salesperson[0]?._id);
-    // console.log(targetStartDate);
-    // console.log(targetEndDate);
-    // console.log(grandTotalAmt);
+
     let Allproduct = product?.map((ele, i) => {
       console.log(ele);
       return {
@@ -456,44 +444,14 @@ const CreatePromotionalActivity = (args) => {
       };
     });
     let payload = {
-      // startDate: targetStartDate,
-      // endDate: targetEndDate,
       grandTotal: grandTotalAmt,
       salesPersonId: Salesperson[0]?._id,
       products: Allproduct,
     };
-    // const ObjOrder = {
-    //   userId: UserInfo?._id,
-    //   fullName: UserInfo?.UserName,
-    //   address: UserInfo?.Address,
-    //   // MobileNo: 1234567890,
-    //   // country: "USA",
-    //   // state: "California",
-    //   // city: "Los Angeles",
-    //   // landMark: "Nearby Park",
-    //   // pincode: 90001,
-    //   // grandTotal: 100.50,
-    //   // discount: 10.00,
-    //   // shippingCost: 5.00,
-    //   // taxAmount: 7.50,
-    //   // status: "pending",
-    //   orderItems: product,
-    // };
+
     if (error) {
       swal("Error occured while Entering Details");
     } else {
-      // Create_Targetsave(payload)
-      //   .then((res) => {
-      //     // if (res.status) {
-      //     //   setFormData({});
-      //     //   window.location.reload();
-      //     swal("Target Created Successfully");
-      //     // }
-      //     console.log(res);
-      //   })
-      //   .catch((err) => {
-      //     console.log(err);
-      //   });
     }
   };
   const onSelect1 = (selectedList, selectedItem, index) => {

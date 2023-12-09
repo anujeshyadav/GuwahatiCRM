@@ -51,7 +51,6 @@ const PhoneNo = (props) => {
 };
 const ThemeNavbar = (props) => {
   const [screenSize, setScreenSize] = useState();
-
   const { user } = useAuth0();
   const colorsArr = ["primary", "danger", "success", "info", "warning", "dark"];
   const navbarTypes = ["floating", "static", "sticky", "hidden"];
@@ -73,6 +72,7 @@ const ThemeNavbar = (props) => {
       <div className="content-overlay" />
       <div className="header-navbar-shadow" />
       <Navbar
+        style={{ backgroundColor: "white" }}
         className={classnames(
           "header-navbar navbar-expand-lg navbar navbar-with-menu navbar-shadow",
           {
@@ -106,56 +106,6 @@ const ThemeNavbar = (props) => {
           {/* <HorizontalMenu /> */}
 
           <div className="navbar-container content">
-            {/* <div class=" navbar-collapse d-flex flex-row" id="navbar-mobile">
-              <Route
-                render={({ history }) => (
-                  <div
-                    title="Click to Go Dashboard"
-                    style={{ fontWeight: "800", cursor: "pointer" }}
-                    onClick={() => history.push("/dashboard")}>
-                    <img src={logo} width="50%" height={35} alt="logo" />
-                  </div>
-                )}
-              />
-              <div className="bookmark-wrapper">
-                <NavbarBookmarks
-                  sidebarVisibility={props.sidebarVisibility}
-                  handleAppOverlay={props.handleAppOverlay}
-                />
-              </div>
-              {props.horizontal ? (
-                <>
-                  <HorizontalMenu />
-                </>
-              ) : null}
-              <>
-                <NavbarUser
-                  handleAppOverlay={props.handleAppOverlay}
-                  changeCurrentLang={props.changeCurrentLang}
-                  phoneNo={<PhoneNo userdata={user} {...props} />}
-                  userImg={
-                    props.user.login.values !== undefined &&
-                    props.user.login.values.loggedInWith !== "jwt" &&
-                    props.user.login.values.photoUrl
-                      ? props.user.login.values.photoUrl
-                      : user !== undefined && user.picture
-                      ? user.picture
-                      : userImg
-                  }
-                  loggedInWith={
-                    props.user !== undefined &&
-                    props.user.login.values !== undefined
-                      ? props.user.login.values.loggedInWith
-                      : null
-                  }
-                  logoutWithJWT={props.logoutWithJWT}
-                  logoutWithFirebase={props.logoutWithFirebase}
-                />
-              </>
-            </div> */}
-            {/* <div
-              className="navbar-collapse d-flex justify-content-between align-items-center"
-              id="navbar-mobile"> */}
             <div
               className="navbar-collapse d-flex justify-content-between align-items-center"
               id="navbar-mobile">
@@ -181,9 +131,9 @@ const ThemeNavbar = (props) => {
                 />
               </div>
               {props.horizontal ? (
-                <>
+                <span className="horizontalmenu">
                   <HorizontalMenu />
-                </>
+                </span>
               ) : null}
               <>
                 <NavbarUser
