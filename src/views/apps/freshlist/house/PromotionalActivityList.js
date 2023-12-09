@@ -109,18 +109,19 @@ class PromotionalActivityList extends React.Component {
 
   async componentDidMount() {
     const UserInformation = this.context?.UserInformatio;
-    View_PromotionList()
-      .then((res) => {
-        console.log(res?.Promotion);
-        let keys = Object.keys(res?.Promotion[0]);
-        let myarr = keys.filter((item) => item !== "_id" && item !== "__v");
-        let unique = [...new Set(myarr)];
-        this.setState({ Dropdown: unique });
-        this.setState({ AllData: res?.Promotion });
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+        let pageparmission = JSON.parse(localStorage.getItem("userData"));
+        View_PromotionList(pageparmission?._id)
+          .then((res) => {
+            console.log(res?.Promotion);
+            let keys = Object.keys(res?.Promotion[0]);
+            let myarr = keys.filter((item) => item !== "_id" && item !== "__v");
+            let unique = [...new Set(myarr)];
+            this.setState({ Dropdown: unique });
+            this.setState({ AllData: res?.Promotion });
+          })
+          .catch((err) => {
+            console.log(err);
+          });
     // await CreateAccountView()
     //   .then((res) => {
     //     var mydropdownArray = [];

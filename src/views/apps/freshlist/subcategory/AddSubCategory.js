@@ -74,7 +74,6 @@ export class AddSubCategory extends Component {
 
   async componentDidMount() {
    let pageparmission = JSON.parse(localStorage.getItem("userData"));
-debugger
   await AllCategoryList(pageparmission?._id)
      .then((res) => {
        console.log(res);

@@ -223,10 +223,10 @@ export const SavePromotionsActivity = async data => {
     .then(res => res.data);
   return response;
 };
-export const View_PromotionList = async data => {
+export const View_PromotionList = async (id) => {
   let response = await axiosConfig
-    .get(`${View_Promotion_List}`)
-    .then(res => res.data);
+    .get(`${View_Promotion_List}` + id)
+    .then((res) => res.data);
   return response;
 };
 export const CreatePartysave = async data => {
