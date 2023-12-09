@@ -246,7 +246,7 @@ class UserProfile extends React.Component {
     this.toggleModal();
   };
   render() {
-    // console.log(this.context?.UserInformatio);
+    console.log(this.context);
     const { selectedCountry, selectedState, selectedCity } = this.state;
     return (
       <React.Fragment>
@@ -312,40 +312,46 @@ class UserProfile extends React.Component {
               md="8"
               className="d-flex justify-content-center">
               <Card className="bg-authentication rounded-0 mb-0 w-100">
-                <Row className="container">
+                <Row className="container p-2">
                   <Col>
-                    <span className="mb-3 mt-3">Edit Profile</span>
+                    <span className="mb-2 mt-2">Edit Profile</span>
                   </Col>
                   <Col>
-                    <span
-                      onClick={(e) => this.setState({ Addcolor: true })}
+                    <Badge
+                      color="primary"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        this.setState({ Addcolor: true });
+                      }}
                       style={{ cursor: "pointer" }}
-                      className="mb-3 mt-3">
+                      className="">
                       Choose Background color
-                    </span>
+                    </Badge>
                     {this.state.Addcolor && this.state.Addcolor && (
-                      <div>
-                        <input
-                          onChange={(e) => {
-                            localStorage.setItem(
-                              "UserDefinedcoler",
-                              e.target.value
-                            );
-                            console.log(e.target.value);
-                          }}
-                          type="color"
-                          className=""
-                        />
-                        <Badge
-                          color="Primary"
-                          onClick={(e) => {
-                            e.preventDefault();
-                            this.setState({ Addcolor: false });
-                          }}>
-                          {" "}
-                          Submit
-                        </Badge>
-                      </div>
+                      <>
+                        <div className="mt-1">
+                          <input
+                            onChange={(e) => {
+                              localStorage.setItem(
+                                "UserDefinedcoler",
+                                e.target.value
+                              );
+                              this.context?.SetmyCustomColor(e.target.value);
+                            }}
+                            type="color"
+                            className=""
+                          />
+                          <Badge
+                            className="mx-3"
+                            color="primary"
+                            onClick={(e) => {
+                              e.preventDefault();
+                              this.setState({ Addcolor: false });
+                            }}>
+                            Submit
+                          </Badge>
+                        </div>
+                      </>
                     )}
                   </Col>
                   {this.state.LoginData?.rolename?.position == 1 ? (
