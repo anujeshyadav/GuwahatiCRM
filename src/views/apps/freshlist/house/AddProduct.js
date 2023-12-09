@@ -169,8 +169,6 @@ const AddProduct = () => {
     let formdata = new FormData();
     let userData = JSON.parse(localStorage.getItem("userData"));
     formdata.append("created_by", userData._id);
-    console.log(formData);
-    console.log(CreatAccountView);
     CreatAccountView?.input?.map((ele, i) => {
       if (ele?.type?._attributes?.type == "text") {
         formdata.append(`${ele?.name._text}`, formData[ele?.name?._text]);

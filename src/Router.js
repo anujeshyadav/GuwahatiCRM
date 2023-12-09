@@ -489,6 +489,9 @@ const OrderList = lazy(() => import("./views/apps/freshlist/order/OrderList"));
 const PurchaseOrderList = lazy(() =>
   import("./views/apps/freshlist/order/purchase/PurchaseOrderList")
 );
+const PendingPurchase = lazy(() =>
+  import("./views/apps/freshlist/order/purchase/PendingPurchase")
+);
 const EditPurchase = lazy(() =>
   import("./views/apps/freshlist/order/purchase/EditPurchase")
 );
@@ -537,12 +540,12 @@ const AddNewSupplier = lazy(() =>
 const CreateQuote = lazy(() =>
   import("./views/apps/freshlist/customer/Quotation/CreateQuote")
 );
-const DebitNotes = lazy(() =>
-  import("./views/apps/freshlist/customer/Quotation/DebitNotes")
-);
-const CreateNotes = lazy(() =>
-  import("./views/apps/freshlist/customer/Quotation/CreateNotes")
-);
+// const DebitNotes = lazy(() =>
+//   import("./views/apps/freshlist/customer/Quotation/DebitNotes")
+// );
+// const CreateNotes = lazy(() =>
+//   import("./views/apps/freshlist/customer/Quotation/CreateNotes")
+// );
 
 const WareHouseListSoft = lazy(() =>
   import("./views/apps/freshlist/customer/warehouse/WareHouseList")
@@ -1457,6 +1460,10 @@ class AppRouter extends React.Component {
             component={PurchaseOrderList}
           />
           <AppRoute
+            path="/app/AJgroup/purchase/pendingPurchase"
+            component={PendingPurchase}
+          />
+          <AppRoute
             path="/app/AJgroup/order/AddPurchaseOrder"
             component={AddPurchaseOrder}
           />
@@ -1871,14 +1878,14 @@ class AppRouter extends React.Component {
             path="/app/softNumen/system/CreateQuote"
             component={CreateQuote}
           />
-          <AppRoute
+          {/* <AppRoute
             path="/app/softNumen/system/DebitNotes"
             component={DebitNotes}
-          />
-          <AppRoute
-            path="/app/softNumen/system/CreateNotes"
+          /> */}
+          {/* <AppRoute
+            path="/app/Ajgroup/system/CreateNotes"
             component={CreateNotes}
-          />
+          /> */}
           <AppRoute
             path="/app/softNumen/system/WareHouseListSoft"
             component={WareHouseListSoft}
@@ -1993,7 +2000,7 @@ class AppRouter extends React.Component {
             component={ProductRegistration}
           />
           <AppRoute
-            path="/app/SoftNumen/product/PurchaseInvoice"
+            path="/app/AJGroup/product/PurchaseInvoice"
             component={PurchaseInvoice}
           />
           <AppRoute

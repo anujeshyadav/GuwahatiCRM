@@ -21,8 +21,6 @@ import {
 import { ContextLayout } from "../../../../../utility/context/Layout";
 import { AgGridReact } from "ag-grid-react";
 import "ag-grid-community/dist/styles/ag-grid.css";
-// import EditAccount from "../../accounts/EditAccount";
-// import ViewAccount from "../accounts/ViewAccount";
 import ViewOrder from "../../order/ViewAll";
 import jsPDF from "jspdf";
 import "jspdf-autotable";

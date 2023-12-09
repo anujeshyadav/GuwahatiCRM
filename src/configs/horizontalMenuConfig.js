@@ -144,11 +144,11 @@ const horizontalMenuConfig = [
       },
       {
         id: "Creditnote",
-        title: "Credit Note",
+        title: "CreditNote",
         type: "item",
         icon: <FaCircle size={8} />,
         permissions: ["admin", "editor"],
-        navLink: "/app/softNumen/order/OrderSearch",
+        navLink: "/app/AjGroup/note/CreditNoteList",
       },
       {
         id: "Sales manager",
@@ -212,8 +212,15 @@ const horizontalMenuConfig = [
         type: "item",
         icon: <FaCircle size={8} />,
         permissions: ["admin", "editor"],
-        // navLink: "/app/SoftNumen/product/ProductRegistration",
         navLink: "/app/AJgroup/order/purchaseOrderList",
+      },
+      {
+        id: "Purchaseorder",
+        title: "Pending Purchase Order",
+        type: "item",
+        icon: <FaCircle size={8} />,
+        permissions: ["admin", "editor"],
+        navLink: "/app/AJgroup/purchase/pendingPurchase",
       },
       {
         id: "PurchaseInvoice",
@@ -221,8 +228,7 @@ const horizontalMenuConfig = [
         type: "item",
         icon: <FaCircle size={8} />,
         permissions: ["admin", "editor"],
-        navLink: "/app/SoftNumen/product/PurchaseInvoice",
-        // navLink: "/app/softnumen/InvoiceGenerator",
+        navLink: "/app/AJGroup/product/PurchaseInvoice",
       },
       {
         id: "PurchaseReturn",

@@ -86,6 +86,10 @@ export const Roles = [
         title: "Achievement",
         permission: ["View", "Create", "Edit", "Delete"],
       },
+      {
+        title: "CreditNote",
+        permission: ["View", "Create", "Edit", "Delete"],
+      },
     ],
   },
   {
@@ -93,6 +97,10 @@ export const Roles = [
     TabName: [
       {
         title: "Purchase Order",
+        permission: ["View", "Create", "Edit", "Delete"],
+      },
+      {
+        title: "Pending Purchase Order",
         permission: ["View", "Create", "Edit", "Delete"],
       },
       {

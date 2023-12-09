@@ -67,6 +67,8 @@ class WareHouseList extends React.Component {
       isOpen: false,
       Arrindex: "",
       rowData: [],
+      wareHouseViewOne: [],
+      Show: false,
       setMySelectedarr: [],
       SelectedCols: [],
       paginationPageSize: 5,
@@ -108,7 +110,10 @@ class WareHouseList extends React.Component {
     await CreateWarehouseList(userData._id)
       .then(res => {
         console.log(res);
-        this.setState({ rowData: res?.Warehouse });
+        if (res.Warehouse) {
+          this.setState({ wareHouseViewOne: res?.Warehouse });
+        }
+        // this.setState({ rowData: res?.Warehouse });
       })
       .catch(err => {
         console.log(err);
@@ -546,6 +551,26 @@ class WareHouseList extends React.Component {
       });
     }
   };
+
+  handleShowWarehouse = e => {
+    debugger;
+    e.preventDefault();
+    if (this.state.warehouse != "NA") {
+      console.log(this.state.wareHouseViewOne[0]);
+      let selecteddata = this.state.wareHouseViewOne?.filter(
+        (ele, i) => ele?._id == this.state.warehouse
+      );
+      this.setState({ Show: true });
+      this.setState({ rowData: selecteddata });
+    } else {
+      swal("You did not select Any Warehouse");
+    }
+  };
+  changeHandler = e => {
+    console.log(e.target.value, this.state.warehouse);
+
+    this.setState({ [e.target.name]: e.target.value });
+  };
   render() {
     const {
       rowData,
@@ -555,6 +580,7 @@ class WareHouseList extends React.Component {
       isOpen,
       SelectedCols,
       AllcolumnDefs,
+      Show,
     } = this.state;
     return (
       <>
@@ -608,33 +634,33 @@ class WareHouseList extends React.Component {
                           <h1 className="float-left">Warehouse List</h1>
                         </Col>
                         <Col>
-                          <Col>
-                            <FormGroup>
-                              {/* <Label>{ele?.dropdown?.label?._text}</Label> */}
-                              <Label>WareHouse List </Label>
-                              <CustomInput
-                                // required
-                                type="select"
-                                // name={ele?.dropdown?.name?._text}
-                                name="ware"
-                                // value={formData[ele?.dropdown?.name?._text]}
-                                value=""
-                                // onChange={this.handleInputChange}
-                              >
-                                <option value="">--Select WareHouse--</option>
-                                <option>abc</option>
-                                <option>abc123</option>
-                                {/* {ele?.dropdown?.option?.map((option, index) => (
-                                  <option
-                                    key={index}
-                                    value={option?._attributes?.value}
-                                  >
-                                    {option?._attributes?.value}
-                                  </option>
-                                ))} */}
-                              </CustomInput>
-                            </FormGroup>
-                          </Col>
+                          <FormGroup>
+                            <Label>WareHouse List </Label>
+                            <CustomInput
+                              type="select"
+                              placeholder="Select Warehouse"
+                              name="warehouse"
+                              value={this.state.warehouse}
+                              onChange={this.changeHandler}
+                            >
+                              <option value="">--Select WareHouse--</option>
+                              {this.state.wareHouseViewOne?.map(cat => (
+                                <option value={cat?._id} key={cat?._id}>
+                                  {cat?.WarehouseName}
+                                </option>
+                              ))}
+                            </CustomInput>
+                          </FormGroup>
+                        </Col>
+
+                        <Col lg="2" md="2" className="mb-2">
+                          <Button
+                            className="mt-2"
+                            color="primary"
+                            onClick={this.handleShowWarehouse}
+                          >
+                            Submit
+                          </Button>
                         </Col>
                         <Col>
                           <span className="mx-1">
@@ -726,120 +752,129 @@ class WareHouseList extends React.Component {
                           </span>
                         </Col>
                       </Row>
-                      <CardBody>
-                        {this.state.rowData === null ? null : (
-                          <div className="ag-theme-material w-100 my-2 ag-grid-table">
-                            <div className="d-flex flex-wrap justify-content-between align-items-center">
-                              <div className="mb-1">
-                                <UncontrolledDropdown className="p-1 ag-dropdown">
-                                  <DropdownToggle tag="div">
-                                    {this.gridApi
-                                      ? this.state.currenPageSize
-                                      : "" * this.state.getPageSize -
-                                        (this.state.getPageSize - 1)}
-                                    -
-                                    {this.state.rowData.length -
-                                      this.state.currenPageSize *
-                                        this.state.getPageSize >
-                                    0
-                                      ? this.state.currenPageSize *
-                                        this.state.getPageSize
-                                      : this.state.rowData.length}{" "}
-                                    of {this.state.rowData.length}
-                                    <ChevronDown className="ml-50" size={15} />
-                                  </DropdownToggle>
-                                  <DropdownMenu right>
-                                    <DropdownItem
-                                      tag="div"
-                                      onClick={() => this.filterSize(5)}
-                                    >
-                                      5
-                                    </DropdownItem>
-                                    <DropdownItem
-                                      tag="div"
-                                      onClick={() => this.filterSize(20)}
-                                    >
-                                      20
-                                    </DropdownItem>
-                                    <DropdownItem
-                                      tag="div"
-                                      onClick={() => this.filterSize(50)}
-                                    >
-                                      50
-                                    </DropdownItem>
-                                    <DropdownItem
-                                      tag="div"
-                                      onClick={() => this.filterSize(100)}
-                                    >
-                                      100
-                                    </DropdownItem>
-                                    <DropdownItem
-                                      tag="div"
-                                      onClick={() => this.filterSize(134)}
-                                    >
-                                      134
-                                    </DropdownItem>
-                                  </DropdownMenu>
-                                </UncontrolledDropdown>
-                              </div>
-                              <div className="d-flex flex-wrap justify-content-end mb-1">
-                                <div className="table-input mr-1">
-                                  <Input
-                                    placeholder="search Item here..."
-                                    onChange={e =>
-                                      this.updateSearchQuery(e.target.value)
-                                    }
-                                    value={this.state.value}
-                                  />
+                      {Show ? (
+                        <>
+                          <CardBody>
+                            {this.state.rowData === null ? null : (
+                              <div className="ag-theme-material w-100 my-2 ag-grid-table">
+                                <div className="d-flex flex-wrap justify-content-between align-items-center">
+                                  <div className="mb-1">
+                                    <UncontrolledDropdown className="p-1 ag-dropdown">
+                                      <DropdownToggle tag="div">
+                                        {this.gridApi
+                                          ? this.state.currenPageSize
+                                          : "" * this.state.getPageSize -
+                                            (this.state.getPageSize - 1)}
+                                        -
+                                        {this.state.rowData.length -
+                                          this.state.currenPageSize *
+                                            this.state.getPageSize >
+                                        0
+                                          ? this.state.currenPageSize *
+                                            this.state.getPageSize
+                                          : this.state.rowData.length}{" "}
+                                        of {this.state.rowData.length}
+                                        <ChevronDown
+                                          className="ml-50"
+                                          size={15}
+                                        />
+                                      </DropdownToggle>
+                                      <DropdownMenu right>
+                                        <DropdownItem
+                                          tag="div"
+                                          onClick={() => this.filterSize(5)}
+                                        >
+                                          5
+                                        </DropdownItem>
+                                        <DropdownItem
+                                          tag="div"
+                                          onClick={() => this.filterSize(20)}
+                                        >
+                                          20
+                                        </DropdownItem>
+                                        <DropdownItem
+                                          tag="div"
+                                          onClick={() => this.filterSize(50)}
+                                        >
+                                          50
+                                        </DropdownItem>
+                                        <DropdownItem
+                                          tag="div"
+                                          onClick={() => this.filterSize(100)}
+                                        >
+                                          100
+                                        </DropdownItem>
+                                        <DropdownItem
+                                          tag="div"
+                                          onClick={() => this.filterSize(134)}
+                                        >
+                                          134
+                                        </DropdownItem>
+                                      </DropdownMenu>
+                                    </UncontrolledDropdown>
+                                  </div>
+                                  <div className="d-flex flex-wrap justify-content-end mb-1">
+                                    <div className="table-input mr-1">
+                                      <Input
+                                        placeholder="search Item here..."
+                                        onChange={e =>
+                                          this.updateSearchQuery(e.target.value)
+                                        }
+                                        value={this.state.value}
+                                      />
+                                    </div>
+                                  </div>
                                 </div>
-                              </div>
-                            </div>
-                            <ContextLayout.Consumer className="ag-theme-alpine">
-                              {context => (
-                                <AgGridReact
-                                  id="myAgGrid"
-                                  // gridOptions={{
-                                  //   domLayout: "autoHeight",
-                                  //   // or other layout options
-                                  // }}
-                                  gridOptions={this.gridOptions}
-                                  rowSelection="multiple"
-                                  defaultColDef={defaultColDef}
-                                  columnDefs={columnDefs}
-                                  rowData={rowData}
-                                  // onGridReady={(params) => {
-                                  //   this.gridApi = params.api;
-                                  //   this.gridColumnApi = params.columnApi;
-                                  //   this.gridRef.current = params.api;
+                                <ContextLayout.Consumer className="ag-theme-alpine">
+                                  {context => (
+                                    <AgGridReact
+                                      id="myAgGrid"
+                                      // gridOptions={{
+                                      //   domLayout: "autoHeight",
+                                      //   // or other layout options
+                                      // }}
+                                      gridOptions={this.gridOptions}
+                                      rowSelection="multiple"
+                                      defaultColDef={defaultColDef}
+                                      columnDefs={columnDefs}
+                                      rowData={rowData}
+                                      // onGridReady={(params) => {
+                                      //   this.gridApi = params.api;
+                                      //   this.gridColumnApi = params.columnApi;
+                                      //   this.gridRef.current = params.api;
 
-                                  //   this.setState({
-                                  //     currenPageSize:
-                                  //       this.gridApi.paginationGetCurrentPage() +
-                                  //       1,
-                                  //     getPageSize:
-                                  //       this.gridApi.paginationGetPageSize(),
-                                  //     totalPages:
-                                  //       this.gridApi.paginationGetTotalPages(),
-                                  //   });
-                                  // }}
-                                  onGridReady={this.onGridReady}
-                                  colResizeDefault={"shift"}
-                                  animateRows={true}
-                                  floatingFilter={false}
-                                  pagination={true}
-                                  paginationPageSize={
-                                    this.state.paginationPageSize
-                                  }
-                                  pivotPanelShow="always"
-                                  enableRtl={context.state.direction === "rtl"}
-                                  ref={this.gridRef} // Attach the ref to the grid
-                                  domLayout="autoHeight" // Adjust layout as needed
-                                />
-                              )}
-                            </ContextLayout.Consumer>
-                          </div>
-                        )}
-                      </CardBody>
+                                      //   this.setState({
+                                      //     currenPageSize:
+                                      //       this.gridApi.paginationGetCurrentPage() +
+                                      //       1,
+                                      //     getPageSize:
+                                      //       this.gridApi.paginationGetPageSize(),
+                                      //     totalPages:
+                                      //       this.gridApi.paginationGetTotalPages(),
+                                      //   });
+                                      // }}
+                                      onGridReady={this.onGridReady}
+                                      colResizeDefault={"shift"}
+                                      animateRows={true}
+                                      floatingFilter={false}
+                                      pagination={true}
+                                      paginationPageSize={
+                                        this.state.paginationPageSize
+                                      }
+                                      pivotPanelShow="always"
+                                      enableRtl={
+                                        context.state.direction === "rtl"
+                                      }
+                                      ref={this.gridRef} // Attach the ref to the grid
+                                      domLayout="autoHeight" // Adjust layout as needed
+                                    />
+                                  )}
+                                </ContextLayout.Consumer>
+                              </div>
+                            )}
+                          </CardBody>
+                        </>
+                      ) : null}
                     </Card>
                   </Col>
                 </>
