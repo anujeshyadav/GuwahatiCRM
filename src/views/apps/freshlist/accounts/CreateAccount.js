@@ -100,6 +100,27 @@ const CreateAccount = () => {
   useEffect(() => {
     console.log(formData);
   }, [formData]);
+  useEffect(() => {
+    const getLocation = () => {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          (position) => {
+            const { latitude, longitude } = position.coords;
+
+            console.log(position.coords);
+          },
+          (error) => {
+            swal("error", error);
+          },
+          { enableHighAccuracy: true }
+        );
+      } else {
+        swal("Your Browser does not support Location");
+      }
+    };
+
+    getLocation();
+  }, []);
 
   useEffect(() => {
     let userdata = JSON.parse(localStorage.getItem("userData"));

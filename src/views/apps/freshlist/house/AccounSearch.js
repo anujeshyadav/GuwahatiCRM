@@ -329,7 +329,7 @@ class AccounSearch extends React.Component {
       });
     await CreateAccountList(userid)
       .then(res => {
-        let value = res?.adminDetail;
+        let value = res?.adminDetails;
         if (value.length) {
           this.setState({ rowData: value });
         }
