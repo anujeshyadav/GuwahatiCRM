@@ -352,6 +352,9 @@ const CreateTarget = (args) => {
   //   setPart(newFormValues);
   // };
 
+  const WareHousetoWareHouse = (e) => {
+    e.preventDefault();
+  };
   const submitHandler = (e) => {
     e.preventDefault();
 
@@ -361,21 +364,24 @@ const CreateTarget = (args) => {
     // console.log(targetStartDate);
     // console.log(targetEndDate);
     // console.log(grandTotalAmt);
+    debugger;
     let Allproduct = product?.map((ele, i) => {
       console.log(ele);
       return {
         productId: ele?.productId,
-        qtyAssign: ele?.qty,
+        unitType: ele?.qty,
         price: ele?.price,
+        Size: ele?.qty,
+        transferQty: ele?.price,
         totalPrice: ele?.totalprice,
       };
     });
     let payload = {
-      startDate: StockTrxdate,
-      endDate: targetEndDate,
+      productItems: Allproduct,
+      warehouseToId: targetEndDate,
+      stockTransferDate: grandTotalAmt,
       grandTotal: grandTotalAmt,
-      salesPersonId: Salesperson[0]?._id,
-      products: Allproduct,
+      status: "Transferring",
     };
     // const ObjOrder = {
     //   userId: UserInfo?._id,
@@ -491,7 +497,7 @@ const CreateTarget = (args) => {
         </Row>
         <CardBody>
           {TypeOfTrx && TypeOfTrx == "Warehousetowarehouse" && (
-            <Form className="mx-1" onSubmit={submitHandler}>
+            <Form className="mx-1" onSubmit={WareHousetoWareHouse}>
               <Row>
                 <Col className="mb-1" lg="3" md="3" sm="12">
                   <div className="">

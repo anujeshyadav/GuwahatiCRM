@@ -278,6 +278,7 @@ class HouseProductList extends React.Component {
         swal("Error", "something went wrong try again");
       });
     let userdata = JSON.parse(localStorage.getItem("userData"));
+
     await ProductListView(userdata?._id)
       .then((res) => {
         console.log(res?.Product);

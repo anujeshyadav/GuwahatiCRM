@@ -22,7 +22,10 @@ import { history } from "../../../../history";
 import "../../../../assets/scss/plugins/tables/_agGridStyleOverride.scss";
 import "../../../../assets/scss/pages/users.scss";
 import { Route } from "react-router-dom";
-import { AllCategoryList, Delete_SubCategory } from "../../../../ApiEndPoint/ApiCalling";
+import {
+  AllCategoryList,
+  Delete_SubCategory,
+} from "../../../../ApiEndPoint/ApiCalling";
 import swal from "sweetalert";
 
 class SubCategoryList extends React.Component {
@@ -53,7 +56,7 @@ class SubCategoryList extends React.Component {
         field: "image",
         filter: true,
         width: 100,
-        cellRendererFramework: (params) => {
+        cellRendererFramework: params => {
           return (
             <>
               {params.data?.image && (
@@ -74,7 +77,7 @@ class SubCategoryList extends React.Component {
         field: "name",
         filter: true,
         width: 200,
-        cellRendererFramework: (params) => {
+        cellRendererFramework: params => {
           return (
             <div className="d-flex align-items-center">
               <span>{params.data?.name}</span>
@@ -88,7 +91,7 @@ class SubCategoryList extends React.Component {
         field: "description",
         filter: true,
         width: 200,
-        cellRendererFramework: (params) => {
+        cellRendererFramework: params => {
           return (
             <div className="d-flex align-items-center">
               <span>{params.data?.description}</span>
@@ -128,7 +131,7 @@ class SubCategoryList extends React.Component {
         field: "status",
         filter: true,
         width: 150,
-        cellRendererFramework: (params) => {
+        cellRendererFramework: params => {
           return params.data?.status === "Active" ? (
             <div className="badge badge-pill badge-success">
               {params.data?.status}
@@ -145,7 +148,7 @@ class SubCategoryList extends React.Component {
         field: "sortorder",
         field: "transactions",
         width: 150,
-        cellRendererFramework: (params) => {
+        cellRendererFramework: params => {
           return (
             <div className="actions cursor-pointer">
               {/* <Eye
@@ -176,7 +179,6 @@ class SubCategoryList extends React.Component {
                     size="25px"
                     color="red"
                     onClick={() => {
-
                       this.runthisfunction(params.data._id);
                     }}
                   />
@@ -193,7 +195,7 @@ class SubCategoryList extends React.Component {
     let pageparmission = JSON.parse(localStorage.getItem("userData"));
 
     let newparmisson = pageparmission?.role?.find(
-      (value) => value?.pageName === "Category List"
+      value => value?.pageName === "Category List"
     );
 
     this.setState({ Viewpermisson: newparmisson?.permission.includes("View") });
@@ -208,30 +210,31 @@ class SubCategoryList extends React.Component {
     });
 
     await AllCategoryList(pageparmission?._id)
-      .then((res) => {
+      .then(res => {
         console.log(res);
         if (res?.Category?.length) {
           this.setState({ CatList: res?.Category });
         }
       })
-      .catch((err) => {
+      .catch(err => {
         console.log(err);
       });
   }
   async runthisfunction(id) {
     console.log(id);
 
-    Delete_SubCategory(this.state.category,id).then((res)=>{
-     let selectedData = this.gridApi.getSelectedRows();
-      this.gridApi.updateRowData({ remove: selectedData });
-      swal("SubCategory Deleted Successfully")
-    }).catch((err)=>{
-      console.log(err)
-      swal("Something went wrong")
-    })
-  
+    Delete_SubCategory(this.state.category, id)
+      .then(res => {
+        let selectedData = this.gridApi.getSelectedRows();
+        this.gridApi.updateRowData({ remove: selectedData });
+        swal("SubCategory Deleted Successfully");
+      })
+      .catch(err => {
+        console.log(err);
+        swal("Something went wrong");
+      });
   }
-  onGridReady = (params) => {
+  onGridReady = params => {
     this.gridApi = params.api;
     this.gridColumnApi = params.columnApi;
     this.setState({
@@ -240,10 +243,10 @@ class SubCategoryList extends React.Component {
       totalPages: this.gridApi.paginationGetTotalPages(),
     });
   };
-  updateSearchQuery = (val) => {
+  updateSearchQuery = val => {
     this.gridApi.setQuickFilter(val);
   };
-  filterSize = (val) => {
+  filterSize = val => {
     if (this.gridApi) {
       this.gridApi.paginationSetPageSize(Number(val));
       this.setState({
@@ -252,7 +255,7 @@ class SubCategoryList extends React.Component {
       });
     }
   };
-  handleShowSubCat = (e) => {
+  handleShowSubCat = e => {
     e.preventDefault();
     if (this.state.category != "NA") {
       let selecteddata = this.state.CatList?.filter(
@@ -265,7 +268,7 @@ class SubCategoryList extends React.Component {
       swal("Select Category");
     }
   };
-  changeHandler = (e) => {
+  changeHandler = e => {
     this.setState({ [e.target.name]: e.target.value });
   };
   render() {
@@ -303,7 +306,7 @@ class SubCategoryList extends React.Component {
                   onChange={this.changeHandler}
                 >
                   <option value="NA">--Select Category--</option>
-                  {this.state.CatList?.map((cat) => (
+                  {this.state.CatList?.map(cat => (
                     <option value={cat?._id} key={cat?._id}>
                       {cat?.name}
                     </option>
@@ -393,7 +396,7 @@ class SubCategoryList extends React.Component {
                           <div className="table-input mr-1">
                             <Input
                               placeholder="search..."
-                              onChange={(e) =>
+                              onChange={e =>
                                 this.updateSearchQuery(e.target.value)
                               }
                               value={this.state.value}
@@ -410,7 +413,7 @@ class SubCategoryList extends React.Component {
                         </div>
                       </div>
                       <ContextLayout.Consumer>
-                        {(context) => (
+                        {context => (
                           <AgGridReact
                             gridOptions={{}}
                             rowSelection="multiple"
