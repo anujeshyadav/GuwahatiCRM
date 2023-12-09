@@ -28,7 +28,7 @@ import "jspdf-autotable";
 import Logo from "../../../../../assets/img/profile/pages/logomain.png";
 import Papa from "papaparse";
 import { FaPlus } from "react-icons/fa";
-import { Eye, Trash2, ChevronDown, Edit } from "react-feather";
+import { Eye, Trash2, ChevronDown, Edit, CloudLightning } from "react-feather";
 import { IoMdRemoveCircleOutline } from "react-icons/io";
 import { history } from "../../../../../history";
 import "../../../../../assets/scss/plugins/tables/_agGridStyleOverride.scss";
@@ -854,7 +854,7 @@ class UnitList extends React.Component {
           <ModalBody className="modalbodyhead">
             <Row>
               <Col lg="4" md="4" sm="12" xl="4" xs="12">
-                <h4>Avilable Columns</h4>
+                <h4>Available Columns</h4>
                 <div className="mainshffling">
                   <div class="ex1">
                     {AllcolumnDefs &&
@@ -908,7 +908,7 @@ class UnitList extends React.Component {
               <Col lg="6" md="6" sm="12" xl="6" xs="12">
                 <Row>
                   <Col lg="8" md="8" sm="12" xs="12">
-                    <h4>Visible Columns</h4>
+                    <h4>Avalable Columns</h4>
                     <div className="mainshffling">
                       <div class="ex1">
                         {SelectedcolumnDefs &&
@@ -1029,7 +1029,10 @@ class UnitList extends React.Component {
                     name="baseUnit"
                     value={this.state.baseUnit}
                     defaultValue="None"
-                    onChange={e => this.setState({ baseUnit: e.target.value })}
+                    onChange={e => {
+                      console.log(e.target.value);
+                      this.setState({ baseUnit: e.target.value });
+                    }}
                   >
                     <option value="None">None</option>
                     {this.state.baseubitListView?.map(val => {
@@ -1050,9 +1053,10 @@ class UnitList extends React.Component {
                     name="secondaryUnit"
                     value={this.state.secondaryUnit}
                     defaultValue="None"
-                    onChange={e =>
-                      this.setState({ secondaryUnit: e.target.value })
-                    }
+                    onChange={e => {
+                      console.log(e.target.value);
+                      this.setState({ secondaryUnit: e.target.value });
+                    }}
                   >
                     <option value="None">None</option>
                     {this.state.baseubitListView?.map(val => {

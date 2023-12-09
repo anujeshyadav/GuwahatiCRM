@@ -51,7 +51,7 @@ import UserContext from "../../../../../context/Context";
 
 const SelectedColums = [];
 
-class PendingPurchase extends React.Component {
+class PurchaseCompleted extends React.Component {
   static contextType = UserContext;
   constructor(props) {
     super(props);
@@ -354,10 +354,10 @@ class PendingPurchase extends React.Component {
     await PurchaseOrderList()
       .then(res => {
         console.log(res?.orderHistory);
-        const pendingStatus = res?.orderHistory?.filter(ele =>
-          ele.status == "pending" ? ele.status : null
+        const completedStatus = res?.orderHistory?.filter(ele =>
+          ele.status == "completed" ? ele.status : null
         );
-        this.setState({ rowData: pendingStatus });
+        this.setState({ rowData: completedStatus });
         this.setState({ AllcolumnDefs: this.state.columnDefs });
         this.setState({ SelectedCols: this.state.columnDefs });
 
@@ -1094,4 +1094,4 @@ class PendingPurchase extends React.Component {
     );
   }
 }
-export default PendingPurchase;
+export default PurchaseCompleted;
