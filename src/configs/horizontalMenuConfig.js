@@ -319,6 +319,14 @@ const horizontalMenuConfig = [
         navLink: "/app/AjGroup/StockTransferList",
       },
       {
+        id: "StockTransfer",
+        title: "Stock Transfer",
+        type: "item",
+        icon: <FaList size={15} />,
+        permissions: ["admin", "editor"],
+        navLink: "/app/ajgroup/account/CreateStockTrx",
+      },
+      {
         id: "ConversionProcess",
         title: "Conversion Process",
         type: "item",
@@ -967,7 +975,7 @@ const horizontalMenuConfig = [
       },
       {
         id: "Unit",
-        title: "Unit List",
+        title: "UnitList",
         type: "item",
         icon: <FaCircle size={8} />,
         permissions: ["admin", "editor"],
@@ -979,7 +987,7 @@ const horizontalMenuConfig = [
         type: "item",
         icon: <FaCircle size={8} />,
         permissions: ["admin", "editor"],
-        navLink: "/app/softnumen/warehouseStock",
+        navLink: "/app/ajgroup/account/CreateStockTrx",
       },
     ],
   },
