@@ -49,7 +49,7 @@ export const Category_List = "/categories/view-category/";
 export const Create_SubCategory = "/categories/save-subcategory";
 export const Create_Product_XMLView = "/product/get-xml";
 export const Save_Product = "/product/save-product";
-export const ProductList_View = "/product/view-product";
+export const ProductList_View = "/product/view-product/";
 
 export const Save_Order = "/order/save-create-order";
 export const view_create_order_history = "/order/view-create-order-history/";

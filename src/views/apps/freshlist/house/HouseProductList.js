@@ -104,49 +104,51 @@ class HouseProductList extends React.Component {
   async componentDidMount() {
     const UserInformation = this.context?.UserInformatio;
     CreateProductXMLView()
-      .then(res => {
+      .then((res) => {
         const jsonData = xmlJs.xml2json(res.data, { compact: true, spaces: 2 });
         console.log(JSON.parse(jsonData)?.createProduct);
 
-        const inputs = JSON.parse(jsonData)?.createProduct?.input?.map(ele => {
-          if (ele?.type._attributes.type == "file") {
-            return {
-              headerName: ele?.label._text,
-              field: ele?.name._text,
-              filter: true,
-              sortable: true,
-              cellRendererFramework: params => {
-                return (
-                  <>
-                    <div className="actions cursor-pointer">
+        const inputs = JSON.parse(jsonData)?.createProduct?.input?.map(
+          (ele) => {
+            if (ele?.type._attributes.type == "file") {
+              return {
+                headerName: ele?.label._text,
+                field: ele?.name._text,
+                filter: true,
+                sortable: true,
+                cellRendererFramework: (params) => {
+                  return (
+                    <>
                       <div className="actions cursor-pointer">
-                        {params.data?.Product_image && (
-                          <img
-                            className="rounded-circle mr-50"
-                            src={`http://65.0.96.247:8000/Images/${params.data?.Product_image}`}
-                            alt="user avatar"
-                            height="40"
-                            width="40"
-                          />
-                        )}
+                        <div className="actions cursor-pointer">
+                          {params.data?.Product_image && (
+                            <img
+                              className="rounded-circle mr-50"
+                              src={`http://65.0.96.247:8000/Images/${params.data?.Product_image}`}
+                              alt="user avatar"
+                              height="40"
+                              width="40"
+                            />
+                          )}
+                        </div>
                       </div>
-                    </div>
-                  </>
-                );
-              },
-            };
-          } else {
-            return {
-              headerName: ele?.label._text,
-              field: ele?.name._text,
-              filter: true,
-              sortable: true,
-            };
+                    </>
+                  );
+                },
+              };
+            } else {
+              return {
+                headerName: ele?.label._text,
+                field: ele?.name._text,
+                filter: true,
+                sortable: true,
+              };
+            }
           }
-        });
+        );
         let dropdown = JSON.parse(jsonData).createProduct?.MyDropDown;
         if (dropdown.length) {
-          var mydropdownArray = dropdown?.map(ele => {
+          var mydropdownArray = dropdown?.map((ele) => {
             return {
               headerName: ele?.dropdown?.label?._text,
               field: ele?.dropdown?.name?._text,
@@ -178,7 +180,7 @@ class HouseProductList extends React.Component {
             field: "sortorder",
             field: "transactions",
             width: 190,
-            cellRendererFramework: params => {
+            cellRendererFramework: (params) => {
               return (
                 <div className="actions cursor-pointer">
                   <Route
@@ -229,7 +231,7 @@ class HouseProductList extends React.Component {
             field: "createdAt",
             filter: true,
             sortable: true,
-            cellRendererFramework: params => {
+            cellRendererFramework: (params) => {
               return (
                 <>
                   <div className="actions cursor-pointer">
@@ -244,7 +246,7 @@ class HouseProductList extends React.Component {
             field: "updatedAt",
             filter: true,
             sortable: true,
-            cellRendererFramework: params => {
+            cellRendererFramework: (params) => {
               return (
                 <>
                   <div className="actions cursor-pointer">
@@ -271,16 +273,17 @@ class HouseProductList extends React.Component {
         }
         this.setState({ SelectedCols: Product });
       })
-      .catch(err => {
+      .catch((err) => {
         console.log(err);
         swal("Error", "something went wrong try again");
       });
-    await ProductListView()
-      .then(res => {
+    let userdata = JSON.parse(localStorage.getItem("userData"));
+    await ProductListView(userdata?._id)
+      .then((res) => {
         console.log(res?.Product);
         this.setState({ rowData: res?.Product });
       })
-      .catch(err => {
+      .catch((err) => {
         console.log(err);
       });
   }
@@ -682,7 +685,7 @@ class HouseProductList extends React.Component {
                           <span>
                             <Route
                               render={({ history }) => (
-                                <Button
+                                <Badge
                                   className="btn  float-right mr-1"
                                   color="primary"
                                   onClick={() =>
@@ -692,7 +695,7 @@ class HouseProductList extends React.Component {
                                   }
                                 >
                                   Add Product
-                                </Button>
+                                </Badge>
                               )}
                             />
                           </span>

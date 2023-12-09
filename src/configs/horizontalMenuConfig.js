@@ -953,7 +953,7 @@ const horizontalMenuConfig = [
       },
       {
         id: "Unit",
-        title: "Unit List",
+        title: "UnitList",
         type: "item",
         icon: <FaCircle size={8} />,
         permissions: ["admin", "editor"],

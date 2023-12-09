@@ -169,8 +169,8 @@ const AddProduct = () => {
     let formdata = new FormData();
     let userData = JSON.parse(localStorage.getItem("userData"));
     formdata.append("created_by", userData._id);
-    console.log(formData);
-    console.log(CreatAccountView);
+    // console.log(formData);
+    // console.log(CreatAccountView);
     CreatAccountView?.input?.map((ele, i) => {
       if (ele?.type?._attributes?.type == "text") {
         formdata.append(`${ele?.name._text}`, formData[ele?.name?._text]);
@@ -191,7 +191,7 @@ const AddProduct = () => {
       swal("Error occured while Entering Details");
     } else {
       SaveProduct(formdata)
-        .then(res => {
+        .then((res) => {
           console.log(res);
           setFormData({});
           if (res.status) {
@@ -199,7 +199,7 @@ const AddProduct = () => {
             swal("Product Created Successfully");
           }
         })
-        .catch(err => {
+        .catch((err) => {
           console.log(err);
         });
     }

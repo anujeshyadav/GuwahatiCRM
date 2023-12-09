@@ -283,8 +283,10 @@ export const AllCategoryList = async id => {
     .then(res => res.data);
   return response;
 };
-export const ProductListView = async () => {
-  let response = await axiosConfig.get(ProductList_View).then(res => res.data);
+export const ProductListView = async (id) => {
+  let response = await axiosConfig
+    .get(ProductList_View + id)
+    .then((res) => res.data);
   return response;
 };
 export const CreateunitxmlView = async () => {
