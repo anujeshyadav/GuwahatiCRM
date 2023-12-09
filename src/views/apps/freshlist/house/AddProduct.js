@@ -169,7 +169,6 @@ const AddProduct = () => {
     let formdata = new FormData();
     let userData = JSON.parse(localStorage.getItem("userData"));
     formdata.append("created_by", userData._id);
-    // formdata.append("created_by", formData["userData._id"]);
     console.log(formData);
     console.log(CreatAccountView);
     CreatAccountView?.input?.map((ele, i) => {

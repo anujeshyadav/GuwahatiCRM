@@ -13,6 +13,9 @@ import {
   Button,
   ModalHeader,
   ModalBody,
+  Label,
+  FormGroup,
+  CustomInput,
 } from "reactstrap";
 import { ContextLayout } from "../../../../../utility/context/Layout";
 import { AgGridReact } from "ag-grid-react";
@@ -605,13 +608,42 @@ class WareHouseList extends React.Component {
                           <h1 className="float-left">Warehouse List</h1>
                         </Col>
                         <Col>
+                          <Col>
+                            <FormGroup>
+                              {/* <Label>{ele?.dropdown?.label?._text}</Label> */}
+                              <Label>WareHouse List </Label>
+                              <CustomInput
+                                // required
+                                type="select"
+                                // name={ele?.dropdown?.name?._text}
+                                name="ware"
+                                // value={formData[ele?.dropdown?.name?._text]}
+                                value=""
+                                // onChange={this.handleInputChange}
+                              >
+                                <option value="">--Select WareHouse--</option>
+                                <option>abc</option>
+                                <option>abc123</option>
+                                {/* {ele?.dropdown?.option?.map((option, index) => (
+                                  <option
+                                    key={index}
+                                    value={option?._attributes?.value}
+                                  >
+                                    {option?._attributes?.value}
+                                  </option>
+                                ))} */}
+                              </CustomInput>
+                            </FormGroup>
+                          </Col>
+                        </Col>
+                        <Col>
                           <span className="mx-1">
                             <FaFilter
                               style={{ cursor: "pointer" }}
                               title="filter coloumn"
                               size="30px"
                               onClick={this.LookupviewStart}
-                              color="blue"
+                              color="primary"
                               className="float-right"
                             />
                           </span>
@@ -622,7 +654,7 @@ class WareHouseList extends React.Component {
                                 title="download file"
                                 size="30px"
                                 className="dropdown-button "
-                                color="blue"
+                                color="primary"
                                 onClick={this.toggleDropdown}
                               />
                               {isOpen && (
@@ -673,6 +705,24 @@ class WareHouseList extends React.Component {
                                 </div>
                               )}
                             </div>
+                          </span>
+                          <span>
+                            <Route
+                              render={({ history }) => (
+                                <Button
+                                  className="float-right mr-1"
+                                  color="primary"
+                                  size="sm"
+                                  onClick={() =>
+                                    history.push(
+                                      "/app/softNumen/warehouse/CreateWareHouse"
+                                    )
+                                  }
+                                >
+                                  Create Warehouse
+                                </Button>
+                              )}
+                            />
                           </span>
                         </Col>
                       </Row>
