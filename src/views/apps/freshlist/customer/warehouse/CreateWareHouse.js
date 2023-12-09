@@ -33,22 +33,7 @@ const CreateWareHouse = () => {
   const [error, setError] = useState("");
   const [permissions, setpermissions] = useState({});
 
-  const handleInputFileChange = (e, type, i) => {
-    const { name, value, files } = e.target;
-    debugger;
-    if (type == "file") {
-      console.log(e.target.name);
-      if (e.target.name == "WarehousePhoto")
-        setFormData({
-          ...formData,
-          [name]: files[0],
-        });
-    }
-  };
-
   const handleInputChange = (e, type, i) => {
-    setindex(i);
-
     const { name, value } = e.target;
     if (type == "number") {
       if (/^\d{0,10}$/.test(value)) {
@@ -85,28 +70,20 @@ const CreateWareHouse = () => {
   const submitHandler = e => {
     e.preventDefault();
     const userId = JSON.parse(localStorage.getItem("userData"))._id;
-    debugger;
-    const formdata = new FormData();
-    formdata.append("created_by", userId);
-    // formdata.append("warehouse", formdata.WarehousePhoto);
-    // created_by:userid
-    CreatWarehouseView.input.map(ele => {
-      debugger;
-      console.log(ele?.name?._text, ele);
-      // ele?.name?._text;
-      if (ele?.name?._text == "WarehousePhoto") {
-        formdata.append(`${ele?.name?._text}`, formData.WarehousePhoto);
-      } else {
-        formdata.append(`${ele?.name?._text}`, formData[ele?.name?._text]);
-      }
-    });
+    formData["created_by"] = userId;
+
     if (error) {
       swal("Error occured while Entering Details");
     } else {
       CreateWarehousesave(formData)
         .then(res => {
           if (res.status) {
-            setFormData({ WarehouseName: "", mobileno: "", email: "" });
+            setFormData({
+              WarehouseName: "",
+              mobileno: "",
+              email: "",
+              locaton: "",
+            });
             swal(`Warehouse  ${res.message}`);
           }
         })
@@ -167,6 +144,7 @@ const CreateWareHouse = () => {
                                   name={ele?.name?._text}
                                   value={formData[ele?.name?._text]}
                                   onChange={phone => {
+                                    console.log(phone);
                                     setFormData({
                                       ...formData,
                                       [ele?.name?._text]: phone,
@@ -220,37 +198,6 @@ const CreateWareHouse = () => {
                           </FormGroup>
                         </Col>
                       );
-                    } else if (ele?.type?._attributes?.type == "file") {
-                      console.log("file", ele?.name?._text);
-                      return (
-                        <Col key={i} lg="3" md="3" sm="12">
-                          <FormGroup key={i}>
-                            <Label className="">{ele?.label?._text}</Label>
-                            <Input
-                              type={ele?.type?._attributes?.type}
-                              name={ele?.name?._text}
-                              // value={formData[ele?.name?._text]}
-                              onChange={e => {
-                                handleInputFileChange(
-                                  e,
-                                  ele?.type?._attributes?.type,
-                                  i
-                                );
-                              }}
-                            />
-
-                            {index === i ? (
-                              <>
-                                {error && (
-                                  <span style={{ color: "red" }}>{error}</span>
-                                )}
-                              </>
-                            ) : (
-                              <></>
-                            )}
-                          </FormGroup>
-                        </Col>
-                      );
                     } else {
                       return (
                         <Col key={i} lg="3" md="3" sm="12">
@@ -261,6 +208,13 @@ const CreateWareHouse = () => {
                               placeholder={ele?.placeholder?._text}
                               name={ele?.name?._text}
                               value={formData[ele?.name?._text]}
+                              onChange={e => {
+                                handleInputChange(
+                                  e,
+                                  ele?.type?._attributes?.type,
+                                  i
+                                );
+                              }}
                             />
                             {index === i ? (
                               <>
@@ -276,6 +230,35 @@ const CreateWareHouse = () => {
                       );
                     }
                   })}
+                <Col lg="6" md="6" sm="6" className="mb-2 mt-1">
+                  <Label className="mb-0">Status</Label>
+                  <div
+                    className="form-label-group"
+                    onChange={e => {
+                      setFormData({
+                        ...formData,
+                        ["status"]: e.target.value,
+                      });
+                    }}
+                  >
+                    <input
+                      checked={formData["status"] == "Active"}
+                      style={{ marginRight: "3px" }}
+                      type="radio"
+                      name="status"
+                      value="Active"
+                    />
+                    <span style={{ marginRight: "20px" }}>Active</span>
+                    <input
+                      checked={formData["status"] == "Deactive"}
+                      style={{ marginRight: "3px" }}
+                      type="radio"
+                      name="status"
+                      value="Deactive"
+                    />
+                    <span style={{ marginRight: "3px" }}>Deactive</span>
+                  </div>
+                </Col>
               </Row>
               <hr />
               <Row>
