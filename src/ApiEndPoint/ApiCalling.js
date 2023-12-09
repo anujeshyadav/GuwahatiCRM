@@ -3,6 +3,7 @@ import {
   Create_warehouse_save,
   Purchase_Order_List,
   Debit_note_Order_List,
+  Credit_note_Order_List,
   GoodDispatch_xmlView,
   SAVE_GoodDispatch,
   GoodDispatch_List,
@@ -223,10 +224,10 @@ export const SavePromotionsActivity = async data => {
     .then(res => res.data);
   return response;
 };
-export const View_PromotionList = async (id) => {
+export const View_PromotionList = async id => {
   let response = await axiosConfig
     .get(`${View_Promotion_List}` + id)
-    .then((res) => res.data);
+    .then(res => res.data);
   return response;
 };
 export const CreatePartysave = async data => {
@@ -283,10 +284,13 @@ export const AllCategoryList = async id => {
     .then(res => res.data);
   return response;
 };
-export const ProductListView = async () => {
-  let response = await axiosConfig.get(ProductList_View).then(res => res.data);
+export const ProductListView = async id => {
+  let response = await axiosConfig
+    .get(ProductList_View + id)
+    .then(res => res.data);
   return response;
 };
+
 export const CreateunitxmlView = async () => {
   let response = await axiosConfig
     .get(`${Create_unit_xmlView}`)
@@ -432,6 +436,12 @@ export const PlaceOrder_Edit = async (payload, id) => {
 export const DebitnoteOrderList = async () => {
   let response = await axiosConfig
     .get(`${Debit_note_Order_List}`)
+    .then(res => res.data);
+  return response;
+};
+export const CreditnoteOrderList = async () => {
+  let response = await axiosConfig
+    .get(`${Credit_note_Order_List}`)
     .then(res => res.data);
   return response;
 };

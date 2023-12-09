@@ -17,46 +17,41 @@ import {
   ModalBody,
   Badge,
 } from "reactstrap";
-import { ContextLayout } from "../../../../utility/context/Layout";
+
+import { ContextLayout } from "../../../../../utility/context/Layout";
 import { AgGridReact } from "ag-grid-react";
 import "ag-grid-community/dist/styles/ag-grid.css";
-import EditAccount from "../accounts/EditAccount";
-import ViewAccount from "../accounts/ViewAccount";
+import PendingView from "../../order/Pending";
 import jsPDF from "jspdf";
 import "jspdf-autotable";
-import Logo from "../../../../assets/img/profile/pages/logomain.png";
+import Logo from "../../../../../assets/img/profile/pages/logomain.png";
 import Papa from "papaparse";
-import { Eye, Trash2, ChevronDown, Edit } from "react-feather";
+import { Eye, ChevronDown, Edit } from "react-feather";
 import { IoMdRemoveCircleOutline } from "react-icons/io";
-import "../../../../assets/scss/plugins/tables/_agGridStyleOverride.scss";
-import "../../../../assets/scss/pages/users.scss";
+import "../../../../../assets/scss/plugins/tables/_agGridStyleOverride.scss";
+import "../../../../../assets/scss/pages/users.scss";
 
 import {
   FaArrowAltCircleLeft,
   FaArrowAltCircleRight,
   FaFilter,
-  FaPlus,
 } from "react-icons/fa";
-import moment from "moment-timezone";
 import swal from "sweetalert";
 import {
-  CreateAccountList,
-  CreateAccountView,
-  CreateProductXMLView,
-  DeleteAccount,
-  ProductListView,
-} from "../../../../ApiEndPoint/ApiCalling";
+  createOrderhistoryview,
+  Delete_targetINlist,
+} from "../../../../../ApiEndPoint/ApiCalling";
 import {
   BsCloudDownloadFill,
   BsFillArrowDownSquareFill,
   BsFillArrowUpSquareFill,
 } from "react-icons/bs";
 import * as XLSX from "xlsx";
-import UserContext from "../../../../context/Context";
+import UserContext from "../../../../../context/Context";
 
 const SelectedColums = [];
 
-class HouseProductList extends React.Component {
+class PendingPurchase extends React.Component {
   static contextType = UserContext;
   constructor(props) {
     super(props);
@@ -66,12 +61,15 @@ class HouseProductList extends React.Component {
       isOpen: false,
       Arrindex: "",
       rowData: [],
+      modal: false,
+      modalone: false,
+      ViewData: {},
+
       setMySelectedarr: [],
       SelectedCols: [],
       paginationPageSize: 5,
       currenPageSize: "",
       getPageSize: "",
-      columnDefs: [],
       AllcolumnDefs: [],
       SelectedcolumnDefs: [],
       defaultColDef: {
@@ -81,16 +79,255 @@ class HouseProductList extends React.Component {
         resizable: true,
         suppressMenu: true,
       },
+      columnDefs: [
+        {
+          headerName: "UID",
+          valueGetter: "node.rowIndex + 1",
+          field: "node.rowIndex + 1",
+          // checkboxSelection: true,
+          width: 80,
+          filter: true,
+        },
+        {
+          headerName: "Actions",
+          field: "transactions",
+          width: 180,
+          cellRendererFramework: params => {
+            return (
+              <div className="actions cursor-pointer">
+                {/* {this.state.Viewpermisson && ( */}
+                <Eye
+                  className="mr-50"
+                  size="25px"
+                  color="green"
+                  onClick={() => {
+                    this.handleChangeView(params.data, "readonly");
+                  }}
+                />
+                {/* )} */}
+                {/* {this.state.Editpermisson && ( */}
+                <Edit
+                  className="mr-50"
+                  size="25px"
+                  color="blue"
+                  onClick={() =>
+                    this.props.history.push({
+                      pathname: `/app/AJGroup/order/editPending/${params.data?._id}`,
+                      state: params.data,
+                    })
+                  }
+                />
+                {/* )} */}
+                {/* {this.state.Deletepermisson && ( */}
+                {/* <Trash2
+                  className="mr-50"
+                  size="25px"
+                  color="Red"
+                  onClick={() => {
+                    this.runthisfunction(params?.data?._id);
+                  }}
+                /> */}
+                {/* )} */}
+              </div>
+            );
+          },
+        },
+        {
+          headerName: "Product_Title",
+          field: "orderItems",
+          filter: true,
+          width: 180,
+          valueGetter: params => {
+            if (params.data.orderItems && params.data.orderItems.length > 0) {
+              return params.data.orderItems[0].product.Product_Title;
+            }
+            return null;
+          },
+        },
+        {
+          headerName: "Category",
+          field: "orderItems",
+          filter: true,
+          width: 180,
+          valueGetter: params => {
+            if (params.data.orderItems && params.data.orderItems.length > 0) {
+              return params.data.orderItems[0].product.category;
+            }
+            return null;
+          },
+        },
+        {
+          headerName: "SubCategory",
+          field: "orderItems",
+          filter: true,
+          width: 180,
+          valueGetter: params => {
+            if (params.data.orderItems && params.data.orderItems.length > 0) {
+              return params.data.orderItems[0].product.SubCategory;
+            }
+            return null;
+          },
+        },
+        {
+          headerName: "Price",
+          field: "orderItems",
+          filter: true,
+          width: 150,
+          valueGetter: params => {
+            if (params.data.orderItems && params.data.orderItems.length > 0) {
+              return params.data.orderItems[0].price;
+            }
+            return null;
+          },
+        },
+        {
+          headerName: "Size",
+          field: "orderItems",
+          filter: true,
+          width: 150,
+          valueGetter: params => {
+            if (params.data.orderItems && params.data.orderItems.length > 0) {
+              return params.data.orderItems[0].qty; // Return the price
+            }
+            return null;
+          },
+        },
+        {
+          headerName: "GST Rate",
+          field: "orderItems",
+          filter: true,
+          width: 180,
+          valueGetter: params => {
+            if (params.data.orderItems && params.data.orderItems.length > 0) {
+              return params.data.orderItems[0].product["GST Rate"]; // Return the price
+            }
+            return null; // Or handle cases where there's no price
+          },
+        },
+        {
+          headerName: "HSN Code",
+          field: "orderItems",
+          filter: true,
+          width: 180,
+          valueGetter: params => {
+            if (params.data.orderItems && params.data.orderItems.length > 0) {
+              return params.data.orderItems[0].product.HSN_Code; // Return the price
+            }
+            return null;
+          },
+        },
+
+        {
+          headerName: "Country",
+          field: "country",
+          filter: true,
+          width: 200,
+          cellRendererFramework: params => {
+            return (
+              <div>
+                <span>{params.data?.country}</span>
+              </div>
+            );
+          },
+        },
+        {
+          headerName: "State",
+          field: "state",
+          filter: true,
+          width: 200,
+          cellRendererFramework: params => {
+            return (
+              <div>
+                <span>{params.data?.state}</span>
+              </div>
+            );
+          },
+        },
+        {
+          headerName: "City",
+          field: "city",
+          filter: true,
+          width: 200,
+          cellRendererFramework: params => {
+            return (
+              <div>
+                <span>{params.data?.city}</span>
+              </div>
+            );
+          },
+        },
+        {
+          headerName: "MobileNo",
+          field: "MobileNo",
+          filter: true,
+          width: 150,
+          cellRendererFramework: params => {
+            return (
+              <div>
+                <span>{params.data?.MobileNo}</span>
+              </div>
+            );
+          },
+        },
+        {
+          headerName: "Discount",
+          field: "discount",
+          filter: true,
+          width: 200,
+          cellRendererFramework: params => {
+            return (
+              <div>
+                <span>{params.data?.discount}</span>
+              </div>
+            );
+          },
+        },
+        {
+          headerName: "GrandTotal",
+          field: "grandTotal",
+          filter: true,
+          width: 200,
+          cellRendererFramework: params => {
+            return (
+              <div>
+                <span>{params.data?.grandTotal}</span>
+              </div>
+            );
+          },
+        },
+
+        {
+          headerName: "Status",
+          field: "status",
+          filter: true,
+          width: 150,
+          cellRendererFramework: params => {
+            return params.value === "pending" ? (
+              <div className="badge badge-pill badge-warning">
+                {params.data.status}
+              </div>
+            ) : params.value === "canceled" ? (
+              <div className="badge badge-pill badge bg-danger">
+                {params.data.status}
+              </div>
+            ) : null;
+          },
+        },
+      ],
     };
   }
-
+  toggleModal = () => {
+    this.setState(prevState => ({
+      modalone: !prevState.modalone,
+    }));
+  };
   LookupviewStart = () => {
     this.setState(prevState => ({
       modal: !prevState.modal,
     }));
   };
 
-  handleChangeEdit = (data, types) => {
+  handleChangeView = (data, types) => {
     let type = types;
     if (type == "readonly") {
       this.setState({ ViewOneUserView: true });
@@ -100,197 +337,58 @@ class HouseProductList extends React.Component {
       this.setState({ EditOneData: data });
     }
   };
+  // handleChangeEdit = (data, types) => {
+  //   let type = types;
+  //   if (type == "readonly") {
+  //     this.setState({ ViewOneUserView: true });
+  //     this.setState({ ViewOneData: data });
+  //   } else {
+  //     this.setState({ EditOneUserView: true });
+  //     this.setState({ EditOneData: data });
+  //   }
+  // };
 
   async componentDidMount() {
     const UserInformation = this.context?.UserInformatio;
-    CreateProductXMLView()
+
+    await createOrderhistoryview()
       .then(res => {
-        const jsonData = xmlJs.xml2json(res.data, { compact: true, spaces: 2 });
-        console.log(JSON.parse(jsonData)?.createProduct);
+        console.log(res?.orderHistory);
+        // const pendingStatus = res?.orderHistory?.filter(
+        //   ele => ele.status == "pending"? ele.status:null
+        // );
+        this.setState({ rowData: res?.orderHistory });
+        this.setState({ AllcolumnDefs: this.state.columnDefs });
+        this.setState({ SelectedCols: this.state.columnDefs });
 
-        const inputs = JSON.parse(jsonData)?.createProduct?.input?.map(ele => {
-          if (ele?.type._attributes.type == "file") {
-            return {
-              headerName: ele?.label._text,
-              field: ele?.name._text,
-              filter: true,
-              sortable: true,
-              cellRendererFramework: params => {
-                return (
-                  <>
-                    <div className="actions cursor-pointer">
-                      <div className="actions cursor-pointer">
-                        {params.data?.Product_image && (
-                          <img
-                            className="rounded-circle mr-50"
-                            src={`http://65.0.96.247:8000/Images/${params.data?.Product_image}`}
-                            alt="user avatar"
-                            height="40"
-                            width="40"
-                          />
-                        )}
-                      </div>
-                    </div>
-                  </>
-                );
-              },
-            };
-          } else {
-            return {
-              headerName: ele?.label._text,
-              field: ele?.name._text,
-              filter: true,
-              sortable: true,
-            };
-          }
-        });
-        let dropdown = JSON.parse(jsonData).createProduct?.MyDropDown;
-        if (dropdown.length) {
-          var mydropdownArray = dropdown?.map(ele => {
-            return {
-              headerName: ele?.dropdown?.label?._text,
-              field: ele?.dropdown?.name?._text,
-              filter: true,
-              sortable: true,
-            };
-          });
-        } else {
-          var adddropdown = [
-            {
-              headerName: dropdown?.label._text,
-              field: dropdown?.name._text,
-              filter: true,
-              sortable: true,
-            },
-          ];
-        }
-
-        let myHeadings = [
-          // ...checkboxinput,
-          ...inputs,
-          // ...adddropdown,
-          // ...addRadio,
-          ...mydropdownArray,
-        ];
-        let Product = [
-          {
-            headerName: "Actions",
-            field: "sortorder",
-            field: "transactions",
-            width: 190,
-            cellRendererFramework: params => {
-              return (
-                <div className="actions cursor-pointer">
-                  <Route
-                    render={({ history }) => (
-                      <Eye
-                        className="mr-50"
-                        size="25px"
-                        color="green"
-                        // onClick={() => {
-                        //   this.handleChangeEdit(params.data, "readonly");
-                        // }}
-                      />
-                    )}
-                  />
-                  <Route
-                    render={({ history }) => (
-                      <Edit
-                        className="mr-50"
-                        size="25px"
-                        color="blue"
-                        // onClick={() => {
-                        //   this.handleChangeEdit(params.data, "Editable");
-                        // }}
-                      />
-                    )}
-                  />
-
-                  <Route
-                    render={() => (
-                      <Trash2
-                        className="mr-50"
-                        size="25px"
-                        color="red"
-                        onClick={() => {
-                          this.runthisfunction(params?.data?._id);
-                        }}
-                      />
-                    )}
-                  />
-                </div>
-              );
-            },
-          },
-
-          ...myHeadings,
-          {
-            headerName: "Created date",
-            field: "createdAt",
-            filter: true,
-            sortable: true,
-            cellRendererFramework: params => {
-              return (
-                <>
-                  <div className="actions cursor-pointer">
-                    <span>{params?.data?.createdAt}</span>
-                  </div>
-                </>
-              );
-            },
-          },
-          {
-            headerName: "Updated date",
-            field: "updatedAt",
-            filter: true,
-            sortable: true,
-            cellRendererFramework: params => {
-              return (
-                <>
-                  <div className="actions cursor-pointer">
-                    <div className="actions cursor-pointer">
-                      <span>{params?.data?.createdAt}</span>
-                    </div>
-                  </div>
-                </>
-              );
-            },
-          },
-        ];
-
-        this.setState({ AllcolumnDefs: Product });
-
-        let userHeading = JSON.parse(localStorage.getItem("ProductList"));
+        let userHeading = JSON.parse(localStorage.getItem("TargetList"));
         if (userHeading?.length) {
           this.setState({ columnDefs: userHeading });
           this.gridApi.setColumnDefs(userHeading);
           this.setState({ SelectedcolumnDefs: userHeading });
         } else {
-          this.setState({ columnDefs: Product });
-          this.setState({ SelectedcolumnDefs: Product });
+          this.setState({ columnDefs: this.state.columnDefs });
+          this.setState({ SelectedcolumnDefs: this.state.columnDefs });
         }
-        this.setState({ SelectedCols: Product });
-      })
-      .catch(err => {
-        console.log(err);
-        swal("Error", "something went wrong try again");
-      });
-    let userdata = JSON.parse(localStorage.getItem("userData"));
-
-    await ProductListView(userdata?._id)
-      .then(res => {
-        console.log(res?.Product);
-        this.setState({ rowData: res?.Product });
       })
       .catch(err => {
         console.log(err);
       });
+    // await CreateAccountList()
+    //   .then((res) => {
+    //     let value = res?.User;
+    //     this.setState({ rowData: value });
+    //   })
+    //   .catch((err) => {
+    //     console.log(err);
+    //   });
   }
   toggleDropdown = () => {
     this.setState(prevState => ({ isOpen: !prevState.isOpen }));
   };
 
   runthisfunction(id) {
+    debugger;
     swal("Warning", "Sure You Want to Delete it", {
       buttons: {
         cancel: "cancel",
@@ -299,7 +397,7 @@ class HouseProductList extends React.Component {
     }).then(value => {
       switch (value) {
         case "delete":
-          DeleteAccount(id)
+          Delete_targetINlist(id)
             .then(res => {
               let selectedData = this.gridApi.getSelectedRows();
               this.gridApi.updateRowData({ remove: selectedData });
@@ -516,12 +614,13 @@ class HouseProductList extends React.Component {
 
   HandleSetVisibleField = e => {
     e.preventDefault();
+    debugger;
     this.gridApi.setColumnDefs(this.state.SelectedcolumnDefs);
     this.setState({ columnDefs: this.state.SelectedcolumnDefs });
     this.setState({ SelectedcolumnDefs: this.state.SelectedcolumnDefs });
     this.setState({ rowData: this.state.rowData });
     localStorage.setItem(
-      "ProductList",
+      "TargetList",
       JSON.stringify(this.state.SelectedcolumnDefs)
     );
     this.LookupviewStart();
@@ -539,11 +638,11 @@ class HouseProductList extends React.Component {
     });
   };
   handleLeftShift = () => {
-    let SelectedCols = this.state.SelectedcolumnDefs.slice();
+    let SelectedCols = this.state.SelectedcolumnDefs?.slice();
     let delindex = this.state.Arrindex; /* Your delete index here */
 
     if (SelectedCols && delindex >= 0) {
-      const splicedElement = SelectedCols.splice(delindex, 1); // Remove the element
+      const splicedElement = SelectedCols?.splice(delindex, 1); // Remove the element
 
       this.setState({
         SelectedcolumnDefs: SelectedCols, // Update the state with the modified array
@@ -562,8 +661,7 @@ class HouseProductList extends React.Component {
     } = this.state;
     return (
       <>
-        {/* <ExcelReader /> */}
-        <Row className="app-user-list">
+        <Col className="app-user-list">
           {this.state.EditOneUserView && this.state.EditOneUserView ? (
             <Row className="card">
               <Col>
@@ -580,7 +678,7 @@ class HouseProductList extends React.Component {
                 </div>
               </Col>
 
-              <EditAccount EditOneData={this.state.EditOneData} />
+              {/* <EditAccount EditOneData={this.state.EditOneData} /> */}
             </Row>
           ) : (
             <>
@@ -600,7 +698,7 @@ class HouseProductList extends React.Component {
                         </Button>
                       </div>
                     </Col>
-                    <ViewAccount ViewOneData={this.state.ViewOneData} />
+                    <PendingView ViewOneData={this.state.ViewOneData} />
                   </Row>
                 </>
               ) : (
@@ -609,7 +707,7 @@ class HouseProductList extends React.Component {
                     <Card>
                       <Row className="m-2">
                         <Col>
-                          <h1 className="float-left">Product List</h1>
+                          <h1 className="float-left">Pending List</h1>
                         </Col>
                         <Col>
                           <span className="mx-1">
@@ -680,23 +778,6 @@ class HouseProductList extends React.Component {
                                 </div>
                               )}
                             </div>
-                          </span>
-                          <span>
-                            <Route
-                              render={({ history }) => (
-                                <Button
-                                  className="btn  float-right mr-1"
-                                  color="primary"
-                                  onClick={() =>
-                                    history.push(
-                                      "/app/freshlist/house/AddProduct"
-                                    )
-                                  }
-                                >
-                                  Add Product
-                                </Button>
-                              )}
-                            />
                           </span>
                         </Col>
                       </Row>
@@ -820,7 +901,7 @@ class HouseProductList extends React.Component {
               )}
             </>
           )}
-        </Row>
+        </Col>
 
         <Modal
           isOpen={this.state.modal}
@@ -832,7 +913,7 @@ class HouseProductList extends React.Component {
           <ModalBody className="modalbodyhead">
             <Row>
               <Col lg="4" md="4" sm="12" xl="4" xs="12">
-                <h4>Avilable Columns</h4>
+                <h4>Available Columns</h4>
                 <div className="mainshffling">
                   <div class="ex1">
                     {AllcolumnDefs &&
@@ -912,9 +993,9 @@ class HouseProductList extends React.Component {
                                       <IoMdRemoveCircleOutline
                                         onClick={() => {
                                           const SelectedCols =
-                                            this.state.SelectedcolumnDefs.slice();
+                                            this.state.SelectedcolumnDefs?.slice();
                                           const delindex =
-                                            SelectedCols.findIndex(
+                                            SelectedCols?.findIndex(
                                               element =>
                                                 element?.headerName ==
                                                 ele?.headerName
@@ -922,7 +1003,7 @@ class HouseProductList extends React.Component {
 
                                           if (SelectedCols && delindex >= 0) {
                                             const splicedElement =
-                                              SelectedCols.splice(delindex, 1); // Remove the element
+                                              SelectedCols?.splice(delindex, 1); // Remove the element
                                             // splicedElement contains the removed element, if needed
 
                                             this.setState({
@@ -989,8 +1070,23 @@ class HouseProductList extends React.Component {
             </Row>
           </ModalBody>
         </Modal>
+        <Modal
+          isOpen={this.state.modalone}
+          toggle={this.toggleModal}
+          className="modal-dialog modal-xl"
+          size="lg"
+          backdrop={true}
+          fullscreen={true}
+        >
+          <ModalHeader toggle={this.toggleModal}>View Details</ModalHeader>
+          <ModalBody className="myproducttable">
+            {/* <div className="container"> */}
+            {/* <TargetAssignedOne ViewData={this.state.ViewData} /> */}
+            {/* </div> */}
+          </ModalBody>
+        </Modal>
       </>
     );
   }
 }
-export default HouseProductList;
+export default PendingPurchase;
