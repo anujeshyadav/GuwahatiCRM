@@ -18,7 +18,7 @@ import {
 import Select from "react-select";
 import { Country, State, City } from "country-state-city";
 import CheckBoxesVuexy from "../../../components/@vuexy/checkbox/CheckboxesVuexy";
-import { Check } from "react-feather";
+import { Check, CloudLightning } from "react-feather";
 import Breadcrumbs from "../../../components/@vuexy/breadCrumbs/BreadCrumb";
 import swal from "sweetalert";
 import {
@@ -314,7 +314,39 @@ class UserProfile extends React.Component {
               <Card className="bg-authentication rounded-0 mb-0 w-100">
                 <Row className="container">
                   <Col>
-                    <span className="mb-3">Edit Profile</span>
+                    <span className="mb-3 mt-3">Edit Profile</span>
+                  </Col>
+                  <Col>
+                    <span
+                      onClick={(e) => this.setState({ Addcolor: true })}
+                      style={{ cursor: "pointer" }}
+                      className="mb-3 mt-3">
+                      Choose Background color
+                    </span>
+                    {this.state.Addcolor && this.state.Addcolor && (
+                      <div>
+                        <input
+                          onChange={(e) => {
+                            localStorage.setItem(
+                              "UserDefinedcoler",
+                              e.target.value
+                            );
+                            console.log(e.target.value);
+                          }}
+                          type="color"
+                          className=""
+                        />
+                        <Badge
+                          color="Primary"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            this.setState({ Addcolor: false });
+                          }}>
+                          {" "}
+                          Submit
+                        </Badge>
+                      </div>
+                    )}
                   </Col>
                   {this.state.LoginData?.rolename?.position == 1 ? (
                     <>
