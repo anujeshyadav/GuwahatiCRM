@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import {
   DropdownItem,
   DropdownMenu,
@@ -28,8 +28,8 @@ import { Link } from "react-router-dom/cjs/react-router-dom.min";
 import logo from "../../../assets/img/logo/mainLogo1.png";
 import { Route } from "react-router-dom";
 import HorizontalMenu from "./Myhorizontalmenu";
+import UserContext from "../../../context/Context";
 // import HorizontalMenu from "../../../../src/layouts/layouts/components/menu/horizontal-menu/HorizontalMenu";
-
 const PhoneNo = (props) => {
   console.log(props);
   let phone_no = "";
@@ -51,9 +51,11 @@ const PhoneNo = (props) => {
 };
 const ThemeNavbar = (props) => {
   const [screenSize, setScreenSize] = useState();
+  const [myCustomColor, SetmyCustomColor] = useState("");
   const { user } = useAuth0();
   const colorsArr = ["primary", "danger", "success", "info", "warning", "dark"];
   const navbarTypes = ["floating", "static", "sticky", "hidden"];
+  const contextValue = useContext(UserContext);
 
   useEffect(() => {
     setScreenSize(window.innerWidth);
@@ -65,6 +67,7 @@ const ThemeNavbar = (props) => {
 
   useEffect(() => {
     console.log(screenSize);
+    console.log(contextValue);
   }, [screenSize]);
 
   return (
@@ -72,7 +75,11 @@ const ThemeNavbar = (props) => {
       <div className="content-overlay" />
       <div className="header-navbar-shadow" />
       <Navbar
-        style={{ backgroundColor: "white" }}
+        style={{
+          backgroundColor: `${
+            contextValue?.myCustomColor ? contextValue?.myCustomColor : "White"
+          }`,
+        }}
         className={classnames(
           "header-navbar navbar-expand-lg navbar navbar-with-menu navbar-shadow",
           {
@@ -132,7 +139,7 @@ const ThemeNavbar = (props) => {
               </div>
               {props.horizontal ? (
                 <span className="horizontalmenu">
-                  <HorizontalMenu />
+                  <HorizontalMenu contextValue={contextValue?.myCustomColor} />
                 </span>
               ) : null}
               <>
