@@ -16,6 +16,7 @@ import {
   ModalHeader,
   Modal,
   InputGroup,
+  Badge,
 } from "reactstrap";
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
@@ -32,15 +33,12 @@ import { FiSend } from "react-icons/fi";
 
 import "../../../../assets/scss/pages/users.scss";
 import {
-  CreateOrder_ViewData,
-  CommentOrder,
-  CreateOrder_ID,
-  CommentProductWiki,
-  SaveOrder,
   ProductListView,
   CreatePartyList,
   Create_Sales_personList,
   Create_Targetsave,
+  CreateWarehouseList,
+  UnitListView,
 } from "../../../../ApiEndPoint/ApiCalling";
 import "../../../../assets/scss/pages/users.scss";
 import Timepickers from "../../../forms/form-elements/datepicker/Timepicker";
@@ -49,23 +47,27 @@ import { Route } from "react-router-dom";
 
 let GrandTotal = [];
 let SelectedITems = [];
+let SelectedSize = [];
 const CreateTarget = (args) => {
   const [formData, setFormData] = useState({});
   const [Index, setIndex] = useState("");
-  const [targetStartDate, settargetStartDate] = useState("");
+  const [StockTrxdate, setStockTrxDate] = useState("");
   const [targetEndDate, settargetEndDate] = useState("");
   const [index, setindex] = useState("");
   const [error, setError] = useState("");
   const [ProductList, setProductList] = useState([]);
   const [PartyList, setPartyList] = useState([]);
   const [Salesperson, setSalesperson] = useState("");
+  const [WareHouseone, setWareHouseone] = useState({});
+  const [WareHousetwo, setWareHousetwo] = useState({});
+  const [TypeOfTrx, setTypeOfTrx] = useState("");
   const [grandTotalAmt, setGrandTotalAmt] = useState(0);
-  // const [OrderID, setOrderID] = useState();
+  const [UnitList, setUnitList] = useState([]);
   const [UserInfo, setUserInfo] = useState({});
   const [modal, setModal] = useState(false);
   const [items, setItems] = useState("");
   const [audit, setAudit] = useState(false);
-  const [SalesPersonList, setSalesPersonList] = useState([]);
+  const [WareHouselist, setWarehouseList] = useState([]);
   const toggle = (item) => {
     setItems(item);
     setModal(!modal);
@@ -82,14 +84,15 @@ const CreateTarget = (args) => {
   };
   const [product, setProduct] = useState([
     {
-      product: "", //
+      product: "",
       productId: "",
       availableQty: "",
-      qty: 1, //
-      price: "", //
-      totalprice: "", //
-      Salespersonname: "",
-      targetstartDate: "",
+      transferQty: 1,
+      price: "",
+      totalprice: "",
+      Size: "",
+      unitType: "",
+      stockTrxDate: "",
       targetEndDate: "",
       discount: "",
       Shipping: "",
@@ -101,18 +104,20 @@ const CreateTarget = (args) => {
   const handleProductChangeProduct = (e, index) => {
     // product.price * product?.qty
     setIndex(index);
+    console.log(product);
     const { name, value } = e.target;
     const list = [...product];
-    list[index][name] = value;
+    list[index][name] = Number(value);
     console.log(GrandTotal);
+
     let amt = 0;
     if (list.length > 0) {
       const x = list?.map((val) => {
         console.log(val.qty * val.price);
-        GrandTotal[index] = val.qty * val.price;
+        GrandTotal[index] = val.Size * val.price * val.transferQty;
 
-        list[index]["totalprice"] = val.qty * val.price;
-        return val.qty * val.price;
+        list[index]["totalprice"] = val.Size * val.price * val.transferQty;
+        return val.Size * val.price * val.transferQty;
       });
       amt = x.reduce((a, b) => a + b);
       console.log("GrandTotal", amt);
@@ -140,6 +145,24 @@ const CreateTarget = (args) => {
     let amt = myarr.reduce((a, b) => a + b);
     setGrandTotalAmt(amt);
   };
+  const handleRemoveSelectedone = (selectedList, selectedItem, index) => {
+    // console.log(selectedList);
+    // console.log(selectedItem); // removed item
+    // console.log(product);
+    // console.log(index);
+    // console.log(SelectedITems);
+    SelectedSize.splice(index, 1);
+    let myarr = product?.map((ele, i) => {
+      // debugger;
+      console.log(ele?.Size * ele?.price * SelectedSize[i]?.unitQty);
+      let indextotal = ele?.Size * SelectedSize[i]?.unitQty;
+      GrandTotal[index] = indextotal;
+      return indextotal;
+    });
+
+    let amt = myarr.reduce((a, b) => a + b);
+    setGrandTotalAmt(amt);
+  };
   const handleSelection = (selectedList, selectedItem, index) => {
     SelectedITems.push(selectedItem);
     setProduct((prevProductList) => {
@@ -148,17 +171,39 @@ const CreateTarget = (args) => {
       updatedProduct.price = selectedItem?.Product_MRP; // Update the price of the copied product
       updatedProduct.productId = selectedItem?._id;
       updatedProductList[index] = updatedProduct; // Replace the product at the specified index with the updated one
+
+      // let myarr = prevProductList?.map((ele, i) => {
+      //   console.log(ele?.transferQty * selectedItem[i]?.Product_MRP);
+      //   let indextotal = ele?.transferQty * SelectedITems[i]?.Product_MRP;
+      //   GrandTotal[index] = indextotal;
+      //   return indextotal;
+      // });
+      // let amt = myarr.reduce((a, b) => a + b);
+      // setGrandTotalAmt(amt);
+      return updatedProductList; // Return the updated product list to set the state
+    });
+    // onSelect1(selectedList, selectedItem, index);
+  };
+  const handleSelectionone = (selectedList, selectedItem, index) => {
+    SelectedSize.push(selectedItem);
+
+    setProduct((prevProductList) => {
+      const updatedProductList = [...prevProductList]; // Create a copy of the productList array
+      const updatedProduct = { ...updatedProductList[index] }; // Create a copy of the product at the specified index
+      updatedProduct.Size = selectedItem?.unitQty; // Update the price of the copied product
+      updatedProduct.unitType = selectedItem?.primaryUnit;
+      updatedProductList[index] = updatedProduct; // Replace the product at the specified index with the updated one
       let myarr = prevProductList?.map((ele, i) => {
-        console.log(ele?.qty * selectedItem[i]?.Product_MRP);
-        let indextotal = ele?.qty * SelectedITems[i]?.Product_MRP;
+        console.log(ele?.transferQty * ele?.price * SelectedSize[i]?.unitQty);
+        let indextotal =
+          ele?.transferQty * ele?.price * SelectedSize[i]?.unitQty;
         GrandTotal[index] = indextotal;
         return indextotal;
       });
       let amt = myarr.reduce((a, b) => a + b);
       setGrandTotalAmt(amt);
-    return updatedProductList; // Return the updated product list to set the state
+      return updatedProductList; // Return the updated product list to set the state
     });
-    product.map((value) => console.log(value.totalprice));
     // onSelect1(selectedList, selectedItem, index);
   };
   const handleInputChange = (e, type, i) => {
@@ -210,29 +255,32 @@ const CreateTarget = (args) => {
     console.log(product);
     console.log(GrandTotal);
     console.log(Salesperson);
-    console.log(targetStartDate);
+    console.log(StockTrxdate);
     console.log(targetEndDate);
   }, [product, targetEndDate]);
 
   useEffect(() => {
-    Create_Sales_personList()
+    let userData = JSON.parse(localStorage.getItem("userData"));
+    CreateWarehouseList(userData._id)
       .then((res) => {
-        console.log(res?.SalesPerson);
-        setSalesPersonList(res?.SalesPerson);
-      })
-      .catch((err) => console.log(err));
-    ProductListView()
-      .then((res) => {
-        // console.log(res?.Product);
-        setProductList(res?.Product);
+        console.log(res?.Warehouse);
+        setWarehouseList(res?.Warehouse);
       })
       .catch((err) => {
         console.log(err);
       });
-    CreatePartyList()
+    UnitListView(userData?._id)
       .then((res) => {
-        // console.log(res.Party)
-        setPartyList(res.Party);
+        console.log(res?.Unit);
+        setUnitList(res?.Unit);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+    ProductListView(userData?._id)
+      .then((res) => {
+        console.log(res.Product);
+        setProductList(res?.Product);
       })
       .catch((err) => {
         console.log(err);
@@ -275,11 +323,12 @@ const CreateTarget = (args) => {
         product: "", //
         productId: "",
         availableQty: "",
-        qty: 1, //
+        transferQty: 1, //
         price: "", //
         totalprice: "", //
-        Salespersonname: "",
-        targetstartDate: "",
+        Size: "",
+        unitType: "",
+        stockTrxDate: "",
         targetEndDate: "",
         discount: "",
         Shipping: "",
@@ -303,6 +352,9 @@ const CreateTarget = (args) => {
   //   setPart(newFormValues);
   // };
 
+  const WareHousetoWareHouse = (e) => {
+    e.preventDefault();
+  };
   const submitHandler = (e) => {
     e.preventDefault();
 
@@ -312,21 +364,24 @@ const CreateTarget = (args) => {
     // console.log(targetStartDate);
     // console.log(targetEndDate);
     // console.log(grandTotalAmt);
+    debugger;
     let Allproduct = product?.map((ele, i) => {
       console.log(ele);
       return {
         productId: ele?.productId,
-        qtyAssign: ele?.qty,
+        unitType: ele?.qty,
         price: ele?.price,
+        Size: ele?.qty,
+        transferQty: ele?.price,
         totalPrice: ele?.totalprice,
       };
     });
     let payload = {
-      startDate: targetStartDate,
-      endDate: targetEndDate,
+      productItems: Allproduct,
+      warehouseToId: targetEndDate,
+      stockTransferDate: grandTotalAmt,
       grandTotal: grandTotalAmt,
-      salesPersonId: Salesperson[0]?._id,
-      products: Allproduct,
+      status: "Transferring",
     };
     // const ObjOrder = {
     //   userId: UserInfo?._id,
@@ -363,111 +418,100 @@ const CreateTarget = (args) => {
     }
   };
   const onSelect1 = (selectedList, selectedItem, index) => {
-    // console.log(selectedList);
-    setSalesperson(selectedList);
-    // console.log(index);
-    // if (selectedList.length) {
-    //   for (var i = 0; i < selectedList.length; i++) {
-    //     selectedOptions.push(selectedList[i].id);
-    //   }
-    // }
-    // let arr = selectedList.map((ele) => ele.id);
-    // setmultiSelect(arr);
-    // console.log(multiSelect);
-    // let uniqueChars = [...new Set(selectedOptions)];
-    // if (uniqueChars.length === 1) {
-    //   let value = uniqueChars[0];
-    //   const formdata = new FormData();
-    //   formdata.append("state_id", value);
-    //   axiosConfig
-    //     .post(`/getcity`, formdata)
-    //     .then((res) => {
-    //       setCityList(res?.data?.cities);
-    //     })
-    //     .catch((err) => {
-    //       console.log(err);
-    //     });
-    // } else {
-    //   setCityList([]);
-    // }
+    console.log(selectedList);
+    setWareHouseone(selectedList);
   };
   const onRemove1 = (selectedList, removedItem, index) => {
     console.log(selectedList);
     console.log(index);
-
-    // setmultiSelect(selectedList);
-
-    // let arr = selectedList.map((ele) => ele.id);
-    // console.log(arr);
-    // setmultiSelect(arr);
-    // console.log(multiSelect);
-    // if (selectedList.length) {
-    //   for (var i = 0; i < selectedList.length; i++) {
-    //     selectedOptions.push(selectedList[i].id);
-    //   }
-    // }
-    // let uniqueChars = [...new Set(selectedOptions)];
-    // console.log(uniqueChars);
+  };
+  const onSelect2 = (selectedList, selectedItem, index) => {
+    console.log(selectedList);
+    setWareHousetwo(selectedList);
+  };
+  const onRemove2 = (selectedList, removedItem, index) => {
+    console.log(selectedList);
+    console.log(index);
   };
   return (
     <div>
-      <div>
-        <Card>
-          <Row className="m-2">
-            <Col className="">
-              <div>
-                <h1 className="">Create Stock Transfer</h1>
-              </div>
-            </Col>
-            <Col>
-              <div className="float-right">
-                <Route
-                  render={({ history }) => (
-                    <Button
-                      style={{ cursor: "pointer" }}
-                      className="float-right mr-1"
-                      color="primary"
-                      onClick={() => history.goBack()}
-                    >
-                      {" "}
-                      Back
-                      {/* <FaPlus size={15} /> Create User */}
-                    </Button>
-                  )}
-                />
-              </div>
-            </Col>
-          </Row>
+      <Card>
+        <Row className="m-2">
+          <Col lg="8" md="8" sm="8" className="mb-2 mt-1">
+            <div>
+              <h1 className="">Create Stock Transfer</h1>
+              <div className="choose">
+                <h4 className="mb-1">Choose Type of Stock trx</h4>
+                <div
+                  className="form-label-group"
+                  onChange={(e) => setTypeOfTrx(e.target.value)}
+                  // onChange={(e) => {
+                  //   setFormData({
+                  //     ...formData,
+                  //     ["status"]: e.target.value,
+                  //   });
+                  // }}
+                >
+                  <input
+                    required
+                    style={{ marginRight: "3px" }}
+                    type="radio"
+                    name="status"
+                    value="Warehousetowarehouse"
+                  />
+                  <span style={{ marginRight: "20px" }}>
+                    Warehouse to Warehouse
+                  </span>
 
-          <CardBody>
-            {/* <Pickers /> */}
-            {/* <Col className="mb-3" md="6" sm="12">
-              <h5 className="text-bold-500">Range</h5>
-              <Flatpickr
-                // value={rangePicker}
-                className="form-control"
-                options={{ mode: "range" }}
-                onChange={(date) => {
-                  console.log(date);
-                }}
+                  <input
+                    required
+                    style={{ marginRight: "3px" }}
+                    type="radio"
+                    name="status"
+                    value="Factorytowarehourse"
+                  />
+                  <span style={{ marginRight: "3px" }}>
+                    Factory to Warehourse
+                  </span>
+                </div>
+              </div>
+            </div>
+          </Col>
+          <Col>
+            <div className="float-right">
+              <Route
+                render={({ history }) => (
+                  <Button
+                    style={{ cursor: "pointer" }}
+                    className="float-right mr-1"
+                    color="primary"
+                    onClick={() => history.goBack()}>
+                    {" "}
+                    Back
+                    {/* <FaPlus size={15} /> Create User */}
+                  </Button>
+                )}
               />
-            </Col> */}
-            <Form className="m-1" onSubmit={submitHandler}>
+            </div>
+          </Col>
+        </Row>
+        <CardBody>
+          {TypeOfTrx && TypeOfTrx == "Warehousetowarehouse" && (
+            <Form className="mx-1" onSubmit={WareHousetoWareHouse}>
               <Row>
                 <Col className="mb-1" lg="3" md="3" sm="12">
                   <div className="">
                     <Label>Choose Warehouse(from where) *</Label>
-
                     <Multiselect
                       required
                       selectionLimit={1}
                       // showCheckbox="true"
                       isObject="false"
-                      options={SalesPersonList} // Options to display in the dropdown
+                      options={WareHouselist} // Options to display in the dropdown
                       // selectedValues={selectedValue}   // Preselected value to persist in dropdown
                       onSelect={onSelect1} // Function will trigger on select event
                       onRemove={onRemove1} // Function will trigger on remove event
-                      displayValue="firstName" // Property name to display in the dropdown options
+                      displayValue="WarehouseName" // Property name to display in the dropdown options
                     />
                   </div>
                 </Col>
@@ -480,11 +524,11 @@ const CreateTarget = (args) => {
                       selectionLimit={1}
                       // showCheckbox="true"
                       isObject="false"
-                      options={SalesPersonList} // Options to display in the dropdown
+                      options={WareHouselist} // Options to display in the dropdown
                       // selectedValues={selectedValue}   // Preselected value to persist in dropdown
-                      onSelect={onSelect1} // Function will trigger on select event
-                      onRemove={onRemove1} // Function will trigger on remove event
-                      displayValue="firstName" // Property name to display in the dropdown options
+                      onSelect={onSelect2} // Function will trigger on select event
+                      onRemove={onRemove2} // Function will trigger on remove event
+                      displayValue="WarehouseName" // Property name to display in the dropdown options
                     />
                   </div>
                 </Col>
@@ -496,8 +540,191 @@ const CreateTarget = (args) => {
                       type="date"
                       name="targetEndDate"
                       placeholder="Date of Delivery"
-                      value={targetStartDate}
-                      onChange={(e) => settargetStartDate(e.target.value)}
+                      value={StockTrxdate}
+                      onChange={(e) => setStockTrxDate(e.target.value)}
+                    />
+                  </div>
+                </Col>
+              </Row>
+              {product &&
+                product?.map((product, index) => (
+                  <Row className="" key={index}>
+                    <Col className="mb-1" lg="2" md="2" sm="12">
+                      <div className="">
+                        <Label>Product Name</Label>
+                        <Multiselect
+                          required
+                          selectionLimit={1}
+                          // showCheckbox="true"
+                          isObject="false"
+                          options={ProductList}
+                          // selectedValues={selectedValue}   // Preselected value to persist in dropdown
+                          onSelect={(selectedList, selectedItem) =>
+                            handleSelection(selectedList, selectedItem, index)
+                          }
+                          onRemove={(selectedList, selectedItem) => {
+                            handleRemoveSelected(
+                              selectedList,
+                              selectedItem,
+                              index
+                            );
+                          }}
+                          displayValue="Product_Title" // Property name to display in the dropdown options
+                        />
+                      </div>
+                    </Col>
+                    <Col className="mb-1" lg="2" md="2" sm="12">
+                      <div className="">
+                        <Label>Size</Label>
+                        <Multiselect
+                          required
+                          selectionLimit={1}
+                          // showCheckbox="true"
+                          isObject="false"
+                          options={UnitList}
+                          // selectedValues={selectedValue}   // Preselected value to persist in dropdown
+                          onSelect={(selectedList, selectedItem) =>
+                            handleSelectionone(
+                              selectedList,
+                              selectedItem,
+                              index
+                            )
+                          }
+                          onRemove={(selectedList, selectedItem) => {
+                            handleRemoveSelectedone(
+                              selectedList,
+                              selectedItem,
+                              index
+                            );
+                          }}
+                          displayValue="primaryUnit" // Property name to display in the dropdown options
+                        />
+                      </div>
+                    </Col>
+                    <Col className="mb-1" lg="2" md="2" sm="12">
+                      <div className="">
+                        <Label>Quantity To be Transfer</Label>
+                        <Input
+                          type="number"
+                          name="transferQty"
+                          placeholder="Req_Qty"
+                          value={product?.qty}
+                          onChange={(e) => handleProductChangeProduct(e, index)}
+                        />
+                      </div>
+                    </Col>
+                    <Col className="mb-1" lg="2" md="2" sm="12">
+                      <div className="">
+                        <Label>Price</Label>
+                        <Input
+                          type="number"
+                          name="price"
+                          readOnly
+                          placeholder="Price"
+                          value={product.price}
+                        />
+                      </div>
+                    </Col>
+                    <Col className="mb-1" lg="2" md="2" sm="12">
+                      <div className="">
+                        <Label>Total Price</Label>
+                        <Input
+                          type="number"
+                          name="totalprice"
+                          readOnly
+                          placeholder="TtlPrice"
+                          value={
+                            product.Size * product.price * product.transferQty
+                          }
+                        />
+                      </div>
+                    </Col>
+
+                    <Col className="d-flex mt-1 abb" lg="3" md="3" sm="12">
+                      <div className="btnStyle">
+                        {index ? (
+                          <Badge
+                            type="button"
+                            color="danger"
+                            className="button remove "
+                            onClick={() => removeMoreProduct(index)}>
+                            - Remove
+                          </Badge>
+                        ) : null}
+                      </div>
+
+                      <div className="btnStyle">
+                        <Badge
+                          className="ml-1 mb-1"
+                          color="primary"
+                          type="button"
+                          onClick={() => addMoreProduct()}>
+                          + Add
+                        </Badge>
+                      </div>
+                    </Col>
+                  </Row>
+                ))}
+
+              <Row>
+                <Col className="mb-1" lg="12" md="12" sm="12">
+                  <div className=" d-flex justify-content-end">
+                    <Label className="pr-5">
+                      Grand Total :{" "}
+                      <stron>
+                        {grandTotalAmt && grandTotalAmt == "NaN"
+                          ? 0
+                          : grandTotalAmt}{" "}
+                      </stron>
+                    </Label>
+                  </div>
+                </Col>
+              </Row>
+              <Row>
+                <Col>
+                  <div className="d-flex justify-content-center">
+                    <Button.Ripple
+                      color="primary"
+                      type="submit"
+                      className="mt-2">
+                      Submit
+                    </Button.Ripple>
+                  </div>
+                </Col>
+              </Row>
+            </Form>
+          )}
+          {TypeOfTrx && TypeOfTrx == "Factorytowarehourse" && (
+            <Form className="m-1" onSubmit={submitHandler}>
+              <Row>
+                <Col className="mb-1" lg="3" md="3" sm="12">
+                  <div className="">
+                    <Label>Choose Warehouse </Label>
+
+                    <Multiselect
+                      required
+                      selectionLimit={1}
+                      // showCheckbox="true"
+                      isObject="false"
+                      options={WareHouselist} // Options to display in the dropdown
+                      // selectedValues={selectedValue}   // Preselected value to persist in dropdown
+                      onSelect={onSelect1} // Function will trigger on select event
+                      onRemove={onRemove1} // Function will trigger on remove event
+                      displayValue="WarehouseName" // Property name to display in the dropdown options
+                    />
+                  </div>
+                </Col>
+
+                <Col className="mb-1" lg="2" md="2" sm="12">
+                  <div className="">
+                    <Label>Stock Transfer date</Label>
+                    <Input
+                      required
+                      type="date"
+                      name="targetEndDate"
+                      placeholder="Date of Delivery"
+                      value={StockTrxdate}
+                      onChange={(e) => setStockTrxDate(e.target.value)}
                     />
                   </div>
                 </Col>
@@ -545,10 +772,38 @@ const CreateTarget = (args) => {
                     </Col>
                     <Col className="mb-1" lg="2" md="2" sm="12">
                       <div className="">
+                        <Label>Size</Label>
+                        <Multiselect
+                          required
+                          selectionLimit={1}
+                          // showCheckbox="true"
+                          isObject="false"
+                          options={UnitList}
+                          // selectedValues={selectedValue}   // Preselected value to persist in dropdown
+                          onSelect={(selectedList, selectedItem) =>
+                            handleSelectionone(
+                              selectedList,
+                              selectedItem,
+                              index
+                            )
+                          }
+                          onRemove={(selectedList, selectedItem) => {
+                            handleRemoveSelectedone(
+                              selectedList,
+                              selectedItem,
+                              index
+                            );
+                          }}
+                          displayValue="primaryUnit" // Property name to display in the dropdown options
+                        />
+                      </div>
+                    </Col>
+                    <Col className="mb-1" lg="2" md="2" sm="12">
+                      <div className="">
                         <Label>Quantity To be Transfer</Label>
                         <Input
                           type="number"
-                          name="qty"
+                          name="transferQty"
                           placeholder="Req_Qty"
                           value={product?.qty}
                           onChange={(e) => handleProductChangeProduct(e, index)}
@@ -575,7 +830,9 @@ const CreateTarget = (args) => {
                           name="totalprice"
                           readOnly
                           placeholder="TtlPrice"
-                          value={product.price * product?.qty}
+                          value={
+                            product.Size * product.price * product.transferQty
+                          }
                         />
                       </div>
                     </Col>
@@ -587,8 +844,7 @@ const CreateTarget = (args) => {
                             type="button"
                             color="danger"
                             className="button remove "
-                            onClick={() => removeMoreProduct(index)}
-                          >
+                            onClick={() => removeMoreProduct(index)}>
                             - Remove
                           </Button>
                         ) : null}
@@ -599,8 +855,7 @@ const CreateTarget = (args) => {
                           className="ml-1 mb-1"
                           color="primary"
                           type="button"
-                          onClick={() => addMoreProduct()}
-                        >
+                          onClick={() => addMoreProduct()}>
                           + Add
                         </Button>
                       </div>
@@ -649,7 +904,12 @@ const CreateTarget = (args) => {
                 <Col className="mb-1" lg="12" md="12" sm="12">
                   <div className=" d-flex justify-content-end">
                     <Label className="pr-5">
-                      Grand Total : <stron>{grandTotalAmt}</stron>
+                      Grand Total :{" "}
+                      <stron>
+                        {grandTotalAmt && grandTotalAmt == "NaN"
+                          ? 0
+                          : grandTotalAmt}{" "}
+                      </stron>
                     </Label>
                   </div>
                 </Col>
@@ -660,17 +920,16 @@ const CreateTarget = (args) => {
                     <Button.Ripple
                       color="primary"
                       type="submit"
-                      className="mt-2"
-                    >
+                      className="mt-2">
                       Submit
                     </Button.Ripple>
                   </div>
                 </Col>
               </Row>
             </Form>
-          </CardBody>
-        </Card>
-      </div>
+          )}
+        </CardBody>
+      </Card>
     </div>
   );
 };
