@@ -396,6 +396,12 @@ class HorizontalSidebar extends React.Component {
     return (
       <div className="">
         <div
+          style={{
+            backgroundColor: `${
+              this.props.contextValue ? this.props.contextValue : "White"
+            }`,
+            width: "100%",
+          }}
           className={classnames(
             " mycustomereturn header-navbar navbar-expand-sm navbar navbar-horizontal navbar-shadow"
             // {
@@ -407,8 +413,7 @@ class HorizontalSidebar extends React.Component {
             //       this.props.navbarType
             //     ),
             // }
-          )}
-          style={{ width: "100%" }}>
+          )}>
           <div className="navbar-container main-menu-content mycustomcontent">
             <ul className="nav" id="main-menu-navigation mycustomnavigation">
               {this.renderDropdown(navigationConfig)}
