@@ -1,369 +1,3 @@
-// import React from "react";
-// import {
-//   Card,
-//   CardBody,
-//   Input,
-//   Row,
-//   Col,
-//   Button,
-//   UncontrolledDropdown,
-//   DropdownMenu,
-//   DropdownItem,
-//   DropdownToggle,
-//   Label,
-//   CustomInput,
-// } from "reactstrap";
-// // import axiosConfig from "../../../axiosConfig";
-// import axios from "axios";
-// import { ContextLayout } from "../../../../utility/context/Layout";
-// import { AgGridReact } from "ag-grid-react";
-// import { Edit, Trash2, ChevronDown, Eye } from "react-feather";
-// import { history } from "../../../../history";
-// import "../../../../assets/scss/plugins/tables/_agGridStyleOverride.scss";
-// import "../../../../assets/scss/pages/users.scss";
-// import { Route, Link } from "react-router-dom";
-// import { ProductListView } from "../../../../ApiEndPoint/ApiCalling";
-
-// class HouseProductList extends React.Component {
-//   state = {
-//     rowData: [],
-//     paginationPageSize: 20,
-//     currenPageSize: "",
-//     getPageSize: "",
-//     defaultColDef: {
-//       sortable: true,
-//       editable: true,
-//       resizable: true,
-//       suppressMenu: true,
-//     },
-//     columnDefs: [
-//       {
-//         headerName: "S.No",
-//         valueGetter: "node.rowIndex + 1",
-//         field: "node.rowIndex + 1",
-//         width: 150,
-//         filter: true,
-//       },
-//       {
-//         headerName: "Product Name",
-//         field: "product_name",
-//         filter: true,
-//         width: 200,
-//         cellRendererFramework: (params) => {
-//           return (
-//             <div>
-//               <span>{params.data.product_name}</span>
-//             </div>
-//           );
-//         },
-//       },
-//       {
-//         headerName: "Purchase Price",
-//         field: "buying_price",
-//         filter: true,
-//         width: 190,
-//         cellRendererFramework: (params) => {
-//           return (
-//             <div className="d-flex align-items-center cursor-pointer">
-//               <span>{params.data.buying_price}</span>
-//             </div>
-//           );
-//         },
-//       },
-
-//       {
-//         headerName: "Selling Price",
-//         field: "selling_price",
-//         filter: true,
-//         width: 200,
-//         cellRendererFramework: (params) => {
-//           return (
-//             <div>
-//               <span>{params.data.selling_price}</span>
-//             </div>
-//           );
-//         },
-//       },
-//       {
-//         headerName: "Status",
-//         field: "status",
-//         filter: true,
-//         width: 150,
-//         cellRendererFramework: (params) => {
-//           return params.data.status === "Active" ? (
-//             <div className="badge badge-pill badge-success">
-//               {params.data.status}
-//             </div>
-//           ) : params.data.status === "Inactive" ? (
-//             <div className="badge badge-pill badge-warning">
-//               {params.data.status}
-//             </div>
-//           ) : null;
-//         },
-//       },
-//       {
-//         headerName: "Actions",
-//         field: "sortorder",
-//         // eslint-disable-next-line no-dupe-keys
-//         field: "transactions",
-//         width: 150,
-//         cellRendererFramework: (params) => {
-//           return (
-//             <div className="actions cursor-pointer">
-//               <Route
-//                 render={({ history }) => (
-//                   <Eye
-//                     className="mr-50"
-//                     size="25px"
-//                     color="green"
-//                     onClick={() =>
-//                       history.push(
-//                         `/app/freshlist/house/viewHouseProduct/${params.data._id}`
-//                       )
-//                     }
-//                   />
-//                 )}
-//               />
-//               <Route
-//                 render={({ history }) => (
-//                   <Edit
-//                     className="mr-50"
-//                     size="25px"
-//                     color="blue"
-//                     onClick={() =>
-//                       history.push(
-//                         `/app/freshlist/house/editHouseProduct/${params.data._id}`
-//                       )
-//                     }
-//                   />
-//                 )}
-//               />
-//               <Trash2
-//                 className="mr-50"
-//                 size="25px"
-//                 color="red"
-//                 onClick={() => {
-//                   let selectedData = this.gridApi.getSelectedRows();
-//                   this.runthisfunction(params.data._id);
-//                   this.gridApi.updateRowData({ remove: selectedData });
-//                 }}
-//               />
-//             </div>
-//           );
-//         },
-//       },
-//     ],
-//   };
-
-//   async componentDidMount() {
-//     await ProductListView()
-//       .then((res) => {
-//         console.log(res?.Product);
-//       })
-//       .catch((err) => {
-//         console.log(err);
-//       });
-//   }
-
-//   async runthisfunction(id) {
-//     console.log(id);
-//     await axios.get(`http://35.154.86.59/api/user/delcustomer/${id}`).then(
-//       (response) => {
-//         console.log(response);
-//       },
-//       (error) => {
-//         console.log(error);
-//       }
-//     );
-//   }
-//   onGridReady = (params) => {
-//     this.gridApi = params.api;
-//     this.gridColumnApi = params.columnApi;
-//     this.setState({
-//       currenPageSize: this.gridApi.paginationGetCurrentPage() + 1,
-//       getPageSize: this.gridApi.paginationGetPageSize(),
-//       totalPages: this.gridApi.paginationGetTotalPages(),
-//     });
-//   };
-//   updateSearchQuery = (val) => {
-//     this.gridApi.setQuickFilter(val);
-//   };
-//   filterSize = (val) => {
-//     if (this.gridApi) {
-//       this.gridApi.paginationSetPageSize(Number(val));
-//       this.setState({
-//         currenPageSize: val,
-//         getPageSize: val,
-//       });
-//     }
-//   };
-//   render() {
-//     const { rowData, columnDefs, defaultColDef } = this.state;
-//     return (
-//       console.log(rowData),
-//       (
-//         <Row className="app-user-list">
-//           <Col sm="12"></Col>
-//           <Col sm="12">
-//             <Card>
-//               <Row className="m-2">
-//                 <Col>
-//                   <h1 sm="6" className="float-left">
-//                     Product List
-//                   </h1>
-//                 </Col>
-//                 {/* <Col>
-//                   <Button
-//                     style={{ marginRight: "-22rem" }}
-//                     className=" btn btn-danger float-right"
-//                     onClick={() =>
-//                       history.push("/app/freshlist/house/HouseProductList")
-//                     }
-//                   >
-//                     Back
-//                   </Button>
-//                 </Col> */}
-//                 <Col>
-//                   <Route
-//                     render={({ history }) => (
-//                       <Button
-//                         className="btn  float-right"
-//                         color="primary"
-//                         onClick={() =>
-//                           history.push("/app/freshlist/house/AddProduct")
-//                         }
-//                       >
-//                         Add Product
-//                       </Button>
-//                     )}
-//                   />
-//                 </Col>
-//               </Row>
-//               <CardBody>
-//                 {this.state.rowData === null ? null : (
-//                   <div className="ag-theme-material w-100 my-2 ag-grid-table">
-//                     <div className="d-flex flex-wrap justify-content-between align-items-center">
-//                       <div className="mb-1">
-//                         <UncontrolledDropdown className="p-1 ag-dropdown">
-//                           <DropdownToggle tag="div">
-//                             {this.gridApi
-//                               ? this.state.currenPageSize
-//                               : "" * this.state.getPageSize -
-//                                 (this.state.getPageSize - 1)}{" "}
-//                             -{" "}
-//                             {this.state.rowData.length -
-//                               this.state.currenPageSize *
-//                                 this.state.getPageSize >
-//                             0
-//                               ? this.state.currenPageSize *
-//                                 this.state.getPageSize
-//                               : this.state.rowData.length}{" "}
-//                             of {this.state.rowData.length}
-//                             <ChevronDown className="ml-50" size={15} />
-//                           </DropdownToggle>
-//                           <DropdownMenu right>
-//                             <DropdownItem
-//                               tag="div"
-//                               onClick={() => this.filterSize(20)}
-//                             >
-//                               20
-//                             </DropdownItem>
-//                             <DropdownItem
-//                               tag="div"
-//                               onClick={() => this.filterSize(50)}
-//                             >
-//                               50
-//                             </DropdownItem>
-//                             <DropdownItem
-//                               tag="div"
-//                               onClick={() => this.filterSize(100)}
-//                             >
-//                               100
-//                             </DropdownItem>
-//                             <DropdownItem
-//                               tag="div"
-//                               onClick={() => this.filterSize(134)}
-//                             >
-//                               134
-//                             </DropdownItem>
-//                           </DropdownMenu>
-//                         </UncontrolledDropdown>
-//                       </div>
-//                       <div className="d-flex flex-wrap justify-content-between mb-1">
-//                         <div className="mr-1">
-//                           <CustomInput
-//                             type="select"
-//                             placeholder="Select Type"
-//                             name="type"
-//                             value={this.state.sortorder}
-//                             onChange={this.changeHandler}
-//                           >
-//                             <option> Select Products </option>
-//                             <option value="less than 10">Less than 10</option>
-//                             <option value="less than 5 ">Less than 5</option>
-//                             <option value="out of stock">Out of Stock</option>
-//                             <option value="less than 5 ">
-//                               Expiring in 90 Days
-//                             </option>
-//                             <option value="out of stock">
-//                               Expiring in 60 Days
-//                             </option>
-//                             <option value="out of stock">
-//                               Expiring in 30 Days
-//                             </option>
-//                           </CustomInput>
-//                         </div>
-
-//                         <div className="table-input mr-1">
-//                           <Input
-//                             placeholder="search..."
-//                             onChange={(e) =>
-//                               this.updateSearchQuery(e.target.value)
-//                             }
-//                             value={this.state.value}
-//                           />
-//                         </div>
-//                         <div className="export-btn">
-//                           <Button.Ripple
-//                             color="primary"
-//                             onClick={() => this.gridApi.exportDataAsCsv()}
-//                           >
-//                             Export as CSV
-//                           </Button.Ripple>
-//                         </div>
-//                       </div>
-//                     </div>
-//                     <ContextLayout.Consumer>
-//                       {(context) => (
-//                         <AgGridReact
-//                           gridOptions={{}}
-//                           rowSelection="multiple"
-//                           defaultColDef={defaultColDef}
-//                           columnDefs={columnDefs}
-//                           rowData={rowData}
-//                           onGridReady={this.onGridReady}
-//                           colResizeDefault={"shift"}
-//                           animateRows={true}
-//                           floatingFilter={false}
-//                           pagination={true}
-//                           paginationPageSize={this.state.paginationPageSize}
-//                           pivotPanelShow="always"
-//                           enableRtl={context.state.direction === "rtl"}
-//                         />
-//                       )}
-//                     </ContextLayout.Consumer>
-//                   </div>
-//                 )}
-//               </CardBody>
-//             </Card>
-//           </Col>
-//         </Row>
-//       )
-//     );
-//   }
-// }
-// export default HouseProductList;
-
 import React, { useRef } from "react";
 import { Route } from "react-router-dom";
 import xmlJs from "xml-js";
@@ -451,7 +85,7 @@ class HouseProductList extends React.Component {
   }
 
   LookupviewStart = () => {
-    this.setState((prevState) => ({
+    this.setState(prevState => ({
       modal: !prevState.modal,
     }));
   };
@@ -470,51 +104,49 @@ class HouseProductList extends React.Component {
   async componentDidMount() {
     const UserInformation = this.context?.UserInformatio;
     CreateProductXMLView()
-      .then((res) => {
+      .then(res => {
         const jsonData = xmlJs.xml2json(res.data, { compact: true, spaces: 2 });
         console.log(JSON.parse(jsonData)?.createProduct);
 
-        const inputs = JSON.parse(jsonData)?.createProduct?.input?.map(
-          (ele) => {
-            if (ele?.type._attributes.type == "file") {
-              return {
-                headerName: ele?.label._text,
-                field: ele?.name._text,
-                filter: true,
-                sortable: true,
-                cellRendererFramework: (params) => {
-                  return (
-                    <>
+        const inputs = JSON.parse(jsonData)?.createProduct?.input?.map(ele => {
+          if (ele?.type._attributes.type == "file") {
+            return {
+              headerName: ele?.label._text,
+              field: ele?.name._text,
+              filter: true,
+              sortable: true,
+              cellRendererFramework: params => {
+                return (
+                  <>
+                    <div className="actions cursor-pointer">
                       <div className="actions cursor-pointer">
-                        <div className="actions cursor-pointer">
-                          {params.data?.Product_image && (
-                            <img
-                              className="rounded-circle mr-50"
-                              src={`http://65.0.96.247:8000/Images/${params.data?.Product_image}`}
-                              alt="user avatar"
-                              height="40"
-                              width="40"
-                            />
-                          )}
-                        </div>
+                        {params.data?.Product_image && (
+                          <img
+                            className="rounded-circle mr-50"
+                            src={`http://65.0.96.247:8000/Images/${params.data?.Product_image}`}
+                            alt="user avatar"
+                            height="40"
+                            width="40"
+                          />
+                        )}
                       </div>
-                    </>
-                  );
-                },
-              };
-            } else {
-              return {
-                headerName: ele?.label._text,
-                field: ele?.name._text,
-                filter: true,
-                sortable: true,
-              };
-            }
+                    </div>
+                  </>
+                );
+              },
+            };
+          } else {
+            return {
+              headerName: ele?.label._text,
+              field: ele?.name._text,
+              filter: true,
+              sortable: true,
+            };
           }
-        );
+        });
         let dropdown = JSON.parse(jsonData).createProduct?.MyDropDown;
         if (dropdown.length) {
-          var mydropdownArray = dropdown?.map((ele) => {
+          var mydropdownArray = dropdown?.map(ele => {
             return {
               headerName: ele?.dropdown?.label?._text,
               field: ele?.dropdown?.name?._text,
@@ -532,7 +164,6 @@ class HouseProductList extends React.Component {
             },
           ];
         }
-        debugger;
 
         let myHeadings = [
           // ...checkboxinput,
@@ -547,7 +178,7 @@ class HouseProductList extends React.Component {
             field: "sortorder",
             field: "transactions",
             width: 190,
-            cellRendererFramework: (params) => {
+            cellRendererFramework: params => {
               return (
                 <div className="actions cursor-pointer">
                   <Route
@@ -598,7 +229,7 @@ class HouseProductList extends React.Component {
             field: "createdAt",
             filter: true,
             sortable: true,
-            cellRendererFramework: (params) => {
+            cellRendererFramework: params => {
               return (
                 <>
                   <div className="actions cursor-pointer">
@@ -613,7 +244,7 @@ class HouseProductList extends React.Component {
             field: "updatedAt",
             filter: true,
             sortable: true,
-            cellRendererFramework: (params) => {
+            cellRendererFramework: params => {
               return (
                 <>
                   <div className="actions cursor-pointer">
@@ -640,21 +271,21 @@ class HouseProductList extends React.Component {
         }
         this.setState({ SelectedCols: Product });
       })
-      .catch((err) => {
+      .catch(err => {
         console.log(err);
         swal("Error", "something went wrong try again");
       });
     await ProductListView()
-      .then((res) => {
+      .then(res => {
         console.log(res?.Product);
         this.setState({ rowData: res?.Product });
       })
-      .catch((err) => {
+      .catch(err => {
         console.log(err);
       });
   }
   toggleDropdown = () => {
-    this.setState((prevState) => ({ isOpen: !prevState.isOpen }));
+    this.setState(prevState => ({ isOpen: !prevState.isOpen }));
   };
 
   runthisfunction(id) {
@@ -663,15 +294,15 @@ class HouseProductList extends React.Component {
         cancel: "cancel",
         catch: { text: "Delete ", value: "delete" },
       },
-    }).then((value) => {
+    }).then(value => {
       switch (value) {
         case "delete":
           DeleteAccount(id)
-            .then((res) => {
+            .then(res => {
               let selectedData = this.gridApi.getSelectedRows();
               this.gridApi.updateRowData({ remove: selectedData });
             })
-            .catch((err) => {
+            .catch(err => {
               console.log(err);
             });
           break;
@@ -680,7 +311,7 @@ class HouseProductList extends React.Component {
     });
   }
 
-  onGridReady = (params) => {
+  onGridReady = params => {
     this.gridApi = params.api;
     this.gridColumnApi = params.columnApi;
     this.gridRef.current = params.api;
@@ -692,11 +323,11 @@ class HouseProductList extends React.Component {
     });
   };
 
-  updateSearchQuery = (val) => {
+  updateSearchQuery = val => {
     this.gridApi.setQuickFilter(val);
   };
 
-  filterSize = (val) => {
+  filterSize = val => {
     if (this.gridApi) {
       this.gridApi.paginationSetPageSize(Number(val));
       this.setState({
@@ -711,7 +342,7 @@ class HouseProductList extends React.Component {
       SelectedColums?.push(value);
     } else {
       const delindex = SelectedColums?.findIndex(
-        (ele) => ele?.headerName === value?.headerName
+        ele => ele?.headerName === value?.headerName
       );
 
       SelectedColums?.splice(delindex, 1);
@@ -722,14 +353,14 @@ class HouseProductList extends React.Component {
       Papa.parse(csvData, {
         header: true,
         skipEmptyLines: true,
-        complete: (result) => {
+        complete: result => {
           if (result.data && result.data.length > 0) {
             resolve(result.data);
           } else {
             reject(new Error("No data found in the CSV"));
           }
         },
-        error: (error) => {
+        error: error => {
           reject(error);
         },
       });
@@ -741,7 +372,7 @@ class HouseProductList extends React.Component {
 
     const doc = new jsPDF("landscape", "mm", size, false);
     doc.setTextColor(5, 87, 97);
-    const tableData = parsedData.map((row) => Object.values(row));
+    const tableData = parsedData.map(row => Object.values(row));
     doc.addImage(Logo, "JPEG", 10, 10, 50, 30);
     let date = new Date();
     doc.setCreationDate(date);
@@ -766,14 +397,14 @@ class HouseProductList extends React.Component {
       console.error("Error parsing CSV:", error);
     }
   };
-  processCell = (params) => {
+  processCell = params => {
     // console.log(params);
     // Customize cell content as needed
     return params.value;
   };
 
   convertCsvToExcel(csvData) {
-    return new Promise((resolve) => {
+    return new Promise(resolve => {
       Papa.parse(csvData, {
         header: true,
         dynamicTyping: true,
@@ -804,7 +435,7 @@ class HouseProductList extends React.Component {
     window.URL.revokeObjectURL(url);
   }
 
-  exportToExcel = async (e) => {
+  exportToExcel = async e => {
     const CsvData = this.gridApi.getDataAsCsv({
       processCellCallback: this.processCell,
     });
@@ -817,7 +448,7 @@ class HouseProductList extends React.Component {
       processCellCallback: this.processCell,
     });
     Papa.parse(CsvData, {
-      complete: (result) => {
+      complete: result => {
         const ws = XLSX.utils.json_to_sheet(result.data);
         const wb = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(wb, ws, "Sheet1");
@@ -853,13 +484,13 @@ class HouseProductList extends React.Component {
       processCellCallback: this.processCell,
     });
     Papa.parse(CsvData, {
-      complete: (result) => {
+      complete: result => {
         const rows = result.data;
 
         // Create XML
         let xmlString = "<root>\n";
 
-        rows.forEach((row) => {
+        rows.forEach(row => {
           xmlString += "  <row>\n";
           row.forEach((cell, index) => {
             xmlString += `    <field${index + 1}>${cell}</field${index + 1}>\n`;
@@ -881,7 +512,7 @@ class HouseProductList extends React.Component {
     });
   };
 
-  HandleSetVisibleField = (e) => {
+  HandleSetVisibleField = e => {
     e.preventDefault();
     this.gridApi.setColumnDefs(this.state.SelectedcolumnDefs);
     this.setState({ columnDefs: this.state.SelectedcolumnDefs });
@@ -897,10 +528,10 @@ class HouseProductList extends React.Component {
   HeadingRightShift = () => {
     const updatedSelectedColumnDefs = [
       ...new Set([
-        ...this.state.SelectedcolumnDefs.map((item) => JSON.stringify(item)),
-        ...SelectedColums.map((item) => JSON.stringify(item)),
+        ...this.state.SelectedcolumnDefs.map(item => JSON.stringify(item)),
+        ...SelectedColums.map(item => JSON.stringify(item)),
       ]),
-    ].map((item) => JSON.parse(item));
+    ].map(item => JSON.parse(item));
     this.setState({
       SelectedcolumnDefs: [...new Set(updatedSelectedColumnDefs)], // Update the state with the combined array
     });
@@ -936,7 +567,7 @@ class HouseProductList extends React.Component {
               <Col>
                 <div className="d-flex justify-content-end p-1">
                   <Button
-                    onClick={(e) => {
+                    onClick={e => {
                       e.preventDefault();
                       this.setState({ EditOneUserView: false });
                     }}
@@ -957,7 +588,7 @@ class HouseProductList extends React.Component {
                     <Col>
                       <div className="d-flex justify-content-end p-1">
                         <Button
-                          onClick={(e) => {
+                          onClick={e => {
                             e.preventDefault();
                             this.setState({ ViewOneUserView: false });
                           }}
@@ -1127,7 +758,7 @@ class HouseProductList extends React.Component {
                                 <div className="table-input mr-1">
                                   <Input
                                     placeholder="search Item here..."
-                                    onChange={(e) =>
+                                    onChange={e =>
                                       this.updateSearchQuery(e.target.value)
                                     }
                                     value={this.state.value}
@@ -1136,7 +767,7 @@ class HouseProductList extends React.Component {
                               </div>
                             </div>
                             <ContextLayout.Consumer className="ag-theme-alpine">
-                              {(context) => (
+                              {context => (
                                 <AgGridReact
                                   id="myAgGrid"
                                   // gridOptions={{
@@ -1207,9 +838,7 @@ class HouseProductList extends React.Component {
                         return (
                           <>
                             <div
-                              onClick={(e) =>
-                                this.handleChangeHeader(e, ele, i)
-                              }
+                              onClick={e => this.handleChangeHeader(e, ele, i)}
                               key={i}
                               className="mycustomtag mt-1"
                             >
@@ -1284,7 +913,7 @@ class HouseProductList extends React.Component {
                                             this.state.SelectedcolumnDefs.slice();
                                           const delindex =
                                             SelectedCols.findIndex(
-                                              (element) =>
+                                              element =>
                                                 element?.headerName ==
                                                 ele?.headerName
                                             );

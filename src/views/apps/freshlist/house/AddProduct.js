@@ -11,7 +11,6 @@ import {
   Button,
   FormGroup,
   CustomInput,
-  Badge,
 } from "reactstrap";
 import { history } from "../../../../history";
 import PhoneInput from "react-phone-input-2";
@@ -26,24 +25,19 @@ import "../../../../../src/layouts/assets/scss/pages/users.scss";
 
 import {
   AllCategoryList,
-  CreateAccountSave,
-  CreateAccountView,
   CreateProductXMLView,
   SaveProduct,
   UnitListView,
+  CreateWarehouseList,
 } from "../../../../ApiEndPoint/ApiCalling";
-import { BiEnvelope } from "react-icons/bi";
-import { FcPhoneAndroid } from "react-icons/fc";
-import { BsWhatsapp } from "react-icons/bs";
 import "../../../../assets/scss/pages/users.scss";
 import UserContext from "../../../../context/Context";
-import { CloudLightning } from "react-feather";
-import { FaPlus } from "react-icons/fa";
 
 const AddProduct = () => {
   const [CreatAccountView, setCreatAccountView] = useState([]);
   const [categoryList, setcategoryList] = useState([]);
   const [UnitList, setUnitList] = useState([]);
+  const [wareHouseList, setWareHouseList] = useState([]);
   const [subcatlist, setsubcatlist] = useState([]);
   const [Countries, setCountry] = useState({});
   const [States, setState] = useState({});
@@ -110,56 +104,59 @@ const AddProduct = () => {
       }
     }
   };
-  const changeHandler1 = (e) => {
+  const changeHandler1 = e => {
     setFormData({
       ...formData,
       ["status"]: e.target.value,
     });
   };
   useEffect(() => {
-    console.log(formData);
+    // console.log(formData);
   }, [formData]);
   useEffect(() => {
     CreateProductXMLView()
-      // CreateAccountView()
-      .then((res) => {
+      .then(res => {
         const jsonData = xmlJs.xml2json(res.data, { compact: true, spaces: 2 });
-        console.log(JSON.parse(jsonData));
-
+        console.log(JSON.parse(jsonData).createProduct);
         setCreatAccountView(JSON.parse(jsonData)?.createProduct);
-
         setdropdownValue(JSON.parse(jsonData)?.createProduct);
       })
-      .catch((err) => {
+      .catch(err => {
         console.log(err);
       });
     let pageparmission = JSON.parse(localStorage.getItem("userData"));
 
     AllCategoryList(pageparmission?._id)
-      .then((res) => {
+      .then(res => {
         console.log(res);
         if (res?.Category) {
           setcategoryList(res.Category);
         }
       })
-      .catch((err) => {
+      .catch(err => {
         console.log(err);
       });
 
     let userData = JSON.parse(localStorage.getItem("userData"));
     UnitListView(userData?._id)
-      .then((res) => {
+      .then(res => {
         console.log(res?.Unit);
         setUnitList(res?.Unit);
       })
-      .catch((err) => {
+      .catch(err => {
+        console.log(err);
+      });
+    CreateWarehouseList(userData?._id)
+      .then(res => {
+        console.log(res?.Warehouse);
+        setWareHouseList(res?.Warehouse);
+      })
+      .catch(err => {
         console.log(err);
       });
   }, []);
   const handleFileChange = (e, type, i) => {
-    const { name, value, checked } = e.target;
-    let allimages = Array.from(e.target.files);
-    debugger;
+    const { name } = e.target;
     setindex(i);
     setFormData({
       ...formData,
@@ -167,9 +164,12 @@ const AddProduct = () => {
     });
   };
 
-  const submitHandler = (e) => {
+  const submitHandler = e => {
     e.preventDefault();
     let formdata = new FormData();
+    let userData = JSON.parse(localStorage.getItem("userData"));
+    formdata.append("created_by", userData._id);
+    // formdata.append("created_by", formData["userData._id"]);
     console.log(formData);
     console.log(CreatAccountView);
     CreatAccountView?.input?.map((ele, i) => {
@@ -181,6 +181,7 @@ const AddProduct = () => {
         formdata.append(`${ele?.name._text}`, formData[ele?.name?._text]);
       }
     });
+
     CreatAccountView?.MyDropDown?.map((ele, i) => {
       formdata.append(
         `${ele?.dropdown?.name?._text}`,
@@ -191,7 +192,7 @@ const AddProduct = () => {
       swal("Error occured while Entering Details");
     } else {
       SaveProduct(formdata)
-        .then((res) => {
+        .then(res => {
           console.log(res);
           setFormData({});
           if (res.status) {
@@ -199,12 +200,12 @@ const AddProduct = () => {
             swal("Product Created Successfully");
           }
         })
-        .catch((err) => {
+        .catch(err => {
           console.log(err);
         });
     }
   };
-  const handlechangeSubcat = (e) => {
+  const handlechangeSubcat = e => {
     console.log(e.target.value);
     if (e.target.value != "NA") {
       let selecteddata = categoryList?.filter(
@@ -234,7 +235,8 @@ const AddProduct = () => {
                       color="primary"
                       onClick={() =>
                         history.push("/app/freshlist/house/houseProductList")
-                      }>
+                      }
+                    >
                       Go back
                     </Button>
                   )}
@@ -249,7 +251,6 @@ const AddProduct = () => {
               <Row className="mb-2">
                 {dropdownValue &&
                   dropdownValue?.MyDropDown?.map((ele, i) => {
-                    console.log(ele);
                     if (ele?.dropdown?.name?._text == "category") {
                       return (
                         <>
@@ -263,12 +264,13 @@ const AddProduct = () => {
                               placeholder="Select Category"
                               name={ele?.dropdown?.name?._text}
                               value={formData[ele?.dropdown?.name?._text]}
-                              onChange={(e) => {
+                              onChange={e => {
                                 handleInputChange(e);
                                 handlechangeSubcat(e);
-                              }}>
+                              }}
+                            >
                               <option value="NA">--Select Category--</option>
-                              {categoryList?.map((cat) => (
+                              {categoryList?.map(cat => (
                                 <option value={cat?.name} key={cat?._id}>
                                   {cat?.name}
                                 </option>
@@ -291,9 +293,10 @@ const AddProduct = () => {
                               placeholder="Select Category"
                               name={ele?.dropdown?.name?._text}
                               value={formData[ele?.dropdown?.name?._text]}
-                              onChange={handleInputChange}>
+                              onChange={handleInputChange}
+                            >
                               <option value="NA">--Select SubCategory--</option>
-                              {subcatlist?.map((cat) => (
+                              {subcatlist?.map(cat => (
                                 <option value={cat?.name} key={cat?._id}>
                                   {cat?.name}
                                 </option>
@@ -313,14 +316,19 @@ const AddProduct = () => {
                             <CustomInput
                               required
                               type="select"
-                              placeholder="Select Category"
+                              placeholder="Select WareHouse"
                               name={ele?.dropdown?.name?._text}
                               value={formData[ele?.dropdown?.name?._text]}
-                              onChange={handleInputChange}>
-                              <option value="NA">--Select Unit--</option>
-                              {subcatlist?.map((cat) => (
-                                <option value={cat?.name} key={cat?._id}>
-                                  {cat?.name}
+                              onChange={handleInputChange}
+                            >
+                              <option value="NA">--Select WareHouse--</option>
+
+                              {wareHouseList?.map(whList => (
+                                <option
+                                  value={whList?.WarehouseName}
+                                  key={whList?._id}
+                                >
+                                  {whList?.WarehouseName}
                                 </option>
                               ))}
                             </CustomInput>
@@ -341,10 +349,11 @@ const AddProduct = () => {
                               placeholder="Select Category"
                               name={ele?.dropdown?.name?._text}
                               value={formData[ele?.dropdown?.name?._text]}
-                              onChange={handleInputChange}>
+                              onChange={handleInputChange}
+                            >
                               <option value="NA">--Select Unit--</option>
                               {UnitList &&
-                                UnitList?.map((cat) => (
+                                UnitList?.map(cat => (
                                   <option value={cat?.unitQty} key={cat?._id}>
                                     {cat?.primaryUnit}
                                   </option>
@@ -363,12 +372,14 @@ const AddProduct = () => {
                               type="select"
                               name={ele?.dropdown?.name?._text}
                               value={formData[ele?.dropdown?.name?._text]}
-                              onChange={handleInputChange}>
+                              onChange={handleInputChange}
+                            >
                               <option value="">--Select Role--</option>
                               {ele?.dropdown?.option?.map((option, index) => (
                                 <option
                                   key={index}
-                                  value={option?._attributes?.value}>
+                                  value={option?._attributes?.value}
+                                >
                                   {option?._attributes?.value}
                                 </option>
                               ))}
@@ -436,7 +447,7 @@ const AddProduct = () => {
                               <PhoneInput
                                 inputClass="myphoneinput"
                                 country={"us"}
-                                onKeyDown={(e) => {
+                                onKeyDown={e => {
                                   if (
                                     ele?.type?._attributes?.type == "number"
                                   ) {
@@ -447,7 +458,7 @@ const AddProduct = () => {
                                 countryCodeEditable={false}
                                 name={ele?.name?._text}
                                 value={formData[ele?.name?._text]}
-                                onChange={(phone) => {
+                                onChange={phone => {
                                   setFormData({
                                     ...formData,
                                     [ele?.name?._text]: phone,
@@ -480,14 +491,14 @@ const AddProduct = () => {
                                 inputClass="countryclass"
                                 className="countryclassnw"
                                 options={Country.getAllCountries()}
-                                getOptionLabel={(options) => {
+                                getOptionLabel={options => {
                                   return options["name"];
                                 }}
-                                getOptionValue={(options) => {
+                                getOptionValue={options => {
                                   return options["name"];
                                 }}
                                 value={Countries}
-                                onChange={(country) => {
+                                onChange={country => {
                                   setCountry(country);
                                   setFormData({
                                     ...formData,
@@ -518,14 +529,14 @@ const AddProduct = () => {
                                 options={State?.getStatesOfCountry(
                                   Countries?.isoCode
                                 )}
-                                getOptionLabel={(options) => {
+                                getOptionLabel={options => {
                                   return options["name"];
                                 }}
-                                getOptionValue={(options) => {
+                                getOptionValue={options => {
                                   return options["name"];
                                 }}
                                 value={States}
-                                onChange={(State) => {
+                                onChange={State => {
                                   setState(State);
                                   setFormData({
                                     ...formData,
@@ -557,14 +568,14 @@ const AddProduct = () => {
                                   States?.countryCode,
                                   States?.isoCode
                                 )}
-                                getOptionLabel={(options) => {
+                                getOptionLabel={options => {
                                   return options["name"];
                                 }}
-                                getOptionValue={(options) => {
+                                getOptionValue={options => {
                                   return options["name"];
                                 }}
                                 value={Cities}
-                                onChange={(City) => {
+                                onChange={City => {
                                   setCities(City);
                                   setFormData({
                                     ...formData,
@@ -596,12 +607,13 @@ const AddProduct = () => {
                                   key={i}
                                   lg="4"
                                   md="4"
-                                  sm="12">
+                                  sm="12"
+                                >
                                   <FormGroup key={i}>
                                     <Label>{ele?.label?._text}</Label>
 
                                     <Input
-                                      onKeyDown={(e) => {
+                                      onKeyDown={e => {
                                         if (
                                           ele?.type?._attributes?.type ==
                                           "number"
@@ -626,7 +638,7 @@ const AddProduct = () => {
                                         // formData[ele?.name?._text]
                                       }
                                       // value={formData[ele?.name?._text]}
-                                      onChange={(e) =>
+                                      onChange={e =>
                                         handleInputChange(
                                           e,
                                           ele?.type?._attributes?.type,
@@ -655,12 +667,13 @@ const AddProduct = () => {
                                   key={i}
                                   lg="4"
                                   md="4"
-                                  sm="12">
+                                  sm="12"
+                                >
                                   <FormGroup key={i}>
                                     <Label>{ele?.label?._text}</Label>
 
                                     <Input
-                                      onKeyDown={(e) => {
+                                      onKeyDown={e => {
                                         if (
                                           ele?.type?._attributes?.type ==
                                           "number"
@@ -674,7 +687,7 @@ const AddProduct = () => {
                                       placeholder={ele?.placeholder?._text}
                                       name={ele?.name?._text}
                                       value={formData[ele?.name?._text]}
-                                      onChange={(e) =>
+                                      onChange={e =>
                                         handleInputChange(
                                           e,
                                           ele?.type?._attributes?.type,
@@ -710,15 +723,16 @@ const AddProduct = () => {
                                 key={i}
                                 lg="4"
                                 md="4"
-                                sm="12">
+                                sm="12"
+                              >
                                 <FormGroup key={i}>
                                   <Label>{ele?.label?._text}</Label>
 
                                   <Input
-                                    onWheel={(e) => {
+                                    onWheel={e => {
                                       e.preventDefault(); // Prevent the mouse wheel scroll event
                                     }}
-                                    onKeyDown={(e) => {
+                                    onKeyDown={e => {
                                       if (
                                         ele?.type?._attributes?.type == "number"
                                       ) {
@@ -730,7 +744,7 @@ const AddProduct = () => {
                                     placeholder={ele?.placeholder?._text}
                                     name={ele?.name?._text}
                                     value={formData[ele?.name?._text]}
-                                    onChange={(e) =>
+                                    onChange={e =>
                                       handleInputChange(
                                         e,
                                         ele?.type?._attributes?.type,
@@ -768,7 +782,7 @@ const AddProduct = () => {
                                       placeholder={ele?.placeholder?._text}
                                       name={ele?.name?._text}
                                       //   value={formData[ele?.name?._text]}
-                                      onChange={(e) => {
+                                      onChange={e => {
                                         // const value = e.target.value;
                                         // // Use regular expression to allow only numbers
                                         // const numericValue = value.replace(
@@ -802,7 +816,7 @@ const AddProduct = () => {
 
                                     <Input
                                       className="form-control"
-                                      onKeyDown={(e) => {
+                                      onKeyDown={e => {
                                         if (
                                           ele?.type?._attributes?.type ==
                                           "number"
@@ -816,7 +830,7 @@ const AddProduct = () => {
                                       placeholder={ele?.placeholder?._text}
                                       name={ele?.name?._text}
                                       value={formData[ele?.name?._text]}
-                                      onChange={(e) => {
+                                      onChange={e => {
                                         // const value = e.target.value;
                                         // // Use regular expression to allow only numbers
                                         // const numericValue = value.replace(
@@ -925,7 +939,8 @@ const AddProduct = () => {
                 <Button.Ripple
                   color="primary"
                   type="submit"
-                  className="mr-1 mt-2 mx-2">
+                  className="mr-1 mt-2 mx-2"
+                >
                   Submit
                 </Button.Ripple>
               </Row>
@@ -937,5 +952,3 @@ const AddProduct = () => {
   );
 };
 export default AddProduct;
-
-

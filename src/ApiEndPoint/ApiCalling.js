@@ -192,9 +192,9 @@ export const CreateWarehousesave = async data => {
   return response;
 };
 
-export const CreateWarehouseList = async () => {
+export const CreateWarehouseList = async id => {
   let response = await axiosConfig
-    .get(`${Create_Warehouse_List}`)
+    .get(`${Create_Warehouse_List}` + id)
     .then(res => res.data);
   return response;
 };

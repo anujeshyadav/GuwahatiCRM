@@ -59,9 +59,7 @@ import {
 } from "react-icons/bs";
 import * as XLSX from "xlsx";
 import UserContext from "../../../../../context/Context";
-
 const SelectedColums = [];
-
 class UnitList extends React.Component {
   static contextType = UserContext;
   constructor(props) {

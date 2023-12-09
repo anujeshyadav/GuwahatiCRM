@@ -6,6 +6,7 @@ export const View_Company_Details = "/company-detail/view-company-details/";
 export const Update_Role = "/role/update-role/";
 export const Create_warehouse_xmlView = "/warehouse/get-xml";
 export const Create_warehouse_save = "/warehouse/save-warehouse";
+export const Create_Warehouse_List = "/warehouse/view-warehouse/";
 export const Create_Party_XML = "/party/get-xml";
 export const Create_Party_save = "/party/save-party";
 export const Create_Sales_personXMlView = "/sales-person/get-xml";
@@ -20,7 +21,7 @@ export const Update_Sales_person_save = "/sales-person/update-sales-person/";
 export const Create_Sales_person_List = "/sales-person/view-sales-person";
 export const Create_Sales_person_save = "/sales-person/save-sales-person";
 export const Create_Party_List = "/party/view-party";
-export const Create_Warehouse_List = "/warehouse/view-warehouse";
+
 export const Save_Promotion = "/promotion/save-promotion";
 export const View_Promotion_List = "/promotion/view-promotion";
 export const Create_transporter_xmlView = "/transporter/get-xml";
