@@ -49,6 +49,8 @@ export const Category_List = "/categories/view-category/";
 export const Create_SubCategory = "/categories/save-subcategory";
 export const Create_Product_XMLView = "/product/get-xml";
 export const Save_Product = "/product/save-product";
+export const Stock_trx_FtoW = "/factory/stock-transfer-FTW";
+export const Stock_trx_FtoW_List = "/stock-updation/view-warehouse-stock/";
 export const ProductList_View = "/product/view-product/";
 
 export const Save_Order = "/order/save-create-order";

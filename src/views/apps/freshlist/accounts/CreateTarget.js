@@ -214,26 +214,28 @@ const CreateTarget = args => {
   }, [product, targetEndDate]);
 
   useEffect(() => {
+    let userdata = JSON.parse(localStorage.getItem("userData"));
+
     Create_Sales_personList()
-      .then(res => {
+      .then((res) => {
         console.log(res?.SalesPerson);
         setSalesPersonList(res?.SalesPerson);
       })
-      .catch(err => console.log(err));
-    ProductListView()
-      .then(res => {
-        // console.log(res?.Product);
+      .catch((err) => console.log(err));
+    ProductListView(userdata?._id)
+      .then((res) => {
+        console.log(res?.Product);
         setProductList(res?.Product);
       })
-      .catch(err => {
+      .catch((err) => {
         console.log(err);
       });
     CreatePartyList()
-      .then(res => {
+      .then((res) => {
         // console.log(res.Party)
         setPartyList(res.Party);
       })
-      .catch(err => {
+      .catch((err) => {
         console.log(err);
       });
   }, []);
@@ -287,7 +289,7 @@ const CreateTarget = args => {
       },
     ]);
   };
-  let removeMoreProduct = i => {
+  let removeMoreProduct = (i) => {
     let newFormValues = [...product];
     newFormValues.splice(i, 1);
     GrandTotal.splice(i, 1);
@@ -302,7 +304,7 @@ const CreateTarget = args => {
   //   setPart(newFormValues);
   // };
 
-  const submitHandler = e => {
+  const submitHandler = (e) => {
     e.preventDefault();
 
     // console.log(product);
@@ -326,6 +328,7 @@ const CreateTarget = args => {
       grandTotal: grandTotalAmt,
       salesPersonId: Salesperson[0]?._id,
       products: Allproduct,
+      created_by: UserInfo?._id,
     };
     // const ObjOrder = {
     //   userId: UserInfo?._id,
@@ -348,7 +351,7 @@ const CreateTarget = args => {
       swal("Error occured while Entering Details");
     } else {
       Create_Targetsave(payload)
-        .then(res => {
+        .then((res) => {
           // if (res.status) {
           //   setFormData({});
           //   window.location.reload();
@@ -356,7 +359,7 @@ const CreateTarget = args => {
           // }
           console.log(res);
         })
-        .catch(err => {
+        .catch((err) => {
           console.log(err);
         });
     }
