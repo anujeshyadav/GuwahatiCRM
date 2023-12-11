@@ -108,6 +108,7 @@ const EditPending = args => {
                   >
                     <option value="pending">pending</option>
                     <option value="canceled">cancelled</option>
+                    <option value="canceled">completed</option>
                   </CustomInput>
                 </Col>
                 <Col lg="6" md="6" sm="6" className="mb-2">

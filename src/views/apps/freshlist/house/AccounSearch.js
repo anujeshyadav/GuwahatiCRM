@@ -38,7 +38,6 @@ import {
   FaFilter,
   FaPlus,
 } from "react-icons/fa";
-import moment from "moment-timezone";
 import swal from "sweetalert";
 import {
   CreateAccountList,
@@ -330,6 +329,7 @@ class AccounSearch extends React.Component {
     await CreateAccountList(userid)
       .then(res => {
         let value = res?.adminDetails;
+        console.log(value);
         if (value.length) {
           this.setState({ rowData: value });
         }
