@@ -1,6 +1,5 @@
 import React, { useRef } from "react";
 import { Route } from "react-router-dom";
-import xmlJs from "xml-js";
 import {
   Card,
   CardBody,
@@ -40,6 +39,7 @@ import {
 } from "react-icons/fa";
 import swal from "sweetalert";
 import {
+  CreateUserList,
   CreateAccountList,
   Create_TargetList,
   Delete_targetINlist,
@@ -242,222 +242,6 @@ class TargetCreation extends React.Component {
             );
           },
         },
-        // {
-        //   headerName: "Products",
-        //   field: "products",
-        //   filter: "agSetColumnFilter",
-        //   width: 500,
-        //   cellRendererFramework: (params) => {
-        //     return (
-        //       <div className="d-flex flex-wrap">
-        //         {params?.data?.products &&
-        //           params?.data?.products?.map((ele, i) => {
-        //             if (params.data?.products.length > 1) {
-        //               return <span key={i}>{ele?.title}, &nbsp;</span>;
-        //             } else {
-        //               return <span key={i}>{ele?.title}</span>;
-        //             }
-        //           })}
-        //       </div>
-        //     );
-        //   },
-        // },
-        // {
-        //   headerName: "Product Name",
-        //   field: "title",
-        //   filter: "agSetColumnFilter",
-        //   width: 200,
-        //   cellRendererFramework: (params) => {
-        //     return (
-        //       <div className="d-flex align-items-center cursor-pointer">
-        //         <div className="">
-        //           <span>{params.data?.title}</span>
-        //         </div>
-        //       </div>
-        //     );
-        //   },
-        // },
-        // {
-        //   headerName: "Assign To",
-        //   field: "assign_full_name",
-        //   filter: "agSetColumnFilter",
-        //   width: 150,
-        //   cellRendererFramework: (params) => {
-        //     return (
-        //       <div className="d-flex align-items-center cursor-pointer">
-        //         <div className="">
-        //           <span>{params.data?.assign_full_name}</span>
-        //         </div>
-        //       </div>
-        //     );
-        //   },
-        // },
-        {
-          headerName: "Assigned By",
-          field: "user_full_name",
-          filter: "agSetColumnFilter",
-          width: 180,
-          cellRendererFramework: params => {
-            return (
-              <div className="d-flex align-items-center cursor-pointer">
-                <div className="">
-                  <span>{params.data?.user_full_name}</span>
-                </div>
-              </div>
-            );
-          },
-        },
-        // {
-        //   headerName: "Product",
-        //   field: "title",
-        //   filter: "agSetColumnFilter",
-        //   width: 150,
-        //   cellRendererFramework: (params) => {
-        //     return (
-        //       <div className="d-flex align-items-center cursor-pointer">
-        //         <div className="">
-        //           <span>{params.data?.title}</span>
-        //         </div>
-        //       </div>
-        //     );
-        //   },
-        // },
-        // {
-        //   headerName: "Assigned User",
-        //   field: "qty",
-        //   filter: "agSetColumnFilter",
-        //   width: 180,
-        //   cellRendererFramework: (params) => {
-        //     return (
-        //       <div className="d-flex align-items-center cursor-pointer">
-        //         <div className="">
-        //           <span>{params?.data?.assign_full_name}</span>
-        //         </div>
-        //       </div>
-        //     );
-        //   },
-        // },
-        // {
-        //   headerName: "CATEGORY",
-        //   field: "category_name",
-        //   filter: "agSetColumnFilter",
-        //   width: 150,
-        //   cellRendererFramework: (params) => {
-        //     return (
-        //       <div className="d-flex align-items-center cursor-pointer">
-        //         <div className="">
-        //           <span>{params.data?.category_name}</span>
-        //         </div>
-        //       </div>
-        //     );
-        //   },
-        // },
-        // {
-        //   headerName: "Description",
-        //   field: "description",
-        //   filter: "agSetColumnFilter",
-        //   width: 120,
-        //   cellRendererFramework: (params) => {
-        //     return (
-        //       <div className="d-flex align-items-center cursor-pointer">
-        //         <div className="">
-        //           <span>{ReactHtmlParser(params.data?.description)}</span>
-        //         </div>
-        //       </div>
-        //     );
-        //   },
-        // },
-        // {
-        //   headerName: "PRICE",
-        //   field: "price",
-        //   filter: "agSetColumnFilter",
-        //   width: 120,
-        //   cellRendererFramework: (params) => {
-        //     return (
-        //       <div className="d-flex align-items-center cursor-pointer">
-        //         <div className="">
-        //           <span>{params?.data?.price}</span>
-        //         </div>
-        //       </div>
-        //     );
-        //   },
-        // },
-        // {
-        //   headerName: "DiscountPrice",
-        //   field: "discountprice",
-        //   filter: "agSetColumnFilter",
-        //   width: 120,
-        //   cellRendererFramework: (params) => {
-        //     return (
-        //       <div className="d-flex align-items-center cursor-pointer">
-        //         <div className="">
-        //           <span>{params.data?.discountprice}</span>
-        //         </div>
-        //       </div>
-        //     );
-        //   },
-        // },
-        // {
-        //   headerName: "Shipping Fee",
-        //   field: "shipping_fee",
-        //   filter: "agSetColumnFilter",
-        //   width: 120,
-        //   cellRendererFramework: (params) => {
-        //     return (
-        //       <div className="d-flex align-items-center cursor-pointer">
-        //         <div className="">
-        //           <span>{params.data?.shipping_fee}</span>
-        //         </div>
-        //       </div>
-        //     );
-        //   },
-        // },
-        // {
-        //   headerName: "Tax Rate",
-        //   field: "tax_rate",
-        //   filter: "agSetColumnFilter",
-        //   width: 120,
-        //   cellRendererFramework: (params) => {
-        //     return (
-        //       <div className="d-flex align-items-center cursor-pointer">
-        //         <div className="">
-        //           <span>{params.data?.tax_rate}</span>
-        //         </div>
-        //       </div>
-        //     );
-        //   },
-        // },
-        // {
-        //   headerName: "Tags",
-        //   field: "tags",
-        //   filter: "agSetColumnFilter",
-        //   width: 120,
-        //   cellRendererFramework: (params) => {
-        //     return (
-        //       <div className="d-flex align-items-center cursor-pointer">
-        //         <div className="">
-        //           <span>{params.data?.tags}</span>
-        //         </div>
-        //       </div>
-        //     );
-        //   },
-        // },
-        // {
-        //   headerName: "STOCK",
-        //   field: "stock",
-
-        //   filter: "agSetColumnFilter",
-        //   width: 150,
-        //   cellRendererFramework: (params) => {
-        //     return (
-        //       <div className="d-flex align-items-center cursor-pointer">
-        //         <div className="">
-        //           <span>{ReactHtmlParser(params.data?.stock)}</span>
-        //         </div>
-        //       </div>
-        //     );
-        //   },
-        // },
         {
           headerName: "Created at",
           field: "createdAt",
@@ -488,21 +272,6 @@ class TargetCreation extends React.Component {
             );
           },
         },
-        // {
-        //   headerName: "SALES",
-        //   field: "pisces",
-        //   filter: "agSetColumnFilter",
-        //   width: 120,
-        //   cellRendererFramework: (params) => {
-        //     return (
-        //       <div className="d-flex align-items-center cursor-pointer">
-        //         <div className="">
-        //           <span>{ReactHtmlParser(params.data.pisces)}</span>
-        //         </div>
-        //       </div>
-        //     );
-        //   },
-        // },
       ],
     };
   }
@@ -530,10 +299,10 @@ class TargetCreation extends React.Component {
 
   async componentDidMount() {
     let userId = JSON.parse(localStorage.getItem("userData"))._id;
-    // const UserInformation = this.context?.UserInformatio;
 
     await Create_TargetList(userId)
       .then(res => {
+        console.log(res.TargetCreation);
         this.setState({ rowData: res?.TargetCreation });
         this.setState({ AllcolumnDefs: this.state.columnDefs });
         this.setState({ SelectedCols: this.state.columnDefs });
@@ -565,7 +334,6 @@ class TargetCreation extends React.Component {
   };
 
   runthisfunction(id) {
-    debugger;
     swal("Warning", "Sure You Want to Delete it", {
       buttons: {
         cancel: "cancel",
@@ -1277,9 +1045,7 @@ class TargetCreation extends React.Component {
         >
           <ModalHeader toggle={this.toggleModal}>View Details</ModalHeader>
           <ModalBody className="myproducttable">
-            {/* <div className="container"> */}
             <TargetAssignedOne ViewData={this.state.ViewData} />
-            {/* </div> */}
           </ModalBody>
         </Modal>
       </>

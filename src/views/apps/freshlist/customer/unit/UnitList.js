@@ -1077,9 +1077,14 @@ class UnitList extends React.Component {
                     name="baseUnit"
                     value={this.state.baseUnit}
                     defaultValue="None"
+                    //  onChange={e => {
+                    //                       console.log(e.target.value);
+                    //                       this.setState({ baseUnit: e.target.value });
+                    //                     }}
+                    //                   >
                     onChange={e => {
-                      console.log(e.target.value);
                       this.setState({ baseUnit: e.target.value });
+                      this.changeHandler(e);
                     }}
                   >
                     <option value="None">None</option>
@@ -1141,6 +1146,7 @@ class UnitList extends React.Component {
                             </div>
                             <div className="">
                               <Input
+                                required
                                 type="number"
                                 disabled={this.state.isDisable ? true : false}
                                 className=""
@@ -1185,7 +1191,6 @@ class UnitList extends React.Component {
                     />
                   </span>
                 </Col>
-
                 <Col>
                   <Button
                     type="submit"

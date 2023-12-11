@@ -6,8 +6,10 @@ import {
   Credit_note_Order_List,
   GoodDispatch_xmlView,
   SAVE_GoodDispatch,
+  Stock_trx_FtoW,
   GoodDispatch_List,
   Edit_GoodDispatch,
+  Stock_trx_FtoW_List,
   View_Company_Details,
   Purchase_Return,
   Purchase_Edit_Order,
@@ -88,6 +90,7 @@ import {
   Warranty_Delete,
   Create_Account_save,
   Create_Account_List,
+  Create_User_List,
   Delete_Customer_List,
   Delete_Account_List,
   Add_To_Cart_PartsCatelougue,
@@ -186,7 +189,20 @@ export const Createwarehousexml = async () => {
     .then(res => res.data);
   return response;
 };
+export const Stock_trxFtoWList = async () => {
+  let response = await axiosConfig
+    .get(`${Stock_trx_FtoW_List}`)
+    .then(res => res.data);
+  return response;
+};
 
+// export const CreateWarehousesave = async data => {
+export const StocktrxFtoW = async data => {
+  let response = await axiosConfig
+    .post(`${Stock_trx_FtoW}`, data)
+    .then(res => res.data);
+  return response;
+};
 export const CreateWarehousesave = async data => {
   let response = await axiosConfig
     .post(`${Create_warehouse_save}`, data)
@@ -637,6 +653,12 @@ export const DeleteCustomerList = async id => {
 export const CreateAccountList = async id => {
   let response = await axiosConfig
     .get(`${Create_Account_List}` + id)
+    .then(res => res.data);
+  return response;
+};
+export const CreateUserList = async id => {
+  let response = await axiosConfig
+    .get(`${Create_User_List}` + id)
     .then(res => res.data);
   return response;
 };

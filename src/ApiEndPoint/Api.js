@@ -50,6 +50,8 @@ export const Category_List = "/categories/view-category/";
 export const Create_SubCategory = "/categories/save-subcategory";
 export const Create_Product_XMLView = "/product/get-xml";
 export const Save_Product = "/product/save-product";
+export const Stock_trx_FtoW = "/factory/stock-transfer-FTW";
+export const Stock_trx_FtoW_List = "/stock-updation/view-warehouse-stock/";
 export const ProductList_View = "/product/view-product/";
 
 export const Save_Order = "/order/save-create-order";
@@ -101,7 +103,7 @@ export const Create_Customer_save = "/customer/save-customer";
 export const Create_Customer_Update = "/customer/update-customer/";
 export const Create_Account_save = "/user/save-user";
 export const Create_Account_List = "/user/view-user-by-id/";
-// export const Create_Account_List = "/user/view-user/";
+export const Create_User_List = "/user/view-user/";
 export const Create_Customer_List = "/customer/view-customer/";
 export const Create_Account_Update = "/user/update-user/";
 export const Delete_Account_List = "/user/delete-user/";

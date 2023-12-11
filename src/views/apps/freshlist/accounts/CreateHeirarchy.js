@@ -1,17 +1,3 @@
-// import React from "react";
-
-// const CreateHeirarchy = () => {
-//   return (
-//     <div>
-//       <div className="d-flex justify-content-center">
-//         <h4>Create Hierarchy</h4>
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default CreateHeirarchy;
-
 import React, { useEffect, useState, useContext } from "react";
 import xmlJs from "xml-js";
 import {
@@ -38,15 +24,8 @@ import { Route } from "react-router-dom";
 import swal from "sweetalert";
 import "../../../../../src/layouts/assets/scss/pages/users.scss";
 
-import {
-  CreateAccountSave,
-  CreateAccountUpdate,
-  CreateAccountView,
-  Get_RoleList,
-} from "../../../../ApiEndPoint/ApiCalling";
-import { BiEnvelope } from "react-icons/bi";
-import { FcPhoneAndroid } from "react-icons/fc";
-import { BsWhatsapp } from "react-icons/bs";
+import { Get_RoleList } from "../../../../ApiEndPoint/ApiCalling";
+
 import "../../../../assets/scss/pages/users.scss";
 import UserContext from "../../../../context/Context";
 import { CloudLightning } from "react-feather";
@@ -54,6 +33,7 @@ import { FaPlus } from "react-icons/fa";
 
 const CreateHeirarchy = ({ EditOneData }) => {
   const [dropdownValue, setdropdownValue] = useState({});
+  const [dropdownValuesecond, setdropdownValueSecond] = useState({});
   const [Parent, setParent] = useState("Parent");
   const [Error, setError] = useState("");
   const [Child, setChild] = useState("Child");
@@ -70,6 +50,8 @@ const CreateHeirarchy = ({ EditOneData }) => {
     Get_RoleList()
       .then((res) => {
         setdropdownValue(res?.Role);
+        setdropdownValueSecond(res?.Role);
+        console.log(res?.Role);
       })
       .catch((err) => {
         console.log(err);
@@ -81,6 +63,25 @@ const CreateHeirarchy = ({ EditOneData }) => {
     e.preventDefault();
     // console.log(EditOneData);
     // console.log(formData);
+
+    console.log(Parent);
+    console.log(dropdownValue);
+    let Secondary = dropdownValuesecond?.filter(
+      (ele, i) => ele?._id !== Parent
+    );
+    console.log(Secondary);
+    setdropdownValueSecond(Secondary);
+    debugger;
+    // setdropdownValueSecond;
+
+    debugger;
+    if (localStorage.getItem("Herirarchy_postion")) {
+      let current_position = localStorage.getItem("Herirarchy_postion");
+
+      localStorage.setItem("Herirarchy_postion", current_position + 1);
+    } else {
+      localStorage.setItem("Herirarchy_postion", 0);
+    }
   };
 
   return (
@@ -123,7 +124,14 @@ const CreateHeirarchy = ({ EditOneData }) => {
                     required
                     type="select"
                     name="rolename"
-                    onChange={(e) => setParent(e.target.value)}>
+                    onChange={(e) => {
+                      setParent(e.target.value);
+                      let Secondary = dropdownValuesecond?.filter(
+                        (ele, i) => ele?._id !== e.target.value
+                      );
+                      console.log(Secondary);
+                      setdropdownValueSecond(Secondary);
+                    }}>
                     <option value="Parent">--Select Parent--</option>
                     {dropdownValue &&
                       dropdownValue?.length &&
@@ -144,9 +152,9 @@ const CreateHeirarchy = ({ EditOneData }) => {
                     name="rolename"
                     onChange={(e) => setChild(e.target.value)}>
                     <option value="Child">--Select Child--</option>
-                    {dropdownValue &&
-                      dropdownValue?.length &&
-                      dropdownValue?.map((ele, i) => {
+                    {dropdownValuesecond &&
+                      dropdownValuesecond?.length &&
+                      dropdownValuesecond?.map((ele, i) => {
                         return (
                           <option value={ele?._id}>{ele?.roleName}</option>
                         );
