@@ -34,17 +34,15 @@ import { FiSend } from "react-icons/fi";
 import "../../../../assets/scss/pages/users.scss";
 import {
   ProductListView,
-  CreatePartyList,
-  Create_Sales_personList,
-  Create_Targetsave,
   CreateWarehouseList,
   UnitListView,
   StocktrxFtoW,
+  WarehousetoWareHouseTrx,
 } from "../../../../ApiEndPoint/ApiCalling";
 import "../../../../assets/scss/pages/users.scss";
 import Timepickers from "../../../forms/form-elements/datepicker/Timepicker";
 import Pickers from "../../../forms/form-elements/datepicker/Pickers";
-import { Route } from "react-router-dom";
+import { Route, useHistory } from "react-router-dom";
 
 let GrandTotal = [];
 let SelectedITems = [];
@@ -69,6 +67,8 @@ const CreateTarget = (args) => {
   const [items, setItems] = useState("");
   const [audit, setAudit] = useState(false);
   const [WareHouselist, setWarehouseList] = useState([]);
+
+  const history = useHistory();
   const toggle = (item) => {
     setItems(item);
     setModal(!modal);
@@ -253,6 +253,7 @@ const CreateTarget = (args) => {
   };
   // handleInputChange;
   useEffect(() => {
+    console.log(window);
     console.log(product);
     console.log(GrandTotal);
     console.log(Salesperson);
@@ -355,17 +356,50 @@ const CreateTarget = (args) => {
 
   const WareHousetoWareHouse = (e) => {
     e.preventDefault();
+    console.log(WareHouseone);
+    console.log(WareHousetwo);
+    console.log(StockTrxdate);
+    console.log(product);
+    debugger;
+    let userdata = JSON.parse(localStorage.getItem("userData"));
+    let Allproduct = product?.map((ele, i) => {
+      console.log(ele);
+      return {
+        productId: ele?.productId,
+        unitType: ele?.unitType,
+        price: ele?.price,
+        Size: ele?.Size,
+        transferQty: ele?.transferQty,
+        totalPrice: ele?.totalprice,
+      };
+    });
+    let payload = {
+      productItems: Allproduct,
+      warehouseToId: WareHouseone[0]?._id,
+      warehouseFromId: WareHousetwo[0]?._id,
+      stockTransferDate: StockTrxdate,
+      grandTotal: grandTotalAmt,
+      status: "Transferring",
+      created_by: userdata?._id,
+    };
+    console.log(payload);
+    WarehousetoWareHouseTrx(payload)
+      .then((res) => {
+        //   window.location.reload();
+        history.goBack();
+        swal("Stock transerffered is Initiated");
+
+        console.log(res);
+      })
+      .catch((err) => {
+        console.log(err);
+        swal("Something Went Wrong");
+      });
   };
   const submitHandler = (e) => {
     e.preventDefault();
     let userdata = JSON.parse(localStorage.getItem("userData"));
-    // console.log(product);
-    // console.log(GrandTotal);
-    // console.log(Salesperson[0]?._id);
-    // console.log(targetStartDate);
-    // console.log(targetEndDate);
-    // console.log(grandTotalAmt);
-    debugger;
+
     let Allproduct = product?.map((ele, i) => {
       console.log(ele);
       return {
@@ -391,10 +425,10 @@ const CreateTarget = (args) => {
     } else {
       StocktrxFtoW(payload)
         .then((res) => {
-          // if (res.status) {
-          //   setFormData({});
           //   window.location.reload();
+          history.goBack();
           swal("Stock Assigned to WareHouse");
+
           // }
           console.log(res);
         })
@@ -593,6 +627,7 @@ const CreateTarget = (args) => {
                         <Input
                           type="number"
                           name="transferQty"
+                          min={0}
                           placeholder="Req_Qty"
                           value={product?.qty}
                           onChange={(e) => handleProductChangeProduct(e, index)}
@@ -791,6 +826,7 @@ const CreateTarget = (args) => {
                           type="number"
                           name="transferQty"
                           placeholder="Req_Qty"
+                          min={0}
                           value={product?.qty}
                           onChange={(e) => handleProductChangeProduct(e, index)}
                         />

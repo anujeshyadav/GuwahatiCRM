@@ -565,6 +565,9 @@ const RawmaterialOutward = lazy(() =>
 const StockTransferwarehouse = lazy(() =>
   import("./views/apps/freshlist/customer/warehouse/StockTransfer")
 );
+const InwardStock = lazy(() =>
+  import("./views/apps/freshlist/customer/warehouse/InwardStock")
+);
 const DamageReport = lazy(() =>
   import("./views/apps/freshlist/customer/warehouse/DamageReport")
 );
@@ -1172,10 +1175,10 @@ const accessControl = lazy(() =>
 const RouteConfig = ({ component: Component, fullLayout, ...rest }) => (
   <Route
     {...rest}
-    render={props => {
+    render={(props) => {
       return (
         <ContextLayout.Consumer>
-          {context => {
+          {(context) => {
             let LayoutTag =
               fullLayout === true
                 ? context.fullLayout
@@ -1195,7 +1198,7 @@ const RouteConfig = ({ component: Component, fullLayout, ...rest }) => (
     }}
   />
 );
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
   return {
     user: state.auth.login.userRole,
   };
@@ -1912,6 +1915,10 @@ class AppRouter extends React.Component {
           <AppRoute
             path="/app/softNumen/warehouse/StockTransfer"
             component={StockTransferwarehouse}
+          />
+          <AppRoute
+            path="/app/softNumen/warehouse/InwardStock"
+            component={InwardStock}
           />
           <AppRoute
             path="/app/softNumen/warehouse/DamageReport"

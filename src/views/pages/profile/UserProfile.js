@@ -324,7 +324,7 @@ class UserProfile extends React.Component {
                         this.setState({ Addcolor: true });
                       }}
                       style={{ cursor: "pointer" }}
-                      className="">
+                      className="mb-1">
                       Choose Background color
                     </Badge>
                     {this.state.Addcolor && this.state.Addcolor && (
@@ -360,6 +360,7 @@ class UserProfile extends React.Component {
                         <div className="d-flex justify-content-end">
                           <Badge
                             style={{ cursor: "pointer" }}
+                            className=""
                             onClick={(e) => {
                               e.preventDefault();
                               this.toggleModal();

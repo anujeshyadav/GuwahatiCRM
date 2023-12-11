@@ -51,6 +51,7 @@ const PhoneNo = (props) => {
 };
 const ThemeNavbar = (props) => {
   const [screenSize, setScreenSize] = useState();
+  const [screenheight, setScreenheight] = useState(false);
   const [myCustomColor, SetmyCustomColor] = useState("");
   const [ComDetails, setComDetails] = useState({});
   const { user } = useAuth0();
@@ -60,7 +61,7 @@ const ThemeNavbar = (props) => {
 
   useEffect(() => {
     setScreenSize(window.innerWidth);
-
+    setScreenheight(window.innerHeight);
     // setScreenSize({
     //   width: window.innerWidth,
     //   height: window.innerHeight,
@@ -69,7 +70,7 @@ const ThemeNavbar = (props) => {
 
   useEffect(() => {
     console.log(contextValue);
-  }, [screenSize]);
+  }, [screenSize, screenheight]);
 
   return (
     <React.Fragment>
@@ -80,6 +81,121 @@ const ThemeNavbar = (props) => {
           backgroundColor: `${
             contextValue?.myCustomColor ? contextValue?.myCustomColor : "White"
           }`,
+        }}
+        className={classnames(
+          "header-navbar navbar-expand-lg navbar navbar-with-menu navbar-shadow",
+          {
+            "navbar-light":
+              props.navbarColor === "default" ||
+              !colorsArr.includes(props.navbarColor),
+            "navbar-dark": colorsArr.includes(props.navbarColor),
+            "bg-primary":
+              props.navbarColor === "primary" && props.navbarType !== "static",
+            "bg-danger":
+              props.navbarColor === "danger" && props.navbarType !== "static",
+            "bg-success":
+              props.navbarColor === "success" && props.navbarType !== "static",
+            "bg-info":
+              props.navbarColor === "info" && props.navbarType !== "static",
+            "bg-warning":
+              props.navbarColor === "warning" && props.navbarType !== "static",
+            "bg-dark":
+              props.navbarColor === "dark" && props.navbarType !== "static",
+            "d-none": props.navbarType === "hidden" && !props.horizontal,
+            "floating-nav":
+              (props.navbarType === "floating" && !props.horizontal) ||
+              (!navbarTypes.includes(props.navbarType) && !props.horizontal),
+            "navbar-static-top":
+              props.navbarType === "static" && !props.horizontal,
+            "fixed-top": props.navbarType === "sticky" || props.horizontal,
+            scrolling: props.horizontal && props.scrolling,
+          }
+        )}>
+        <div className="navbar-wrapper">
+          {/* <HorizontalMenu /> */}
+
+          <div className="navbar-container content">
+            <div
+              className="navbar-collapse d-flex justify-content-between align-items-center"
+              id="navbar-mobile">
+              {" "}
+              <Route
+                render={({ history }) => (
+                  <div
+                    title="Click to Go Dashboard"
+                    style={{
+                      cursor: "pointer",
+                      width: `${window.innerWidth <= 768 ? "25%" : "8%"}`,
+                    }}
+                    // style={{ cursor: "pointer", width: "8%" }}
+                    onClick={() => history.push("/dashboard")}>
+                    {contextValue?.CompanyDetails?.logo &&
+                    contextValue?.CompanyDetails?.logo ? (
+                      <>
+                        <img
+                          src={`http://64.227.162.41:5000/Images/${contextValue?.CompanyDetails?.logo}`}
+                          width="100%"
+                          height={35}
+                          alt="logo"
+                        />
+                      </>
+                    ) : (
+                      <>
+                        <img src={logo} width="100%" height={35} alt="logo" />
+                      </>
+                    )}
+                  </div>
+                )}
+              />
+              <div className="bookmark-wrapper">
+                <NavbarBookmarks
+                  sidebarVisibility={props.sidebarVisibility}
+                  handleAppOverlay={props.handleAppOverlay}
+                />
+              </div>
+              {props.horizontal ? (
+                <span className="horizontalmenu">
+                  <HorizontalMenu contextValue={contextValue?.myCustomColor} />
+                </span>
+              ) : null}
+              <>
+                <NavbarUser
+                  handleAppOverlay={props.handleAppOverlay}
+                  changeCurrentLang={props.changeCurrentLang}
+                  phoneNo={<PhoneNo userdata={user} {...props} />}
+                  userImg={
+                    props.user.login.values !== undefined &&
+                    props.user.login.values.loggedInWith !== "jwt" &&
+                    props.user.login.values.photoUrl
+                      ? props.user.login.values.photoUrl
+                      : user !== undefined && user.picture
+                      ? user.picture
+                      : userImg
+                  }
+                  loggedInWith={
+                    props.user !== undefined &&
+                    props.user.login.values !== undefined
+                      ? props.user.login.values.loggedInWith
+                      : null
+                  }
+                  logoutWithJWT={props.logoutWithJWT}
+                  logoutWithFirebase={props.logoutWithFirebase}
+                />
+              </>
+            </div>
+          </div>
+        </div>
+      </Navbar>
+
+      <Navbar
+        style={{
+          backgroundColor: `${
+            contextValue?.myCustomColor ? contextValue?.myCustomColor : "White"
+          }`,
+          position: "fixed",
+          // bottom: 25,
+          // bottom: `${screenheight && screenheight > 768 ? 0 : 25}`,
+          // bottom: `${window.innerHeight - window.innerHeight * 0.9}`,
         }}
         className={classnames(
           "header-navbar navbar-expand-lg navbar navbar-with-menu navbar-shadow",
