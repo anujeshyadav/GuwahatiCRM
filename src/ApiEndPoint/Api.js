@@ -38,6 +38,7 @@ export const Create_unit_save = "/unit/save-unit/";
 export const Create_unit_List = "/unit/view-unit/";
 export const Delete_Unit_List = "/unit/delete-unit/";
 export const Unit_ViewOne = "/unit/update-unit/";
+export const Unit_Update = "/unit/update-unit/";
 
 export const Delete_Category = "/categories/delete-category/"; //done
 export const Delete_Sub_Category = "/categories/delete-categories/";
@@ -90,7 +91,7 @@ export const Create_SalesManager_xmlView =
 export const Create_Customer_xmlView = "/customer/get-xml";
 export const Create_Target_xml_view = "/target-creation/get-xml";
 
-export const Create_Target_List = "/target-creation/view-target-creation";
+export const Create_Target_List = "/target-creation/view-target-creation/";
 export const Delete_target_INlist = "/target-creation/delete-target-creation/";
 export const Update_target_INlist = "/target-creation/update-target-creation/";
 export const Delete_individual_Target = "/target-creation/";

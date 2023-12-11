@@ -9,41 +9,19 @@ import {
   Input,
   Label,
   Button,
-  FormGroup,
-  CustomInput,
-  ModalBody,
-  ModalHeader,
-  Modal,
-  InputGroup,
 } from "reactstrap";
-import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
-import { BiEnvelope } from "react-icons/bi";
-import { BsFillChatDotsFill, BsWhatsapp } from "react-icons/bs";
-import { FaHistory } from "react-icons/fa";
-import { FcPhoneAndroid } from "react-icons/fc";
-import { AiOutlineSearch } from "react-icons/ai";
-import Flatpickr from "react-flatpickr";
 
 import Multiselect from "multiselect-react-dropdown";
 
-import { FiSend } from "react-icons/fi";
-
 import "../../../../assets/scss/pages/users.scss";
 import {
-  CreateOrder_ViewData,
-  CommentOrder,
-  CreateOrder_ID,
-  CommentProductWiki,
-  SaveOrder,
   ProductListView,
   CreatePartyList,
   Create_Sales_personList,
   Create_Targetsave,
 } from "../../../../ApiEndPoint/ApiCalling";
 import "../../../../assets/scss/pages/users.scss";
-import Timepickers from "../../../forms/form-elements/datepicker/Timepicker";
-import Pickers from "../../../forms/form-elements/datepicker/Pickers";
 import { Route } from "react-router-dom";
 
 let GrandTotal = [];
@@ -116,18 +94,11 @@ const CreateTarget = args => {
       amt = x.reduce((a, b) => a + b);
       console.log("GrandTotal", amt);
     }
-    // console.log(list)
     setProduct(list);
     setGrandTotalAmt(amt);
-    // setAmount(amt);
   };
 
   const handleRemoveSelected = (selectedList, selectedItem, index) => {
-    // console.log(selectedList);
-    // console.log(selectedItem); // removed item
-    // console.log(product);
-    // console.log(index);
-    // console.log(SelectedITems);
     SelectedITems.splice(index, 1);
     let myarr = product?.map((ele, i) => {
       console.log(ele?.qty * selectedItem[i]?.Product_MRP);
@@ -142,20 +113,21 @@ const CreateTarget = args => {
   const handleSelection = (selectedList, selectedItem, index) => {
     SelectedITems.push(selectedItem);
     setProduct(prevProductList => {
-      const updatedProductList = [...prevProductList]; // Create a copy of the productList array
-      const updatedProduct = { ...updatedProductList[index] }; // Create a copy of the product at the specified index
-      updatedProduct.price = selectedItem?.Product_MRP; // Update the price of the copied product
+      const updatedProductList = [...prevProductList];
+      const updatedProduct = { ...updatedProductList[index] };
+      updatedProduct.price = selectedItem?.Product_MRP;
       updatedProduct.productId = selectedItem?._id;
-      updatedProductList[index] = updatedProduct; // Replace the product at the specified index with the updated one
+      updatedProductList[index] = updatedProduct;
       let myarr = prevProductList?.map((ele, i) => {
-        console.log(ele?.qty * selectedItem[i]?.Product_MRP);
+        // console.log(ele?.qty * selectedItem[i]?.Product_MRP);
         let indextotal = ele?.qty * SelectedITems[i]?.Product_MRP;
+
         GrandTotal[index] = indextotal;
         return indextotal;
       });
       let amt = myarr.reduce((a, b) => a + b);
       setGrandTotalAmt(amt);
-      return updatedProductList; // Return the updated product list to set the state
+      return updatedProductList;
     });
     product.map(value => console.log(value.totalprice));
     // onSelect1(selectedList, selectedItem, index);
@@ -205,24 +177,19 @@ const CreateTarget = args => {
     }
   };
   // handleInputChange;
-  useEffect(() => {
-    console.log(product);
-    console.log(GrandTotal);
-    console.log(Salesperson);
-    console.log(targetStartDate);
-    console.log(targetEndDate);
-  }, [product, targetEndDate]);
+  useEffect(() => {}, [product, targetEndDate]);
 
   useEffect(() => {
+    const userInfo = JSON.parse(localStorage.getItem("userData"));
     Create_Sales_personList()
       .then(res => {
         console.log(res?.SalesPerson);
         setSalesPersonList(res?.SalesPerson);
       })
       .catch(err => console.log(err));
-    ProductListView()
+    ProductListView(userInfo._id)
       .then(res => {
-        // console.log(res?.Product);
+        console.log(res?.Product);
         setProductList(res?.Product);
       })
       .catch(err => {
@@ -304,13 +271,8 @@ const CreateTarget = args => {
 
   const submitHandler = e => {
     e.preventDefault();
-
-    // console.log(product);
-    // console.log(GrandTotal);
-    // console.log(Salesperson[0]?._id);
-    // console.log(targetStartDate);
-    // console.log(targetEndDate);
-    // console.log(grandTotalAmt);
+    debugger;
+    let userId = JSON.parse(localStorage.getItem("userData"))._id;
     let Allproduct = product?.map((ele, i) => {
       console.log(ele);
       return {
@@ -320,40 +282,21 @@ const CreateTarget = args => {
         totalPrice: ele?.totalprice,
       };
     });
+    debugger;
     let payload = {
       startDate: targetStartDate,
       endDate: targetEndDate,
       grandTotal: grandTotalAmt,
       salesPersonId: Salesperson[0]?._id,
       products: Allproduct,
+      created_by: userId,
     };
-    // const ObjOrder = {
-    //   userId: UserInfo?._id,
-    //   fullName: UserInfo?.UserName,
-    //   address: UserInfo?.Address,
-    //   // MobileNo: 1234567890,
-    //   // country: "USA",
-    //   // state: "California",
-    //   // city: "Los Angeles",
-    //   // landMark: "Nearby Park",
-    //   // pincode: 90001,
-    //   // grandTotal: 100.50,
-    //   // discount: 10.00,
-    //   // shippingCost: 5.00,
-    //   // taxAmount: 7.50,
-    //   // status: "pending",
-    //   orderItems: product,
-    // };
     if (error) {
       swal("Error occured while Entering Details");
     } else {
       Create_Targetsave(payload)
         .then(res => {
-          // if (res.status) {
-          //   setFormData({});
-          //   window.location.reload();
           swal("Target Created Successfully");
-          // }
           console.log(res);
         })
         .catch(err => {
@@ -362,52 +305,11 @@ const CreateTarget = args => {
     }
   };
   const onSelect1 = (selectedList, selectedItem) => {
-    debugger;
-    // console.log(selectedList);
     setSalesperson(selectedList);
-    // console.log(index);
-    // if (selectedList.length) {
-    //   for (var i = 0; i < selectedList.length; i++) {
-    //     selectedOptions.push(selectedList[i].id);
-    //   }
-    // }
-    // let arr = selectedList.map((ele) => ele.id);
-    // setmultiSelect(arr);
-    // console.log(multiSelect);
-    // let uniqueChars = [...new Set(selectedOptions)];
-    // if (uniqueChars.length === 1) {
-    //   let value = uniqueChars[0];
-    //   const formdata = new FormData();
-    //   formdata.append("state_id", value);
-    //   axiosConfig
-    //     .post(`/getcity`, formdata)
-    //     .then((res) => {
-    //       setCityList(res?.data?.cities);
-    //     })
-    //     .catch((err) => {
-    //       console.log(err);
-    //     });
-    // } else {
-    //   setCityList([]);
-    // }
   };
   const onRemove1 = (selectedList, removedItem, index) => {
     console.log(selectedList);
     console.log(index);
-
-    // setmultiSelect(selectedList);
-
-    // let arr = selectedList.map((ele) => ele.id);
-    // console.log(arr);
-    // setmultiSelect(arr);
-    // console.log(multiSelect);
-    // if (selectedList.length) {
-    //   for (var i = 0; i < selectedList.length; i++) {
-    //     selectedOptions.push(selectedList[i].id);
-    //   }
-    // }
-    // let uniqueChars = [...new Set(selectedOptions)];
-    // console.log(uniqueChars);
   };
   return (
     <div>
@@ -533,6 +435,7 @@ const CreateTarget = args => {
                         <Input
                           type="number"
                           name="qty"
+                          autoComplete="off"
                           placeholder="Req_Qty"
                           value={product?.qty}
                           onChange={e => handleProductChangeProduct(e, index)}
@@ -591,44 +494,6 @@ const CreateTarget = args => {
                     </Col>
                   </Row>
                 ))}
-              <Row>
-                {/* <Col className="mb-1" lg="2" md="2" sm="12">
-                      <div className="">
-                        <Label>Discount</Label>
-                        <Input
-                          type="number"
-                          name="discount"
-                          readOnly
-                          placeholder="Dissct"
-                          value={product.discount}
-                        />
-                      </div>
-                    </Col> */}
-                {/* <Col className="mb-1" lg="2" md="2" sm="12">
-                      <div className="">
-                        <Label>Shipping Cost</Label>
-                        <Input
-                          type="number"
-                          name="Shipcst"
-                          readOnly
-                          placeholder="Shipcst"
-                          value={product.Shipping}
-                        />
-                      </div>
-                    </Col> */}
-                {/* <Col className="mb-1" lg="2" md="2" sm="12">
-                      <div className="">
-                        <Label>Tax</Label>
-                        <Input
-                          type="number"
-                          name="tax"
-                          readOnly
-                          placeholder="Tax"
-                          value={product.tax}
-                        />
-                      </div>
-                    </Col> */}
-              </Row>
               <Row>
                 <Col className="mb-1" lg="12" md="12" sm="12">
                   <div className=" d-flex justify-content-end">

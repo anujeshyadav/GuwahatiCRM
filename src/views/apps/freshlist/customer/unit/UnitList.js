@@ -21,7 +21,7 @@ import {
 import { ContextLayout } from "../../../../../utility/context/Layout";
 import { AgGridReact } from "ag-grid-react";
 import "ag-grid-community/dist/styles/ag-grid.css";
-import ViewAccount from "../../../freshlist/accounts/ViewAccount";
+import ViewUnit from "./ViewUnit";
 import EditUnit from "./EditUnit";
 import jsPDF from "jspdf";
 import "jspdf-autotable";
@@ -50,7 +50,7 @@ import {
   SaveUnit,
   SaveAddPrimary_Unit,
   BaseUnitListView,
-  UnitViewOne,
+  UnitUpdate,
 } from "../../../../../ApiEndPoint/ApiCalling";
 import {
   BsCloudDownloadFill,
@@ -72,10 +72,13 @@ class UnitList extends React.Component {
       rowData: [],
       baseubitListView: [],
       baseUnit: "",
+      unitId: "",
       primaryUnit: "",
       secondaryUnit: "",
-      unitQty: "",
+      unitQty: 0,
+      isDisable: false,
       formData: {},
+      isUpdate: false,
       IsprimaryUnit: false,
       setMySelectedarr: [],
       SelectedCols: [],
@@ -118,14 +121,22 @@ class UnitList extends React.Component {
   };
 
   handleChangeEdit = (data, types) => {
-    console.log(data);
+    // console.log(data);
+    this.setState(prevState => ({
+      unitModal: !prevState.unitModal,
+    }));
+    this.setState({ baseUnit: data.primaryUnit });
+    this.setState({ secondaryUnit: data.secondaryUnit });
+    this.setState({ unitQty: data.unitQty });
+
     let type = types;
     if (type == "readonly") {
-      this.setState({ ViewOneUserView: true });
-      this.setState({ ViewOneData: data });
+      this.setState({ isDisable: true });
     } else {
-      this.setState({ EditOneUserView: true });
-      this.setState({ EditOneData: data });
+      console.log(data, data?._id);
+      this.setState({ unitId: data?._id });
+      this.setState({ isUpdate: true });
+      this.setState({ isDisable: false });
     }
   };
   changeHandler = e => {
@@ -163,19 +174,80 @@ class UnitList extends React.Component {
   handleSave = e => {
     e.preventDefault();
     let userData = JSON.parse(localStorage.getItem("userData"));
-    const payload = {
-      primaryUnit: this.state.baseUnit,
-      secondaryUnit: this.state.secondaryUnit,
-      unitQty: Number(this.state.unitQty),
-      created_by: userData?._id,
-    };
+    if (this.state.baseUnit != "" && this.state.secondaryUnit != "") {
+      if (this.state.baseUnit != this.state.secondaryUnit) {
+        if (Number(this.state.unitQty) > 0) {
+          const payload = {
+            primaryUnit: this.state.baseUnit,
+            secondaryUnit: this.state.secondaryUnit,
+            unitQty: Number(this.state.unitQty),
+            created_by: userData?._id,
+          };
 
-    SaveUnit(payload)
-      .then(res => {
-        console.log(res);
-        if (res.status) {
-          swal(`${res.message}`);
+          if (this.state.isUpdate) {
+            debugger;
+            console.log(this.state.unitId);
+            UnitUpdate(payload, this.state.unitId)
+              .then(res => {
+                if (res.status) {
+                  console.log("Edit", res);
+                  swal(`${res.message}`);
+                  this.setState(prevState => ({
+                    unitModal: !prevState.unitModal,
+                  }));
+                }
+                this.setState({
+                  baseUnit: "",
+                  secondaryUnit: "",
+                  unitQty: 0,
+                });
+                this.myFunctionCall();
+              })
+              .catch(err => {
+                console.log(err);
+              });
+            // update close
+          } else {
+            SaveUnit(payload)
+              .then(res => {
+                if (res.status) {
+                  swal(`${res.message}`);
+                  this.setState(prevState => ({
+                    unitModal: !prevState.unitModal,
+                  }));
+                }
+                this.setState({
+                  baseUnit: "",
+                  secondaryUnit: "",
+                  unitQty: 0,
+                });
+                this.myFunctionCall();
+              })
+              .catch(err => {
+                console.log(err);
+              });
+          }
+        } else {
+          swal("!Error", `Quantity should be greater than 0`);
         }
+      } else {
+        swal(
+          "!Error",
+          `${this.state.baseUnit} and ${this.state.secondaryUnit} can not be same`
+        );
+      }
+    } else {
+      swal(
+        "Error",
+        `Please Select  Primary & Secondary unit with Quanity Properly`
+      );
+    }
+  };
+  myFunctionCall = async () => {
+    let userData = JSON.parse(localStorage.getItem("userData"));
+    await UnitListView(userData?._id)
+      .then(res => {
+        this.setState({ rowData: res?.Unit });
       })
       .catch(err => {
         console.log(err);
@@ -183,16 +255,7 @@ class UnitList extends React.Component {
   };
   async componentDidMount() {
     const UserInformation = this.context?.UserInformatio;
-
-    let userData = JSON.parse(localStorage.getItem("userData"));
-    await UnitListView(userData?._id)
-      .then(res => {
-        console.log(res?.Unit);
-        this.setState({ rowData: res?.Unit });
-      })
-      .catch(err => {
-        console.log(err);
-      });
+    this.myFunctionCall();
     await BaseUnitListView()
       .then(res => {
         this.setState({ baseubitListView: res.PrimaryUnit });
@@ -200,136 +263,118 @@ class UnitList extends React.Component {
       .catch(err => {
         console.log(err);
       });
-
-    await CreateunitxmlView()
-      .then(res => {
-        const jsonData = xmlJs.xml2json(res.data, { compact: true, spaces: 2 });
-        const inputs = JSON.parse(jsonData).CreateUnit?.input?.map(ele => {
-          return {
-            headerName: ele?.label._text,
-            field: ele?.name._text,
-            filter: true,
-            sortable: true,
-          };
-        });
-        let myHeadings = [...inputs];
-        let Product = [
-          {
-            headerName: "Actions",
-            field: "sortorder",
-            field: "transactions",
-            width: 190,
-            cellRendererFramework: params => {
-              return (
-                <div className="actions cursor-pointer">
-                  <Route
-                    render={({ history }) => (
-                      <Eye
-                        className="mr-50"
-                        size="25px"
-                        color="green"
-                        onClick={() => {
-                          this.handleChangeEdit(params.data, "readonly");
-                        }}
-                      />
-                    )}
+    let Product = [
+      {
+        headerName: "Actions",
+        field: "sortorder",
+        field: "transactions",
+        width: 190,
+        cellRendererFramework: params => {
+          return (
+            <div className="actions cursor-pointer">
+              <Route
+                render={({ history }) => (
+                  <Eye
+                    className="mr-50"
+                    size="25px"
+                    color="green"
+                    onClick={() => {
+                      this.handleChangeEdit(params.data, "readonly");
+                    }}
                   />
-                  <Route
-                    render={({ history }) => (
-                      <Edit
-                        className="mr-50"
-                        size="25px"
-                        color="blue"
-                        onClick={() => {
-                          this.handleChangeEdit(params.data, "Editable");
-                        }}
-                      />
-                    )}
+                )}
+              />
+              <Route
+                render={({ history }) => (
+                  <Edit
+                    className="mr-50"
+                    size="25px"
+                    color="blue"
+                    onClick={() => {
+                      this.handleChangeEdit(params.data, "Editable");
+                    }}
                   />
+                )}
+              />
 
-                  <Route
-                    render={() => (
-                      <Trash2
-                        className="mr-50"
-                        size="25px"
-                        color="red"
-                        onClick={() => {
-                          this.runthisfunction(params?.data?._id);
-                        }}
-                      />
-                    )}
+              <Route
+                render={() => (
+                  <Trash2
+                    className="mr-50"
+                    size="25px"
+                    color="red"
+                    onClick={() => {
+                      this.runthisfunction(params?.data?._id);
+                    }}
                   />
-                </div>
-              );
-            },
-          },
+                )}
+              />
+            </div>
+          );
+        },
+      },
 
-          ...myHeadings,
+      // ...myHeadings,
 
-          {
-            headerName: "PrimaryUnit",
-            field: "primaryUnit",
-            filter: true,
-            sortable: true,
-            cellRendererFramework: params => {
-              return (
-                <>
-                  <div className="actions cursor-pointer">
-                    <span>{params?.data?.primaryUnit}</span>
-                  </div>
-                </>
-              );
-            },
-          },
-          {
-            headerName: "Quantity",
-            field: "Quantity",
-            filter: true,
-            sortable: true,
-            cellRendererFramework: params => {
-              return (
-                <>
-                  <div className="actions cursor-pointer">
-                    <span>{params?.data?.unitQty}</span>
-                  </div>
-                </>
-              );
-            },
-          },
-          {
-            headerName: "SecondaryUnit",
-            field: "secondaryUnit",
-            filter: true,
-            sortable: true,
-            cellRendererFramework: params => {
-              return (
-                <>
-                  <div className="actions cursor-pointer">
-                    <span>{params?.data?.secondaryUnit}</span>
-                  </div>
-                </>
-              );
-            },
-          },
-        ];
+      {
+        headerName: "PrimaryUnit",
+        field: "primaryUnit",
+        filter: true,
+        sortable: true,
+        cellRendererFramework: params => {
+          return (
+            <>
+              <div className="actions cursor-pointer">
+                <span>{params?.data?.primaryUnit}</span>
+              </div>
+            </>
+          );
+        },
+      },
+      {
+        headerName: "Quantity",
+        field: "Quantity",
+        filter: true,
+        sortable: true,
+        cellRendererFramework: params => {
+          return (
+            <>
+              <div className="actions cursor-pointer">
+                <span>{params?.data?.unitQty}</span>
+              </div>
+            </>
+          );
+        },
+      },
+      {
+        headerName: "SecondaryUnit",
+        field: "secondaryUnit",
+        filter: true,
+        sortable: true,
+        cellRendererFramework: params => {
+          return (
+            <>
+              <div className="actions cursor-pointer">
+                <span>{params?.data?.secondaryUnit}</span>
+              </div>
+            </>
+          );
+        },
+      },
+    ];
 
-        this.setState({ AllcolumnDefs: Product });
+    this.setState({ AllcolumnDefs: Product });
 
-        let userHeading = JSON.parse(localStorage.getItem("UserWikiList"));
-        if (userHeading?.length) {
-          this.setState({ columnDefs: userHeading });
-          this.gridApi.setColumnDefs(userHeading);
-          this.setState({ SelectedcolumnDefs: userHeading });
-        } else {
-          this.setState({ columnDefs: Product });
-          this.setState({ SelectedcolumnDefs: Product });
-        }
-        this.setState({ SelectedCols: Product });
-      })
-      .catch(err => {
-        console.log(err);
-        swal("Error", "something went wrong try again");
-      });
+    let userHeading = JSON.parse(localStorage.getItem("UserWikiList"));
+    if (userHeading?.length) {
+      this.setState({ columnDefs: userHeading });
+      this.gridApi.setColumnDefs(userHeading);
+      this.setState({ SelectedcolumnDefs: userHeading });
+    } else {
+      this.setState({ columnDefs: Product });
+      this.setState({ SelectedcolumnDefs: Product });
+    }
+    this.setState({ SelectedCols: Product });
   }
   toggleDropdown = () => {
     this.setState(prevState => ({ isOpen: !prevState.isOpen }));
@@ -348,6 +393,8 @@ class UnitList extends React.Component {
             .then(res => {
               let selectedData = this.gridApi.getSelectedRows();
               this.gridApi.updateRowData({ remove: selectedData });
+              swal("Deleted", "Record has been deleted", "success");
+              this.myFunctionCall();
             })
             .catch(err => {
               console.log(err);
@@ -622,7 +669,6 @@ class UnitList extends React.Component {
                 </div>
               </Col>
               <EditUnit ViewOneData={this.state.ViewOneData} />
-              {/* <EditAccount EditOneData={this.state.EditOneData} /> */}
             </Row>
           ) : (
             <>
@@ -643,7 +689,7 @@ class UnitList extends React.Component {
                       </div>
                     </Col>
 
-                    <ViewAccount ViewOneData={this.state.ViewOneData} />
+                    <ViewUnit ViewOneData={this.state.ViewOneData} />
                   </Row>
                 </>
               ) : (
@@ -1025,6 +1071,8 @@ class UnitList extends React.Component {
                   <Label>Primary Unit</Label>
                   <CustomInput
                     type="select"
+                    disabled={this.state.isDisable ? true : false}
+                    required
                     placeholder="Select Type"
                     name="baseUnit"
                     value={this.state.baseUnit}
@@ -1049,6 +1097,8 @@ class UnitList extends React.Component {
                   <Label>Secondary Unit</Label>
                   <CustomInput
                     type="select"
+                    required
+                    disabled={this.state.isDisable ? true : false}
                     placeholder="Select Type"
                     name="secondaryUnit"
                     value={this.state.secondaryUnit}
@@ -1069,9 +1119,8 @@ class UnitList extends React.Component {
                   </CustomInput>
                 </Col>
               </Row>
-
-              {this.state.baseUnit !== this.state.secondaryUnit &&
-              this.state.IsprimaryUnit == true ? (
+              {this.state.baseUnit != "None" &&
+              this.state.baseUnit != this.state.secondaryUnit ? (
                 <>
                   <Row>
                     <Col md="12" lg="12" sm="12">
@@ -1093,11 +1142,12 @@ class UnitList extends React.Component {
                             <div className="">
                               <Input
                                 type="number"
+                                disabled={this.state.isDisable ? true : false}
                                 className=""
-                                name="inputValue"
+                                name="unitQty"
                                 checked
                                 style={{ width: "80px", height: "2px" }}
-                                value={this.state.inputValue}
+                                value={this.state.unitQty}
                                 onChange={e =>
                                   this.setState({
                                     unitQty: e.target.value,
@@ -1116,6 +1166,7 @@ class UnitList extends React.Component {
                   </Row>
                 </>
               ) : null}
+
               <hr></hr>
               <Row className="justify-content-end modalbodyheadunit">
                 <Col>
@@ -1134,8 +1185,14 @@ class UnitList extends React.Component {
                     />
                   </span>
                 </Col>
+
                 <Col>
-                  <Button type="submit" size="sm" color="primary">
+                  <Button
+                    type="submit"
+                    disabled={this.state.isDisable ? true : false}
+                    size="sm"
+                    color="primary"
+                  >
                     Save
                   </Button>
                 </Col>
