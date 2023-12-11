@@ -492,6 +492,9 @@ const PurchaseOrderList = lazy(() =>
 const PendingPurchase = lazy(() =>
   import("./views/apps/freshlist/order/purchase/PendingPurchase")
 );
+const PurchaseCompleted = lazy(() =>
+  import("./views/apps/freshlist/order/purchase/PurchaseCompleted")
+);
 const EditPurchase = lazy(() =>
   import("./views/apps/freshlist/order/purchase/EditPurchase")
 );
@@ -1465,6 +1468,10 @@ class AppRouter extends React.Component {
           <AppRoute
             path="/app/AJgroup/purchase/pendingPurchase"
             component={PendingPurchase}
+          />
+          <AppRoute
+            path="/app/AJgroup/purchase/purchaseCompleted"
+            component={PurchaseCompleted}
           />
           <AppRoute
             path="/app/AJgroup/order/AddPurchaseOrder"

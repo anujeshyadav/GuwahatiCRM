@@ -261,7 +261,7 @@ class InwardStock extends React.Component {
     let userid = pageparmission?._id;
     await View_Wareahouseid(userid)
       .then((res) => {
-        console.log(res?.Warehouse?.productItems);
+        console.log(res?.Warehouse);
         this.setState({ rowData: res?.Warehouse?.productItems });
         debugger;
       })

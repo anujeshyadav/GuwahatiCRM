@@ -216,11 +216,19 @@ const horizontalMenuConfig = [
       },
       {
         id: "Purchaseorder",
-        title: "Pending Purchase Order",
+        title: "Purchase Pending",
         type: "item",
         icon: <FaCircle size={8} />,
         permissions: ["admin", "editor"],
         navLink: "/app/AJgroup/purchase/pendingPurchase",
+      },
+      {
+        id: "Purchaseorder",
+        title: "Purchase Complete",
+        type: "item",
+        icon: <FaCircle size={8} />,
+        permissions: ["admin", "editor"],
+        navLink: "/app/AJgroup/purchase/purchaseCompleted",
       },
       {
         id: "PurchaseInvoice",

@@ -65,6 +65,7 @@ import {
   Create_unit_List,
   Delete_Unit_List,
   Unit_ViewOne,
+  Unit_Update,
   Create_Category,
   Save_Product,
   Save_Order,
@@ -92,6 +93,7 @@ import {
   Warranty_Delete,
   Create_Account_save,
   Create_Account_List,
+  Create_User_List,
   Delete_Customer_List,
   Delete_Account_List,
   Add_To_Cart_PartsCatelougue,
@@ -198,6 +200,7 @@ export const Stock_trxFactorytoWList = async (id) => {
   return response;
 };
 
+// export const CreateWarehousesave = async data => {
 export const StocktrxFtoW = async (data) => {
   let response = await axiosConfig
     .post(`${Stock_trx_FtoW}`, data)
@@ -373,6 +376,12 @@ export const DeleteSalesperson = async (id) => {
 export const UnitViewOne = async (id) => {
   let response = await axiosConfig
     .put(`${Unit_ViewOne}` + id)
+    .then((res) => res.data);
+  return response;
+};
+export const UnitUpdate = async (payload, id) => {
+  let response = await axiosConfig
+    .put(`${Unit_Update}` + id, payload)
     .then((res) => res.data);
   return response;
 };
@@ -677,6 +686,12 @@ export const DeleteCustomerList = async (id) => {
 export const CreateAccountList = async (id) => {
   let response = await axiosConfig
     .get(`${Create_Account_List}` + id)
+    .then((res) => res.data);
+  return response;
+};
+export const CreateUserList = async (id) => {
+  let response = await axiosConfig
+    .get(`${Create_User_List}` + id)
     .then((res) => res.data);
   return response;
 };
@@ -1271,9 +1286,9 @@ export const Create_Targetsave = async (data) => {
     .then((res) => res.data);
   return response;
 };
-export const Create_TargetList = async () => {
+export const Create_TargetList = async (id) => {
   let response = await axiosConfig
-    .get(`${Create_Target_List}`)
+    .get(`${Create_Target_List}` + id)
     .then((res) => res.data);
   return response;
 };

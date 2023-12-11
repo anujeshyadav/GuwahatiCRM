@@ -38,7 +38,7 @@ import {
 } from "react-icons/fa";
 import swal from "sweetalert";
 import {
-  createOrderhistoryview,
+  PurchaseOrderList,
   Delete_targetINlist,
 } from "../../../../../ApiEndPoint/ApiCalling";
 import {
@@ -351,13 +351,13 @@ class PendingPurchase extends React.Component {
   async componentDidMount() {
     const UserInformation = this.context?.UserInformatio;
 
-    await createOrderhistoryview()
+    await PurchaseOrderList()
       .then(res => {
         console.log(res?.orderHistory);
-        // const pendingStatus = res?.orderHistory?.filter(
-        //   ele => ele.status == "pending"? ele.status:null
-        // );
-        this.setState({ rowData: res?.orderHistory });
+        const pendingStatus = res?.orderHistory?.filter(ele =>
+          ele.status == "pending" ? ele.status : null
+        );
+        this.setState({ rowData: pendingStatus });
         this.setState({ AllcolumnDefs: this.state.columnDefs });
         this.setState({ SelectedCols: this.state.columnDefs });
 
@@ -685,8 +685,12 @@ class PendingPurchase extends React.Component {
               {this.state.ViewOneUserView && this.state.ViewOneUserView ? (
                 <>
                   <Row className="card">
-                    <Col>
-                      <div className="d-flex justify-content-end p-1">
+                    <Row className="m-2">
+                      <Col>
+                        <h2>Pending Purchase Order</h2>
+                      </Col>
+                      <Col className="" style={{ display: "contents" }}>
+                        {/* <div className="d-flex justify-content-end p-1"> */}
                         <Button
                           onClick={e => {
                             e.preventDefault();
@@ -696,8 +700,9 @@ class PendingPurchase extends React.Component {
                         >
                           Back
                         </Button>
-                      </div>
-                    </Col>
+                        {/* </div> */}
+                      </Col>
+                    </Row>
                     <PendingView ViewOneData={this.state.ViewOneData} />
                   </Row>
                 </>
@@ -707,7 +712,7 @@ class PendingPurchase extends React.Component {
                     <Card>
                       <Row className="m-2">
                         <Col>
-                          <h1 className="float-left">Pending List</h1>
+                          <h1 className="float-left">Purchase Pending List</h1>
                         </Col>
                         <Col>
                           <span className="mx-1">

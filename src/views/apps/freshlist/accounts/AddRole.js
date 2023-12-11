@@ -100,7 +100,11 @@ export const Roles = [
         permission: ["View", "Create", "Edit", "Delete"],
       },
       {
-        title: "Pending Purchase Order",
+        title: "Purchase Pending",
+        permission: ["View", "Create", "Edit", "Delete"],
+      },
+      {
+        title: " Purchase Complete",
         permission: ["View", "Create", "Edit", "Delete"],
       },
       {
