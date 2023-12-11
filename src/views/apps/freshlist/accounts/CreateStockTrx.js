@@ -39,6 +39,7 @@ import {
   Create_Targetsave,
   CreateWarehouseList,
   UnitListView,
+  StocktrxFtoW,
 } from "../../../../ApiEndPoint/ApiCalling";
 import "../../../../assets/scss/pages/users.scss";
 import Timepickers from "../../../forms/form-elements/datepicker/Timepicker";
@@ -58,8 +59,8 @@ const CreateTarget = (args) => {
   const [ProductList, setProductList] = useState([]);
   const [PartyList, setPartyList] = useState([]);
   const [Salesperson, setSalesperson] = useState("");
-  const [WareHouseone, setWareHouseone] = useState({});
-  const [WareHousetwo, setWareHousetwo] = useState({});
+  const [WareHouseone, setWareHouseone] = useState([]);
+  const [WareHousetwo, setWareHousetwo] = useState([]);
   const [TypeOfTrx, setTypeOfTrx] = useState("");
   const [grandTotalAmt, setGrandTotalAmt] = useState(0);
   const [UnitList, setUnitList] = useState([]);
@@ -357,7 +358,7 @@ const CreateTarget = (args) => {
   };
   const submitHandler = (e) => {
     e.preventDefault();
-
+    let userdata = JSON.parse(localStorage.getItem("userData"));
     // console.log(product);
     // console.log(GrandTotal);
     // console.log(Salesperson[0]?._id);
@@ -369,46 +370,31 @@ const CreateTarget = (args) => {
       console.log(ele);
       return {
         productId: ele?.productId,
-        unitType: ele?.qty,
+        unitType: ele?.unitType,
         price: ele?.price,
-        Size: ele?.qty,
-        transferQty: ele?.price,
+        Size: ele?.Size,
+        transferQty: ele?.transferQty,
         totalPrice: ele?.totalprice,
       };
     });
     let payload = {
       productItems: Allproduct,
-      warehouseToId: targetEndDate,
-      stockTransferDate: grandTotalAmt,
+      warehouseToId: WareHouseone[0]?._id,
+      stockTransferDate: StockTrxdate,
       grandTotal: grandTotalAmt,
       status: "Transferring",
+      created_by: userdata?._id,
     };
-    // const ObjOrder = {
-    //   userId: UserInfo?._id,
-    //   fullName: UserInfo?.UserName,
-    //   address: UserInfo?.Address,
-    //   // MobileNo: 1234567890,
-    //   // country: "USA",
-    //   // state: "California",
-    //   // city: "Los Angeles",
-    //   // landMark: "Nearby Park",
-    //   // pincode: 90001,
-    //   // grandTotal: 100.50,
-    //   // discount: 10.00,
-    //   // shippingCost: 5.00,
-    //   // taxAmount: 7.50,
-    //   // status: "pending",
-    //   orderItems: product,
-    // };
+
     if (error) {
       swal("Error occured while Entering Details");
     } else {
-      Create_Targetsave(payload)
+      StocktrxFtoW(payload)
         .then((res) => {
           // if (res.status) {
           //   setFormData({});
           //   window.location.reload();
-          swal("Target Created Successfully");
+          swal("Stock Assigned to WareHouse");
           // }
           console.log(res);
         })

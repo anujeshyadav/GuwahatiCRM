@@ -6,8 +6,10 @@ import {
   Credit_note_Order_List,
   GoodDispatch_xmlView,
   SAVE_GoodDispatch,
+  Stock_trx_FtoW,
   GoodDispatch_List,
   Edit_GoodDispatch,
+  Stock_trx_FtoW_List,
   View_Company_Details,
   Purchase_Return,
   Purchase_Edit_Order,
@@ -185,7 +187,19 @@ export const Createwarehousexml = async () => {
     .then((res) => res.data);
   return response;
 };
+export const Stock_trxFtoWList = async () => {
+  let response = await axiosConfig
+    .get(`${Stock_trx_FtoW_List}`)
+    .then((res) => res.data);
+  return response;
+};
 
+export const StocktrxFtoW = async (data) => {
+  let response = await axiosConfig
+    .post(`${Stock_trx_FtoW}`, data)
+    .then((res) => res.data);
+  return response;
+};
 export const CreateWarehousesave = async (data) => {
   let response = await axiosConfig
     .post(`${Create_warehouse_save}`, data)

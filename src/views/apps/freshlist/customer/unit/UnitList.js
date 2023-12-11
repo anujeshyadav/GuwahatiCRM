@@ -611,12 +611,11 @@ class UnitList extends React.Component {
               <Col>
                 <div className="d-flex justify-content-end p-1">
                   <Button
-                    onClick={e => {
+                    onClick={(e) => {
                       e.preventDefault();
                       this.setState({ EditOneUserView: false });
                     }}
-                    color="danger"
-                  >
+                    color="danger">
                     Back
                   </Button>
                 </div>
@@ -632,12 +631,11 @@ class UnitList extends React.Component {
                     <Col>
                       <div className="d-flex justify-content-end p-1">
                         <Button
-                          onClick={e => {
+                          onClick={(e) => {
                             e.preventDefault();
                             this.setState({ ViewOneUserView: false });
                           }}
-                          color="danger"
-                        >
+                          color="danger">
                           Back
                         </Button>
                       </div>
@@ -682,13 +680,11 @@ class UnitList extends React.Component {
                                     position: "absolute",
                                     zIndex: "1",
                                   }}
-                                  className="dropdown-content dropdownmy"
-                                >
+                                  className="dropdown-content dropdownmy">
                                   <h5
                                     onClick={() => this.exportToPDF()}
                                     style={{ cursor: "pointer" }}
-                                    className=" mx-1 myactive mt-1"
-                                  >
+                                    className=" mx-1 myactive mt-1">
                                     .PDF
                                   </h5>
                                   <h5
@@ -696,29 +692,25 @@ class UnitList extends React.Component {
                                       this.gridApi.exportDataAsCsv()
                                     }
                                     style={{ cursor: "pointer" }}
-                                    className=" mx-1 myactive"
-                                  >
+                                    className=" mx-1 myactive">
                                     .CSV
                                   </h5>
                                   <h5
                                     onClick={this.convertCSVtoExcel}
                                     style={{ cursor: "pointer" }}
-                                    className=" mx-1 myactive"
-                                  >
+                                    className=" mx-1 myactive">
                                     .XLS
                                   </h5>
                                   <h5
                                     onClick={this.exportToExcel}
                                     style={{ cursor: "pointer" }}
-                                    className=" mx-1 myactive"
-                                  >
+                                    className=" mx-1 myactive">
                                     .XLSX
                                   </h5>
                                   <h5
                                     onClick={() => this.convertCsvToXml()}
                                     style={{ cursor: "pointer" }}
-                                    className=" mx-1 myactive"
-                                  >
+                                    className=" mx-1 myactive">
                                     .XML
                                   </h5>
                                 </div>
@@ -732,8 +724,7 @@ class UnitList extends React.Component {
                                   style={{ cursor: "pointer" }}
                                   className="float-right mr-1"
                                   color="primary"
-                                  onClick={this.LookCreateUnit}
-                                >
+                                  onClick={this.LookCreateUnit}>
                                   <FaPlus size={15} /> Create Unit
                                 </Badge>
                               )}
@@ -766,32 +757,27 @@ class UnitList extends React.Component {
                                   <DropdownMenu right>
                                     <DropdownItem
                                       tag="div"
-                                      onClick={() => this.filterSize(5)}
-                                    >
+                                      onClick={() => this.filterSize(5)}>
                                       5
                                     </DropdownItem>
                                     <DropdownItem
                                       tag="div"
-                                      onClick={() => this.filterSize(20)}
-                                    >
+                                      onClick={() => this.filterSize(20)}>
                                       20
                                     </DropdownItem>
                                     <DropdownItem
                                       tag="div"
-                                      onClick={() => this.filterSize(50)}
-                                    >
+                                      onClick={() => this.filterSize(50)}>
                                       50
                                     </DropdownItem>
                                     <DropdownItem
                                       tag="div"
-                                      onClick={() => this.filterSize(100)}
-                                    >
+                                      onClick={() => this.filterSize(100)}>
                                       100
                                     </DropdownItem>
                                     <DropdownItem
                                       tag="div"
-                                      onClick={() => this.filterSize(134)}
-                                    >
+                                      onClick={() => this.filterSize(134)}>
                                       134
                                     </DropdownItem>
                                   </DropdownMenu>
@@ -801,7 +787,7 @@ class UnitList extends React.Component {
                                 <div className="table-input mr-1">
                                   <Input
                                     placeholder="search Item here..."
-                                    onChange={e =>
+                                    onChange={(e) =>
                                       this.updateSearchQuery(e.target.value)
                                     }
                                     value={this.state.value}
@@ -810,7 +796,7 @@ class UnitList extends React.Component {
                               </div>
                             </div>
                             <ContextLayout.Consumer className="ag-theme-alpine">
-                              {context => (
+                              {(context) => (
                                 <AgGridReact
                                   id="myAgGrid"
                                   gridOptions={this.gridOptions}
@@ -848,8 +834,7 @@ class UnitList extends React.Component {
           isOpen={this.state.modal}
           toggle={this.LookupviewStart}
           className={this.props.className}
-          style={{ maxWidth: "1050px" }}
-        >
+          style={{ maxWidth: "1050px" }}>
           <ModalHeader toggle={this.LookupviewStart}>Change Fileds</ModalHeader>
           <ModalBody className="modalbodyhead">
             <Row>
@@ -862,15 +847,15 @@ class UnitList extends React.Component {
                         return (
                           <>
                             <div
-                              onClick={e => this.handleChangeHeader(e, ele, i)}
+                              onClick={(e) =>
+                                this.handleChangeHeader(e, ele, i)
+                              }
                               key={i}
-                              className="mycustomtag mt-1"
-                            >
+                              className="mycustomtag mt-1">
                               <span className="mt-1">
                                 <h5
                                   style={{ cursor: "pointer" }}
-                                  className="allfields"
-                                >
+                                  className="allfields">
                                   <input
                                     type="checkbox"
                                     // checked={check && check}
@@ -929,15 +914,14 @@ class UnitList extends React.Component {
                                             : ""
                                         }`,
                                       }}
-                                      className="allfields"
-                                    >
+                                      className="allfields">
                                       <IoMdRemoveCircleOutline
                                         onClick={() => {
                                           const SelectedCols =
                                             this.state.SelectedcolumnDefs.slice();
                                           const delindex =
                                             SelectedCols.findIndex(
-                                              element =>
+                                              (element) =>
                                                 element?.headerName ==
                                                 ele?.headerName
                                             );
@@ -1015,8 +999,7 @@ class UnitList extends React.Component {
         <Modal
           isOpen={this.state.unitModal}
           toggle={this.LookCreateUnit}
-          className={this.props.className}
-        >
+          className={this.props.className}>
           <ModalHeader toggle={this.LookCreateUnit}>Select Unit</ModalHeader>
           <ModalBody className="modalbodyheadunit">
             <Form className="m-1" onSubmit={this.handleSave}>
@@ -1029,10 +1012,12 @@ class UnitList extends React.Component {
                     name="baseUnit"
                     value={this.state.baseUnit}
                     defaultValue="None"
-                    onChange={e => this.setState({ baseUnit: e.target.value })}
-                  >
+                    onChange={(e) => {
+                      this.setState({ baseUnit: e.target.value });
+                      this.changeHandler(e);
+                    }}>
                     <option value="None">None</option>
-                    {this.state.baseubitListView?.map(val => {
+                    {this.state.baseubitListView?.map((val) => {
                       return (
                         <option value={val.primaryUnit}>
                           {val.primaryUnit}
@@ -1050,12 +1035,11 @@ class UnitList extends React.Component {
                     name="secondaryUnit"
                     value={this.state.secondaryUnit}
                     defaultValue="None"
-                    onChange={e =>
+                    onChange={(e) =>
                       this.setState({ secondaryUnit: e.target.value })
-                    }
-                  >
+                    }>
                     <option value="None">None</option>
-                    {this.state.baseubitListView?.map(val => {
+                    {this.state.baseubitListView?.map((val) => {
                       return (
                         <option value={val.primaryUnit}>
                           {val.primaryUnit}
@@ -1088,13 +1072,13 @@ class UnitList extends React.Component {
                             </div>
                             <div className="">
                               <Input
+                                required
                                 type="number"
                                 className=""
                                 name="inputValue"
-                                checked
                                 style={{ width: "80px", height: "2px" }}
                                 value={this.state.inputValue}
-                                onChange={e =>
+                                onChange={(e) =>
                                   this.setState({
                                     unitQty: e.target.value,
                                   })
@@ -1122,8 +1106,7 @@ class UnitList extends React.Component {
                           style={{ cursor: "pointer" }}
                           className="float-right mr-1"
                           color="primary"
-                          onClick={this.LookAddUnit}
-                        >
+                          onClick={this.LookAddUnit}>
                           <FaPlus size={15} /> Add Unit
                         </Badge>
                       )}
@@ -1159,7 +1142,7 @@ class UnitList extends React.Component {
                   placeholder="Unit Name"
                   // style={{ width: "80px", height: "2px" }}
                   value={this.state.unitName}
-                  onChange={e => {
+                  onChange={(e) => {
                     console.log(e.target.value);
                     this.setState({
                       primaryUnit: e.target.value,

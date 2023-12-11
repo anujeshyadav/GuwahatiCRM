@@ -52,6 +52,7 @@ const PhoneNo = (props) => {
 const ThemeNavbar = (props) => {
   const [screenSize, setScreenSize] = useState();
   const [myCustomColor, SetmyCustomColor] = useState("");
+  const [ComDetails, setComDetails] = useState({});
   const { user } = useAuth0();
   const colorsArr = ["primary", "danger", "success", "info", "warning", "dark"];
   const navbarTypes = ["floating", "static", "sticky", "hidden"];
@@ -59,6 +60,7 @@ const ThemeNavbar = (props) => {
 
   useEffect(() => {
     setScreenSize(window.innerWidth);
+
     // setScreenSize({
     //   width: window.innerWidth,
     //   height: window.innerHeight,
@@ -66,7 +68,6 @@ const ThemeNavbar = (props) => {
   }, []);
 
   useEffect(() => {
-    console.log(screenSize);
     console.log(contextValue);
   }, [screenSize]);
 
@@ -127,7 +128,21 @@ const ThemeNavbar = (props) => {
                     }}
                     // style={{ cursor: "pointer", width: "8%" }}
                     onClick={() => history.push("/dashboard")}>
-                    <img src={logo} width="100%" height={35} alt="logo" />
+                    {contextValue?.CompanyDetails?.logo &&
+                    contextValue?.CompanyDetails?.logo ? (
+                      <>
+                        <img
+                          src={`http://64.227.162.41:5000/Images/${contextValue?.CompanyDetails?.logo}`}
+                          width="100%"
+                          height={35}
+                          alt="logo"
+                        />
+                      </>
+                    ) : (
+                      <>
+                        <img src={logo} width="100%" height={35} alt="logo" />
+                      </>
+                    )}
                   </div>
                 )}
               />

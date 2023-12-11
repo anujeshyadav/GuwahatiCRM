@@ -28,6 +28,11 @@ const State = (props) => {
   }, [myCustomColor]);
 
   useEffect(() => {
+    let Companydetail = JSON.parse(localStorage.getItem("Companydetail"));
+    setCompanyDetails(Companydetail);
+  }, [JSON.stringify(CompanyDetails)]);
+
+  useEffect(() => {
     let user = JSON.parse(localStorage.getItem("userData"));
     console.log(UserInformatio);
     const fetchData = async () => {
@@ -35,6 +40,10 @@ const State = (props) => {
         await ViewCompanyDetails(user?._id)
           .then((res) => {
             console.log(res?.CompanyDetail);
+            localStorage.setItem(
+              "Companydetail",
+              JSON.stringify(res?.CompanyDetail)
+            );
             setCompanyDetails(res?.CompanyDetail);
           })
           .catch((err) => {
@@ -45,7 +54,7 @@ const State = (props) => {
       }
     };
     fetchData();
-  }, [JSON.stringify(user)]);
+  }, []);
 
   useEffect(() => {
     let user = JSON.parse(localStorage.getItem("userData"));
