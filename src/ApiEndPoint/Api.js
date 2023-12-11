@@ -1,11 +1,13 @@
 // Guwahati open
 export const Get_Role = "/role/get-role";
+export const Create_Role = "/role/create-role";
 export const Get_Role_by_id = "/role/get-role-by-id/";
 export const Create_Company_Details = "/company-detail/save-company-details";
 export const View_Company_Details = "/company-detail/view-company-details/";
 export const Update_Role = "/role/update-role/";
 export const Create_warehouse_xmlView = "/warehouse/get-xml";
 export const Create_warehouse_save = "/warehouse/save-warehouse";
+export const View_Wareahouse_id = "/warehouse/view-warehouse-by-id/";
 export const Create_Warehouse_List = "/warehouse/view-warehouse/";
 export const Create_Party_XML = "/party/get-xml";
 export const Create_Party_save = "/party/save-party";
@@ -50,8 +52,11 @@ export const Create_SubCategory = "/categories/save-subcategory";
 export const Create_Product_XMLView = "/product/get-xml";
 export const Save_Product = "/product/save-product";
 export const Stock_trx_FtoW = "/factory/stock-transfer-FTW";
+export const Stock_trx_WarehousetoWareHouse =
+  "/stock-updation/stock-transfer-warehouse";
 export const Stock_trx_FtoW_List = "/stock-updation/view-warehouse-stock/";
 export const ProductList_View = "/product/view-product/";
+export const Factory_Stock = "factory/view-factory-stock";
 
 export const Save_Order = "/order/save-create-order";
 export const view_create_order_history = "/order/view-create-order-history/";

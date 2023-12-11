@@ -104,239 +104,240 @@ class AccounSearch extends React.Component {
     const UserInformation = this.context?.UserInformatio;
     let pageparmission = JSON.parse(localStorage.getItem("userData"));
     let userid = pageparmission?._id;
-    await CreateAccountView()
-      .then(res => {
-        var mydropdownArray = [];
-        var adddropdown = [];
-        const jsonData = xmlJs.xml2json(res.data, {
-          compact: true,
-          spaces: 2,
-        });
-        console.log(JSON.parse(jsonData)?.CreateUser);
-        const inputs = JSON.parse(jsonData)?.CreateUser?.input?.map(ele => {
-          return {
-            headerName: ele?.label._text,
-            field: ele?.name._text,
-            filter: true,
-            sortable: true,
-          };
-        });
-        // let Radioinput =
-        //   JSON.parse(jsonData).CreateAccount?.Radiobutton?.input[0]?.name
-        //     ?._text;
-        // const addRadio = [
-        //   {
-        //     headerName: Radioinput,
-        //     field: Radioinput,
-        //     filter: true,
-        //     sortable: true,
-        //     cellRendererFramework: (params) => {
-        //       return params.data?.Status === "Active" ? (
-        //         <div className="badge badge-pill badge-success">
-        //           {params.data.Status}
-        //         </div>
-        //       ) : params.data?.Status === "Deactive" ? (
-        //         <div className="badge badge-pill badge-warning">
-        //           {params.data.Status}
-        //         </div>
-        //       ) : (
-        //         "NA"
-        //       );
-        //     },
-        //   },
-        // ];
+     await CreateAccountList(userid)
+       .then((res) => {
+         let value = res?.adminDetails;
+         if (value.length) {
+           this.setState({ rowData: value });
+         }
+       })
+       .catch((err) => {
+         console.log(err);
+       });
+     await CreateAccountView()
+       .then((res) => {
+         var mydropdownArray = [];
+         var adddropdown = [];
+         const jsonData = xmlJs.xml2json(res.data, {
+           compact: true,
+           spaces: 2,
+         });
+         console.log(JSON.parse(jsonData)?.CreateUser);
+         const inputs = JSON.parse(jsonData)?.CreateUser?.input?.map((ele) => {
+           return {
+             headerName: ele?.label._text,
+             field: ele?.name._text,
+             filter: true,
+             sortable: true,
+           };
+         });
+         // let Radioinput =
+         //   JSON.parse(jsonData).CreateAccount?.Radiobutton?.input[0]?.name
+         //     ?._text;
+         // const addRadio = [
+         //   {
+         //     headerName: Radioinput,
+         //     field: Radioinput,
+         //     filter: true,
+         //     sortable: true,
+         //     cellRendererFramework: (params) => {
+         //       return params.data?.Status === "Active" ? (
+         //         <div className="badge badge-pill badge-success">
+         //           {params.data.Status}
+         //         </div>
+         //       ) : params.data?.Status === "Deactive" ? (
+         //         <div className="badge badge-pill badge-warning">
+         //           {params.data.Status}
+         //         </div>
+         //       ) : (
+         //         "NA"
+         //       );
+         //     },
+         //   },
+         // ];
 
-        // let dropdown = JSON.parse(jsonData).CreateAccount?.MyDropdown?.dropdown;
-        // if (dropdown.length) {
-        //   var mydropdownArray = dropdown?.map((ele) => {
-        //     return {
-        //       headerName: ele?.label,
-        //       field: ele?.name,
-        //       filter: true,
-        //       sortable: true,
-        //     };
-        //   });
-        // } else {
-        //   var adddropdown = [
-        //     {
-        //       headerName: dropdown?.label._text,
-        //       field: dropdown?.name._text,
-        //       filter: true,
-        //       sortable: true,
-        //     },
-        //   ];
-        // }
+         // let dropdown = JSON.parse(jsonData).CreateAccount?.MyDropdown?.dropdown;
+         // if (dropdown.length) {
+         //   var mydropdownArray = dropdown?.map((ele) => {
+         //     return {
+         //       headerName: ele?.label,
+         //       field: ele?.name,
+         //       filter: true,
+         //       sortable: true,
+         //     };
+         //   });
+         // } else {
+         //   var adddropdown = [
+         //     {
+         //       headerName: dropdown?.label._text,
+         //       field: dropdown?.name._text,
+         //       filter: true,
+         //       sortable: true,
+         //     },
+         //   ];
+         // }
 
-        let myHeadings = [
-          // ...checkboxinput,
-          ...inputs,
-          // ...adddropdown,
-          // ...addRadio,
-          // ...mydropdownArray,
-        ];
-        // console.log(myHeadings);
-        let Product = [
-          {
-            headerName: "Actions",
-            field: "sortorder",
-            field: "transactions",
-            width: 190,
-            cellRendererFramework: params => {
-              return (
-                <div className="actions cursor-pointer">
-                  <Route
-                    render={({ history }) => (
-                      <Eye
-                        className="mr-50"
-                        size="25px"
-                        color="green"
-                        onClick={() => {
-                          this.handleChangeEdit(params?.data, "readonly");
-                        }}
-                      />
-                    )}
-                  />
-                  <Route
-                    render={({ history }) => (
-                      <Edit
-                        className="mr-50"
-                        size="25px"
-                        color="blue"
-                        onClick={() => {
-                          this.handleChangeEdit(params?.data, "Editable");
-                        }}
-                      />
-                    )}
-                  />
+         let myHeadings = [
+           // ...checkboxinput,
+           ...inputs,
+           // ...adddropdown,
+           // ...addRadio,
+           // ...mydropdownArray,
+         ];
+         // console.log(myHeadings);
+         let Product = [
+           {
+             headerName: "Actions",
+             field: "sortorder",
+             field: "transactions",
+             width: 190,
+             cellRendererFramework: (params) => {
+               return (
+                 <div className="actions cursor-pointer">
+                   <Route
+                     render={({ history }) => (
+                       <Eye
+                         className="mr-50"
+                         size="25px"
+                         color="green"
+                         onClick={() => {
+                           this.handleChangeEdit(params?.data, "readonly");
+                         }}
+                       />
+                     )}
+                   />
+                   <Route
+                     render={({ history }) => (
+                       <Edit
+                         className="mr-50"
+                         size="25px"
+                         color="blue"
+                         onClick={() => {
+                           this.handleChangeEdit(params?.data, "Editable");
+                         }}
+                       />
+                     )}
+                   />
 
-                  <Route
-                    render={() => (
-                      <Trash2
-                        className="mr-50"
-                        size="25px"
-                        color="red"
-                        onClick={() => {
-                          this.runthisfunction(params?.data?._id);
-                        }}
-                      />
-                    )}
-                  />
-                </div>
-              );
-            },
-          },
-          {
-            headerName: "Status",
-            field: "status",
-            filter: true,
-            width: 150,
-            cellRendererFramework: params => {
-              return params.data?.status === "Active" ? (
-                <div className="badge badge-pill badge-success">
-                  {params.data?.status}
-                </div>
-              ) : params.data?.status === "Deactive" ? (
-                <div className="badge badge-pill badge-warning">
-                  {params.data?.status}
-                </div>
-              ) : null;
-            },
-          },
+                   <Route
+                     render={() => (
+                       <Trash2
+                         className="mr-50"
+                         size="25px"
+                         color="red"
+                         onClick={() => {
+                           this.runthisfunction(params?.data?._id);
+                         }}
+                       />
+                     )}
+                   />
+                 </div>
+               );
+             },
+           },
+           {
+             headerName: "Status",
+             field: "status",
+             filter: true,
+             width: 150,
+             cellRendererFramework: (params) => {
+               return params.data?.status === "Active" ? (
+                 <div className="badge badge-pill badge-success">
+                   {params.data?.status}
+                 </div>
+               ) : params.data?.status === "Deactive" ? (
+                 <div className="badge badge-pill badge-warning">
+                   {params.data?.status}
+                 </div>
+               ) : null;
+             },
+           },
 
-          {
-            headerName: "Created by",
-            field: "created_by.firstName",
-            filter: true,
-            sortable: true,
-            cellRendererFramework: params => {
-              // console.log(params?.data);
-              return (
-                <>
-                  <div className="actions cursor-pointer">
-                    <span>{params?.data?.created_by?.firstName}</span>
-                  </div>
-                </>
-              );
-            },
-          },
-          {
-            headerName: "Rolename",
-            field: "rolename.roleName",
-            filter: true,
-            sortable: true,
-            cellRendererFramework: params => {
-              // console.log(params.data);
-              return (
-                <>
-                  <div className="actions cursor-pointer">
-                    <span>{params?.data?.rolename?.roleName}</span>
-                  </div>
-                </>
-              );
-            },
-          },
-          ...myHeadings,
-          {
-            headerName: "Created date",
-            field: "createdAt",
-            filter: true,
-            sortable: true,
-            cellRendererFramework: params => {
-              return (
-                <>
-                  <div className="actions cursor-pointer">
-                    <span>{params?.data?.createdAt}</span>
-                  </div>
-                </>
-              );
-            },
-          },
-          {
-            headerName: "Updated date",
-            field: "updatedAt",
-            filter: true,
-            sortable: true,
-            cellRendererFramework: params => {
-              return (
-                <>
-                  <div className="actions cursor-pointer">
-                    <div className="actions cursor-pointer">
-                      <span>{params?.data?.updatedAt}</span>
-                    </div>
-                  </div>
-                </>
-              );
-            },
-          },
-        ];
+           {
+             headerName: "Created by",
+             field: "created_by.firstName",
+             filter: true,
+             sortable: true,
+             cellRendererFramework: (params) => {
+               // console.log(params?.data);
+               return (
+                 <>
+                   <div className="actions cursor-pointer">
+                     <span>{params?.data?.created_by?.firstName}</span>
+                   </div>
+                 </>
+               );
+             },
+           },
+           {
+             headerName: "Rolename",
+             field: "rolename.roleName",
+             filter: true,
+             sortable: true,
+             cellRendererFramework: (params) => {
+               // console.log(params.data);
+               return (
+                 <>
+                   <div className="actions cursor-pointer">
+                     <span>{params?.data?.rolename?.roleName}</span>
+                   </div>
+                 </>
+               );
+             },
+           },
+           ...myHeadings,
+           {
+             headerName: "Created date",
+             field: "createdAt",
+             filter: true,
+             sortable: true,
+             cellRendererFramework: (params) => {
+               return (
+                 <>
+                   <div className="actions cursor-pointer">
+                     <span>{params?.data?.createdAt}</span>
+                   </div>
+                 </>
+               );
+             },
+           },
+           {
+             headerName: "Updated date",
+             field: "updatedAt",
+             filter: true,
+             sortable: true,
+             cellRendererFramework: (params) => {
+               return (
+                 <>
+                   <div className="actions cursor-pointer">
+                     <div className="actions cursor-pointer">
+                       <span>{params?.data?.updatedAt}</span>
+                     </div>
+                   </div>
+                 </>
+               );
+             },
+           },
+         ];
 
-        this.setState({ AllcolumnDefs: Product });
+         this.setState({ AllcolumnDefs: Product });
 
-        let userHeading = JSON.parse(localStorage.getItem("AccountSearch"));
-        if (userHeading?.length) {
-          this.setState({ columnDefs: userHeading });
-          this.gridApi.setColumnDefs(userHeading);
-          this.setState({ SelectedcolumnDefs: userHeading });
-        } else {
-          this.setState({ columnDefs: Product });
-          this.setState({ SelectedcolumnDefs: Product });
-        }
-        this.setState({ SelectedCols: Product });
-      })
-      .catch(err => {
-        console.log(err);
-        swal("Error", "something went wrong try again");
-      });
-    await CreateAccountList(userid)
-      .then(res => {
-        let value = res?.adminDetails;
-        if (value.length) {
-          this.setState({ rowData: value });
-        }
-      })
-      .catch(err => {
-        console.log(err);
-      });
+         let userHeading = JSON.parse(localStorage.getItem("AccountSearch"));
+         if (userHeading?.length) {
+           this.setState({ columnDefs: userHeading });
+           this.gridApi.setColumnDefs(userHeading);
+           this.setState({ SelectedcolumnDefs: userHeading });
+         } else {
+           this.setState({ columnDefs: Product });
+           this.setState({ SelectedcolumnDefs: Product });
+         }
+         this.setState({ SelectedCols: Product });
+       })
+       .catch((err) => {
+         console.log(err);
+         swal("Error", "something went wrong try again");
+       });
+   
   }
 
   toggleDropdown = () => {

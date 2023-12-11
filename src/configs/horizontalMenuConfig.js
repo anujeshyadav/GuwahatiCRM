@@ -705,7 +705,7 @@ const horizontalMenuConfig = [
         type: "item",
         icon: <FaCode size={15} />,
         permissions: ["admin", "editor"],
-        navLink: "/app/softNumen/warranty/CreateWiki",
+        navLink: "/app/softNumen/warehouse/InwardStock",
       },
       {
         id: "Outward Stock",
