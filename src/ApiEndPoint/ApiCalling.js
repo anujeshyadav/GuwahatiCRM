@@ -7,8 +7,13 @@ import {
   GoodDispatch_xmlView,
   SAVE_GoodDispatch,
   Stock_trx_FtoW,
+  Warehouse_OutwardStock_list,
+  Warehouse_Stock,
+  Warehouse_Inward_list,
+  Warehouse_Temporarly_list,
   Stock_trx_WarehousetoWareHouse,
   View_Wareahouse_id,
+  Stock_update,
   GoodDispatch_List,
   Edit_GoodDispatch,
   Stock_trx_FtoW_List,
@@ -317,6 +322,18 @@ export const ViewFactoryStock = async (id) => {
   let response = await axiosConfig
     .get(`${Factory_Stock}`)
     // .get(`${Factory_Stock}` + id)
+    .then((res) => res.data);
+  return response;
+};
+export const ViewOneWarehouseStock = async (id) => {
+  let response = await axiosConfig
+    .get(`${Warehouse_Stock}` + id)
+    .then((res) => res.data);
+  return response;
+};
+export const Warehouse_Inwardlist = async (id) => {
+  let response = await axiosConfig
+    .get(`${Warehouse_Inward_list}` + id)
     .then((res) => res.data);
   return response;
 };
@@ -1317,6 +1334,24 @@ export const Update_targetINlist = async (id, data) => {
 export const View_Wareahouseid = async (id) => {
   let response = await axiosConfig
     .get(`${View_Wareahouse_id}` + id)
+    .then((res) => res.data);
+  return response;
+};
+export const WarehouseOutwardStocklist = async (id) => {
+  let response = await axiosConfig
+    .get(`${Warehouse_OutwardStock_list}` + id)
+    .then((res) => res.data);
+  return response;
+};
+export const Warehouse_Temporarlylist = async (id) => {
+  let response = await axiosConfig
+    .get(`${Warehouse_Temporarly_list}` + id)
+    .then((res) => res.data);
+  return response;
+};
+export const Stockupdate = async (id, data) => {
+  let response = await axiosConfig
+    .put(`${Stock_update}` + id, data)
     .then((res) => res.data);
   return response;
 };
