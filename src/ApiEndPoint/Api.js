@@ -58,6 +58,12 @@ export const Stock_trx_WarehousetoWareHouse =
 export const Stock_trx_FtoW_List = "/stock-updation/view-warehouse-stock/";
 export const ProductList_View = "/product/view-product/";
 export const Factory_Stock = "factory/view-factory-stock";
+export const Warehouse_Stock = "/warehouse/view-warehouse-stock/";
+export const Warehouse_Inward_list = "/stock-updation/view-in-ward-stock/";
+export const Warehouse_OutwardStock_list = "/stock-updation/view-out-ward-stock/";
+export const Warehouse_Temporarly_list = "/user/view-warehouse/";
+export const Stock_update = "/stock-updation/update-warehoue-to-warehouse/";
+// export const Stock_update = "/factory/update-factory-warehouse/";
 
 export const Save_Order = "/order/save-create-order";
 export const view_create_order_history = "/order/view-create-order-history/";

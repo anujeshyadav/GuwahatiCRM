@@ -568,6 +568,12 @@ const StockTransferwarehouse = lazy(() =>
 const InwardStock = lazy(() =>
   import("./views/apps/freshlist/customer/warehouse/InwardStock")
 );
+const OutwardStock = lazy(() =>
+  import("./views/apps/freshlist/customer/warehouse/OutwardStock")
+);
+const WareHouseStock = lazy(() =>
+  import("./views/apps/freshlist/customer/warehouse/WareHouseStock")
+);
 const DamageReport = lazy(() =>
   import("./views/apps/freshlist/customer/warehouse/DamageReport")
 );
@@ -1919,6 +1925,14 @@ class AppRouter extends React.Component {
           <AppRoute
             path="/app/softNumen/warehouse/InwardStock"
             component={InwardStock}
+          />
+          <AppRoute
+            path="/app/Ajgroup/warehouse/OutwardStock"
+            component={OutwardStock}
+          />
+          <AppRoute
+            path="/app/softNumen/warehouse/WareHouseStock"
+            component={WareHouseStock}
           />
           <AppRoute
             path="/app/softNumen/warehouse/DamageReport"

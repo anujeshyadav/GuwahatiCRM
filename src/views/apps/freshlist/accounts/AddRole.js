@@ -119,10 +119,7 @@ export const Roles = [
         title: "Debit Notes",
         permission: ["View", "Create", "Edit", "Delete"],
       },
-      {
-        title: "Multivendor",
-        permission: ["View", "Create", "Edit", "Delete"],
-      },
+
       {
         title: "Purchase Return",
         permission: ["View", "Create", "Edit", "Delete"],
@@ -146,96 +143,88 @@ export const Roles = [
       },
     ],
   },
-  {
-    title: "Stock Transfer",
-    TabName: [
-      {
-        title: "Conversion Process",
-        permission: ["View", "Create", "Edit", "Delete"],
-      },
-      {
-        title: "Finished Product",
-        permission: ["View", "Create", "Edit", "Delete"],
-      },
-      {
-        title: "Damaged Product",
-        permission: ["View", "Create", "Edit", "Delete"],
-      },
-      {
-        title: "Wastage Details",
-        permission: ["View", "Create", "Edit", "Delete"],
-      },
-      {
-        title: "Raw Return",
-        permission: ["View", "Create", "Edit", "Delete"],
-      },
-      {
-        title: "InProcess Stock",
-        permission: ["View", "Create", "Edit", "Delete"],
-      },
-    ],
-  },
-  {
-    title: "Team",
-    TabName: [
-      {
-        title: "Party Creation",
-        permission: ["View", "Create", "Edit", "Delete"],
-      },
-      {
-        title: "Team Creation",
-        permission: ["View", "Create", "Edit", "Delete"],
-      },
-      {
-        title: "Area Assignment",
-        permission: ["View", "Create", "Edit", "Delete"],
-      },
-      {
-        title: "Party Assignment",
-        permission: ["View", "Create", "Edit", "Delete"],
-      },
-      {
-        title: "Target creation Partywise",
-        permission: ["View", "Create", "Edit", "Delete"],
-      },
-      {
-        title: "Target creation Product wise",
-        permission: ["View", "Create", "Edit", "Delete"],
-      },
-      {
-        title: "Auto Target Creation",
-        permission: ["View", "Create", "Edit", "Delete"],
-      },
-      {
-        title: "Balanced Target",
-        permission: ["View", "Create", "Edit", "Delete"],
-      },
-      {
-        title: "Team working Report",
-        permission: ["View", "Create", "Edit", "Delete"],
-      },
-      {
-        title: "Order Dispatch Detail",
-        permission: ["View", "Create", "Edit", "Delete"],
-      },
-      {
-        title: "Party Report",
-        permission: ["View", "Create", "Edit", "Delete"],
-      },
-      {
-        title: "Collection Report",
-        permission: ["View", "Create", "Edit", "Delete"],
-      },
-      {
-        title: "Payment due Report",
-        permission: ["View", "Create", "Edit", "Delete"],
-      },
-      {
-        title: "Dead Party",
-        permission: ["View", "Create", "Edit", "Delete"],
-      },
-    ],
-  },
+  // {
+  //   title: "Stock Transfer",
+  //   TabName: [
+  //     {
+  //       title: "Conversion Process",
+  //       permission: ["View", "Create", "Edit", "Delete"],
+  //     },
+  //     {
+  //       title: "Finished Product",
+  //       permission: ["View", "Create", "Edit", "Delete"],
+  //     },
+  //     {
+  //       title: "Damaged Product",
+  //       permission: ["View", "Create", "Edit", "Delete"],
+  //     },
+  //     {
+  //       title: "Wastage Details",
+  //       permission: ["View", "Create", "Edit", "Delete"],
+  //     },
+  //     {
+  //       title: "Raw Return",
+  //       permission: ["View", "Create", "Edit", "Delete"],
+  //     },
+  //     {
+  //       title: "InProcess Stock",
+  //       permission: ["View", "Create", "Edit", "Delete"],
+  //     },
+  //   ],
+  // },
+  // {
+  //   title: "Team",
+  //   TabName: [
+  //     {
+  //       title: "Area Assignment",
+  //       permission: ["View", "Create", "Edit", "Delete"],
+  //     },
+  //     {
+  //       title: "Party Assignment",
+  //       permission: ["View", "Create", "Edit", "Delete"],
+  //     },
+  //     {
+  //       title: "Target creation Partywise",
+  //       permission: ["View", "Create", "Edit", "Delete"],
+  //     },
+  //     {
+  //       title: "Target creation Product wise",
+  //       permission: ["View", "Create", "Edit", "Delete"],
+  //     },
+  //     {
+  //       title: "Auto Target Creation",
+  //       permission: ["View", "Create", "Edit", "Delete"],
+  //     },
+  //     {
+  //       title: "Balanced Target",
+  //       permission: ["View", "Create", "Edit", "Delete"],
+  //     },
+  //     {
+  //       title: "Team working Report",
+  //       permission: ["View", "Create", "Edit", "Delete"],
+  //     },
+  //     {
+  //       title: "Order Dispatch Detail",
+  //       permission: ["View", "Create", "Edit", "Delete"],
+  //     },
+  //     {
+  //       title: "Party Report",
+  //       permission: ["View", "Create", "Edit", "Delete"],
+  //     },
+  //     {
+  //       title: "Collection Report",
+  //       permission: ["View", "Create", "Edit", "Delete"],
+  //     },
+  //     {
+  //       title: "Payment due Report",
+  //       permission: ["View", "Create", "Edit", "Delete"],
+  //     },
+  //     {
+  //       title: "Dead Party",
+  //       permission: ["View", "Create", "Edit", "Delete"],
+  //     },
+  //   ],
+  // },
   {
     title: "Report",
     TabName: [
@@ -383,23 +372,6 @@ export const Roles = [
       },
     ],
   },
-  {
-    title: "Multivendor",
-    TabName: [
-      {
-        title: "Registration",
-        permission: ["View", "Create", "Edit", "Delete"],
-      },
-      {
-        title: "subCategory List",
-        permission: ["View", "Create", "Edit", "Delete"],
-      },
-      {
-        title: "Product Creation",
-        permission: ["View", "Create", "Edit", "Delete"],
-      },
-    ],
-  },
 
   {
     title: "Warehouse",
@@ -456,10 +428,6 @@ export const Roles = [
       },
       {
         title: "UnitList",
-        permission: ["View", "Create", "Edit", "Delete"],
-      },
-      {
-        title: "WareHouseStock",
         permission: ["View", "Create", "Edit", "Delete"],
       },
     ],

@@ -879,28 +879,16 @@ class InvoiceGenerator extends React.Component {
 
   async componentDidMount() {
     const UserInformation = this.context;
-    // console.log(UserInformation?.CompanyDetails);
-    // if (UserInformation?.CompanyDetails) {
-    //   this.setState({ CompanyDetails: UserInformation?.CompanyDetails });
-    // }
+   console.log(UserInformation?.CompanyDetails);
+   this.setState({ CompanyDetails: UserInformation?.CompanyDetails });
+   let pageparmission = JSON.parse(localStorage.getItem("userData"));
+   let userid = pageparmission?._id;
 
-    let pageparmission = JSON.parse(localStorage.getItem("userData"));
-    let userid = pageparmission?._id;
-    await ViewCompanyDetails(userid)
-      .then(res => {
-        console.log(res?.CompanyDetail);
-        this.setState({ CompanyDetails: res?.CompanyDetail });
-      })
-      .catch(err => {
-        console.log(err);
-      });
-
-    let billnumner = localStorage.getItem("billnumber");
-    if (billnumner) {
-      this.setState({ ShowBill: false });
-      this.setState({ BillNumber: billnumner });
-    }
-
+   let billnumner = localStorage.getItem("billnumber");
+   if (billnumner) {
+     this.setState({ ShowBill: false });
+     this.setState({ BillNumber: billnumner });
+   }
     const InsidePermissions = CheckPermission("Sales Invoice");
     console.log(InsidePermissions);
     this.setState({ InsiderPermissions: InsidePermissions });

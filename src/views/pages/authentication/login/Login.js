@@ -228,9 +228,9 @@ class Login extends React.Component {
         this.context?.setUserInformatio(basicinfor);
 
         swal(
+          "success",
           "Sucessfully login",
           "You are LoggedIn!",
-          "Success",
 
           {
             buttons: {
