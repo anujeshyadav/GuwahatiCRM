@@ -1295,7 +1295,7 @@ class InvoiceGenerator extends React.Component {
                     <Card>
                       <Row className="m-2">
                         <Col>
-                          <h1 className="float-left">Order List</h1>
+                          <h1 className="float-left">Sales Order List</h1>
                         </Col>
                         <Col>
                           <span className="mx-1">

@@ -63,7 +63,7 @@ export const Roles = [
         permission: ["View", "Create", "Edit", "Delete"],
       },
       {
-        title: "dispatch details",
+        title: "Dispatch details",
         permission: ["View", "Create", "Edit", "Delete"],
       },
       {
@@ -104,7 +104,7 @@ export const Roles = [
         permission: ["View", "Create", "Edit", "Delete"],
       },
       {
-        title: " Purchase Complete",
+        title: "Purchase Complete",
         permission: ["View", "Create", "Edit", "Delete"],
       },
       {

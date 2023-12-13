@@ -34,7 +34,6 @@ import {
   FaArrowAltCircleLeft,
   FaArrowAltCircleRight,
   FaFilter,
-  FaPlus,
 } from "react-icons/fa";
 import swal from "sweetalert";
 import {
@@ -133,6 +132,19 @@ class CompleteOrder extends React.Component {
           },
         },
         {
+          headerName: "Status",
+          field: "status",
+          filter: true,
+          width: 150,
+          cellRendererFramework: params => {
+            return params.value === "completed" ? (
+              <div className="badge badge-pill badge-success">
+                {params.data.status}
+              </div>
+            ) : null;
+          },
+        },
+        {
           headerName: "Product_Title",
           field: "orderItems",
           filter: true,
@@ -220,20 +232,6 @@ class CompleteOrder extends React.Component {
             );
           },
         },
-
-        {
-          headerName: "Status",
-          field: "status",
-          filter: true,
-          width: 150,
-          cellRendererFramework: params => {
-            return params.value === "completed" ? (
-              <div className="badge badge-pill badge-success">
-                {params.data.status}
-              </div>
-            ) : null;
-          },
-        },
       ],
     };
   }
@@ -270,9 +268,8 @@ class CompleteOrder extends React.Component {
     }
   };
   async componentDidMount() {
-    const UserInformation = this.context?.UserInformatio;
-
-    await createOrderhistoryview()
+    const userId = JSON.parse(localStorage.getItem("userData"))._id;
+    await createOrderhistoryview(userId)
       .then(res => {
         console.log(res.orderHistory);
         const ComplteStatus = res?.orderHistory?.filter(

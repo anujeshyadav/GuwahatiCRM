@@ -13,6 +13,7 @@ import {
   View_Company_Details,
   Purchase_Return,
   Purchase_Edit_Order,
+  Purchase_Status_Order,
   Place_Order_List,
   Save_Place_Order,
   SavePurchase_Order,
@@ -409,9 +410,9 @@ export const SavePlaceOrder = async data => {
     .then(res => res.data);
   return response;
 };
-export const PlaceOrderViewList = async () => {
+export const PlaceOrderViewList = async id => {
   let response = await axiosConfig
-    .get(`${Place_Order_List}`)
+    .get(`${Place_Order_List}` + id)
     .then(res => res.data);
   return response;
 };
@@ -423,9 +424,9 @@ export const SavePurchaseOrder = async data => {
   return response;
 };
 
-export const PurchaseOrderList = async () => {
+export const PurchaseOrderList = async id => {
   let response = await axiosConfig
-    .get(`${Purchase_Order_List}`)
+    .get(`${Purchase_Order_List}` + id)
     .then(res => res.data);
   return response;
 };
@@ -439,6 +440,12 @@ export const PurchaseReturn = async data => {
 export const PurchaseEdit_Order = async (payload, id) => {
   let response = await axiosConfig
     .put(`${Purchase_Edit_Order}` + id, payload)
+    .then(res => res.data);
+  return response;
+};
+export const PurchaseStatusOrder = async (payload, id) => {
+  let response = await axiosConfig
+    .put(`${Purchase_Status_Order}` + id, payload)
     .then(res => res.data);
   return response;
 };

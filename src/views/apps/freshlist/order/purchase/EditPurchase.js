@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useContext } from "react";
+import xmlJs from "xml-js";
 import {
   Card,
   CardBody,
@@ -9,96 +10,46 @@ import {
   Label,
   Button,
   FormGroup,
+  CustomInput,
 } from "reactstrap";
 import "react-phone-input-2/lib/style.css";
 
 import { useParams, useLocation } from "react-router-dom";
 import "../../../../../assets/scss/pages/users.scss";
-import {
-  ProductListView,
-  Create_Sales_personList,
-  PurchaseEdit_Order,
-} from "../../../../../ApiEndPoint/ApiCalling";
+import { PurchaseStatusOrder } from "../../../../../ApiEndPoint/ApiCalling";
 import "../../../../../assets/scss/pages/users.scss";
 import { Route } from "react-router-dom";
 
-let GrandTotal = [];
-
 const EditPurchase = args => {
-  const [Index, setIndex] = useState(-1);
   const [error, setError] = useState("");
-  const [grandTotalAmt, setGrandTotalAmt] = useState(0);
-  const [Editdata, setEditdata] = useState({});
-  const [UserInfo, setUserInfo] = useState({});
-  const [userName, setUserName] = useState("");
+  const [status, setstatus] = useState("");
+  const [orderData, setOrderData] = useState("");
   const Params = useParams();
   const location = useLocation();
 
-  const [product, setProduct] = useState([
-    {
-      product: "", //
-      productId: "",
-      availableQty: "",
-      qty: 1, //
-      price: "", //
-      grandTotal: "",
-    },
-  ]);
+  useEffect(() => {
+    console.log(location.state);
+    setstatus(location.state.status);
+    setOrderData(location.state);
+  }, []);
+
   const handleChange = e => {
     console.log(e.target.value);
-    setUserName(e.target.value);
+    setstatus(e.target.value);
   };
-
-  const handleProductChangeProduct = (e, index) => {
-    setIndex(index);
-    const { name, value } = e.target;
-    let orderitem = product?.orderItems;
-
-    const list = [...orderitem];
-    list[index][name] = value;
-    console.log(list);
-    setProduct(list);
-  };
-
-  useEffect(() => {
-    setProduct(location.state);
-    setUserName(location.state.fullName);
-    setEditdata(location?.state);
-    setGrandTotalAmt(location?.state?.grandTotal);
-  }, []);
-
-  useEffect(() => {
-    setProduct(location.state);
-    setEditdata(location?.state);
-  }, [product]);
-
-  useEffect(() => {
-    const userInfo = JSON.parse(localStorage.getItem("userData"));
-    setUserInfo(userInfo);
-  }, []);
-
   const submitHandler = e => {
     e.preventDefault();
-    debugger;
-    console.log(product, product.orderItems);
-    let editedproduct = product.orderItems.map(ele => {
-      return {
-        productId: ele?.product?._id,
-        qty: Number(ele?.qty),
-      };
-    });
+
     let payload = {
-      fullName: userName,
-      orderItems: editedproduct,
+      status: status,
     };
-    console.log(payload);
     if (error) {
       swal("Error occured while Entering Details");
     } else {
-      PurchaseEdit_Order(payload, product._id)
+      PurchaseStatusOrder(payload, orderData._id)
         .then(res => {
           console.log(res);
-          swal("PurchaseOrder  Edited Successfully");
+          swal("Status changed Successfully");
         })
         .catch(err => {
           console.log(err);
@@ -113,7 +64,7 @@ const EditPurchase = args => {
           <Row className="m-2">
             <Col className="">
               <div>
-                <h1 className="">Edit PurchaseOrder</h1>
+                <h2 className="">Edit Purchase Order Status</h2>
               </div>
             </Col>
             <Col>
@@ -137,102 +88,23 @@ const EditPurchase = args => {
 
           <CardBody>
             <Form className="m-1" onSubmit={submitHandler}>
-              <Col className="mb-1" lg="4" md="4" sm="12">
-                <div className="">
-                  <Label>FullName</Label>
-                  <Input
+              <Row>
+                <Col lg="6" md="6" sm="6" className="mb-2">
+                  <Label>Status</Label>
+                  <CustomInput
                     required
-                    type="text"
-                    name="FullName"
-                    placeholder="FullName"
-                    value={userName}
+                    type="select"
+                    placeholder="City"
+                    name="city"
+                    value={status}
                     onChange={handleChange}
-                  />
-                </div>
-              </Col>
-
-              {product &&
-                product?.orderItems?.map((product, index) => {
-                  return (
-                    <Row className="" key={index}>
-                      <Col className="mb-1">
-                        <div className="">
-                          <Label>Product Name</Label>
-                          <Input
-                            type="text"
-                            placeholder="ProductName"
-                            name="Product_Title"
-                            disabled
-                            value={product.product.Product_Title}
-                            onChange={e => handleChange(e, index)}
-                          />
-                        </div>
-                      </Col>
-                      <Col>
-                        <FormGroup>
-                          <Label>Price</Label>
-                          <Input
-                            type="number"
-                            disabled
-                            placeholder="Price"
-                            name="Price"
-                            value={product.price}
-                          />
-                        </FormGroup>
-                      </Col>
-                      <Col>
-                        <FormGroup>
-                          <Label>Size</Label>
-                          <Input
-                            type="number"
-                            placeholder="Size"
-                            name="qty"
-                            value={product.qty}
-                            onChange={e => handleProductChangeProduct(e, index)}
-                          />
-                        </FormGroup>
-                      </Col>
-                      <Col>
-                        <FormGroup>
-                          <Label>GST Rate</Label>
-                          <Input
-                            type="number"
-                            placeholder="GST Rate"
-                            disabled
-                            name="GSTRate"
-                            value={product.product["GST Rate"]}
-                            // onChange={e => handleProductChangeProduct(e, index)}
-                          />
-                        </FormGroup>
-                      </Col>
-
-                      <Col>
-                        <FormGroup>
-                          <Label>HST Code</Label>
-                          <Input
-                            type="number"
-                            placeholder="HSTCode"
-                            name="HSTCode"
-                            disabled
-                            value={product.product.HSN_Code}
-                            // onChange={e => handleProductChangeProduct(e, index)}
-                          />
-                        </FormGroup>
-                      </Col>
-                    </Row>
-                  );
-                })}
-              <Row>
-                <Col className="mb-1" lg="12" md="12" sm="12">
-                  <div className=" d-flex justify-content-end">
-                    <Label className="pr-5">
-                      Grand Total : <stron>{grandTotalAmt}</stron>
-                    </Label>
-                  </div>
+                  >
+                    <option value="pending">pending</option>
+                    <option value="cancelled">cancelled</option>
+                    <option value="completed">completed</option>
+                  </CustomInput>
                 </Col>
-              </Row>
-              <Row>
-                <Col>
+                <Col lg="6" md="6" sm="6" className="mb-2">
                   <div className="d-flex justify-content-center">
                     <Button.Ripple
                       color="primary"

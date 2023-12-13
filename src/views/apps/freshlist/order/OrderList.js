@@ -16,7 +16,6 @@ import {
   ModalHeader,
   ModalBody,
   Badge,
-  CustomInput,
 } from "reactstrap";
 import { ContextLayout } from "../../../../utility/context/Layout";
 import { AgGridReact } from "ag-grid-react";
