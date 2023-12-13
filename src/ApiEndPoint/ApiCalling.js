@@ -7,6 +7,8 @@ import {
   GoodDispatch_xmlView,
   SAVE_GoodDispatch,
   Stock_trx_FtoW,
+  Stock_trx_WarehousetoWareHouse,
+  View_Wareahouse_id,
   GoodDispatch_List,
   Edit_GoodDispatch,
   Stock_trx_FtoW_List,
@@ -83,6 +85,7 @@ import {
   customerRegistration,
   Create_Party_XML,
   Product_Registration,
+  Create_Role,
   Warranty_AuditHistory,
   Warranty_AuditHistoryList,
   Warranty_AuditHistoryViewone,
@@ -168,6 +171,7 @@ import {
   ticketTool_View,
   CreaterOrder_View,
   AddOrderComment,
+  Factory_Stock,
   Order_ViewList,
   orders_ID,
 } from "./Api";
@@ -190,9 +194,9 @@ export const Createwarehousexml = async () => {
     .then(res => res.data);
   return response;
 };
-export const Stock_trxFtoWList = async () => {
+export const Stock_trxFactorytoWList = async id => {
   let response = await axiosConfig
-    .get(`${Stock_trx_FtoW_List}`)
+    .get(`${Stock_trx_FtoW_List}` + id)
     .then(res => res.data);
   return response;
 };
@@ -201,6 +205,12 @@ export const Stock_trxFtoWList = async () => {
 export const StocktrxFtoW = async data => {
   let response = await axiosConfig
     .post(`${Stock_trx_FtoW}`, data)
+    .then(res => res.data);
+  return response;
+};
+export const WarehousetoWareHouseTrx = async data => {
+  let response = await axiosConfig
+    .post(`${Stock_trx_WarehousetoWareHouse}`, data)
     .then(res => res.data);
   return response;
 };
@@ -299,6 +309,13 @@ export const SaveProduct = async data => {
 export const AllCategoryList = async id => {
   let response = await axiosConfig
     .get(`${Category_List}` + id)
+    .then(res => res.data);
+  return response;
+};
+export const ViewFactoryStock = async id => {
+  let response = await axiosConfig
+    .get(`${Factory_Stock}`)
+    // .get(`${Factory_Stock}` + id)
     .then(res => res.data);
   return response;
 };
@@ -508,6 +525,12 @@ export const Get_RoleList = async () => {
   let response = await axiosConfig.get(`${Get_Role}`).then(res => res.data);
   return response;
 };
+export const CreateRole = async data => {
+  let response = await axiosConfig
+    .post(`${Create_Role}`, data)
+    .then(res => res.data);
+  return response;
+};
 export const Get_Role_byid = async id => {
   let response = await axiosConfig
     .get(`${Get_Role_by_id}` + id)
@@ -564,12 +587,12 @@ export const EditUserProfile = async (id, data) => {
     .then(res => res.data);
   return response;
 };
-export const CreateRole = async () => {
-  let response = await axiosConfig
-    .post(`/admin/getProduct`)
-    .then(res => res.data);
-  return response;
-};
+// export const CreateRole = async () => {
+//   let response = await axiosConfig
+//     .post(`/admin/getProduct`)
+//     .then((res) => res.data);
+//   return response;
+// };
 export const CreateAccountView = async () => {
   let response = await axiosConfig
     .get(`${Create_Account_xmlView}`)
@@ -1270,6 +1293,15 @@ export const Delete_individualTarget = async (id, id1) => {
 export const Update_targetINlist = async (id, data) => {
   let response = await axiosConfig
     .put(Update_target_INlist + id, data)
+    .then(res => res.data);
+  return response;
+};
+
+// warehouse view by id aj gproup
+// View_Wareahouse_id;
+export const View_Wareahouseid = async id => {
+  let response = await axiosConfig
+    .get(`${View_Wareahouse_id}` + id)
     .then(res => res.data);
   return response;
 };

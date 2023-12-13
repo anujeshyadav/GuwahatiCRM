@@ -10,9 +10,20 @@ import {
   Label,
   Button,
   FormGroup,
+  CustomInput,
+  ModalBody,
+  ModalHeader,
+  Modal,
+  InputGroup,
   Badge,
 } from "reactstrap";
+import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
+import { BiEnvelope } from "react-icons/bi";
+import { BsFillChatDotsFill, BsWhatsapp } from "react-icons/bs";
+import { FaHistory } from "react-icons/fa";
+import { FcPhoneAndroid } from "react-icons/fc";
+import { AiOutlineSearch } from "react-icons/ai";
 import Flatpickr from "react-flatpickr";
 
 import Multiselect from "multiselect-react-dropdown";
@@ -30,6 +41,8 @@ import {
   StocktrxFtoW,
 } from "../../../../ApiEndPoint/ApiCalling";
 import "../../../../assets/scss/pages/users.scss";
+import Timepickers from "../../../forms/form-elements/datepicker/Timepicker";
+import Pickers from "../../../forms/form-elements/datepicker/Pickers";
 import { Route } from "react-router-dom";
 
 let GrandTotal = [];
@@ -63,6 +76,12 @@ const CreateTarget = args => {
     setAudit(!audit);
     // setModal(!modal);
   };
+  const handleopentoggle = iteam => {
+    toggle(iteam);
+  };
+  const handleHistory = () => {
+    audittoggle();
+  };
   const [product, setProduct] = useState([
     {
       product: "",
@@ -93,7 +112,7 @@ const CreateTarget = args => {
     let amt = 0;
     if (list.length > 0) {
       const x = list?.map(val => {
-        console.log(val, val.qty * val.price);
+        console.log(val.qty * val.price);
         GrandTotal[index] = val.Size * val.price * val.transferQty;
 
         list[index]["totalprice"] = val.Size * val.price * val.transferQty;
@@ -102,8 +121,7 @@ const CreateTarget = args => {
       amt = x.reduce((a, b) => a + b);
       console.log("GrandTotal", amt);
     }
-    console.log(list);
-
+    // console.log(list)
     setProduct(list);
     setGrandTotalAmt(amt);
   };
@@ -151,6 +169,15 @@ const CreateTarget = args => {
       updatedProduct.price = selectedItem?.Product_MRP; // Update the price of the copied product
       updatedProduct.productId = selectedItem?._id;
       updatedProductList[index] = updatedProduct; // Replace the product at the specified index with the updated one
+
+      // let myarr = prevProductList?.map((ele, i) => {
+      //   console.log(ele?.transferQty * selectedItem[i]?.Product_MRP);
+      //   let indextotal = ele?.transferQty * SelectedITems[i]?.Product_MRP;
+      //   GrandTotal[index] = indextotal;
+      //   return indextotal;
+      // });
+      // let amt = myarr.reduce((a, b) => a + b);
+      // setGrandTotalAmt(amt);
       return updatedProductList; // Return the updated product list to set the state
     });
     // onSelect1(selectedList, selectedItem, index);
@@ -177,7 +204,50 @@ const CreateTarget = args => {
     });
     // onSelect1(selectedList, selectedItem, index);
   };
-
+  const handleInputChange = (e, type, i) => {
+    const { name, value, checked } = e.target;
+    setindex(i);
+    if (type == "checkbox") {
+      if (checked) {
+        setFormData({
+          ...formData,
+          [name]: checked,
+        });
+      } else {
+        setFormData({
+          ...formData,
+          [name]: checked,
+        });
+      }
+    } else {
+      if (type == "number") {
+        if (/^\d{0,10}$/.test(value)) {
+          setFormData({
+            ...formData,
+            [name]: value,
+          });
+          setError("");
+        } else {
+          setError(
+            "Please enter a valid number with a maximum length of 10 digits"
+          );
+        }
+      } else {
+        if (value.length <= 10) {
+          setFormData({
+            ...formData,
+            [name]: value,
+          });
+          setError("");
+        } else {
+          setFormData({
+            ...formData,
+            [name]: value,
+          });
+        }
+      }
+    }
+  };
   // handleInputChange;
   useEffect(() => {
     console.log(product);
@@ -218,6 +288,30 @@ const CreateTarget = args => {
     const userInfo = JSON.parse(localStorage.getItem("userData"));
     console.log(userInfo);
     setUserInfo(userInfo);
+    // CreateOrder_ID()
+    //   .then((res) => {
+    //     const lastElement = res?.Order[res?.Order?.length - 1].id;
+    //     const prefix = lastElement?.substring(0, 5);
+    //     const number = parseInt(lastElement?.match(/\d+$/)[0], 10) + 1;
+    //     const concatenatedString = prefix + number;
+    //     setOrderID(concatenatedString);
+    //   })
+    //   .catch((err) => {
+    //     console.log(err);
+    //   });
+    // CreateOrder_ViewData()
+    //   .then((res) => {
+    //     const jsonData = xmlJs.xml2json(res.data, { compact: true, spaces: 2 });
+    //     setCreatAccountView(JSON.parse(jsonData));
+    //     setStatusDropDown(
+    //       JSON.parse(jsonData)?.createOrder.CurrentStatus?.MyDropDown?.dropdown
+    //     );
+    //     setdropdownValue(JSON.parse(jsonData));
+    //     setPartDetails(JSON.parse(jsonData)?.createOrder.PartDetails);
+    //   })
+    //   .catch((err) => {
+    //     console.log(err);
+    //   });
   }, []);
 
   let addMoreProduct = () => {
@@ -250,6 +344,11 @@ const CreateTarget = args => {
 
     setProduct(newFormValues);
   };
+  // let handlePartChange = (i, e) => {
+  //   let newFormValues = [...part];
+  //   newFormValues[i][e.target.name] = e.target.value;
+  //   setPart(newFormValues);
+  // };
 
   const WareHousetoWareHouse = e => {
     e.preventDefault();

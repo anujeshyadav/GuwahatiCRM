@@ -591,12 +591,11 @@ class WareHouseList extends React.Component {
               <Col>
                 <div className="d-flex justify-content-end p-1">
                   <Button
-                    onClick={e => {
+                    onClick={(e) => {
                       e.preventDefault();
                       this.setState({ EditOneUserView: false });
                     }}
-                    color="danger"
-                  >
+                    color="danger">
                     Back
                   </Button>
                 </div>
@@ -612,12 +611,11 @@ class WareHouseList extends React.Component {
                     <Col>
                       <div className="d-flex justify-content-end p-1">
                         <Button
-                          onClick={e => {
+                          onClick={(e) => {
                             e.preventDefault();
                             this.setState({ ViewOneUserView: false });
                           }}
-                          color="danger"
-                        >
+                          color="danger">
                           Back
                         </Button>
                       </div>
@@ -635,16 +633,15 @@ class WareHouseList extends React.Component {
                         </Col>
                         <Col>
                           <FormGroup>
-                            <Label>WareHouse List </Label>
+                            <Label>Select Warehouse</Label>
                             <CustomInput
                               type="select"
                               placeholder="Select Warehouse"
                               name="warehouse"
                               value={this.state.warehouse}
-                              onChange={this.changeHandler}
-                            >
+                              onChange={this.changeHandler}>
                               <option value="">--Select WareHouse--</option>
-                              {this.state.wareHouseViewOne?.map(cat => (
+                              {this.state.wareHouseViewOne?.map((cat) => (
                                 <option value={cat?._id} key={cat?._id}>
                                   {cat?.WarehouseName}
                                 </option>
@@ -657,8 +654,7 @@ class WareHouseList extends React.Component {
                           <Button
                             className="mt-2"
                             color="primary"
-                            onClick={this.handleShowWarehouse}
-                          >
+                            onClick={this.handleShowWarehouse}>
                             Submit
                           </Button>
                         </Col>
@@ -689,13 +685,11 @@ class WareHouseList extends React.Component {
                                     position: "absolute",
                                     zIndex: "1",
                                   }}
-                                  className="dropdown-content dropdownmy"
-                                >
+                                  className="dropdown-content dropdownmy">
                                   <h5
                                     onClick={() => this.exportToPDF()}
                                     style={{ cursor: "pointer" }}
-                                    className=" mx-1 myactive mt-1"
-                                  >
+                                    className=" mx-1 myactive mt-1">
                                     .PDF
                                   </h5>
                                   <h5
@@ -703,29 +697,25 @@ class WareHouseList extends React.Component {
                                       this.gridApi.exportDataAsCsv()
                                     }
                                     style={{ cursor: "pointer" }}
-                                    className=" mx-1 myactive"
-                                  >
+                                    className=" mx-1 myactive">
                                     .CSV
                                   </h5>
                                   <h5
                                     onClick={this.convertCSVtoExcel}
                                     style={{ cursor: "pointer" }}
-                                    className=" mx-1 myactive"
-                                  >
+                                    className=" mx-1 myactive">
                                     .XLS
                                   </h5>
                                   <h5
                                     onClick={this.exportToExcel}
                                     style={{ cursor: "pointer" }}
-                                    className=" mx-1 myactive"
-                                  >
+                                    className=" mx-1 myactive">
                                     .XLSX
                                   </h5>
                                   <h5
                                     onClick={() => this.convertCsvToXml()}
                                     style={{ cursor: "pointer" }}
-                                    className=" mx-1 myactive"
-                                  >
+                                    className=" mx-1 myactive">
                                     .XML
                                   </h5>
                                 </div>
@@ -743,8 +733,7 @@ class WareHouseList extends React.Component {
                                     history.push(
                                       "/app/softNumen/warehouse/CreateWareHouse"
                                     )
-                                  }
-                                >
+                                  }>
                                   Create Warehouse
                                 </Button>
                               )}
@@ -782,32 +771,27 @@ class WareHouseList extends React.Component {
                                       <DropdownMenu right>
                                         <DropdownItem
                                           tag="div"
-                                          onClick={() => this.filterSize(5)}
-                                        >
+                                          onClick={() => this.filterSize(5)}>
                                           5
                                         </DropdownItem>
                                         <DropdownItem
                                           tag="div"
-                                          onClick={() => this.filterSize(20)}
-                                        >
+                                          onClick={() => this.filterSize(20)}>
                                           20
                                         </DropdownItem>
                                         <DropdownItem
                                           tag="div"
-                                          onClick={() => this.filterSize(50)}
-                                        >
+                                          onClick={() => this.filterSize(50)}>
                                           50
                                         </DropdownItem>
                                         <DropdownItem
                                           tag="div"
-                                          onClick={() => this.filterSize(100)}
-                                        >
+                                          onClick={() => this.filterSize(100)}>
                                           100
                                         </DropdownItem>
                                         <DropdownItem
                                           tag="div"
-                                          onClick={() => this.filterSize(134)}
-                                        >
+                                          onClick={() => this.filterSize(134)}>
                                           134
                                         </DropdownItem>
                                       </DropdownMenu>
@@ -817,7 +801,7 @@ class WareHouseList extends React.Component {
                                     <div className="table-input mr-1">
                                       <Input
                                         placeholder="search Item here..."
-                                        onChange={e =>
+                                        onChange={(e) =>
                                           this.updateSearchQuery(e.target.value)
                                         }
                                         value={this.state.value}
@@ -826,7 +810,7 @@ class WareHouseList extends React.Component {
                                   </div>
                                 </div>
                                 <ContextLayout.Consumer className="ag-theme-alpine">
-                                  {context => (
+                                  {(context) => (
                                     <AgGridReact
                                       id="myAgGrid"
                                       // gridOptions={{
@@ -887,8 +871,7 @@ class WareHouseList extends React.Component {
           isOpen={this.state.modal}
           toggle={this.LookupviewStart}
           className={this.props.className}
-          style={{ maxWidth: "1050px" }}
-        >
+          style={{ maxWidth: "1050px" }}>
           <ModalHeader toggle={this.LookupviewStart}>Change Fileds</ModalHeader>
           <ModalBody className="modalbodyhead">
             <Row>
@@ -901,15 +884,15 @@ class WareHouseList extends React.Component {
                         return (
                           <>
                             <div
-                              onClick={e => this.handleChangeHeader(e, ele, i)}
+                              onClick={(e) =>
+                                this.handleChangeHeader(e, ele, i)
+                              }
                               key={i}
-                              className="mycustomtag mt-1"
-                            >
+                              className="mycustomtag mt-1">
                               <span className="mt-1">
                                 <h5
                                   style={{ cursor: "pointer" }}
-                                  className="allfields"
-                                >
+                                  className="allfields">
                                   <input
                                     type="checkbox"
                                     // checked={check && check}
@@ -968,15 +951,14 @@ class WareHouseList extends React.Component {
                                             : ""
                                         }`,
                                       }}
-                                      className="allfields"
-                                    >
+                                      className="allfields">
                                       <IoMdRemoveCircleOutline
                                         onClick={() => {
                                           const SelectedCols =
                                             this.state.SelectedcolumnDefs.slice();
                                           const delindex =
                                             SelectedCols.findIndex(
-                                              element =>
+                                              (element) =>
                                                 element?.headerName ==
                                                 ele?.headerName
                                             );

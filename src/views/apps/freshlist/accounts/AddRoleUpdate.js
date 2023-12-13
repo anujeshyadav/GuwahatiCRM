@@ -22,7 +22,10 @@ import { Route } from "react-router-dom";
 import "../../../../assets/scss/pages/users.scss";
 import { BsFillArrowDownCircleFill } from "react-icons/bs";
 import { AiOutlineSearch } from "react-icons/ai";
-import { CreateAccountView } from "../../../../ApiEndPoint/ApiCalling";
+import {
+  CreateAccountView,
+  CreateRole,
+} from "../../../../ApiEndPoint/ApiCalling";
 import xmlJs from "xml-js";
 import { CloudLightning } from "react-feather";
 
@@ -94,29 +97,52 @@ export default function AddRoleNew(args) {
     e.preventDefault();
     let userdata = JSON.parse(localStorage.getItem("userData"));
 
-    let formdata = new FormData();
-
-    formdata.append("user_id", userdata?.Userinfo?.id);
-    formdata.set("role_name", Role);
-    formdata.set("description", Desc);
-    formdata.set("selectedarray", JSON.stringify(Selected));
-
-    axiosConfig
-      .post(`/addroles`, formdata)
+    let payload = {
+      createdBy: userdata?._id,
+      roleName: Role,
+      // position: 7,
+      desc: Desc,
+      // rank: 7,
+      rolePermission: Selected,
+    };
+    CreateRole(payload)
       .then((res) => {
         console.log(res);
-        swal("Success", "Role Created");
-        setSelected("");
-        setDesc("");
-        setRole("");
         var checkboxes = document.getElementsByName("check");
         for (var checkbox of checkboxes) {
           checkbox.checked = false;
         }
+        setSelected("");
+        setDesc("");
+        setRole("");
       })
-      .catch((er) => {
-        console.log(er);
+      .catch((err) => {
+        console.log(err);
       });
+
+    // let formdata = new FormData();
+
+    // formdata.append("user_id", userdata?.Userinfo?.id);
+    // formdata.set("role_name", Role);
+    // formdata.set("description", Desc);
+    // formdata.set("selectedarray", JSON.stringify(Selected));
+
+    // axiosConfig
+    //   .post(`/addroles`, formdata)
+    //   .then((res) => {
+    //     console.log(res);
+    //     swal("Success", "Role Created");
+    //     setSelected("");
+    //     setDesc("");
+    //     setRole("");
+    //     var checkboxes = document.getElementsByName("check");
+    //     for (var checkbox of checkboxes) {
+    //       checkbox.checked = false;
+    //     }
+    //   })
+    //   .catch((er) => {
+    //     console.log(er);
+    //   });
   };
   const handleopentoggle = () => {
     CreateAccountView()
@@ -162,8 +188,7 @@ export default function AddRoleNew(args) {
                         color="primary"
                         onClick={() =>
                           history.push("/app/Trupee/account/RoleList")
-                        }
-                      >
+                        }>
                         {" "}
                         Back
                         {/* <FaPlus size={15} /> Create User */}
@@ -215,123 +240,126 @@ export default function AddRoleNew(args) {
               <section className="mt-5 container">
                 <Row className="gy-0 container">
                   {Roles &&
-                    Roles?.map((value, index) =>{
-                      console.log("value",value?.TabName)
-                      return(
-                      <Col
-                        key={index}
-                        style={{
-                          borderRadius: "12px",
-                          // background: "#e5dfdf26",
-                          height: `${
-                            show && SelectedIndex === index ? "auto" : "40px"
-                          }`,
-                        }}
-                        className="customcol gy-0 mb-2 "
-                        lg="12"
-                        md="12"
-                        sm="12"
-                      >
-                        <Row
+                    Roles?.map((value, index) => {
+                      console.log("value", value?.TabName);
+                      return (
+                        <Col
+                          key={index}
                           style={{
-                            lineHeight: "44px",
-                            borderRadius: "6px",
-                            background: "#f7f7f8",
+                            borderRadius: "12px",
+                            // background: "#e5dfdf26",
+                            height: `${
+                              show && SelectedIndex === index ? "auto" : "40px"
+                            }`,
                           }}
-                          className="roleheading"
-                        >
-                          <Col className="gy-2" lg="4" sm="4" md="4">
-                            <div className="align-item-center">
-                              <input
-                                className="mt-1"
-                                name="check"
-                                id={`head_${value?.title}`}
-                                onClick={(e) => {
-                                  handlesetparent(e.target.checked, index);
-                                  handleSelectPage(
-                                    e.target.value,
-                                    e.target.checked,
-                                    "parentPermit",
-                                    value?.title,
-                                    index
-                                  );
-                                }}
-                                style={{
-                                  height: "19px",
-                                  width: "26px",
-                                }}
-                                type="checkbox"
-                              />
+                          className="customcol gy-0 mb-2 "
+                          lg="12"
+                          md="12"
+                          sm="12">
+                          <Row
+                            style={{
+                              lineHeight: "44px",
+                              borderRadius: "6px",
+                              background: "#f7f7f8",
+                            }}
+                            className="roleheading">
+                            <Col className="gy-2" lg="4" sm="4" md="4">
+                              <div className="align-item-center">
+                                <input
+                                  className="mt-1"
+                                  name="check"
+                                  id={`head_${value?.title}`}
+                                  onClick={(e) => {
+                                    handlesetparent(e.target.checked, index);
+                                    handleSelectPage(
+                                      e.target.value,
+                                      e.target.checked,
+                                      "parentPermit",
+                                      value?.title,
+                                      index
+                                    );
+                                  }}
+                                  style={{
+                                    height: "19px",
+                                    width: "26px",
+                                  }}
+                                  type="checkbox"
+                                />
 
-                              <span className="mx-3 gy-0">{value?.title}</span>
-                            </div>
-                          </Col>
-                          <Col className="gy-2">
-                            <div className="d-flex justify-content-center">
-                              <span className="mx-3"> View</span>
-                            </div>
-                          </Col>
-                          <Col className="gy-2">
-                            <div className="d-flex justify-content-center">
-                              <span className="mx-3"> Create</span>
-                            </div>
-                          </Col>
-                          <Col className="gy-2">
-                            <div className="d-flex justify-content-center">
-                              <span className="mx-3"> Edit</span>
-                            </div>
-                          </Col>
-                          <Col className="gy-2">
-                            <div className="d-flex justify-content-center">
-                              <span className="mx-3"> Delete</span>
-                            </div>
-                          </Col>
-                        </Row>
-
-                        {show && SelectedIndex === index ? (
-                          <>
-                            <div className="container">
-                              <div className="gy-2 mt-2">
-                                {value?.TabName?.map((ele, i) => (
-                                  <>
-                                    <Row key={i} className="">
-                                      <Col lg="4" sm="4" md="4">
-                                        <h6 className="mt-1"> {ele?.title}</h6>
-                                      </Col>
-                                      {ele?.permission?.map((permit, ind) => (
-                                        <Col key={ind} lg="2" md="2" sm="2">
-                                          <div className="d-flex justify-content-center">
-                                            <input
-                                              name="check"
-                                              id={`item_${permit}`}
-                                              onClick={(e) => {
-                                                handleSelectPage(
-                                                  e.target.value,
-                                                  e.target.checked,
-                                                  permit,
-                                                  ele.title,
-                                                  ind
-                                                );
-                                              }}
-                                              style={{
-                                                height: "19px",
-                                                width: "26px",
-                                              }}
-                                              type="checkbox"
-                                            />
-                                          </div>
-                                        </Col>
-                                      ))}
-                                    </Row>
-                                  </>
-                                ))}
+                                <span className="mx-3 gy-0">
+                                  {value?.title}
+                                </span>
                               </div>
-                            </div>
-                          </>
-                        ) : null}
-                      </Col>
-                    )
-                    } )}
+                            </Col>
+                            <Col className="gy-2">
+                              <div className="d-flex justify-content-center">
+                                <span className="mx-3"> View</span>
+                              </div>
+                            </Col>
+                            <Col className="gy-2">
+                              <div className="d-flex justify-content-center">
+                                <span className="mx-3"> Create</span>
+                              </div>
+                            </Col>
+                            <Col className="gy-2">
+                              <div className="d-flex justify-content-center">
+                                <span className="mx-3"> Edit</span>
+                              </div>
+                            </Col>
+                            <Col className="gy-2">
+                              <div className="d-flex justify-content-center">
+                                <span className="mx-3"> Delete</span>
+                              </div>
+                            </Col>
+                          </Row>
+
+                          {show && SelectedIndex === index ? (
+                            <>
+                              <div className="container">
+                                <div className="gy-2 mt-2">
+                                  {value?.TabName?.map((ele, i) => (
+                                    <>
+                                      <Row key={i} className="">
+                                        <Col lg="4" sm="4" md="4">
+                                          <h6 className="mt-1">
+                                            {" "}
+                                            {ele?.title}
+                                          </h6>
+                                        </Col>
+                                        {ele?.permission?.map((permit, ind) => (
+                                          <Col key={ind} lg="2" md="2" sm="2">
+                                            <div className="d-flex justify-content-center">
+                                              <input
+                                                name="check"
+                                                id={`item_${permit}`}
+                                                onClick={(e) => {
+                                                  handleSelectPage(
+                                                    e.target.value,
+                                                    e.target.checked,
+                                                    permit,
+                                                    ele.title,
+                                                    ind
+                                                  );
+                                                }}
+                                                style={{
+                                                  height: "19px",
+                                                  width: "26px",
+                                                }}
+                                                type="checkbox"
+                                              />
+                                            </div>
+                                          </Col>
+                                        ))}
+                                      </Row>
+                                    </>
+                                  ))}
+                                </div>
+                              </div>
+                            </>
+                          ) : null}
+                        </Col>
+                      );
+                    })}
                 </Row>
                 <Row>
                   <Col>
@@ -339,8 +367,7 @@ export default function AddRoleNew(args) {
                       <Button
                         type="submit"
                         style={{ cursor: "pointer" }}
-                        color="primary"
-                      >
+                        color="primary">
                         Submit
                       </Button>
                     </div>
@@ -357,8 +384,7 @@ export default function AddRoleNew(args) {
         backdrop={false}
         isOpen={modal}
         toggle={toggle}
-        {...args}
-      >
+        {...args}>
         <ModalHeader toggle={toggle}>Role List</ModalHeader>
         <ModalBody>
           <div className="modalheaderaddrol p-1">
@@ -370,8 +396,7 @@ export default function AddRoleNew(args) {
               hover
               responsive
               size="sm"
-              striped
-            >
+              striped>
               <thead>
                 <tr>
                   <th>S.No.</th>
@@ -386,8 +411,7 @@ export default function AddRoleNew(args) {
                         className="tabletr"
                         onClick={(e) => HandleSelectRole(ele)}
                         style={{ cursor: "pointer" }}
-                        key={i}
-                      >
+                        key={i}>
                         <th scope="row">{i + 1}</th>
                         <td>{ele?._text}</td>
                       </tr>
