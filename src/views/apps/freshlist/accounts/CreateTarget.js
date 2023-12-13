@@ -155,7 +155,6 @@ const CreateTarget = args => {
   }, []);
   useEffect(() => {
     const userInfo = JSON.parse(localStorage.getItem("userData"));
-    // console.log(userInfo);
     setUserInfo(userInfo);
   }, []);
 

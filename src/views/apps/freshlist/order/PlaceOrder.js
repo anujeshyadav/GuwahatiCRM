@@ -33,6 +33,7 @@ const PlaceOrder = args => {
   const [index, setindex] = useState("");
   const [error, setError] = useState("");
   const [ProductList, setProductList] = useState([]);
+  const [UnitList, setUnitList] = useState([]);
   const [PartyList, setPartyList] = useState([]);
   const [grandTotalAmt, setGrandTotalAmt] = useState(0);
   const [UserInfo, setUserInfo] = useState({});
@@ -45,7 +46,8 @@ const PlaceOrder = args => {
       qty: 1,
       price: "",
       totalprice: "",
-      partyId: "",
+      unitQty: "",
+      // partyId: "",
     },
   ]);
 
@@ -84,6 +86,12 @@ const PlaceOrder = args => {
       return updatedProductList;
     });
   };
+  const handleUnit = (e, index) => {
+    let unt = [...product];
+    unt[index].unitQty = e.target.value;
+    console.log(unt);
+    setProduct(unt);
+  };
   const handleSelection = (selectedList, selectedItem, index) => {
     SelectedITems.push(selectedItem);
     setProduct(prevProductList => {
@@ -111,7 +119,8 @@ const PlaceOrder = args => {
   }, [product, GrandTotal]);
 
   useEffect(() => {
-    ProductListView()
+    const userId = JSON.parse(localStorage.getItem("userData"))._id;
+    ProductListView(userId)
       .then(res => {
         console.log(res.Product);
         setProductList(res?.Product);
@@ -297,6 +306,25 @@ const PlaceOrder = args => {
                           }
                         />
                       </div>
+                    </Col>
+                    <Col className="mb-1">
+                      <Label>Choose Unit</Label>
+                      <CustomInput
+                        type="select"
+                        placeholder="Select Type"
+                        name="type"
+                        value={product.unitQty}
+                        onChange={e => handleUnit(e, index)}
+                      >
+                        <option value="None">None</option>
+                        {UnitList?.map(val => {
+                          return (
+                            <option value={val.primaryUnit}>
+                              {val.primaryUnit}
+                            </option>
+                          );
+                        })}
+                      </CustomInput>
                     </Col>
                     <Col className="mb-1" lg="2" md="2" sm="12">
                       <div className="">

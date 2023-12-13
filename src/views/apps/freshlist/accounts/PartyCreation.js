@@ -97,13 +97,11 @@ const PartyCreation = () => {
       }
     }
   };
-  useEffect(() => {
-    console.log(formData);
-  }, [formData]);
+  useEffect(() => {}, [formData]);
   useEffect(() => {
     // CreateAccountView()
     CreatePartyXML()
-      .then((res) => {
+      .then(res => {
         const jsonData = xmlJs.xml2json(res.data, { compact: true, spaces: 2 });
         console.log(JSON.parse(jsonData));
 
@@ -111,26 +109,26 @@ const PartyCreation = () => {
 
         setdropdownValue(JSON.parse(jsonData)?.CreateParty?.MyDropDown);
       })
-      .catch((err) => {
+      .catch(err => {
         console.log(err);
       });
   }, []);
 
-  const submitHandler = (e) => {
+  const submitHandler = e => {
     e.preventDefault();
     console.log(formData);
     if (error) {
       swal("Error occured while Entering Details");
     } else {
       CreatePartysave(formData)
-        .then((res) => {
+        .then(res => {
           // setFormData({});
           if (res.status) {
             // window.location.reload();
             swal("Party Created Successfully");
           }
         })
-        .catch((err) => {
+        .catch(err => {
           console.log(err);
         });
     }
@@ -219,7 +217,7 @@ const PartyCreation = () => {
                               <PhoneInput
                                 inputClass="myphoneinput"
                                 country={"us"}
-                                onKeyDown={(e) => {
+                                onKeyDown={e => {
                                   if (
                                     ele?.type?._attributes?.type == "number"
                                   ) {
@@ -230,7 +228,7 @@ const PartyCreation = () => {
                                 countryCodeEditable={false}
                                 name={ele?.name?._text}
                                 value={formData[ele?.name?._text]}
-                                onChange={(phone) => {
+                                onChange={phone => {
                                   setFormData({
                                     ...formData,
                                     [ele?.name?._text]: phone,
@@ -254,7 +252,6 @@ const PartyCreation = () => {
                       );
                     } else if (!!ele?.library) {
                       if (ele?.label._text?.includes("ountry")) {
-                        console.log(ele);
                         return (
                           <Col key={i} lg="4" md="4" sm="12">
                             <FormGroup>
@@ -263,14 +260,14 @@ const PartyCreation = () => {
                                 inputClass="countryclass"
                                 className="countryclassnw"
                                 options={Country.getAllCountries()}
-                                getOptionLabel={(options) => {
+                                getOptionLabel={options => {
                                   return options["name"];
                                 }}
-                                getOptionValue={(options) => {
+                                getOptionValue={options => {
                                   return options["name"];
                                 }}
                                 value={Countries}
-                                onChange={(country) => {
+                                onChange={country => {
                                   setCountry(country);
                                   setFormData({
                                     ...formData,
@@ -301,14 +298,14 @@ const PartyCreation = () => {
                                 options={State?.getStatesOfCountry(
                                   Countries?.isoCode
                                 )}
-                                getOptionLabel={(options) => {
+                                getOptionLabel={options => {
                                   return options["name"];
                                 }}
-                                getOptionValue={(options) => {
+                                getOptionValue={options => {
                                   return options["name"];
                                 }}
                                 value={States}
-                                onChange={(State) => {
+                                onChange={State => {
                                   setState(State);
                                   setFormData({
                                     ...formData,
@@ -340,14 +337,14 @@ const PartyCreation = () => {
                                   States?.countryCode,
                                   States?.isoCode
                                 )}
-                                getOptionLabel={(options) => {
+                                getOptionLabel={options => {
                                   return options["name"];
                                 }}
-                                getOptionValue={(options) => {
+                                getOptionValue={options => {
                                   return options["name"];
                                 }}
                                 value={Cities}
-                                onChange={(City) => {
+                                onChange={City => {
                                   setCities(City);
                                   setFormData({
                                     ...formData,
@@ -379,7 +376,7 @@ const PartyCreation = () => {
                                     <Label>{ele?.label?._text}</Label>
 
                                     <Input
-                                      onKeyDown={(e) => {
+                                      onKeyDown={e => {
                                         if (
                                           ele?.type?._attributes?.type ==
                                           "number"
@@ -404,7 +401,7 @@ const PartyCreation = () => {
                                         // formData[ele?.name?._text]
                                       }
                                       // value={formData[ele?.name?._text]}
-                                      onChange={(e) =>
+                                      onChange={e =>
                                         handleInputChange(
                                           e,
                                           ele?.type?._attributes?.type,
@@ -433,7 +430,7 @@ const PartyCreation = () => {
                                     <Label>{ele?.label?._text}</Label>
 
                                     <Input
-                                      onKeyDown={(e) => {
+                                      onKeyDown={e => {
                                         if (
                                           ele?.type?._attributes?.type ==
                                           "number"
@@ -447,7 +444,7 @@ const PartyCreation = () => {
                                       placeholder={ele?.placeholder?._text}
                                       name={ele?.name?._text}
                                       value={formData[ele?.name?._text]}
-                                      onChange={(e) =>
+                                      onChange={e =>
                                         handleInputChange(
                                           e,
                                           ele?.type?._attributes?.type,
@@ -483,10 +480,10 @@ const PartyCreation = () => {
                                   <Label>{ele?.label?._text}</Label>
 
                                   <Input
-                                    onWheel={(e) => {
+                                    onWheel={e => {
                                       e.preventDefault(); // Prevent the mouse wheel scroll event
                                     }}
-                                    onKeyDown={(e) => {
+                                    onKeyDown={e => {
                                       if (
                                         ele?.type?._attributes?.type == "number"
                                       ) {
@@ -498,7 +495,7 @@ const PartyCreation = () => {
                                     placeholder={ele?.placeholder?._text}
                                     name={ele?.name?._text}
                                     value={formData[ele?.name?._text]}
-                                    onChange={(e) =>
+                                    onChange={e =>
                                       handleInputChange(
                                         e,
                                         ele?.type?._attributes?.type,
@@ -526,7 +523,7 @@ const PartyCreation = () => {
                                 <Label>{ele?.label?._text}</Label>
 
                                 <Input
-                                  onKeyDown={(e) => {
+                                  onKeyDown={e => {
                                     if (
                                       ele?.type?._attributes?.type == "number"
                                     ) {
@@ -538,7 +535,7 @@ const PartyCreation = () => {
                                   placeholder={ele?.placeholder?._text}
                                   name={ele?.name?._text}
                                   value={formData[ele?.name?._text]}
-                                  onChange={(e) => {
+                                  onChange={e => {
                                     // const value = e.target.value;
                                     // // Use regular expression to allow only numbers
                                     // const numericValue = value.replace(

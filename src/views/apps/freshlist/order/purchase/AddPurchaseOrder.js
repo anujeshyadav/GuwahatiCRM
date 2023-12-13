@@ -107,7 +107,8 @@ const AddPurchaseOrder = args => {
   }, [product, GrandTotal]);
 
   useEffect(() => {
-    ProductListView()
+    const userId = JSON.parse(localStorage.getItem("userData"))._id;
+    ProductListView(userId)
       .then(res => {
         console.log(res.Product);
         setProductList(res?.Product);
@@ -156,9 +157,6 @@ const AddPurchaseOrder = args => {
 
   const submitHandler = e => {
     e.preventDefault();
-    // product?.map(ele => {
-    //   return {};
-    // });
     let fullname = UserInfo.firstName + " " + UserInfo?.lastName;
     console.log(UserInfo?.UserName);
     const ObjOrder = {
@@ -171,6 +169,7 @@ const AddPurchaseOrder = args => {
       state: UserInfo?.State,
       city: UserInfo?.City,
       orderItems: product,
+      // created_by: UserInfo?._id,
     };
     if (error) {
       swal("Error occured while Entering Details");
@@ -178,9 +177,6 @@ const AddPurchaseOrder = args => {
       SavePurchaseOrder(ObjOrder)
         .then(res => {
           console.log(res);
-          // if (res.status) {
-          //   setFormData({});
-          //   window.location.reload();
           swal(" Add Purchase Order  Successfully");
           history.push("/app/AJgroup/order/purchaseOrderList");
 

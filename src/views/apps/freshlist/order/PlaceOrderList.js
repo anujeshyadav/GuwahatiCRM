@@ -22,7 +22,6 @@ import { ContextLayout } from "../../../../utility/context/Layout";
 import { AgGridReact } from "ag-grid-react";
 import "ag-grid-community/dist/styles/ag-grid.css";
 import EditAccount from "../accounts/EditAccount";
-// import ViewAccount from "../accounts/ViewAccount";
 import ViewOrder from "./ViewAll";
 import jsPDF from "jspdf";
 import "jspdf-autotable";
@@ -344,8 +343,8 @@ class PlaceOrderList extends React.Component {
 
   async componentDidMount() {
     const UserInformation = this.context?.UserInformatio;
-
-    await PlaceOrderViewList()
+    let userId = JSON.parse(localStorage.getItem("userData"))._id;
+    await PlaceOrderViewList(userId)
       .then(res => {
         console.log(res);
         this.setState({ rowData: res?.orderHistory });

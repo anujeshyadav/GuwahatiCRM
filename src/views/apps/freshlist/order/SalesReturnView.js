@@ -114,12 +114,12 @@ const SalesReturnView = args => {
 
     let payload = {
       userId: userData?._id,
-      // status: "pending",
       returnItems: myarr,
       mobileNumber: userData?.mobileNumber,
       email: userData.email,
       Return_amount: grandTotalAmt,
       orderId: location?.state?._id,
+      created_by: userData?._id,
     };
 
     if (error) {

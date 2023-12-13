@@ -69,7 +69,7 @@ export const Save_Order = "/order/save-create-order";
 export const view_create_order_history = "/order/view-create-order-history/";
 // By other
 export const Save_Place_Order = "/order/save-place-order";
-export const Place_Order_List = "/order/view-place-order";
+export const Place_Order_List = "/order/view-place-order/";
 export const Place_ORder_Return_Product = "/sales-return/save-sales-return";
 export const Place_Order_Edit = "/order/update-place-order/";
 // BY OWN
@@ -83,9 +83,11 @@ export const Sales_Pending_StatusChange = "/order/update-create-order-status/";
 // purchase order
 export const SavePurchase_Order = "/purchase-order/save-purchase-order";
 export const Purchase_Order_List =
-  "/purchase-order/view-purchase-order-history";
+  "/purchase-order/view-purchase-order-history/";
 export const Purchase_Return = "/purchase-return/save-purchase-return";
 export const Purchase_Edit_Order = "/purchase-order/update-purchase-order/";
+export const Purchase_Status_Order =
+  "/purchase-order/update-purchase-order-status/";
 
 export const Debit_note_Order_List = "/debit-note/view-debit-note";
 export const Credit_note_Order_List = "/credit-note/view-credit-note";

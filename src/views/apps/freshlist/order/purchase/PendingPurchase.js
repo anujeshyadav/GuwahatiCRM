@@ -112,24 +112,30 @@ class PendingPurchase extends React.Component {
                   color="blue"
                   onClick={() =>
                     this.props.history.push({
-                      pathname: `/app/AJGroup/order/editPending/${params.data?._id}`,
+                      pathname: `/app/AJGroup/order/editPurchase/${params.data?._id}`,
                       state: params.data,
                     })
                   }
                 />
-                {/* )} */}
-                {/* {this.state.Deletepermisson && ( */}
-                {/* <Trash2
-                  className="mr-50"
-                  size="25px"
-                  color="Red"
-                  onClick={() => {
-                    this.runthisfunction(params?.data?._id);
-                  }}
-                /> */}
-                {/* )} */}
               </div>
             );
+          },
+        },
+        {
+          headerName: "Status",
+          field: "status",
+          filter: true,
+          width: 150,
+          cellRendererFramework: params => {
+            return params.value === "pending" ? (
+              <div className="badge badge-pill badge-warning">
+                {params.data.status}
+              </div>
+            ) : params.value === "cancelled" ? (
+              <div className="badge badge-pill badge bg-danger">
+                {params.data.status}
+              </div>
+            ) : null;
           },
         },
         {
@@ -144,30 +150,30 @@ class PendingPurchase extends React.Component {
             return null;
           },
         },
-        {
-          headerName: "Category",
-          field: "orderItems",
-          filter: true,
-          width: 180,
-          valueGetter: params => {
-            if (params.data.orderItems && params.data.orderItems.length > 0) {
-              return params.data.orderItems[0].product.category;
-            }
-            return null;
-          },
-        },
-        {
-          headerName: "SubCategory",
-          field: "orderItems",
-          filter: true,
-          width: 180,
-          valueGetter: params => {
-            if (params.data.orderItems && params.data.orderItems.length > 0) {
-              return params.data.orderItems[0].product.SubCategory;
-            }
-            return null;
-          },
-        },
+        // {
+        //   headerName: "Category",
+        //   field: "orderItems",
+        //   filter: true,
+        //   width: 180,
+        //   valueGetter: params => {
+        //     if (params.data.orderItems && params.data.orderItems.length > 0) {
+        //       return params.data.orderItems[0].product.category;
+        //     }
+        //     return null;
+        //   },
+        // },
+        // {
+        //   headerName: "SubCategory",
+        //   field: "orderItems",
+        //   filter: true,
+        //   width: 180,
+        //   valueGetter: params => {
+        //     if (params.data.orderItems && params.data.orderItems.length > 0) {
+        //       return params.data.orderItems[0].product.SubCategory;
+        //     }
+        //     return null;
+        //   },
+        // },
         {
           headerName: "Price",
           field: "orderItems",
@@ -295,24 +301,6 @@ class PendingPurchase extends React.Component {
             );
           },
         },
-
-        {
-          headerName: "Status",
-          field: "status",
-          filter: true,
-          width: 150,
-          cellRendererFramework: params => {
-            return params.value === "pending" ? (
-              <div className="badge badge-pill badge-warning">
-                {params.data.status}
-              </div>
-            ) : params.value === "canceled" ? (
-              <div className="badge badge-pill badge bg-danger">
-                {params.data.status}
-              </div>
-            ) : null;
-          },
-        },
       ],
     };
   }
@@ -350,8 +338,8 @@ class PendingPurchase extends React.Component {
 
   async componentDidMount() {
     const UserInformation = this.context?.UserInformatio;
-
-    await PurchaseOrderList()
+    let userId = JSON.parse(localStorage.getItem("userData"))._id;
+    await PurchaseOrderList(userId)
       .then(res => {
         console.log(res?.orderHistory);
         const pendingStatus = res?.orderHistory?.filter(ele =>
