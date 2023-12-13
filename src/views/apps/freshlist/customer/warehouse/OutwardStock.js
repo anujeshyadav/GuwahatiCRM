@@ -48,7 +48,7 @@ import {
   Stockupdate,
   ViewFactoryStock,
   ViewOneWarehouseStock,
-  Warehouse_Inwardlist,
+  WarehouseOutwardStocklist,
 } from "../../../../../ApiEndPoint/ApiCalling";
 import {
   BsCloudDownloadFill,
@@ -61,7 +61,7 @@ import UpdateStockTrx from "../../accounts/UpdateStockTrx";
 
 const SelectedColums = [];
 
-class StockTransfer extends React.Component {
+class OutwardStock extends React.Component {
   static contextType = UserContext;
   constructor(props) {
     super(props);
@@ -108,9 +108,11 @@ class StockTransfer extends React.Component {
                     this.setState({ ViewOneData: params?.data });
                     this.setState({ ViewOneUserView: true });
                     this.setState({ EditOneUserView: false });
+
+                    console.log(params?.data);
                   }}
                 />
-                {/* <Edit
+                <Edit
                   className="mr-50"
                   size="25px"
                   color="blue"
@@ -122,8 +124,8 @@ class StockTransfer extends React.Component {
 
                     console.log(params?.data);
                   }}
-                /> */}
-                {/* <Trash2
+                />
+                <Trash2
                   className="mr-50"
                   size="25px"
                   color="red"
@@ -132,7 +134,7 @@ class StockTransfer extends React.Component {
                     this.runthisfunction(params.data._id);
                     this.gridApi.updateRowData({ remove: selectedData });
                   }}
-                /> */}
+                />
               </div>
             );
           },
@@ -267,6 +269,7 @@ class StockTransfer extends React.Component {
     };
     let id = this.state.ViewOneData?._id;
 
+    console.log(this.state.ViewOneData?._id);
     swal("Warning", "Sure You Want to Update Status", {
       buttons: {
         cancel: "No",
@@ -332,12 +335,18 @@ class StockTransfer extends React.Component {
     let pageparmission = JSON.parse(localStorage.getItem("userData"));
     let userid = pageparmission?._id;
     // await ViewFactoryStock()
-    await Warehouse_Inwardlist(userid)
+    await WarehouseOutwardStocklist(userid)
       .then((res) => {
-        console.log(res?.Warehouse);
-        if (res?.Warehouse) {
-          this.setState({ rowData: res?.Warehouse });
-        }
+        debugger;
+        console.log(res);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+    await ViewOneWarehouseStock(userid)
+      .then((res) => {
+        console.log(res?.Factory);
+        this.setState({ rowData: res?.Factory });
         this.setState({ AllcolumnDefs: this.state.columnDefs });
 
         let userHeading = JSON.parse(localStorage.getItem("FactoryStock"));
@@ -350,26 +359,6 @@ class StockTransfer extends React.Component {
           this.setState({ SelectedcolumnDefs: this.state.columnDefs });
         }
         this.setState({ SelectedCols: this.state.columnDefs });
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-    await ViewOneWarehouseStock(userid)
-      .then((res) => {
-        console.log(res?.Factory);
-        // this.setState({ rowData: res?.Factory });
-        // this.setState({ AllcolumnDefs: this.state.columnDefs });
-
-        // let userHeading = JSON.parse(localStorage.getItem("FactoryStock"));
-        // if (userHeading?.length) {
-        //   this.setState({ columnDefs: userHeading });
-        //   this.gridApi.setColumnDefs(userHeading);
-        //   this.setState({ SelectedcolumnDefs: userHeading });
-        // } else {
-        //   this.setState({ columnDefs: this.state.columnDefs });
-        //   this.setState({ SelectedcolumnDefs: this.state.columnDefs });
-        // }
-        // this.setState({ SelectedCols: this.state.columnDefs });
       })
       .catch((err) => {
         console.log(err);
@@ -722,7 +711,7 @@ class StockTransfer extends React.Component {
                       )}
                     </div>
                   </span>
-                  <span>
+                  {/* <span>
                     <Route
                       render={({ history }) => (
                         <Badge
@@ -738,7 +727,7 @@ class StockTransfer extends React.Component {
                         </Badge>
                       )}
                     />
-                  </span>
+                  </span> */}
                 </Col>
               </Row>
               <CardBody>
@@ -1123,4 +1112,4 @@ class StockTransfer extends React.Component {
     );
   }
 }
-export default StockTransfer;
+export default OutwardStock;

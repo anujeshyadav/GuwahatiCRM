@@ -239,7 +239,7 @@ const horizontalMenuConfig = [
         navLink: "/app/AJGroup/product/PurchaseInvoice",
       },
       {
-        id: "PurchaseReturn",
+        id: "PurchaseReturnss",
         title: "Purchase Return",
         type: "item",
         icon: <FaCircle size={8} />,
@@ -262,14 +262,14 @@ const horizontalMenuConfig = [
       //   permissions: ["admin", "editor"],
       //   navLink: "/app/softNumen/warranty/Campaignlist",
       // },
-      {
-        id: "PurchaseReturn",
-        title: "Purchase Return",
-        type: "item",
-        icon: <FaCircle size={8} />,
-        permissions: ["admin", "editor"],
-        navLink: "/app/softNumen/warranty/Campaignlist",
-      },
+      // {
+      //   id: "PurchaseReturnss",
+      //   title: "Purchase Return",
+      //   type: "item",
+      //   icon: <FaCircle size={8} />,
+      //   permissions: ["admin", "editor"],
+      //   navLink: "/app/softNumen/warranty/Campaignlist",
+      // },
     ],
   },
   {
@@ -505,14 +505,14 @@ const horizontalMenuConfig = [
     type: "collapse",
     icon: <FaShoppingCart size={15} />,
     children: [
-      {
-        id: "PartyList",
-        title: "Party List",
-        type: "item",
-        icon: <FaList size={15} />,
-        permissions: ["admin", "editor"],
-        navLink: "/app/SoftNumen/PartyList",
-      },
+      // {
+      //   id: "PartyList",
+      //   title: "Party List",
+      //   type: "item",
+      //   icon: <FaList size={15} />,
+      //   permissions: ["admin", "editor"],
+      //   navLink: "/app/SoftNumen/PartyList",
+      // },
       // {
       //   id: "TransporterList",
       //   title: "Transporter List",
@@ -721,7 +721,7 @@ const horizontalMenuConfig = [
         type: "item",
         icon: <FaCode size={15} />,
         permissions: ["admin", "editor"],
-        navLink: "/app/softNumen/warranty/CreateWiki",
+        navLink: "/app/Ajgroup/warehouse/OutwardStock",
       },
       {
         id: "Closing Stock",
@@ -987,7 +987,7 @@ const horizontalMenuConfig = [
         type: "item",
         icon: <FaCircle size={8} />,
         permissions: ["admin", "editor"],
-        navLink: "/app/ajgroup/account/CreateStockTrx",
+        navLink: "/app/softNumen/warehouse/StockTransfer",
       },
     ],
   },

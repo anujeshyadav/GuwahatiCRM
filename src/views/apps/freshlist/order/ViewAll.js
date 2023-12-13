@@ -92,7 +92,7 @@ const OrderView = ({ ViewOneData }) => {
     <div>
       <div>
         <Card>
-          <Form className="mr-1 ml-1">
+          <Form className="p-3">
             <Row className="mb-2">
               <Col lg="4" md="4" sm="12">
                 <FormGroup>
@@ -108,7 +108,7 @@ const OrderView = ({ ViewOneData }) => {
               </Col>
               {product &&
                 product?.orderItems?.map((ele, index) => (
-                  <Row className="" key={index}>
+                  <>
                     <Col lg="4" md="4" sm="12">
                       <FormGroup>
                         <Label>Product Name</Label>
@@ -170,7 +170,7 @@ const OrderView = ({ ViewOneData }) => {
                         />
                       </FormGroup>
                     </Col>
-                  </Row>
+                  </>
                 ))}
             </Row>
           </Form>

@@ -133,7 +133,7 @@ const UserDropdown = (props) => {
             tag="a"
             href="#"
             onClick={(e) => {
-              localStorage.clear();
+              // localStorage.clear();
               localStorage.removeItem("userData");
               history.push("/#/pages/login");
               const data = new FormData();
@@ -144,7 +144,7 @@ const UserDropdown = (props) => {
                 .post("/apiLogout", data)
                 .then((resp) => {
                   console.log(resp);
-                  localStorage.clear();
+                  // localStorage.clear();
                   localStorage.removeItem("userData");
                   history.push("/#/pages/login");
                 })
@@ -167,7 +167,7 @@ const UserDropdown = (props) => {
                 }
               } else {
                 localStorage.removeItem("userData");
-                localStorage.clear();
+                // localStorage.clear();
                 history.push("/#/pages/login");
               }
             }}

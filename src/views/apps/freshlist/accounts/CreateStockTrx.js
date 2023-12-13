@@ -38,6 +38,7 @@ import {
   UnitListView,
   StocktrxFtoW,
   WarehousetoWareHouseTrx,
+  Warehouse_Temporarlylist,
 } from "../../../../ApiEndPoint/ApiCalling";
 import "../../../../assets/scss/pages/users.scss";
 import Timepickers from "../../../forms/form-elements/datepicker/Timepicker";
@@ -252,21 +253,38 @@ const CreateTarget = (args) => {
     }
   };
   // handleInputChange;
-  useEffect(() => {
-    console.log(window);
-    console.log(product);
-    console.log(GrandTotal);
-    console.log(Salesperson);
-    console.log(StockTrxdate);
-    console.log(targetEndDate);
-  }, [product, targetEndDate]);
+  // useEffect(() => {
+  //   console.log(window);
+  //   console.log(product);
+  //   console.log(GrandTotal);
+  //   console.log(Salesperson);
+  //   console.log(StockTrxdate);
+  //   console.log(targetEndDate);
+  // }, [product, targetEndDate]);
 
   useEffect(() => {
     let userData = JSON.parse(localStorage.getItem("userData"));
+    Warehouse_Temporarlylist(userData._id)
+      .then((res) => {
+        console.log(res?.adminDetails);
+        let myWarehouse = res?.adminDetails?.filter((ele, i) =>
+          ele?.rolename?.roleName
+            ?.split(" ")
+            .join("")
+            .toLowerCase()
+            .includes("warehouse")
+        );
+
+        setWarehouseList(myWarehouse);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+    // firstName;
     CreateWarehouseList(userData._id)
       .then((res) => {
-        console.log(res?.Warehouse);
-        setWarehouseList(res?.Warehouse);
+        // console.log(res?.Warehouse);
+        // setWarehouseList(res?.Warehouse);
       })
       .catch((err) => {
         console.log(err);
@@ -356,11 +374,7 @@ const CreateTarget = (args) => {
 
   const WareHousetoWareHouse = (e) => {
     e.preventDefault();
-    console.log(WareHouseone);
-    console.log(WareHousetwo);
-    console.log(StockTrxdate);
-    console.log(product);
-    debugger;
+
     let userdata = JSON.parse(localStorage.getItem("userData"));
     let Allproduct = product?.map((ele, i) => {
       console.log(ele);
@@ -379,7 +393,7 @@ const CreateTarget = (args) => {
       warehouseFromId: WareHousetwo[0]?._id,
       stockTransferDate: StockTrxdate,
       grandTotal: grandTotalAmt,
-      status: "Transferring",
+      status: "InProcess",
       created_by: userdata?._id,
     };
     console.log(payload);
@@ -416,9 +430,10 @@ const CreateTarget = (args) => {
       warehouseToId: WareHouseone[0]?._id,
       stockTransferDate: StockTrxdate,
       grandTotal: grandTotalAmt,
-      status: "Transferring",
+      status: "InProcess",
       created_by: userdata?._id,
     };
+    console.log(payload);
 
     if (error) {
       swal("Error occured while Entering Details");
@@ -531,7 +546,7 @@ const CreateTarget = (args) => {
                       // selectedValues={selectedValue}   // Preselected value to persist in dropdown
                       onSelect={onSelect1} // Function will trigger on select event
                       onRemove={onRemove1} // Function will trigger on remove event
-                      displayValue="WarehouseName" // Property name to display in the dropdown options
+                      displayValue="firstName" // Property name to display in the dropdown options
                     />
                   </div>
                 </Col>
@@ -548,7 +563,7 @@ const CreateTarget = (args) => {
                       // selectedValues={selectedValue}   // Preselected value to persist in dropdown
                       onSelect={onSelect2} // Function will trigger on select event
                       onRemove={onRemove2} // Function will trigger on remove event
-                      displayValue="WarehouseName" // Property name to display in the dropdown options
+                      displayValue="firstName" // Property name to display in the dropdown options
                     />
                   </div>
                 </Col>
@@ -731,7 +746,7 @@ const CreateTarget = (args) => {
                       // selectedValues={selectedValue}   // Preselected value to persist in dropdown
                       onSelect={onSelect1} // Function will trigger on select event
                       onRemove={onRemove1} // Function will trigger on remove event
-                      displayValue="WarehouseName" // Property name to display in the dropdown options
+                      displayValue="firstName" // Property name to display in the dropdown options
                     />
                   </div>
                 </Col>
