@@ -28,7 +28,10 @@ import "../../../../assets/scss/pages/users.scss";
 import swal from "sweetalert";
 import { Route } from "react-router-dom";
 import { BsEye, BsTrash } from "react-icons/bs";
-import { CreateAccountView, Get_RoleList } from "../../../../ApiEndPoint/ApiCalling";
+import {
+  CreateAccountView,
+  Get_RoleList,
+} from "../../../../ApiEndPoint/ApiCalling";
 import { FaPlus } from "react-icons/fa";
 import { CheckPermission } from "../house/CheckPermission";
 
@@ -61,7 +64,7 @@ class RoleList extends React.Component {
         field: "roleName",
         filter: true,
         resizable: true,
-        width: 160,
+        width: 200,
         cellRendererFramework: (params) => {
           return (
             <div className="d-flex align-items-center cursor-pointer">
@@ -279,7 +282,8 @@ class RoleList extends React.Component {
                           color="primary"
                           onClick={() =>
                             history.push("/app/freshlist/account/addRoleNew")
-                          }>
+                          }
+                        >
                           <FaPlus size={15} /> Create Role
                         </Badge>
                       )}
@@ -300,7 +304,8 @@ class RoleList extends React.Component {
                             history.push(
                               "/app/freshlist/account/CreateHeirarchy"
                             )
-                          }>
+                          }
+                        >
                           <FaPlus size={15} /> Create Hierarchy
                         </Badge>
                       )}
@@ -331,22 +336,26 @@ class RoleList extends React.Component {
                         <DropdownMenu right>
                           <DropdownItem
                             tag="div"
-                            onClick={() => this.filterSize(20)}>
+                            onClick={() => this.filterSize(20)}
+                          >
                             20
                           </DropdownItem>
                           <DropdownItem
                             tag="div"
-                            onClick={() => this.filterSize(50)}>
+                            onClick={() => this.filterSize(50)}
+                          >
                             50
                           </DropdownItem>
                           <DropdownItem
                             tag="div"
-                            onClick={() => this.filterSize(100)}>
+                            onClick={() => this.filterSize(100)}
+                          >
                             100
                           </DropdownItem>
                           <DropdownItem
                             tag="div"
-                            onClick={() => this.filterSize(134)}>
+                            onClick={() => this.filterSize(134)}
+                          >
                             134
                           </DropdownItem>
                         </DropdownMenu>
