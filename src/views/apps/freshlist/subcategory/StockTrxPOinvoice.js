@@ -71,13 +71,17 @@ const StockTrxPOinvoice = ({
   invoiceData,
   CurrentWords,
   BilData,
+  AllData,
   tableList,
   AllCharges,
 }) => {
   console.log(invoiceData);
   console.log(BilData);
+  console.log(tableList);
+  console.log(AllData);
   console.log(CurrentWords);
   console.log(AllCharges);
+  debugger;
   // console.log("poinvoice");
   // const { items, customerName, date, total, place_supply } = invoiceData;
   const curentDate = new Date();
@@ -175,7 +179,7 @@ const StockTrxPOinvoice = ({
                   padding: "10px 10px",
                   borderRight: "1px solid black",
                 }}>
-                <View style={{ flexDirection: "row", paddingBottom: "3px" }}>
+                {/* <View style={{ flexDirection: "row", paddingBottom: "3px" }}>
                   <Text
                     style={{
                       fontSize: "10px",
@@ -187,7 +191,7 @@ const StockTrxPOinvoice = ({
                   <Text style={{ fontSize: "10px", fontWeight: "bold" }}>
                     : {invoiceData?._id}
                   </Text>
-                </View>
+                </View> */}
                 <View style={{ flexDirection: "row", paddingBottom: "3px" }}>
                   <Text
                     style={{
@@ -235,12 +239,16 @@ const StockTrxPOinvoice = ({
                     style={{
                       fontSize: "10px",
                       fontWeight: "bold",
-                      width: "50%",
+                      width: "45%",
                     }}>
                     Place of Supply
                   </Text>{" "}
                   <Text style={{ fontSize: "10px", fontWeight: "bold" }}>
-                    : {invoiceData?.city}
+                    : &nbsp;
+                    {` ${BilData?.ViewOneData?.warehouseToId?.firstName} 
+                     ${BilData?.ViewOneData?.warehouseToId?.State},
+                      ${BilData?.ViewOneData?.warehouseToId?.City},
+                      ${BilData?.ViewOneData?.warehouseToId?.email}`}
                   </Text>
                 </View>
               </View>
