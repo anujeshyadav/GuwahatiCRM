@@ -106,9 +106,9 @@ const EditPending = args => {
                     value={status}
                     onChange={handleChange}
                   >
-                    <option value="pending">pending</option>
-                    <option value="canceled">cancelled</option>
-                    <option value="canceled">completed</option>
+                    <option value="pending">Pending</option>
+                    <option value="cancelled">Cancelled</option>
+                    <option value="completed">Completed</option>
                   </CustomInput>
                 </Col>
                 <Col lg="6" md="6" sm="6" className="mb-2">
