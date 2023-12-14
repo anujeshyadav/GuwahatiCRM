@@ -51,6 +51,7 @@ import {
 } from "react-icons/bs";
 import * as XLSX from "xlsx";
 import UserContext from "../../../../context/Context";
+import { CheckPermission } from "./CheckPermission";
 
 const SelectedColums = [];
 
@@ -67,6 +68,7 @@ class AccounSearch extends React.Component {
       setMySelectedarr: [],
       SelectedCols: [],
       paginationPageSize: 5,
+      InsiderPermissions: {},
       currenPageSize: "",
       getPageSize: "",
       columnDefs: [],
@@ -102,6 +104,9 @@ class AccounSearch extends React.Component {
   async componentDidMount() {
     const UserInformation = this.context?.UserInformatio;
     let pageparmission = JSON.parse(localStorage.getItem("userData"));
+    const InsidePermissions = CheckPermission("Create User");
+    console.log(InsidePermissions);
+    this.setState({ InsiderPermissions: InsidePermissions });
     let userid = pageparmission?._id;
     await CreateAccountList(userid)
       .then((res) => {
@@ -194,43 +199,51 @@ class AccounSearch extends React.Component {
             cellRendererFramework: (params) => {
               return (
                 <div className="actions cursor-pointer">
-                  <Route
-                    render={({ history }) => (
-                      <Eye
-                        className="mr-50"
-                        size="25px"
-                        color="green"
-                        onClick={() => {
-                          this.handleChangeEdit(params?.data, "readonly");
-                        }}
+                  {this.state.InsiderPermissions &&
+                    this.state.InsiderPermissions.View && (
+                      <Route
+                        render={({ history }) => (
+                          <Eye
+                            className="mr-50"
+                            size="25px"
+                            color="green"
+                            onClick={() => {
+                              this.handleChangeEdit(params?.data, "readonly");
+                            }}
+                          />
+                        )}
                       />
                     )}
-                  />
-                  <Route
-                    render={({ history }) => (
-                      <Edit
-                        className="mr-50"
-                        size="25px"
-                        color="blue"
-                        onClick={() => {
-                          this.handleChangeEdit(params?.data, "Editable");
-                        }}
+                  {this.state.InsiderPermissions &&
+                    this.state.InsiderPermissions.Edit && (
+                      <Route
+                        render={({ history }) => (
+                          <Edit
+                            className="mr-50"
+                            size="25px"
+                            color="blue"
+                            onClick={() => {
+                              this.handleChangeEdit(params?.data, "Editable");
+                            }}
+                          />
+                        )}
                       />
                     )}
-                  />
-
-                  <Route
-                    render={() => (
-                      <Trash2
-                        className="mr-50"
-                        size="25px"
-                        color="red"
-                        onClick={() => {
-                          this.runthisfunction(params?.data?._id);
-                        }}
+                  {this.state.InsiderPermissions &&
+                    this.state.InsiderPermissions.Delete && (
+                      <Route
+                        render={() => (
+                          <Trash2
+                            className="mr-50"
+                            size="25px"
+                            color="red"
+                            onClick={() => {
+                              this.runthisfunction(params?.data?._id);
+                            }}
+                          />
+                        )}
                       />
                     )}
-                  />
                 </div>
               );
             },
@@ -611,6 +624,7 @@ class AccounSearch extends React.Component {
       SelectedcolumnDefs,
       isOpen,
       SelectedCols,
+      InsiderPermissions,
       AllcolumnDefs,
     } = this.state;
     return (
@@ -666,88 +680,91 @@ class AccounSearch extends React.Component {
                         <Col>
                           <h1 className="float-left">User list</h1>
                         </Col>
-                        <Col>
-                          <span className="mx-1">
-                            <FaFilter
-                              style={{ cursor: "pointer" }}
-                              title="filter coloumn"
-                              size="25px"
-                              onClick={this.LookupviewStart}
-                              color="#39cccc"
-                              className="float-right"
-                            />
-                          </span>
-                          <span className="mx-1">
-                            <div className="dropdown-container float-right">
-                              <BsCloudDownloadFill
-                                style={{ cursor: "pointer" }}
-                                title="download file"
-                                size="25px"
-                                className="dropdown-button "
-                                color="#39cccc"
-                                onClick={this.toggleDropdown}
-                              />
-                              {isOpen && (
-                                <div
-                                  style={{
-                                    position: "absolute",
-                                    zIndex: "1",
-                                  }}
-                                  className="dropdown-content dropdownmy">
-                                  <h5
-                                    onClick={() => this.exportToPDF()}
-                                    style={{ cursor: "pointer" }}
-                                    className=" mx-1 myactive mt-1">
-                                    .PDF
-                                  </h5>
-                                  <h5
-                                    onClick={() =>
-                                      this.gridApi.exportDataAsCsv()
-                                    }
-                                    style={{ cursor: "pointer" }}
-                                    className=" mx-1 myactive">
-                                    .CSV
-                                  </h5>
-                                  <h5
-                                    onClick={this.convertCSVtoExcel}
-                                    style={{ cursor: "pointer" }}
-                                    className=" mx-1 myactive">
-                                    .XLS
-                                  </h5>
-                                  <h5
-                                    onClick={this.exportToExcel}
-                                    style={{ cursor: "pointer" }}
-                                    className=" mx-1 myactive">
-                                    .XLSX
-                                  </h5>
-                                  <h5
-                                    onClick={() => this.convertCsvToXml()}
-                                    style={{ cursor: "pointer" }}
-                                    className=" mx-1 myactive">
-                                    .XML
-                                  </h5>
-                                </div>
-                              )}
-                            </div>
-                          </span>
-                          <span>
-                            <Route
-                              render={({ history }) => (
-                                <Badge
+                        {this.state.InsiderPermissions &&
+                          this.state.InsiderPermissions.View && (
+                            <Col>
+                              <span className="mx-1">
+                                <FaFilter
                                   style={{ cursor: "pointer" }}
-                                  className="float-right mr-1"
-                                  color="primary"
-                                  onClick={() =>
-                                    history.push(
-                                      "/app/SoftNumen/account/CreateAccount"
-                                    )
-                                  }>
-                                  <FaPlus size={15} /> Create User
-                                </Badge>
-                              )}
-                            />
-                          </span>
-                        </Col>
+                                  title="filter coloumn"
+                                  size="25px"
+                                  onClick={this.LookupviewStart}
+                                  color="#39cccc"
+                                  className="float-right"
+                                />
+                              </span>
+                              <span className="mx-1">
+                                <div className="dropdown-container float-right">
+                                  <BsCloudDownloadFill
+                                    style={{ cursor: "pointer" }}
+                                    title="download file"
+                                    size="25px"
+                                    className="dropdown-button "
+                                    color="#39cccc"
+                                    onClick={this.toggleDropdown}
+                                  />
+                                  {isOpen && (
+                                    <div
+                                      style={{
+                                        position: "absolute",
+                                        zIndex: "1",
+                                      }}
+                                      className="dropdown-content dropdownmy">
+                                      <h5
+                                        onClick={() => this.exportToPDF()}
+                                        style={{ cursor: "pointer" }}
+                                        className=" mx-1 myactive mt-1">
+                                        .PDF
+                                      </h5>
+                                      <h5
+                                        onClick={() =>
+                                          this.gridApi.exportDataAsCsv()
+                                        }
+                                        style={{ cursor: "pointer" }}
+                                        className=" mx-1 myactive">
+                                        .CSV
+                                      </h5>
+                                      <h5
+                                        onClick={this.convertCSVtoExcel}
+                                        style={{ cursor: "pointer" }}
+                                        className=" mx-1 myactive">
+                                        .XLS
+                                      </h5>
+                                      <h5
+                                        onClick={this.exportToExcel}
+                                        style={{ cursor: "pointer" }}
+                                        className=" mx-1 myactive">
+                                        .XLSX
+                                      </h5>
+                                      <h5
+                                        onClick={() => this.convertCsvToXml()}
+                                        style={{ cursor: "pointer" }}
+                                        className=" mx-1 myactive">
+                                        .XML
+                                      </h5>
+                                    </div>
+                                  )}
+                                </div>
+                              </span>
+                              <span>
+                                <Route
+                                  render={({ history }) => (
+                                    <Badge
+                                      style={{ cursor: "pointer" }}
+                                      className="float-right mr-1"
+                                      color="primary"
+                                      onClick={() =>
+                                        history.push(
+                                          "/app/SoftNumen/account/CreateAccount"
+                                        )
+                                      }>
+                                      <FaPlus size={15} /> Create User
+                                    </Badge>
+                                  )}
+                                />
+                              </span>
+                            </Col>
+                          )}
                       </Row>
                       <CardBody>
                         {this.state.rowData === null ? null : (

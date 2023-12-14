@@ -38,14 +38,13 @@ import "../../../../../assets/scss/pages/users.scss";
 import {
   FaArrowAltCircleLeft,
   FaArrowAltCircleRight,
+  FaDownload,
   FaFilter,
   FaPlus,
 } from "react-icons/fa";
 import moment from "moment-timezone";
 import swal from "sweetalert";
 import {
-  CreateAccountList,
-  CreateAccountView,
   DeleteAccount,
   Stock_trxFactorytoWList,
   Stockupdate,
@@ -59,6 +58,8 @@ import {
 import * as XLSX from "xlsx";
 import UserContext from "../../../../../context/Context";
 import UpdateStockTrx from "../../accounts/UpdateStockTrx";
+import { Icon } from "leaflet";
+import StockTrxInvoice from "../../subcategory/StockTrxInvoice";
 
 const SelectedColums = [];
 
@@ -70,6 +71,7 @@ class StockTransfer extends React.Component {
     this.gridApi = null;
     this.state = {
       isOpen: false,
+      ShowBill: false,
       Arrindex: "",
       rowData: [],
       setMySelectedarr: [],
@@ -99,11 +101,6 @@ class StockTransfer extends React.Component {
                   className="mr-50"
                   size="25px"
                   color="green"
-                  // onClick={() =>
-                  //   history.push(
-                  //     `/app/freshlist/customer/viewCustomer/${params.data?._id}`
-                  //   )
-                  // }
                   onClick={(e) => {
                     this.togglemodal();
                     this.setState({ ViewOneData: params?.data });
@@ -146,21 +143,21 @@ class StockTransfer extends React.Component {
           filter: true,
           width: 150,
           cellRendererFramework: (params) => {
-            return params.data?.status === "Completed" ? (
+            return params.data?.transferStatus === "Completed" ? (
               <div className="badge badge-pill badge-success">
-                {params.data?.status}
+                {params.data?.transferStatus}
               </div>
-            ) : params.value === "InProcess" ? (
+            ) : params.data?.transferStatus === "InProcess" ? (
               <div className="badge badge-pill badge-warning">
-                {params.data?.status}
+                {params.data?.transferStatus}
               </div>
-            ) : params.value === "Hold" ? (
+            ) : params.data?.transferStatus === "Hold" ? (
               <div className="badge badge-pill badge-danger">
-                {params.data?.status}
+                {params.data?.transferStatus}
               </div>
-            ) : params.value === "Pending" ? (
+            ) : params.data?.transferStatus === "Pending" ? (
               <div className="badge badge-pill badge-warning">
-                {params.data?.status}
+                {params.data?.transferStatus}
               </div>
             ) : null;
           },
@@ -199,9 +196,7 @@ class StockTransfer extends React.Component {
           cellRendererFramework: (params) => {
             console.log(params.data);
             return (
-              <div>
-                {<span>{params.data?.warehouseToId?.WarehouseName}</span>}
-              </div>
+              <div>{<span>{params.data?.warehouseToId?.firstName}</span>}</div>
             );
           },
         },
@@ -304,6 +299,9 @@ class StockTransfer extends React.Component {
     this.setState((prevState) => ({
       modalone: !prevState.modalone,
     }));
+  };
+  handleStockTrxInvoiceShow = () => {
+    this.setState({ ShowBill: true });
   };
 
   handleChangeEdit = (data, types) => {
@@ -1001,40 +999,67 @@ class StockTransfer extends React.Component {
           toggle={this.togglemodal}
           className={this.props.className}
           style={{ maxWidth: "1050px" }}>
-          <ModalHeader toggle={this.togglemodal}>All Products</ModalHeader>
-          <ModalBody className="modalbodyhead">
-            {this.state.ViewOneUserView ? (
+          <ModalHeader toggle={this.togglemodal}>
+            {this.state.ViewOneUserView ? "Bill Download" : "All Products"}
+          </ModalHeader>
+          <ModalBody
+            className={`${this.state.ViewOneUserView ? "" : "modalbodyhead"}`}>
+            {this.state.ShowBill ? (
               <>
-                <Row>
-                  <Col>
-                    <Label>WareHouse Name :</Label>
-                    <h5 className="mx-1">
-                      {this.state.ViewOneData &&
-                        this.state.ViewOneData?.warehouseToId?.WarehouseName}
-                    </h5>
-                  </Col>
-                  <Col>
-                    <Label>Stock trx date :</Label>
-                    <h5>
-                      {this.state.ViewOneData &&
-                        this.state.ViewOneData?.stockTransferDate}
-                    </h5>
-                  </Col>
-                  <Col>
-                    <Label>Grand Total :</Label>
-                    <h5>
-                      <strong>
-                        {this.state.ViewOneData &&
-                          this.state.ViewOneData?.grandTotal}{" "}
-                      </strong>
-                      Rs/-
-                    </h5>
-                  </Col>
-                  {this.state.ViewOneData?.status == "Completed" ? (
-                    <h5>status:{this.state.ViewOneData?.status}</h5>
-                  ) : (
-                    <>
+                <StockTrxInvoice ViewOneData={this.state.ViewOneData} />
+              </>
+            ) : (
+              <>
+                {this.state.ViewOneUserView ? (
+                  <>
+                    <Row>
                       <Col>
+                        <Label>WareHouse Name :</Label>
+                        <h5 className="mx-1">
+                          {this.state.ViewOneData &&
+                            this.state.ViewOneData?.warehouseToId
+                              ?.WarehouseName}
+                        </h5>
+                      </Col>
+                      <Col>
+                        <Label>Stock trx date :</Label>
+                        <h5>
+                          {this.state.ViewOneData &&
+                            this.state.ViewOneData?.stockTransferDate}
+                        </h5>
+                      </Col>
+                      <Col>
+                        <Label>Grand Total :</Label>
+                        <h5>
+                          <strong>
+                            {this.state.ViewOneData &&
+                              this.state.ViewOneData?.grandTotal}{" "}
+                          </strong>
+                          Rs/-
+                        </h5>
+                      </Col>
+                      <Col>
+                        {this.state.ViewOneData?.transferStatus ==
+                        "Completed" ? (
+                          <>
+                            <div className="d-flex justify-content-center">
+                              <h5>
+                                status:
+                                <Badge className="mx-2" color="primary">
+                                  {this.state.ViewOneData?.transferStatus}
+                                </Badge>
+                              </h5>
+                            </div>
+                          </>
+                        ) : (
+                          <>
+                            <h5>
+                              status:
+                              <Badge className="mx-2" color="primary">
+                                {this.state.ViewOneData?.transferStatus}
+                              </Badge>
+                            </h5>
+                            {/* <Col>
                         <Label>Change Status</Label>
                         <CustomInput onChange={this.UpdateStock} type="select">
                           <option value="NA">--Select--</option>
@@ -1042,58 +1067,75 @@ class StockTransfer extends React.Component {
                           <option value="Pending">Pending</option>
                           <option value="Hold">Hold</option>
                         </CustomInput>
+                      </Col> */}
+                          </>
+                        )}
                       </Col>
-                    </>
-                  )}
-                </Row>
-                <Row className="p-2">
-                  <Col>
-                    <div className="d-flex justify-content-center">
-                      <h4>Product Details</h4>
-                    </div>
-                  </Col>
-                </Row>
-                <Row>
-                  <Col>
-                    <Table style={{ cursor: "pointer" }} striped>
-                      <thead>
-                        <tr>
-                          <th>#</th>
-                          <th>Product Name</th>
-                          <th>Price</th>
-                          <th>Size</th>
-                          <th>Unit</th>
-                          <th>Quantity</th>
-                          <th>Total</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {this.state.ViewOneData?.productItems &&
-                          this.state.ViewOneData?.productItems?.map(
-                            (ele, i) => (
-                              <>
-                                <tr>
-                                  <th scope="row">{i + 1}</th>
-                                  <td>{ele?.product?.Product_Title}</td>
-                                  <td>{ele?.price}</td>
-                                  <td>{ele?.Size}</td>
-                                  <td>{ele?.unitType}</td>
-                                  <td>{ele?.transferQty}</td>
-                                  <td>
-                                    {ele?.price * ele?.Size * ele?.transferQty}
-                                  </td>
-                                </tr>
-                              </>
-                            )
-                          )}
-                      </tbody>
-                    </Table>
-                  </Col>
-                </Row>
-              </>
-            ) : (
-              <>
-                <UpdateStockTrx ViewOne={this.state.ViewOneData} />
+                      <Col>
+                        <Label>Download Invoice :</Label>
+                        <div className="d-flex justify-content-center">
+                          <FaDownload
+                            onClick={this.handleStockTrxInvoiceShow}
+                            color="#00c0e"
+                            fill="#00c0e"
+                            style={{ cursor: "pointer" }}
+                            size={20}
+                          />
+                        </div>
+                      </Col>
+                    </Row>
+                    <Row className="p-2">
+                      <Col>
+                        <div className="d-flex justify-content-center">
+                          <h4>Product Details</h4>
+                        </div>
+                      </Col>
+                    </Row>
+                    <Row>
+                      <Col>
+                        <Table style={{ cursor: "pointer" }} striped>
+                          <thead>
+                            <tr>
+                              <th>#</th>
+                              <th>Product Name</th>
+                              <th>Price</th>
+                              <th>Size</th>
+                              <th>Unit</th>
+                              <th>Quantity</th>
+                              <th>Total</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {this.state.ViewOneData?.productItems &&
+                              this.state.ViewOneData?.productItems?.map(
+                                (ele, i) => (
+                                  <>
+                                    <tr>
+                                      <th scope="row">{i + 1}</th>
+                                      <td>{ele?.product?.Product_Title}</td>
+                                      <td>{ele?.price}</td>
+                                      <td>{ele?.Size}</td>
+                                      <td>{ele?.unitType}</td>
+                                      <td>{ele?.transferQty}</td>
+                                      <td>
+                                        {ele?.price *
+                                          ele?.Size *
+                                          ele?.transferQty}
+                                      </td>
+                                    </tr>
+                                  </>
+                                )
+                              )}
+                          </tbody>
+                        </Table>
+                      </Col>
+                    </Row>
+                  </>
+                ) : (
+                  <>
+                    <UpdateStockTrx ViewOne={this.state.ViewOneData} />
+                  </>
+                )}
               </>
             )}
           </ModalBody>

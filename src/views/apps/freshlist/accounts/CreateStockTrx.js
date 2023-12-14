@@ -58,6 +58,7 @@ const CreateTarget = args => {
   const [index, setindex] = useState("");
   const [error, setError] = useState("");
   const [ProductList, setProductList] = useState([]);
+  const [ProductWTWList, setProductWTWList] = useState([]);
   const [PartyList, setPartyList] = useState([]);
   const [Salesperson, setSalesperson] = useState("");
   const [WareHouseone, setWareHouseone] = useState([]);
@@ -70,7 +71,7 @@ const CreateTarget = args => {
   const [items, setItems] = useState("");
   const [audit, setAudit] = useState(false);
   const [WareHouselist, setWarehouseList] = useState([]);
-  const toggle = item => {
+  const toggle = (item) => {
     setItems(item);
     setModal(!modal);
   };
@@ -78,7 +79,7 @@ const CreateTarget = args => {
     setAudit(!audit);
     // setModal(!modal);
   };
-  const handleopentoggle = iteam => {
+  const handleopentoggle = (iteam) => {
     toggle(iteam);
   };
   const handleHistory = () => {
@@ -88,6 +89,7 @@ const CreateTarget = args => {
     {
       product: "",
       productId: "",
+      AvailaleQty: null,
       availableQty: "",
       transferQty: 1,
       price: "",
@@ -106,17 +108,55 @@ const CreateTarget = args => {
   const handleProductChangeProduct = (e, index) => {
     setIndex(index);
     console.log(product);
+
     const { name, value } = e.target;
     const list = [...product];
-    list[index][name] = Number(value);
+    if (name.includes("transferQty")) {
+      // list[index]["Size"] = Number(value);
+      let available = Number(list[index]["AvailaleQty"]);
+      let Askingfor = Number(value);
+      if (available >= Askingfor) {
+        list[index][name] = Askingfor;
+      } else {
+        swal("Can not Transfer More then Stock");
+        list[index][name] = available - 1;
+      }
+    } else {
+      list[index][name] = value;
+    }
     console.log(GrandTotal);
 
     let amt = 0;
     if (list.length > 0) {
-      const x = list?.map(val => {
-        console.log(val.qty * val.price);
+      const x = list?.map((val) => {
         GrandTotal[index] = val.Size * val.price * val.transferQty;
+        list[index]["totalprice"] = val.Size * val.price * val.transferQty;
+        return val.Size * val.price * val.transferQty;
+      });
+      amt = x.reduce((a, b) => a + b);
+      console.log("GrandTotal", amt);
+    }
+    // console.log(list)
+    setProduct(list);
+    setGrandTotalAmt(amt);
+  };
+  const handleProductChangeProductone = (e, index) => {
+    setIndex(index);
+    console.log(product);
+    debugger;
+    const { name, value } = e.target;
+    const list = [...product];
+    if (name.includes("transferQty")) {
+      list[index][name] = Number(value);
+    } else {
+      list[index][name] = value;
+    }
+    console.log(GrandTotal);
 
+    let amt = 0;
+    if (list.length > 0) {
+      const x = list?.map((val) => {
+        GrandTotal[index] = val.Size * val.price * val.transferQty;
         list[index]["totalprice"] = val.Size * val.price * val.transferQty;
         return val.Size * val.price * val.transferQty;
       });
@@ -146,14 +186,8 @@ const CreateTarget = args => {
     setGrandTotalAmt(amt);
   };
   const handleRemoveSelectedone = (selectedList, selectedItem, index) => {
-    // console.log(selectedList);
-    // console.log(selectedItem); // removed item
-    // console.log(product);
-    // console.log(index);
-    // console.log(SelectedITems);
     SelectedSize.splice(index, 1);
     let myarr = product?.map((ele, i) => {
-      // debugger;
       console.log(ele?.Size * ele?.price * SelectedSize[i]?.unitQty);
       let indextotal = ele?.Size * SelectedSize[i]?.unitQty;
       GrandTotal[index] = indextotal;
@@ -164,30 +198,38 @@ const CreateTarget = args => {
     setGrandTotalAmt(amt);
   };
   const handleSelection = (selectedList, selectedItem, index) => {
+    // product[index]["AvailaleQty"] = myproduct?.Size;
     SelectedITems.push(selectedItem);
-    setProduct(prevProductList => {
+    setProduct((prevProductList) => {
+      const updatedProductList = [...prevProductList]; // Create a copy of the productList array
+      const updatedProduct = { ...updatedProductList[index] }; // Create a copy of the product at the specified index
+      updatedProduct.price = selectedItem?.Product_MRP; // Update the price of the copied product
+      updatedProduct.productId = selectedItem?.productId?._id;
+      updatedProduct.AvailaleQty = selectedItem?.Size;
+      updatedProductList[index] = updatedProduct; // Replace the product at the specified index with the updated one
+
+      return updatedProductList; // Return the updated product list to set the state
+    });
+  };
+  const handleSelectionProduct = (selectedList, selectedItem, index) => {
+    // product[index]["AvailaleQty"] = myproduct?.Size;
+    debugger;
+    SelectedITems.push(selectedItem);
+    setProduct((prevProductList) => {
       const updatedProductList = [...prevProductList]; // Create a copy of the productList array
       const updatedProduct = { ...updatedProductList[index] }; // Create a copy of the product at the specified index
       updatedProduct.price = selectedItem?.Product_MRP; // Update the price of the copied product
       updatedProduct.productId = selectedItem?._id;
+      updatedProduct.AvailaleQty = selectedItem?.Size;
       updatedProductList[index] = updatedProduct; // Replace the product at the specified index with the updated one
 
-      // let myarr = prevProductList?.map((ele, i) => {
-      //   console.log(ele?.transferQty * selectedItem[i]?.Product_MRP);
-      //   let indextotal = ele?.transferQty * SelectedITems[i]?.Product_MRP;
-      //   GrandTotal[index] = indextotal;
-      //   return indextotal;
-      // });
-      // let amt = myarr.reduce((a, b) => a + b);
-      // setGrandTotalAmt(amt);
       return updatedProductList; // Return the updated product list to set the state
     });
-    // onSelect1(selectedList, selectedItem, index);
   };
   const handleSelectionone = (selectedList, selectedItem, index) => {
     SelectedSize.push(selectedItem);
 
-    setProduct(prevProductList => {
+    setProduct((prevProductList) => {
       const updatedProductList = [...prevProductList]; // Create a copy of the productList array
       const updatedProduct = { ...updatedProductList[index] }; // Create a copy of the product at the specified index
       updatedProduct.Size = selectedItem?.unitQty; // Update the price of the copied product
@@ -262,8 +304,8 @@ const CreateTarget = args => {
 
   useEffect(() => {
     let userData = JSON.parse(localStorage.getItem("userData"));
-    Warehouse_Temporarlylist(userData._id)
-      .then(res => {
+    Warehouse_Temporarlylist(userData?._id)
+      .then((res) => {
         console.log(res?.adminDetails);
         let myWarehouse = res?.adminDetails?.filter((ele, i) =>
           ele?.rolename?.roleName
@@ -275,32 +317,32 @@ const CreateTarget = args => {
 
         setWarehouseList(myWarehouse);
       })
-      .catch(err => {
+      .catch((err) => {
         console.log(err);
       });
-    // firstName;
-    CreateWarehouseList(userData._id)
-      .then(res => {
-        // console.log(res?.Warehouse);
-        // setWarehouseList(res?.Warehouse);
-      })
-      .catch(err => {
-        console.log(err);
-      });
+
+    // CreateWarehouseList(userData._id)
+    //   .then((res) => {
+    //     console.log(res?.Warehouse);
+    //     setWarehouseList(res?.Warehouse);
+    //   })
+    //   .catch((err) => {
+    //     console.log(err);
+    //   });
     UnitListView(userData?._id)
-      .then(res => {
+      .then((res) => {
         console.log(res?.Unit);
         setUnitList(res?.Unit);
       })
-      .catch(err => {
+      .catch((err) => {
         console.log(err);
       });
     ProductListView(userData?._id)
-      .then(res => {
+      .then((res) => {
         console.log(res.Product);
         setProductList(res?.Product);
       })
-      .catch(err => {
+      .catch((err) => {
         console.log(err);
       });
   }, []);
@@ -340,6 +382,7 @@ const CreateTarget = args => {
       {
         product: "", //
         productId: "",
+        AvailaleQty: null,
         availableQty: "",
         transferQty: 1, //
         price: "", //
@@ -355,7 +398,7 @@ const CreateTarget = args => {
       },
     ]);
   };
-  let removeMoreProduct = i => {
+  let removeMoreProduct = (i) => {
     let newFormValues = [...product];
     newFormValues.splice(i, 1);
     GrandTotal.splice(i, 1);
@@ -370,7 +413,7 @@ const CreateTarget = args => {
   //   setPart(newFormValues);
   // };
 
-  const WareHousetoWareHouse = e => {
+  const WareHousetoWareHouse = (e) => {
     e.preventDefault();
 
     let userdata = JSON.parse(localStorage.getItem("userData"));
@@ -383,32 +426,33 @@ const CreateTarget = args => {
         Size: ele?.Size,
         transferQty: ele?.transferQty,
         totalPrice: ele?.totalprice,
+        currentStock: ele?.transferQty * ele?.Size,
       };
     });
     let payload = {
       productItems: Allproduct,
-      warehouseToId: WareHouseone[0]?._id,
-      warehouseFromId: WareHousetwo[0]?._id,
+      warehouseToId: WareHousetwo[0]?._id,
+      warehouseFromId: WareHouseone[0]?._id,
       stockTransferDate: StockTrxdate,
       grandTotal: grandTotalAmt,
-      status: "InProcess",
+      transferStatus: "InProcess",
       created_by: userdata?._id,
     };
     console.log(payload);
     WarehousetoWareHouseTrx(payload)
-      .then(res => {
+      .then((res) => {
         //   window.location.reload();
-        history.goBack();
+        // history.goBack();
         swal("Stock transerffered is Initiated");
 
         console.log(res);
       })
-      .catch(err => {
+      .catch((err) => {
         console.log(err);
         swal("Something Went Wrong");
       });
   };
-  const submitHandler = e => {
+  const submitHandler = (e) => {
     e.preventDefault();
     let userdata = JSON.parse(localStorage.getItem("userData"));
     // console.log(product);
@@ -417,7 +461,7 @@ const CreateTarget = args => {
     // console.log(targetStartDate);
     // console.log(targetEndDate);
     // console.log(grandTotalAmt);
-    debugger;
+
     let Allproduct = product?.map((ele, i) => {
       console.log(ele);
       return {
@@ -427,6 +471,7 @@ const CreateTarget = args => {
         Size: ele?.Size,
         transferQty: ele?.transferQty,
         totalPrice: ele?.totalprice,
+        currentStock: ele?.transferQty * ele?.Size,
       };
     });
     let payload = {
@@ -434,16 +479,15 @@ const CreateTarget = args => {
       warehouseToId: WareHouseone[0]?._id,
       stockTransferDate: StockTrxdate,
       grandTotal: grandTotalAmt,
-      status: "InProcess",
+      transferStatus: "InProcess",
       created_by: userdata?._id,
     };
-    console.log(payload);
 
     if (error) {
       swal("Error occured while Entering Details");
     } else {
       StocktrxFtoW(payload)
-        .then(res => {
+        .then((res) => {
           // if (res.status) {
           //   setFormData({});
           //   window.location.reload();
@@ -451,7 +495,7 @@ const CreateTarget = args => {
           // }
           console.log(res);
         })
-        .catch(err => {
+        .catch((err) => {
           console.log(err);
         });
     }
@@ -459,8 +503,33 @@ const CreateTarget = args => {
   const onSelect1 = (selectedList, selectedItem, index) => {
     console.log(selectedList);
     setWareHouseone(selectedList);
+    // setProductList(selectedList[0].productItems);
+  };
+  const onSelectone = (selectedList, selectedItem, index) => {
+    console.log(selectedList);
+    setWareHouseone(selectedList);
+    // const list = [...product];
+    let MySelectedwarehouseProduct = selectedList[0].productItems?.map(
+      (ele, i) => {
+        let myproduct = ele?.productId;
+        ele["Product_Title"] = myproduct?.Product_Title;
+        ele["Product_id"] = myproduct?._id;
+        ele["Product_MRP"] = myproduct?.Product_MRP;
+        ele["discount"] = myproduct?.discount;
+        ele["transferQty"] = myproduct?.transferQty;
+        ele["MIN_stockalert"] = myproduct?.MIN_stockalert;
+      }
+    );
+
+    console.log(selectedList[0]?.productItems);
+
+    setProductWTWList(selectedList[0]?.productItems);
   };
   const onRemove1 = (selectedList, removedItem, index) => {
+    console.log(selectedList);
+    console.log(index);
+  };
+  const onRemoveone = (selectedList, removedItem, index) => {
     console.log(selectedList);
     console.log(index);
   };
@@ -483,7 +552,7 @@ const CreateTarget = args => {
                 <h4 className="mb-1">Choose Type of Stock trx</h4>
                 <div
                   className="form-label-group"
-                  onChange={e => setTypeOfTrx(e.target.value)}
+                  onChange={(e) => setTypeOfTrx(e.target.value)}
                   // onChange={(e) => {
                   //   setFormData({
                   //     ...formData,
@@ -524,8 +593,7 @@ const CreateTarget = args => {
                     style={{ cursor: "pointer" }}
                     className="float-right mr-1"
                     color="primary"
-                    onClick={() => history.goBack()}
-                  >
+                    onClick={() => history.goBack()}>
                     {" "}
                     Back
                     {/* <FaPlus size={15} /> Create User */}
@@ -549,8 +617,8 @@ const CreateTarget = args => {
                       isObject="false"
                       options={WareHouselist} // Options to display in the dropdown
                       // selectedValues={selectedValue}   // Preselected value to persist in dropdown
-                      onSelect={onSelect1} // Function will trigger on select event
-                      onRemove={onRemove1} // Function will trigger on remove event
+                      onSelect={onSelectone} // Function will trigger on select event
+                      onRemove={onRemoveone} // Function will trigger on remove event
                       displayValue="firstName" // Property name to display in the dropdown options
                     />
                   </div>
@@ -581,7 +649,7 @@ const CreateTarget = args => {
                       name="targetEndDate"
                       placeholder="Date of Delivery"
                       value={StockTrxdate}
-                      onChange={e => setStockTrxDate(e.target.value)}
+                      onChange={(e) => setStockTrxDate(e.target.value)}
                     />
                   </div>
                 </Col>
@@ -596,8 +664,8 @@ const CreateTarget = args => {
                           required
                           selectionLimit={1}
                           // showCheckbox="true"
-                          isObject="false"
-                          options={ProductList}
+                          isObject="true"
+                          options={ProductWTWList}
                           // selectedValues={selectedValue}   // Preselected value to persist in dropdown
                           onSelect={(selectedList, selectedItem) =>
                             handleSelection(selectedList, selectedItem, index)
@@ -611,6 +679,20 @@ const CreateTarget = args => {
                           }}
                           displayValue="Product_Title" // Property name to display in the dropdown options
                         />
+                        {/* <CustomInput
+                          name="productId"
+                          onChange={(e) => handleProductChangeProduct(e, index)}
+                          type="select">
+                          <option>--Select--</option>
+                          {ProductWTWList &&
+                            ProductWTWList?.map((ele, i) => {
+                              return (
+                                <option value={ele?.productId?._id}>
+                                  {ele?.productId.Product_Title}
+                                </option>
+                              );
+                            })}
+                        </CustomInput> */}
                       </div>
                     </Col>
                     <Col className="mb-1" lg="2" md="2" sm="12">
@@ -646,10 +728,25 @@ const CreateTarget = args => {
                         <Label>Quantity To be Transfer</Label>
                         <Input
                           type="number"
+                          min={0}
                           name="transferQty"
                           placeholder="Req_Qty"
                           value={product?.qty}
-                          onChange={e => handleProductChangeProduct(e, index)}
+                          onChange={(e) => handleProductChangeProduct(e, index)}
+                        />
+                      </div>
+                    </Col>
+                    <Col className="mb-1" lg="2" md="2" sm="12">
+                      <div className="">
+                        <Label>Available Qty</Label>
+                        <Input
+                          disabled
+                          type="number"
+                          min={0}
+                          name="AvailaleQty"
+                          placeholder="Available Qty"
+                          value={product?.AvailaleQty}
+                          // onChange={(e) => handleProductChangeProduct(e, index)}
                         />
                       </div>
                     </Col>
@@ -687,8 +784,7 @@ const CreateTarget = args => {
                             type="button"
                             color="danger"
                             className="button remove "
-                            onClick={() => removeMoreProduct(index)}
-                          >
+                            onClick={() => removeMoreProduct(index)}>
                             - Remove
                           </Badge>
                         ) : null}
@@ -699,8 +795,7 @@ const CreateTarget = args => {
                           className="ml-1 mb-1"
                           color="primary"
                           type="button"
-                          onClick={() => addMoreProduct()}
-                        >
+                          onClick={() => addMoreProduct()}>
                           + Add
                         </Badge>
                       </div>
@@ -728,8 +823,7 @@ const CreateTarget = args => {
                     <Button.Ripple
                       color="primary"
                       type="submit"
-                      className="mt-2"
-                    >
+                      className="mt-2">
                       Submit
                     </Button.Ripple>
                   </div>
@@ -767,24 +861,10 @@ const CreateTarget = args => {
                       name="targetEndDate"
                       placeholder="Date of Delivery"
                       value={StockTrxdate}
-                      onChange={e => setStockTrxDate(e.target.value)}
+                      onChange={(e) => setStockTrxDate(e.target.value)}
                     />
                   </div>
                 </Col>
-                {/* <Col className="mb-1" lg="2" md="2" sm="12">
-                  <div className="">
-                    <Label>End Date</Label>
-                    <Input
-                      required
-                      type="date"
-                      name="targetstartDate"
-                      placeholder="Date of Delivery"
-                      value={targetEndDate}
-                      // value={product.price * product.qty}
-                      onChange={(e) => settargetEndDate(e.target.value)}
-                    />
-                  </div>
-                </Col> */}
               </Row>
               {product &&
                 product?.map((product, index) => (
@@ -800,7 +880,11 @@ const CreateTarget = args => {
                           options={ProductList}
                           // selectedValues={selectedValue}   // Preselected value to persist in dropdown
                           onSelect={(selectedList, selectedItem) =>
-                            handleSelection(selectedList, selectedItem, index)
+                            handleSelectionProduct(
+                              selectedList,
+                              selectedItem,
+                              index
+                            )
                           }
                           onRemove={(selectedList, selectedItem) => {
                             handleRemoveSelected(
@@ -846,10 +930,13 @@ const CreateTarget = args => {
                         <Label>Quantity To be Transfer</Label>
                         <Input
                           type="number"
+                          min={0}
                           name="transferQty"
                           placeholder="Req_Qty"
                           value={product?.qty}
-                          onChange={e => handleProductChangeProduct(e, index)}
+                          onChange={(e) =>
+                            handleProductChangeProductone(e, index)
+                          }
                         />
                       </div>
                     </Col>
@@ -887,8 +974,7 @@ const CreateTarget = args => {
                             type="button"
                             color="danger"
                             className="button remove "
-                            onClick={() => removeMoreProduct(index)}
-                          >
+                            onClick={() => removeMoreProduct(index)}>
                             - Remove
                           </Button>
                         ) : null}
@@ -899,8 +985,7 @@ const CreateTarget = args => {
                           className="ml-1 mb-1"
                           color="primary"
                           type="button"
-                          onClick={() => addMoreProduct()}
-                        >
+                          onClick={() => addMoreProduct()}>
                           + Add
                         </Button>
                       </div>
@@ -965,8 +1050,7 @@ const CreateTarget = args => {
                     <Button.Ripple
                       color="primary"
                       type="submit"
-                      className="mt-2"
-                    >
+                      className="mt-2">
                       Submit
                     </Button.Ripple>
                   </div>

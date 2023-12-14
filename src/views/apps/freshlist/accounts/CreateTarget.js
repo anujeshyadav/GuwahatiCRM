@@ -244,8 +244,7 @@ const CreateTarget = args => {
                       style={{ cursor: "pointer" }}
                       className="float-right mr-1"
                       color="primary"
-                      onClick={() => history.goBack()}
-                    >
+                      onClick={() => history.goBack()}>
                       Back
                     </Button>
                   )}
@@ -279,7 +278,7 @@ const CreateTarget = args => {
                       type="date"
                       name="targetEndDate"
                       value={targetStartDate}
-                      onChange={e => settargetStartDate(e.target.value)}
+                      onChange={(e) => settargetStartDate(e.target.value)}
                     />
                   </div>
                 </Col>
@@ -291,7 +290,7 @@ const CreateTarget = args => {
                       type="date"
                       name="targetstartDate"
                       value={targetEndDate}
-                      onChange={e => settargetEndDate(e.target.value)}
+                      onChange={(e) => settargetEndDate(e.target.value)}
                     />
                   </div>
                 </Col>
@@ -327,10 +326,11 @@ const CreateTarget = args => {
                         <Input
                           type="number"
                           name="qty"
+                          min={0}
                           autoComplete="off"
                           placeholder="Req_Qty"
                           value={product?.qty}
-                          onChange={e => handleQuantity(e, index)}
+                          onChange={(e) => handleQuantity(e, index)}
                         />
                       </div>
                     </Col>
@@ -366,8 +366,7 @@ const CreateTarget = args => {
                             type="button"
                             color="danger"
                             className="button remove "
-                            onClick={() => removeMoreProduct(index)}
-                          >
+                            onClick={() => removeMoreProduct(index)}>
                             - Remove
                           </Button>
                         ) : null}
@@ -378,8 +377,7 @@ const CreateTarget = args => {
                           className="ml-1 mb-1"
                           color="primary"
                           type="button"
-                          onClick={() => addMoreProduct()}
-                        >
+                          onClick={() => addMoreProduct()}>
                           + Add
                         </Button>
                       </div>
@@ -401,8 +399,7 @@ const CreateTarget = args => {
                     <Button.Ripple
                       color="primary"
                       type="submit"
-                      className="mt-2"
-                    >
+                      className="mt-2">
                       Submit
                     </Button.Ripple>
                   </div>
