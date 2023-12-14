@@ -1,9 +1,32 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { PDFViewer } from "@react-pdf/renderer";
 import InvoiceTemplate from "./InvoiceTemplate";
 import ReactPDF from "@react-pdf/renderer";
 import POInVoice from "./StockTrxPOinvoice";
 import axiosConfig from "../../../../axiosConfig";
+import { ToWords } from "to-words";
+import UserContext from "../../../../context/Context";
+
+const toWords = new ToWords({
+  localeCode: "en-IN",
+  converterOptions: {
+    currency: true,
+    ignoreDecimal: false,
+    ignoreZeroCurrency: false,
+    doNotAddOnly: false,
+    currencyOptions: {
+      // can be used to override defaults for the selected locale
+      name: "Rupee",
+      plural: "Rupees",
+      symbol: "₹",
+      fractionalUnit: {
+        name: "Paisa",
+        plural: "Paise",
+        symbol: "",
+      },
+    },
+  },
+});
 
 const StockTrxInvoice = (props) => {
   console.log(props);
@@ -11,35 +34,19 @@ const StockTrxInvoice = (props) => {
   const [AllCharges, setAllCharges] = useState({});
   const [UserChoice, setUserChoice] = useState({});
   const [details, setDetails] = useState([]);
+  const [word, setword] = useState("");
 
+  const Alldata = useContext(UserContext);
   useEffect(() => {
     console.log(props);
+    console.log(Alldata);
 
-    let userchoice = JSON.parse(localStorage.getItem("billUI"));
-    setUserChoice(userchoice);
-    if (props?.AddedBill?.length > 0) {
-      // console.log("props", props);
-      // console.log("Multibil here", props?.AllbillMerged);
-      setDetails(props?.AllbillMerged);
-      setAllCharges(props?.Applied_Charges);
-    } else {
-      // const formdata = new FormData();
-      // formdata.append("order_id", props.PrintData.order_id);
-      // axiosConfig
-      //   .post(`/order_detail`, formdata)
-      //   .then((response) => {
-      //     console.log(response.data.data);
-      //     setDetails(response.data.data);
-      //   })
-      //   .catch((error) => {
-      //     console.log(error);
-      //   });
-    }
-
-    if (props?.PrintData) {
-      console.log(props?.PrintData);
-      setPrintview(props?.PrintData);
-    }
+    setDetails(props?.ViewOneData.productItems);
+    const toWords = new ToWords();
+    let word = toWords.convert(Number(props?.ViewOneData?.grandTotal), {
+      currency: true,
+    });
+    setword(word);
   }, []);
 
   return (
@@ -49,8 +56,9 @@ const StockTrxInvoice = (props) => {
         <POInVoice
           UserChoice={UserChoice}
           invoiceData={Printview}
-          CurrentWords={props.wordsNumber}
+          CurrentWords={word}
           BilData={props}
+          AllData={Alldata}
           tableList={details}
           AllCharges={AllCharges}
           fileName="invoice.pdf"

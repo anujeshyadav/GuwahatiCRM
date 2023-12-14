@@ -299,9 +299,11 @@ class StockTransfer extends React.Component {
     this.setState((prevState) => ({
       modalone: !prevState.modalone,
     }));
+    this.setState({ ShowBill :false});
   };
   handleStockTrxInvoiceShow = () => {
     this.setState({ ShowBill: true });
+    
   };
 
   handleChangeEdit = (data, types) => {
@@ -1000,10 +1002,10 @@ class StockTransfer extends React.Component {
           className={this.props.className}
           style={{ maxWidth: "1050px" }}>
           <ModalHeader toggle={this.togglemodal}>
-            {this.state.ViewOneUserView ? "Bill Download" : "All Products"}
+            {this.state.ShowBill ? "Bill Download" : "All Products"}
           </ModalHeader>
           <ModalBody
-            className={`${this.state.ViewOneUserView ? "" : "modalbodyhead"}`}>
+            className={`${this.state.ShowBill ? "p-1" : "modalbodyhead"}`}>
             {this.state.ShowBill ? (
               <>
                 <StockTrxInvoice ViewOneData={this.state.ViewOneData} />
@@ -1017,8 +1019,7 @@ class StockTransfer extends React.Component {
                         <Label>WareHouse Name :</Label>
                         <h5 className="mx-1">
                           {this.state.ViewOneData &&
-                            this.state.ViewOneData?.warehouseToId
-                              ?.WarehouseName}
+                            this.state.ViewOneData?.warehouseToId?.firstName}
                         </h5>
                       </Col>
                       <Col>
