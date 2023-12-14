@@ -114,7 +114,13 @@ class PromotionalActivityList extends React.Component {
           .then((res) => {
             console.log(res?.Promotion);
             let keys = Object.keys(res?.Promotion[0]);
-            let myarr = keys.filter((item) => item !== "_id" && item !== "__v");
+            let myarr = keys.filter(
+              (item) =>
+                item !== "_id" &&
+                item !== "__v" &&
+                item !== "created_by" &&
+                item !== "status"
+            );
             let unique = [...new Set(myarr)];
             this.setState({ Dropdown: unique });
             this.setState({ AllData: res?.Promotion });

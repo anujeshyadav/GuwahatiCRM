@@ -38,6 +38,7 @@ import "../../../../../assets/scss/pages/users.scss";
 import {
   FaArrowAltCircleLeft,
   FaArrowAltCircleRight,
+  FaDownload,
   FaFilter,
   FaPlus,
 } from "react-icons/fa";
@@ -109,7 +110,7 @@ class OutwardStock extends React.Component {
                     this.setState({ ViewOneUserView: true });
                     this.setState({ EditOneUserView: false });
 
-                    console.log(params?.data);
+                    // console.log(params?.data);
                   }}
                 />
                 <Edit
@@ -145,21 +146,21 @@ class OutwardStock extends React.Component {
           filter: true,
           width: 150,
           cellRendererFramework: (params) => {
-            return params.data?.status === "Completed" ? (
+            return params.data?.transferStatus === "Completed" ? (
               <div className="badge badge-pill badge-success">
-                {params.data?.status}
+                {params.data?.transferStatus}
               </div>
-            ) : params.value === "InProcess" ? (
+            ) : params.data?.transferStatus === "InProcess" ? (
               <div className="badge badge-pill badge-warning">
-                {params.data?.status}
+                {params.data?.transferStatus}
               </div>
-            ) : params.value === "Hold" ? (
+            ) : params.data?.transferStatus === "Hold" ? (
               <div className="badge badge-pill badge-danger">
-                {params.data?.status}
+                {params.data?.transferStatus}
               </div>
-            ) : params.value === "Pending" ? (
+            ) : params.data?.transferStatus === "Pending" ? (
               <div className="badge badge-pill badge-warning">
-                {params.data?.status}
+                {params.data?.transferStatus}
               </div>
             ) : null;
           },
@@ -196,11 +197,8 @@ class OutwardStock extends React.Component {
           filter: true,
           width: 200,
           cellRendererFramework: (params) => {
-            console.log(params.data);
             return (
-              <div>
-                {<span>{params.data?.warehouseToId?.WarehouseName}</span>}
-              </div>
+              <div>{<span>{params.data?.warehouseToId?.firstName}</span>}</div>
             );
           },
         },
@@ -263,13 +261,12 @@ class OutwardStock extends React.Component {
     };
   }
   UpdateStock = (e) => {
-    console.log(e.target.value);
     let payload = {
       status: e.target.value,
     };
     let id = this.state.ViewOneData?._id;
 
-    console.log(this.state.ViewOneData?._id);
+    // console.log(this.state.ViewOneData?._id);
     swal("Warning", "Sure You Want to Update Status", {
       buttons: {
         cancel: "No",
@@ -280,7 +277,7 @@ class OutwardStock extends React.Component {
         case "Sure":
           Stockupdate(id, payload)
             .then((res) => {
-              console.log(res);
+              // console.log(res);
               swal("success", "Status Updated Successfully");
               this.togglemodal();
               this.ViewStockList();
@@ -337,32 +334,48 @@ class OutwardStock extends React.Component {
     // await ViewFactoryStock()
     await WarehouseOutwardStocklist(userid)
       .then((res) => {
-        debugger;
-        console.log(res);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-    await ViewOneWarehouseStock(userid)
-      .then((res) => {
-        console.log(res?.Factory);
-        this.setState({ rowData: res?.Factory });
-        this.setState({ AllcolumnDefs: this.state.columnDefs });
+        // console.log(res?.Warehouse);
+        let rowData = res?.Warehouse;
 
-        let userHeading = JSON.parse(localStorage.getItem("FactoryStock"));
-        if (userHeading?.length) {
-          this.setState({ columnDefs: userHeading });
-          this.gridApi.setColumnDefs(userHeading);
-          this.setState({ SelectedcolumnDefs: userHeading });
-        } else {
-          this.setState({ columnDefs: this.state.columnDefs });
-          this.setState({ SelectedcolumnDefs: this.state.columnDefs });
+        if (rowData) {
+          this.setState({ rowData: rowData });
+          this.setState({ AllcolumnDefs: this.state.columnDefs });
+
+          let userHeading = JSON.parse(localStorage.getItem("FactoryStock"));
+          if (userHeading?.length) {
+            this.setState({ columnDefs: userHeading });
+            this.gridApi.setColumnDefs(userHeading);
+            this.setState({ SelectedcolumnDefs: userHeading });
+          } else {
+            this.setState({ columnDefs: this.state.columnDefs });
+            this.setState({ SelectedcolumnDefs: this.state.columnDefs });
+          }
+          this.setState({ SelectedCols: this.state.columnDefs });
         }
-        this.setState({ SelectedCols: this.state.columnDefs });
       })
       .catch((err) => {
         console.log(err);
       });
+    // await ViewOneWarehouseStock(userid)
+    //   .then((res) => {
+    //     console.log(res?.Factory);
+    // this.setState({ rowData: res?.Factory });
+    // this.setState({ AllcolumnDefs: this.state.columnDefs });
+
+    // let userHeading = JSON.parse(localStorage.getItem("FactoryStock"));
+    // if (userHeading?.length) {
+    //   this.setState({ columnDefs: userHeading });
+    //   this.gridApi.setColumnDefs(userHeading);
+    //   this.setState({ SelectedcolumnDefs: userHeading });
+    // } else {
+    //   this.setState({ columnDefs: this.state.columnDefs });
+    //   this.setState({ SelectedcolumnDefs: this.state.columnDefs });
+    // }
+    // this.setState({ SelectedCols: this.state.columnDefs });
+    // })
+    // .catch((err) => {
+    //   console.log(err);
+    // });
   };
 
   toggleDropdown = () => {
@@ -1017,11 +1030,11 @@ class OutwardStock extends React.Component {
               <>
                 <Row>
                   <Col>
-                    <Label>WareHouse Name :</Label>
-                    <h5 className="mx-1">
+                    <Label>WareHouse To :</Label>
+                    <Badge color="primary" className="">
                       {this.state.ViewOneData &&
-                        this.state.ViewOneData?.warehouseToId?.WarehouseName}
-                    </h5>
+                        this.state.ViewOneData?.warehouseToId?.firstName}
+                    </Badge>
                   </Col>
                   <Col>
                     <Label>Stock trx date :</Label>
@@ -1040,21 +1053,37 @@ class OutwardStock extends React.Component {
                       Rs/-
                     </h5>
                   </Col>
-                  {this.state.ViewOneData?.status == "Completed" ? (
-                    <h5>status:{this.state.ViewOneData?.status}</h5>
-                  ) : (
-                    <>
-                      <Col>
-                        <Label>Change Status</Label>
-                        <CustomInput onChange={this.UpdateStock} type="select">
-                          <option value="NA">--Select--</option>
-                          <option value="Completed">Completed</option>
-                          <option value="Pending">Pending</option>
-                          <option value="Hold">Hold</option>
-                        </CustomInput>
-                      </Col>
-                    </>
-                  )}
+                  <Col>
+                    {this.state.ViewOneData?.transferStatus == "Completed" ? (
+                      <>
+                        <div className="d-flex justify-content-center">
+                          <label>Status</label>
+                          <Badge color="primary">
+                            {this.state.ViewOneData?.transferStatus}
+                          </Badge>
+                        </div>
+                      </>
+                    ) : (
+                      <>
+                        <div className="d-flex justify-content-center">
+                          <label>Status</label>
+                          <Badge color="primary">
+                            {this.state.ViewOneData?.transferStatus}
+                          </Badge>
+                        </div>
+                      </>
+                    )}
+                  </Col>
+                  <Col>
+                    <Label>Download Invoice :</Label>
+                    <div className="d-flex justify-content-center">
+                      <FaDownload
+                        color="#00c0e"
+                        style={{ cursor: "pointer" }}
+                        size={20}
+                      />
+                    </div>
+                  </Col>
                 </Row>
                 <Row className="p-2">
                   <Col>

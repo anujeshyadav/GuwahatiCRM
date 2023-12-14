@@ -38,6 +38,7 @@ import "../../../../../assets/scss/pages/users.scss";
 import {
   FaArrowAltCircleLeft,
   FaArrowAltCircleRight,
+  FaDownload,
   FaFilter,
   FaPlus,
 } from "react-icons/fa";
@@ -139,25 +140,26 @@ class StockTransfer extends React.Component {
         },
         {
           headerName: "Status",
-          field: "status",
+          field: "transferStatus",
           filter: true,
           width: 150,
           cellRendererFramework: (params) => {
-            return params.data?.status === "Completed" ? (
+            console.log(params.data);
+            return params.data?.transferStatus === "Completed" ? (
               <div className="badge badge-pill badge-success">
-                {params.data?.status}
+                {params.data?.transferStatus}
               </div>
-            ) : params.value === "InProcess" ? (
+            ) : params.data?.transferStatus === "InProcess" ? (
               <div className="badge badge-pill badge-warning">
-                {params.data?.status}
+                {params.data?.transferStatus}
               </div>
-            ) : params.value === "Hold" ? (
+            ) : params.data?.transferStatus === "Hold" ? (
               <div className="badge badge-pill badge-danger">
-                {params.data?.status}
+                {params.data?.transferStatus}
               </div>
-            ) : params.value === "Pending" ? (
+            ) : params.data?.transferStatus === "Pending" ? (
               <div className="badge badge-pill badge-warning">
-                {params.data?.status}
+                {params.data?.transferStatus}
               </div>
             ) : null;
           },
@@ -168,9 +170,31 @@ class StockTransfer extends React.Component {
           filter: true,
           width: 200,
           cellRendererFramework: (params) => {
+            console.log(params.data);
             return (
               <div>
                 <span>{params.data?.stockTransferDate}</span>
+              </div>
+            );
+          },
+        },
+        {
+          headerName: "From",
+          field: "warehouseFromId",
+          filter: true,
+          width: 200,
+          cellRendererFramework: (params) => {
+            console.log(params.data);
+            return (
+              <div>
+                <span>
+                  {params.data?.warehouseFromId &&
+                  params.data?.warehouseFromId ? (
+                    <>{params.data?.warehouseFromId?.firstName}</>
+                  ) : (
+                    "Factory"
+                  )}
+                </span>
               </div>
             );
           },
@@ -184,20 +208,6 @@ class StockTransfer extends React.Component {
             return (
               <div>
                 <span>{params.data?.productItems?.length} Products</span>
-              </div>
-            );
-          },
-        },
-        {
-          headerName: "Warehouse Name",
-          field: "warehouseToId",
-          filter: true,
-          width: 200,
-          cellRendererFramework: (params) => {
-            console.log(params.data);
-            return (
-              <div>
-                {<span>{params.data?.warehouseToId?.WarehouseName}</span>}
               </div>
             );
           },
@@ -263,7 +273,7 @@ class StockTransfer extends React.Component {
   UpdateStock = (e) => {
     console.log(e.target.value);
     let payload = {
-      status: e.target.value,
+      transferStatus: e.target.value,
     };
     let id = this.state.ViewOneData?._id;
 
@@ -1030,8 +1040,16 @@ class StockTransfer extends React.Component {
                   <Col>
                     <Label>WareHouse Name :</Label>
                     <h5 className="mx-1">
-                      {this.state.ViewOneData &&
-                        this.state.ViewOneData?.warehouseToId?.WarehouseName}
+                      <span>
+                        {this.state.ViewOneData?.warehouseFromId &&
+                        this.state.ViewOneData?.warehouseFromId ? (
+                          <>
+                            {this.state.ViewOneData?.warehouseFromId?.firstName}
+                          </>
+                        ) : (
+                          "Factory"
+                        )}
+                      </span>
                     </h5>
                   </Col>
                   <Col>
@@ -1051,21 +1069,42 @@ class StockTransfer extends React.Component {
                       Rs/-
                     </h5>
                   </Col>
-                  {this.state.ViewOneData?.status == "Completed" ? (
-                    <h5>status:{this.state.ViewOneData?.status}</h5>
-                  ) : (
-                    <>
-                      <Col>
-                        <Label>Change Status</Label>
-                        <CustomInput onChange={this.UpdateStock} type="select">
-                          <option value="NA">--Select--</option>
-                          <option value="Completed">Completed</option>
-                          <option value="Pending">Pending</option>
-                          <option value="Hold">Hold</option>
-                        </CustomInput>
-                      </Col>
-                    </>
-                  )}
+                  <Col>
+                    {this.state.ViewOneData?.transferStatus == "Completed" ? (
+                      <>
+                        <div className="d-flex justify-content-center">
+                          <label>status:</label>
+                          <Badge color="primary">
+                            {this.state.ViewOneData?.transferStatus}
+                          </Badge>
+                        </div>
+                      </>
+                    ) : (
+                      <>
+                        <Col>
+                          <Label>Change Status</Label>
+                          <CustomInput
+                            onChange={this.UpdateStock}
+                            type="select">
+                            <option value="NA">--Select--</option>
+                            <option value="Completed">Completed</option>
+                            <option value="Pending">Pending</option>
+                            <option value="Hold">Hold</option>
+                          </CustomInput>
+                        </Col>
+                      </>
+                    )}
+                  </Col>
+                  <Col>
+                    <Label>Download Invoice :</Label>
+                    <div className="d-flex justify-content-center">
+                      <FaDownload
+                        color="#00c0e"
+                        style={{ cursor: "pointer" }}
+                        size={20}
+                      />
+                    </div>
+                  </Col>
                 </Row>
                 <Row className="p-2">
                   <Col>

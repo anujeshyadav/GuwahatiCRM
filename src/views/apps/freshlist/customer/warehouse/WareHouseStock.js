@@ -101,6 +101,7 @@ class WareHouseStock extends React.Component {
           filter: true,
           width: 200,
           cellRendererFramework: (params) => {
+            console.log(params);
             return (
               <div>
                 <span>{params.data?.price}</span>
@@ -108,19 +109,19 @@ class WareHouseStock extends React.Component {
             );
           },
         },
-        {
-          headerName: "Transfer Qty",
-          field: "transferQty",
-          filter: true,
-          width: 200,
-          cellRendererFramework: (params) => {
-            return (
-              <div>
-                <span>{params.data?.transferQty} </span>
-              </div>
-            );
-          },
-        },
+        // {
+        //   headerName: "Transfer Qty",
+        //   field: "transferQty",
+        //   filter: true,
+        //   width: 200,
+        //   cellRendererFramework: (params) => {
+        //     return (
+        //       <div>
+        //         <span>{params.data?.transferQty} </span>
+        //       </div>
+        //     );
+        //   },
+        // },
         {
           headerName: "UnitType",
           field: "unitType",
@@ -134,54 +135,67 @@ class WareHouseStock extends React.Component {
             );
           },
         },
+        {
+          headerName: "Current Stock",
+          field: "Size",
+          filter: true,
+          width: 200,
+          cellRendererFramework: (params) => {
+            return (
+              <div>
+                <span>{params.data?.Size}</span>
+              </div>
+            );
+          },
+        },
 
-        {
-          headerName: "Status",
-          field: "status",
-          filter: true,
-          width: 150,
-          cellRendererFramework: (params) => {
-            return params.data?.status === "transferring" ? (
-              <div className="badge badge-pill badge-success">
-                {params.data?.status}
-              </div>
-            ) : params.value === "false" ? (
-              <div className="badge badge-pill badge-warning">
-                {params.data?.status}
-              </div>
-            ) : null;
-          },
-        },
-        {
-          headerName: "Grand Total",
-          field: "grandTotal",
-          filter: true,
-          sortable: true,
-          cellRendererFramework: (params) => {
-            return (
-              <>
-                <div className="actions cursor-pointer">
-                  <span>{params?.data?.grandTotal}</span>
-                </div>
-              </>
-            );
-          },
-        },
-        {
-          headerName: "Created date",
-          field: "createdAt",
-          filter: true,
-          sortable: true,
-          cellRendererFramework: (params) => {
-            return (
-              <>
-                <div className="actions cursor-pointer">
-                  <span>{params?.data?.createdAt}</span>
-                </div>
-              </>
-            );
-          },
-        },
+        // {
+        //   headerName: "Status",
+        //   field: "status",
+        //   filter: true,
+        //   width: 150,
+        //   cellRendererFramework: (params) => {
+        //     return params.data?.status === "transferring" ? (
+        //       <div className="badge badge-pill badge-success">
+        //         {params.data?.status}
+        //       </div>
+        //     ) : params.value === "false" ? (
+        //       <div className="badge badge-pill badge-warning">
+        //         {params.data?.status}
+        //       </div>
+        //     ) : null;
+        //   },
+        // },
+        // {
+        //   headerName: "Grand Total",
+        //   field: "grandTotal",
+        //   filter: true,
+        //   sortable: true,
+        //   cellRendererFramework: (params) => {
+        //     return (
+        //       <>
+        //         <div className="actions cursor-pointer">
+        //           <span>{params?.data?.grandTotal}</span>
+        //         </div>
+        //       </>
+        //     );
+        //   },
+        // },
+        // {
+        //   headerName: "Created date",
+        //   field: "createdAt",
+        //   filter: true,
+        //   sortable: true,
+        //   cellRendererFramework: (params) => {
+        //     return (
+        //       <>
+        //         <div className="actions cursor-pointer">
+        //           <span>{params?.data?.createdAt}</span>
+        //         </div>
+        //       </>
+        //     );
+        //   },
+        // },
 
         {
           headerName: "Actions",
@@ -195,21 +209,21 @@ class WareHouseStock extends React.Component {
                   className="mr-50"
                   size="25px"
                   color="green"
-                  onClick={() =>
-                    history.push(
-                      `/app/freshlist/customer/viewCustomer/${params.data?._id}`
-                    )
-                  }
+                  //   onClick={() =>
+                  //     history.push(
+                  //       `/app/freshlist/customer/viewCustomer/${params.data?._id}`
+                  //     )
+                  //   }
                 />
                 <Edit
                   className="mr-50"
                   size="25px"
                   color="blue"
-                  onClick={() =>
-                    history.push(
-                      `/app/freshlist/customer/editCustomer/${params.data._id}`
-                    )
-                  }
+                  //   onClick={() =>
+                  //     history.push(
+                  //       `/app/freshlist/customer/editCustomer/${params.data._id}`
+                  //     )
+                  //   }
                 />
                 <Trash2
                   className="mr-50"
@@ -261,9 +275,10 @@ class WareHouseStock extends React.Component {
     let userid = pageparmission?._id;
     await View_Wareahouseid(userid)
       .then((res) => {
-        console.log(res?.Warehouse);
-        this.setState({ rowData: res?.Warehouse?.productItems });
-        debugger;
+        console.log(res?.User);
+        if (res?.User?.productItems) {
+          this.setState({ rowData: res?.User?.productItems });
+        }
       })
       .catch((err) => {
         console.log(err);

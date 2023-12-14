@@ -648,8 +648,7 @@ class NavbarUser extends React.PureComponent {
                   className="dropdown-language nav-item"
                   isOpen={this.state.langDropdown}
                   toggle={this.handleLangDropdown}
-                  data-tour="language"
-                >
+                  data-tour="language">
                   <DropdownToggle tag="a" className="nav-link">
                     <span className="d-sm-inline-block d-none text-capitalize align-middle ml-50">
                       {langArr[context.state.locale]}
@@ -664,8 +663,7 @@ class NavbarUser extends React.PureComponent {
                   // className="modal-dialog modal-lg"
                   size="lg"
                   backdrop={true}
-                  fullscreen={true}
-                >
+                  fullscreen={true}>
                   <ModalHeader toggle={this.toggleModal}>
                     Added To Cart
                   </ModalHeader>
@@ -681,8 +679,7 @@ class NavbarUser extends React.PureComponent {
                                 this.setState({ switchScreen: false })
                               }
                               title="go back"
-                              color="primary"
-                            >
+                              color="primary">
                               <FaAngleLeft className="" />
                             </Badge>
                           </div>
@@ -710,8 +707,7 @@ class NavbarUser extends React.PureComponent {
                                           (ele, i) => (
                                             <div
                                               key={i}
-                                              className="mynewaddrss py-1"
-                                            >
+                                              className="mynewaddrss py-1">
                                               <input
                                                 className="mt-1"
                                                 checked={
@@ -736,8 +732,7 @@ class NavbarUser extends React.PureComponent {
                                                       cursor: "pointer",
                                                     }}
                                                     color="primary"
-                                                    className="mt-1"
-                                                  >
+                                                    className="mt-1">
                                                     Deliver to This Address
                                                   </Badge>
                                                 ) : null}
@@ -753,8 +748,7 @@ class NavbarUser extends React.PureComponent {
                                           className="mt-1"
                                           color="primary"
                                           style={{ cursor: "pointer" }}
-                                          onClick={this.handleAddAddress}
-                                        >
+                                          onClick={this.handleAddAddress}>
                                           + Add New
                                         </Badge>
                                       </>
@@ -765,15 +759,13 @@ class NavbarUser extends React.PureComponent {
                                   <div
                                     style={{ cursor: "pointer" }}
                                     onClick={this.handleAddAddress}
-                                    className="addmoreaddress d-flex justify-content-center"
-                                  >
+                                    className="addmoreaddress d-flex justify-content-center">
                                     <h5 className="mx-1">
                                       <Badge
                                         title="Add new Address"
                                         style={{ cursor: "pointer" }}
                                         className="mx-2"
-                                        color="primary"
-                                      >
+                                        color="primary">
                                         <strong>+</strong>
                                       </Badge>
                                       Add New Address{" "}
@@ -793,8 +785,7 @@ class NavbarUser extends React.PureComponent {
                                             lg="6"
                                             md="6"
                                             sm="6"
-                                            xs="12"
-                                          >
+                                            xs="12">
                                             <Label>Full Name *</Label>
                                             <Input
                                               required
@@ -959,8 +950,7 @@ class NavbarUser extends React.PureComponent {
                                             <div className="d-flex justify-content-center">
                                               <Button
                                                 type="submit"
-                                                color="primary"
-                                              >
+                                                color="primary">
                                                 Submit
                                               </Button>
                                             </div>
@@ -988,8 +978,7 @@ class NavbarUser extends React.PureComponent {
                                 }
                                 name="TaxType"
                                 className="form-control"
-                                id="productSelect"
-                              >
+                                id="productSelect">
                                 <option value="Individual">Individual</option>
                                 <option value="All">All </option>
                               </CustomInput>
@@ -1056,8 +1045,7 @@ class NavbarUser extends React.PureComponent {
                               <Button
                                 className="mt-1"
                                 onClick={(e) => e.preventDefault()}
-                                color="primary"
-                              >
+                                color="primary">
                                 Submit
                               </Button>
                               {/* <input
@@ -1076,8 +1064,7 @@ class NavbarUser extends React.PureComponent {
                               style={{ height: "221px", overflowY: "scroll" }}
                               bordered
                               hover
-                              striped
-                            >
+                              striped>
                               <thead>
                                 <tr>
                                   <th># </th>
@@ -1149,8 +1136,7 @@ class NavbarUser extends React.PureComponent {
                                                 i,
                                                 e
                                               )
-                                            }
-                                          >
+                                            }>
                                             -
                                           </Button>
                                           <div className="inputheading">
@@ -1182,8 +1168,7 @@ class NavbarUser extends React.PureComponent {
                                             }
                                             style={{ padding: "7px 8px" }}
                                             color="primary"
-                                            size="sm"
-                                          >
+                                            size="sm">
                                             <strong>+</strong>
                                           </Button>
                                           {/* {ele?.quantity} */}
@@ -1304,8 +1289,7 @@ class NavbarUser extends React.PureComponent {
         </div>
         <UncontrolledDropdown
           tag="li"
-          className="dropdown-notification nav-item"
-        >
+          className="dropdown-notification nav-item">
           <DropdownToggle tag="a" className="nav-link nav-link-label">
             <BsCartCheckFill color="#055761" size={19} />
             <Badge pill color="primary" className="badge-up">
@@ -1328,8 +1312,7 @@ class NavbarUser extends React.PureComponent {
               className="media-list overflow-hidden position-relative"
               options={{
                 wheelPropagation: false,
-              }}
-            >
+              }}>
               {user?.PartsCatalougueCart?.map((ele, i) => {
                 {
                   /* console.log(ele); */
@@ -1338,8 +1321,7 @@ class NavbarUser extends React.PureComponent {
                   <>
                     <div
                       style={{ cursor: "pointer" }}
-                      className="d-flex justify-content-between"
-                    >
+                      className="d-flex justify-content-between">
                       <Media key={i} className="d-flex align-items-start">
                         <Media
                           onClick={() => {
@@ -1347,8 +1329,7 @@ class NavbarUser extends React.PureComponent {
                             this.toggleModal();
                           }}
                           left
-                          href="#"
-                        >
+                          href="#">
                           {i + 1}
                         </Media>
                         <Media
@@ -1356,8 +1337,7 @@ class NavbarUser extends React.PureComponent {
                             this.handleShowCart();
                             this.toggleModal();
                           }}
-                          body
-                        >
+                          body>
                           <Media
                             onClick={() => {
                               this.handleShowCart();
@@ -1365,8 +1345,7 @@ class NavbarUser extends React.PureComponent {
                             }}
                             heading
                             className="primary media-heading"
-                            tag="h6"
-                          >
+                            tag="h6">
                             <p>
                               {ele?.product?.Part_Name} &nbsp;( Qty:{" "}
                               {ele?.quantity})
@@ -1379,8 +1358,7 @@ class NavbarUser extends React.PureComponent {
                         <small>
                           <time
                             className="media-meta"
-                            dateTime="2015-06-11T18:29:20+08:00"
-                          >
+                            dateTime="2015-06-11T18:29:20+08:00">
                             <MdDelete
                               color="red"
                               size={19}
@@ -1402,8 +1380,7 @@ class NavbarUser extends React.PureComponent {
                 this.handleShowCart();
                 this.toggleModal();
               }}
-              className="dropdown-menu-footer"
-            >
+              className="dropdown-menu-footer">
               <DropdownItem tag="a" className="p-1 text-center">
                 <span className="align-middle">View all</span>
               </DropdownItem>
@@ -1415,8 +1392,7 @@ class NavbarUser extends React.PureComponent {
 
         <UncontrolledDropdown
           tag="li"
-          className="dropdown-notification nav-item"
-        >
+          className="dropdown-notification nav-item">
           <DropdownToggle tag="a" className="nav-link nav-link-label">
             <Icon.Bell size={19} />
             <Badge pill color="primary" className="badge-up">
@@ -1434,16 +1410,14 @@ class NavbarUser extends React.PureComponent {
               className="media-list overflow-hidden position-relative"
               options={{
                 wheelPropagation: false,
-              }}
-            >
+              }}>
               <div className="d-flex justify-content-between">
                 <Media
                   className="d-flex align-items-start"
                   onClick={() => {
                     history.push("/#/app/softNumen/order/OrderOne");
                     window.location.reload();
-                  }}
-                >
+                  }}>
                   <Media left href="#">
                     <Icon.PlusSquare
                       className="font-medium-5 primary"
@@ -1461,8 +1435,7 @@ class NavbarUser extends React.PureComponent {
                   <small>
                     <time
                       className="media-meta"
-                      dateTime="2015-06-11T18:29:20+08:00"
-                    >
+                      dateTime="2015-06-11T18:29:20+08:00">
                       9 hours ago
                     </time>
                   </small>
@@ -1581,9 +1554,10 @@ class NavbarUser extends React.PureComponent {
           <DropdownToggle tag="a" className="nav-link dropdown-user-link">
             <div className="user-nav d-sm-flex d-none">
               <div className="user-name text-bold-600">
-                {pageparmission && pageparmission?.UserName}{" "}
+                {pageparmission &&
+                  `${pageparmission?.firstName}   ${pageparmission?.lastName}`}{" "}
               </div>
-              <div>{pageparmission && pageparmission?.Role}</div>
+              <div>{pageparmission && pageparmission?.rolename?.roleName}</div>
               {/* <span className="user-status">{this.state.userData.name}</span> */}
             </div>
             <span data-tour="user">
