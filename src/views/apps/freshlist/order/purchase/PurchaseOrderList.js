@@ -1,6 +1,5 @@
 import React, { useRef } from "react";
 import { Route } from "react-router-dom";
-import xmlJs from "xml-js";
 import {
   Card,
   CardBody,
@@ -52,7 +51,7 @@ import UserContext from "../../../../../context/Context";
 
 const SelectedColums = [];
 
-class OrderList extends React.Component {
+class PurchaseOrderViewList extends React.Component {
   static contextType = UserContext;
   constructor(props) {
     super(props);
@@ -138,6 +137,28 @@ class OrderList extends React.Component {
             );
           },
         },
+
+        {
+          headerName: "Status",
+          field: "status",
+          filter: true,
+          width: 150,
+          cellRendererFramework: params => {
+            return params.value == "comleted" ? (
+              <div className="badge badge-pill badge-success">
+                {params.data.status}
+              </div>
+            ) : params.value == "pending" ? (
+              <div className="badge badge-pill badge-warning">
+                {params.data.status}
+              </div>
+            ) : (
+              <div className="badge badge-pill badge-success">
+                {params.data.status}
+              </div>
+            );
+          },
+        },
         {
           headerName: "Full Name",
           field: "orderItems",
@@ -213,28 +234,6 @@ class OrderList extends React.Component {
             return null;
           },
         },
-
-        {
-          headerName: "Status",
-          field: "status",
-          filter: true,
-          width: 150,
-          cellRendererFramework: params => {
-            return params.value == "comleted" ? (
-              <div className="badge badge-pill badge-success">
-                {params.data.status}
-              </div>
-            ) : params.value == "pending" ? (
-              <div className="badge badge-pill badge-warning">
-                {params.data.status}
-              </div>
-            ) : (
-              <div className="badge badge-pill badge-success">
-                {params.data.status}
-              </div>
-            );
-          },
-        },
       ],
     };
   }
@@ -261,11 +260,9 @@ class OrderList extends React.Component {
   };
 
   async componentDidMount() {
-    const UserInformation = this.context?.UserInformatio;
-
-    await PurchaseOrderList()
+    let userId = JSON.parse(localStorage.getItem("userData"))._id;
+    await PurchaseOrderList(userId)
       .then(res => {
-        console.log(res);
         this.setState({ rowData: res?.orderHistory });
         this.setState({ AllcolumnDefs: this.state.columnDefs });
         this.setState({ SelectedCols: this.state.columnDefs });
@@ -284,6 +281,7 @@ class OrderList extends React.Component {
         console.log(err);
       });
   }
+
   toggleDropdown = () => {
     this.setState(prevState => ({ isOpen: !prevState.isOpen }));
   };
@@ -981,4 +979,4 @@ class OrderList extends React.Component {
     );
   }
 }
-export default OrderList;
+export default PurchaseOrderViewList;

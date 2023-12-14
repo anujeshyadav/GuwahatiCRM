@@ -1,6 +1,5 @@
 import React, { useRef } from "react";
 import { Route } from "react-router-dom";
-import xmlJs from "xml-js";
 import {
   Card,
   CardBody,
@@ -15,7 +14,6 @@ import {
   Button,
   ModalHeader,
   ModalBody,
-  Badge,
 } from "reactstrap";
 
 import { ContextLayout } from "../../../../../utility/context/Layout";
@@ -106,7 +104,7 @@ class PurchaseCompleted extends React.Component {
                 />
                 {/* )} */}
                 {/* {this.state.Editpermisson && ( */}
-                <Edit
+                {/* <Edit
                   className="mr-50"
                   size="25px"
                   color="blue"
@@ -116,7 +114,7 @@ class PurchaseCompleted extends React.Component {
                       state: params.data,
                     })
                   }
-                />
+                /> */}
                 {/* )} */}
                 {/* {this.state.Deletepermisson && ( */}
                 {/* <Trash2
@@ -128,6 +126,19 @@ class PurchaseCompleted extends React.Component {
                   }}
                 /> */}
                 {/* )} */}
+              </div>
+            );
+          },
+        },
+        {
+          headerName: "Status",
+          field: "status",
+          filter: true,
+          width: 150,
+          cellRendererFramework: params => {
+            return (
+              <div className="badge badge-pill badge-success">
+                {params.data.status}
               </div>
             );
           },
@@ -295,24 +306,6 @@ class PurchaseCompleted extends React.Component {
             );
           },
         },
-
-        {
-          headerName: "Status",
-          field: "status",
-          filter: true,
-          width: 150,
-          cellRendererFramework: params => {
-            return params.value === "pending" ? (
-              <div className="badge badge-pill badge-warning">
-                {params.data.status}
-              </div>
-            ) : params.value === "canceled" ? (
-              <div className="badge badge-pill badge bg-danger">
-                {params.data.status}
-              </div>
-            ) : null;
-          },
-        },
       ],
     };
   }
@@ -350,8 +343,8 @@ class PurchaseCompleted extends React.Component {
 
   async componentDidMount() {
     const UserInformation = this.context?.UserInformatio;
-
-    await PurchaseOrderList()
+    let userId = JSON.parse(localStorage.getItem("userData"))._id;
+    await PurchaseOrderList(userId)
       .then(res => {
         console.log(res?.orderHistory);
         const completedStatus = res?.orderHistory?.filter(ele =>
@@ -712,7 +705,7 @@ class PurchaseCompleted extends React.Component {
                     <Card>
                       <Row className="m-2">
                         <Col>
-                          <h1 className="float-left">Purchase Pending List</h1>
+                          <h1 className="float-left">Purchase Complte List</h1>
                         </Col>
                         <Col>
                           <span className="mx-1">

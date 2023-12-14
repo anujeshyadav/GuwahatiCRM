@@ -801,7 +801,7 @@ class InvoiceGenerator extends React.Component {
 
   MergeBillNow = data => {
     let billnum = localStorage.getItem("billnumber");
-    console.log(data);
+    console.log("Bill", data);
     console.log(billnum);
     // debugger;
     if (billnum) {
@@ -879,16 +879,16 @@ class InvoiceGenerator extends React.Component {
 
   async componentDidMount() {
     const UserInformation = this.context;
-   console.log(UserInformation?.CompanyDetails);
-   this.setState({ CompanyDetails: UserInformation?.CompanyDetails });
-   let pageparmission = JSON.parse(localStorage.getItem("userData"));
-   let userid = pageparmission?._id;
+    console.log(UserInformation?.CompanyDetails);
+    this.setState({ CompanyDetails: UserInformation?.CompanyDetails });
+    let pageparmission = JSON.parse(localStorage.getItem("userData"));
+    let userid = pageparmission?._id;
 
-   let billnumner = localStorage.getItem("billnumber");
-   if (billnumner) {
-     this.setState({ ShowBill: false });
-     this.setState({ BillNumber: billnumner });
-   }
+    let billnumner = localStorage.getItem("billnumber");
+    if (billnumner) {
+      this.setState({ ShowBill: false });
+      this.setState({ BillNumber: billnumner });
+    }
     const InsidePermissions = CheckPermission("Sales Invoice");
     console.log(InsidePermissions);
     this.setState({ InsiderPermissions: InsidePermissions });
@@ -1283,7 +1283,7 @@ class InvoiceGenerator extends React.Component {
                     <Card>
                       <Row className="m-2">
                         <Col>
-                          <h1 className="float-left">Order List</h1>
+                          <h1 className="float-left">Sales Order List</h1>
                         </Col>
                         <Col>
                           <span className="mx-1">

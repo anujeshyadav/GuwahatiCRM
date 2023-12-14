@@ -1,6 +1,4 @@
 import React, { useRef } from "react";
-import { Route } from "react-router-dom";
-import xmlJs from "xml-js";
 import {
   Card,
   CardBody,
@@ -15,13 +13,11 @@ import {
   Button,
   ModalHeader,
   ModalBody,
-  Badge,
 } from "reactstrap";
 
 import { ContextLayout } from "../../../../utility/context/Layout";
 import { AgGridReact } from "ag-grid-react";
 import "ag-grid-community/dist/styles/ag-grid.css";
-import EditAccount from "../accounts/EditAccount";
 import PendingView from "../order/Pending";
 import jsPDF from "jspdf";
 import "jspdf-autotable";
@@ -36,15 +32,9 @@ import {
   FaArrowAltCircleLeft,
   FaArrowAltCircleRight,
   FaFilter,
-  FaPlus,
 } from "react-icons/fa";
-import moment from "moment-timezone";
 import swal from "sweetalert";
 import {
-  CreateAccountList,
-  CreateAccountView,
-  Create_TargetList,
-  DeleteAccount,
   createOrderhistoryview,
   Delete_targetINlist,
 } from "../../../../ApiEndPoint/ApiCalling";
@@ -55,7 +45,6 @@ import {
 } from "react-icons/bs";
 import * as XLSX from "xlsx";
 import UserContext from "../../../../context/Context";
-// import TargetAssignedOne from "./TargetAssignedOne";
 
 const SelectedColums = [];
 
@@ -139,6 +128,19 @@ class PendingOrder extends React.Component {
                 {/* )} */}
               </div>
             );
+          },
+        },
+        {
+          headerName: "Status",
+          field: "status",
+          filter: true,
+          width: 150,
+          cellRendererFramework: params => {
+            return params.value === "pending" ? (
+              <div className="badge badge-pill badge-warning">
+                {params.data.status}
+              </div>
+            ) : null;
           },
         },
         {
@@ -304,24 +306,6 @@ class PendingOrder extends React.Component {
             );
           },
         },
-
-        {
-          headerName: "Status",
-          field: "status",
-          filter: true,
-          width: 150,
-          cellRendererFramework: params => {
-            return params.value === "pending" ? (
-              <div className="badge badge-pill badge-warning">
-                {params.data.status}
-              </div>
-            ) : params.value === "canceled" ? (
-              <div className="badge badge-pill badge bg-danger">
-                {params.data.status}
-              </div>
-            ) : null;
-          },
-        },
       ],
     };
   }
@@ -358,15 +342,14 @@ class PendingOrder extends React.Component {
   // };
 
   async componentDidMount() {
-    const UserInformation = this.context?.UserInformatio;
-
-    await createOrderhistoryview()
+    const userId = JSON.parse(localStorage.getItem("userData"))._id;
+    await createOrderhistoryview(userId)
       .then(res => {
         console.log(res?.orderHistory);
-        // const pendingStatus = res?.orderHistory?.filter(
-        //   ele => ele.status == "pending"? ele.status:null
-        // );
-        this.setState({ rowData: res?.orderHistory });
+        const pendingStatus = res?.orderHistory?.filter(
+          ele => ele.status == "pending"
+        );
+        this.setState({ rowData: pendingStatus });
         this.setState({ AllcolumnDefs: this.state.columnDefs });
         this.setState({ SelectedCols: this.state.columnDefs });
 
@@ -716,7 +699,7 @@ class PendingOrder extends React.Component {
                     <Card>
                       <Row className="m-2">
                         <Col>
-                          <h1 className="float-left">Pending List</h1>
+                          <h1 className="float-left">Sales Pending List</h1>
                         </Col>
                         <Col>
                           <span className="mx-1">

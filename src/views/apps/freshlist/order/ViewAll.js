@@ -49,7 +49,6 @@ const OrderView = ({ ViewOneData }) => {
       qty: 1, //
       price: "", //
       totalprice: "", //
-      //  grandTotal: "",
     },
   ]);
   const Context = useContext(UserContext);
@@ -69,32 +68,14 @@ const OrderView = ({ ViewOneData }) => {
     setFormData(ViewOneData);
     console.log(ViewOneData);
   }, []);
-  const handleProductChangeProduct = (e, index) => {
-    setIndex(index);
-    const { name, value } = e.target;
-    const list = [...product];
-    list[index][name] = value;
-    let amt = 0;
-    if (list.length > 0) {
-      const x = list?.map(val => {
-        console.log(val.qty * val.price);
-        // GrandTotal[index] = val.qty * val.price;
 
-        list[index]["totalprice"] = val.qty * val.price;
-        return val.qty * val.price;
-      });
-      amt = x.reduce((a, b) => a + b);
-      console.log("GrandTotal", amt);
-    }
-    setProduct(list);
-  };
   return (
     <div>
       <div>
         <Card>
           <Form className="p-3">
             <Row className="mb-2">
-              <Col lg="4" md="4" sm="12">
+              <Col className="ml-1" lg="4" md="4" sm="12">
                 <FormGroup>
                   <Label>FullName</Label>
                   <Input
