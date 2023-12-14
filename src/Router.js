@@ -476,16 +476,18 @@ const StockTransfer = lazy(() =>
 const SupplierWarranty = lazy(() =>
   import("./views/apps/freshlist/customer/WarrantyCLaims/SupplierWarranty")
 );
+
 const CreateOrder = lazy(() =>
   import("./views/apps/freshlist/order/CreateOrder")
 );
+const OrderList = lazy(() => import("./views/apps/freshlist/order/OrderList"));
 const PendingOrder = lazy(() =>
   import("./views/apps/freshlist/order/PendingOrder")
 );
 const EditPending = lazy(() =>
   import("./views/apps/freshlist/order/pending/EditPending")
 );
-const OrderList = lazy(() => import("./views/apps/freshlist/order/OrderList"));
+
 const PurchaseOrderList = lazy(() =>
   import("./views/apps/freshlist/order/purchase/PurchaseOrderList")
 );
@@ -1181,10 +1183,10 @@ const accessControl = lazy(() =>
 const RouteConfig = ({ component: Component, fullLayout, ...rest }) => (
   <Route
     {...rest}
-    render={(props) => {
+    render={props => {
       return (
         <ContextLayout.Consumer>
-          {(context) => {
+          {context => {
             let LayoutTag =
               fullLayout === true
                 ? context.fullLayout
@@ -1204,7 +1206,7 @@ const RouteConfig = ({ component: Component, fullLayout, ...rest }) => (
     }}
   />
 );
-const mapStateToProps = (state) => {
+const mapStateToProps = state => {
   return {
     user: state.auth.login.userRole,
   };

@@ -232,7 +232,7 @@ class Bills extends React.Component {
         field: "order_status",
         filter: true,
         width: 160,
-        cellRendererFramework: (params) => {
+        cellRendererFramework: params => {
           return params.data?.order_status === "Completed" ? (
             <div className="badge badge-pill badge-success">Completed</div>
           ) : params.data?.order_status === "Pending" ? (
@@ -256,7 +256,7 @@ class Bills extends React.Component {
         filter: true,
         resizable: true,
         width: 150,
-        cellRendererFramework: (params) => {
+        cellRendererFramework: params => {
           // console.log(params.data?.order_id);
 
           return (
@@ -307,7 +307,7 @@ class Bills extends React.Component {
         filter: true,
         resizable: true,
         width: 150,
-        cellRendererFramework: (params) => {
+        cellRendererFramework: params => {
           return (
             <div className="d-flex align-items-center justify-content-center cursor-pointer">
               <div>
@@ -329,7 +329,7 @@ class Bills extends React.Component {
         filter: true,
         resizable: true,
         width: 150,
-        cellRendererFramework: (params) => {
+        cellRendererFramework: params => {
           return (
             <div className="d-flex align-items-center justify-content-center cursor-pointer">
               <div>
@@ -398,7 +398,7 @@ class Bills extends React.Component {
         field: "sortorder",
         field: "transactions",
         width: 120,
-        cellRendererFramework: (params) => {
+        cellRendererFramework: params => {
           return (
             <div className="actions cursor-pointer">
               {this.state.Viewpermisson && (
@@ -461,7 +461,7 @@ class Bills extends React.Component {
         filter: true,
         resizable: true,
         width: 160,
-        cellRendererFramework: (params) => {
+        cellRendererFramework: params => {
           return (
             <div className="d-flex align-items-center cursor-pointer">
               <div>
@@ -509,7 +509,7 @@ class Bills extends React.Component {
         filter: true,
         resizable: true,
         width: 230,
-        cellRendererFramework: (params) => {
+        cellRendererFramework: params => {
           return (
             <div className="d-flex align-items-center cursor-pointer">
               <div>
@@ -765,12 +765,13 @@ class Bills extends React.Component {
       // },
     ],
   };
-  handleSubmit = (e) => {
+  handleSubmit = e => {
     // e.preventDefault();
     this.setState({ ViewBill: true });
   };
-  handleBillDownload = (data) => {
-    console.log(data);
+  handleBillDownload = data => {
+    debugger;
+    console.log("InvoiceData", data);
     this.setState({ PrintData: data });
     const toWords = new ToWords();
     let words = toWords.convert(Number(data.sub_total), { currency: true });
@@ -778,18 +779,18 @@ class Bills extends React.Component {
     this.toggleModal();
   };
   toggleModal = () => {
-    this.setState((prevState) => ({
+    this.setState(prevState => ({
       modal: !prevState.modal,
     }));
   };
-  changeHandler = (e) => {
+  changeHandler = e => {
     this.setState({ [e.target.name]: e.target.value });
   };
   async componentDidMount() {
     let pageparmission = JSON.parse(localStorage.getItem("userData"));
     // console.log(pageparmission.role);
     let newparmisson = pageparmission?.role?.find(
-      (value) => value?.pageName === "Bills"
+      value => value?.pageName === "Bills"
     );
     console.log(newparmisson);
     this.setState({ Viewpermisson: newparmisson?.permission.includes("View") });
@@ -807,12 +808,12 @@ class Bills extends React.Component {
     formdata.append("role", pageparmission?.Userinfo?.role);
     await axiosConfig
       .post(`/getallcompleteorders`, formdata)
-      .then((res) => {
+      .then(res => {
         console.log(res.data.data);
         let rowData = res.data.data;
         this.setState({ rowData });
       })
-      .catch((err) => {
+      .catch(err => {
         console.log(err);
       });
     // console.log(newparmisson?.permission.includes("View"));
@@ -832,15 +833,15 @@ class Bills extends React.Component {
   async runthisfunction(id) {
     console.log(id);
     await axiosConfig.delete(`/admin/del_subcategory/${id}`).then(
-      (response) => {
+      response => {
         console.log(response);
       },
-      (error) => {
+      error => {
         console.log(error);
       }
     );
   }
-  onGridReady = (params) => {
+  onGridReady = params => {
     this.gridApi = params.api;
     this.gridColumnApi = params.columnApi;
     this.setState({
@@ -849,10 +850,10 @@ class Bills extends React.Component {
       totalPages: this.gridApi.paginationGetTotalPages(),
     });
   };
-  updateSearchQuery = (val) => {
+  updateSearchQuery = val => {
     this.gridApi.setQuickFilter(val);
   };
-  filterSize = (val) => {
+  filterSize = val => {
     if (this.gridApi) {
       this.gridApi.paginationSetPageSize(Number(val));
       this.setState({
@@ -861,7 +862,7 @@ class Bills extends React.Component {
       });
     }
   };
-  handlePrint = (e) => {
+  handlePrint = e => {
     e.preventDefault();
     window.print();
   };
@@ -973,9 +974,7 @@ class Bills extends React.Component {
                       <div className="table-input mr-1">
                         <Input
                           placeholder="search..."
-                          onChange={(e) =>
-                            this.updateSearchQuery(e.target.value)
-                          }
+                          onChange={e => this.updateSearchQuery(e.target.value)}
                           value={this.state.value}
                         />
                       </div>
@@ -990,7 +989,7 @@ class Bills extends React.Component {
                     </div>
                   </div>
                   <ContextLayout.Consumer>
-                    {(context) => (
+                    {context => (
                       <AgGridReact
                         gridOptions={{}}
                         rowSelection="multiple"

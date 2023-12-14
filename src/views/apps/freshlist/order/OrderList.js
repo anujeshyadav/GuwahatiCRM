@@ -261,10 +261,10 @@ class OrderList extends React.Component {
 
   async componentDidMount() {
     const userId = JSON.parse(localStorage.getItem("userData"))._id;
-    const UserInformation = this.context?.UserInformatio;
 
     await createOrderhistoryview(userId)
       .then(res => {
+        console.log(res?.orderHistory);
         this.setState({ rowData: res?.orderHistory });
         console.log(res?.orderHistory);
         this.setState({ AllcolumnDefs: this.state.columnDefs });
