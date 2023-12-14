@@ -271,8 +271,7 @@ class OrderList extends React.Component {
   async componentDidMount() {
     const userId = JSON.parse(localStorage.getItem("userData"))._id;
     const UserInformation = this.context?.UserInformatio;
-    const InsidePermissions = CheckPermission("Sales Order");
-    this.setState({ InsiderPermissions: InsidePermissions });
+
     await createOrderhistoryview(userId)
       .then((res) => {
         this.setState({ rowData: res?.orderHistory });
