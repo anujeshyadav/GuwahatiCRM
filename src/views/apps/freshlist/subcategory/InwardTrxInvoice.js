@@ -2,7 +2,7 @@ import React, { useEffect, useState, useContext } from "react";
 import { PDFViewer } from "@react-pdf/renderer";
 import InvoiceTemplate from "./InvoiceTemplate";
 import ReactPDF from "@react-pdf/renderer";
-import POInVoice from "./StockTrxPOinvoice";
+import POInVoice from "./InwardPoInvoice";
 import axiosConfig from "../../../../axiosConfig";
 import { ToWords } from "to-words";
 import UserContext from "../../../../context/Context";
@@ -33,13 +33,17 @@ const StockTrxInvoice = (props) => {
   const [Printview, setPrintview] = useState({});
   const [AllCharges, setAllCharges] = useState({});
   const [UserChoice, setUserChoice] = useState({});
+  const [InwardCondition, setInwardCondition] = useState(false);
   const [details, setDetails] = useState([]);
   const [word, setword] = useState("");
 
   const Alldata = useContext(UserContext);
   useEffect(() => {
-    // console.log(props);
-    // console.log(Alldata);
+    console.log(props);
+    console.log(Alldata);
+    if (!!props?.ViewOneData?.warehouseFromId) {
+      setInwardCondition(true);
+    }
     let userchoice = JSON.parse(localStorage.getItem("billUI"));
     if (userchoice) {
       setUserChoice(userchoice);
@@ -62,6 +66,7 @@ const StockTrxInvoice = (props) => {
       <PDFViewer width="1000" height="800">
         <POInVoice
           UserChoice={UserChoice}
+          InwardCondition={InwardCondition}
           invoiceData={Printview}
           CurrentWords={word}
           BilData={props}

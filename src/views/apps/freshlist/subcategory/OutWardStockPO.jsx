@@ -2,7 +2,7 @@ import React, { useEffect, useState, useContext } from "react";
 import { PDFViewer } from "@react-pdf/renderer";
 import InvoiceTemplate from "./InvoiceTemplate";
 import ReactPDF from "@react-pdf/renderer";
-import POInVoice from "./StockTrxPOinvoice";
+import POInVoice from "./OutwardPoInvoice";
 import axiosConfig from "../../../../axiosConfig";
 import { ToWords } from "to-words";
 import UserContext from "../../../../context/Context";
@@ -38,8 +38,8 @@ const StockTrxInvoice = (props) => {
 
   const Alldata = useContext(UserContext);
   useEffect(() => {
-    // console.log(props);
-    // console.log(Alldata);
+    console.log(props);
+    console.log(Alldata);
     let userchoice = JSON.parse(localStorage.getItem("billUI"));
     if (userchoice) {
       setUserChoice(userchoice);
