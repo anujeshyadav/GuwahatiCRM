@@ -1,6 +1,7 @@
 import React, { useRef } from "react";
 import { Route } from "react-router-dom";
 import xmlJs from "xml-js";
+import { ImDownload } from "react-icons/im";
 import {
   Card,
   CardBody,
@@ -91,7 +92,7 @@ class PromotionalActivityList extends React.Component {
   }
 
   LookupviewStart = () => {
-    this.setState((prevState) => ({
+    this.setState(prevState => ({
       modal: !prevState.modal,
     }));
   };
@@ -109,25 +110,25 @@ class PromotionalActivityList extends React.Component {
 
   async componentDidMount() {
     const UserInformation = this.context?.UserInformatio;
-        let pageparmission = JSON.parse(localStorage.getItem("userData"));
-        View_PromotionList(pageparmission?._id)
-          .then((res) => {
-            console.log(res?.Promotion);
-            let keys = Object.keys(res?.Promotion[0]);
-            let myarr = keys.filter(
-              (item) =>
-                item !== "_id" &&
-                item !== "__v" &&
-                item !== "created_by" &&
-                item !== "status"
-            );
-            let unique = [...new Set(myarr)];
-            this.setState({ Dropdown: unique });
-            this.setState({ AllData: res?.Promotion });
-          })
-          .catch((err) => {
-            console.log(err);
-          });
+    let pageparmission = JSON.parse(localStorage.getItem("userData"));
+    View_PromotionList(pageparmission?._id)
+      .then(res => {
+        console.log(res?.Promotion);
+        let keys = Object.keys(res?.Promotion[0]);
+        let myarr = keys.filter(
+          item =>
+            item !== "_id" &&
+            item !== "__v" &&
+            item !== "created_by" &&
+            item !== "status"
+        );
+        let unique = [...new Set(myarr)];
+        this.setState({ Dropdown: unique });
+        this.setState({ AllData: res?.Promotion });
+      })
+      .catch(err => {
+        console.log(err);
+      });
     // await CreateAccountView()
     //   .then((res) => {
     //     var mydropdownArray = [];
@@ -321,7 +322,7 @@ class PromotionalActivityList extends React.Component {
     //   });
   }
   toggleDropdown = () => {
-    this.setState((prevState) => ({ isOpen: !prevState.isOpen }));
+    this.setState(prevState => ({ isOpen: !prevState.isOpen }));
   };
 
   runthisfunction(id) {
@@ -330,15 +331,15 @@ class PromotionalActivityList extends React.Component {
         cancel: "cancel",
         catch: { text: "Delete ", value: "delete" },
       },
-    }).then((value) => {
+    }).then(value => {
       switch (value) {
         case "delete":
           DeleteAccount(id)
-            .then((res) => {
+            .then(res => {
               let selectedData = this.gridApi.getSelectedRows();
               this.gridApi.updateRowData({ remove: selectedData });
             })
-            .catch((err) => {
+            .catch(err => {
               console.log(err);
             });
           break;
@@ -347,7 +348,7 @@ class PromotionalActivityList extends React.Component {
     });
   }
 
-  onGridReady = (params) => {
+  onGridReady = params => {
     this.gridApi = params.api;
     this.gridColumnApi = params.columnApi;
     this.gridRef.current = params.api;
@@ -359,11 +360,11 @@ class PromotionalActivityList extends React.Component {
     });
   };
 
-  updateSearchQuery = (val) => {
+  updateSearchQuery = val => {
     this.gridApi.setQuickFilter(val);
   };
 
-  filterSize = (val) => {
+  filterSize = val => {
     if (this.gridApi) {
       this.gridApi.paginationSetPageSize(Number(val));
       this.setState({
@@ -378,7 +379,7 @@ class PromotionalActivityList extends React.Component {
       SelectedColums?.push(value);
     } else {
       const delindex = SelectedColums?.findIndex(
-        (ele) => ele?.headerName === value?.headerName
+        ele => ele?.headerName === value?.headerName
       );
 
       SelectedColums?.splice(delindex, 1);
@@ -389,14 +390,14 @@ class PromotionalActivityList extends React.Component {
       Papa.parse(csvData, {
         header: true,
         skipEmptyLines: true,
-        complete: (result) => {
+        complete: result => {
           if (result.data && result.data.length > 0) {
             resolve(result.data);
           } else {
             reject(new Error("No data found in the CSV"));
           }
         },
-        error: (error) => {
+        error: error => {
           reject(error);
         },
       });
@@ -408,7 +409,7 @@ class PromotionalActivityList extends React.Component {
 
     const doc = new jsPDF("landscape", "mm", size, false);
     doc.setTextColor(5, 87, 97);
-    const tableData = parsedData.map((row) => Object.values(row));
+    const tableData = parsedData.map(row => Object.values(row));
     doc.addImage(Logo, "JPEG", 10, 10, 50, 30);
     let date = new Date();
     doc.setCreationDate(date);
@@ -433,14 +434,14 @@ class PromotionalActivityList extends React.Component {
       console.error("Error parsing CSV:", error);
     }
   };
-  processCell = (params) => {
+  processCell = params => {
     // console.log(params);
     // Customize cell content as needed
     return params.value;
   };
 
   convertCsvToExcel(csvData) {
-    return new Promise((resolve) => {
+    return new Promise(resolve => {
       Papa.parse(csvData, {
         header: true,
         dynamicTyping: true,
@@ -471,7 +472,7 @@ class PromotionalActivityList extends React.Component {
     window.URL.revokeObjectURL(url);
   }
 
-  exportToExcel = async (e) => {
+  exportToExcel = async e => {
     const CsvData = this.gridApi.getDataAsCsv({
       processCellCallback: this.processCell,
     });
@@ -484,7 +485,7 @@ class PromotionalActivityList extends React.Component {
       processCellCallback: this.processCell,
     });
     Papa.parse(CsvData, {
-      complete: (result) => {
+      complete: result => {
         const ws = XLSX.utils.json_to_sheet(result.data);
         const wb = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(wb, ws, "Sheet1");
@@ -520,13 +521,13 @@ class PromotionalActivityList extends React.Component {
       processCellCallback: this.processCell,
     });
     Papa.parse(CsvData, {
-      complete: (result) => {
+      complete: result => {
         const rows = result.data;
 
         // Create XML
         let xmlString = "<root>\n";
 
-        rows.forEach((row) => {
+        rows.forEach(row => {
           xmlString += "  <row>\n";
           row.forEach((cell, index) => {
             xmlString += `    <field${index + 1}>${cell}</field${index + 1}>\n`;
@@ -548,7 +549,7 @@ class PromotionalActivityList extends React.Component {
     });
   };
 
-  HandleSetVisibleField = (e) => {
+  HandleSetVisibleField = e => {
     e.preventDefault();
 
     this.gridApi.setColumnDefs(this.state.SelectedcolumnDefs);
@@ -565,10 +566,10 @@ class PromotionalActivityList extends React.Component {
   HeadingRightShift = () => {
     const updatedSelectedColumnDefs = [
       ...new Set([
-        ...this.state.SelectedcolumnDefs.map((item) => JSON.stringify(item)),
-        ...SelectedColums.map((item) => JSON.stringify(item)),
+        ...this.state.SelectedcolumnDefs.map(item => JSON.stringify(item)),
+        ...SelectedColums.map(item => JSON.stringify(item)),
       ]),
-    ].map((item) => JSON.parse(item));
+    ].map(item => JSON.parse(item));
     this.setState({
       SelectedcolumnDefs: [...new Set(updatedSelectedColumnDefs)], // Update the state with the combined array
     });
@@ -585,7 +586,7 @@ class PromotionalActivityList extends React.Component {
       });
     }
   };
-  handleFilter = (e) => {
+  handleFilter = e => {
     let headings;
     let maxKeys = 0;
     let elementWithMaxKeys = null;
@@ -620,19 +621,19 @@ class PromotionalActivityList extends React.Component {
       }
       // if(findheading.indexOf("productId")){
 
-        let index2 = findheading.indexOf("productId");
-        if (index2 > -1) {
-          findheading.splice(index2, 1);
-        }
+      let index2 = findheading.indexOf("productId");
+      if (index2 > -1) {
+        findheading.splice(index2, 1);
+      }
       // }
-      headings = findheading?.map((ele) => {
+      headings = findheading?.map(ele => {
         if (ele == "freeOtherProducts") {
           return {
             headerName: "freeOtherProducts",
             field: "freeOtherProducts",
             filter: true,
             width: 180,
-            cellRendererFramework: (params) => {
+            cellRendererFramework: params => {
               return (
                 <>
                   <div className="d-flex justify-content-center">
@@ -661,7 +662,7 @@ class PromotionalActivityList extends React.Component {
           field: "sortorder",
           field: "transactions",
           width: 190,
-          cellRendererFramework: (params) => {
+          cellRendererFramework: params => {
             return (
               <div className="actions cursor-pointer">
                 <Route
@@ -707,23 +708,23 @@ class PromotionalActivityList extends React.Component {
         },
 
         ...myHeadings,
-         {
-            headerName: "Status",
-            field: "status",
-            filter: true,
-            width: 150,
-            cellRendererFramework: (params) => {
-              return params.data?.status === "Active" ? (
-                <div className="badge badge-pill badge-success">
-                  {params.data?.status}
-                </div>
-              ) : params.data?.status === "Deactive" ? (
-                <div className="badge badge-pill badge-warning">
-                  {params.data?.status}
-                </div>
-              ) : null;
-            },
+        {
+          headerName: "Status",
+          field: "status",
+          filter: true,
+          width: 150,
+          cellRendererFramework: params => {
+            return params.data?.status === "Active" ? (
+              <div className="badge badge-pill badge-success">
+                {params.data?.status}
+              </div>
+            ) : params.data?.status === "Deactive" ? (
+              <div className="badge badge-pill badge-warning">
+                {params.data?.status}
+              </div>
+            ) : null;
           },
+        },
         // {
         //   headerName: "Created date",
         //   field: "createdAt",
@@ -797,12 +798,13 @@ class PromotionalActivityList extends React.Component {
               <Col>
                 <div className="d-flex justify-content-end p-1">
                   <Button
-                    onClick={(e) => {
+                    onClick={e => {
                       e.preventDefault();
                       this.setState({ EditOneUserView: false });
                       this.componentDidMount();
                     }}
-                    color="danger">
+                    color="danger"
+                  >
                     Back
                   </Button>
                 </div>
@@ -818,11 +820,12 @@ class PromotionalActivityList extends React.Component {
                     <Col>
                       <div className="d-flex justify-content-end p-1">
                         <Button
-                          onClick={(e) => {
+                          onClick={e => {
                             e.preventDefault();
                             this.setState({ ViewOneUserView: false });
                           }}
-                          color="danger">
+                          color="danger"
+                        >
                           Back
                         </Button>
                       </div>
@@ -836,7 +839,10 @@ class PromotionalActivityList extends React.Component {
                     <Card>
                       <Row className="m-2">
                         <Col>
-                          <h1 className="float-left">
+                          <h1
+                            className="float-left"
+                            style={{ fontWeight: "600" }}
+                          >
                             Promotional Activity list
                           </h1>
                         </Col>
@@ -845,8 +851,7 @@ class PromotionalActivityList extends React.Component {
                             type="select"
                             name="typeofpromotion"
                             className="float-right"
-                            onChange={(e) => this.handleFilter(e)}
-                            
+                            onChange={e => this.handleFilter(e)}
                           >
                             <option value="NA">
                               --Select Promotion Type--
@@ -861,12 +866,12 @@ class PromotionalActivityList extends React.Component {
                               })}
                           </CustomInput>
                         </Col>
-                        <Col lg="2" md="2" sm="2">
+                        <Col lg="3" md="3" sm="3">
                           <span className="">
                             <FaFilter
                               style={{ cursor: "pointer" }}
                               title="filter coloumn"
-                              size="25px"
+                              size="35px"
                               onClick={this.LookupviewStart}
                               color="#39cccc"
                               className="float-right"
@@ -874,10 +879,10 @@ class PromotionalActivityList extends React.Component {
                           </span>
                           <span className="mx-1">
                             <div className="dropdown-container float-right">
-                              <BsCloudDownloadFill
+                              <ImDownload
                                 style={{ cursor: "pointer" }}
                                 title="download file"
-                                size="25px"
+                                size="35px"
                                 className="dropdown-button "
                                 color="#39cccc"
                                 onClick={this.toggleDropdown}
@@ -887,12 +892,16 @@ class PromotionalActivityList extends React.Component {
                                   style={{
                                     position: "absolute",
                                     zIndex: "1",
+                                    border: "1px solid #39cccc",
+                                    backgroundColor: "white",
                                   }}
-                                  className="dropdown-content dropdownmy">
+                                  className="dropdown-content dropdownmy"
+                                >
                                   <h5
                                     onClick={() => this.exportToPDF()}
                                     style={{ cursor: "pointer" }}
-                                    className=" mx-1 myactive mt-1">
+                                    className=" mx-1 myactive mt-1"
+                                  >
                                     .PDF
                                   </h5>
                                   <h5
@@ -900,25 +909,29 @@ class PromotionalActivityList extends React.Component {
                                       this.gridApi.exportDataAsCsv()
                                     }
                                     style={{ cursor: "pointer" }}
-                                    className=" mx-1 myactive">
+                                    className=" mx-1 myactive"
+                                  >
                                     .CSV
                                   </h5>
                                   <h5
                                     onClick={this.convertCSVtoExcel}
                                     style={{ cursor: "pointer" }}
-                                    className=" mx-1 myactive">
+                                    className=" mx-1 myactive"
+                                  >
                                     .XLS
                                   </h5>
                                   <h5
                                     onClick={this.exportToExcel}
                                     style={{ cursor: "pointer" }}
-                                    className=" mx-1 myactive">
+                                    className=" mx-1 myactive"
+                                  >
                                     .XLSX
                                   </h5>
                                   <h5
                                     onClick={() => this.convertCsvToXml()}
                                     style={{ cursor: "pointer" }}
-                                    className=" mx-1 myactive">
+                                    className=" mx-1 myactive"
+                                  >
                                     .XML
                                   </h5>
                                 </div>
@@ -928,17 +941,23 @@ class PromotionalActivityList extends React.Component {
                           <span>
                             <Route
                               render={({ history }) => (
-                                <Badge
-                                  style={{ cursor: "pointer" }}
+                                <Button
+                                  style={{
+                                    cursor: "pointer",
+                                    backgroundColor: "#39cccc",
+                                    color: "white",
+                                    fontWeight: "600",
+                                  }}
                                   className="float-right mr-1"
-                                  color="primary"
+                                  color="#39cccc"
                                   onClick={() =>
                                     history.push(
                                       "/app/ajgroup/account/CreatePromotionalActivity"
                                     )
-                                  }>
+                                  }
+                                >
                                   <FaPlus size={15} /> Activiity
-                                </Badge>
+                                </Button>
                               )}
                             />
                           </span>
@@ -974,27 +993,32 @@ class PromotionalActivityList extends React.Component {
                                       <DropdownMenu right>
                                         <DropdownItem
                                           tag="div"
-                                          onClick={() => this.filterSize(5)}>
+                                          onClick={() => this.filterSize(5)}
+                                        >
                                           5
                                         </DropdownItem>
                                         <DropdownItem
                                           tag="div"
-                                          onClick={() => this.filterSize(20)}>
+                                          onClick={() => this.filterSize(20)}
+                                        >
                                           20
                                         </DropdownItem>
                                         <DropdownItem
                                           tag="div"
-                                          onClick={() => this.filterSize(50)}>
+                                          onClick={() => this.filterSize(50)}
+                                        >
                                           50
                                         </DropdownItem>
                                         <DropdownItem
                                           tag="div"
-                                          onClick={() => this.filterSize(100)}>
+                                          onClick={() => this.filterSize(100)}
+                                        >
                                           100
                                         </DropdownItem>
                                         <DropdownItem
                                           tag="div"
-                                          onClick={() => this.filterSize(134)}>
+                                          onClick={() => this.filterSize(134)}
+                                        >
                                           134
                                         </DropdownItem>
                                       </DropdownMenu>
@@ -1004,7 +1028,7 @@ class PromotionalActivityList extends React.Component {
                                     <div className="table-input mr-1">
                                       <Input
                                         placeholder="search Item here..."
-                                        onChange={(e) =>
+                                        onChange={e =>
                                           this.updateSearchQuery(e.target.value)
                                         }
                                         value={this.state.value}
@@ -1013,7 +1037,7 @@ class PromotionalActivityList extends React.Component {
                                   </div>
                                 </div>
                                 <ContextLayout.Consumer className="ag-theme-alpine">
-                                  {(context) => (
+                                  {context => (
                                     <AgGridReact
                                       id="myAgGrid"
                                       // gridOptions={{
@@ -1074,7 +1098,8 @@ class PromotionalActivityList extends React.Component {
           isOpen={this.state.modal}
           toggle={this.LookupviewStart}
           className={this.props.className}
-          style={{ maxWidth: "1050px" }}>
+          style={{ maxWidth: "1050px" }}
+        >
           <ModalHeader toggle={this.LookupviewStart}>Change Fileds</ModalHeader>
           <ModalBody className="modalbodyhead">
             <Row>
@@ -1087,15 +1112,15 @@ class PromotionalActivityList extends React.Component {
                         return (
                           <>
                             <div
-                              onClick={(e) =>
-                                this.handleChangeHeader(e, ele, i)
-                              }
+                              onClick={e => this.handleChangeHeader(e, ele, i)}
                               key={i}
-                              className="mycustomtag mt-1">
+                              className="mycustomtag mt-1"
+                            >
                               <span className="mt-1">
                                 <h5
                                   style={{ cursor: "pointer" }}
-                                  className="allfields">
+                                  className="allfields"
+                                >
                                   <input
                                     type="checkbox"
                                     // checked={check && check}
@@ -1154,14 +1179,15 @@ class PromotionalActivityList extends React.Component {
                                             : ""
                                         }`,
                                       }}
-                                      className="allfields">
+                                      className="allfields"
+                                    >
                                       <IoMdRemoveCircleOutline
                                         onClick={() => {
                                           const SelectedCols =
                                             this.state.SelectedcolumnDefs.slice();
                                           const delindex =
                                             SelectedCols.findIndex(
-                                              (element) =>
+                                              element =>
                                                 element?.headerName ==
                                                 ele?.headerName
                                             );

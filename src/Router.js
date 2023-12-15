@@ -37,6 +37,8 @@ const CustomerRegistration = lazy(() =>
 // Parts
 const AddPart = lazy(() => import("./views/apps/freshlist/parts/AddPart"));
 const PartList = lazy(() => import("./views/apps/freshlist/parts/PartList"));
+
+const Cashbook = lazy(() => import("./views/apps/freshlist/parts/Cashbook"));
 const PartCatalougue = lazy(() =>
   import("./views/apps/freshlist/parts/PartCatalougue")
 );
@@ -206,7 +208,9 @@ const OrderOne = lazy(() => import("./views/apps/freshlist/order/OrderOne"));
 const OrderSearch = lazy(() =>
   import("./views/apps/freshlist/order/OrderSearch")
 );
-
+const Achivement = lazy(() =>
+  import("./views/apps/freshlist/order/Achivement")
+);
 const Selectedorder = lazy(() =>
   import("./views/apps/freshlist/order/Selectedorder")
 );
@@ -470,6 +474,7 @@ const CreateCampaign = lazy(() =>
 const StockReport = lazy(() =>
   import("./views/apps/freshlist/customer/StockManagement/StockReport")
 );
+
 const StockTransfer = lazy(() =>
   import("./views/apps/freshlist/customer/StockManagement/StockTransfer")
 );
@@ -780,9 +785,67 @@ const SearchPolicy = lazy(() =>
 const CreateTicket = lazy(() =>
   import("./views/apps/freshlist/customer/Ticketing/CreateTicket")
 );
-const TicketSearch = lazy(() =>
-  import("./views/apps/freshlist/customer/Ticketing/TicketSearch")
+const Stockreport = lazy(() =>
+  import("./views/apps/freshlist/customer/Ticketing/Stockreport")
 );
+const OverdueReport = lazy(() =>
+  import("./views/apps/freshlist/customer/Ticketing/OverdueReport")
+);
+const purchasereportamount = lazy(() =>
+  import("./views/apps/freshlist/customer/Ticketing/purchasereportamount")
+);
+const WareHouseReport = lazy(() =>
+  import("./views/apps/freshlist/customer/Ticketing/WareHouseReport")
+);
+const Partywiseledger = lazy(() =>
+  import("./views/apps/freshlist/customer/Ticketing/Partywiseledger")
+);
+const TransporterReport = lazy(() =>
+  import("./views/apps/freshlist/customer/Ticketing/TransporterReport")
+);
+const targerReport = lazy(() =>
+  import("./views/apps/freshlist/customer/Ticketing/targerReport")
+);
+const DispatchReport = lazy(() =>
+  import("./views/apps/freshlist/customer/Ticketing/DispatchReport")
+);
+const GSTR1 = lazy(() =>
+  import("./views/apps/freshlist/customer/Ticketing/GSTR1")
+);
+const ProductListwithHSNandGST = lazy(() =>
+  import("./views/apps/freshlist/customer/Ticketing/ProductListwithHSNandGST")
+);
+const OutStandingReport = lazy(() =>
+  import("./views/apps/freshlist/customer/Ticketing/OutStandingReport")
+);
+const CashbookReport = lazy(() =>
+  import("./views/apps/freshlist/customer/Ticketing/CashbookReport")
+);
+const PendingOrderReport = lazy(() =>
+  import("./views/apps/freshlist/customer/Ticketing/PendingOrderReport")
+);
+const LockInReport = lazy(() =>
+  import("./views/apps/freshlist/customer/Ticketing/LockInReport")
+);
+const HSNWisesaleReport = lazy(() =>
+  import("./views/apps/freshlist/customer/Ticketing/HSNWisesaleReport")
+);
+const GSTR9 = lazy(() =>
+  import("./views/apps/freshlist/customer/Ticketing/GSTR9")
+);
+const GSTR3B = lazy(() =>
+  import("./views/apps/freshlist/customer/Ticketing/GSTR3B")
+);
+const TeamandtargerReport = lazy(() =>
+  import("./views/apps/freshlist/customer/Ticketing/TeamandtargerReport")
+);
+const Salesreport = lazy(() =>
+  import("./views/apps/freshlist/customer/Ticketing/Salesreport")
+);
+const Orderreport = lazy(() =>
+  import("./views/apps/freshlist/customer/Ticketing/Orderreport")
+);
+
 // inspection
 const CreateInspections = lazy(() =>
   import("./views/apps/freshlist/inspection/CreateInspections")
@@ -1256,6 +1319,7 @@ class AppRouter extends React.Component {
             component={Scheduler}
           />
           <AppRoute path="/app/SoftNumen/parts/PartList" component={PartList} />
+          <AppRoute path="/app/SoftNumen/parts/Cashbook" component={Cashbook} />
           <AppRoute
             path="/app/SoftNumen/parts/PartCatalougue"
             component={PartCatalougue}
@@ -1513,6 +1577,10 @@ class AppRouter extends React.Component {
           <AppRoute
             path="/app/softNumen/order/OrderSearch"
             component={OrderSearch}
+          />
+          <AppRoute
+            path="/app/jupitech/order/achivement"
+            component={Achivement}
           />
           <AppRoute
             path="/app/freshlist/order/Selectedorder"
@@ -1831,6 +1899,73 @@ class AppRouter extends React.Component {
           <AppRoute
             path="/app/softNumen/report/stockReport"
             component={StockReport}
+          />
+          <AppRoute
+            path="/app/SoftNumen/ticket/OverdueReport"
+            component={OverdueReport}
+          />
+          <AppRoute
+            path="/app/SoftNumen/ticket/Salesreport"
+            component={Salesreport}
+          />
+          <AppRoute
+            path="/app/SoftNumen/ticket/purchasereportamount"
+            component={purchasereportamount}
+          />
+          <AppRoute path="/app/SoftNumen/ticket/GSTR1" component={GSTR1} />
+          <AppRoute path="/app/SoftNumen/ticket/GSTR3B" component={GSTR3B} />
+          <AppRoute path="/app/SoftNumen/ticket/GSTR9" component={GSTR9} />
+          <AppRoute
+            path="/app/SoftNumen/ticket/HSNWisesaleReport"
+            component={HSNWisesaleReport}
+          />
+          <AppRoute
+            path="/app/SoftNumen/ticket/ProductListwithHSNandGST"
+            component={ProductListwithHSNandGST}
+          />
+          <AppRoute
+            path="/app/SoftNumen/ticket/LockInReport"
+            component={LockInReport}
+          />
+          <AppRoute
+            path="/app/SoftNumen/ticket/PendingOrderReport"
+            component={PendingOrderReport}
+          />
+          <AppRoute
+            path="/app/SoftNumen/ticket/CashbookReport"
+            component={CashbookReport}
+          />
+          <AppRoute
+            path="/app/SoftNumen/ticket/OutStandingReport"
+            component={OutStandingReport}
+          />
+          <AppRoute
+            path="/app/SoftNumen/ticket/TeamandtargerReport"
+            component={TeamandtargerReport}
+          />
+          <AppRoute
+            path="/app/SoftNumen/ticket/Partywiseledger"
+            component={Partywiseledger}
+          />
+          <AppRoute
+            path="/app/SoftNumen/ticket/TransporterReport"
+            component={TransporterReport}
+          />
+          <AppRoute
+            path="/app/SoftNumen/ticket/targerReport"
+            component={targerReport}
+          />
+          <AppRoute
+            path="/app/SoftNumen/ticket/DispatchReport"
+            component={DispatchReport}
+          />
+          <AppRoute
+            path="/app/SoftNumen/ticket/WareHouseReport"
+            component={WareHouseReport}
+          />
+          <AppRoute
+            path="/app/softNumen/report/Orderreport"
+            component={Orderreport}
           />
           <AppRoute
             path="/app/softNumen/report/StockTransfer"
@@ -2216,8 +2351,8 @@ class AppRouter extends React.Component {
             component={CreateTicket}
           />
           <AppRoute
-            path="/app/SoftNumen/ticket/TicketSearch"
-            component={TicketSearch}
+            path="/app/SoftNumen/ticket/Stockreport"
+            component={Stockreport}
           />
           {/* Inspections */}
           <AppRoute

@@ -1,7 +1,5 @@
 import React, { useRef } from "react";
 import { ImDownload } from "react-icons/im";
-import { Route } from "react-router-dom";
-import xmlJs from "xml-js";
 import {
   Card,
   CardBody,
@@ -17,12 +15,11 @@ import {
   ModalHeader,
   ModalBody,
 } from "reactstrap";
-import ExcelReader from "../parts/ExcelReader";
 import { ContextLayout } from "../../../../utility/context/Layout";
 import { AgGridReact } from "ag-grid-react";
 import "ag-grid-community/dist/styles/ag-grid.css";
-import EditAccount from "../accounts/EditAccount";
-import ViewAccount from "../accounts/ViewAccount";
+import EditAccount from "../../freshlist/accounts/EditAccount";
+import ViewAccount from "../../freshlist/accounts/ViewAccount";
 import jsPDF from "jspdf";
 import "jspdf-autotable";
 import Logo from "../../../../assets/img/profile/pages/logomain.png";
@@ -31,18 +28,18 @@ import { Eye, Trash2, ChevronDown, Edit } from "react-feather";
 import { IoMdRemoveCircleOutline } from "react-icons/io";
 import "../../../../assets/scss/plugins/tables/_agGridStyleOverride.scss";
 import "../../../../assets/scss/pages/users.scss";
+import { Route } from "react-router-dom";
+import xmlJs from "xml-js";
 
 import {
   FaArrowAltCircleLeft,
   FaArrowAltCircleRight,
   FaFilter,
 } from "react-icons/fa";
-import moment from "moment-timezone";
 import swal from "sweetalert";
 import {
-  CreateAccountList,
-  CreateOrder_ViewData,
-  OrderViewList,
+  SparePart_List,
+  SparesPartsView,
   DeleteAccount,
 } from "../../../../ApiEndPoint/ApiCalling";
 import {
@@ -55,7 +52,7 @@ import UserContext from "../../../../context/Context";
 
 const SelectedColums = [];
 
-class OrderSearch extends React.Component {
+class Cashbook extends React.Component {
   static contextType = UserContext;
   constructor(props) {
     super(props);
@@ -101,26 +98,53 @@ class OrderSearch extends React.Component {
   };
 
   async componentDidMount() {
+    let headings;
+    // let inputs;
+    let maxKeys = 0;
+    let elementWithMaxKeys = null;
     const UserInformation = this.context?.UserInformatio;
-    // debugger
-    await CreateOrder_ViewData()
+    await SparesPartsView()
       .then(res => {
-        // console.log(res)
-        var mydropdownArray = [];
-        // var adddropdown = [];
-        const jsonData = xmlJs.xml2json(res.data, { compact: true, spaces: 2 });
-        console.log(JSON.parse(jsonData));
-
-        const inputs = JSON.parse(jsonData).createOrder?.input?.map(ele => {
+        console.log(res?.SparePart);
+        this.setState({ rowData: res?.SparePart });
+        for (const element of res?.SparePart) {
+          const numKeys = Object.keys(element).length;
+          if (numKeys > maxKeys) {
+            maxKeys = numKeys;
+            elementWithMaxKeys = element;
+          }
+        }
+        console.log(maxKeys);
+        let findheading = Object.keys(elementWithMaxKeys);
+        let index = findheading.indexOf("_id");
+        if (index > -1) {
+          findheading.splice(index, 1);
+        }
+        let index1 = findheading.indexOf("__v");
+        if (index1 > -1) {
+          findheading.splice(index1, 1);
+        }
+        headings = findheading?.map(ele => {
           return {
-            headerName: ele?.label._text,
-            field: ele?.name._text,
+            headerName: ele,
+            field: ele,
             filter: true,
             sortable: true,
           };
         });
+        // var adddropdown = [];
+        // const inputs = res?.SparePart?.map(ele => {
+        //   console.log(ele);
+        //   Object.keys(ele).map(key => ({
+        //     headerName: key,
+        //     field: key,
+        //     filter: true,
+        //     sortable: true,
+        //   }));
+        // });
+
         // let Radioinput =
-        //   JSON.parse(jsonData).createOrder?.Radiobutton?.input[0]?.name
+        //   JSON.parse(jsonData).CreateAccount?.Radiobutton?.input[0]?.name
         //     ?._text;
         // const addRadio = [
         //   {
@@ -144,8 +168,8 @@ class OrderSearch extends React.Component {
         //   },
         // ];
 
-        // let dropdown = JSON.parse(jsonData).createOrder?.MyDropdown?.dropdown;
-        // if (dropdown.length) {
+        // let dropdown = JSON.parse(jsonData).CreateAccount?.MyDropdown?.dropdown;
+        // if (dropdown?.length) {
         //   var mydropdownArray = dropdown?.map(ele => {
         //     return {
         //       headerName: ele?.label,
@@ -166,7 +190,8 @@ class OrderSearch extends React.Component {
         // }
 
         let myHeadings = [
-          ...inputs,
+          // ...checkboxinput,
+          ...headings,
           // ...adddropdown,
           // ...addRadio,
           // ...mydropdownArray,
@@ -204,7 +229,6 @@ class OrderSearch extends React.Component {
           //             />
           //           )}
           //         />
-
           //         <Route
           //           render={() => (
           //             <Trash2
@@ -227,7 +251,8 @@ class OrderSearch extends React.Component {
           //   filter: true,
           //   sortable: true,
           //   cellRendererFramework: params => {
-          //     return params.data?.whatsapp === true ? (
+          //     console.log(params?.data?.whatsapp);
+          //     return params.data?.whatsapp === true || "undefined" ? (
           //       <div className="badge badge-pill badge-success">YES</div>
           //     ) : params.data?.whatsapp === false ? (
           //       <div className="badge badge-pill badge-warning">NO</div>
@@ -242,6 +267,7 @@ class OrderSearch extends React.Component {
           //   filter: true,
           //   sortable: true,
           //   cellRendererFramework: params => {
+          //     console.log(params?.data?.sms);
           //     return params.data?.sms === true ? (
           //       <div className="badge badge-pill badge-success">YES</div>
           //     ) : params.data?.sms === false ? (
@@ -257,6 +283,7 @@ class OrderSearch extends React.Component {
           //   filter: true,
           //   sortable: true,
           //   cellRendererFramework: params => {
+          //     console.log(params?.data?.gmail);
           //     return params.data?.gmail === true ? (
           //       <div className="badge badge-pill badge-success">YES</div>
           //     ) : params.data?.gmail === false ? (
@@ -350,10 +377,11 @@ class OrderSearch extends React.Component {
           //   },
           // },
         ];
-
         this.setState({ AllcolumnDefs: Product });
 
-        let userHeading = JSON.parse(localStorage.getItem("UserSearchheading"));
+        let userHeading = JSON.parse(
+          localStorage.getItem("UserSearchParSearch")
+        );
         if (userHeading?.length) {
           this.setState({ columnDefs: userHeading });
           this.gridApi.setColumnDefs(userHeading);
@@ -366,44 +394,43 @@ class OrderSearch extends React.Component {
       })
       .catch(err => {
         console.log(err);
-        swal("Error", "something went wrong try again");
+        // swal("Error", "something went wrong try again");
       });
-    await OrderViewList()
-      .then(res => {
-        console.log(res.Order[0]._id);
-        localStorage.setItem("OrderommentId", res.Order[0]._id);
-        // this.setState({ rowData: res });
-      })
-      .catch(err => {
-        console.log(err);
-      });
+    // await SparePart_List()
+    //   .then(res => {
+    //     console.log(res.Parts);
+    //     // this.setState({ rowData: res?.Parts });
+    //   })
+    //   .catch(err => {
+    //     console.log(err);
+    //   });
   }
   toggleDropdown = () => {
     this.setState(prevState => ({ isOpen: !prevState.isOpen }));
   };
 
-  runthisfunction(id) {
-    swal("Warning", "Sure You Want to Delete it", {
-      buttons: {
-        cancel: "cancel",
-        catch: { text: "Delete ", value: "delete" },
-      },
-    }).then(value => {
-      switch (value) {
-        case "delete":
-          DeleteAccount(id)
-            .then(res => {
-              let selectedData = this.gridApi.getSelectedRows();
-              this.gridApi.updateRowData({ remove: selectedData });
-            })
-            .catch(err => {
-              console.log(err);
-            });
-          break;
-        default:
-      }
-    });
-  }
+  // runthisfunction(id) {
+  //   swal("Warning", "Sure You Want to Delete it", {
+  //     buttons: {
+  //       cancel: "cancel",
+  //       catch: { text: "Delete ", value: "delete" },
+  //     },
+  //   }).then(value => {
+  //     switch (value) {
+  //       case "delete":
+  //         DeleteAccount(id)
+  //           .then(res => {
+  //             let selectedData = this.gridApi.getSelectedRows();
+  //             this.gridApi.updateRowData({ remove: selectedData });
+  //           })
+  //           .catch(err => {
+  //             console.log(err);
+  //           });
+  //         break;
+  //       default:
+  //     }
+  //   });
+  // }
 
   onGridReady = params => {
     this.gridApi = params.api;
@@ -608,13 +635,12 @@ class OrderSearch extends React.Component {
 
   HandleSetVisibleField = e => {
     e.preventDefault();
-    debugger;
     this.gridApi.setColumnDefs(this.state.SelectedcolumnDefs);
     this.setState({ columnDefs: this.state.SelectedcolumnDefs });
     this.setState({ SelectedcolumnDefs: this.state.SelectedcolumnDefs });
     this.setState({ rowData: this.state.rowData });
     localStorage.setItem(
-      "UserSearchheading",
+      "UserSearchParSearch",
       JSON.stringify(this.state.SelectedcolumnDefs)
     );
     this.LookupviewStart();
@@ -636,8 +662,7 @@ class OrderSearch extends React.Component {
     let delindex = this.state.Arrindex; /* Your delete index here */
 
     if (SelectedCols && delindex >= 0) {
-      const splicedElement = SelectedCols.splice(delindex, 1); // Remove the element
-
+      SelectedCols.splice(delindex, 1); // Remove the element
       this.setState({
         SelectedcolumnDefs: SelectedCols, // Update the state with the modified array
       });
@@ -699,13 +724,13 @@ class OrderSearch extends React.Component {
                 <>
                   <Col sm="12">
                     <Card>
-                      <Row className="ml-2 mt-2 mr-2">
+                      <Row className="mt-2 ml-2 mr-2">
                         <Col>
                           <h1
                             className="float-left"
                             style={{ fontWeight: "600" }}
                           >
-                            Billing Lock List
+                            Cashbook
                           </h1>
                         </Col>
                         <Col>
@@ -800,7 +825,7 @@ class OrderSearch extends React.Component {
                                     0
                                       ? this.state.currenPageSize *
                                         this.state.getPageSize
-                                      : this.state.rowData.length}{" "}
+                                      : this.state.rowData.length}
                                     of {this.state.rowData.length}
                                     <ChevronDown className="ml-50" size={15} />
                                   </DropdownToggle>
@@ -895,7 +920,7 @@ class OrderSearch extends React.Component {
           <ModalBody className="modalbodyhead">
             <Row>
               <Col lg="4" md="4" sm="12" xl="4" xs="12">
-                <h4>Avilable Columns</h4>
+                <h4>Available Columns</h4>
                 <div className="mainshffling">
                   <div class="ex1">
                     {AllcolumnDefs &&
@@ -984,12 +1009,11 @@ class OrderSearch extends React.Component {
                                             );
 
                                           if (SelectedCols && delindex >= 0) {
-                                            const splicedElement =
-                                              SelectedCols.splice(delindex, 1); // Remove the element
+                                            SelectedCols.splice(delindex, 1); // Remove the element
                                             // splicedElement contains the removed element, if needed
 
                                             this.setState({
-                                              SelectedcolumnDefs: SelectedCols, // Update the state with the modified array
+                                              SelectedcolumnDefs: SelectedCols, // Update the state with the
                                             });
                                           }
                                         }}
@@ -1045,4 +1069,4 @@ class OrderSearch extends React.Component {
     );
   }
 }
-export default OrderSearch;
+export default Cashbook;

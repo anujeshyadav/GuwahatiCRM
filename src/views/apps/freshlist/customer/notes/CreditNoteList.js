@@ -16,6 +16,7 @@ import {
   ModalBody,
   Badge,
 } from "reactstrap";
+import { ImDownload } from "react-icons/im";
 import { AgGridReact } from "ag-grid-react";
 import "ag-grid-community/dist/styles/ag-grid.css";
 import jsPDF from "jspdf";
@@ -571,16 +572,21 @@ class CreditNoteList extends React.Component {
                 <>
                   <Col sm="12">
                     <Card>
-                      <Row className="m-2">
+                      <Row className="ml-2 mt-2 mr-2">
                         <Col>
-                          <h1 className="float-left">CreditNote List</h1>
+                          <h1
+                            className="float-left"
+                            style={{ fontWeight: "600" }}
+                          >
+                            CreditNote List
+                          </h1>
                         </Col>
                         <Col>
                           <span className="mx-1">
                             <FaFilter
                               style={{ cursor: "pointer" }}
                               title="filter coloumn"
-                              size="25px"
+                              size="35px"
                               onClick={this.LookupviewStart}
                               color="#39cccc"
                               className="float-right"
@@ -588,10 +594,10 @@ class CreditNoteList extends React.Component {
                           </span>
                           <span className="mx-1">
                             <div className="dropdown-container float-right">
-                              <BsCloudDownloadFill
+                              <ImDownload
                                 style={{ cursor: "pointer" }}
                                 title="download file"
-                                size="25px"
+                                size="35px"
                                 className="dropdown-button "
                                 color="#39cccc"
                                 onClick={this.toggleDropdown}
@@ -601,6 +607,8 @@ class CreditNoteList extends React.Component {
                                   style={{
                                     position: "absolute",
                                     zIndex: "1",
+                                    border: "1px solid #39cccc",
+                                    backgroundColor: "white",
                                   }}
                                   className="dropdown-content dropdownmy"
                                 >
@@ -665,7 +673,7 @@ class CreditNoteList extends React.Component {
                           </span> */}
                         </Col>
                       </Row>
-                      <CardBody>
+                      <CardBody style={{ marginTop: "-1.5rem" }}>
                         {this.state.rowData === null ? null : (
                           <div className="ag-theme-material w-100 my-2 ag-grid-table">
                             <div className="d-flex flex-wrap justify-content-between align-items-center">

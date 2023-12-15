@@ -19,6 +19,7 @@ import {
   Form,
   CustomInput,
 } from "reactstrap";
+import { ImDownload } from "react-icons/im";
 import { AiOutlineDownload } from "react-icons/ai";
 import { ToWords } from "to-words";
 import {
@@ -1280,17 +1281,30 @@ class InvoiceGenerator extends React.Component {
                 </>
               ) : (
                 <>
-                  <Col>
+                  <Col sm="12">
                     <Card>
-                      <Row className="m-2">
-                        <Col>
-                          <h1 className="float-left">Sales Order List</h1>
+                      <Row className="ml-2 mr-2 mt-2">
+                        <Col lg="9" sm="8" xs="8">
+                          <h1
+                            className="float-left"
+                            style={{ fontWeight: "600" }}
+                          >
+                            Sales Order List
+                          </h1>
                         </Col>
+
                         {this.state.InsiderPermissions &&
                           this.state.InsiderPermissions?.Create && (
-                            <Col>
+                            <Col lg="2" sm="2" xs="2">
                               <Button
-                                className=" btn btn-success float-right "
+                                className="float-right  "
+                                color="#39cccc"
+                                style={{
+                                  cursor: "pointer",
+                                  backgroundColor: "#39cccc",
+                                  color: "white",
+                                  fontWeight: "600",
+                                }}
                                 onClick={e => {
                                   let billnumber =
                                     localStorage.getItem("billnumber");
@@ -1311,22 +1325,22 @@ class InvoiceGenerator extends React.Component {
                         <Col>
                           {InsiderPermissions && InsiderPermissions?.View && (
                             <>
-                              <span className="mx-1">
+                              <span className="">
                                 <FaFilter
                                   style={{ cursor: "pointer" }}
                                   title="filter coloumn"
-                                  size="25px"
+                                  size="35px"
                                   onClick={this.LookupviewStart}
                                   color="#39cccc"
                                   className="float-right"
                                 />
                               </span>
-                              <span className="mx-1">
+                              <span className="">
                                 <div className="dropdown-container float-right">
-                                  <BsCloudDownloadFill
+                                  <ImDownload
                                     style={{ cursor: "pointer" }}
                                     title="download file"
-                                    size="25px"
+                                    size="35px"
                                     className="dropdown-button "
                                     color="#39cccc"
                                     onClick={this.toggleDropdown}
@@ -1336,6 +1350,8 @@ class InvoiceGenerator extends React.Component {
                                       style={{
                                         position: "absolute",
                                         zIndex: "1",
+                                        border: "1px solid #39cccc",
+                                        backgroundColor: "white",
                                       }}
                                       className="dropdown-content dropdownmy"
                                     >
@@ -1383,30 +1399,8 @@ class InvoiceGenerator extends React.Component {
                             </>
                           )}
                         </Col>
-                        {this.state.InsiderPermissions &&
-                          this.state.InsiderPermissions?.Create && (
-                            <Col lg="2" sm="2" md="2">
-                              <Button
-                                className=" btn btn-success float-right"
-                                onClick={e => {
-                                  let billnumber =
-                                    localStorage.getItem("billnumber");
-                                  if (billnumber) {
-                                    // swal("You already Selected Bill Type");
-                                    this.setState({ ShowBill: true });
-                                    this.toggleModalOne();
-                                  } else {
-                                    this.setState({ ShowBill: true });
-                                    this.toggleModalOne();
-                                  }
-                                }}
-                              >
-                                Select Invoice
-                              </Button>
-                            </Col>
-                          )}
                       </Row>
-                      <CardBody>
+                      <CardBody style={{ marginTop: "-1.5rem" }}>
                         {this.state.rowData === null ? null : (
                           <div className="ag-theme-material w-100 my-2 ag-grid-table">
                             <div className="d-flex flex-wrap justify-content-between align-items-center">

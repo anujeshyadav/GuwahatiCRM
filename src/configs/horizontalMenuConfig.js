@@ -266,7 +266,7 @@ const horizontalMenuConfig = [
         type: "item",
         icon: <BsTrophy size={22} />,
         permissions: ["admin", "editor"],
-        navLink: "/app/softNumen/order/OrderSearch",
+        navLink: "/app/jupitech/order/achivement",
       },
     ],
   },
@@ -370,7 +370,7 @@ const horizontalMenuConfig = [
         type: "item",
         icon: <FaBook size={22} />,
         permissions: ["admin", "editor"],
-        navLink: "/app/SoftNumen/parts/PartList",
+        navLink: "/app/SoftNumen/parts/Cashbook",
       },
     ],
   },
@@ -605,7 +605,7 @@ const horizontalMenuConfig = [
         type: "item",
         icon: <BsFileBarGraph size={22} />,
         permissions: ["admin", "editor"],
-        navLink: "/app/SoftNumen/ticket/TicketSearch",
+        navLink: "/app/SoftNumen/ticket/Stockreport",
       },
       {
         id: "OrderReport",
@@ -613,7 +613,7 @@ const horizontalMenuConfig = [
         type: "item",
         icon: <BsFillCartCheckFill size={22} />,
         permissions: ["admin", "editor"],
-        navLink: "/app/SoftNumen/ticket/TicketSearch",
+        navLink: "/app/softNumen/report/Orderreport",
       },
       {
         id: "OverdueReport",
@@ -621,7 +621,7 @@ const horizontalMenuConfig = [
         type: "item",
         icon: <FaBusinessTime size={22} />,
         permissions: ["admin", "editor"],
-        navLink: "/app/SoftNumen/ticket/TicketSearch",
+        navLink: "/app/SoftNumen/ticket/OverdueReport",
       },
       {
         id: "Salesreport",
@@ -629,7 +629,7 @@ const horizontalMenuConfig = [
         type: "item",
         icon: <FaFileInvoiceDollar size={22} />,
         permissions: ["admin", "editor"],
-        navLink: "/app/SoftNumen/ticket/TicketSearch",
+        navLink: "/app/SoftNumen/ticket/Salesreport",
       },
       {
         id: "purchasereportamount",
@@ -637,7 +637,7 @@ const horizontalMenuConfig = [
         type: "item",
         icon: <HiOutlineDocumentReport size={22} />,
         permissions: ["admin", "editor"],
-        navLink: "/app/SoftNumen/ticket/TicketSearch",
+        navLink: "/app/SoftNumen/ticket/purchasereportamount",
       },
       {
         id: "TeamandtargerReport",
@@ -645,7 +645,7 @@ const horizontalMenuConfig = [
         type: "item",
         icon: <RiTeamLine size={22} />,
         permissions: ["admin", "editor"],
-        navLink: "/app/SoftNumen/ticket/TicketSearch",
+        navLink: "/app/SoftNumen/ticket/TeamandtargerReport",
       },
 
       {
@@ -654,7 +654,7 @@ const horizontalMenuConfig = [
         type: "item",
         icon: <FaWarehouse size={22} />,
         permissions: ["admin", "editor"],
-        navLink: "/app/SoftNumen/ticket/TicketSearch",
+        navLink: "/app/SoftNumen/ticket/WareHouseReport",
       },
       {
         id: "Partywise ledger",
@@ -662,7 +662,7 @@ const horizontalMenuConfig = [
         type: "item",
         icon: <SiHyperledger size={22} />,
         permissions: ["admin", "editor"],
-        navLink: "/app/SoftNumen/ticket/TicketSearch",
+        navLink: "/app/SoftNumen/ticket/Partywiseledger",
       },
       {
         id: "TransporterReport",
@@ -670,7 +670,7 @@ const horizontalMenuConfig = [
         type: "item",
         icon: <MdEmojiTransportation size={22} />,
         permissions: ["admin", "editor"],
-        navLink: "/app/SoftNumen/ticket/TicketSearch",
+        navLink: "/app/SoftNumen/ticket/TransporterReport",
       },
       {
         id: "targerReport",
@@ -678,7 +678,7 @@ const horizontalMenuConfig = [
         type: "item",
         icon: <GiHumanTarget size={22} />,
         permissions: ["admin", "editor"],
-        navLink: "/app/SoftNumen/ticket/TicketSearch",
+        navLink: "/app/SoftNumen/ticket/targerReport",
       },
       {
         id: "DispatchReport",
@@ -686,7 +686,7 @@ const horizontalMenuConfig = [
         type: "item",
         icon: <FaTruckLoading size={22} />,
         permissions: ["admin", "editor"],
-        navLink: "/app/SoftNumen/ticket/TicketSearch",
+        navLink: "/app/SoftNumen/ticket/DispatchReport",
       },
       {
         id: "GSTR 1",
@@ -694,7 +694,7 @@ const horizontalMenuConfig = [
         type: "item",
         icon: <GiCash size={22} />,
         permissions: ["admin", "editor"],
-        navLink: "/app/SoftNumen/ticket/TicketSearch",
+        navLink: "/app/SoftNumen/ticket/GSTR1",
       },
       {
         id: "GSTR 3B",
@@ -702,7 +702,7 @@ const horizontalMenuConfig = [
         type: "item",
         icon: <GiCash size={22} />,
         permissions: ["admin", "editor"],
-        navLink: "/app/SoftNumen/ticket/TicketSearch",
+        navLink: "/app/SoftNumen/ticket/GSTR3B",
       },
       {
         id: "GSTR 9",
@@ -710,7 +710,7 @@ const horizontalMenuConfig = [
         type: "item",
         icon: <GiCash size={22} />,
         permissions: ["admin", "editor"],
-        navLink: "/app/SoftNumen/ticket/TicketSearch",
+        navLink: "/app/SoftNumen/ticket/GSTR9",
       },
       {
         id: "HSN Wise sale Report",
@@ -718,7 +718,7 @@ const horizontalMenuConfig = [
         type: "item",
         icon: <FaFileInvoiceDollar size={22} />,
         permissions: ["admin", "editor"],
-        navLink: "/app/SoftNumen/ticket/TicketSearch",
+        navLink: "/app/SoftNumen/ticket/HSNWisesaleReport",
       },
       {
         id: "Product List with HSN and GST",
@@ -726,7 +726,7 @@ const horizontalMenuConfig = [
         type: "item",
         icon: <FaRegListAlt size={22} />,
         permissions: ["admin", "editor"],
-        navLink: "/app/SoftNumen/ticket/TicketSearch",
+        navLink: "/app/SoftNumen/ticket/ProductListwithHSNandGST",
       },
       {
         id: "Out Standing Report",
@@ -734,7 +734,7 @@ const horizontalMenuConfig = [
         type: "item",
         icon: <FaOutdent size={22} />,
         permissions: ["admin", "editor"],
-        navLink: "/app/SoftNumen/ticket/TicketSearch",
+        navLink: "/app/SoftNumen/ticket/OutStandingReport",
       },
 
       {
@@ -743,7 +743,7 @@ const horizontalMenuConfig = [
         type: "item",
         icon: <BsFileLock2Fill size={22} />,
         permissions: ["admin", "editor"],
-        navLink: "/app/SoftNumen/ticket/TicketSearch",
+        navLink: "/app/SoftNumen/ticket/LockInReport",
       },
       {
         id: "Cashbook Report",
@@ -751,7 +751,7 @@ const horizontalMenuConfig = [
         type: "item",
         icon: <FaBook size={22} />,
         permissions: ["admin", "editor"],
-        navLink: "/app/SoftNumen/ticket/TicketSearch",
+        navLink: "/app/SoftNumen/ticket/CashbookReport",
       },
       {
         id: "Pending Order Report",
@@ -759,7 +759,7 @@ const horizontalMenuConfig = [
         type: "item",
         icon: <MdOutlinePendingActions size={22} />,
         permissions: ["admin", "editor"],
-        navLink: "/app/SoftNumen/ticket/TicketSearch",
+        navLink: "/app/SoftNumen/ticket/PendingOrderReport",
       },
     ],
   },

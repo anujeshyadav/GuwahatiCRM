@@ -17,6 +17,7 @@ import {
   ModalBody,
   Badge,
 } from "reactstrap";
+import { ImDownload } from "react-icons/im";
 import { ContextLayout } from "../../../../utility/context/Layout";
 import { AgGridReact } from "ag-grid-react";
 import "ag-grid-community/dist/styles/ag-grid.css";
@@ -83,7 +84,7 @@ class GoodDispatchList extends React.Component {
   }
 
   LookupviewStart = () => {
-    this.setState((prevState) => ({
+    this.setState(prevState => ({
       modal: !prevState.modal,
     }));
   };
@@ -105,7 +106,7 @@ class GoodDispatchList extends React.Component {
     this.setState({ InsiderPermissions: InsidePermissions });
     const userId = JSON.parse(localStorage.getItem("userData"))._id;
     GoodDispatchxmlView()
-      .then((res) => {
+      .then(res => {
         var mydropdownArray = [];
         var adddropdown = [];
         const jsonData = xmlJs.xml2json(res.data, { compact: true, spaces: 2 });
@@ -121,7 +122,7 @@ class GoodDispatchList extends React.Component {
           headerSet?.splice(indexC - 1, 1); // Since 'b' is removed, remove 'c' from updated index
         }
 
-        const inputs = headerSet?.map((ele) => {
+        const inputs = headerSet?.map(ele => {
           return {
             headerName: ele?.label._text,
             field: ele?.name._text,
@@ -144,7 +145,7 @@ class GoodDispatchList extends React.Component {
             field: "sortorder",
             field: "transactions",
             width: 190,
-            cellRendererFramework: (params) => {
+            cellRendererFramework: params => {
               return (
                 <div className="actions cursor-pointer">
                   {this.state.InsiderPermissions &&
@@ -221,7 +222,7 @@ class GoodDispatchList extends React.Component {
             field: "CnUpload",
             filter: true,
             sortable: true,
-            cellRendererFramework: (params) => {
+            cellRendererFramework: params => {
               return (
                 <>
                   <div className="actions cursor-pointer">
@@ -239,7 +240,7 @@ class GoodDispatchList extends React.Component {
             field: "FetchSalesInvoice",
             filter: true,
             sortable: true,
-            cellRendererFramework: (params) => {
+            cellRendererFramework: params => {
               return (
                 <>
                   <div className="actions cursor-pointer">
@@ -257,7 +258,7 @@ class GoodDispatchList extends React.Component {
             field: "updatedAt",
             filter: true,
             sortable: true,
-            cellRendererFramework: (params) => {
+            cellRendererFramework: params => {
               return (
                 <>
                   <div className="actions cursor-pointer">
@@ -284,12 +285,12 @@ class GoodDispatchList extends React.Component {
         }
         this.setState({ SelectedCols: Product });
       })
-      .catch((err) => {
+      .catch(err => {
         console.log(err);
       });
 
     await GoodDispatchListView(userId)
-      .then((res) => {
+      .then(res => {
         // console.log(res.GoodDispatch[0].CNUpload);
 
         // Find the index of 'b' in the array
@@ -305,12 +306,12 @@ class GoodDispatchList extends React.Component {
         }
         this.setState({ rowData: res.GoodDispatch });
       })
-      .catch((err) => {
+      .catch(err => {
         console.log(err);
       });
   }
   toggleDropdown = () => {
-    this.setState((prevState) => ({ isOpen: !prevState.isOpen }));
+    this.setState(prevState => ({ isOpen: !prevState.isOpen }));
   };
 
   runthisfunction(id) {
@@ -319,15 +320,15 @@ class GoodDispatchList extends React.Component {
         cancel: "cancel",
         catch: { text: "Delete ", value: "delete" },
       },
-    }).then((value) => {
+    }).then(value => {
       switch (value) {
         case "delete":
           DeleteAccount(id)
-            .then((res) => {
+            .then(res => {
               let selectedData = this.gridApi.getSelectedRows();
               this.gridApi.updateRowData({ remove: selectedData });
             })
-            .catch((err) => {
+            .catch(err => {
               console.log(err);
             });
           break;
@@ -336,7 +337,7 @@ class GoodDispatchList extends React.Component {
     });
   }
 
-  onGridReady = (params) => {
+  onGridReady = params => {
     this.gridApi = params.api;
     this.gridColumnApi = params.columnApi;
     this.gridRef.current = params.api;
@@ -348,11 +349,11 @@ class GoodDispatchList extends React.Component {
     });
   };
 
-  updateSearchQuery = (val) => {
+  updateSearchQuery = val => {
     this.gridApi.setQuickFilter(val);
   };
 
-  filterSize = (val) => {
+  filterSize = val => {
     if (this.gridApi) {
       this.gridApi.paginationSetPageSize(Number(val));
       this.setState({
@@ -367,7 +368,7 @@ class GoodDispatchList extends React.Component {
       SelectedColums?.push(value);
     } else {
       const delindex = SelectedColums?.findIndex(
-        (ele) => ele?.headerName === value?.headerName
+        ele => ele?.headerName === value?.headerName
       );
 
       SelectedColums?.splice(delindex, 1);
@@ -378,14 +379,14 @@ class GoodDispatchList extends React.Component {
       Papa.parse(csvData, {
         header: true,
         skipEmptyLines: true,
-        complete: (result) => {
+        complete: result => {
           if (result.data && result.data.length > 0) {
             resolve(result.data);
           } else {
             reject(new Error("No data found in the CSV"));
           }
         },
-        error: (error) => {
+        error: error => {
           reject(error);
         },
       });
@@ -397,7 +398,7 @@ class GoodDispatchList extends React.Component {
 
     const doc = new jsPDF("landscape", "mm", size, false);
     doc.setTextColor(5, 87, 97);
-    const tableData = parsedData.map((row) => Object.values(row));
+    const tableData = parsedData.map(row => Object.values(row));
     doc.addImage(Logo, "JPEG", 10, 10, 50, 30);
     let date = new Date();
     doc.setCreationDate(date);
@@ -422,12 +423,12 @@ class GoodDispatchList extends React.Component {
       console.error("Error parsing CSV:", error);
     }
   };
-  processCell = (params) => {
+  processCell = params => {
     return params.value;
   };
 
   convertCsvToExcel(csvData) {
-    return new Promise((resolve) => {
+    return new Promise(resolve => {
       Papa.parse(csvData, {
         header: true,
         dynamicTyping: true,
@@ -458,7 +459,7 @@ class GoodDispatchList extends React.Component {
     window.URL.revokeObjectURL(url);
   }
 
-  exportToExcel = async (e) => {
+  exportToExcel = async e => {
     const CsvData = this.gridApi.getDataAsCsv({
       processCellCallback: this.processCell,
     });
@@ -471,7 +472,7 @@ class GoodDispatchList extends React.Component {
       processCellCallback: this.processCell,
     });
     Papa.parse(CsvData, {
-      complete: (result) => {
+      complete: result => {
         const ws = XLSX.utils.json_to_sheet(result.data);
         const wb = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(wb, ws, "Sheet1");
@@ -507,13 +508,13 @@ class GoodDispatchList extends React.Component {
       processCellCallback: this.processCell,
     });
     Papa.parse(CsvData, {
-      complete: (result) => {
+      complete: result => {
         const rows = result.data;
 
         // Create XML
         let xmlString = "<root>\n";
 
-        rows.forEach((row) => {
+        rows.forEach(row => {
           xmlString += "  <row>\n";
           row.forEach((cell, index) => {
             xmlString += `    <field${index + 1}>${cell}</field${index + 1}>\n`;
@@ -535,7 +536,7 @@ class GoodDispatchList extends React.Component {
     });
   };
 
-  HandleSetVisibleField = (e) => {
+  HandleSetVisibleField = e => {
     e.preventDefault();
     this.gridApi.setColumnDefs(this.state.SelectedcolumnDefs);
     this.setState({ columnDefs: this.state.SelectedcolumnDefs });
@@ -551,10 +552,10 @@ class GoodDispatchList extends React.Component {
   HeadingRightShift = () => {
     const updatedSelectedColumnDefs = [
       ...new Set([
-        ...this.state.SelectedcolumnDefs.map((item) => JSON.stringify(item)),
-        ...SelectedColums.map((item) => JSON.stringify(item)),
+        ...this.state.SelectedcolumnDefs.map(item => JSON.stringify(item)),
+        ...SelectedColums.map(item => JSON.stringify(item)),
       ]),
-    ].map((item) => JSON.parse(item));
+    ].map(item => JSON.parse(item));
     this.setState({
       SelectedcolumnDefs: [...new Set(updatedSelectedColumnDefs)], // Update the state with the combined array
     });
@@ -590,11 +591,12 @@ class GoodDispatchList extends React.Component {
               <Col>
                 <div className="d-flex justify-content-end p-1">
                   <Button
-                    onClick={(e) => {
+                    onClick={e => {
                       e.preventDefault();
                       this.setState({ EditOneUserView: false });
                     }}
-                    color="danger">
+                    color="danger"
+                  >
                     Back
                   </Button>
                 </div>
@@ -610,11 +612,12 @@ class GoodDispatchList extends React.Component {
                     <Col>
                       <div className="d-flex justify-content-end p-1">
                         <Button
-                          onClick={(e) => {
+                          onClick={e => {
                             e.preventDefault();
                             this.setState({ ViewOneUserView: false });
                           }}
-                          color="danger">
+                          color="danger"
+                        >
                           Back
                         </Button>
                       </div>
@@ -626,9 +629,14 @@ class GoodDispatchList extends React.Component {
                 <>
                   <Col sm="12">
                     <Card>
-                      <Row className="m-2">
+                      <Row className="ml-2 mr-2 mt-2">
                         <Col>
-                          <h1 className="float-left">Good Dispatch List</h1>
+                          <h1
+                            className="float-left"
+                            style={{ fontWeight: "600" }}
+                          >
+                            Good Dispatch List
+                          </h1>
                         </Col>
 
                         {InsiderPermissions && InsiderPermissions?.View && (
@@ -637,7 +645,7 @@ class GoodDispatchList extends React.Component {
                               <FaFilter
                                 style={{ cursor: "pointer" }}
                                 title="filter coloumn"
-                                size="25px"
+                                size="35px"
                                 onClick={this.LookupviewStart}
                                 color="#39cccc"
                                 className="float-right"
@@ -645,10 +653,10 @@ class GoodDispatchList extends React.Component {
                             </span>
                             <span className="mx-1">
                               <div className="dropdown-container float-right">
-                                <BsCloudDownloadFill
+                                <ImDownload
                                   style={{ cursor: "pointer" }}
                                   title="download file"
-                                  size="25px"
+                                  size="35px"
                                   className="dropdown-button "
                                   color="#39cccc"
                                   onClick={this.toggleDropdown}
@@ -658,12 +666,16 @@ class GoodDispatchList extends React.Component {
                                     style={{
                                       position: "absolute",
                                       zIndex: "1",
+                                      border: "1px solid #39cccc",
+                                      backgroundColor: "white",
                                     }}
-                                    className="dropdown-content dropdownmy">
+                                    className="dropdown-content dropdownmy"
+                                  >
                                     <h5
                                       onClick={() => this.exportToPDF()}
                                       style={{ cursor: "pointer" }}
-                                      className=" mx-1 myactive mt-1">
+                                      className=" mx-1 myactive mt-1"
+                                    >
                                       .PDF
                                     </h5>
                                     <h5
@@ -671,25 +683,29 @@ class GoodDispatchList extends React.Component {
                                         this.gridApi.exportDataAsCsv()
                                       }
                                       style={{ cursor: "pointer" }}
-                                      className=" mx-1 myactive">
+                                      className=" mx-1 myactive"
+                                    >
                                       .CSV
                                     </h5>
                                     <h5
                                       onClick={this.convertCSVtoExcel}
                                       style={{ cursor: "pointer" }}
-                                      className=" mx-1 myactive">
+                                      className=" mx-1 myactive"
+                                    >
                                       .XLS
                                     </h5>
                                     <h5
                                       onClick={this.exportToExcel}
                                       style={{ cursor: "pointer" }}
-                                      className=" mx-1 myactive">
+                                      className=" mx-1 myactive"
+                                    >
                                       .XLSX
                                     </h5>
                                     <h5
                                       onClick={() => this.convertCsvToXml()}
                                       style={{ cursor: "pointer" }}
-                                      className=" mx-1 myactive">
+                                      className=" mx-1 myactive"
+                                    >
                                       .XML
                                     </h5>
                                   </div>
@@ -699,24 +715,30 @@ class GoodDispatchList extends React.Component {
                             <span>
                               <Route
                                 render={({ history }) => (
-                                  <Badge
-                                    style={{ cursor: "pointer" }}
+                                  <Button
+                                    style={{
+                                      cursor: "pointer",
+                                      backgroundColor: "#39cccc",
+                                      color: "white",
+                                      fontWeight: "600",
+                                    }}
                                     className="float-right mr-1"
-                                    color="primary"
+                                    color="#39cccc"
                                     onClick={() =>
                                       history.push(
                                         "/app/AjGroup/dispatch/CreateDispach"
                                       )
-                                    }>
+                                    }
+                                  >
                                     <FaPlus size={15} /> Create Dispatch
-                                  </Badge>
+                                  </Button>
                                 )}
                               />
                             </span>
                           </Col>
                         )}
                       </Row>
-                      <CardBody>
+                      <CardBody style={{ marginTop: "-1.5rem" }}>
                         {this.state.rowData === null ? null : (
                           <div className="ag-theme-material w-100 my-2 ag-grid-table">
                             <div className="d-flex flex-wrap justify-content-between align-items-center">
@@ -741,27 +763,32 @@ class GoodDispatchList extends React.Component {
                                   <DropdownMenu right>
                                     <DropdownItem
                                       tag="div"
-                                      onClick={() => this.filterSize(5)}>
+                                      onClick={() => this.filterSize(5)}
+                                    >
                                       5
                                     </DropdownItem>
                                     <DropdownItem
                                       tag="div"
-                                      onClick={() => this.filterSize(20)}>
+                                      onClick={() => this.filterSize(20)}
+                                    >
                                       20
                                     </DropdownItem>
                                     <DropdownItem
                                       tag="div"
-                                      onClick={() => this.filterSize(50)}>
+                                      onClick={() => this.filterSize(50)}
+                                    >
                                       50
                                     </DropdownItem>
                                     <DropdownItem
                                       tag="div"
-                                      onClick={() => this.filterSize(100)}>
+                                      onClick={() => this.filterSize(100)}
+                                    >
                                       100
                                     </DropdownItem>
                                     <DropdownItem
                                       tag="div"
-                                      onClick={() => this.filterSize(134)}>
+                                      onClick={() => this.filterSize(134)}
+                                    >
                                       134
                                     </DropdownItem>
                                   </DropdownMenu>
@@ -771,7 +798,7 @@ class GoodDispatchList extends React.Component {
                                 <div className="table-input mr-1">
                                   <Input
                                     placeholder="search Item here..."
-                                    onChange={(e) =>
+                                    onChange={e =>
                                       this.updateSearchQuery(e.target.value)
                                     }
                                     value={this.state.value}
@@ -780,7 +807,7 @@ class GoodDispatchList extends React.Component {
                               </div>
                             </div>
                             <ContextLayout.Consumer className="ag-theme-alpine">
-                              {(context) => (
+                              {context => (
                                 <AgGridReact
                                   id="myAgGrid"
                                   // gridOptions={{
@@ -837,7 +864,8 @@ class GoodDispatchList extends React.Component {
           isOpen={this.state.modal}
           toggle={this.LookupviewStart}
           className={this.props.className}
-          style={{ maxWidth: "1050px" }}>
+          style={{ maxWidth: "1050px" }}
+        >
           <ModalHeader toggle={this.LookupviewStart}>Change Fileds</ModalHeader>
           <ModalBody className="modalbodyhead">
             <Row>
@@ -850,15 +878,15 @@ class GoodDispatchList extends React.Component {
                         return (
                           <>
                             <div
-                              onClick={(e) =>
-                                this.handleChangeHeader(e, ele, i)
-                              }
+                              onClick={e => this.handleChangeHeader(e, ele, i)}
                               key={i}
-                              className="mycustomtag mt-1">
+                              className="mycustomtag mt-1"
+                            >
                               <span className="mt-1">
                                 <h5
                                   style={{ cursor: "pointer" }}
-                                  className="allfields">
+                                  className="allfields"
+                                >
                                   <input
                                     type="checkbox"
                                     // checked={check && check}
@@ -917,14 +945,15 @@ class GoodDispatchList extends React.Component {
                                             : ""
                                         }`,
                                       }}
-                                      className="allfields">
+                                      className="allfields"
+                                    >
                                       <IoMdRemoveCircleOutline
                                         onClick={() => {
                                           const SelectedCols =
                                             this.state.SelectedcolumnDefs.slice();
                                           const delindex =
                                             SelectedCols.findIndex(
-                                              (element) =>
+                                              element =>
                                                 element?.headerName ==
                                                 ele?.headerName
                                             );
