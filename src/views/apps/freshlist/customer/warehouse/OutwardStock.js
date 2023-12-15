@@ -59,6 +59,7 @@ import {
 import * as XLSX from "xlsx";
 import UserContext from "../../../../../context/Context";
 import UpdateStockTrx from "../../accounts/UpdateStockTrx";
+import StockTrxInvoice from "../../subcategory/OutWardStockPO";
 
 const SelectedColums = [];
 
@@ -70,6 +71,8 @@ class OutwardStock extends React.Component {
     this.gridApi = null;
     this.state = {
       isOpen: false,
+      ShowBill: false,
+
       Arrindex: "",
       rowData: [],
       setMySelectedarr: [],
@@ -300,8 +303,11 @@ class OutwardStock extends React.Component {
     this.setState((prevState) => ({
       modalone: !prevState.modalone,
     }));
+    this.setState({ ShowBill: false });
   };
-
+  handleStockTrxInvoiceShow = () => {
+    this.setState({ ShowBill: true });
+  };
   handleChangeEdit = (data, types) => {
     let type = types;
     if (type == "readonly") {
@@ -1024,111 +1030,129 @@ class OutwardStock extends React.Component {
           toggle={this.togglemodal}
           className={this.props.className}
           style={{ maxWidth: "1050px" }}>
-          <ModalHeader toggle={this.togglemodal}>All Products</ModalHeader>
-          <ModalBody className="modalbodyhead">
+          <ModalHeader toggle={this.togglemodal}>
+            {this.state.ShowBill ? "Bill Download" : "All Products"}
+          </ModalHeader>
+          <ModalBody
+            className={`${this.state.ShowBill ? "p-1" : "modalbodyhead"}`}>
             {this.state.ViewOneUserView ? (
               <>
-                <Row>
-                  <Col>
-                    <Label>WareHouse To :</Label>
-                    <Badge color="primary" className="">
-                      {this.state.ViewOneData &&
-                        this.state.ViewOneData?.warehouseToId?.firstName}
-                    </Badge>
-                  </Col>
-                  <Col>
-                    <Label>Stock trx date :</Label>
-                    <h5>
-                      {this.state.ViewOneData &&
-                        this.state.ViewOneData?.stockTransferDate}
-                    </h5>
-                  </Col>
-                  <Col>
-                    <Label>Grand Total :</Label>
-                    <h5>
-                      <strong>
-                        {this.state.ViewOneData &&
-                          this.state.ViewOneData?.grandTotal}{" "}
-                      </strong>
-                      Rs/-
-                    </h5>
-                  </Col>
-                  <Col>
-                    {this.state.ViewOneData?.transferStatus == "Completed" ? (
-                      <>
+                {this.state.ShowBill ? (
+                  <>
+                    <StockTrxInvoice ViewOneData={this.state.ViewOneData} />
+                  </>
+                ) : (
+                  <>
+                    <Row>
+                      <Col>
+                        <Label>WareHouse To :</Label>
+                        <Badge color="primary" className="">
+                          {this.state.ViewOneData &&
+                            this.state.ViewOneData?.warehouseToId?.firstName}
+                        </Badge>
+                      </Col>
+                      <Col>
+                        <Label>Stock trx date :</Label>
+                        <h5>
+                          {this.state.ViewOneData &&
+                            this.state.ViewOneData?.stockTransferDate}
+                        </h5>
+                      </Col>
+                      <Col>
+                        <Label>Grand Total :</Label>
+                        <h5>
+                          <strong>
+                            {this.state.ViewOneData &&
+                              this.state.ViewOneData?.grandTotal}{" "}
+                          </strong>
+                          Rs/-
+                        </h5>
+                      </Col>
+
+                      {this.state.ViewOneData?.transferStatus == "Completed" ? (
+                        <>
+                          <Col className="">
+                            <Label>status:</Label>
+                            <div>
+                              <Badge color="primary">
+                                {this.state.ViewOneData?.transferStatus}
+                              </Badge>
+                            </div>
+                          </Col>
+                        </>
+                      ) : (
+                        <>
+                          <Col className="">
+                            <Label>status:</Label>
+                            <div>
+                              <Badge color="primary">
+                                {this.state.ViewOneData?.transferStatus}
+                              </Badge>
+                            </div>
+                          </Col>
+                        </>
+                      )}
+
+                      <Col>
+                        <Label>Download Invoice :</Label>
                         <div className="d-flex justify-content-center">
-                          <label>Status</label>
-                          <Badge color="primary">
-                            {this.state.ViewOneData?.transferStatus}
-                          </Badge>
+                          <FaDownload
+                            onClick={this.handleStockTrxInvoiceShow}
+                            color="#00c0e"
+                            style={{ cursor: "pointer" }}
+                            size={20}
+                          />
                         </div>
-                      </>
-                    ) : (
-                      <>
+                      </Col>
+                    </Row>
+                    <Row className="p-2">
+                      <Col>
                         <div className="d-flex justify-content-center">
-                          <label>Status</label>
-                          <Badge color="primary">
-                            {this.state.ViewOneData?.transferStatus}
-                          </Badge>
+                          <h4>Product Details</h4>
                         </div>
-                      </>
-                    )}
-                  </Col>
-                  <Col>
-                    <Label>Download Invoice :</Label>
-                    <div className="d-flex justify-content-center">
-                      <FaDownload
-                        color="#00c0e"
-                        style={{ cursor: "pointer" }}
-                        size={20}
-                      />
-                    </div>
-                  </Col>
-                </Row>
-                <Row className="p-2">
-                  <Col>
-                    <div className="d-flex justify-content-center">
-                      <h4>Product Details</h4>
-                    </div>
-                  </Col>
-                </Row>
-                <Row>
-                  <Col>
-                    <Table style={{ cursor: "pointer" }} striped>
-                      <thead>
-                        <tr>
-                          <th>#</th>
-                          <th>Product Name</th>
-                          <th>Price</th>
-                          <th>Size</th>
-                          <th>Unit</th>
-                          <th>Quantity</th>
-                          <th>Total</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {this.state.ViewOneData?.productItems &&
-                          this.state.ViewOneData?.productItems?.map(
-                            (ele, i) => (
-                              <>
-                                <tr>
-                                  <th scope="row">{i + 1}</th>
-                                  <td>{ele?.product?.Product_Title}</td>
-                                  <td>{ele?.price}</td>
-                                  <td>{ele?.Size}</td>
-                                  <td>{ele?.unitType}</td>
-                                  <td>{ele?.transferQty}</td>
-                                  <td>
-                                    {ele?.price * ele?.Size * ele?.transferQty}
-                                  </td>
-                                </tr>
-                              </>
-                            )
-                          )}
-                      </tbody>
-                    </Table>
-                  </Col>
-                </Row>
+                      </Col>
+                    </Row>
+                    <Row>
+                      <Col>
+                        <Table style={{ cursor: "pointer" }} striped>
+                          <thead>
+                            <tr>
+                              <th>#</th>
+                              <th>Product Name</th>
+                              <th>Price</th>
+                              <th>Size</th>
+                              <th>Unit</th>
+                              <th>Quantity</th>
+                              <th>Total</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {this.state.ViewOneData?.productItems &&
+                              this.state.ViewOneData?.productItems?.map(
+                                (ele, i) => (
+                                  <>
+                                    <tr>
+                                      <th scope="row">{i + 1}</th>
+                                      <td>{ele?.product?.Product_Title}</td>
+                                      <td>{ele?.price}</td>
+                                      <td>{ele?.Size}</td>
+                                      <td>{ele?.unitType}</td>
+                                      <td>{ele?.transferQty}</td>
+                                      <td>
+                                        {ele?.price *
+                                          ele?.Size *
+                                          ele?.transferQty}
+                                      </td>
+                                    </tr>
+                                  </>
+                                )
+                              )}
+                          </tbody>
+                        </Table>
+                      </Col>
+                    </Row>
+                  </>
+                )}
               </>
             ) : (
               <>

@@ -75,7 +75,6 @@ const StockTrxPOinvoice = ({
   tableList,
   AllCharges,
 }) => {
-  // console.log("poinvoice");
   // const { items, customerName, date, total, place_supply } = invoiceData;
   const curentDate = new Date();
 
@@ -259,10 +258,11 @@ const StockTrxPOinvoice = ({
                               fontSize: "10px",
                               fontWeight: "bold",
                             }}>
-                            {`${AllData?.CompanyDetails?.name}
-                             ${AllData?.CompanyDetails?.address}
-                              ${AllData?.CompanyDetails?.mobileNo} 
-                              ${AllData?.CompanyDetails?.email} `}
+                            {`${BilData?.ViewOneData?.warehouseFromId?.firstName}
+                             ${BilData?.ViewOneData?.warehouseFromId?.City}
+                               ${BilData?.ViewOneData?.warehouseFromId?.State} 
+                                ${BilData?.ViewOneData?.warehouseFromId?.Country} 
+                                ${BilData?.ViewOneData?.warehouseFromId?.email}`}
                           </Text>{" "}
                           <Text
                             style={{
@@ -347,10 +347,11 @@ const StockTrxPOinvoice = ({
                               fontSize: "10px",
                               fontWeight: "bold",
                             }}>
-                            {`${AllData?.CompanyDetails?.name}
-                             ${AllData?.CompanyDetails?.address}
-                              ${AllData?.CompanyDetails?.mobileNo} 
-                              ${AllData?.CompanyDetails?.email} `}
+                            {`${BilData?.ViewOneData?.warehouseFromId?.firstName}
+                             ${BilData?.ViewOneData?.warehouseFromId?.City}
+                               ${BilData?.ViewOneData?.warehouseFromId?.State} 
+                                ${BilData?.ViewOneData?.warehouseFromId?.Country} 
+                                ${BilData?.ViewOneData?.warehouseFromId?.email}`}
                           </Text>{" "}
                           <Text
                             style={{

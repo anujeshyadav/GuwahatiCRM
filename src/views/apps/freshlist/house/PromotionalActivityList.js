@@ -54,6 +54,7 @@ import {
 } from "react-icons/bs";
 import * as XLSX from "xlsx";
 import UserContext from "../../../../context/Context";
+import { CheckPermission } from "./CheckPermission";
 
 const SelectedColums = [];
 
@@ -66,6 +67,7 @@ class PromotionalActivityList extends React.Component {
     this.state = {
       isOpen: false,
       Table: false,
+      InsiderPermissions: {},
       TableFilterValue: "",
       SelectedFilter: "",
       Arrindex: "",
@@ -108,217 +110,29 @@ class PromotionalActivityList extends React.Component {
   };
 
   async componentDidMount() {
+    const InsidePermissions = CheckPermission("Promotional Activity");
+    console.log(InsidePermissions);
+    this.setState({ InsiderPermissions: InsidePermissions });
     const UserInformation = this.context?.UserInformatio;
-        let pageparmission = JSON.parse(localStorage.getItem("userData"));
-        View_PromotionList(pageparmission?._id)
-          .then((res) => {
-            console.log(res?.Promotion);
-            let keys = Object.keys(res?.Promotion[0]);
-            let myarr = keys.filter(
-              (item) =>
-                item !== "_id" &&
-                item !== "__v" &&
-                item !== "created_by" &&
-                item !== "status"
-            );
-            let unique = [...new Set(myarr)];
-            this.setState({ Dropdown: unique });
-            this.setState({ AllData: res?.Promotion });
-          })
-          .catch((err) => {
-            console.log(err);
-          });
-    // await CreateAccountView()
-    //   .then((res) => {
-    //     var mydropdownArray = [];
-    //     var adddropdown = [];
-    //     const jsonData = xmlJs.xml2json(res.data, { compact: true, spaces: 2 });
-    //     console.log(JSON.parse(jsonData)?.CreateUser);
-
-    //     const inputs = JSON.parse(jsonData)?.CreateUser?.input?.map((ele) => {
-    //       return {
-    //         headerName: ele?.label._text,
-    //         field: ele?.name._text,
-    //         filter: true,
-    //         sortable: true,
-    //       };
-    //     });
-    //     // let Radioinput =
-    //     //   JSON.parse(jsonData).CreateAccount?.Radiobutton?.input[0]?.name
-    //     //     ?._text;
-    //     // const addRadio = [
-    //     //   {
-    //     //     headerName: Radioinput,
-    //     //     field: Radioinput,
-    //     //     filter: true,
-    //     //     sortable: true,
-    //     //     cellRendererFramework: (params) => {
-    //     //       return params.data?.Status === "Active" ? (
-    //     //         <div className="badge badge-pill badge-success">
-    //     //           {params.data.Status}
-    //     //         </div>
-    //     //       ) : params.data?.Status === "Deactive" ? (
-    //     //         <div className="badge badge-pill badge-warning">
-    //     //           {params.data.Status}
-    //     //         </div>
-    //     //       ) : (
-    //     //         "NA"
-    //     //       );
-    //     //     },
-    //     //   },
-    //     // ];
-
-    //     // let dropdown = JSON.parse(jsonData).CreateAccount?.MyDropdown?.dropdown;
-    //     // if (dropdown.length) {
-    //     //   var mydropdownArray = dropdown?.map((ele) => {
-    //     //     return {
-    //     //       headerName: ele?.label,
-    //     //       field: ele?.name,
-    //     //       filter: true,
-    //     //       sortable: true,
-    //     //     };
-    //     //   });
-    //     // } else {
-    //     //   var adddropdown = [
-    //     //     {
-    //     //       headerName: dropdown?.label._text,
-    //     //       field: dropdown?.name._text,
-    //     //       filter: true,
-    //     //       sortable: true,
-    //     //     },
-    //     //   ];
-    //     // }
-
-    //     let myHeadings = [
-    //       // ...checkboxinput,
-    //       ...inputs,
-    //       // ...adddropdown,
-    //       // ...addRadio,
-    //       // ...mydropdownArray,
-    //     ];
-    //     // console.log(myHeadings);
-    //     let Product = [
-    //       {
-    //         headerName: "Actions",
-    //         field: "sortorder",
-    //         field: "transactions",
-    //         width: 190,
-    //         cellRendererFramework: (params) => {
-    //           return (
-    //             <div className="actions cursor-pointer">
-    //               <Route
-    //                 render={({ history }) => (
-    //                   <Eye
-    //                     className="mr-50"
-    //                     size="25px"
-    //                     color="green"
-    //                     onClick={() => {
-    //                       this.handleChangeEdit(params.data, "readonly");
-    //                     }}
-    //                   />
-    //                 )}
-    //               />
-    //               <Route
-    //                 render={({ history }) => (
-    //                   <Edit
-    //                     className="mr-50"
-    //                     size="25px"
-    //                     color="blue"
-    //                     onClick={() => {
-    //                       this.handleChangeEdit(params.data, "Editable");
-    //                     }}
-    //                   />
-    //                 )}
-    //               />
-
-    //               <Route
-    //                 render={() => (
-    //                   <Trash2
-    //                     className="mr-50"
-    //                     size="25px"
-    //                     color="red"
-    //                     onClick={() => {
-    //                       this.runthisfunction(params?.data?._id);
-    //                     }}
-    //                   />
-    //                 )}
-    //               />
-    //             </div>
-    //           );
-    //         },
-    //       },
-    //       {
-    //         headerName: "Status",
-    //         field: "status",
-    //         filter: true,
-    //         width: 150,
-    //         cellRendererFramework: (params) => {
-    //           return params.data?.status === "Active" ? (
-    //             <div className="badge badge-pill badge-success">
-    //               {params.data?.status}
-    //             </div>
-    //           ) : params.data?.status === "Deactive" ? (
-    //             <div className="badge badge-pill badge-warning">
-    //               {params.data?.status}
-    //             </div>
-    //           ) : null;
-    //         },
-    //       },
-
-    //       ...myHeadings,
-    //       {
-    //         headerName: "Created date",
-    //         field: "createdAt",
-    //         filter: true,
-    //         sortable: true,
-    //         cellRendererFramework: (params) => {
-    //           return (
-    //             <>
-    //               <div className="actions cursor-pointer">
-    //                 <span>{params?.data?.createdAt}</span>
-    //               </div>
-    //             </>
-    //           );
-    //         },
-    //       },
-    //       {
-    //         headerName: "Updated date",
-    //         field: "updatedAt",
-    //         filter: true,
-    //         sortable: true,
-    //         cellRendererFramework: (params) => {
-    //           return (
-    //             <>
-    //               <div className="actions cursor-pointer">
-    //                 <div className="actions cursor-pointer">
-    //                   <span>{params?.data?.createdAt}</span>
-    //                 </div>
-    //               </div>
-    //             </>
-    //           );
-    //         },
-    //       },
-    //     ];
-
-    //     this.setState({ AllcolumnDefs: Product });
-
-    //     let userHeading = JSON.parse(
-    //       localStorage.getItem("PromotionalActivity")
-    //     );
-    //     if (userHeading?.length) {
-    //       this.setState({ columnDefs: userHeading });
-    //       this.gridApi.setColumnDefs(userHeading);
-    //       this.setState({ SelectedcolumnDefs: userHeading });
-    //     } else {
-    //       this.setState({ columnDefs: Product });
-    //       this.setState({ SelectedcolumnDefs: Product });
-    //     }
-    //     this.setState({ SelectedCols: Product });
-    //   })
-    //   .catch((err) => {
-    //     console.log(err);
-    //     swal("Error", "something went wrong try again");
-    //   });
+    let pageparmission = JSON.parse(localStorage.getItem("userData"));
+    View_PromotionList(pageparmission?._id)
+      .then((res) => {
+        console.log(res?.Promotion);
+        let keys = Object.keys(res?.Promotion[0]);
+        let myarr = keys.filter(
+          (item) =>
+            item !== "_id" &&
+            item !== "__v" &&
+            item !== "created_by" &&
+            item !== "status"
+        );
+        let unique = [...new Set(myarr)];
+        this.setState({ Dropdown: unique });
+        this.setState({ AllData: res?.Promotion });
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   }
   toggleDropdown = () => {
     this.setState((prevState) => ({ isOpen: !prevState.isOpen }));
@@ -620,10 +434,10 @@ class PromotionalActivityList extends React.Component {
       }
       // if(findheading.indexOf("productId")){
 
-        let index2 = findheading.indexOf("productId");
-        if (index2 > -1) {
-          findheading.splice(index2, 1);
-        }
+      let index2 = findheading.indexOf("productId");
+      if (index2 > -1) {
+        findheading.splice(index2, 1);
+      }
       // }
       headings = findheading?.map((ele) => {
         if (ele == "freeOtherProducts") {
@@ -664,66 +478,76 @@ class PromotionalActivityList extends React.Component {
           cellRendererFramework: (params) => {
             return (
               <div className="actions cursor-pointer">
-                <Route
-                  render={({ history }) => (
-                    <Eye
-                      className="mr-50"
-                      size="25px"
-                      color="green"
-                      onClick={() => {
-                        //   this.handleChangeEdit(params.data, "readonly");
-                      }}
+                {this.state.InsiderPermissions &&
+                  this.state.InsiderPermissions?.View && (
+                    <Route
+                      render={({ history }) => (
+                        <Eye
+                          className="mr-50"
+                          size="25px"
+                          color="green"
+                          onClick={() => {
+                            //   this.handleChangeEdit(params.data, "readonly");
+                          }}
+                        />
+                      )}
                     />
                   )}
-                />
-                <Route
-                  render={({ history }) => (
-                    <Edit
-                      className="mr-50"
-                      size="25px"
-                      color="blue"
-                      onClick={() => {
-                        //   this.handleChangeEdit(params.data, "Editable");
-                      }}
-                    />
-                  )}
-                />
 
-                <Route
-                  render={() => (
-                    <Trash2
-                      className="mr-50"
-                      size="25px"
-                      color="red"
-                      onClick={() => {
-                        this.runthisfunction(params?.data?._id);
-                      }}
+                {this.state.InsiderPermissions &&
+                  this.state.InsiderPermissions?.Edit && (
+                    <Route
+                      render={({ history }) => (
+                        <Edit
+                          className="mr-50"
+                          size="25px"
+                          color="blue"
+                          onClick={() => {
+                            //   this.handleChangeEdit(params.data, "Editable");
+                          }}
+                        />
+                      )}
                     />
                   )}
-                />
+
+                {this.state.InsiderPermissions &&
+                  this.state.InsiderPermissions?.Delete && (
+                    <Route
+                      render={() => (
+                        <Trash2
+                          className="mr-50"
+                          size="25px"
+                          color="red"
+                          onClick={() => {
+                            this.runthisfunction(params?.data?._id);
+                          }}
+                        />
+                      )}
+                    />
+                  )}
               </div>
             );
           },
         },
 
         ...myHeadings,
-         {
-            headerName: "Status",
-            field: "status",
-            filter: true,
-            width: 150,
-            cellRendererFramework: (params) => {
-              return params.data?.status === "Active" ? (
-                <div className="badge badge-pill badge-success">
-                  {params.data?.status}
-                </div>
-              ) : params.data?.status === "Deactive" ? (
-                <div className="badge badge-pill badge-warning">
-                  {params.data?.status}
-                </div>
-              ) : null;
-            },
+        {
+          headerName: "Status",
+          field: "status",
+          filter: true,
+          width: 150,
+          cellRendererFramework: (params) => {
+            return params.data?.status === "Active" ? (
+              <div className="badge badge-pill badge-success">
+                {params.data?.status}
+              </div>
+            ) : params.data?.status === "Deactive" ? (
+              <div className="badge badge-pill badge-warning">
+                {params.data?.status}
+              </div>
+            ) : null;
           },
+        },
         // {
         //   headerName: "Created date",
         //   field: "createdAt",
@@ -840,109 +664,113 @@ class PromotionalActivityList extends React.Component {
                             Promotional Activity list
                           </h1>
                         </Col>
-                        <Col lg="2" md="2" sm="2" xs="2">
-                          <CustomInput
-                            type="select"
-                            name="typeofpromotion"
-                            className="float-right"
-                            onChange={(e) => this.handleFilter(e)}
-                            
-                          >
-                            <option value="NA">
-                              --Select Promotion Type--
-                            </option>
-                            {this.state.Dropdown &&
-                              this.state.Dropdown?.map((ele, i) => {
-                                return (
-                                  <>
-                                    <option value={ele}>{ele}</option>
-                                  </>
-                                );
-                              })}
-                          </CustomInput>
-                        </Col>
-                        <Col lg="2" md="2" sm="2">
-                          <span className="">
-                            <FaFilter
-                              style={{ cursor: "pointer" }}
-                              title="filter coloumn"
-                              size="25px"
-                              onClick={this.LookupviewStart}
-                              color="#39cccc"
-                              className="float-right"
-                            />
-                          </span>
-                          <span className="mx-1">
-                            <div className="dropdown-container float-right">
-                              <BsCloudDownloadFill
-                                style={{ cursor: "pointer" }}
-                                title="download file"
-                                size="25px"
-                                className="dropdown-button "
-                                color="#39cccc"
-                                onClick={this.toggleDropdown}
-                              />
-                              {isOpen && (
-                                <div
-                                  style={{
-                                    position: "absolute",
-                                    zIndex: "1",
-                                  }}
-                                  className="dropdown-content dropdownmy">
-                                  <h5
-                                    onClick={() => this.exportToPDF()}
+
+                        {this.state.InsiderPermissions &&
+                          this.state.InsiderPermissions?.View && (
+                            <>
+                              <Col lg="2" md="2" sm="2" xs="2">
+                                <CustomInput
+                                  type="select"
+                                  name="typeofpromotion"
+                                  className="float-right"
+                                  onChange={(e) => this.handleFilter(e)}>
+                                  <option value="NA">
+                                    --Select Promotion Type--
+                                  </option>
+                                  {this.state.Dropdown &&
+                                    this.state.Dropdown?.map((ele, i) => {
+                                      return (
+                                        <>
+                                          <option value={ele}>{ele}</option>
+                                        </>
+                                      );
+                                    })}
+                                </CustomInput>
+                              </Col>
+                              <Col lg="2" md="2" sm="2">
+                                <span className="">
+                                  <FaFilter
                                     style={{ cursor: "pointer" }}
-                                    className=" mx-1 myactive mt-1">
-                                    .PDF
-                                  </h5>
-                                  <h5
-                                    onClick={() =>
-                                      this.gridApi.exportDataAsCsv()
-                                    }
-                                    style={{ cursor: "pointer" }}
-                                    className=" mx-1 myactive">
-                                    .CSV
-                                  </h5>
-                                  <h5
-                                    onClick={this.convertCSVtoExcel}
-                                    style={{ cursor: "pointer" }}
-                                    className=" mx-1 myactive">
-                                    .XLS
-                                  </h5>
-                                  <h5
-                                    onClick={this.exportToExcel}
-                                    style={{ cursor: "pointer" }}
-                                    className=" mx-1 myactive">
-                                    .XLSX
-                                  </h5>
-                                  <h5
-                                    onClick={() => this.convertCsvToXml()}
-                                    style={{ cursor: "pointer" }}
-                                    className=" mx-1 myactive">
-                                    .XML
-                                  </h5>
-                                </div>
-                              )}
-                            </div>
-                          </span>
-                          <span>
-                            <Route
-                              render={({ history }) => (
-                                <Badge
-                                  style={{ cursor: "pointer" }}
-                                  className="float-right mr-1"
-                                  color="primary"
-                                  onClick={() =>
-                                    history.push(
-                                      "/app/ajgroup/account/CreatePromotionalActivity"
-                                    )
-                                  }>
-                                  <FaPlus size={15} /> Activiity
-                                </Badge>
-                              )}
-                            />
-                          </span>
-                        </Col>
+                                    title="filter coloumn"
+                                    size="25px"
+                                    onClick={this.LookupviewStart}
+                                    color="#39cccc"
+                                    className="float-right"
+                                  />
+                                </span>
+                                <span className="mx-1">
+                                  <div className="dropdown-container float-right">
+                                    <BsCloudDownloadFill
+                                      style={{ cursor: "pointer" }}
+                                      title="download file"
+                                      size="25px"
+                                      className="dropdown-button "
+                                      color="#39cccc"
+                                      onClick={this.toggleDropdown}
+                                    />
+                                    {isOpen && (
+                                      <div
+                                        style={{
+                                          position: "absolute",
+                                          zIndex: "1",
+                                        }}
+                                        className="dropdown-content dropdownmy">
+                                        <h5
+                                          onClick={() => this.exportToPDF()}
+                                          style={{ cursor: "pointer" }}
+                                          className=" mx-1 myactive mt-1">
+                                          .PDF
+                                        </h5>
+                                        <h5
+                                          onClick={() =>
+                                            this.gridApi.exportDataAsCsv()
+                                          }
+                                          style={{ cursor: "pointer" }}
+                                          className=" mx-1 myactive">
+                                          .CSV
+                                        </h5>
+                                        <h5
+                                          onClick={this.convertCSVtoExcel}
+                                          style={{ cursor: "pointer" }}
+                                          className=" mx-1 myactive">
+                                          .XLS
+                                        </h5>
+                                        <h5
+                                          onClick={this.exportToExcel}
+                                          style={{ cursor: "pointer" }}
+                                          className=" mx-1 myactive">
+                                          .XLSX
+                                        </h5>
+                                        <h5
+                                          onClick={() => this.convertCsvToXml()}
+                                          style={{ cursor: "pointer" }}
+                                          className=" mx-1 myactive">
+                                          .XML
+                                        </h5>
+                                      </div>
+                                    )}
+                                  </div>
+                                </span>
+                                <span>
+                                  <Route
+                                    render={({ history }) => (
+                                      <Badge
+                                        style={{ cursor: "pointer" }}
+                                        className="float-right mr-1"
+                                        color="primary"
+                                        onClick={() =>
+                                          history.push(
+                                            "/app/ajgroup/account/CreatePromotionalActivity"
+                                          )
+                                        }>
+                                        <FaPlus size={15} /> Activiity
+                                      </Badge>
+                                    )}
+                                  />
+                                </span>
+                              </Col>
+                            </>
+                          )}
                       </Row>
                       {this.state.Table ? (
                         <>

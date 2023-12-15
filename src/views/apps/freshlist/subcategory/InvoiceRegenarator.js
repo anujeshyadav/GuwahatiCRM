@@ -12,24 +12,12 @@ const InvoiceRegenarator = (props) => {
   const [details, setDetails] = useState([]);
 
   useEffect(() => {
-    // if (props?.AddedBill?.length > 1) {
+  
     console.log(props);
-    // console.log("Multibil here", props?.AllbillMerged);
+
     setDetails(props?.AllbillMerged);
     setAllCharges(props?.Applied_Charges);
-    // } else {
-    //   const formdata = new FormData();
-    //   formdata.append("order_id", props.PrintData.order_id);
-    //   axiosConfig
-    //     .post(`/order_detail`, formdata)
-    //     .then((response) => {
-    //       console.log(response.data.data);
-    //       setDetails(response.data.data);
-    //     })
-    //     .catch((error) => {
-    //       console.log(error);
-    //     });
-    // }
+   
 
     if (props?.PrintData) {
       console.log(props?.PrintData);
