@@ -115,7 +115,7 @@ class RoleList extends React.Component {
                 )} */}
 
               {this.state.InsiderPermissions &&
-                this.state.InsiderPermissions.Delete && (
+                this.state.InsiderPermissions.Edit && (
                   <Route
                     render={({ history }) => (
                       <Edit
