@@ -18,11 +18,10 @@ const InvoiceGenerator = props => {
 
   useEffect(() => {
     console.log(props);
+
     let userchoice = JSON.parse(localStorage.getItem("billUI"));
     setUserChoice(userchoice);
     if (props?.AddedBill?.length > 0) {
-      // console.log("props", props);
-      // console.log("Multibil here", props?.AllbillMerged);
       setDetails(props?.AllbillMerged);
       setAllCharges(props?.Applied_Charges);
     } else {
@@ -30,11 +29,11 @@ const InvoiceGenerator = props => {
       formdata.append("order_id", props.PrintData.order_id);
       axiosConfig
         .post(`/order_detail`, formdata)
-        .then(response => {
+        .then((response) => {
           console.log(response.data.data);
           setDetails(response.data.data);
         })
-        .catch(error => {
+        .catch((error) => {
           console.log(error);
         });
     }

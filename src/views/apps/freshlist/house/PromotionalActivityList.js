@@ -55,6 +55,7 @@ import {
 } from "react-icons/bs";
 import * as XLSX from "xlsx";
 import UserContext from "../../../../context/Context";
+import { CheckPermission } from "./CheckPermission";
 
 const SelectedColums = [];
 
@@ -67,6 +68,7 @@ class PromotionalActivityList extends React.Component {
     this.state = {
       isOpen: false,
       Table: false,
+      InsiderPermissions: {},
       TableFilterValue: "",
       SelectedFilter: "",
       Arrindex: "",
@@ -109,6 +111,9 @@ class PromotionalActivityList extends React.Component {
   };
 
   async componentDidMount() {
+    const InsidePermissions = CheckPermission("Promotional Activity");
+    console.log(InsidePermissions);
+    this.setState({ InsiderPermissions: InsidePermissions });
     const UserInformation = this.context?.UserInformatio;
     let pageparmission = JSON.parse(localStorage.getItem("userData"));
     View_PromotionList(pageparmission?._id)
@@ -129,197 +134,6 @@ class PromotionalActivityList extends React.Component {
       .catch(err => {
         console.log(err);
       });
-    // await CreateAccountView()
-    //   .then((res) => {
-    //     var mydropdownArray = [];
-    //     var adddropdown = [];
-    //     const jsonData = xmlJs.xml2json(res.data, { compact: true, spaces: 2 });
-    //     console.log(JSON.parse(jsonData)?.CreateUser);
-
-    //     const inputs = JSON.parse(jsonData)?.CreateUser?.input?.map((ele) => {
-    //       return {
-    //         headerName: ele?.label._text,
-    //         field: ele?.name._text,
-    //         filter: true,
-    //         sortable: true,
-    //       };
-    //     });
-    //     // let Radioinput =
-    //     //   JSON.parse(jsonData).CreateAccount?.Radiobutton?.input[0]?.name
-    //     //     ?._text;
-    //     // const addRadio = [
-    //     //   {
-    //     //     headerName: Radioinput,
-    //     //     field: Radioinput,
-    //     //     filter: true,
-    //     //     sortable: true,
-    //     //     cellRendererFramework: (params) => {
-    //     //       return params.data?.Status === "Active" ? (
-    //     //         <div className="badge badge-pill badge-success">
-    //     //           {params.data.Status}
-    //     //         </div>
-    //     //       ) : params.data?.Status === "Deactive" ? (
-    //     //         <div className="badge badge-pill badge-warning">
-    //     //           {params.data.Status}
-    //     //         </div>
-    //     //       ) : (
-    //     //         "NA"
-    //     //       );
-    //     //     },
-    //     //   },
-    //     // ];
-
-    //     // let dropdown = JSON.parse(jsonData).CreateAccount?.MyDropdown?.dropdown;
-    //     // if (dropdown.length) {
-    //     //   var mydropdownArray = dropdown?.map((ele) => {
-    //     //     return {
-    //     //       headerName: ele?.label,
-    //     //       field: ele?.name,
-    //     //       filter: true,
-    //     //       sortable: true,
-    //     //     };
-    //     //   });
-    //     // } else {
-    //     //   var adddropdown = [
-    //     //     {
-    //     //       headerName: dropdown?.label._text,
-    //     //       field: dropdown?.name._text,
-    //     //       filter: true,
-    //     //       sortable: true,
-    //     //     },
-    //     //   ];
-    //     // }
-
-    //     let myHeadings = [
-    //       // ...checkboxinput,
-    //       ...inputs,
-    //       // ...adddropdown,
-    //       // ...addRadio,
-    //       // ...mydropdownArray,
-    //     ];
-    //     // console.log(myHeadings);
-    //     let Product = [
-    //       {
-    //         headerName: "Actions",
-    //         field: "sortorder",
-    //         field: "transactions",
-    //         width: 190,
-    //         cellRendererFramework: (params) => {
-    //           return (
-    //             <div className="actions cursor-pointer">
-    //               <Route
-    //                 render={({ history }) => (
-    //                   <Eye
-    //                     className="mr-50"
-    //                     size="25px"
-    //                     color="green"
-    //                     onClick={() => {
-    //                       this.handleChangeEdit(params.data, "readonly");
-    //                     }}
-    //                   />
-    //                 )}
-    //               />
-    //               <Route
-    //                 render={({ history }) => (
-    //                   <Edit
-    //                     className="mr-50"
-    //                     size="25px"
-    //                     color="blue"
-    //                     onClick={() => {
-    //                       this.handleChangeEdit(params.data, "Editable");
-    //                     }}
-    //                   />
-    //                 )}
-    //               />
-
-    //               <Route
-    //                 render={() => (
-    //                   <Trash2
-    //                     className="mr-50"
-    //                     size="25px"
-    //                     color="red"
-    //                     onClick={() => {
-    //                       this.runthisfunction(params?.data?._id);
-    //                     }}
-    //                   />
-    //                 )}
-    //               />
-    //             </div>
-    //           );
-    //         },
-    //       },
-    //       {
-    //         headerName: "Status",
-    //         field: "status",
-    //         filter: true,
-    //         width: 150,
-    //         cellRendererFramework: (params) => {
-    //           return params.data?.status === "Active" ? (
-    //             <div className="badge badge-pill badge-success">
-    //               {params.data?.status}
-    //             </div>
-    //           ) : params.data?.status === "Deactive" ? (
-    //             <div className="badge badge-pill badge-warning">
-    //               {params.data?.status}
-    //             </div>
-    //           ) : null;
-    //         },
-    //       },
-
-    //       ...myHeadings,
-    //       {
-    //         headerName: "Created date",
-    //         field: "createdAt",
-    //         filter: true,
-    //         sortable: true,
-    //         cellRendererFramework: (params) => {
-    //           return (
-    //             <>
-    //               <div className="actions cursor-pointer">
-    //                 <span>{params?.data?.createdAt}</span>
-    //               </div>
-    //             </>
-    //           );
-    //         },
-    //       },
-    //       {
-    //         headerName: "Updated date",
-    //         field: "updatedAt",
-    //         filter: true,
-    //         sortable: true,
-    //         cellRendererFramework: (params) => {
-    //           return (
-    //             <>
-    //               <div className="actions cursor-pointer">
-    //                 <div className="actions cursor-pointer">
-    //                   <span>{params?.data?.createdAt}</span>
-    //                 </div>
-    //               </div>
-    //             </>
-    //           );
-    //         },
-    //       },
-    //     ];
-
-    //     this.setState({ AllcolumnDefs: Product });
-
-    //     let userHeading = JSON.parse(
-    //       localStorage.getItem("PromotionalActivity")
-    //     );
-    //     if (userHeading?.length) {
-    //       this.setState({ columnDefs: userHeading });
-    //       this.gridApi.setColumnDefs(userHeading);
-    //       this.setState({ SelectedcolumnDefs: userHeading });
-    //     } else {
-    //       this.setState({ columnDefs: Product });
-    //       this.setState({ SelectedcolumnDefs: Product });
-    //     }
-    //     this.setState({ SelectedCols: Product });
-    //   })
-    //   .catch((err) => {
-    //     console.log(err);
-    //     swal("Error", "something went wrong try again");
-    //   });
   }
   toggleDropdown = () => {
     this.setState(prevState => ({ isOpen: !prevState.isOpen }));
@@ -665,43 +479,53 @@ class PromotionalActivityList extends React.Component {
           cellRendererFramework: params => {
             return (
               <div className="actions cursor-pointer">
-                <Route
-                  render={({ history }) => (
-                    <Eye
-                      className="mr-50"
-                      size="25px"
-                      color="green"
-                      onClick={() => {
-                        //   this.handleChangeEdit(params.data, "readonly");
-                      }}
+                {this.state.InsiderPermissions &&
+                  this.state.InsiderPermissions?.View && (
+                    <Route
+                      render={({ history }) => (
+                        <Eye
+                          className="mr-50"
+                          size="25px"
+                          color="green"
+                          onClick={() => {
+                            //   this.handleChangeEdit(params.data, "readonly");
+                          }}
+                        />
+                      )}
                     />
                   )}
-                />
-                <Route
-                  render={({ history }) => (
-                    <Edit
-                      className="mr-50"
-                      size="25px"
-                      color="blue"
-                      onClick={() => {
-                        //   this.handleChangeEdit(params.data, "Editable");
-                      }}
-                    />
-                  )}
-                />
 
-                <Route
-                  render={() => (
-                    <Trash2
-                      className="mr-50"
-                      size="25px"
-                      color="red"
-                      onClick={() => {
-                        this.runthisfunction(params?.data?._id);
-                      }}
+                {this.state.InsiderPermissions &&
+                  this.state.InsiderPermissions?.Edit && (
+                    <Route
+                      render={({ history }) => (
+                        <Edit
+                          className="mr-50"
+                          size="25px"
+                          color="blue"
+                          onClick={() => {
+                            //   this.handleChangeEdit(params.data, "Editable");
+                          }}
+                        />
+                      )}
                     />
                   )}
-                />
+
+                {this.state.InsiderPermissions &&
+                  this.state.InsiderPermissions?.Delete && (
+                    <Route
+                      render={() => (
+                        <Trash2
+                          className="mr-50"
+                          size="25px"
+                          color="red"
+                          onClick={() => {
+                            this.runthisfunction(params?.data?._id);
+                          }}
+                        />
+                      )}
+                    />
+                  )}
               </div>
             );
           },
@@ -866,12 +690,12 @@ class PromotionalActivityList extends React.Component {
                               })}
                           </CustomInput>
                         </Col>
-                        <Col lg="3" md="3" sm="3">
+                        <Col lg="2" md="2" sm="2">
                           <span className="">
                             <FaFilter
                               style={{ cursor: "pointer" }}
                               title="filter coloumn"
-                              size="35px"
+                              size="25px"
                               onClick={this.LookupviewStart}
                               color="#39cccc"
                               className="float-right"
@@ -879,10 +703,10 @@ class PromotionalActivityList extends React.Component {
                           </span>
                           <span className="mx-1">
                             <div className="dropdown-container float-right">
-                              <ImDownload
+                              <BsCloudDownloadFill
                                 style={{ cursor: "pointer" }}
                                 title="download file"
-                                size="35px"
+                                size="25px"
                                 className="dropdown-button "
                                 color="#39cccc"
                                 onClick={this.toggleDropdown}
@@ -892,8 +716,6 @@ class PromotionalActivityList extends React.Component {
                                   style={{
                                     position: "absolute",
                                     zIndex: "1",
-                                    border: "1px solid #39cccc",
-                                    backgroundColor: "white",
                                   }}
                                   className="dropdown-content dropdownmy"
                                 >
@@ -941,15 +763,10 @@ class PromotionalActivityList extends React.Component {
                           <span>
                             <Route
                               render={({ history }) => (
-                                <Button
-                                  style={{
-                                    cursor: "pointer",
-                                    backgroundColor: "#39cccc",
-                                    color: "white",
-                                    fontWeight: "600",
-                                  }}
+                                <Badge
+                                  style={{ cursor: "pointer" }}
                                   className="float-right mr-1"
-                                  color="#39cccc"
+                                  color="primary"
                                   onClick={() =>
                                     history.push(
                                       "/app/ajgroup/account/CreatePromotionalActivity"
@@ -957,7 +774,7 @@ class PromotionalActivityList extends React.Component {
                                   }
                                 >
                                   <FaPlus size={15} /> Activiity
-                                </Button>
+                                </Badge>
                               )}
                             />
                           </span>

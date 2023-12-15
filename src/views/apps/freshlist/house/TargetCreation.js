@@ -53,6 +53,7 @@ import {
 import * as XLSX from "xlsx";
 import UserContext from "../../../../context/Context";
 import TargetAssignedOne from "./TargetAssignedOne";
+import { CheckPermission } from "./CheckPermission";
 
 const SelectedColums = [];
 
@@ -69,7 +70,7 @@ class TargetCreation extends React.Component {
       modal: false,
       modalone: false,
       ViewData: {},
-
+      InsiderPermissions: {},
       setMySelectedarr: [],
       SelectedCols: [],
       paginationPageSize: 5,
@@ -132,43 +133,47 @@ class TargetCreation extends React.Component {
             return (
               <div className="actions cursor-pointer">
                 {/* {this.state.Viewpermisson && ( */}
-                <Eye
-                  className="mr-50"
-                  size="25px"
-                  color="green"
-                  onClick={
-                    () => {
-                      this.setState({ ViewData: params?.data });
-                      this.toggleModal();
-                    }
-                    // history.push(
-                    //   `/app/freshlist/order/viewAll/${params.data._id}`
-                    // )
-                  }
-                />
+                {this.state.InsiderPermissions &&
+                  this.state.InsiderPermissions?.View && (
+                    <Eye
+                      className="mr-50"
+                      size="25px"
+                      color="green"
+                      onClick={() => {
+                        this.setState({ ViewData: params?.data });
+                        this.toggleModal();
+                      }}
+                    />
+                  )}
                 {/* )} */}
                 {/* {this.state.Editpermisson && ( */}
-                <Edit
-                  className="mr-50"
-                  size="25px"
-                  color="blue"
-                  onClick={() =>
-                    this.props.history.push({
-                      pathname: `/app/AJGroup/account/EditTarget/${params.data?._id}`,
-                      state: params.data,
-                    })
-                  }
-                />
+                {this.state.InsiderPermissions &&
+                  this.state.InsiderPermissions?.Edit && (
+                    <Edit
+                      className="mr-50"
+                      size="25px"
+                      color="blue"
+                      onClick={() =>
+                        this.props.history.push({
+                          pathname: `/app/AJGroup/account/EditTarget/${params.data?._id}`,
+                          state: params.data,
+                        })
+                      }
+                    />
+                  )}
                 {/* )} */}
                 {/* {this.state.Deletepermisson && ( */}
-                <Trash2
-                  className="mr-50"
-                  size="25px"
-                  color="Red"
-                  onClick={() => {
-                    this.runthisfunction(params?.data?._id);
-                  }}
-                />
+                {this.state.InsiderPermissions &&
+                  this.state.InsiderPermissions?.Delete && (
+                    <Trash2
+                      className="mr-50"
+                      size="25px"
+                      color="Red"
+                      onClick={() => {
+                        this.runthisfunction(params?.data?._id);
+                      }}
+                    />
+                  )}
                 {/* )} */}
               </div>
             );
@@ -300,7 +305,8 @@ class TargetCreation extends React.Component {
 
   async componentDidMount() {
     let userId = JSON.parse(localStorage.getItem("userData"))._id;
-
+    const InsidePermissions = CheckPermission("Target Creation");
+    this.setState({ InsiderPermissions: InsidePermissions });
     await Create_TargetList(userId)
       .then(res => {
         console.log(res.TargetCreation);
@@ -661,102 +667,99 @@ class TargetCreation extends React.Component {
                             Target List
                           </h1>
                         </Col>
-                        <Col>
-                          <span className="mx-1">
-                            <FaFilter
-                              style={{ cursor: "pointer" }}
-                              title="filter coloumn"
-                              size="35px"
-                              onClick={this.LookupviewStart}
-                              color="#39cccc"
-                              className="float-right"
-                            />
-                          </span>
-                          <span className="mx-1">
-                            <div className="dropdown-container float-right">
-                              <ImDownload
-                                style={{ cursor: "pointer" }}
-                                title="download file"
-                                size="35px"
-                                className="dropdown-button "
-                                color="#39cccc"
-                                onClick={this.toggleDropdown}
-                              />
-                              {isOpen && (
-                                <div
-                                  style={{
-                                    position: "absolute",
-                                    zIndex: "1",
-                                    border: "1px solid #39cccc",
-                                    backgroundColor: "white",
-                                  }}
-                                  className="dropdown-content dropdownmy"
-                                >
-                                  <h5
-                                    onClick={() => this.exportToPDF()}
-                                    style={{ cursor: "pointer" }}
-                                    className=" mx-1 myactive mt-1"
-                                  >
-                                    .PDF
-                                  </h5>
-                                  <h5
-                                    onClick={() =>
-                                      this.gridApi.exportDataAsCsv()
-                                    }
-                                    style={{ cursor: "pointer" }}
-                                    className=" mx-1 myactive"
-                                  >
-                                    .CSV
-                                  </h5>
-                                  <h5
-                                    onClick={this.convertCSVtoExcel}
-                                    style={{ cursor: "pointer" }}
-                                    className=" mx-1 myactive"
-                                  >
-                                    .XLS
-                                  </h5>
-                                  <h5
-                                    onClick={this.exportToExcel}
-                                    style={{ cursor: "pointer" }}
-                                    className=" mx-1 myactive"
-                                  >
-                                    .XLSX
-                                  </h5>
-                                  <h5
-                                    onClick={() => this.convertCsvToXml()}
-                                    style={{ cursor: "pointer" }}
-                                    className=" mx-1 myactive"
-                                  >
-                                    .XML
-                                  </h5>
-                                </div>
-                              )}
-                            </div>
-                          </span>
-                          <span>
-                            <Route
-                              render={({ history }) => (
-                                <Button
-                                  style={{
-                                    cursor: "pointer",
-                                    backgroundColor: "#39cccc",
-                                    color: "white",
-                                    fontWeight: "600",
-                                  }}
-                                  className="float-right mr-1"
+
+                        {this.state.InsiderPermissions &&
+                          this.state.InsiderPermissions?.View && (
+                            <Col>
+                              <span className="mx-1">
+                                <FaFilter
+                                  style={{ cursor: "pointer" }}
+                                  title="filter coloumn"
+                                  size="25px"
+                                  onClick={this.LookupviewStart}
                                   color="#39cccc"
-                                  onClick={() =>
-                                    history.push(
-                                      "/app/SoftNumen/account/CreateTarget"
-                                    )
-                                  }
-                                >
-                                  <FaPlus size={15} /> Create Target
-                                </Button>
-                              )}
-                            />
-                          </span>
-                        </Col>
+                                  className="float-right"
+                                />
+                              </span>
+                              <span className="mx-1">
+                                <div className="dropdown-container float-right">
+                                  <BsCloudDownloadFill
+                                    style={{ cursor: "pointer" }}
+                                    title="download file"
+                                    size="25px"
+                                    className="dropdown-button "
+                                    color="#39cccc"
+                                    onClick={this.toggleDropdown}
+                                  />
+                                  {isOpen && (
+                                    <div
+                                      style={{
+                                        position: "absolute",
+                                        zIndex: "1",
+                                      }}
+                                      className="dropdown-content dropdownmy"
+                                    >
+                                      <h5
+                                        onClick={() => this.exportToPDF()}
+                                        style={{ cursor: "pointer" }}
+                                        className=" mx-1 myactive mt-1"
+                                      >
+                                        .PDF
+                                      </h5>
+                                      <h5
+                                        onClick={() =>
+                                          this.gridApi.exportDataAsCsv()
+                                        }
+                                        style={{ cursor: "pointer" }}
+                                        className=" mx-1 myactive"
+                                      >
+                                        .CSV
+                                      </h5>
+                                      <h5
+                                        onClick={this.convertCSVtoExcel}
+                                        style={{ cursor: "pointer" }}
+                                        className=" mx-1 myactive"
+                                      >
+                                        .XLS
+                                      </h5>
+                                      <h5
+                                        onClick={this.exportToExcel}
+                                        style={{ cursor: "pointer" }}
+                                        className=" mx-1 myactive"
+                                      >
+                                        .XLSX
+                                      </h5>
+                                      <h5
+                                        onClick={() => this.convertCsvToXml()}
+                                        style={{ cursor: "pointer" }}
+                                        className=" mx-1 myactive"
+                                      >
+                                        .XML
+                                      </h5>
+                                    </div>
+                                  )}
+                                </div>
+                              </span>
+                              <span>
+                                <Route
+                                  render={({ history }) => (
+                                    <Badge
+                                      style={{ cursor: "pointer" }}
+                                      className="float-right mr-1"
+                                      color="primary"
+                                      onClick={() =>
+                                        history.push(
+                                          "/app/SoftNumen/account/CreateTarget"
+                                        )
+                                      }
+                                    >
+                                      <FaPlus size={15} /> Create Target
+                                    </Badge>
+                                  )}
+                                />
+                              </span>
+                            </Col>
+                          )}
                       </Row>
                       <CardBody style={{ marginTop: "-1.5rem" }}>
                         {this.state.rowData === null ? null : (
