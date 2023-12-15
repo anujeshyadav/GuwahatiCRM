@@ -1257,7 +1257,7 @@ class InvoiceGenerator extends React.Component {
             <>
               {this.state.ViewOneUserView && this.state.ViewOneUserView ? (
                 <>
-                  <Row className="card">
+                  <Row>
                     <Col>
                       <h1 className="float-left">View User</h1>
                     </Col>
@@ -1279,12 +1279,34 @@ class InvoiceGenerator extends React.Component {
                 </>
               ) : (
                 <>
-                  <Col sm="12">
+                  <Col>
                     <Card>
                       <Row className="m-2">
                         <Col>
                           <h1 className="float-left">Sales Order List</h1>
                         </Col>
+                        {this.state.InsiderPermissions &&
+                          this.state.InsiderPermissions?.Create && (
+                            <Col>
+                              <Button
+                                className=" btn btn-success float-right "
+                                onClick={e => {
+                                  let billnumber =
+                                    localStorage.getItem("billnumber");
+                                  if (billnumber) {
+                                    // swal("You already Selected Bill Type");
+                                    this.setState({ ShowBill: true });
+                                    this.toggleModalOne();
+                                  } else {
+                                    this.setState({ ShowBill: true });
+                                    this.toggleModalOne();
+                                  }
+                                }}
+                              >
+                                Select Invoice
+                              </Button>
+                            </Col>
+                          )}
                         <Col>
                           <span className="mx-1">
                             <FaFilter
@@ -1357,28 +1379,6 @@ class InvoiceGenerator extends React.Component {
                           </span>
                           <span></span>
                         </Col>
-                        {this.state.InsiderPermissions &&
-                          this.state.InsiderPermissions?.Create && (
-                            <Col lg="2" sm="2" md="2">
-                              <Button
-                                className=" btn btn-success float-right"
-                                onClick={e => {
-                                  let billnumber =
-                                    localStorage.getItem("billnumber");
-                                  if (billnumber) {
-                                    // swal("You already Selected Bill Type");
-                                    this.setState({ ShowBill: true });
-                                    this.toggleModalOne();
-                                  } else {
-                                    this.setState({ ShowBill: true });
-                                    this.toggleModalOne();
-                                  }
-                                }}
-                              >
-                                Select Invoice
-                              </Button>
-                            </Col>
-                          )}
                       </Row>
                       <CardBody>
                         {this.state.rowData === null ? null : (
