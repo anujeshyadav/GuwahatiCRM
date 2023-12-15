@@ -28,7 +28,10 @@ import "../../../../assets/scss/pages/users.scss";
 import swal from "sweetalert";
 import { Route } from "react-router-dom";
 import { BsEye, BsTrash } from "react-icons/bs";
-import { CreateAccountView, Get_RoleList } from "../../../../ApiEndPoint/ApiCalling";
+import {
+  CreateAccountView,
+  Get_RoleList,
+} from "../../../../ApiEndPoint/ApiCalling";
 import { FaPlus } from "react-icons/fa";
 import { CheckPermission } from "../house/CheckPermission";
 
@@ -62,7 +65,7 @@ class RoleList extends React.Component {
         filter: true,
         resizable: true,
         width: 160,
-        cellRendererFramework: (params) => {
+        cellRendererFramework: params => {
           return (
             <div className="d-flex align-items-center cursor-pointer">
               <div className="">
@@ -78,7 +81,7 @@ class RoleList extends React.Component {
         filter: true,
         resizable: true,
         width: 230,
-        cellRendererFramework: (params) => {
+        cellRendererFramework: params => {
           return (
             <div className="d-flex align-items-center cursor-pointer">
               <div className="">
@@ -94,7 +97,7 @@ class RoleList extends React.Component {
         field: "sortorder",
         field: "transactions",
         width: 200,
-        cellRendererFramework: (params) => {
+        cellRendererFramework: params => {
           return (
             <div className="actions cursor-pointer">
               {/* {this.state.InsiderPermissions &&
@@ -148,11 +151,11 @@ class RoleList extends React.Component {
   };
   async componentDidMount() {
     Get_RoleList()
-      .then((res) => {
+      .then(res => {
         console.log(res?.Role);
         this.setState({ rowData: res?.Role });
       })
-      .catch((err) => {
+      .catch(err => {
         console.log(err);
       });
 
@@ -166,12 +169,12 @@ class RoleList extends React.Component {
     formdata.append("role", pageparmission?.Userinfo?.role);
     await axiosConfig
       .post("/getrolelist", formdata)
-      .then((response) => {
+      .then(response => {
         const propertyNames = Object.values(response.data?.data);
 
         this.setState({ rowData: propertyNames });
       })
-      .catch((error) => {
+      .catch(error => {
         // console.log(error);
       });
   }
@@ -184,19 +187,19 @@ class RoleList extends React.Component {
         cancel: "cancel",
         catch: { text: "Delete ", value: "delete" },
       },
-    }).then((value) => {
+    }).then(value => {
       switch (value) {
         case "delete":
           const formData = new FormData();
           formData.append("user_id", id);
           this.gridApi.updateRowData({ remove: selectedData });
-          axiosConfig.post(`/userdelete`, formData).then((response) => {});
+          axiosConfig.post(`/userdelete`, formData).then(response => {});
           break;
         default:
       }
     });
   }
-  onGridReady = (params) => {
+  onGridReady = params => {
     this.gridApi = params.api;
     this.gridColumnApi = params.columnApi;
     this.setState({
@@ -205,11 +208,11 @@ class RoleList extends React.Component {
       totalPages: this.gridApi.paginationGetTotalPages(),
     });
   };
-  updateSearchQuery = (val) => {
+  updateSearchQuery = val => {
     this.gridApi.setQuickFilter(val);
   };
 
-  filterSize = (val) => {
+  filterSize = val => {
     if (this.gridApi) {
       this.gridApi.paginationSetPageSize(Number(val));
       this.setState({
@@ -276,10 +279,11 @@ class RoleList extends React.Component {
                         <Badge
                           style={{ cursor: "pointer" }}
                           className=" float-right mr-3"
-                          color="primary"
+                          color="info"
                           onClick={() =>
                             history.push("/app/freshlist/account/addRoleNew")
-                          }>
+                          }
+                        >
                           <FaPlus size={15} /> Create Role
                         </Badge>
                       )}
@@ -300,7 +304,8 @@ class RoleList extends React.Component {
                             history.push(
                               "/app/freshlist/account/CreateHeirarchy"
                             )
-                          }>
+                          }
+                        >
                           <FaPlus size={15} /> Create Hierarchy
                         </Badge>
                       )}
@@ -331,22 +336,26 @@ class RoleList extends React.Component {
                         <DropdownMenu right>
                           <DropdownItem
                             tag="div"
-                            onClick={() => this.filterSize(20)}>
+                            onClick={() => this.filterSize(20)}
+                          >
                             20
                           </DropdownItem>
                           <DropdownItem
                             tag="div"
-                            onClick={() => this.filterSize(50)}>
+                            onClick={() => this.filterSize(50)}
+                          >
                             50
                           </DropdownItem>
                           <DropdownItem
                             tag="div"
-                            onClick={() => this.filterSize(100)}>
+                            onClick={() => this.filterSize(100)}
+                          >
                             100
                           </DropdownItem>
                           <DropdownItem
                             tag="div"
-                            onClick={() => this.filterSize(134)}>
+                            onClick={() => this.filterSize(134)}
+                          >
                             134
                           </DropdownItem>
                         </DropdownMenu>
@@ -400,7 +409,7 @@ class RoleList extends React.Component {
                     </div> */}
                   </div>
                   <ContextLayout.Consumer>
-                    {(context) => (
+                    {context => (
                       <AgGridReact
                         gridOptions={{}}
                         rowSelection="multiple"
