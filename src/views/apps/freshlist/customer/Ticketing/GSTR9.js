@@ -1,7 +1,7 @@
 import React, { useRef } from "react";
-import { ImDownload } from "react-icons/im";
 import { Route } from "react-router-dom";
 import xmlJs from "xml-js";
+import { ImDownload } from "react-icons/im";
 import {
   Card,
   CardBody,
@@ -17,20 +17,20 @@ import {
   ModalHeader,
   ModalBody,
 } from "reactstrap";
-import ExcelReader from "../parts/ExcelReader";
-import { ContextLayout } from "../../../../utility/context/Layout";
+import { ContextLayout } from "../../../../../utility/context/Layout";
 import { AgGridReact } from "ag-grid-react";
 import "ag-grid-community/dist/styles/ag-grid.css";
-import EditAccount from "../accounts/EditAccount";
-import ViewAccount from "../accounts/ViewAccount";
+import EditAccount from "../../accounts/EditAccount";
+import ViewAccount from "../../accounts/ViewAccount";
 import jsPDF from "jspdf";
+// import db from "../../../../context/indexdb";
 import "jspdf-autotable";
-import Logo from "../../../../assets/img/profile/pages/logomain.png";
+import Logo from "../../../../../assets/img/profile/pages/logomain.png";
 import Papa from "papaparse";
 import { Eye, Trash2, ChevronDown, Edit } from "react-feather";
 import { IoMdRemoveCircleOutline } from "react-icons/io";
-import "../../../../assets/scss/plugins/tables/_agGridStyleOverride.scss";
-import "../../../../assets/scss/pages/users.scss";
+import "../../../../../assets/scss/plugins/tables/_agGridStyleOverride.scss";
+import "../../../../../assets/scss/pages/users.scss";
 
 import {
   FaArrowAltCircleLeft,
@@ -40,22 +40,21 @@ import {
 import moment from "moment-timezone";
 import swal from "sweetalert";
 import {
-  CreateAccountList,
-  CreateOrder_ViewData,
-  OrderViewList,
-  DeleteAccount,
-} from "../../../../ApiEndPoint/ApiCalling";
+  TicketTool_ViewData,
+  ticketToolDeleteOne,
+  ticketToolList,
+} from "../../../../../ApiEndPoint/ApiCalling";
 import {
   BsCloudDownloadFill,
   BsFillArrowDownSquareFill,
   BsFillArrowUpSquareFill,
 } from "react-icons/bs";
 import * as XLSX from "xlsx";
-import UserContext from "../../../../context/Context";
+import UserContext from "../../../../../context/Context";
 
 const SelectedColums = [];
 
-class OrderSearch extends React.Component {
+class GSTR9 extends React.Component {
   static contextType = UserContext;
   constructor(props) {
     super(props);
@@ -102,16 +101,23 @@ class OrderSearch extends React.Component {
 
   async componentDidMount() {
     const UserInformation = this.context?.UserInformatio;
-    // debugger
-    await CreateOrder_ViewData()
+    await ticketToolList()
       .then(res => {
-        // console.log(res)
-        var mydropdownArray = [];
-        // var adddropdown = [];
-        const jsonData = xmlJs.xml2json(res.data, { compact: true, spaces: 2 });
-        console.log(JSON.parse(jsonData));
+        console.log(res?.TicketTool);
+        this.setState({ rowData: res?.TicketTool });
+      })
+      .catch(err => {
+        console.log(err);
+      });
 
-        const inputs = JSON.parse(jsonData).createOrder?.input?.map(ele => {
+    TicketTool_ViewData()
+      .then(res => {
+        console.log(res);
+        let jsonData = xmlJs.xml2json(res.data, { compact: true, spaces: 2 });
+        // console.log(JSON.parse(jsonData)?.createTicket);
+        let CreatAccountView = JSON.parse(jsonData)?.createTicket;
+
+        const Checkbox = CreatAccountView?.CheckBox?.input?.map(ele => {
           return {
             headerName: ele?.label._text,
             field: ele?.name._text,
@@ -119,241 +125,258 @@ class OrderSearch extends React.Component {
             sortable: true,
           };
         });
-        // let Radioinput =
-        //   JSON.parse(jsonData).createOrder?.Radiobutton?.input[0]?.name
-        //     ?._text;
-        // const addRadio = [
-        //   {
-        //     headerName: Radioinput,
-        //     field: Radioinput,
-        //     filter: true,
-        //     sortable: true,
-        //     cellRendererFramework: params => {
-        //       return params.data?.Status === "Active" ? (
-        //         <div className="badge badge-pill badge-success">
-        //           {params.data.Status}
-        //         </div>
-        //       ) : params.data?.Status === "Deactive" ? (
-        //         <div className="badge badge-pill badge-warning">
-        //           {params.data.Status}
-        //         </div>
-        //       ) : (
-        //         "NA"
-        //       );
-        //     },
-        //   },
-        // ];
+        const partsmydropdown = CreatAccountView?.Parts?.MyDropDown?.map(
+          ele => {
+            return {
+              headerName: ele?.dropdown?.label._text,
+              field: ele?.dropdown?.name?._text,
+              filter: true,
+              sortable: true,
+            };
+          }
+        );
 
-        // let dropdown = JSON.parse(jsonData).createOrder?.MyDropdown?.dropdown;
-        // if (dropdown.length) {
-        //   var mydropdownArray = dropdown?.map(ele => {
-        //     return {
-        //       headerName: ele?.label,
-        //       field: ele?.name,
-        //       filter: true,
-        //       sortable: true,
-        //     };
-        //   });
-        // } else {
-        //   var adddropdown = [
-        //     {
-        //       headerName: dropdown?.label._text,
-        //       field: dropdown?.name._text,
-        //       filter: true,
-        //       sortable: true,
-        //     },
-        //   ];
-        // }
+        let dropdown = CreatAccountView?.CurrentStatus?.MyDropDown?.dropdown;
 
+        const singledropdown = {
+          headerName: dropdown?.name._text,
+          field: dropdown?.name._text,
+          filter: true,
+          sortable: true,
+        };
+
+        const partinput = CreatAccountView?.Parts?.input?.map(ele => {
+          return {
+            headerName: ele?.label._text,
+            field: ele?.name._text,
+            filter: true,
+            sortable: true,
+          };
+        });
+
+        const productdropdown = CreatAccountView?.Product?.MyDropDown?.map(
+          ele => {
+            return {
+              headerName: ele?.dropdown?.label._text,
+              field: ele?.dropdown?.name?._text,
+              filter: true,
+              sortable: true,
+            };
+          }
+        );
+
+        const productinput = CreatAccountView?.Product?.input?.map(ele => {
+          return {
+            headerName: ele?.label._text,
+            field: ele?.name._text,
+            filter: true,
+            sortable: true,
+          };
+        });
+
+        const allinput = CreatAccountView?.input?.map(ele => {
+          return {
+            headerName: ele?.label._text,
+            field: ele?.name._text,
+            filter: true,
+            sortable: true,
+          };
+        });
+
+        // formdata.append("id", randomNumber);
         let myHeadings = [
-          ...inputs,
-          // ...adddropdown,
-          // ...addRadio,
-          // ...mydropdownArray,
+          ...Checkbox,
+          ...partsmydropdown,
+          singledropdown,
+          ...partinput,
+          ...productinput,
+          ...allinput,
+          ...productdropdown,
         ];
+        // console.log(myHeadings);
         let Product = [
-          // {
-          //   headerName: "Actions",
-          //   field: "sortorder",
-          //   field: "transactions",
-          //   width: 190,
-          //   cellRendererFramework: params => {
-          //     return (
-          //       <div className="actions cursor-pointer">
-          //         <Route
-          //           render={({ history }) => (
-          //             <Eye
-          //               className="mr-50"
-          //               size="25px"
-          //               color="green"
-          //               onClick={() => {
-          //                 this.handleChangeEdit(params.data, "readonly");
-          //               }}
-          //             />
-          //           )}
-          //         />
-          //         <Route
-          //           render={({ history }) => (
-          //             <Edit
-          //               className="mr-50"
-          //               size="25px"
-          //               color="blue"
-          //               onClick={() => {
-          //                 this.handleChangeEdit(params.data, "Editable");
-          //               }}
-          //             />
-          //           )}
-          //         />
+          {
+            headerName: "Actions",
+            field: "sortorder",
+            field: "transactions",
+            width: 190,
+            cellRendererFramework: params => {
+              return (
+                <div className="actions cursor-pointer">
+                  <Route
+                    render={({ history }) => (
+                      <Eye
+                        className="mr-50"
+                        size="25px"
+                        color="green"
+                        onClick={() => {
+                          this.handleChangeEdit(params.data, "readonly");
+                        }}
+                      />
+                    )}
+                  />
+                  <Route
+                    render={({ history }) => (
+                      <Edit
+                        className="mr-50"
+                        size="25px"
+                        color="blue"
+                        onClick={() => {
+                          this.handleChangeEdit(params.data, "Editable");
+                        }}
+                      />
+                    )}
+                  />
 
-          //         <Route
-          //           render={() => (
-          //             <Trash2
-          //               className="mr-50"
-          //               size="25px"
-          //               color="red"
-          //               onClick={() => {
-          //                 this.runthisfunction(params?.data?._id);
-          //               }}
-          //             />
-          //           )}
-          //         />
-          //       </div>
-          //     );
-          //   },
-          // },
-          // {
-          //   headerName: "Whatsapp",
-          //   field: "whatsapp",
-          //   filter: true,
-          //   sortable: true,
-          //   cellRendererFramework: params => {
-          //     return params.data?.whatsapp === true ? (
-          //       <div className="badge badge-pill badge-success">YES</div>
-          //     ) : params.data?.whatsapp === false ? (
-          //       <div className="badge badge-pill badge-warning">NO</div>
-          //     ) : (
-          //       "NA"
-          //     );
-          //   },
-          // },
-          // {
-          //   headerName: "SMS",
-          //   field: "sms",
-          //   filter: true,
-          //   sortable: true,
-          //   cellRendererFramework: params => {
-          //     return params.data?.sms === true ? (
-          //       <div className="badge badge-pill badge-success">YES</div>
-          //     ) : params.data?.sms === false ? (
-          //       <div className="badge badge-pill badge-warning">No</div>
-          //     ) : (
-          //       "NA"
-          //     );
-          //   },
-          // },
-          // {
-          //   headerName: "Gmail",
-          //   field: "gmail",
-          //   filter: true,
-          //   sortable: true,
-          //   cellRendererFramework: params => {
-          //     return params.data?.gmail === true ? (
-          //       <div className="badge badge-pill badge-success">YES</div>
-          //     ) : params.data?.gmail === false ? (
-          //       <div className="badge badge-pill badge-warning">NO</div>
-          //     ) : (
-          //       "NA"
-          //     );
-          //   },
-          // },
+                  <Route
+                    render={() => (
+                      <Trash2
+                        className="mr-50"
+                        size="25px"
+                        color="red"
+                        onClick={() => {
+                          this.runthisfunction(params?.data?._id);
+                        }}
+                      />
+                    )}
+                  />
+                </div>
+              );
+            },
+          },
+          {
+            headerName: "Whatsapp",
+            field: "whatsapp",
+            filter: true,
+            sortable: true,
+            cellRendererFramework: params => {
+              return params.data?.whatsapp === "true" ? (
+                <div className="badge badge-pill badge-success">YES</div>
+              ) : params.data?.whatsapp === "false" ? (
+                <div className="badge badge-pill badge-warning">NO</div>
+              ) : (
+                "NA"
+              );
+            },
+          },
+          {
+            headerName: "SMS",
+            field: "sms",
+            filter: true,
+            sortable: true,
+            cellRendererFramework: params => {
+              return params.data?.sms === "true" ? (
+                <div className="badge badge-pill badge-success">YES</div>
+              ) : params.data?.sms === "false" ? (
+                <div className="badge badge-pill badge-warning">No</div>
+              ) : (
+                "NA"
+              );
+            },
+          },
+          {
+            headerName: "Gmail",
+            field: "gmail",
+            filter: true,
+            sortable: true,
+            cellRendererFramework: params => {
+              return params.data?.gmail === "true" ? (
+                <div className="badge badge-pill badge-success">YES</div>
+              ) : params.data?.gmail === "false" ? (
+                <div className="badge badge-pill badge-warning">NO</div>
+              ) : (
+                "NA"
+              );
+            },
+          },
           ...myHeadings,
-          // {
-          //   headerName: "Created date",
-          //   field: "createdAt",
-          //   filter: true,
-          //   sortable: true,
-          //   cellRendererFramework: params => {
-          //     let convertedTime = "NA";
-          //     if (params?.data?.createdAt == undefined) {
-          //       convertedTime = "NA";
-          //     }
-          //     if (params?.data?.createdAt) {
-          //       convertedTime = params?.data?.createdAt;
-          //     }
-          //     if (
-          //       UserInformation?.timeZone !== undefined &&
-          //       params?.data?.createdAt !== undefined
-          //     ) {
-          //       if (params?.data?.createdAt != undefined) {
-          //         convertedTime = moment(params?.data?.createdAt?.split(".")[0])
-          //           .tz(UserInformation?.timeZone.split("-")[0])
-          //           .format(UserInformation?.dateTimeFormat);
-          //       }
-          //     }
+          {
+            headerName: "Created date",
+            field: "createdAt",
+            filter: true,
+            sortable: true,
+            cellRendererFramework: params => {
+              let convertedTime = "NA";
+              if (params?.data?.createdAt == undefined) {
+                convertedTime = "NA";
+              }
+              if (params?.data?.createdAt) {
+                convertedTime = params?.data?.createdAt;
+              }
+              if (
+                UserInformation?.timeZone !== undefined &&
+                params?.data?.createdAt !== undefined
+              ) {
+                if (params?.data?.createdAt != undefined) {
+                  convertedTime = moment(params?.data?.createdAt?.split(".")[0])
+                    .tz(UserInformation?.timeZone.split("-")[0])
+                    .format(UserInformation?.dateTimeFormat);
+                }
+              }
 
-          //     return (
-          //       <>
-          //         <div className="actions cursor-pointer">
-          //           {convertedTime == "NA" ? (
-          //             "NA"
-          //           ) : (
-          //             <span>
-          //               {convertedTime} &nbsp;
-          //               {UserInformation?.timeZone &&
-          //                 UserInformation?.timeZone.split("-")[1]}
-          //             </span>
-          //           )}
-          //         </div>
-          //       </>
-          //     );
-          //   },
-          // },
-          // {
-          //   headerName: "Updated date",
-          //   field: "updatedAt",
-          //   filter: true,
-          //   sortable: true,
-          //   cellRendererFramework: params => {
-          //     let convertedTime = "NA";
-          //     if (params?.data?.updatedAt == undefined) {
-          //       convertedTime = "NA";
-          //     }
-          //     if (params?.data?.updatedAt) {
-          //       convertedTime = params?.data?.updatedAt;
-          //     }
-          //     if (
-          //       UserInformation?.timeZone !== undefined &&
-          //       params?.data?.updatedAt !== undefined
-          //     ) {
-          //       if (params?.data?.updatedAt != undefined) {
-          //         convertedTime = moment(params?.data?.updatedAt?.split(".")[0])
-          //           .tz(UserInformation?.timeZone.split("-")[0])
-          //           .format(UserInformation?.dateTimeFormat);
-          //       }
-          //     }
+              return (
+                <>
+                  <div className="actions cursor-pointer">
+                    {convertedTime == "NA" ? (
+                      "NA"
+                    ) : (
+                      <span>
+                        {convertedTime} &nbsp;
+                        {UserInformation?.timeZone &&
+                          UserInformation?.timeZone.split("-")[1]}
+                      </span>
+                    )}
+                  </div>
+                </>
+              );
+            },
+          },
+          {
+            headerName: "Updated date",
+            field: "updatedAt",
+            filter: true,
+            sortable: true,
+            cellRendererFramework: params => {
+              let convertedTime = "NA";
+              if (params?.data?.updatedAt == undefined) {
+                convertedTime = "NA";
+              }
+              if (params?.data?.updatedAt) {
+                convertedTime = params?.data?.updatedAt;
+              }
+              if (
+                UserInformation?.timeZone !== undefined &&
+                params?.data?.updatedAt !== undefined
+              ) {
+                if (params?.data?.updatedAt != undefined) {
+                  convertedTime = moment(params?.data?.updatedAt?.split(".")[0])
+                    .tz(UserInformation?.timeZone.split("-")[0])
+                    .format(UserInformation?.dateTimeFormat);
+                }
+              }
 
-          //     return (
-          //       <>
-          //         <div className="actions cursor-pointer">
-          //           {convertedTime == "NA" ? (
-          //             "NA"
-          //           ) : (
-          //             <span>
-          //               {convertedTime} &nbsp;
-          //               {UserInformation?.timeZone &&
-          //                 UserInformation?.timeZone.split("-")[1]}
-          //             </span>
-          //           )}
-          //         </div>
-          //       </>
-          //     );
-          //   },
-          // },
+              return (
+                <>
+                  <div className="actions cursor-pointer">
+                    {convertedTime == "NA" ? (
+                      "NA"
+                    ) : (
+                      <span>
+                        {convertedTime} &nbsp;
+                        {UserInformation?.timeZone &&
+                          UserInformation?.timeZone.split("-")[1]}
+                      </span>
+                    )}
+                  </div>
+                </>
+              );
+            },
+          },
         ];
 
         this.setState({ AllcolumnDefs: Product });
 
-        let userHeading = JSON.parse(localStorage.getItem("UserSearchheading"));
+        let userHeading = JSON.parse(localStorage.getItem("Ticketsearch"));
         if (userHeading?.length) {
           this.setState({ columnDefs: userHeading });
           this.gridApi.setColumnDefs(userHeading);
@@ -366,17 +389,285 @@ class OrderSearch extends React.Component {
       })
       .catch(err => {
         console.log(err);
-        swal("Error", "something went wrong try again");
       });
-    await OrderViewList()
-      .then(res => {
-        console.log(res.Order[0]._id);
-        localStorage.setItem("OrderommentId", res.Order[0]._id);
-        // this.setState({ rowData: res });
-      })
-      .catch(err => {
-        console.log(err);
-      });
+
+    // await CreateAccountView()
+    //   .then((res) => {
+    //     var mydropdownArray = [];
+    //     var adddropdown = [];
+    //     const jsonData = xmlJs.xml2json(res.data, { compact: true, spaces: 2 });
+    //     console.log(JSON.parse(jsonData));
+
+    //     const inputs = JSON.parse(jsonData).CreateAccount?.input?.map((ele) => {
+    //       return {
+    //         headerName: ele?.label._text,
+    //         field: ele?.name._text,
+    //         filter: true,
+    //         sortable: true,
+    //       };
+    //     });
+    //     let Radioinput =
+    //       JSON.parse(jsonData).CreateAccount?.Radiobutton?.input[0]?.name
+    //         ?._text;
+    //     const addRadio = [
+    //       {
+    //         headerName: Radioinput,
+    //         field: Radioinput,
+    //         filter: true,
+    //         sortable: true,
+    //         cellRendererFramework: (params) => {
+    //           return params.data?.Status === "Active" ? (
+    //             <div className="badge badge-pill badge-success">
+    //               {params.data.Status}
+    //             </div>
+    //           ) : params.data?.Status === "Deactive" ? (
+    //             <div className="badge badge-pill badge-warning">
+    //               {params.data.Status}
+    //             </div>
+    //           ) : (
+    //             "NA"
+    //           );
+    //         },
+    //       },
+    //     ];
+
+    //     let dropdown = JSON.parse(jsonData).CreateAccount?.MyDropdown?.dropdown;
+    //     if (dropdown.length) {
+    //       var mydropdownArray = dropdown?.map((ele) => {
+    //         return {
+    //           headerName: ele?.label,
+    //           field: ele?.name,
+    //           filter: true,
+    //           sortable: true,
+    //         };
+    //       });
+    //     } else {
+    //       var adddropdown = [
+    //         {
+    //           headerName: dropdown?.label._text,
+    //           field: dropdown?.name._text,
+    //           filter: true,
+    //           sortable: true,
+    //         },
+    //       ];
+    //     }
+
+    //     let myHeadings = [
+    //       // ...checkboxinput,
+    //       ...inputs,
+    //       ...adddropdown,
+    //       ...addRadio,
+    //       ...mydropdownArray,
+    //     ];
+    //     // console.log(myHeadings);
+    //     let Product = [
+    //       {
+    //         headerName: "Actions",
+    //         field: "sortorder",
+    //         field: "transactions",
+    //         width: 190,
+    //         cellRendererFramework: (params) => {
+    //           return (
+    //             <div className="actions cursor-pointer">
+    //               <Route
+    //                 render={({ history }) => (
+    //                   <Eye
+    //                     className="mr-50"
+    //                     size="25px"
+    //                     color="green"
+    //                     onClick={() => {
+    //                       this.handleChangeEdit(params.data, "readonly");
+    //                     }}
+    //                   />
+    //                 )}
+    //               />
+    //               <Route
+    //                 render={({ history }) => (
+    //                   <Edit
+    //                     className="mr-50"
+    //                     size="25px"
+    //                     color="blue"
+    //                     onClick={() => {
+    //                       this.handleChangeEdit(params.data, "Editable");
+    //                     }}
+    //                   />
+    //                 )}
+    //               />
+
+    //               <Route
+    //                 render={() => (
+    //                   <Trash2
+    //                     className="mr-50"
+    //                     size="25px"
+    //                     color="red"
+    //                     onClick={() => {
+    //                       this.runthisfunction(params?.data?._id);
+    //                     }}
+    //                   />
+    //                 )}
+    //               />
+    //             </div>
+    //           );
+    //         },
+    //       },
+    //       {
+    //         headerName: "Whatsapp",
+    //         field: "whatsapp",
+    //         filter: true,
+    //         sortable: true,
+    //         cellRendererFramework: (params) => {
+    //           console.log(params?.data?.whatsapp);
+    //           return params.data?.whatsapp === true ? (
+    //             <div className="badge badge-pill badge-success">YES</div>
+    //           ) : params.data?.whatsapp === false ? (
+    //             <div className="badge badge-pill badge-warning">NO</div>
+    //           ) : (
+    //             "NA"
+    //           );
+    //         },
+    //       },
+    //       {
+    //         headerName: "SMS",
+    //         field: "sms",
+    //         filter: true,
+    //         sortable: true,
+    //         cellRendererFramework: (params) => {
+    //           console.log(params?.data?.sms);
+    //           return params.data?.sms === true ? (
+    //             <div className="badge badge-pill badge-success">YES</div>
+    //           ) : params.data?.sms === false ? (
+    //             <div className="badge badge-pill badge-warning">No</div>
+    //           ) : (
+    //             "NA"
+    //           );
+    //         },
+    //       },
+    //       {
+    //         headerName: "Gmail",
+    //         field: "gmail",
+    //         filter: true,
+    //         sortable: true,
+    //         cellRendererFramework: (params) => {
+    //           console.log(params?.data?.gmail);
+    //           return params.data?.gmail === true ? (
+    //             <div className="badge badge-pill badge-success">YES</div>
+    //           ) : params.data?.gmail === false ? (
+    //             <div className="badge badge-pill badge-warning">NO</div>
+    //           ) : (
+    //             "NA"
+    //           );
+    //         },
+    //       },
+    //       ...myHeadings,
+    //       {
+    //         headerName: "Created date",
+    //         field: "createdAt",
+    //         filter: true,
+    //         sortable: true,
+    //         cellRendererFramework: (params) => {
+    //           let convertedTime = "NA";
+    //           if (params?.data?.createdAt == undefined) {
+    //             convertedTime = "NA";
+    //           }
+    //           if (params?.data?.createdAt) {
+    //             convertedTime = params?.data?.createdAt;
+    //           }
+    //           if (
+    //             UserInformation?.timeZone !== undefined &&
+    //             params?.data?.createdAt !== undefined
+    //           ) {
+    //             if (params?.data?.createdAt != undefined) {
+    //               convertedTime = moment(params?.data?.createdAt?.split(".")[0])
+    //                 .tz(UserInformation?.timeZone.split("-")[0])
+    //                 .format(UserInformation?.dateTimeFormat);
+    //             }
+    //           }
+
+    //           return (
+    //             <>
+    //               <div className="actions cursor-pointer">
+    //                 {convertedTime == "NA" ? (
+    //                   "NA"
+    //                 ) : (
+    //                   <span>
+    //                     {convertedTime} &nbsp;
+    //                     {UserInformation?.timeZone &&
+    //                       UserInformation?.timeZone.split("-")[1]}
+    //                   </span>
+    //                 )}
+    //               </div>
+    //             </>
+    //           );
+    //         },
+    //       },
+    //       {
+    //         headerName: "Updated date",
+    //         field: "updatedAt",
+    //         filter: true,
+    //         sortable: true,
+    //         cellRendererFramework: (params) => {
+    //           let convertedTime = "NA";
+    //           if (params?.data?.updatedAt == undefined) {
+    //             convertedTime = "NA";
+    //           }
+    //           if (params?.data?.updatedAt) {
+    //             convertedTime = params?.data?.updatedAt;
+    //           }
+    //           if (
+    //             UserInformation?.timeZone !== undefined &&
+    //             params?.data?.updatedAt !== undefined
+    //           ) {
+    //             if (params?.data?.updatedAt != undefined) {
+    //               convertedTime = moment(params?.data?.updatedAt?.split(".")[0])
+    //                 .tz(UserInformation?.timeZone.split("-")[0])
+    //                 .format(UserInformation?.dateTimeFormat);
+    //             }
+    //           }
+
+    //           return (
+    //             <>
+    //               <div className="actions cursor-pointer">
+    //                 {convertedTime == "NA" ? (
+    //                   "NA"
+    //                 ) : (
+    //                   <span>
+    //                     {convertedTime} &nbsp;
+    //                     {UserInformation?.timeZone &&
+    //                       UserInformation?.timeZone.split("-")[1]}
+    //                   </span>
+    //                 )}
+    //               </div>
+    //             </>
+    //           );
+    //         },
+    //       },
+    //     ];
+
+    //     this.setState({ AllcolumnDefs: Product });
+
+    //     let userHeading = JSON.parse(localStorage.getItem("Ticketsearch"));
+    //     if (userHeading?.length) {
+    //       this.setState({ columnDefs: userHeading });
+    //       this.gridApi.setColumnDefs(userHeading);
+    //       this.setState({ SelectedcolumnDefs: userHeading });
+    //     } else {
+    //       this.setState({ columnDefs: Product });
+    //       this.setState({ SelectedcolumnDefs: Product });
+    //     }
+    //     this.setState({ SelectedCols: Product });
+    //   })
+    //   .catch((err) => {
+    //     console.log(err);
+    //     swal("Error", "something went wrong try again");
+    //   });
+    // await CreateAccountList()
+    //   .then((res) => {
+    //     let value = res?.CreateAccount;
+    //     this.setState({ rowData: value });
+    //   })
+    //   .catch((err) => {
+    //     console.log(err);
+    //   });
   }
   toggleDropdown = () => {
     this.setState(prevState => ({ isOpen: !prevState.isOpen }));
@@ -391,7 +682,7 @@ class OrderSearch extends React.Component {
     }).then(value => {
       switch (value) {
         case "delete":
-          DeleteAccount(id)
+          ticketToolDeleteOne(id)
             .then(res => {
               let selectedData = this.gridApi.getSelectedRows();
               this.gridApi.updateRowData({ remove: selectedData });
@@ -608,13 +899,12 @@ class OrderSearch extends React.Component {
 
   HandleSetVisibleField = e => {
     e.preventDefault();
-    debugger;
     this.gridApi.setColumnDefs(this.state.SelectedcolumnDefs);
     this.setState({ columnDefs: this.state.SelectedcolumnDefs });
     this.setState({ SelectedcolumnDefs: this.state.SelectedcolumnDefs });
     this.setState({ rowData: this.state.rowData });
     localStorage.setItem(
-      "UserSearchheading",
+      "Ticketsearch",
       JSON.stringify(this.state.SelectedcolumnDefs)
     );
     this.LookupviewStart();
@@ -655,6 +945,7 @@ class OrderSearch extends React.Component {
     } = this.state;
     return (
       <>
+        {/* <ExcelReader /> */}
         <Row className="app-user-list">
           {this.state.EditOneUserView && this.state.EditOneUserView ? (
             <Row className="card">
@@ -699,13 +990,13 @@ class OrderSearch extends React.Component {
                 <>
                   <Col sm="12">
                     <Card>
-                      <Row className="ml-2 mt-2 mr-2">
+                      <Row className="mt-2 ml-2 mr-2">
                         <Col>
                           <h1
                             className="float-left"
                             style={{ fontWeight: "600" }}
                           >
-                            Billing Lock List
+                            GSTR 9
                           </h1>
                         </Col>
                         <Col>
@@ -854,11 +1145,30 @@ class OrderSearch extends React.Component {
                               {context => (
                                 <AgGridReact
                                   id="myAgGrid"
+                                  // gridOptions={{
+                                  //   domLayout: "autoHeight",
+                                  //   // or other layout options
+                                  // }}
                                   gridOptions={this.gridOptions}
                                   rowSelection="multiple"
                                   defaultColDef={defaultColDef}
                                   columnDefs={columnDefs}
                                   rowData={rowData}
+                                  // onGridReady={(params) => {
+                                  //   this.gridApi = params.api;
+                                  //   this.gridColumnApi = params.columnApi;
+                                  //   this.gridRef.current = params.api;
+
+                                  //   this.setState({
+                                  //     currenPageSize:
+                                  //       this.gridApi.paginationGetCurrentPage() +
+                                  //       1,
+                                  //     getPageSize:
+                                  //       this.gridApi.paginationGetPageSize(),
+                                  //     totalPages:
+                                  //       this.gridApi.paginationGetTotalPages(),
+                                  //   });
+                                  // }}
                                   onGridReady={this.onGridReady}
                                   colResizeDefault={"shift"}
                                   animateRows={true}
@@ -992,6 +1302,17 @@ class OrderSearch extends React.Component {
                                               SelectedcolumnDefs: SelectedCols, // Update the state with the modified array
                                             });
                                           }
+                                          // const delindex =
+                                          //   SelectedCols.findIndex(
+                                          //     (element) =>
+                                          //       element?.headerName ==
+                                          //       ele?.headerName
+                                          //   );
+
+                                          // SelectedCols?.splice(delindex, 1);
+                                          // this.setState({
+                                          //   SelectedcolumnDefs: SelectedCols,
+                                          // });
                                         }}
                                         style={{ cursor: "pointer" }}
                                         size="25px"
@@ -1045,4 +1366,4 @@ class OrderSearch extends React.Component {
     );
   }
 }
-export default OrderSearch;
+export default GSTR9;

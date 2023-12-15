@@ -55,7 +55,7 @@ import UserContext from "../../../../context/Context";
 
 const SelectedColums = [];
 
-class OrderSearch extends React.Component {
+class Achivement extends React.Component {
   static contextType = UserContext;
   constructor(props) {
     super(props);
@@ -366,7 +366,7 @@ class OrderSearch extends React.Component {
       })
       .catch(err => {
         console.log(err);
-        swal("Error", "something went wrong try again");
+        // swal("Error", "something went wrong try again");
       });
     await OrderViewList()
       .then(res => {
@@ -705,7 +705,7 @@ class OrderSearch extends React.Component {
                             className="float-left"
                             style={{ fontWeight: "600" }}
                           >
-                            Billing Lock List
+                            Achivement
                           </h1>
                         </Col>
                         <Col>
@@ -1045,4 +1045,4 @@ class OrderSearch extends React.Component {
     );
   }
 }
-export default OrderSearch;
+export default Achivement;

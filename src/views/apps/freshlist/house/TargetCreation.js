@@ -1,5 +1,6 @@
 import React, { useRef } from "react";
 import { Route } from "react-router-dom";
+import { ImDownload } from "react-icons/im";
 import {
   Card,
   CardBody,
@@ -128,7 +129,7 @@ class TargetCreation extends React.Component {
           headerName: "Actions",
           field: "transactions",
           width: 180,
-          cellRendererFramework: (params) => {
+          cellRendererFramework: params => {
             return (
               <div className="actions cursor-pointer">
                 {/* {this.state.Viewpermisson && ( */}
@@ -183,7 +184,7 @@ class TargetCreation extends React.Component {
           field: "salesPersonId.firstName",
           filter: "agSetColumnFilter",
           width: 200,
-          cellRendererFramework: (params) => {
+          cellRendererFramework: params => {
             // console.log(params.data);
             return (
               <div className="d-flex align-items-center cursor-pointer">
@@ -202,7 +203,7 @@ class TargetCreation extends React.Component {
           field: "Product Name",
           filter: "agSetColumnFilter",
           width: 200,
-          cellRendererFramework: (params) => {
+          cellRendererFramework: params => {
             return (
               <div className="d-flex align-items-center cursor-pointer">
                 <div className="">
@@ -221,7 +222,7 @@ class TargetCreation extends React.Component {
           field: "startDate",
           filter: "agSetColumnFilter",
           width: 200,
-          cellRendererFramework: (params) => {
+          cellRendererFramework: params => {
             return (
               <div className="d-flex align-items-center cursor-pointer">
                 <div className="">
@@ -236,7 +237,7 @@ class TargetCreation extends React.Component {
           field: "endDate",
           filter: "agSetColumnFilter",
           width: 200,
-          cellRendererFramework: (params) => {
+          cellRendererFramework: params => {
             // console.log(params.data);
             return (
               <div className="d-flex align-items-center cursor-pointer">
@@ -252,7 +253,7 @@ class TargetCreation extends React.Component {
           field: "createdAt",
           filter: "agSetColumnFilter",
           width: 200,
-          cellRendererFramework: (params) => {
+          cellRendererFramework: params => {
             return (
               <div className="d-flex align-items-center cursor-pointer">
                 <div className="">
@@ -267,7 +268,7 @@ class TargetCreation extends React.Component {
           field: "updatedAt",
           filter: "agSetColumnFilter",
           width: 200,
-          cellRendererFramework: (params) => {
+          cellRendererFramework: params => {
             return (
               <div className="d-flex align-items-center cursor-pointer">
                 <div className="">
@@ -281,12 +282,12 @@ class TargetCreation extends React.Component {
     };
   }
   toggleModal = () => {
-    this.setState((prevState) => ({
+    this.setState(prevState => ({
       modalone: !prevState.modalone,
     }));
   };
   LookupviewStart = () => {
-    this.setState((prevState) => ({
+    this.setState(prevState => ({
       modal: !prevState.modal,
     }));
   };
@@ -307,7 +308,7 @@ class TargetCreation extends React.Component {
     const InsidePermissions = CheckPermission("Target Creation");
     this.setState({ InsiderPermissions: InsidePermissions });
     await Create_TargetList(userId)
-      .then((res) => {
+      .then(res => {
         console.log(res.TargetCreation);
         this.setState({ rowData: res?.TargetCreation });
         this.setState({ AllcolumnDefs: this.state.columnDefs });
@@ -323,7 +324,7 @@ class TargetCreation extends React.Component {
           this.setState({ SelectedcolumnDefs: this.state.columnDefs });
         }
       })
-      .catch((err) => {
+      .catch(err => {
         console.log(err);
       });
     // await CreateAccountList()
@@ -336,7 +337,7 @@ class TargetCreation extends React.Component {
     //   });
   }
   toggleDropdown = () => {
-    this.setState((prevState) => ({ isOpen: !prevState.isOpen }));
+    this.setState(prevState => ({ isOpen: !prevState.isOpen }));
   };
 
   runthisfunction(id) {
@@ -345,15 +346,15 @@ class TargetCreation extends React.Component {
         cancel: "cancel",
         catch: { text: "Delete ", value: "delete" },
       },
-    }).then((value) => {
+    }).then(value => {
       switch (value) {
         case "delete":
           Delete_targetINlist(id)
-            .then((res) => {
+            .then(res => {
               let selectedData = this.gridApi.getSelectedRows();
               this.gridApi.updateRowData({ remove: selectedData });
             })
-            .catch((err) => {
+            .catch(err => {
               console.log(err);
             });
           break;
@@ -362,7 +363,7 @@ class TargetCreation extends React.Component {
     });
   }
 
-  onGridReady = (params) => {
+  onGridReady = params => {
     this.gridApi = params.api;
     this.gridColumnApi = params.columnApi;
     this.gridRef.current = params.api;
@@ -374,11 +375,11 @@ class TargetCreation extends React.Component {
     });
   };
 
-  updateSearchQuery = (val) => {
+  updateSearchQuery = val => {
     this.gridApi.setQuickFilter(val);
   };
 
-  filterSize = (val) => {
+  filterSize = val => {
     if (this.gridApi) {
       this.gridApi.paginationSetPageSize(Number(val));
       this.setState({
@@ -393,7 +394,7 @@ class TargetCreation extends React.Component {
       SelectedColums?.push(value);
     } else {
       const delindex = SelectedColums?.findIndex(
-        (ele) => ele?.headerName === value?.headerName
+        ele => ele?.headerName === value?.headerName
       );
 
       SelectedColums?.splice(delindex, 1);
@@ -404,14 +405,14 @@ class TargetCreation extends React.Component {
       Papa.parse(csvData, {
         header: true,
         skipEmptyLines: true,
-        complete: (result) => {
+        complete: result => {
           if (result.data && result.data.length > 0) {
             resolve(result.data);
           } else {
             reject(new Error("No data found in the CSV"));
           }
         },
-        error: (error) => {
+        error: error => {
           reject(error);
         },
       });
@@ -423,7 +424,7 @@ class TargetCreation extends React.Component {
 
     const doc = new jsPDF("landscape", "mm", size, false);
     doc.setTextColor(5, 87, 97);
-    const tableData = parsedData.map((row) => Object.values(row));
+    const tableData = parsedData.map(row => Object.values(row));
     doc.addImage(Logo, "JPEG", 10, 10, 50, 30);
     let date = new Date();
     doc.setCreationDate(date);
@@ -448,14 +449,14 @@ class TargetCreation extends React.Component {
       console.error("Error parsing CSV:", error);
     }
   };
-  processCell = (params) => {
+  processCell = params => {
     // console.log(params);
     // Customize cell content as needed
     return params.value;
   };
 
   convertCsvToExcel(csvData) {
-    return new Promise((resolve) => {
+    return new Promise(resolve => {
       Papa.parse(csvData, {
         header: true,
         dynamicTyping: true,
@@ -486,7 +487,7 @@ class TargetCreation extends React.Component {
     window.URL.revokeObjectURL(url);
   }
 
-  exportToExcel = async (e) => {
+  exportToExcel = async e => {
     const CsvData = this.gridApi.getDataAsCsv({
       processCellCallback: this.processCell,
     });
@@ -499,7 +500,7 @@ class TargetCreation extends React.Component {
       processCellCallback: this.processCell,
     });
     Papa.parse(CsvData, {
-      complete: (result) => {
+      complete: result => {
         const ws = XLSX.utils.json_to_sheet(result.data);
         const wb = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(wb, ws, "Sheet1");
@@ -535,13 +536,13 @@ class TargetCreation extends React.Component {
       processCellCallback: this.processCell,
     });
     Papa.parse(CsvData, {
-      complete: (result) => {
+      complete: result => {
         const rows = result.data;
 
         // Create XML
         let xmlString = "<root>\n";
 
-        rows.forEach((row) => {
+        rows.forEach(row => {
           xmlString += "  <row>\n";
           row.forEach((cell, index) => {
             xmlString += `    <field${index + 1}>${cell}</field${index + 1}>\n`;
@@ -563,7 +564,7 @@ class TargetCreation extends React.Component {
     });
   };
 
-  HandleSetVisibleField = (e) => {
+  HandleSetVisibleField = e => {
     e.preventDefault();
     debugger;
     this.gridApi.setColumnDefs(this.state.SelectedcolumnDefs);
@@ -580,10 +581,10 @@ class TargetCreation extends React.Component {
   HeadingRightShift = () => {
     const updatedSelectedColumnDefs = [
       ...new Set([
-        ...this.state.SelectedcolumnDefs.map((item) => JSON.stringify(item)),
-        ...SelectedColums.map((item) => JSON.stringify(item)),
+        ...this.state.SelectedcolumnDefs.map(item => JSON.stringify(item)),
+        ...SelectedColums.map(item => JSON.stringify(item)),
       ]),
-    ].map((item) => JSON.parse(item));
+    ].map(item => JSON.parse(item));
     this.setState({
       SelectedcolumnDefs: [...new Set(updatedSelectedColumnDefs)], // Update the state with the combined array
     });
@@ -619,11 +620,12 @@ class TargetCreation extends React.Component {
               <Col>
                 <div className="d-flex justify-content-end p-1">
                   <Button
-                    onClick={(e) => {
+                    onClick={e => {
                       e.preventDefault();
                       this.setState({ EditOneUserView: false });
                     }}
-                    color="danger">
+                    color="danger"
+                  >
                     Back
                   </Button>
                 </div>
@@ -639,11 +641,12 @@ class TargetCreation extends React.Component {
                     <Col>
                       <div className="d-flex justify-content-end p-1">
                         <Button
-                          onClick={(e) => {
+                          onClick={e => {
                             e.preventDefault();
                             this.setState({ ViewOneUserView: false });
                           }}
-                          color="danger">
+                          color="danger"
+                        >
                           Back
                         </Button>
                       </div>
@@ -655,9 +658,14 @@ class TargetCreation extends React.Component {
                 <>
                   <Col sm="12">
                     <Card>
-                      <Row className="m-2">
+                      <Row className="ml-2 mt-2 mr-2">
                         <Col>
-                          <h1 className="float-left">Target List</h1>
+                          <h1
+                            className="float-left"
+                            style={{ fontWeight: "600" }}
+                          >
+                            Target List
+                          </h1>
                         </Col>
 
                         {this.state.InsiderPermissions &&
@@ -689,11 +697,13 @@ class TargetCreation extends React.Component {
                                         position: "absolute",
                                         zIndex: "1",
                                       }}
-                                      className="dropdown-content dropdownmy">
+                                      className="dropdown-content dropdownmy"
+                                    >
                                       <h5
                                         onClick={() => this.exportToPDF()}
                                         style={{ cursor: "pointer" }}
-                                        className=" mx-1 myactive mt-1">
+                                        className=" mx-1 myactive mt-1"
+                                      >
                                         .PDF
                                       </h5>
                                       <h5
@@ -701,25 +711,29 @@ class TargetCreation extends React.Component {
                                           this.gridApi.exportDataAsCsv()
                                         }
                                         style={{ cursor: "pointer" }}
-                                        className=" mx-1 myactive">
+                                        className=" mx-1 myactive"
+                                      >
                                         .CSV
                                       </h5>
                                       <h5
                                         onClick={this.convertCSVtoExcel}
                                         style={{ cursor: "pointer" }}
-                                        className=" mx-1 myactive">
+                                        className=" mx-1 myactive"
+                                      >
                                         .XLS
                                       </h5>
                                       <h5
                                         onClick={this.exportToExcel}
                                         style={{ cursor: "pointer" }}
-                                        className=" mx-1 myactive">
+                                        className=" mx-1 myactive"
+                                      >
                                         .XLSX
                                       </h5>
                                       <h5
                                         onClick={() => this.convertCsvToXml()}
                                         style={{ cursor: "pointer" }}
-                                        className=" mx-1 myactive">
+                                        className=" mx-1 myactive"
+                                      >
                                         .XML
                                       </h5>
                                     </div>
@@ -737,7 +751,8 @@ class TargetCreation extends React.Component {
                                         history.push(
                                           "/app/SoftNumen/account/CreateTarget"
                                         )
-                                      }>
+                                      }
+                                    >
                                       <FaPlus size={15} /> Create Target
                                     </Badge>
                                   )}
@@ -746,7 +761,7 @@ class TargetCreation extends React.Component {
                             </Col>
                           )}
                       </Row>
-                      <CardBody>
+                      <CardBody style={{ marginTop: "-1.5rem" }}>
                         {this.state.rowData === null ? null : (
                           <div className="ag-theme-material w-100 my-2 ag-grid-table">
                             <div className="d-flex flex-wrap justify-content-between align-items-center">
@@ -771,27 +786,32 @@ class TargetCreation extends React.Component {
                                   <DropdownMenu right>
                                     <DropdownItem
                                       tag="div"
-                                      onClick={() => this.filterSize(5)}>
+                                      onClick={() => this.filterSize(5)}
+                                    >
                                       5
                                     </DropdownItem>
                                     <DropdownItem
                                       tag="div"
-                                      onClick={() => this.filterSize(20)}>
+                                      onClick={() => this.filterSize(20)}
+                                    >
                                       20
                                     </DropdownItem>
                                     <DropdownItem
                                       tag="div"
-                                      onClick={() => this.filterSize(50)}>
+                                      onClick={() => this.filterSize(50)}
+                                    >
                                       50
                                     </DropdownItem>
                                     <DropdownItem
                                       tag="div"
-                                      onClick={() => this.filterSize(100)}>
+                                      onClick={() => this.filterSize(100)}
+                                    >
                                       100
                                     </DropdownItem>
                                     <DropdownItem
                                       tag="div"
-                                      onClick={() => this.filterSize(134)}>
+                                      onClick={() => this.filterSize(134)}
+                                    >
                                       134
                                     </DropdownItem>
                                   </DropdownMenu>
@@ -801,7 +821,7 @@ class TargetCreation extends React.Component {
                                 <div className="table-input mr-1">
                                   <Input
                                     placeholder="search Item here..."
-                                    onChange={(e) =>
+                                    onChange={e =>
                                       this.updateSearchQuery(e.target.value)
                                     }
                                     value={this.state.value}
@@ -810,7 +830,7 @@ class TargetCreation extends React.Component {
                               </div>
                             </div>
                             <ContextLayout.Consumer className="ag-theme-alpine">
-                              {(context) => (
+                              {context => (
                                 <AgGridReact
                                   id="myAgGrid"
                                   // gridOptions={{
@@ -867,7 +887,8 @@ class TargetCreation extends React.Component {
           isOpen={this.state.modal}
           toggle={this.LookupviewStart}
           className={this.props.className}
-          style={{ maxWidth: "1050px" }}>
+          style={{ maxWidth: "1050px" }}
+        >
           <ModalHeader toggle={this.LookupviewStart}>Change Fileds</ModalHeader>
           <ModalBody className="modalbodyhead">
             <Row>
@@ -880,15 +901,15 @@ class TargetCreation extends React.Component {
                         return (
                           <>
                             <div
-                              onClick={(e) =>
-                                this.handleChangeHeader(e, ele, i)
-                              }
+                              onClick={e => this.handleChangeHeader(e, ele, i)}
                               key={i}
-                              className="mycustomtag mt-1">
+                              className="mycustomtag mt-1"
+                            >
                               <span className="mt-1">
                                 <h5
                                   style={{ cursor: "pointer" }}
-                                  className="allfields">
+                                  className="allfields"
+                                >
                                   <input
                                     type="checkbox"
                                     // checked={check && check}
@@ -947,14 +968,15 @@ class TargetCreation extends React.Component {
                                             : ""
                                         }`,
                                       }}
-                                      className="allfields">
+                                      className="allfields"
+                                    >
                                       <IoMdRemoveCircleOutline
                                         onClick={() => {
                                           const SelectedCols =
                                             this.state.SelectedcolumnDefs?.slice();
                                           const delindex =
                                             SelectedCols?.findIndex(
-                                              (element) =>
+                                              element =>
                                                 element?.headerName ==
                                                 ele?.headerName
                                             );
@@ -1035,7 +1057,8 @@ class TargetCreation extends React.Component {
           // className="modal-dialog modal-lg"
           size="lg"
           backdrop={true}
-          fullscreen={true}>
+          fullscreen={true}
+        >
           <ModalHeader toggle={this.toggleModal}>View Details</ModalHeader>
           <ModalBody className="myproducttable">
             <TargetAssignedOne ViewData={this.state.ViewData} />

@@ -267,47 +267,62 @@ class RoleList extends React.Component {
       <Row className="app-user-list">
         <Col sm="12">
           <Card>
-            <Row className="m-2">
-              <Col>
-                <h1 className="float-left">Created Role List</h1>
+            <Row className="mt-2 mx-2 mr-2">
+              <Col lg="6" md="6" sm="6" xs="12">
+                <h1 className="float-left" style={{ fontWeight: "600" }}>
+                  Created Role List
+                </h1>
               </Col>
+              <Col lg="2" md="2" sm="2" xs="12"></Col>
               {this.state.InsiderPermissions &&
                 this.state.InsiderPermissions?.Create && (
-                  <Col>
-                    <Route
-                      render={({ history }) => (
-                        <Badge
-                          style={{ cursor: "pointer" }}
-                          className=" float-right mr-3"
-                          color="info"
-                          onClick={() =>
-                            history.push("/app/freshlist/account/addRoleNew")
-                          }
-                        >
-                          <FaPlus size={15} /> Create Role
-                        </Badge>
-                      )}
-                    />
+                  <Col lg="2" md="2" sm="2" xs="12">
+                    <div className="d-flex justify-content-end">
+                      <Route
+                        render={({ history }) => (
+                          <Button
+                            style={{
+                              cursor: "pointer",
+                              backgroundColor: "#39cccc",
+                              color: "white",
+                              fontWeight: "600",
+                            }}
+                            className=" float-right mb-1"
+                            color="#39cccc"
+                            onClick={() =>
+                              history.push("/app/freshlist/account/addRoleNew")
+                            }
+                          >
+                            <FaPlus size={15} /> Create Role
+                          </Button>
+                        )}
+                      />
+                    </div>
                   </Col>
                 )}
 
               {this.state.InsiderPermissions &&
                 this.state.InsiderPermissions?.Create && (
-                  <Col lg="1" sm="1" md="1" ms="12">
+                  <Col lg="2" sm="2" md="2" ms="12">
                     <Route
                       render={({ history }) => (
-                        <Badge
-                          style={{ cursor: "pointer" }}
+                        <Button
+                          style={{
+                            cursor: "pointer",
+                            backgroundColor: "#39cccc",
+                            color: "white",
+                            fontWeight: "600",
+                          }}
                           className=" float-right"
-                          color="primary"
+                          color="#39cccc"
                           onClick={() =>
                             history.push(
                               "/app/freshlist/account/CreateHeirarchy"
                             )
                           }
                         >
-                          <FaPlus size={15} /> Create Hierarchy
-                        </Badge>
+                          <FaPlus size={15} /> Hierarchy
+                        </Button>
                       )}
                     />
                   </Col>

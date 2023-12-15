@@ -1,5 +1,6 @@
 import React, { useRef } from "react";
 import xmlJs from "xml-js";
+import { ImDownload } from "react-icons/im";
 import {
   Card,
   CardBody,
@@ -1291,102 +1292,112 @@ class PurchaseInvoice extends React.Component {
                 <>
                   <Col sm="12">
                     <Card>
-                      <Row className="m-2">
+                      <Row className="mt-2 ml-2 mr-2 ">
                         <Col>
-                          <h1 className="float-left"> Purchased Order List</h1>
-                        </Col>
-                        <Col>
-                          <span className="mx-1">
-                            <FaFilter
-                              style={{ cursor: "pointer" }}
-                              title="filter coloumn"
-                              size="25px"
-                              onClick={this.LookupviewStart}
-                              color="#39cccc"
-                              className="float-right"
-                            />
-                          </span>
-                          <span className="mx-1">
-                            <div className="dropdown-container float-right">
-                              <BsCloudDownloadFill
-                                style={{ cursor: "pointer" }}
-                                title="download file"
-                                size="25px"
-                                className="dropdown-button "
-                                color="#39cccc"
-                                onClick={this.toggleDropdown}
-                              />
-                              {isOpen && (
-                                <div
-                                  style={{
-                                    position: "absolute",
-                                    zIndex: "1",
-                                  }}
-                                  className="dropdown-content dropdownmy"
-                                >
-                                  <h5
-                                    onClick={() => this.exportToPDF()}
-                                    style={{ cursor: "pointer" }}
-                                    className=" mx-1 myactive mt-1"
-                                  >
-                                    .PDF
-                                  </h5>
-                                  <h5
-                                    onClick={() =>
-                                      this.gridApi.exportDataAsCsv()
-                                    }
-                                    style={{ cursor: "pointer" }}
-                                    className=" mx-1 myactive"
-                                  >
-                                    .CSV
-                                  </h5>
-                                  <h5
-                                    onClick={this.convertCSVtoExcel}
-                                    style={{ cursor: "pointer" }}
-                                    className=" mx-1 myactive"
-                                  >
-                                    .XLS
-                                  </h5>
-                                  <h5
-                                    onClick={this.exportToExcel}
-                                    style={{ cursor: "pointer" }}
-                                    className=" mx-1 myactive"
-                                  >
-                                    .XLSX
-                                  </h5>
-                                  <h5
-                                    onClick={() => this.convertCsvToXml()}
-                                    style={{ cursor: "pointer" }}
-                                    className=" mx-1 myactive"
-                                  >
-                                    .XML
-                                  </h5>
-                                </div>
-                              )}
-                            </div>
-                          </span>
-                          <span></span>
+                          <h1
+                            className="float-left "
+                            style={{ fontWeight: "600" }}
+                          >
+                            Purchased Invoice
+                          </h1>
                         </Col>
                         {this.state.InsiderPermissions &&
-                          this.state.InsiderPermissions?.Create && (
-                            <Col lg="2" sm="2" md="2">
-                              <Button
-                                className=" btn btn-success float-right"
-                                onClick={e => {
-                                  let billnumber =
-                                    localStorage.getItem("billnumber");
-                                  if (billnumber) {
-                                    // swal("You already Selected Bill Type");
-                                    this.setState({ ShowBill: true });
-                                    this.toggleModalOne();
-                                  } else {
-                                    this.setState({ ShowBill: true });
-                                    this.toggleModalOne();
-                                  }
-                                }}
-                              >
-                                Select Invoice
-                              </Button>
+                          this.state.InsiderPermissions.View && (
+                            <Col>
+                              <span className="mx-1">
+                                <FaFilter
+                                  style={{ cursor: "pointer" }}
+                                  title="filter coloumn"
+                                  size="35px"
+                                  onClick={this.LookupviewStart}
+                                  color="#39cccc"
+                                  className="float-right"
+                                />
+                              </span>
+                              <span className="mx-1">
+                                <div className="dropdown-container float-right">
+                                  <ImDownload
+                                    style={{ cursor: "pointer" }}
+                                    title="download file"
+                                    size="35px"
+                                    className="dropdown-button "
+                                    color="#39cccc"
+                                    onClick={this.toggleDropdown}
+                                  />
+                                  {isOpen && (
+                                    <div
+                                      style={{
+                                        position: "absolute",
+                                        zIndex: "1",
+                                        border: "1px solid #39cccc",
+                                        backgroundColor: "white",
+                                      }}
+                                      className="dropdown-content dropdownmy"
+                                    >
+                                      <h5
+                                        onClick={() => this.exportToPDF()}
+                                        style={{ cursor: "pointer" }}
+                                        className=" mx-1 myactive mt-1"
+                                      >
+                                        .PDF
+                                      </h5>
+                                      <h5
+                                        onClick={() =>
+                                          this.gridApi.exportDataAsCsv()
+                                        }
+                                        style={{ cursor: "pointer" }}
+                                        className=" mx-1 myactive"
+                                      >
+                                        .CSV
+                                      </h5>
+                                      <h5
+                                        onClick={this.convertCSVtoExcel}
+                                        style={{ cursor: "pointer" }}
+                                        className=" mx-1 myactive"
+                                      >
+                                        .XLS
+                                      </h5>
+                                      <h5
+                                        onClick={this.exportToExcel}
+                                        style={{ cursor: "pointer" }}
+                                        className=" mx-1 myactive"
+                                      >
+                                        .XLSX
+                                      </h5>
+                                      <h5
+                                        onClick={() => this.convertCsvToXml()}
+                                        style={{ cursor: "pointer" }}
+                                        className=" mx-1 myactive"
+                                      >
+                                        .XML
+                                      </h5>
+                                    </div>
+                                  )}
+                                </div>
+                              </span>
+                              <span>
+                                <Route
+                                  render={({ history }) => (
+                                    <Button
+                                      style={{
+                                        cursor: "pointer",
+                                        backgroundColor: "#39cccc",
+                                        color: "white",
+                                        fontWeight: "600",
+                                      }}
+                                      className="float-right mr-1 "
+                                      color="#39cccc"
+                                      onClick={() =>
+                                        history.push(
+                                          "/app/SoftNumen/account/CreateAccount"
+                                        )
+                                      }
+                                    >
+                                      <FaPlus size={15} /> Create User
+                                    </Button>
+                                  )}
+                                />
+                              </span>
                             </Col>
                           )}
                       </Row>

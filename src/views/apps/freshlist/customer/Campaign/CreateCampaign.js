@@ -137,29 +137,31 @@ const CreateCampaign = () => {
   return (
     <div>
       <div>
-        <Row>
-          <Col>
-            <Route
-              render={({ history }) => (
-                <Button
-                  className=" float-right"
-                  color="danger"
-                  onClick={
-                    () => history.goBack()
-                    // () => history.push("/app/freshlist/order/delivered")
-                    // history.push("/app/freshlist/order/addOrder")
-                  }
-                >
-                  Back
-                </Button>
-              )}
-            />
-          </Col>
-        </Row>
         <Card>
+          <Row></Row>
+
           <Row className="m-2">
             <Col>
-              <h1 className="float-left">Create Campaign</h1>
+              <h1 className="float-left" style={{ fontWeight: "600" }}>
+                Create Campaign
+              </h1>
+            </Col>
+            <Col>
+              <Route
+                render={({ history }) => (
+                  <Button
+                    className=" float-right"
+                    color="danger"
+                    onClick={
+                      () => history.goBack()
+                      // () => history.push("/app/freshlist/order/delivered")
+                      // history.push("/app/freshlist/order/addOrder")
+                    }
+                  >
+                    Back
+                  </Button>
+                )}
+              />
             </Col>
           </Row>
 
