@@ -2,8 +2,6 @@ import React from "react";
 import { useState, useEffect } from "react";
 
 export const CheckPermission = (props) => {
-  console.log(props);
-
   let pageparmission = JSON.parse(localStorage.getItem("userData"));
   let newparmisson = pageparmission?.rolename?.rolePermission?.find(
     (value) => value?.pagename === props

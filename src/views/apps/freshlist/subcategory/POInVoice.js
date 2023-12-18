@@ -7,6 +7,7 @@ import {
   StyleSheet,
   Image,
   Rect,
+  PDFDownloadLink,
 } from "@react-pdf/renderer";
 
 import logo from "../../../../assets/img/logo/logowithoutback.png";

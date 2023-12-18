@@ -2327,7 +2327,7 @@ class AppRouter extends React.Component {
             component={CreateSalesManag}
           />
           <AppRoute
-            path="/app/AjGroup/dispatch/CreateDispach"
+            path="/app/AjGroup/dispatch/CreateDispach/:id"
             component={CreateDispach}
           />
           <AppRoute

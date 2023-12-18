@@ -109,21 +109,21 @@ class AccounSearch extends React.Component {
     let pageparmission = JSON.parse(localStorage.getItem("userData"));
     const InsidePermissions = CheckPermission("Create User");
     console.log(InsidePermissions);
-    this.setState({ InsiderPermissions: InsidePermissions });
     let userid = pageparmission?._id;
+    this.setState({ InsiderPermissions: InsidePermissions });
     await CreateAccountList(userid)
-      .then(res => {
+      .then((res) => {
         let value = res?.adminDetails;
         console.log(value);
         if (value.length) {
           this.setState({ rowData: value });
         }
       })
-      .catch(err => {
+      .catch((err) => {
         console.log(err);
       });
     await CreateAccountView()
-      .then(res => {
+      .then((res) => {
         var mydropdownArray = [];
         var adddropdown = [];
         const jsonData = xmlJs.xml2json(res.data, {
@@ -131,12 +131,13 @@ class AccounSearch extends React.Component {
           spaces: 2,
         });
         console.log(JSON.parse(jsonData)?.CreateUser);
-        const inputs = JSON.parse(jsonData)?.CreateUser?.input?.map(ele => {
+        const inputs = JSON.parse(jsonData)?.CreateUser?.input?.map((ele) => {
           return {
             headerName: ele?.label._text,
             field: ele?.name._text,
             filter: true,
             sortable: true,
+            headerClass: "bold-header",
           };
         });
         // let Radioinput =
@@ -199,7 +200,7 @@ class AccounSearch extends React.Component {
             field: "sortorder",
             field: "transactions",
             width: 190,
-            cellRendererFramework: params => {
+            cellRendererFramework: (params) => {
               return (
                 <div className="actions cursor-pointer">
                   {this.state.InsiderPermissions &&
@@ -285,7 +286,7 @@ class AccounSearch extends React.Component {
             field: "status",
             filter: true,
             width: 150,
-            cellRendererFramework: params => {
+            cellRendererFramework: (params) => {
               return params.data?.status === "Active" ? (
                 <div className="badge badge-pill badge-success">
                   {params.data?.status}
@@ -303,7 +304,7 @@ class AccounSearch extends React.Component {
             field: "created_by.firstName",
             filter: true,
             sortable: true,
-            cellRendererFramework: params => {
+            cellRendererFramework: (params) => {
               // console.log(params?.data);
               return (
                 <>
@@ -319,7 +320,7 @@ class AccounSearch extends React.Component {
             field: "rolename.roleName",
             filter: true,
             sortable: true,
-            cellRendererFramework: params => {
+            cellRendererFramework: (params) => {
               // console.log(params.data);
               return (
                 <>
@@ -336,7 +337,7 @@ class AccounSearch extends React.Component {
             field: "createdAt",
             filter: true,
             sortable: true,
-            cellRendererFramework: params => {
+            cellRendererFramework: (params) => {
               return (
                 <>
                   <div className="actions cursor-pointer">
@@ -351,7 +352,7 @@ class AccounSearch extends React.Component {
             field: "updatedAt",
             filter: true,
             sortable: true,
-            cellRendererFramework: params => {
+            cellRendererFramework: (params) => {
               return (
                 <>
                   <div className="actions cursor-pointer">
@@ -378,7 +379,7 @@ class AccounSearch extends React.Component {
         }
         this.setState({ SelectedCols: Product });
       })
-      .catch(err => {
+      .catch((err) => {
         console.log(err);
         swal("Error", "something went wrong try again");
       });

@@ -271,7 +271,9 @@ class OrderList extends React.Component {
   async componentDidMount() {
     const userId = JSON.parse(localStorage.getItem("userData"))._id;
     const UserInformation = this.context?.UserInformatio;
-
+  const InsidePermissions = CheckPermission("Sales Order");
+  console.log(InsidePermissions);
+  this.setState({ InsiderPermissions: InsidePermissions });
     await createOrderhistoryview(userId)
       .then(res => {
         this.setState({ rowData: res?.orderHistory });
@@ -279,7 +281,7 @@ class OrderList extends React.Component {
         this.setState({ AllcolumnDefs: this.state.columnDefs });
         this.setState({ SelectedCols: this.state.columnDefs });
 
-        let userHeading = JSON.parse(localStorage.getItem("TargetList"));
+        let userHeading = JSON.parse(localStorage.getItem("OrderListshow"));
         if (userHeading?.length) {
           this.setState({ columnDefs: userHeading });
           this.gridApi.setColumnDefs(userHeading);
@@ -298,7 +300,6 @@ class OrderList extends React.Component {
   };
 
   runthisfunction(id) {
-    debugger;
     swal("Warning", "Sure You Want to Delete it", {
       buttons: {
         cancel: "cancel",
@@ -524,7 +525,7 @@ class OrderList extends React.Component {
     this.setState({ SelectedcolumnDefs: this.state.SelectedcolumnDefs });
     this.setState({ rowData: this.state.rowData });
     localStorage.setItem(
-      "TargetList",
+      "OrderListshow",
       JSON.stringify(this.state.SelectedcolumnDefs)
     );
     this.LookupviewStart();

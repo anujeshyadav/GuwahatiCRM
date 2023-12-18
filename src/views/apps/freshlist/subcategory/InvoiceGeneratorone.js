@@ -1,6 +1,10 @@
 import React, { useEffect, useState } from "react";
+<<<<<<< HEAD
+import { PDFViewer, PDFDownloadLink } from "@react-pdf/renderer";
+=======
 import { PDFViewer } from "@react-pdf/renderer";
 import { ToWords } from "to-words";
+>>>>>>> 67161165b7ba35c7b95b5e88eb330911ade07088
 import InvoiceTemplate from "./InvoiceTemplate";
 import ReactPDF from "@react-pdf/renderer";
 import POInVoice from "./POInVoice";
@@ -9,7 +13,7 @@ import axiosConfig from "../../../../axiosConfig";
 import POInvoiceone from "./POInvoiceone";
 import POInvoiceTwo from "./POInvoiceTwo";
 import PoinvoiceThree from "./PoinvoiceThree";
-const InvoiceGenerator = props => {
+const InvoiceGenerator = (props) => {
   console.log(props);
   const [Printview, setPrintview] = useState({});
   const [AllCharges, setAllCharges] = useState({});
@@ -70,6 +74,25 @@ const InvoiceGenerator = props => {
 
   return (
     <div>
+      {/* <PDFDownloadLink
+        document={
+          props?.BillNumber == 1 && (
+            <POInvoiceTwo
+              UserChoice={UserChoice}
+              invoiceData={Printview}
+              CurrentWords={props.wordsNumber}
+              BilData={props}
+              tableList={details}
+              AllCharges={AllCharges}
+              fileName="invoice.pdf"
+            />
+          )
+        }
+        fileName="document.pdf">
+        {({ blob, url, loading, error }) =>
+          loading ? "Loading document..." : "Download now!"
+        }
+      </PDFDownloadLink> */}
       {/* {/ Use PDFViewer to preview the generated PDF /} */}
       <PDFViewer width="1000" height="800">
         {props?.BillNumber == undefined && (
