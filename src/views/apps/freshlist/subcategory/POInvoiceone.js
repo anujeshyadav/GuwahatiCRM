@@ -212,9 +212,7 @@ const POInvoiceone = ({
                     borderRight: "1px solid black",
                   }}
                 >
-                  <View
-                    style={{ flexDirection: "row", paddingBottom: "3px 3px" }}
-                  >
+                  <View style={{ flexDirection: "row", paddingBottom: "3px" }}>
                     {UserChoice?.billTo == "Left" && (
                       <Text
                         style={{
@@ -591,26 +589,7 @@ const POInvoiceone = ({
                   PO Number
                 </Text>
               </View> */}
-                <View
-                  style={{
-                    width: "12%",
-                    padding: "5px 2px",
 
-                    borderRight: "1px solid black",
-                  }}
-                >
-                  <Text
-                    style={{
-                      fontSize: "10px",
-                      fontWeight: "1000",
-                      color: "white",
-
-                      marginLeft: "5px",
-                    }}
-                  >
-                    PO No.
-                  </Text>
-                </View>
                 {/* <View
                   style={{
                     width: "13%",
@@ -736,7 +715,7 @@ const POInvoiceone = ({
                   <Text
                     style={{
                       fontSize: "8px",
-                      color: "black",
+                      color: "white",
                       fontWeight: "1000",
                       marginLeft: "5px",
                     }}
@@ -755,7 +734,7 @@ const POInvoiceone = ({
                   <Text
                     style={{
                       fontSize: "10px",
-                      color: "black",
+                      color: "white",
                       fontWeight: "1000",
                       marginLeft: "5px",
                     }}
@@ -774,7 +753,7 @@ const POInvoiceone = ({
                   <Text
                     style={{
                       fontSize: "10px",
-                      color: "black",
+                      color: "white",
                       fontWeight: "1000",
                       marginLeft: "5px",
                     }}
@@ -793,7 +772,7 @@ const POInvoiceone = ({
                   <Text
                     style={{
                       fontSize: "10px",
-                      color: "black",
+                      color: "white",
                       fontWeight: "1000",
                       marginLeft: "5px",
                     }}
@@ -812,7 +791,7 @@ const POInvoiceone = ({
                   <Text
                     style={{
                       fontSize: "10px",
-                      color: "black",
+                      color: "white",
                       fontWeight: "1000",
                       marginLeft: "5px",
                     }}
