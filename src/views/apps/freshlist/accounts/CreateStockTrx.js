@@ -105,40 +105,44 @@ const CreateTarget = args => {
     },
   ]);
 
-  const handleProductChangeProduct = (e, index) => {
-    setIndex(index);
-    console.log(product);
+  const handleProductChangeProduct = (e, index, avalaibleSize) => {
+    if (avalaibleSize >= Number(e.target.value)) {
+      setIndex(index);
+      console.log(product);
 
-    const { name, value } = e.target;
-    const list = [...product];
-    if (name.includes("transferQty")) {
-      // list[index]["Size"] = Number(value);
-      let available = Number(list[index]["AvailaleQty"]);
-      let Askingfor = Number(value);
-      if (available >= Askingfor) {
-        list[index][name] = Askingfor;
+      const { name, value } = e.target;
+      const list = [...product];
+      if (name.includes("transferQty")) {
+        // list[index]["Size"] = Number(value);
+        let available = Number(list[index]["AvailaleQty"]);
+        let Askingfor = Number(value);
+        if (available >= Askingfor) {
+          list[index][name] = Askingfor;
+        } else {
+          swal("Can not Transfer More then Stock");
+          list[index][name] = available - 1;
+        }
       } else {
-        swal("Can not Transfer More then Stock");
-        list[index][name] = available - 1;
+        list[index][name] = value;
       }
-    } else {
-      list[index][name] = value;
-    }
-    console.log(GrandTotal);
+      console.log(GrandTotal);
 
-    let amt = 0;
-    if (list.length > 0) {
-      const x = list?.map((val) => {
-        GrandTotal[index] = val.Size * val.price * val.transferQty;
-        list[index]["totalprice"] = val.Size * val.price * val.transferQty;
-        return val.Size * val.price * val.transferQty;
-      });
-      amt = x.reduce((a, b) => a + b);
-      console.log("GrandTotal", amt);
+      let amt = 0;
+      if (list.length > 0) {
+        const x = list?.map((val) => {
+          GrandTotal[index] = val.Size * val.price * val.transferQty;
+          list[index]["totalprice"] = val.Size * val.price * val.transferQty;
+          return val.Size * val.price * val.transferQty;
+        });
+        amt = x.reduce((a, b) => a + b);
+        console.log("GrandTotal", amt);
+      }
+      // console.log(list)
+      setProduct(list);
+      setGrandTotalAmt(amt);
+    } else {
+      return null;
     }
-    // console.log(list)
-    setProduct(list);
-    setGrandTotalAmt(amt);
   };
   const handleProductChangeProductone = (e, index) => {
     setIndex(index);
@@ -731,8 +735,14 @@ const CreateTarget = args => {
                           min={0}
                           name="transferQty"
                           placeholder="Req_Qty"
-                          value={product?.qty}
-                          onChange={(e) => handleProductChangeProduct(e, index)}
+                          value={product?.transferQty}
+                          onChange={(e) =>
+                            handleProductChangeProduct(
+                              e,
+                              index,
+                              product?.AvailaleQty
+                            )
+                          }
                         />
                       </div>
                     </Col>
@@ -933,7 +943,7 @@ const CreateTarget = args => {
                           min={0}
                           name="transferQty"
                           placeholder="Req_Qty"
-                          value={product?.qty}
+                          value={product?.transferQty}
                           onChange={(e) =>
                             handleProductChangeProductone(e, index)
                           }
