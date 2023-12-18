@@ -240,26 +240,28 @@ class CreditNoteList extends React.Component {
     const UserInformation = this.context?.UserInformatio;
     const InsidePermissions = CheckPermission("CreditNote");
     this.setState({ InsiderPermissions: InsidePermissions });
-    await CreditnoteOrderList()
-      .then(res => {
-        console.log(res.CreditNote);
-        this.setState({ rowData: res?.CreditNote });
-        this.setState({ AllcolumnDefs: this.state.columnDefs });
-        this.setState({ SelectedCols: this.state.columnDefs });
+     let pageparmission = JSON.parse(localStorage.getItem("userData"));
+     let userid = pageparmission?._id;
+     await CreditnoteOrderList(userid)
+       .then((res) => {
+         console.log(res.CreditNote);
+         this.setState({ rowData: res?.CreditNote });
+         this.setState({ AllcolumnDefs: this.state.columnDefs });
+         this.setState({ SelectedCols: this.state.columnDefs });
 
-        let userHeading = JSON.parse(localStorage.getItem("TargetList"));
-        if (userHeading?.length) {
-          this.setState({ columnDefs: userHeading });
-          this.gridApi.setColumnDefs(userHeading);
-          this.setState({ SelectedcolumnDefs: userHeading });
-        } else {
-          this.setState({ columnDefs: this.state.columnDefs });
-          this.setState({ SelectedcolumnDefs: this.state.columnDefs });
-        }
-      })
-      .catch(err => {
-        console.log(err);
-      });
+         let userHeading = JSON.parse(localStorage.getItem("CreditNote"));
+         if (userHeading?.length) {
+           this.setState({ columnDefs: userHeading });
+           this.gridApi.setColumnDefs(userHeading);
+           this.setState({ SelectedcolumnDefs: userHeading });
+         } else {
+           this.setState({ columnDefs: this.state.columnDefs });
+           this.setState({ SelectedcolumnDefs: this.state.columnDefs });
+         }
+       })
+       .catch((err) => {
+         console.log(err);
+       });
   }
   toggleDropdown = () => {
     this.setState(prevState => ({ isOpen: !prevState.isOpen }));
@@ -491,7 +493,7 @@ class CreditNoteList extends React.Component {
     this.setState({ SelectedcolumnDefs: this.state.SelectedcolumnDefs });
     this.setState({ rowData: this.state.rowData });
     localStorage.setItem(
-      "TargetList",
+      "CreditNote",
       JSON.stringify(this.state.SelectedcolumnDefs)
     );
     this.LookupviewStart();

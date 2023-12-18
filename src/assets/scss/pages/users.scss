@@ -243,6 +243,24 @@ select.custom-select:hover {
   background-color: #00c0ef;
   border: 1px solid aqua;
 }
+// anuejsh css for table view change in all 
+
+
+.ag-header-cell-label {
+  font-weight: bolder;
+}
+
+.ag-cell.ag-cell-not-inline-editing.ag-cell-with-height.ag-cell-value {
+  border-bottom: 1px solid #d9d5d5;
+  border-right: 1px solid #c1c1c1;
+}
+
+.ag-header-cell.ag-header-cell-sortable {
+  background-color: #edad76 !important;
+  display: flex;
+  color: black;
+  border: 1px solid #c3c3c3 !important;
+}
 // sadik css below
 // h3.table-item {
 //   color: #fff;

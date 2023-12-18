@@ -25,15 +25,18 @@ import swal from "sweetalert";
 import "../../../../../src/layouts/assets/scss/pages/users.scss";
 
 import {
+  CreateAccountList,
   GoodDispatchxmlView,
   Save_GoodDispatch,
 } from "../../../../ApiEndPoint/ApiCalling";
 
 import "../../../../assets/scss/pages/users.scss";
 import UserContext from "../../../../context/Context";
+import { array } from "prop-types";
 
 const CreateDispach = () => {
   const [CreatAccountView, setCreatAccountView] = useState([]);
+  const [DeliveryBoy, setDeliveryBoy] = useState([]);
   const [Countries, setCountry] = useState({});
   const [formData, setFormData] = useState({});
   const [dropdownValue, setdropdownValue] = useState({});
@@ -104,8 +107,11 @@ const CreateDispach = () => {
     console.log(formData);
   }, [formData]);
   useEffect(() => {
+    let pageparmission = JSON.parse(localStorage.getItem("userData"));
+    let userid = pageparmission?._id;
+
     GoodDispatchxmlView()
-      .then(res => {
+      .then((res) => {
         const jsonData = xmlJs.xml2json(res.data, { compact: true, spaces: 2 });
         // console.log(
         //   JSON.parse(jsonData)?.GoodDispatch.MyDropdown.dropdown.label._text
@@ -117,13 +123,24 @@ const CreateDispach = () => {
         setCreatAccountView(JSON.parse(jsonData)?.GoodDispatch?.input);
         setdropdownValue(JSON.parse(jsonData)?.GoodDispatch);
       })
-      .catch(err => {
+      .catch((err) => {
         console.log(err);
         swal("Something Went Wrong");
       });
+    CreateAccountList(userid)
+      .then((res) => {
+        let value = res?.adminDetails;
+        console.log(value);
+        if (value) {
+          setDeliveryBoy(value);
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   }, []);
 
-  const submitHandler = e => {
+  const submitHandler = (e) => {
     e.preventDefault();
 
     let formdata = new FormData();
@@ -145,20 +162,20 @@ const CreateDispach = () => {
       `${dropdownValue?.MyDropdown?.dropdown.name?._text}`,
       formData.AssignDeliveryBoy
     );
-    formdata.append("status", formData.status);
+    formdata.append("status", formData?.status);
     // formdata.forEach((value, key) => {
     //   console.log(key, value);
     // });
 
     Save_GoodDispatch(formdata)
-      .then(res => {
+      .then((res) => {
         console.log(res);
         setFormData({});
         if (res.status) {
           swal("Good Dispatch Created Successfully");
         }
       })
-      .catch(err => {
+      .catch((err) => {
         console.log(err.response);
       });
   };
@@ -180,8 +197,7 @@ const CreateDispach = () => {
                       className="float-right mr-1"
                       color="danger"
                       size="sm"
-                      onClick={() => history.goBack()}
-                    >
+                      onClick={() => history.goBack()}>
                       Back
                     </Button>
                   )}
@@ -207,7 +223,7 @@ const CreateDispach = () => {
                               <PhoneInput
                                 inputClass="myphoneinput"
                                 country={"in"}
-                                onKeyDown={e => {
+                                onKeyDown={(e) => {
                                   if (
                                     ele?.type?._attributes?.type == "number"
                                   ) {
@@ -218,7 +234,7 @@ const CreateDispach = () => {
                                 countryCodeEditable={false}
                                 name={ele?.name?._text}
                                 value={formData[ele?.name?._text]}
-                                onChange={phone => {
+                                onChange={(phone) => {
                                   setFormData({
                                     ...formData,
                                     [ele?.name?._text]: phone,
@@ -253,14 +269,14 @@ const CreateDispach = () => {
                                 inputClass="countryclass"
                                 className="countryclassnw"
                                 options={Country.getAllCountries()}
-                                getOptionLabel={options => {
+                                getOptionLabel={(options) => {
                                   return options["name"];
                                 }}
-                                getOptionValue={options => {
+                                getOptionValue={(options) => {
                                   return options["name"];
                                 }}
                                 value={Countries}
-                                onChange={country => {
+                                onChange={(country) => {
                                   setCountry(country);
                                   setFormData({
                                     ...formData,
@@ -294,7 +310,7 @@ const CreateDispach = () => {
                                     </Label>
 
                                     <Input
-                                      onKeyDown={e => {
+                                      onKeyDown={(e) => {
                                         if (
                                           ele?.type?._attributes?.type ==
                                           "number"
@@ -319,7 +335,7 @@ const CreateDispach = () => {
                                         // formData[ele?.name?._text]
                                       }
                                       // value={formData[ele?.name?._text]}
-                                      onChange={e =>
+                                      onChange={(e) =>
                                         handleInputChange(
                                           e,
                                           ele?.type?._attributes?.type,
@@ -350,7 +366,7 @@ const CreateDispach = () => {
                                     </Label>
 
                                     <Input
-                                      onKeyDown={e => {
+                                      onKeyDown={(e) => {
                                         if (
                                           ele?.type?._attributes?.type ==
                                           "number"
@@ -364,7 +380,7 @@ const CreateDispach = () => {
                                       placeholder={ele?.placeholder?._text}
                                       name={ele?.name?._text}
                                       value={formData[ele?.name?._text]}
-                                      onChange={e =>
+                                      onChange={(e) =>
                                         handleInputChange(
                                           e,
                                           ele?.type?._attributes?.type,
@@ -402,10 +418,10 @@ const CreateDispach = () => {
                                   </Label>
 
                                   <Input
-                                    onWheel={e => {
+                                    onWheel={(e) => {
                                       e.preventDefault(); // Prevent the mouse wheel scroll event
                                     }}
-                                    onKeyDown={e => {
+                                    onKeyDown={(e) => {
                                       if (
                                         ele?.type?._attributes?.type == "number"
                                       ) {
@@ -417,7 +433,7 @@ const CreateDispach = () => {
                                     placeholder={ele?.placeholder?._text}
                                     name={ele?.name?._text}
                                     value={formData[ele?.name?._text]}
-                                    onChange={e =>
+                                    onChange={(e) =>
                                       handleInputChange(
                                         e,
                                         ele?.type?._attributes?.type,
@@ -456,7 +472,7 @@ const CreateDispach = () => {
                                       placeholder={ele?.placeholder?._text}
                                       name={ele?.name?._text}
                                       //   value={formData[ele?.name?._text]}
-                                      onChange={e => {
+                                      onChange={(e) => {
                                         handleFileChange(
                                           e,
                                           ele?.type?._attributes?.type,
@@ -484,7 +500,7 @@ const CreateDispach = () => {
 
                                     <Input
                                       className="form-control"
-                                      onKeyDown={e => {
+                                      onKeyDown={(e) => {
                                         if (
                                           ele?.type?._attributes?.type ==
                                           "number"
@@ -498,7 +514,7 @@ const CreateDispach = () => {
                                       placeholder={ele?.placeholder?._text}
                                       name={ele?.name?._text}
                                       value={formData[ele?.name?._text]}
-                                      onChange={e => {
+                                      onChange={(e) => {
                                         handleInputChange(
                                           e,
                                           ele?.type?._attributes?.type,
@@ -527,36 +543,33 @@ const CreateDispach = () => {
                     }
                   })}
                 <Col lg="4" md="4">
-                  <FormGroup>
-                    <Label>
-                      {dropdownValue?.MyDropdown?.dropdown?.label?._text}
-                    </Label>
-                    <CustomInput
-                      required
-                      type="select"
-                      name={dropdownValue?.MyDropdown?.dropdown?.name?._text}
-                      value={
-                        formData[
-                          dropdownValue?.MyDropdown?.dropdown?.name?._text
-                        ]
-                      }
-                      onChange={handleInputChange}
-                    >
-                      <option value="">--Assign Delivery Boy--</option>
-                      {dropdownValue?.MyDropdown?.dropdown?.option.map(
-                        (option, index) => {
-                          return (
-                            <option
-                              key={index}
-                              value={option?._attributes?.value}
-                            >
-                              {option?._attributes?.value}
-                            </option>
-                          );
+                  <div className="mt-1">
+                    <FormGroup>
+                      <Label>
+                        {dropdownValue?.MyDropdown?.dropdown?.label?._text}
+                      </Label>
+                      <CustomInput
+                        required
+                        type="select"
+                        name={dropdownValue?.MyDropdown?.dropdown?.name?._text}
+                        value={
+                          formData[
+                            dropdownValue?.MyDropdown?.dropdown?.name?._text
+                          ]
                         }
-                      )}
-                    </CustomInput>
-                  </FormGroup>
+                        onChange={handleInputChange}>
+                        <option value="">--Assign Delivery Boy--</option>
+                        {DeliveryBoy &&
+                          DeliveryBoy?.map((option, index) => {
+                            return (
+                              <option key={option?._id} value={option?._id}>
+                                {`${option?.firstName} ${option?.lastName}`}
+                              </option>
+                            );
+                          })}
+                      </CustomInput>
+                    </FormGroup>
+                  </div>
                 </Col>
               </Row>
               <hr />
@@ -564,13 +577,12 @@ const CreateDispach = () => {
                 <Label className="mb-0">Status</Label>
                 <div
                   className="form-label-group"
-                  onChange={e => {
+                  onChange={(e) => {
                     setFormData({
                       ...formData,
                       ["status"]: e.target.value,
                     });
-                  }}
-                >
+                  }}>
                   <input
                     style={{ marginRight: "3px" }}
                     type="radio"
@@ -592,8 +604,7 @@ const CreateDispach = () => {
                 <Button.Ripple
                   color="primary"
                   type="submit"
-                  className="mr-1 mt-2 mx-2"
-                >
+                  className="mr-1 mt-2 mx-2">
                   Submit
                 </Button.Ripple>
               </Row>
