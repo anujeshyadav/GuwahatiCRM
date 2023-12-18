@@ -267,9 +267,7 @@ const PoinvoiceThree = ({
                     borderRight: "1px solid black",
                   }}
                 >
-                  <View
-                    style={{ flexDirection: "row", paddingBottom: "3px 3px" }}
-                  >
+                  <View style={{ flexDirection: "row", paddingBottom: "3px" }}>
                     {UserChoice?.billTo == "Left" && (
                       <Text
                         style={{
@@ -291,7 +289,7 @@ const PoinvoiceThree = ({
                           width: "50%",
                         }}
                       >
-                        Ship To
+                        Ship To123
                       </Text>
                     )}
                   </View>
@@ -627,7 +625,7 @@ const PoinvoiceThree = ({
                   PO Number
                 </Text>
               </View> */}
-                <View
+                {/* <View
                   style={{
                     width: "12%",
                     padding: "5px 2px",
@@ -646,8 +644,8 @@ const PoinvoiceThree = ({
                   >
                     PO No.
                   </Text>
-                </View>
-                <View
+                </View> */}
+                {/* <View
                   style={{
                     width: "13%",
                     padding: "5px 2px",
@@ -665,8 +663,8 @@ const PoinvoiceThree = ({
                   >
                     Client Code
                   </Text>
-                </View>
-                <View
+                </View> */}
+                {/* <View
                   style={{
                     width: "13%",
                     padding: "5px 2px",
@@ -684,7 +682,7 @@ const PoinvoiceThree = ({
                   >
                     State name
                   </Text>
-                </View>
+                </View> */}
                 <View
                   style={{
                     width: "15%",
@@ -695,7 +693,7 @@ const PoinvoiceThree = ({
                 >
                   <Text
                     style={{
-                      fontSize: "10px",
+                      fontSize: "8px",
                       color: "black",
                       fontWeight: "1000",
                       marginLeft: "5px",
@@ -706,7 +704,7 @@ const PoinvoiceThree = ({
                 </View>
                 <View
                   style={{
-                    width: "12%",
+                    width: "10%",
                     padding: "5px 2px",
 
                     borderRight: "1px solid black",
@@ -714,7 +712,7 @@ const PoinvoiceThree = ({
                 >
                   <Text
                     style={{
-                      fontSize: "10px",
+                      fontSize: "8px",
                       color: "black",
                       fontWeight: "1000",
                       marginLeft: "5px",
@@ -725,7 +723,7 @@ const PoinvoiceThree = ({
                 </View>
                 <View
                   style={{
-                    width: "12%",
+                    width: "10%",
                     marginRight: "2px",
                     padding: "5px 2px",
                     borderRight: "1px solid black",
@@ -744,7 +742,83 @@ const PoinvoiceThree = ({
                 </View>
                 <View
                   style={{
+                    width: "10%",
+                    marginRight: "2px",
+                    padding: "5px 2px",
+                    borderRight: "1px solid black",
+                  }}
+                >
+                  <Text
+                    style={{
+                      fontSize: "10px",
+                      color: "black",
+                      fontWeight: "1000",
+                      marginLeft: "5px",
+                    }}
+                  >
+                    Discount
+                  </Text>
+                </View>
+                <View
+                  style={{
                     width: "12%",
+                    marginRight: "2px",
+                    padding: "5px 2px",
+                    borderRight: "1px solid black",
+                  }}
+                >
+                  <Text
+                    style={{
+                      fontSize: "8px",
+                      color: "black",
+                      fontWeight: "1000",
+                      marginLeft: "5px",
+                    }}
+                  >
+                    GST Applied
+                  </Text>
+                </View>
+                <View
+                  style={{
+                    width: "10%",
+                    marginRight: "2px",
+                    padding: "5px 2px",
+                    borderRight: "1px solid black",
+                  }}
+                >
+                  <Text
+                    style={{
+                      fontSize: "10px",
+                      color: "black",
+                      fontWeight: "1000",
+                      marginLeft: "5px",
+                    }}
+                  >
+                    Unit Type
+                  </Text>
+                </View>
+                <View
+                  style={{
+                    width: "10%",
+                    marginRight: "2px",
+                    padding: "5px 2px",
+                    borderRight: "1px solid black",
+                  }}
+                >
+                  <Text
+                    style={{
+                      fontSize: "10px",
+                      color: "black",
+                      fontWeight: "1000",
+                      marginLeft: "5px",
+                    }}
+                  >
+                    Size
+                  </Text>
+                </View>
+                <View
+                  style={{
+                    width: "10%",
                     marginRight: "2px",
                     padding: "5px 2px",
                     borderRight: "1px solid black",
@@ -763,7 +837,7 @@ const PoinvoiceThree = ({
                 </View>
                 <View
                   style={{
-                    // width: "15%",
+                    width: "12%",
                     marginRight: "2px",
                     padding: "5px 2px",
                     //   borderRight: "1px solid black",
@@ -807,59 +881,7 @@ const PoinvoiceThree = ({
                       {i + 1}
                     </Text>
                   </View>
-                  <View
-                    style={{
-                      width: "12%",
-                      padding: "2px 2px",
-                    }}
-                  >
-                    <Text
-                      style={{
-                        fontSize: "10px",
-                        fontWeight: "1000",
-                        color: "black",
-                        marginLeft: "5px",
-                      }}
-                    >
-                      {ele?.po_no && ele?.po_no ? <>{ele?.po_no}</> : null}
-                    </Text>
-                  </View>
-                  <View
-                    style={{
-                      width: "13%",
-                      padding: "2px 2px",
-                    }}
-                  >
-                    <Text
-                      style={{
-                        fontSize: "10px",
-                        color: "black",
-                        fontWeight: "1000",
-                        // marginLeft: "5px",
-                      }}
-                    >
-                      {/* {invoiceData?.supplier_name} */}
-                      supplier
-                    </Text>
-                  </View>
-                  <View
-                    style={{
-                      width: "13%",
-                      padding: "2px 2px",
-                    }}
-                  >
-                    <Text
-                      style={{
-                        fontSize: "10px",
 
-                        fontWeight: "1000",
-                        marginLeft: "5px",
-                      }}
-                    >
-                      {/* {invoiceData?.state_title} */}
-                      statetitle
-                    </Text>
-                  </View>
                   <View
                     style={{
                       width: "15%",
@@ -869,7 +891,6 @@ const PoinvoiceThree = ({
                     <Text
                       style={{
                         fontSize: "10px",
-
                         fontWeight: "1000",
                         marginLeft: "5px",
                       }}
@@ -879,7 +900,7 @@ const PoinvoiceThree = ({
                   </View>
                   <View
                     style={{
-                      width: "12%",
+                      width: "10%",
                       padding: "2px 2px",
                     }}
                   >
@@ -896,7 +917,7 @@ const PoinvoiceThree = ({
                   </View>
                   <View
                     style={{
-                      width: "12%",
+                      width: "10%",
                       marginRight: "2px",
                       padding: "2px 2px",
                     }}
@@ -913,6 +934,26 @@ const PoinvoiceThree = ({
                   </View>
                   <View
                     style={{
+                      width: "10%",
+                      marginRight: "2px",
+                      padding: "2px 2px",
+                    }}
+                  >
+                    <Text
+                      style={{
+                        fontSize: "10px",
+                        fontWeight: "1000",
+                        paddingRight: "20px",
+                        marginLeft: "5px",
+                        justifyContent: "flex-start",
+                        // justifyContent: "flex-start",
+                      }}
+                    >
+                      20%
+                    </Text>
+                  </View>
+                  <View
+                    style={{
                       width: "12%",
                       marginRight: "2px",
                       padding: "2px 2px",
@@ -921,17 +962,51 @@ const PoinvoiceThree = ({
                     <Text
                       style={{
                         fontSize: "10px",
-
+                        justifyContent: "flex-start",
                         fontWeight: "1000",
                         marginLeft: "5px",
                       }}
                     >
-                      {ele?.product?.Product_MRP}
+                      {ele?.product["GST Rate"]}
                     </Text>
                   </View>
                   <View
                     style={{
-                      //   width: "12%",
+                      width: "10%",
+                      marginRight: "2px",
+                      padding: "2px 2px",
+                    }}
+                  >
+                    <Text
+                      style={{
+                        fontSize: "8px",
+                        fontWeight: "1000",
+                        marginLeft: "5px",
+                      }}
+                    >
+                      {ele?.unitQty}
+                    </Text>
+                  </View>
+                  <View
+                    style={{
+                      width: "10%",
+                      marginRight: "2px",
+                      padding: "2px 2px",
+                    }}
+                  >
+                    <Text
+                      style={{
+                        fontSize: "10px",
+                        fontWeight: "1000",
+                        marginLeft: "5px",
+                      }}
+                    >
+                      {ele?.product?.Size}
+                    </Text>
+                  </View>
+                  <View
+                    style={{
+                      width: "10%",
                       marginRight: "2px",
                       padding: "2px 2px",
                     }}
@@ -944,7 +1019,27 @@ const PoinvoiceThree = ({
                         marginLeft: "5px",
                       }}
                     >
-                      {ele?.qty * ele?.product?.Product_MRP}
+                      {ele?.product?.Product_MRP}
+                    </Text>
+                  </View>
+                  <View
+                    style={{
+                      width: "12%",
+                      marginRight: "2px",
+                      padding: "2px 2px",
+                    }}
+                  >
+                    <Text
+                      style={{
+                        fontSize: "10px",
+                        justifyContent: "flex-end",
+                        fontWeight: "1000",
+                        marginLeft: "5px",
+                      }}
+                    >
+                      {ele?.qty *
+                        ele?.product?.Size *
+                        ele?.product?.Product_MRP}
                     </Text>
                   </View>
                 </View>

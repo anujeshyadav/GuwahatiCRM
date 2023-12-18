@@ -476,86 +476,18 @@ const POInVoice = ({
                   #
                 </Text>
               </View>
-              {/* <View
-                style={{
-                  width: "10%",
-                  padding: "5px 2px",
-                  borderRight: "1px solid black",
-                }}
-              >
-                <Text
-                  style={{
-                    fontSize: "10px",
-                    color: "white",
-                    fontWeight: "1000",
-                    marginLeft: "5px",
-                  }}
-                >
-                  PO Number
-                </Text>
-              </View> */}
-              {/* <View
-                style={{
-                  width: "12%",
-                  padding: "5px 2px",
 
-                  borderRight: "1px solid black",
-                }}>
-                <Text
-                  style={{
-                    fontSize: "10px",
-                    fontWeight: "1000",
-                    color: "white",
-
-                    marginLeft: "5px",
-                  }}>
-                  PO No.
-                </Text>
-              </View> */}
-              {/* <View
-                style={{
-                  width: "13%",
-                  padding: "5px 2px",
-
-                  borderRight: "1px solid black",
-                }}>
-                <Text
-                  style={{
-                    fontSize: "10px",
-                    color: "white",
-                    fontWeight: "1000",
-                    marginLeft: "5px",
-                  }}>
-                  Client Code
-                </Text>
-              </View> */}
-              {/* <View
-                style={{
-                  width: "13%",
-                  padding: "5px 2px",
-
-                  borderRight: "1px solid black",
-                }}>
-                <Text
-                  style={{
-                    fontSize: "10px",
-                    color: "white",
-                    fontWeight: "1000",
-                    marginLeft: "5px",
-                  }}>
-                  State name
-                </Text>
-              </View> */}
               <View
                 style={{
                   width: "15%",
                   padding: "5px 2px",
+
                   borderRight: "1px solid black",
                 }}
               >
                 <Text
                   style={{
-                    fontSize: "10px",
+                    fontSize: "8px",
                     color: "white",
                     fontWeight: "1000",
                     marginLeft: "5px",
@@ -566,14 +498,15 @@ const POInVoice = ({
               </View>
               <View
                 style={{
-                  width: "12%",
+                  width: "10%",
                   padding: "5px 2px",
+
                   borderRight: "1px solid black",
                 }}
               >
                 <Text
                   style={{
-                    fontSize: "10px",
+                    fontSize: "8px",
                     color: "white",
                     fontWeight: "1000",
                     marginLeft: "5px",
@@ -584,7 +517,7 @@ const POInVoice = ({
               </View>
               <View
                 style={{
-                  width: "12%",
+                  width: "10%",
                   marginRight: "2px",
                   padding: "5px 2px",
                   borderRight: "1px solid black",
@@ -603,7 +536,83 @@ const POInVoice = ({
               </View>
               <View
                 style={{
+                  width: "10%",
+                  marginRight: "2px",
+                  padding: "5px 2px",
+                  borderRight: "1px solid black",
+                }}
+              >
+                <Text
+                  style={{
+                    fontSize: "10px",
+                    color: "white",
+                    fontWeight: "1000",
+                    marginLeft: "5px",
+                  }}
+                >
+                  Discount
+                </Text>
+              </View>
+              <View
+                style={{
                   width: "12%",
+                  marginRight: "2px",
+                  padding: "5px 2px",
+                  borderRight: "1px solid black",
+                }}
+              >
+                <Text
+                  style={{
+                    fontSize: "8px",
+                    color: "white",
+                    fontWeight: "1000",
+                    marginLeft: "5px",
+                  }}
+                >
+                  GST Applied
+                </Text>
+              </View>
+              <View
+                style={{
+                  width: "10%",
+                  marginRight: "2px",
+                  padding: "5px 2px",
+                  borderRight: "1px solid black",
+                }}
+              >
+                <Text
+                  style={{
+                    fontSize: "10px",
+                    color: "white",
+                    fontWeight: "1000",
+                    marginLeft: "5px",
+                  }}
+                >
+                  Unit Type
+                </Text>
+              </View>
+              <View
+                style={{
+                  width: "10%",
+                  marginRight: "2px",
+                  padding: "5px 2px",
+                  borderRight: "1px solid black",
+                }}
+              >
+                <Text
+                  style={{
+                    fontSize: "10px",
+                    color: "white",
+                    fontWeight: "1000",
+                    marginLeft: "5px",
+                  }}
+                >
+                  Size
+                </Text>
+              </View>
+              <View
+                style={{
+                  width: "10%",
                   marginRight: "2px",
                   padding: "5px 2px",
                   borderRight: "1px solid black",
@@ -622,10 +631,10 @@ const POInVoice = ({
               </View>
               <View
                 style={{
-                  // width: "15%",
+                  width: "12%",
                   marginRight: "2px",
                   padding: "5px 2px",
-                  borderRight: "1px solid black",
+                  //   borderRight: "1px solid black",
                 }}
               >
                 <Text
@@ -645,16 +654,15 @@ const POInVoice = ({
                 key={i}
                 style={{
                   flexDirection: "row",
-                  borderBottom: "1px solid black",
                   borderRight: "1px solid black",
                   borderLeft: "1px solid black",
-                  height: "33px",
+                  height: "20px",
                 }}
               >
                 <View
                   style={{
                     width: "3%",
-                    padding: "5px 2px",
+                    padding: "2px 2px",
                   }}
                 >
                   <Text
@@ -667,54 +675,11 @@ const POInVoice = ({
                     {i + 1}
                   </Text>
                 </View>
-                {/* <View
-                  style={{
-                    width: "12%",
-                    padding: "5px 2px",
-                  }}>
-                  <Text
-                    style={{
-                      fontSize: "10px",
-                      fontWeight: "1000",
 
-                      marginLeft: "5px",
-                    }}>
-                    {ele?.po_no && ele?.po_no ? <>{ele?.po_no}</> : null}
-                  </Text>
-                </View> */}
-                {/* <View
-                  style={{
-                    width: "12%",
-                    padding: "5px 2px",
-                  }}>
-                  <Text
-                    style={{
-                      fontSize: "10px",
-
-                      fontWeight: "1000",
-                    }}>
-                    supplier
-                  </Text>
-                </View> */}
-                {/* <View
-                  style={{
-                    width: "13%",
-                    padding: "5px 2px",
-                  }}>
-                  <Text
-                    style={{
-                      fontSize: "10px",
-
-                      fontWeight: "1000",
-                      marginLeft: "5px",
-                    }}>
-                    statetitle
-                  </Text>
-                </View> */}
                 <View
                   style={{
-                    width: "13%",
-                    padding: "5px 2px",
+                    width: "15%",
+                    padding: "2px 2px",
                   }}
                 >
                   <Text
@@ -729,13 +694,14 @@ const POInVoice = ({
                 </View>
                 <View
                   style={{
-                    width: "13%",
-                    padding: "5px 2px",
+                    width: "10%",
+                    padding: "2px 2px",
                   }}
                 >
                   <Text
                     style={{
                       fontSize: "10px",
+
                       fontWeight: "1000",
                       marginLeft: "5px",
                     }}
@@ -745,9 +711,9 @@ const POInVoice = ({
                 </View>
                 <View
                   style={{
-                    width: "12%",
+                    width: "10%",
                     marginRight: "2px",
-                    padding: "5px 2px",
+                    padding: "2px 2px",
                   }}
                 >
                   <Text
@@ -762,27 +728,81 @@ const POInVoice = ({
                 </View>
                 <View
                   style={{
-                    width: "12%",
+                    width: "10%",
                     marginRight: "2px",
-                    padding: "5px 2px",
+                    padding: "2px 2px",
                   }}
                 >
                   <Text
                     style={{
                       fontSize: "10px",
-
                       fontWeight: "1000",
+                      paddingRight: "20px",
                       marginLeft: "5px",
+                      justifyContent: "flex-start",
+                      // justifyContent: "flex-start",
                     }}
                   >
-                    {ele?.product?.Product_MRP}
+                    20%
                   </Text>
                 </View>
                 <View
                   style={{
-                    //   width: "12%",
+                    width: "12%",
                     marginRight: "2px",
-                    padding: "5px 2px",
+                    padding: "2px 2px",
+                  }}
+                >
+                  <Text
+                    style={{
+                      fontSize: "10px",
+                      justifyContent: "flex-start",
+                      fontWeight: "1000",
+                      marginLeft: "5px",
+                    }}
+                  >
+                    {ele?.product["GST Rate"]}
+                  </Text>
+                </View>
+                <View
+                  style={{
+                    width: "10%",
+                    marginRight: "2px",
+                    padding: "2px 2px",
+                  }}
+                >
+                  <Text
+                    style={{
+                      fontSize: "8px",
+                      fontWeight: "1000",
+                      marginLeft: "5px",
+                    }}
+                  >
+                    {ele?.unitQty}
+                  </Text>
+                </View>
+                <View
+                  style={{
+                    width: "10%",
+                    marginRight: "2px",
+                    padding: "2px 2px",
+                  }}
+                >
+                  <Text
+                    style={{
+                      fontSize: "10px",
+                      fontWeight: "1000",
+                      marginLeft: "5px",
+                    }}
+                  >
+                    {ele?.product?.Size}
+                  </Text>
+                </View>
+                <View
+                  style={{
+                    width: "10%",
+                    marginRight: "2px",
+                    padding: "2px 2px",
                   }}
                 >
                   <Text
@@ -793,7 +813,25 @@ const POInVoice = ({
                       marginLeft: "5px",
                     }}
                   >
-                    {ele?.qty * ele?.product?.Product_MRP}
+                    {ele?.product?.Product_MRP}
+                  </Text>
+                </View>
+                <View
+                  style={{
+                    width: "12%",
+                    marginRight: "2px",
+                    padding: "2px 2px",
+                  }}
+                >
+                  <Text
+                    style={{
+                      fontSize: "10px",
+                      justifyContent: "flex-end",
+                      fontWeight: "1000",
+                      marginLeft: "5px",
+                    }}
+                  >
+                    {ele?.qty * ele?.product?.Size * ele?.product?.Product_MRP}
                   </Text>
                 </View>
               </View>
@@ -1083,7 +1121,7 @@ const POInVoice = ({
                           marginTop: "2px",
                         }}
                       >
-                        grandTotal,
+                        {grandTotal}
                         {}
                         {/* {invoiceData?.grandTotal} */}
                       </Text>

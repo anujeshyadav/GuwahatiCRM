@@ -2,8 +2,6 @@ import React, { useEffect, useState } from "react";
 
 import { PDFViewer } from "@react-pdf/renderer";
 import { ToWords } from "to-words";
-import InvoiceTemplate from "./InvoiceTemplate";
-import ReactPDF from "@react-pdf/renderer";
 import POInVoice from "./POInVoice";
 import axiosConfig from "../../../../axiosConfig";
 import POInvoiceone from "./POInvoiceone";
