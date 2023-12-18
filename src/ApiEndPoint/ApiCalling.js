@@ -7,6 +7,7 @@ import {
   GoodDispatch_xmlView,
   SAVE_GoodDispatch,
   Stock_trx_FtoW,
+  view_Sales_order_List,
   Warehouse_OutwardStock_list,
   Warehouse_Stock,
   Warehouse_Inward_list,
@@ -416,6 +417,12 @@ export const SaveOrder = async (data) => {
 export const createOrderhistoryview = async (id) => {
   let response = await axiosConfig
     .get(`${view_create_order_history}` + id)
+    .then((res) => res.data);
+  return response;
+};
+export const view_Sales_orderList = async (id) => {
+  let response = await axiosConfig
+    .get(`${view_Sales_order_List}` + id)
     .then((res) => res.data);
   return response;
 };

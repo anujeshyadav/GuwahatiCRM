@@ -106,7 +106,6 @@ class StockTransfer extends React.Component {
                     this.setState({ ViewOneUserView: true });
                     this.setState({ EditOneUserView: false });
 
-                    console.log(params?.data);
                   }}
                 />
                 <Edit

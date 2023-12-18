@@ -102,7 +102,7 @@ class PlaceOrderList extends React.Component {
           headerName: "Actions",
           field: "transactions",
           width: 180,
-          cellRendererFramework: params => {
+          cellRendererFramework: (params) => {
             return (
               <div className="actions cursor-pointer">
                 {this.state.InsiderPermissions &&
@@ -113,8 +113,7 @@ class PlaceOrderList extends React.Component {
                         padding: "10px",
                         borderRadius: "30px",
                         backgroundColor: "green",
-                      }}
-                    >
+                      }}>
                       <CornerDownLeft
                         className=""
                         size="25px"
@@ -140,8 +139,7 @@ class PlaceOrderList extends React.Component {
                         padding: "10px",
                         borderRadius: "30px",
                         backgroundColor: "#39cccc",
-                      }}
-                    >
+                      }}>
                       <Eye
                         className=""
                         size="20px"
@@ -162,8 +160,7 @@ class PlaceOrderList extends React.Component {
                         borderRadius: "30px",
                         backgroundColor: "rgb(212, 111, 16)",
                         marginLeft: "3px",
-                      }}
-                    >
+                      }}>
                       <FaPencilAlt
                         className=""
                         size="20px"
@@ -179,11 +176,32 @@ class PlaceOrderList extends React.Component {
           },
         },
         {
+          headerName: "Status",
+          field: "status",
+          filter: true,
+          width: 150,
+          cellRendererFramework: (params) => {
+            return params.value === "completed" ? (
+              <div className="badge badge-pill badge-success">
+                {params.data.status}
+              </div>
+            ) : params.value === "pending" ? (
+              <div className="badge badge-pill badge-warning">
+                {params.data.status}
+              </div>
+            ) : (
+              <div className="badge badge-pill badge-success">
+                {params.data.status}
+              </div>
+            );
+          },
+        },
+        {
           headerName: "Full Name",
           field: "orderItems",
           filter: true,
           width: 180,
-          valueGetter: params => {
+          valueGetter: (params) => {
             if (params.data.orderItems && params.data.orderItems.length > 0) {
               return params.data.fullName;
             }
@@ -196,9 +214,9 @@ class PlaceOrderList extends React.Component {
           field: "orderItems",
           filter: true,
           width: 220,
-          valueGetter: params => {
+          valueGetter: (params) => {
             if (params.data.orderItems && params.data.orderItems.length > 0) {
-              return params?.data?.orderItems?.map(val => {
+              return params?.data?.orderItems?.map((val) => {
                 return val?.product?.Product_Title;
               });
             }
@@ -210,7 +228,7 @@ class PlaceOrderList extends React.Component {
           field: "orderItems",
           filter: true,
           width: 150,
-          valueGetter: params => {
+          valueGetter: (params) => {
             if (params.data.orderItems && params.data.orderItems.length > 0) {
               return params.data.orderItems[0].price;
             }
@@ -222,7 +240,7 @@ class PlaceOrderList extends React.Component {
           field: "orderItems",
           filter: true,
           width: 150,
-          valueGetter: params => {
+          valueGetter: (params) => {
             if (params.data.orderItems && params.data.orderItems.length > 0) {
               return params.data.orderItems[0].qty; // Return the price
             }
@@ -234,7 +252,7 @@ class PlaceOrderList extends React.Component {
           field: "orderItems",
           filter: true,
           width: 180,
-          valueGetter: params => {
+          valueGetter: (params) => {
             if (params.data.orderItems && params.data.orderItems.length > 0) {
               return params.data.orderItems[0].product["GST Rate"]; // Return the price
             }
@@ -246,7 +264,7 @@ class PlaceOrderList extends React.Component {
           field: "orderItems",
           filter: true,
           width: 180,
-          valueGetter: params => {
+          valueGetter: (params) => {
             if (params.data.orderItems && params.data.orderItems.length > 0) {
               return params.data.orderItems[0].product.HSN_Code; // Return the price
             }
@@ -332,28 +350,6 @@ class PlaceOrderList extends React.Component {
         //     );
         //   },
         // },
-
-        {
-          headerName: "Status",
-          field: "status",
-          filter: true,
-          width: 150,
-          cellRendererFramework: params => {
-            return params.value === "completed" ? (
-              <div className="badge badge-pill badge-success">
-                {params.data.status}
-              </div>
-            ) : params.value === "pending" ? (
-              <div className="badge badge-pill badge-warning">
-                {params.data.status}
-              </div>
-            ) : (
-              <div className="badge badge-pill badge-success">
-                {params.data.status}
-              </div>
-            );
-          },
-        },
       ],
     };
   }
@@ -822,8 +818,8 @@ class PlaceOrderList extends React.Component {
                                       )
                                     }
                                   >
-                                    <FaPlus size={15} />
-                                    Add Place Order
+                                    <FaPlus size={15} className="mr-1" />
+                                    Place Order
                                   </Button>
                                 )}
                               />

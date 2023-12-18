@@ -68,6 +68,7 @@ export const Stock_update = "/stock-updation/update-warehoue-to-warehouse/";
 
 export const Save_Order = "/order/save-create-order";
 export const view_create_order_history = "/order/view-create-order-history/";
+export const view_Sales_order_List = "/order/view-sales-order/";
 // By other
 export const Save_Place_Order = "/order/save-place-order";
 export const Place_Order_List = "/order/view-place-order/";
