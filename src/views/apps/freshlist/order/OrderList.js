@@ -1,7 +1,7 @@
 import React, { useRef } from "react";
 import { Route } from "react-router-dom";
-import xmlJs from "xml-js";
 import {
+  Label,
   Card,
   CardBody,
   Input,
@@ -16,11 +16,13 @@ import {
   ModalHeader,
   ModalBody,
   Badge,
+  Table,
+  CustomInput,
 } from "reactstrap";
 import { ContextLayout } from "../../../../utility/context/Layout";
 import { AgGridReact } from "ag-grid-react";
 import "ag-grid-community/dist/styles/ag-grid.css";
-import ViewOrder from "../order/ViewAll";
+// import ViewOrder from "../order/ViewAll";
 import jsPDF from "jspdf";
 import "jspdf-autotable";
 import Logo from "../../../../assets/img/profile/pages/logomain.png";
@@ -29,14 +31,15 @@ import { Eye, Trash2, ChevronDown, Edit, CornerDownLeft } from "react-feather";
 import { IoMdRemoveCircleOutline } from "react-icons/io";
 import "../../../../assets/scss/plugins/tables/_agGridStyleOverride.scss";
 import "../../../../assets/scss/pages/users.scss";
-
+// import StockTrxInvoice from "../../subcategory/StockTrxInvoice";
+import StockTrxInvoice from "../../subcategory/StockTrxInvoice";
 import {
   FaArrowAltCircleLeft,
   FaArrowAltCircleRight,
+  FaDownload,
   FaFilter,
   FaPlus,
 } from "react-icons/fa";
-import moment from "moment-timezone";
 import swal from "sweetalert";
 import {
   createOrderhistoryview,
@@ -50,7 +53,6 @@ import {
 import * as XLSX from "xlsx";
 import UserContext from "../../../../context/Context";
 import { CheckPermission } from "../house/CheckPermission";
-// import TargetAssignedOne from "./TargetAssignedOne";
 
 const SelectedColums = [];
 
@@ -64,6 +66,7 @@ class OrderList extends React.Component {
       isOpen: false,
       Arrindex: "",
       rowData: [],
+      ShowBill: false,
       modal: false,
       modalone: false,
       ViewData: {},
@@ -73,7 +76,6 @@ class OrderList extends React.Component {
       paginationPageSize: 5,
       currenPageSize: "",
       getPageSize: "",
-      // columnDefs: [],
       AllcolumnDefs: [],
       SelectedcolumnDefs: [],
       defaultColDef: {
@@ -88,7 +90,6 @@ class OrderList extends React.Component {
           headerName: "UID",
           valueGetter: "node.rowIndex + 1",
           field: "node.rowIndex + 1",
-          // checkboxSelection: true,
           width: 80,
           filter: true,
         },
@@ -125,6 +126,7 @@ class OrderList extends React.Component {
                       size="25px"
                       color="green"
                       onClick={() => {
+                        this.togglemodal();
                         this.handleChangeView(params.data, "readonly");
                       }}
                     />
@@ -271,9 +273,9 @@ class OrderList extends React.Component {
   async componentDidMount() {
     const userId = JSON.parse(localStorage.getItem("userData"))._id;
     const UserInformation = this.context?.UserInformatio;
-  const InsidePermissions = CheckPermission("Sales Order");
-  console.log(InsidePermissions);
-  this.setState({ InsiderPermissions: InsidePermissions });
+    const InsidePermissions = CheckPermission("Sales Order");
+    console.log(InsidePermissions);
+    this.setState({ InsiderPermissions: InsidePermissions });
     await createOrderhistoryview(userId)
       .then(res => {
         this.setState({ rowData: res?.orderHistory });
@@ -295,6 +297,16 @@ class OrderList extends React.Component {
         console.log(err);
       });
   }
+
+  togglemodal = () => {
+    this.setState(prevState => ({
+      modalone: !prevState.modalone,
+    }));
+    this.setState({ ShowBill: false });
+  };
+  handleStockTrxInvoiceShow = () => {
+    this.setState({ ShowBill: true });
+  };
   toggleDropdown = () => {
     this.setState(prevState => ({ isOpen: !prevState.isOpen }));
   };
@@ -568,252 +580,198 @@ class OrderList extends React.Component {
     return (
       <>
         <Col className="app-user-list">
-          {this.state.EditOneUserView && this.state.EditOneUserView ? (
-            <Row className="card">
-              <Col>
-                <div className="d-flex justify-content-end p-1">
-                  <Button
-                    onClick={e => {
-                      e.preventDefault();
-                      this.setState({ EditOneUserView: false });
-                    }}
-                    color="danger"
-                  >
-                    Back
-                  </Button>
-                </div>
-              </Col>
-
-              {/* <EditAccount EditOneData={this.state.EditOneData} /> */}
-            </Row>
-          ) : (
-            <>
-              {this.state.ViewOneUserView && this.state.ViewOneUserView ? (
-                <>
-                  <Row className="card">
-                    <Col>
-                      <div className="d-flex justify-content-end p-1">
-                        <Button
-                          onClick={e => {
-                            e.preventDefault();
-                            this.setState({ ViewOneUserView: false });
-                          }}
-                          color="danger"
-                        >
-                          Back
-                        </Button>
-                      </div>
-                    </Col>
-                    <ViewOrder ViewOneData={this.state.ViewOneData} />
-                  </Row>
-                </>
-              ) : (
-                <>
-                  <Col sm="12">
-                    <Card>
-                      <Row className="ml-2 mt-2 mr-2">
-                        <Col>
-                          <h1
-                            className="float-left "
-                            style={{ fontWeight: "600" }}
+          <Col sm="12">
+            <Card>
+              <Row className="ml-2 mt-2 mr-2">
+                <Col>
+                  <h1 className="float-left " style={{ fontWeight: "600" }}>
+                    {" "}
+                    Sales Order List
+                  </h1>
+                </Col>
+                {InsiderPermissions && InsiderPermissions?.View && (
+                  <Col>
+                    <span className="mx-1">
+                      <FaFilter
+                        style={{ cursor: "pointer" }}
+                        title="filter coloumn"
+                        size="25px"
+                        onClick={this.LookupviewStart}
+                        color="#39cccc"
+                        className="float-right"
+                      />
+                    </span>
+                    <span className="mx-1">
+                      <div className="dropdown-container float-right">
+                        <BsCloudDownloadFill
+                          style={{ cursor: "pointer" }}
+                          title="download file"
+                          size="25px"
+                          className="dropdown-button "
+                          color="#39cccc"
+                          onClick={this.toggleDropdown}
+                        />
+                        {isOpen && (
+                          <div
+                            style={{
+                              position: "absolute",
+                              zIndex: "1",
+                            }}
+                            className="dropdown-content dropdownmy"
                           >
-                            {" "}
-                            Sales Order List
-                          </h1>
-                        </Col>
-                        {InsiderPermissions && InsiderPermissions?.View && (
-                          <Col>
-                            <span className="mx-1">
-                              <FaFilter
-                                style={{ cursor: "pointer" }}
-                                title="filter coloumn"
-                                size="25px"
-                                onClick={this.LookupviewStart}
-                                color="#39cccc"
-                                className="float-right"
-                              />
-                            </span>
-                            <span className="mx-1">
-                              <div className="dropdown-container float-right">
-                                <BsCloudDownloadFill
-                                  style={{ cursor: "pointer" }}
-                                  title="download file"
-                                  size="25px"
-                                  className="dropdown-button "
-                                  color="#39cccc"
-                                  onClick={this.toggleDropdown}
-                                />
-                                {isOpen && (
-                                  <div
-                                    style={{
-                                      position: "absolute",
-                                      zIndex: "1",
-                                    }}
-                                    className="dropdown-content dropdownmy"
-                                  >
-                                    <h5
-                                      onClick={() => this.exportToPDF()}
-                                      style={{ cursor: "pointer" }}
-                                      className=" mx-1 myactive mt-1"
-                                    >
-                                      .PDF
-                                    </h5>
-                                    <h5
-                                      onClick={() =>
-                                        this.gridApi.exportDataAsCsv()
-                                      }
-                                      style={{ cursor: "pointer" }}
-                                      className=" mx-1 myactive"
-                                    >
-                                      .CSV
-                                    </h5>
-                                    <h5
-                                      onClick={this.convertCSVtoExcel}
-                                      style={{ cursor: "pointer" }}
-                                      className=" mx-1 myactive"
-                                    >
-                                      .XLS
-                                    </h5>
-                                    <h5
-                                      onClick={this.exportToExcel}
-                                      style={{ cursor: "pointer" }}
-                                      className=" mx-1 myactive"
-                                    >
-                                      .XLSX
-                                    </h5>
-                                    <h5
-                                      onClick={() => this.convertCsvToXml()}
-                                      style={{ cursor: "pointer" }}
-                                      className=" mx-1 myactive"
-                                    >
-                                      .XML
-                                    </h5>
-                                  </div>
-                                )}
-                              </div>
-                            </span>
-                            <span>
-                              <Route
-                                render={({ history }) => (
-                                  <Badge
-                                    style={{ cursor: "pointer" }}
-                                    className="float-right mr-1"
-                                    color="primary"
-                                    onClick={() =>
-                                      history.push(
-                                        "/app/softnumen/order/createorder"
-                                      )
-                                    }
-                                  >
-                                    <FaPlus size={15} /> Create Order
-                                  </Badge>
-                                )}
-                              />
-                            </span>
-                          </Col>
-                        )}
-                      </Row>
-                      <CardBody style={{ marginTop: "-1.5rem" }}>
-                        {this.state.rowData === null ? null : (
-                          <div className="ag-theme-material w-100 my-2 ag-grid-table">
-                            <div className="d-flex flex-wrap justify-content-between align-items-center">
-                              <div className="mb-1">
-                                <UncontrolledDropdown className="p-1 ag-dropdown">
-                                  <DropdownToggle tag="div">
-                                    {this.gridApi
-                                      ? this.state.currenPageSize
-                                      : "" * this.state.getPageSize -
-                                        (this.state.getPageSize - 1)}{" "}
-                                    -{" "}
-                                    {this.state.rowData.length -
-                                      this.state.currenPageSize *
-                                        this.state.getPageSize >
-                                    0
-                                      ? this.state.currenPageSize *
-                                        this.state.getPageSize
-                                      : this.state.rowData.length}{" "}
-                                    of {this.state.rowData.length}
-                                    <ChevronDown className="ml-50" size={15} />
-                                  </DropdownToggle>
-                                  <DropdownMenu right>
-                                    <DropdownItem
-                                      tag="div"
-                                      onClick={() => this.filterSize(5)}
-                                    >
-                                      5
-                                    </DropdownItem>
-                                    <DropdownItem
-                                      tag="div"
-                                      onClick={() => this.filterSize(20)}
-                                    >
-                                      20
-                                    </DropdownItem>
-                                    <DropdownItem
-                                      tag="div"
-                                      onClick={() => this.filterSize(50)}
-                                    >
-                                      50
-                                    </DropdownItem>
-                                    <DropdownItem
-                                      tag="div"
-                                      onClick={() => this.filterSize(100)}
-                                    >
-                                      100
-                                    </DropdownItem>
-                                    <DropdownItem
-                                      tag="div"
-                                      onClick={() => this.filterSize(134)}
-                                    >
-                                      134
-                                    </DropdownItem>
-                                  </DropdownMenu>
-                                </UncontrolledDropdown>
-                              </div>
-                              <div className="d-flex flex-wrap justify-content-end mb-1">
-                                <div className="table-input mr-1">
-                                  <Input
-                                    placeholder="search Item here..."
-                                    onChange={e =>
-                                      this.updateSearchQuery(e.target.value)
-                                    }
-                                    value={this.state.value}
-                                  />
-                                </div>
-                              </div>
-                            </div>
-                            <ContextLayout.Consumer className="ag-theme-alpine">
-                              {context => (
-                                <AgGridReact
-                                  id="myAgGrid"
-                                  gridOptions={this.gridOptions}
-                                  rowSelection="multiple"
-                                  defaultColDef={defaultColDef}
-                                  columnDefs={columnDefs}
-                                  rowData={rowData}
-                                  onGridReady={this.onGridReady}
-                                  colResizeDefault={"shift"}
-                                  animateRows={true}
-                                  floatingFilter={false}
-                                  pagination={true}
-                                  paginationPageSize={
-                                    this.state.paginationPageSize
-                                  }
-                                  pivotPanelShow="always"
-                                  enableRtl={context.state.direction === "rtl"}
-                                  ref={this.gridRef} // Attach the ref to the grid
-                                  domLayout="autoHeight" // Adjust layout as needed
-                                />
-                              )}
-                            </ContextLayout.Consumer>
+                            <h5
+                              onClick={() => this.exportToPDF()}
+                              style={{ cursor: "pointer" }}
+                              className=" mx-1 myactive mt-1"
+                            >
+                              .PDF
+                            </h5>
+                            <h5
+                              onClick={() => this.gridApi.exportDataAsCsv()}
+                              style={{ cursor: "pointer" }}
+                              className=" mx-1 myactive"
+                            >
+                              .CSV
+                            </h5>
+                            <h5
+                              onClick={this.convertCSVtoExcel}
+                              style={{ cursor: "pointer" }}
+                              className=" mx-1 myactive"
+                            >
+                              .XLS
+                            </h5>
+                            <h5
+                              onClick={this.exportToExcel}
+                              style={{ cursor: "pointer" }}
+                              className=" mx-1 myactive"
+                            >
+                              .XLSX
+                            </h5>
+                            <h5
+                              onClick={() => this.convertCsvToXml()}
+                              style={{ cursor: "pointer" }}
+                              className=" mx-1 myactive"
+                            >
+                              .XML
+                            </h5>
                           </div>
                         )}
-                      </CardBody>
-                    </Card>
+                      </div>
+                    </span>
+                    <span>
+                      <Route
+                        render={({ history }) => (
+                          <Badge
+                            style={{ cursor: "pointer" }}
+                            className="float-right mr-1"
+                            color="primary"
+                            onClick={() =>
+                              history.push("/app/softnumen/order/createorder")
+                            }
+                          >
+                            <FaPlus size={15} /> Create Order
+                          </Badge>
+                        )}
+                      />
+                    </span>
                   </Col>
-                </>
-              )}
-            </>
-          )}
+                )}
+              </Row>
+              <CardBody style={{ marginTop: "-1.5rem" }}>
+                {this.state.rowData === null ? null : (
+                  <div className="ag-theme-material w-100 my-2 ag-grid-table">
+                    <div className="d-flex flex-wrap justify-content-between align-items-center">
+                      <div className="mb-1">
+                        <UncontrolledDropdown className="p-1 ag-dropdown">
+                          <DropdownToggle tag="div">
+                            {this.gridApi
+                              ? this.state.currenPageSize
+                              : "" * this.state.getPageSize -
+                                (this.state.getPageSize - 1)}{" "}
+                            -{" "}
+                            {this.state.rowData.length -
+                              this.state.currenPageSize *
+                                this.state.getPageSize >
+                            0
+                              ? this.state.currenPageSize *
+                                this.state.getPageSize
+                              : this.state.rowData.length}{" "}
+                            of {this.state.rowData.length}
+                            <ChevronDown className="ml-50" size={15} />
+                          </DropdownToggle>
+                          <DropdownMenu right>
+                            <DropdownItem
+                              tag="div"
+                              onClick={() => this.filterSize(5)}
+                            >
+                              5
+                            </DropdownItem>
+                            <DropdownItem
+                              tag="div"
+                              onClick={() => this.filterSize(20)}
+                            >
+                              20
+                            </DropdownItem>
+                            <DropdownItem
+                              tag="div"
+                              onClick={() => this.filterSize(50)}
+                            >
+                              50
+                            </DropdownItem>
+                            <DropdownItem
+                              tag="div"
+                              onClick={() => this.filterSize(100)}
+                            >
+                              100
+                            </DropdownItem>
+                            <DropdownItem
+                              tag="div"
+                              onClick={() => this.filterSize(134)}
+                            >
+                              134
+                            </DropdownItem>
+                          </DropdownMenu>
+                        </UncontrolledDropdown>
+                      </div>
+                      <div className="d-flex flex-wrap justify-content-end mb-1">
+                        <div className="table-input mr-1">
+                          <Input
+                            placeholder="search Item here..."
+                            onChange={e =>
+                              this.updateSearchQuery(e.target.value)
+                            }
+                            value={this.state.value}
+                          />
+                        </div>
+                      </div>
+                    </div>
+                    <ContextLayout.Consumer className="ag-theme-alpine">
+                      {context => (
+                        <AgGridReact
+                          id="myAgGrid"
+                          gridOptions={this.gridOptions}
+                          rowSelection="multiple"
+                          defaultColDef={defaultColDef}
+                          columnDefs={columnDefs}
+                          rowData={rowData}
+                          onGridReady={this.onGridReady}
+                          colResizeDefault={"shift"}
+                          animateRows={true}
+                          floatingFilter={false}
+                          pagination={true}
+                          paginationPageSize={this.state.paginationPageSize}
+                          pivotPanelShow="always"
+                          enableRtl={context.state.direction === "rtl"}
+                          ref={this.gridRef} // Attach the ref to the grid
+                          domLayout="autoHeight" // Adjust layout as needed
+                        />
+                      )}
+                    </ContextLayout.Consumer>
+                  </div>
+                )}
+              </CardBody>
+            </Card>
+          </Col>
         </Col>
 
         <Modal
@@ -983,18 +941,145 @@ class OrderList extends React.Component {
         </Modal>
         <Modal
           isOpen={this.state.modalone}
-          toggle={this.toggleModal}
-          className="modal-dialog modal-xl"
-          // className="modal-dialog modal-lg"
-          size="lg"
-          backdrop={true}
-          fullscreen={true}
+          toggle={this.togglemodal}
+          className={this.props.className}
+          style={{ maxWidth: "1050px" }}
         >
-          <ModalHeader toggle={this.toggleModal}>View Details</ModalHeader>
-          <ModalBody className="myproducttable">
-            {/* <div className="container"> */}
-            {/* <TargetAssignedOne ViewData={this.state.ViewData} /> */}
-            {/* </div> */}
+          <ModalHeader toggle={this.togglemodal}>
+            {this.state.ShowBill ? "Bill Download" : "All Products"}
+          </ModalHeader>
+          <ModalBody
+            className={`${this.state.ShowBill ? "p-1" : "modalbodyhead"}`}
+          >
+            {this.state.ShowBill ? (
+              <>
+                <StockTrxInvoice ViewOneData={this.state.ViewOneData} />
+              </>
+            ) : (
+              <>
+                {this.state.ViewOneUserView ? (
+                  <>
+                    <Row>
+                      <Col>
+                        <Label>WareHouse Name :</Label>
+                        <h5 className="mx-1">
+                          {this.state.ViewOneData &&
+                            this.state.ViewOneData?.warehouseToId?.firstName}
+                        </h5>
+                      </Col>
+                      <Col>
+                        <Label>Stock trx date :</Label>
+                        <h5>
+                          {this.state.ViewOneData &&
+                            this.state.ViewOneData?.stockTransferDate}
+                        </h5>
+                      </Col>
+                      <Col>
+                        <Label>Grand Total :</Label>
+                        <h5>
+                          <strong>
+                            {this.state.ViewOneData &&
+                              this.state.ViewOneData?.grandTotal}{" "}
+                          </strong>
+                          Rs/-
+                        </h5>
+                      </Col>
+                      <Col>
+                        {this.state.ViewOneData?.transferStatus ==
+                        "Completed" ? (
+                          <>
+                            <div className="d-flex justify-content-center">
+                              <h5>
+                                status:
+                                <Badge className="mx-2" color="primary">
+                                  {this.state.ViewOneData?.transferStatus}
+                                </Badge>
+                              </h5>
+                            </div>
+                          </>
+                        ) : (
+                          <>
+                            <h5>
+                              status:
+                              <Badge className="mx-2" color="primary">
+                                {this.state.ViewOneData?.transferStatus}
+                              </Badge>
+                            </h5>
+                            {/* <Col>
+                        <Label>Change Status</Label>
+                        <CustomInput onChange={this.UpdateStock} type="select">
+                          <option value="NA">--Select--</option>
+                          <option value="Completed">Completed</option>
+                          <option value="Pending">Pending</option>
+                          <option value="Hold">Hold</option>
+                        </CustomInput>
+                      </Col> */}
+                          </>
+                        )}
+                      </Col>
+                      <Col>
+                        <Label>Download Invoice :</Label>
+                        <div className="d-flex justify-content-center">
+                          <FaDownload
+                            onClick={this.handleStockTrxInvoiceShow}
+                            color="#00c0e"
+                            fill="#00c0e"
+                            style={{ cursor: "pointer" }}
+                            size={20}
+                          />
+                        </div>
+                      </Col>
+                    </Row>
+                    <Row className="p-2">
+                      <Col>
+                        <div className="d-flex justify-content-center">
+                          <h4>Sales Order List</h4>
+                        </div>
+                      </Col>
+                    </Row>
+                    <Row>
+                      <Col>
+                        <Table style={{ cursor: "pointer" }} striped>
+                          <thead>
+                            <tr>
+                              <th>#</th>
+                              <th>Product Name</th>
+                              <th>Price</th>
+                              <th>Size</th>
+                              <th>Unit</th>
+                              <th>Quantity</th>
+                              <th>Total</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {this.state.ViewOneData?.productItems &&
+                              this.state.ViewOneData?.productItems?.map(
+                                (ele, i) => (
+                                  <>
+                                    <tr>
+                                      <th scope="row">{i + 1}</th>
+                                      <td>{ele?.product?.Product_Title}</td>
+                                      <td>{ele?.price}</td>
+                                      <td>{ele?.Size}</td>
+                                      <td>{ele?.unitType}</td>
+                                      <td>{ele?.transferQty}</td>
+                                      <td>
+                                        {ele?.price *
+                                          ele?.Size *
+                                          ele?.transferQty}
+                                      </td>
+                                    </tr>
+                                  </>
+                                )
+                              )}
+                          </tbody>
+                        </Table>
+                      </Col>
+                    </Row>
+                  </>
+                ) : null}
+              </>
+            )}
           </ModalBody>
         </Modal>
       </>
