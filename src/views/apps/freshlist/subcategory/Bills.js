@@ -30,7 +30,6 @@ import { history } from "../../../../history";
 import "../../../../assets/scss/plugins/tables/_agGridStyleOverride.scss";
 import "../../../../assets/scss/pages/users.scss";
 import { Route } from "react-router-dom";
-// import InvoiceGenerator from "./InvoiceGenerator1";
 const toWords = new ToWords({
   localeCode: "en-IN",
   converterOptions: {
@@ -71,154 +70,9 @@ class Bills extends React.Component {
     getPageSize: "",
     defaultColDef: {
       sortable: true,
-      // editable: true,
       resizable: true,
       suppressMenu: true,
     },
-    // columnDefs: [
-    //   {
-    //     headerName: "S.No",
-    //     valueGetter: "node.rowIndex + 1",
-    //     field: "node.rowIndex + 1",
-    //     width: 100,
-    //     filter: true,
-    //   },
-    //   {
-    //     headerName: "Image",
-    //     field: "image",
-    //     filter: true,
-    //     width: 100,
-    //     cellRendererFramework: (params) => {
-    //       return (
-    //         <img
-    //           className=" rounded-circle mr-50"
-    //           src={params.data.image}
-    //           alt="user avatar"
-    //           height="40"
-    //           width="40"
-    //         />
-    //       );
-    //     },
-    //   },
-    //   {
-    //     headerName: "Name",
-    //     field: "subcategory_name",
-    //     filter: true,
-    //     width: 150,
-    //     cellRendererFramework: (params) => {
-    //       return (
-    //         <div className="d-flex align-items-center">
-    //           <span>{params.data.subcategory_name}</span>
-    //         </div>
-    //       );
-    //     },
-    //   },
-
-    //   {
-    //     headerName: "Category",
-    //     field: "category.category_name",
-    //     filter: true,
-    //     width: 150,
-    //     cellRendererFramework: (params) => {
-    //       return (
-    //         <div className="d-flex align-items-center">
-    //           <span>{params.data.category?.category_name}</span>
-    //         </div>
-    //       );
-    //     },
-    //   },
-    //   {
-    //     headerName: "Type",
-    //     field: "type",
-    //     filter: true,
-    //     width: 150,
-    //     cellRendererFramework: (params) => {
-    //       return (
-    //         <div className="d-flex align-items-center">
-    //           <span>{params.data?.type}</span>
-    //         </div>
-    //       );
-    //     },
-    //   },
-    //   {
-    //     headerName: "Feature",
-    //     field: "feature",
-    //     filter: true,
-    //     width: 150,
-    //     cellRendererFramework: (params) => {
-    //       return (
-    //         <div className="d-flex align-items-center">
-    //           <span>{params.data?.feature}</span>
-    //         </div>
-    //       );
-    //     },
-    //   },
-
-    //   {
-    //     headerName: "Status",
-    //     field: "status",
-    //     filter: true,
-    //     width: 150,
-    //     cellRendererFramework: (params) => {
-    //       return params.value === "Active" ? (
-    //         <div className="badge badge-pill badge-success">
-    //           {params.data.status}
-    //         </div>
-    //       ) : params.value === "Inactive" ? (
-    //         <div className="badge badge-pill badge-warning">
-    //           {params.data.status}
-    //         </div>
-    //       ) : null;
-    //     },
-    //   },
-    //   {
-    //     headerName: "Actions",
-    //     field: "sortorder",
-    //     field: "transactions",
-    //     width: 150,
-    //     cellRendererFramework: (params) => {
-    //       return (
-    //         <div className="actions cursor-pointer">
-    //           {/* <Eye
-    //                             className="mr-50"
-    //                             size="25px"
-    //                             color="green"
-    //                             onClick={() =>
-    //                                 history.push(`/app/customer/viewCustomer/${params.data._id}`)}
-    //                         /> */}
-    //           <Route
-    //             render={({ history }) => (
-    //               <Edit
-    //                 className="mr-50"
-    //                 size="25px"
-    //                 color="blue"
-    //                 onClick={() =>
-    //                   history.push(
-    //                     `/app/freshlist/subcategory/editSubCategory/${params.data._id}`
-    //                   )
-    //                 }
-    //               />
-    //             )}
-    //           />
-    //           <Route
-    //             render={({ history }) => (
-    //               <Trash2
-    //                 className="mr-50"
-    //                 size="25px"
-    //                 color="red"
-    //                 onClick={() => {
-    //                   let selectedData = this.gridApi.getSelectedRows();
-    //                   this.runthisfunction(params.data._id);
-    //                   this.gridApi.updateRowData({ remove: selectedData });
-    //                 }}
-    //               />
-    //             )}
-    //           />
-    //         </div>
-    //       );
-    //     },
-    //   },
-    // ],
     columnDefs: [
       {
         headerName: "S.No",
@@ -775,6 +629,7 @@ class Bills extends React.Component {
     this.setState({ PrintData: data });
     const toWords = new ToWords();
     let words = toWords.convert(Number(data.sub_total), { currency: true });
+    console.log("check", words);
     this.setState({ wordsNumber: words });
     this.toggleModal();
   };
@@ -875,8 +730,6 @@ class Bills extends React.Component {
           <Card>
             <Row className="m-2">
               <Col>
-                {/* <InvoiceGenerator /> */}
-
                 <h1 sm="6" className="float-left">
                   Bills List
                 </h1>

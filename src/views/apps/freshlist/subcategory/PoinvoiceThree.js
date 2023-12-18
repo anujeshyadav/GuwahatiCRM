@@ -70,6 +70,8 @@ const styles = StyleSheet.create({
 const PoinvoiceThree = ({
   UserChoice,
   invoiceData,
+  subTotal,
+  grandTotal,
   CurrentWords,
   BilData,
   tableList,
@@ -100,7 +102,8 @@ const PoinvoiceThree = ({
                   flexDirection: "row",
                   border: "1px solid black",
                   height: "100px",
-                }}>
+                }}
+              >
                 {UserChoice?.imagePosition &&
                 UserChoice?.imagePosition == "Left" ? (
                   <>
@@ -112,13 +115,15 @@ const PoinvoiceThree = ({
                       <>
                         <Image
                           style={{ width: "230px", padding: "25px 10px" }}
-                          src={`http://64.227.162.41:5000/Images/${BilData?.CompanyDetails?.logo}`}></Image>
+                          src={`http://64.227.162.41:5000/Images/${BilData?.CompanyDetails?.logo}`}
+                        ></Image>
                       </>
                     ) : (
                       <>
                         <Image
                           style={{ width: "230px", padding: "25px 10px" }}
-                          src={logo}></Image>
+                          src={logo}
+                        ></Image>
                       </>
                     )}
 
@@ -133,7 +138,8 @@ const PoinvoiceThree = ({
                           fontSize: "8px",
                           marginTop: "5px",
                           marginBottom: "2px",
-                        }}>
+                        }}
+                      >
                         {BilData?.CompanyDetails?.address &&
                           BilData?.CompanyDetails?.address}
                       </Text>
@@ -168,7 +174,8 @@ const PoinvoiceThree = ({
                           fontSize: "8px",
                           marginTop: "5px",
                           marginBottom: "2px",
-                        }}>
+                        }}
+                      >
                         {BilData?.CompanyDetails?.address &&
                           BilData?.CompanyDetails?.address}
                       </Text>
@@ -194,13 +201,15 @@ const PoinvoiceThree = ({
                       <>
                         <Image
                           style={{ width: "230px", padding: "25px 10px" }}
-                          src={`http://64.227.162.41:5000/Images/${BilData?.CompanyDetails?.logo}`}></Image>
+                          src={`http://64.227.162.41:5000/Images/${BilData?.CompanyDetails?.logo}`}
+                        ></Image>
                       </>
                     ) : (
                       <>
                         <Image
                           style={{ width: "230px", padding: "25px 10px" }}
-                          src={logo}></Image>
+                          src={logo}
+                        ></Image>
                       </>
                     )}
                   </>
@@ -215,13 +224,15 @@ const PoinvoiceThree = ({
                   borderRight: "1px solid black",
                   borderLeft: "1px solid black",
                   height: "20px",
-                }}>
+                }}
+              >
                 <View
                   style={{
                     padding: "2px",
                     width: "33%",
                     borderRight: "1px solid black",
-                  }}>
+                  }}
+                >
                   <View style={{ flexDirection: "row", paddingBottom: "3px" }}>
                     {UserChoice?.billTo == "right" && (
                       <Text
@@ -230,7 +241,8 @@ const PoinvoiceThree = ({
                           fontWeight: "1000",
                           marginLeft: "5px",
                           width: "50%",
-                        }}>
+                        }}
+                      >
                         invoice Detail
                       </Text>
                     )}
@@ -241,7 +253,8 @@ const PoinvoiceThree = ({
                           fontWeight: "1000",
                           marginLeft: "5px",
                           width: "50%",
-                        }}>
+                        }}
+                      >
                         Invoice Detail
                       </Text>
                     )}
@@ -252,9 +265,11 @@ const PoinvoiceThree = ({
                     width: "33%",
                     padding: "2px 2px",
                     borderRight: "1px solid black",
-                  }}>
+                  }}
+                >
                   <View
-                    style={{ flexDirection: "row", paddingBottom: "3px 3px" }}>
+                    style={{ flexDirection: "row", paddingBottom: "3px 3px" }}
+                  >
                     {UserChoice?.billTo == "Left" && (
                       <Text
                         style={{
@@ -262,7 +277,8 @@ const PoinvoiceThree = ({
                           fontWeight: "1000",
                           marginLeft: "5px",
                           width: "50%",
-                        }}>
+                        }}
+                      >
                         Bill To
                       </Text>
                     )}
@@ -273,7 +289,8 @@ const PoinvoiceThree = ({
                           fontWeight: "1000",
                           marginLeft: "5px",
                           width: "50%",
-                        }}>
+                        }}
+                      >
                         Ship To
                       </Text>
                     )}
@@ -283,12 +300,14 @@ const PoinvoiceThree = ({
                   style={{
                     padding: "2px",
                     width: "33%",
-                  }}>
+                  }}
+                >
                   <View
                     style={{
                       flexDirection: "row",
                       paddingBottom: "3px",
-                    }}>
+                    }}
+                  >
                     {UserChoice?.billTo == "right" && (
                       <Text
                         style={{
@@ -296,7 +315,8 @@ const PoinvoiceThree = ({
                           fontWeight: "1000",
                           marginLeft: "5px",
                           width: "50%",
-                        }}>
+                        }}
+                      >
                         Bill To
                       </Text>
                     )}
@@ -307,7 +327,8 @@ const PoinvoiceThree = ({
                           fontWeight: "1000",
                           marginLeft: "5px",
                           width: "50%",
-                        }}>
+                        }}
+                      >
                         Ship To
                       </Text>
                     )}
@@ -321,24 +342,29 @@ const PoinvoiceThree = ({
                   borderRight: "1px solid black",
                   borderLeft: "1px solid black",
                   height: "90px",
-                }}>
+                }}
+              >
                 <View
                   style={{
                     padding: "4px",
                     width: "33%",
                     borderRight: "1px solid black",
-                  }}>
+                  }}
+                >
                   <View
                     style={{
                       padding: "3px 3px",
-                    }}>
+                    }}
+                  >
                     <View
-                      style={{ flexDirection: "row", paddingBottom: "3px" }}>
+                      style={{ flexDirection: "row", paddingBottom: "3px" }}
+                    >
                       <Text
                         style={{
                           fontSize: "9px",
                           fontWeight: "bold",
-                        }}>
+                        }}
+                      >
                         Receipt No
                       </Text>{" "}
                       <Text style={{ fontSize: "9px", fontWeight: "bold" }}>
@@ -346,13 +372,15 @@ const PoinvoiceThree = ({
                       </Text>
                     </View>
                     <View
-                      style={{ flexDirection: "row", paddingBottom: "3px" }}>
+                      style={{ flexDirection: "row", paddingBottom: "3px" }}
+                    >
                       <Text
                         style={{
                           fontSize: "9px",
                           fontWeight: "bold",
                           width: "50%",
-                        }}>
+                        }}
+                      >
                         Receipt Date :
                       </Text>{" "}
                       <Text style={{ fontSize: "9px", fontWeight: "bold" }}>
@@ -360,13 +388,15 @@ const PoinvoiceThree = ({
                       </Text>
                     </View>
                     <View
-                      style={{ flexDirection: "row", paddingBottom: "3px" }}>
+                      style={{ flexDirection: "row", paddingBottom: "3px" }}
+                    >
                       <Text
                         style={{
                           fontSize: "9px",
                           fontWeight: "bold",
                           width: "50%",
-                        }}>
+                        }}
+                      >
                         Receipt Time :
                       </Text>{" "}
                       <Text style={{ fontSize: "9px", fontWeight: "bold" }}>
@@ -375,13 +405,15 @@ const PoinvoiceThree = ({
                       </Text>
                     </View>
                     <View
-                      style={{ flexDirection: "row", paddingBottom: "3px" }}>
+                      style={{ flexDirection: "row", paddingBottom: "3px" }}
+                    >
                       <Text
                         style={{
                           fontSize: "8px",
                           fontWeight: "bold",
                           width: "50%",
-                        }}>
+                        }}
+                      >
                         Term
                       </Text>{" "}
                       <Text style={{ fontSize: "8px", fontWeight: "bold" }}>
@@ -395,14 +427,16 @@ const PoinvoiceThree = ({
                     width: "33%",
                     padding: "10px 10px",
                     borderRight: "1px solid black",
-                  }}>
+                  }}
+                >
                   {UserChoice?.billTo == "Left" && (
                     <View style={{ flexDirection: "", paddingBottom: "3px" }}>
                       <Text
                         style={{
                           fontSize: "13px",
                           fontWeight: "bold",
-                        }}>
+                        }}
+                      >
                         {/* {invoiceData?.company_name} */}
                       </Text>{" "}
                       <Text
@@ -410,7 +444,8 @@ const PoinvoiceThree = ({
                           fontSize: "10px",
                           width: "45%",
                           fontWeight: "bold",
-                        }}>
+                        }}
+                      >
                         {/* {invoiceData?.billing_street},
                       {invoiceData?.billing_city_name}
                       {invoiceData?.billing_state_name} ,
@@ -424,7 +459,8 @@ const PoinvoiceThree = ({
                         style={{
                           fontSize: "13px",
                           fontWeight: "bold",
-                        }}>
+                        }}
+                      >
                         {/* {invoiceData?.company_name} */}
                       </Text>{" "}
                       <Text
@@ -432,7 +468,8 @@ const PoinvoiceThree = ({
                           fontSize: "10px",
                           width: "45%",
                           fontWeight: "bold",
-                        }}>
+                        }}
+                      >
                         {/* {invoiceData?.shipping_street}
                       {invoiceData?.shippingcity_city_name}{" "}
                       {invoiceData?.shippingstate_state_name} ,
@@ -446,14 +483,16 @@ const PoinvoiceThree = ({
                     padding: "10px",
                     width: "33%",
                     // borderRight: "1px solid black",
-                  }}>
+                  }}
+                >
                   {UserChoice?.billTo == "right" && (
                     <View style={{ flexDirection: "", paddingBottom: "3px" }}>
                       <Text
                         style={{
                           fontSize: "13px",
                           fontWeight: "bold",
-                        }}>
+                        }}
+                      >
                         {/* {invoiceData?.company_name} */}
                       </Text>{" "}
                       <Text
@@ -461,7 +500,8 @@ const PoinvoiceThree = ({
                           fontSize: "10px",
                           width: "45%",
                           fontWeight: "bold",
-                        }}>
+                        }}
+                      >
                         {/* {invoiceData?.billing_street},
                       {invoiceData?.billing_city_name}
                       {invoiceData?.billing_state_name} ,
@@ -475,7 +515,8 @@ const PoinvoiceThree = ({
                         style={{
                           fontSize: "13px",
                           fontWeight: "bold",
-                        }}>
+                        }}
+                      >
                         {/* {invoiceData?.company_name} */}
                       </Text>{" "}
                       <Text
@@ -483,7 +524,8 @@ const PoinvoiceThree = ({
                           fontSize: "10px",
                           width: "45%",
                           fontWeight: "bold",
-                        }}>
+                        }}
+                      >
                         {/* {invoiceData?.shipping_street}
                       {invoiceData?.shippingcity_city_name}{" "}
                       {invoiceData?.shippingstate_state_name} ,
@@ -500,7 +542,8 @@ const PoinvoiceThree = ({
                   // borderRight: "1px solid black",
                   // borderLeft: "1px solid black",
                   // height: "20px",
-                }}>
+                }}
+              >
                 {/* <View
                 style={{
                   width: "50%",
@@ -546,20 +589,23 @@ const PoinvoiceThree = ({
                   borderRight: "1px solid black",
                   borderLeft: "1px solid black",
                   height: "23px",
-                }}>
+                }}
+              >
                 <View
                   style={{
                     width: "3%",
                     padding: "5px 2px",
                     borderRight: "1px solid black",
-                  }}>
+                  }}
+                >
                   <Text
                     style={{
                       fontSize: "10px",
                       color: "black",
                       fontWeight: "1000",
                       marginLeft: "5px",
-                    }}>
+                    }}
+                  >
                     #
                   </Text>
                 </View>
@@ -587,7 +633,8 @@ const PoinvoiceThree = ({
                     padding: "5px 2px",
 
                     borderRight: "1px solid black",
-                  }}>
+                  }}
+                >
                   <Text
                     style={{
                       fontSize: "10px",
@@ -595,7 +642,8 @@ const PoinvoiceThree = ({
                       color: "black",
 
                       marginLeft: "5px",
-                    }}>
+                    }}
+                  >
                     PO No.
                   </Text>
                 </View>
@@ -605,14 +653,16 @@ const PoinvoiceThree = ({
                     padding: "5px 2px",
 
                     borderRight: "1px solid black",
-                  }}>
+                  }}
+                >
                   <Text
                     style={{
                       fontSize: "10px",
                       color: "black",
                       fontWeight: "1000",
                       marginLeft: "5px",
-                    }}>
+                    }}
+                  >
                     Client Code
                   </Text>
                 </View>
@@ -622,14 +672,16 @@ const PoinvoiceThree = ({
                     padding: "5px 2px",
 
                     borderRight: "1px solid black",
-                  }}>
+                  }}
+                >
                   <Text
                     style={{
                       fontSize: "10px",
                       color: "black",
                       fontWeight: "1000",
                       marginLeft: "5px",
-                    }}>
+                    }}
+                  >
                     State name
                   </Text>
                 </View>
@@ -639,14 +691,16 @@ const PoinvoiceThree = ({
                     padding: "5px 2px",
 
                     borderRight: "1px solid black",
-                  }}>
+                  }}
+                >
                   <Text
                     style={{
                       fontSize: "10px",
                       color: "black",
                       fontWeight: "1000",
                       marginLeft: "5px",
-                    }}>
+                    }}
+                  >
                     Product Name
                   </Text>
                 </View>
@@ -656,14 +710,16 @@ const PoinvoiceThree = ({
                     padding: "5px 2px",
 
                     borderRight: "1px solid black",
-                  }}>
+                  }}
+                >
                   <Text
                     style={{
                       fontSize: "10px",
                       color: "black",
                       fontWeight: "1000",
                       marginLeft: "5px",
-                    }}>
+                    }}
+                  >
                     HSN / SAC
                   </Text>
                 </View>
@@ -673,14 +729,16 @@ const PoinvoiceThree = ({
                     marginRight: "2px",
                     padding: "5px 2px",
                     borderRight: "1px solid black",
-                  }}>
+                  }}
+                >
                   <Text
                     style={{
                       fontSize: "10px",
                       color: "black",
                       fontWeight: "1000",
                       marginLeft: "5px",
-                    }}>
+                    }}
+                  >
                     Qty
                   </Text>
                 </View>
@@ -690,14 +748,16 @@ const PoinvoiceThree = ({
                     marginRight: "2px",
                     padding: "5px 2px",
                     borderRight: "1px solid black",
-                  }}>
+                  }}
+                >
                   <Text
                     style={{
                       fontSize: "10px",
                       color: "black",
                       fontWeight: "1000",
                       marginLeft: "5px",
-                    }}>
+                    }}
+                  >
                     Price
                   </Text>
                 </View>
@@ -707,14 +767,16 @@ const PoinvoiceThree = ({
                     marginRight: "2px",
                     padding: "5px 2px",
                     //   borderRight: "1px solid black",
-                  }}>
+                  }}
+                >
                   <Text
                     style={{
                       fontSize: "10px",
                       color: "black",
                       fontWeight: "1000",
                       marginLeft: "5px",
-                    }}>
+                    }}
+                  >
                     Amount
                   </Text>
                 </View>
@@ -727,18 +789,21 @@ const PoinvoiceThree = ({
                     borderRight: "1px solid black",
                     borderLeft: "1px solid black",
                     height: "20px",
-                  }}>
+                  }}
+                >
                   <View
                     style={{
                       width: "3%",
                       padding: "2px 2px",
-                    }}>
+                    }}
+                  >
                     <Text
                       style={{
                         fontSize: "10px",
                         fontWeight: "1000",
                         marginLeft: "5px",
-                      }}>
+                      }}
+                    >
                       {i + 1}
                     </Text>
                   </View>
@@ -746,14 +811,16 @@ const PoinvoiceThree = ({
                     style={{
                       width: "12%",
                       padding: "2px 2px",
-                    }}>
+                    }}
+                  >
                     <Text
                       style={{
                         fontSize: "10px",
                         fontWeight: "1000",
                         color: "black",
                         marginLeft: "5px",
-                      }}>
+                      }}
+                    >
                       {ele?.po_no && ele?.po_no ? <>{ele?.po_no}</> : null}
                     </Text>
                   </View>
@@ -761,14 +828,16 @@ const PoinvoiceThree = ({
                     style={{
                       width: "13%",
                       padding: "2px 2px",
-                    }}>
+                    }}
+                  >
                     <Text
                       style={{
                         fontSize: "10px",
                         color: "black",
                         fontWeight: "1000",
                         // marginLeft: "5px",
-                      }}>
+                      }}
+                    >
                       {/* {invoiceData?.supplier_name} */}
                       supplier
                     </Text>
@@ -777,14 +846,16 @@ const PoinvoiceThree = ({
                     style={{
                       width: "13%",
                       padding: "2px 2px",
-                    }}>
+                    }}
+                  >
                     <Text
                       style={{
                         fontSize: "10px",
 
                         fontWeight: "1000",
                         marginLeft: "5px",
-                      }}>
+                      }}
+                    >
                       {/* {invoiceData?.state_title} */}
                       statetitle
                     </Text>
@@ -793,14 +864,16 @@ const PoinvoiceThree = ({
                     style={{
                       width: "15%",
                       padding: "2px 2px",
-                    }}>
+                    }}
+                  >
                     <Text
                       style={{
                         fontSize: "10px",
 
                         fontWeight: "1000",
                         marginLeft: "5px",
-                      }}>
+                      }}
+                    >
                       {ele?.product?.Product_Title}
                     </Text>
                   </View>
@@ -808,14 +881,16 @@ const PoinvoiceThree = ({
                     style={{
                       width: "12%",
                       padding: "2px 2px",
-                    }}>
+                    }}
+                  >
                     <Text
                       style={{
                         fontSize: "10px",
 
                         fontWeight: "1000",
                         marginLeft: "5px",
-                      }}>
+                      }}
+                    >
                       {ele?.product?.HSN_Code}
                     </Text>
                   </View>
@@ -824,13 +899,15 @@ const PoinvoiceThree = ({
                       width: "12%",
                       marginRight: "2px",
                       padding: "2px 2px",
-                    }}>
+                    }}
+                  >
                     <Text
                       style={{
                         fontSize: "10px",
                         fontWeight: "1000",
                         marginLeft: "5px",
-                      }}>
+                      }}
+                    >
                       {ele?.qty}
                     </Text>
                   </View>
@@ -839,14 +916,16 @@ const PoinvoiceThree = ({
                       width: "12%",
                       marginRight: "2px",
                       padding: "2px 2px",
-                    }}>
+                    }}
+                  >
                     <Text
                       style={{
                         fontSize: "10px",
 
                         fontWeight: "1000",
                         marginLeft: "5px",
-                      }}>
+                      }}
+                    >
                       {ele?.product?.Product_MRP}
                     </Text>
                   </View>
@@ -855,14 +934,16 @@ const PoinvoiceThree = ({
                       //   width: "12%",
                       marginRight: "2px",
                       padding: "2px 2px",
-                    }}>
+                    }}
+                  >
                     <Text
                       style={{
                         fontSize: "10px",
                         justifyContent: "flex-end",
                         fontWeight: "1000",
                         marginLeft: "5px",
-                      }}>
+                      }}
+                    >
                       {ele?.qty * ele?.product?.Product_MRP}
                     </Text>
                   </View>
@@ -876,20 +957,23 @@ const PoinvoiceThree = ({
                   borderLeft: "1px solid black",
                   borderTop: "1px solid black",
                   borderBottom: "1px solid black",
-                }}>
+                }}
+              >
                 <View
                   style={{
                     width: "55%",
                     padding: "10px 10px",
                     borderRight: "1px solid black",
                     //   height: "250px",
-                  }}>
+                  }}
+                >
                   <View style={{ flexDirection: "", paddingBottom: "3px" }}>
                     <Text
                       style={{
                         fontSize: "14px",
                         fontWeight: "bold",
-                      }}>
+                      }}
+                    >
                       Total In Words
                     </Text>{" "}
                     <Text
@@ -897,7 +981,8 @@ const PoinvoiceThree = ({
                         fontSize: "12px",
                         width: "95%",
                         fontWeight: "bold",
-                      }}>
+                      }}
+                    >
                       {CurrentWords}
                     </Text>{" "}
                   </View>
@@ -924,7 +1009,8 @@ const PoinvoiceThree = ({
                         // margingTop: "50px",
                         // marginBottom: "40px",
                       }
-                    }>
+                    }
+                  >
                     <Text style={{ fontSize: "10px", marginTop: "15px" }}>
                       Terms and Conditions
                     </Text>
@@ -941,28 +1027,32 @@ const PoinvoiceThree = ({
                   style={{
                     width: "45%",
                     height: "120px",
-                  }}>
+                  }}
+                >
                   <View style={{ height: "120px" }}>
                     <View
                       style={{
                         padding: "10px",
 
                         height: "120px",
-                      }}>
+                      }}
+                    >
                       <View
                         style={{
                           flexDirection: "row",
                           gap: "10px",
                           paddingBottom: "3px",
                           justifyContent: "space-between",
-                        }}>
+                        }}
+                      >
                         <Text
                           style={{
                             fontSize: "10px",
                             fontWeight: "bold",
 
                             marginBottom: "6px",
-                          }}>
+                          }}
+                        >
                           Discount :
                         </Text>{" "}
                         <Text
@@ -971,7 +1061,8 @@ const PoinvoiceThree = ({
                             fontWeight: "bold",
 
                             marginBottom: "6px",
-                          }}>
+                          }}
+                        >
                           {AllCharges?.discount_value}.00
                         </Text>
                       </View>
@@ -981,22 +1072,25 @@ const PoinvoiceThree = ({
                           gap: "10px",
                           paddingBottom: "3px",
                           justifyContent: "space-between",
-                        }}>
+                        }}
+                      >
                         <Text
                           style={{
                             fontSize: "10px",
                             fontWeight: "bold",
                             marginBottom: "6px",
-                          }}>
+                          }}
+                        >
                           Sub Total
-                        </Text>{" "}
+                        </Text>
                         <Text
                           style={{
                             fontSize: "10px",
                             fontWeight: "bold",
                             marginBottom: "6px",
-                          }}>
-                          {AllCharges?.subtotal}1312
+                          }}
+                        >
+                          {subTotal}
                         </Text>
                       </View>
                       <View
@@ -1005,24 +1099,27 @@ const PoinvoiceThree = ({
                           gap: "10px",
                           paddingBottom: "3px",
                           justifyContent: "space-between",
-                        }}>
+                        }}
+                      >
                         <Text
                           style={{
                             fontSize: "10px",
                             fontWeight: "bold",
                             // width: "70%",
                             marginBottom: "6px",
-                          }}>
-                          CGST({AllCharges?.cgst}.00%)
-                        </Text>{" "}
+                          }}
+                        >
+                          CGST(9%)
+                        </Text>
                         <Text
                           style={{
                             fontSize: "10px",
                             fontWeight: "bold",
 
                             marginBottom: "6px",
-                          }}>
-                          {AllCharges?.totcgst}560
+                          }}
+                        >
+                          {subTotal * 0.09}
                         </Text>
                       </View>
                       <View
@@ -1031,24 +1128,27 @@ const PoinvoiceThree = ({
                           gap: "10px",
                           paddingBottom: "3px",
                           justifyContent: "space-between",
-                        }}>
+                        }}
+                      >
                         <Text
                           style={{
                             fontSize: "10px",
                             fontWeight: "bold",
 
                             marginBottom: "6px",
-                          }}>
-                          SGST( {AllCharges?.sgst}.00%)
-                        </Text>{" "}
+                          }}
+                        >
+                          SGST(9%)
+                        </Text>
                         <Text
                           style={{
                             fontSize: "10px",
                             fontWeight: "bold",
 
                             marginBottom: "6px",
-                          }}>
-                          {AllCharges?.totsgst}1421
+                          }}
+                        >
+                          {subTotal * 0.09}
                         </Text>
                       </View>
                       <View
@@ -1057,14 +1157,16 @@ const PoinvoiceThree = ({
                           gap: "10px",
                           paddingBottom: "3px",
                           justifyContent: "space-between",
-                        }}>
+                        }}
+                      >
                         <Text
                           style={{
                             fontSize: "10px",
                             fontWeight: "bold",
 
                             marginBottom: "6px",
-                          }}>
+                          }}
+                        >
                           Courier Charges
                         </Text>{" "}
                         <Text
@@ -1073,7 +1175,8 @@ const PoinvoiceThree = ({
                             fontWeight: "bold",
 
                             marginBottom: "6px",
-                          }}>
+                          }}
+                        >
                           {AllCharges?.delivery_charges}.00
                         </Text>
                       </View>
@@ -1083,14 +1186,16 @@ const PoinvoiceThree = ({
                           gap: "10px",
                           paddingBottom: "3px",
                           justifyContent: "space-between",
-                        }}>
+                        }}
+                      >
                         <Text
                           style={{
                             fontSize: "10px",
                             fontWeight: "bold",
 
                             marginBottom: "6px",
-                          }}>
+                          }}
+                        >
                           Other Charges
                         </Text>{" "}
                         <Text
@@ -1099,7 +1204,8 @@ const PoinvoiceThree = ({
                             fontWeight: "bold",
 
                             marginBottom: "6px",
-                          }}>
+                          }}
+                        >
                           {AllCharges?.other_charges}.00
                         </Text>
                       </View>
@@ -1110,13 +1216,15 @@ const PoinvoiceThree = ({
                           gap: "10px",
                           paddingBottom: "3px",
                           justifyContent: "space-between",
-                        }}>
+                        }}
+                      >
                         <Text
                           style={{
                             fontSize: "11px",
                             fontWeight: "bold",
                             marginTop: "2px",
-                          }}>
+                          }}
+                        >
                           Grand Total :
                         </Text>{" "}
                         <Text
@@ -1124,8 +1232,10 @@ const PoinvoiceThree = ({
                             fontSize: "11px",
                             fontWeight: "bold",
                             marginTop: "2px",
-                          }}>
-                          {invoiceData?.grandTotal}
+                          }}
+                        >
+                          {grandTotal}
+                          {/* {invoiceData?.grandTotal} */}
                         </Text>
                       </View>
                     </View>
@@ -1171,7 +1281,8 @@ const PoinvoiceThree = ({
                 justifyContent: "flex-end",
 
                 // alignItems: "flex-end",
-              }}>
+              }}
+            >
               <View
                 style={{
                   padding: "3px 3px ",
@@ -1180,14 +1291,16 @@ const PoinvoiceThree = ({
                   borderLeft: "1px solid black",
                   borderRight: "1px solid black",
                   width: "45%",
-                }}>
+                }}
+              >
                 <Text style={{ fontSize: "11px" }}> For</Text>
                 <Text
                   style={{
                     fontSize: "12px",
                     marginTop: "8px",
                     marginBottom: "8px",
-                  }}>
+                  }}
+                >
                   {" "}
                   {BilData?.CompanyDetails?.name &&
                     BilData?.CompanyDetails?.name}
@@ -1200,7 +1313,8 @@ const PoinvoiceThree = ({
                         style={{ height: "50px", marginTop: "15px" }}
                         src={`http://64.227.162.41:5000/Images/${BilData?.CompanyDetails?.signature}`}
                         width="200px"
-                        height="200px"></Image>
+                        height="200px"
+                      ></Image>
                     </>
                   ) : (
                     <>
@@ -1208,7 +1322,8 @@ const PoinvoiceThree = ({
                         style={{ height: "50px", marginTop: "15px" }}
                         src={signature}
                         width="200px"
-                        height="200px"></Image>
+                        height="200px"
+                      ></Image>
                     </>
                   )}
                 </View>
@@ -1218,7 +1333,8 @@ const PoinvoiceThree = ({
                     marginBottom: "2px",
                     marginTop: "20px",
                     justifyContent: "center",
-                  }}>
+                  }}
+                >
                   <Text style={{ fontSize: "10px" }}>Authorized Signature</Text>
                 </View>
               </View>

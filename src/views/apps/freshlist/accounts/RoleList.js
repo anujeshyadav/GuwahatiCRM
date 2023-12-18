@@ -1,4 +1,5 @@
 import React from "react";
+import { FaPencilAlt } from "react-icons/fa";
 import {
   Card,
   CardBody,
@@ -46,11 +47,9 @@ class RoleList extends React.Component {
     getPageSize: "",
     defaultColDef: {
       sortable: true,
-      // editable: true,
       resizable: true,
       suppressMenu: true,
     },
-    // columnDefs: [],
     columnDefs: [
       {
         headerName: "S.No",
@@ -118,17 +117,27 @@ class RoleList extends React.Component {
                 this.state.InsiderPermissions.Edit && (
                   <Route
                     render={({ history }) => (
-                      <Edit
-                        className="mr-50"
-                        size="25px"
-                        color="blue"
-                        onClick={() =>
-                          history.push({
-                            pathname: `/app/freshlist/account/editRole/${params?.data?._id}`,
-                            data: params,
-                          })
-                        }
-                      />
+                      <span
+                        style={{
+                          border: "1px solid white",
+                          padding: "10px",
+                          borderRadius: "30px",
+                          backgroundColor: "rgb(212, 111, 16)",
+                          marginLeft: "3px",
+                        }}
+                      >
+                        <FaPencilAlt
+                          className=""
+                          size="20px"
+                          color="white"
+                          onClick={() =>
+                            history.push({
+                              pathname: `/app/freshlist/account/editRole/${params?.data?._id}`,
+                              data: params,
+                            })
+                          }
+                        />
+                      </span>
                     )}
                   />
                 )}
@@ -328,7 +337,7 @@ class RoleList extends React.Component {
                   </Col>
                 )}
             </Row>
-            <CardBody>
+            <CardBody style={{ marginTop: "-1.5rem" }}>
               {this.state.rowData === null ? null : (
                 <div className="ag-theme-material w-100 my-1 ag-grid-table">
                   <div className="d-flex flex-wrap justify-content-between align-items-center">

@@ -48,9 +48,10 @@ import moment from "moment-timezone";
 import swal from "sweetalert";
 import {
   DeleteAccount,
-  Stock_trxFactorytoWList,
   Stockupdate,
   ViewFactoryStock,
+  ViewOneWarehouseStock,
+  WarehouseOutwardStocklist,
 } from "../../../../../ApiEndPoint/ApiCalling";
 import {
   BsCloudDownloadFill,
@@ -60,12 +61,11 @@ import {
 import * as XLSX from "xlsx";
 import UserContext from "../../../../../context/Context";
 import UpdateStockTrx from "../../accounts/UpdateStockTrx";
-import { Icon } from "leaflet";
-import StockTrxInvoice from "../../subcategory/StockTrxInvoice";
+import StockTrxInvoice from "../../subcategory/OutWardStockPO";
 
 const SelectedColums = [];
 
-class StockTransfer extends React.Component {
+class DamagedStock extends React.Component {
   static contextType = UserContext;
   constructor(props) {
     super(props);
@@ -74,6 +74,7 @@ class StockTransfer extends React.Component {
     this.state = {
       isOpen: false,
       ShowBill: false,
+
       Arrindex: "",
       rowData: [],
       setMySelectedarr: [],
@@ -103,13 +104,18 @@ class StockTransfer extends React.Component {
                   className="mr-50"
                   size="25px"
                   color="green"
+                  // onClick={() =>
+                  //   history.push(
+                  //     `/app/freshlist/customer/viewCustomer/${params.data?._id}`
+                  //   )
+                  // }
                   onClick={e => {
                     this.togglemodal();
                     this.setState({ ViewOneData: params?.data });
                     this.setState({ ViewOneUserView: true });
                     this.setState({ EditOneUserView: false });
 
-                    console.log(params?.data);
+                    // console.log(params?.data);
                   }}
                 />
                 <Edit
@@ -196,7 +202,6 @@ class StockTransfer extends React.Component {
           filter: true,
           width: 200,
           cellRendererFramework: params => {
-            console.log(params.data);
             return (
               <div>{<span>{params.data?.warehouseToId?.firstName}</span>}</div>
             );
@@ -261,13 +266,12 @@ class StockTransfer extends React.Component {
     };
   }
   UpdateStock = e => {
-    console.log(e.target.value);
     let payload = {
       status: e.target.value,
     };
     let id = this.state.ViewOneData?._id;
 
-    console.log(this.state.ViewOneData?._id);
+    // console.log(this.state.ViewOneData?._id);
     swal("Warning", "Sure You Want to Update Status", {
       buttons: {
         cancel: "No",
@@ -278,7 +282,7 @@ class StockTransfer extends React.Component {
         case "Sure":
           Stockupdate(id, payload)
             .then(res => {
-              console.log(res);
+              // console.log(res);
               swal("success", "Status Updated Successfully");
               this.togglemodal();
               this.ViewStockList();
@@ -306,7 +310,6 @@ class StockTransfer extends React.Component {
   handleStockTrxInvoiceShow = () => {
     this.setState({ ShowBill: true });
   };
-
   handleChangeEdit = (data, types) => {
     let type = types;
     if (type == "readonly") {
@@ -336,26 +339,51 @@ class StockTransfer extends React.Component {
   ViewStockList = async () => {
     let pageparmission = JSON.parse(localStorage.getItem("userData"));
     let userid = pageparmission?._id;
-    await ViewFactoryStock()
+    // await ViewFactoryStock()
+    await WarehouseOutwardStocklist(userid)
       .then(res => {
-        console.log(res?.Factory);
-        this.setState({ rowData: res?.Factory });
-        this.setState({ AllcolumnDefs: this.state.columnDefs });
+        // console.log(res?.Warehouse);
+        let rowData = res?.Warehouse;
 
-        let userHeading = JSON.parse(localStorage.getItem("FactoryStock"));
-        if (userHeading?.length) {
-          this.setState({ columnDefs: userHeading });
-          this.gridApi.setColumnDefs(userHeading);
-          this.setState({ SelectedcolumnDefs: userHeading });
-        } else {
-          this.setState({ columnDefs: this.state.columnDefs });
-          this.setState({ SelectedcolumnDefs: this.state.columnDefs });
+        if (rowData) {
+          this.setState({ rowData: rowData });
+          this.setState({ AllcolumnDefs: this.state.columnDefs });
+
+          let userHeading = JSON.parse(localStorage.getItem("FactoryStock"));
+          if (userHeading?.length) {
+            this.setState({ columnDefs: userHeading });
+            this.gridApi.setColumnDefs(userHeading);
+            this.setState({ SelectedcolumnDefs: userHeading });
+          } else {
+            this.setState({ columnDefs: this.state.columnDefs });
+            this.setState({ SelectedcolumnDefs: this.state.columnDefs });
+          }
+          this.setState({ SelectedCols: this.state.columnDefs });
         }
-        this.setState({ SelectedCols: this.state.columnDefs });
       })
       .catch(err => {
         console.log(err);
       });
+    // await ViewOneWarehouseStock(userid)
+    //   .then((res) => {
+    //     console.log(res?.Factory);
+    // this.setState({ rowData: res?.Factory });
+    // this.setState({ AllcolumnDefs: this.state.columnDefs });
+
+    // let userHeading = JSON.parse(localStorage.getItem("FactoryStock"));
+    // if (userHeading?.length) {
+    //   this.setState({ columnDefs: userHeading });
+    //   this.gridApi.setColumnDefs(userHeading);
+    //   this.setState({ SelectedcolumnDefs: userHeading });
+    // } else {
+    //   this.setState({ columnDefs: this.state.columnDefs });
+    //   this.setState({ SelectedcolumnDefs: this.state.columnDefs });
+    // }
+    // this.setState({ SelectedCols: this.state.columnDefs });
+    // })
+    // .catch((err) => {
+    //   console.log(err);
+    // });
   };
 
   toggleDropdown = () => {
@@ -640,9 +668,7 @@ class StockTransfer extends React.Component {
             <Card>
               <Row className="mt-2 ml-2 mr-2">
                 <Col>
-                  <h1 className="float-left" style={{ fontWeight: "600" }}>
-                    Stock Trx Request list
-                  </h1>
+                  <h1 className="float-left">Damaged Stock</h1>
                 </Col>
                 <Col>
                   <span className="mx-1">
@@ -658,7 +684,7 @@ class StockTransfer extends React.Component {
                   <span className="mx-1">
                     <div className="dropdown-container float-right">
                       <ImDownload
-                        yle={{ cursor: "pointer" }}
+                        style={{ cursor: "pointer" }}
                         title="download file"
                         size="35px"
                         className="dropdown-button "
@@ -714,27 +740,23 @@ class StockTransfer extends React.Component {
                       )}
                     </div>
                   </span>
-                  <span>
+                  {/* <span>
                     <Route
                       render={({ history }) => (
-                        <Button
-                          style={{
-                            cursor: "pointer",
-                            backgroundColor: "#39cccc",
-                            color: "white",
-                            fontWeight: "600",
-                          }}
+                        <Badge
+                          style={{ cursor: "pointer" }}
                           className="float-right mr-1"
-                          color="#39cccc"
+                          color="primary"
                           onClick={() =>
-                            history.push("/app/ajgroup/account/CreateStockTrx")
-                          }
-                        >
-                          <FaPlus size={15} /> Create
-                        </Button>
+                            history.push(
+                              "/app/softNumen/warehouse/WareHouseStock"
+                            )
+                          }>
+                          View My WareHouse
+                        </Badge>
                       )}
                     />
-                  </span>
+                  </span> */}
                 </Col>
               </Row>
               <CardBody style={{ marginTop: "-1.5rem" }}>
@@ -1032,21 +1054,21 @@ class StockTransfer extends React.Component {
           <ModalBody
             className={`${this.state.ShowBill ? "p-1" : "modalbodyhead"}`}
           >
-            {this.state.ShowBill ? (
+            {this.state.ViewOneUserView ? (
               <>
-                <StockTrxInvoice ViewOneData={this.state.ViewOneData} />
-              </>
-            ) : (
-              <>
-                {this.state.ViewOneUserView ? (
+                {this.state.ShowBill ? (
+                  <>
+                    <StockTrxInvoice ViewOneData={this.state.ViewOneData} />
+                  </>
+                ) : (
                   <>
                     <Row>
                       <Col>
-                        <Label>WareHouse Name :</Label>
-                        <h5 className="mx-1">
+                        <Label>WareHouse To :</Label>
+                        <Badge color="primary" className="">
                           {this.state.ViewOneData &&
                             this.state.ViewOneData?.warehouseToId?.firstName}
-                        </h5>
+                        </Badge>
                       </Col>
                       <Col>
                         <Label>Stock trx date :</Label>
@@ -1065,46 +1087,37 @@ class StockTransfer extends React.Component {
                           Rs/-
                         </h5>
                       </Col>
-                      <Col>
-                        {this.state.ViewOneData?.transferStatus ==
-                        "Completed" ? (
-                          <>
-                            <div className="d-flex justify-content-center">
-                              <h5>
-                                status:
-                                <Badge className="mx-2" color="primary">
-                                  {this.state.ViewOneData?.transferStatus}
-                                </Badge>
-                              </h5>
-                            </div>
-                          </>
-                        ) : (
-                          <>
-                            <h5>
-                              status:
-                              <Badge className="mx-2" color="primary">
+
+                      {this.state.ViewOneData?.transferStatus == "Completed" ? (
+                        <>
+                          <Col className="">
+                            <Label>status:</Label>
+                            <div>
+                              <Badge color="primary">
                                 {this.state.ViewOneData?.transferStatus}
                               </Badge>
-                            </h5>
-                            {/* <Col>
-                        <Label>Change Status</Label>
-                        <CustomInput onChange={this.UpdateStock} type="select">
-                          <option value="NA">--Select--</option>
-                          <option value="Completed">Completed</option>
-                          <option value="Pending">Pending</option>
-                          <option value="Hold">Hold</option>
-                        </CustomInput>
-                      </Col> */}
-                          </>
-                        )}
-                      </Col>
+                            </div>
+                          </Col>
+                        </>
+                      ) : (
+                        <>
+                          <Col className="">
+                            <Label>status:</Label>
+                            <div>
+                              <Badge color="primary">
+                                {this.state.ViewOneData?.transferStatus}
+                              </Badge>
+                            </div>
+                          </Col>
+                        </>
+                      )}
+
                       <Col>
                         <Label>Download Invoice :</Label>
                         <div className="d-flex justify-content-center">
                           <FaDownload
                             onClick={this.handleStockTrxInvoiceShow}
                             color="#00c0e"
-                            fill="#00c0e"
                             style={{ cursor: "pointer" }}
                             size={20}
                           />
@@ -1158,11 +1171,11 @@ class StockTransfer extends React.Component {
                       </Col>
                     </Row>
                   </>
-                ) : (
-                  <>
-                    <UpdateStockTrx ViewOne={this.state.ViewOneData} />
-                  </>
                 )}
+              </>
+            ) : (
+              <>
+                <UpdateStockTrx ViewOne={this.state.ViewOneData} />
               </>
             )}
           </ModalBody>
@@ -1171,4 +1184,4 @@ class StockTransfer extends React.Component {
     );
   }
 }
-export default StockTransfer;
+export default DamagedStock;
