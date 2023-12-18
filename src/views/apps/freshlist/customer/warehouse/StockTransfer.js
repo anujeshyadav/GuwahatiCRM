@@ -2,7 +2,6 @@ import React, { useRef } from "react";
 import { ImDownload } from "react-icons/im";
 
 import { Route } from "react-router-dom";
-import xmlJs from "xml-js";
 import {
   Card,
   CardBody,
@@ -26,8 +25,6 @@ import {
 import { ContextLayout } from "../../../../../utility/context/Layout";
 import { AgGridReact } from "ag-grid-react";
 import "ag-grid-community/dist/styles/ag-grid.css";
-import EditAccount from "../../accounts/EditAccount";
-import ViewAccount from "../../accounts/ViewAccount";
 import jsPDF from "jspdf";
 import "jspdf-autotable";
 import Logo from "../../../../../assets/img/profile/pages/logomain.png";
@@ -954,23 +951,10 @@ class StockTransfer extends React.Component {
                                           if (SelectedCols && delindex >= 0) {
                                             const splicedElement =
                                               SelectedCols.splice(delindex, 1); // Remove the element
-                                            // splicedElement contains the removed element, if needed
-
                                             this.setState({
                                               SelectedcolumnDefs: SelectedCols, // Update the state with the modified array
                                             });
                                           }
-                                          // const delindex =
-                                          //   SelectedCols.findIndex(
-                                          //     (element) =>
-                                          //       element?.headerName ==
-                                          //       ele?.headerName
-                                          //   );
-
-                                          // SelectedCols?.splice(delindex, 1);
-                                          // this.setState({
-                                          //   SelectedcolumnDefs: SelectedCols,
-                                          // });
                                         }}
                                         style={{ cursor: "pointer" }}
                                         size="25px"

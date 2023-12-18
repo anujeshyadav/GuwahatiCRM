@@ -28,7 +28,7 @@ const toWords = new ToWords({
   },
 });
 
-const StockTrxInvoice = (props) => {
+const StockTrxInvoice = props => {
   console.log(props);
   const [Printview, setPrintview] = useState({});
   const [AllCharges, setAllCharges] = useState({});
