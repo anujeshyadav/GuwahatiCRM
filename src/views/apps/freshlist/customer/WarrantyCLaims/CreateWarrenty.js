@@ -43,7 +43,7 @@ import { AiOutlineSearch } from "react-icons/ai";
 import AuditHistory from "../../order/audithistory/AuditHistory";
 import swal from "sweetalert";
 
-const CreateWarrenty = (args) => {
+const CreateWarrenty = args => {
   const [CreatAccountView, setCreatAccountView] = useState({});
   const [formData, setFormData] = useState({});
   const [dropdownValue, setdropdownValue] = useState({});
@@ -82,10 +82,10 @@ const CreateWarrenty = (args) => {
   };
   const handleopentogglePart = () => {
     GetPartsCatalogue()
-      .then((res) => {
+      .then(res => {
         console.log(res);
       })
-      .catch((err) => {
+      .catch(err => {
         console.log(err);
       });
     toggleone();
@@ -96,7 +96,7 @@ const CreateWarrenty = (args) => {
     // const max = 9999; // Largest 5-digit number
     // const randomNum = Math.floor(Math.random() * (max - min + 1)) + min;
     WarrantyListView()
-      .then((res) => {
+      .then(res => {
         // console.log(res?.Warranty);
         if (res?.Warranty.length) {
           const lastElement = res?.Warranty[res?.Warranty?.length - 1]?.id;
@@ -109,7 +109,7 @@ const CreateWarrenty = (args) => {
           setRandomNumber(numb);
         }
       })
-      .catch((err) => {
+      .catch(err => {
         console.log(err);
       });
   };
@@ -133,7 +133,7 @@ const CreateWarrenty = (args) => {
     setFormValues([...formValues, { files: [] }]);
   };
 
-  let removeFileAttach = (i) => {
+  let removeFileAttach = i => {
     let newFormValues = [...formValues];
     newFormValues.splice(i, 1);
     setFormValues(newFormValues);
@@ -145,7 +145,7 @@ const CreateWarrenty = (args) => {
     newFormValues[i].files = selectedFiles;
     setFormValues(newFormValues);
   };
-  let removeFormFields = (i) => {
+  let removeFormFields = i => {
     let newFormValues = [...Comments];
     newFormValues.splice(i, 1);
     setComments(newFormValues);
@@ -201,19 +201,19 @@ const CreateWarrenty = (args) => {
   const audittoggle = () => {
     setAudit(!audit);
     WarrantyAuditHistoryList()
-      .then((res) => {
+      .then(res => {
         console.log(res?.AuditHistory);
         const uniqueArray = Array.from(
-          new Set(res?.AuditHistory?.map((obj) => obj.id))
-        ).map((id) => {
-          return res?.AuditHistory?.find((obj) => obj?.id === id);
+          new Set(res?.AuditHistory?.map(obj => obj.id))
+        ).map(id => {
+          return res?.AuditHistory?.find(obj => obj?.id === id);
         });
 
         console.log(uniqueArray);
         setAudithistory(uniqueArray);
         setAllhistory(uniqueArray);
       })
-      .catch((err) => {
+      .catch(err => {
         console.log(err);
         swal("Error", "Something Went Wrong");
       });
@@ -223,7 +223,7 @@ const CreateWarrenty = (args) => {
     setAudithistory(Allhistory);
   };
   useEffect(() => {
-    const handlePopstate = (event) => {
+    const handlePopstate = event => {
       if (event.state === null) {
         // This condition is true when the user uses the browser's back button
         console.log("User used the browser back button.");
@@ -248,12 +248,12 @@ const CreateWarrenty = (args) => {
     setUserInfo(userInfo);
     generateRandomNumber();
     Warranty_ViewData()
-      .then((res) => {
+      .then(res => {
         const jsonData = xmlJs.xml2json(res.data, { compact: true, spaces: 2 });
         // console.log(JSON.parse(jsonData).Warranty);
 
         let value = JSON.parse(jsonData)?.Warranty?.CheckBox?.input;
-        value?.map((ele) => {
+        value?.map(ele => {
           formData[ele?.name._text] = false;
         });
         setCreatAccountView(JSON.parse(jsonData)?.Warranty);
@@ -263,7 +263,7 @@ const CreateWarrenty = (args) => {
 
         setdropdownValue(JSON.parse(jsonData)?.Warranty);
       })
-      .catch((err) => {
+      .catch(err => {
         console.log(err);
       });
   }, []);
@@ -272,22 +272,22 @@ const CreateWarrenty = (args) => {
     console.log(ele?.id);
     debugger;
     await WarrantyAuditHistoryViewOne(ele?.id)
-      .then((res) => {
+      .then(res => {
         console.log(res?.AuditHistory);
         setAudithistory(res?.AuditHistory);
       })
-      .catch((err) => {
+      .catch(err => {
         console.log(err);
       });
   };
 
   const submitHandlerAfterback = () => {
     let formdata = new FormData();
-    dropdownValue?.CheckBox?.input?.map((ele) => {
+    dropdownValue?.CheckBox?.input?.map(ele => {
       formdata.append(`${ele?.name._text}`, formData[ele?.name._text]);
     });
 
-    dropdownValue?.PartDetails?.MyDropDown?.map((ele) => {
+    dropdownValue?.PartDetails?.MyDropDown?.map(ele => {
       formdata.append(
         `${ele?.dropdown?.name?._text}`,
         formData[ele?.dropdown?.name?._text]
@@ -301,33 +301,33 @@ const CreateWarrenty = (args) => {
         "Draft" // formData[dropdown.name?._text]
       );
     }
-    dropdownValue?.PartDetails?.input?.map((ele) => {
+    dropdownValue?.PartDetails?.input?.map(ele => {
       formdata.append(`${ele?.name?._text}`, formData[ele?.name?._text]);
     });
 
-    dropdownValue?.ProductDetails?.MyDropDown?.map((ele) => {
+    dropdownValue?.ProductDetails?.MyDropDown?.map(ele => {
       formdata.append(
         `${ele?.dropdown?.name?._text}`,
         formData[ele?.dropdown?.name?._text]
       );
     });
 
-    dropdownValue?.ProductDetails?.input?.map((ele) => {
+    dropdownValue?.ProductDetails?.input?.map(ele => {
       formdata.append(`${ele?.name?._text}`, formData[ele?.name?._text]);
     });
 
-    dropdownValue?.WType?.MyDropDown?.map((ele) => {
+    dropdownValue?.WType?.MyDropDown?.map(ele => {
       formdata.append(
         `${ele?.dropdown?.name?._text}`,
         formData[ele?.dropdown?.name?._text]
       );
     });
 
-    dropdownValue?.WType?.input?.map((ele) => {
+    dropdownValue?.WType?.input?.map(ele => {
       formdata.append(`${ele?.name?._text}`, formData[ele?.name?._text]);
     });
 
-    dropdownValue?.input?.map((ele) => {
+    dropdownValue?.input?.map(ele => {
       formdata.append(`${ele?.name?._text}`, formData[ele?.name?._text]);
     });
 
@@ -356,24 +356,24 @@ const CreateWarrenty = (args) => {
 
     // let data = { ...formData, Comments: Comments && Comments, formdata };
     WarrantySave(formdata)
-      .then((res) => {
+      .then(res => {
         console.log(res?.Warranty);
         generateRandomNumber();
         // swal("Warrenty Created Successfully");
       })
-      .catch((err) => {
+      .catch(err => {
         console.log(err.response);
         // swal("Something Went Wrong");
       });
   };
-  const submitHandler = (e) => {
+  const submitHandler = e => {
     e.preventDefault();
     let formdata = new FormData();
-    dropdownValue?.CheckBox?.input?.map((ele) => {
+    dropdownValue?.CheckBox?.input?.map(ele => {
       formdata.append(`${ele?.name._text}`, formData[ele?.name._text]);
     });
 
-    dropdownValue?.PartDetails?.MyDropDown?.map((ele) => {
+    dropdownValue?.PartDetails?.MyDropDown?.map(ele => {
       formdata.append(
         `${ele?.dropdown?.name?._text}`,
         formData[ele?.dropdown?.name?._text]
@@ -387,33 +387,33 @@ const CreateWarrenty = (args) => {
         formData[dropdown.name?._text]
       );
     }
-    dropdownValue?.PartDetails?.input?.map((ele) => {
+    dropdownValue?.PartDetails?.input?.map(ele => {
       formdata.append(`${ele?.name?._text}`, formData[ele?.name?._text]);
     });
 
-    dropdownValue?.ProductDetails?.MyDropDown?.map((ele) => {
+    dropdownValue?.ProductDetails?.MyDropDown?.map(ele => {
       formdata.append(
         `${ele?.dropdown?.name?._text}`,
         formData[ele?.dropdown?.name?._text]
       );
     });
 
-    dropdownValue?.ProductDetails?.input?.map((ele) => {
+    dropdownValue?.ProductDetails?.input?.map(ele => {
       formdata.append(`${ele?.name?._text}`, formData[ele?.name?._text]);
     });
 
-    dropdownValue?.WType?.MyDropDown?.map((ele) => {
+    dropdownValue?.WType?.MyDropDown?.map(ele => {
       formdata.append(
         `${ele?.dropdown?.name?._text}`,
         formData[ele?.dropdown?.name?._text]
       );
     });
 
-    dropdownValue?.WType?.input?.map((ele) => {
+    dropdownValue?.WType?.input?.map(ele => {
       formdata.append(`${ele?.name?._text}`, formData[ele?.name?._text]);
     });
 
-    dropdownValue?.input?.map((ele) => {
+    dropdownValue?.input?.map(ele => {
       formdata.append(`${ele?.name?._text}`, formData[ele?.name?._text]);
     });
 
@@ -442,12 +442,12 @@ const CreateWarrenty = (args) => {
 
     // let data = { ...formData, Comments: Comments && Comments, formdata };
     WarrantySave(formdata)
-      .then((res) => {
+      .then(res => {
         console.log(res?.Warranty);
         generateRandomNumber();
         swal("Warrenty Created Successfully");
       })
-      .catch((err) => {
+      .catch(err => {
         console.log(err.response);
         swal("Something Went Wrong");
       });
@@ -557,7 +557,7 @@ const CreateWarrenty = (args) => {
                     let Edit = "";
                     if (ele?.role) {
                       let roles = ele?.role?.find(
-                        (role) => role._attributes?.name === "WARRANTY APPROVER"
+                        role => role._attributes?.name === "WARRANTY APPROVER"
                       );
 
                       View = roles?.permissions?._text.includes("View");
@@ -585,7 +585,7 @@ const CreateWarrenty = (args) => {
                                     className="mybtn primary"
                                   >
                                     <AiOutlineSearch
-                                      onClick={(e) => e.preventDefault()}
+                                      onClick={e => e.preventDefault()}
                                       fill="white"
                                     />
                                   </Button>
@@ -621,7 +621,7 @@ const CreateWarrenty = (args) => {
                                   disabled
                                   inputClass="myphoneinput"
                                   country={"us"}
-                                  onKeyDown={(e) => {
+                                  onKeyDown={e => {
                                     if (
                                       ele?.type?._attributes?.type == "number"
                                     ) {
@@ -632,7 +632,7 @@ const CreateWarrenty = (args) => {
                                   countryCodeEditable={false}
                                   name={ele?.name?._text}
                                   value={formData[ele?.name?._text]}
-                                  onChange={(phone) => {
+                                  onChange={phone => {
                                     setFormData({
                                       ...formData,
                                       [ele?.name?._text]: phone,
@@ -735,7 +735,7 @@ const CreateWarrenty = (args) => {
                               placeholder={ele?.placeholder?._text}
                               name={ele?.name?._text}
                               value={formData[ele?.name?._text]}
-                              onChange={(e) =>
+                              onChange={e =>
                                 handleInputChange(
                                   e,
                                   ele?.type?._attributes?.type,
@@ -797,7 +797,7 @@ const CreateWarrenty = (args) => {
                     let Edit = "";
                     if (ele?.role) {
                       let roles = ele?.role?.find(
-                        (role) => role._attributes?.name === "WARRANTY APPROVER"
+                        role => role._attributes?.name === "WARRANTY APPROVER"
                       );
 
                       View = roles?.permissions?._text.includes("View");
@@ -825,7 +825,7 @@ const CreateWarrenty = (args) => {
                                     className="mybtn primary"
                                   >
                                     <AiOutlineSearch
-                                      onClick={(e) => e.preventDefault()}
+                                      onClick={e => e.preventDefault()}
                                       fill="white"
                                     />
                                   </Button>
@@ -861,7 +861,7 @@ const CreateWarrenty = (args) => {
                                   disabled
                                   inputClass="myphoneinput"
                                   country={"us"}
-                                  onKeyDown={(e) => {
+                                  onKeyDown={e => {
                                     if (
                                       ele?.type?._attributes?.type == "number"
                                     ) {
@@ -872,7 +872,7 @@ const CreateWarrenty = (args) => {
                                   countryCodeEditable={false}
                                   name={ele?.name?._text}
                                   value={formData[ele?.name?._text]}
-                                  onChange={(phone) => {
+                                  onChange={phone => {
                                     setFormData({
                                       ...formData,
                                       [ele?.name?._text]: phone,
@@ -975,7 +975,7 @@ const CreateWarrenty = (args) => {
                               placeholder={ele?.placeholder?._text}
                               name={ele?.name?._text}
                               value={formData[ele?.name?._text]}
-                              onChange={(e) =>
+                              onChange={e =>
                                 handleInputChange(
                                   e,
                                   ele?.type?._attributes?.type,
@@ -1038,7 +1038,7 @@ const CreateWarrenty = (args) => {
                     let Edit = "";
                     if (ele?.role) {
                       let roles = ele?.role?.find(
-                        (role) => role._attributes?.name === "WARRANTY APPROVER"
+                        role => role._attributes?.name === "WARRANTY APPROVER"
                       );
 
                       View = roles?.permissions?._text.includes("View");
@@ -1066,7 +1066,7 @@ const CreateWarrenty = (args) => {
                                     className="mybtn primary"
                                   >
                                     <AiOutlineSearch
-                                      onClick={(e) => e.preventDefault()}
+                                      onClick={e => e.preventDefault()}
                                       fill="white"
                                     />
                                   </Button>
@@ -1102,7 +1102,7 @@ const CreateWarrenty = (args) => {
                                   disabled
                                   inputClass="myphoneinput"
                                   country={"us"}
-                                  onKeyDown={(e) => {
+                                  onKeyDown={e => {
                                     if (
                                       ele?.type?._attributes?.type == "number"
                                     ) {
@@ -1113,7 +1113,7 @@ const CreateWarrenty = (args) => {
                                   countryCodeEditable={false}
                                   name={ele?.name?._text}
                                   value={formData[ele?.name?._text]}
-                                  onChange={(phone) => {
+                                  onChange={phone => {
                                     setFormData({
                                       ...formData,
                                       [ele?.name?._text]: phone,
@@ -1216,7 +1216,7 @@ const CreateWarrenty = (args) => {
                               placeholder={ele?.placeholder?._text}
                               name={ele?.name?._text}
                               value={formData[ele?.name?._text]}
-                              onChange={(e) =>
+                              onChange={e =>
                                 handleInputChange(
                                   e,
                                   ele?.type?._attributes?.type,
@@ -1290,7 +1290,7 @@ const CreateWarrenty = (args) => {
                     let Edit = "";
                     if (ele?.role) {
                       let roles = ele?.role?.find(
-                        (role) => role._attributes?.name === "WARRANTY APPROVER"
+                        role => role._attributes?.name === "WARRANTY APPROVER"
                       );
 
                       View = roles?.permissions?._text.includes("View");
@@ -1318,7 +1318,7 @@ const CreateWarrenty = (args) => {
                                     className="mybtn primary"
                                   >
                                     <AiOutlineSearch
-                                      onClick={(e) => e.preventDefault()}
+                                      onClick={e => e.preventDefault()}
                                       fill="white"
                                     />
                                   </Button>
@@ -1354,7 +1354,7 @@ const CreateWarrenty = (args) => {
                                   disabled
                                   inputClass="myphoneinput"
                                   country={"us"}
-                                  onKeyDown={(e) => {
+                                  onKeyDown={e => {
                                     if (
                                       ele?.type?._attributes?.type == "number"
                                     ) {
@@ -1365,7 +1365,7 @@ const CreateWarrenty = (args) => {
                                   countryCodeEditable={false}
                                   name={ele?.name?._text}
                                   value={formData[ele?.name?._text]}
-                                  onChange={(phone) => {
+                                  onChange={phone => {
                                     setFormData({
                                       ...formData,
                                       [ele?.name?._text]: phone,
@@ -1468,7 +1468,7 @@ const CreateWarrenty = (args) => {
                               placeholder={ele?.placeholder?._text}
                               name={ele?.name?._text}
                               value={formData[ele?.name?._text]}
-                              onChange={(e) =>
+                              onChange={e =>
                                 handleInputChange(
                                   e,
                                   ele?.type?._attributes?.type,
@@ -1504,9 +1504,7 @@ const CreateWarrenty = (args) => {
                                 style={{ marginRight: "3px" }}
                                 type={ele?.type?._attributes?.type}
                                 name={ele?.name?._text}
-                                onChange={(e) =>
-                                  handleInputChange(e, "checkbox")
-                                }
+                                onChange={e => handleInputChange(e, "checkbox")}
                               />{" "}
                               <span
                                 className="mt-1 mx-1"
@@ -1638,7 +1636,7 @@ const CreateWarrenty = (args) => {
                           name="comment"
                           placeholder="Comment"
                           value={element.comment || ""}
-                          onChange={(e) => handleComment(index, e)}
+                          onChange={e => handleComment(index, e)}
                         />
                       </Col>
 
@@ -1673,7 +1671,7 @@ const CreateWarrenty = (args) => {
             <Button
               className="ml-1 "
               color="primary"
-              onClick={(e) => {
+              onClick={e => {
                 SubmitComment(e);
               }}
             >
@@ -1687,7 +1685,7 @@ const CreateWarrenty = (args) => {
                     <Input
                       type="file"
                       multiple
-                      onChange={(e) => handleFileChange(i, e)}
+                      onChange={e => handleFileChange(i, e)}
                     />
                   </Col>
                   <Col className="d-flex mt-2" lg="3" md="3" sm="12">
@@ -1829,7 +1827,7 @@ const CreateWarrenty = (args) => {
                           return (
                             <>
                               <tr
-                                onClick={(e) => handleViewone(e, ele)}
+                                onClick={e => handleViewone(e, ele)}
                                 style={{ cursor: "pointer" }}
                                 key={i}
                               >

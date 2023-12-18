@@ -59,7 +59,7 @@ class Orders extends React.Component {
         field: "role",
         filter: "agSetColumnFilter",
         width: 120,
-        cellRendererFramework: (params) => {
+        cellRendererFramework: params => {
           return (
             <div className="d-flex align-items-center cursor-pointer">
               <div className="">
@@ -74,7 +74,7 @@ class Orders extends React.Component {
         field: "full_name",
         filter: "agSetColumnFilter",
         width: 150,
-        cellRendererFramework: (params) => {
+        cellRendererFramework: params => {
           return (
             <div className="d-flex align-items-center cursor-pointer">
               <div className="">
@@ -89,7 +89,7 @@ class Orders extends React.Component {
         field: "username",
         filter: "agSetColumnFilter",
         width: 150,
-        cellRendererFramework: (params) => {
+        cellRendererFramework: params => {
           return (
             <div className="d-flex align-items-center cursor-pointer">
               <div className="">
@@ -105,7 +105,7 @@ class Orders extends React.Component {
         field: "created_by",
         filter: "agSetColumnFilter",
         width: 150,
-        cellRendererFramework: (params) => {
+        cellRendererFramework: params => {
           // console.log(params?.data);
           return (
             <div className="d-flex align-items-center cursor-pointer">
@@ -122,7 +122,7 @@ class Orders extends React.Component {
         field: "email",
         filter: "agSetColumnFilter",
         width: 230,
-        cellRendererFramework: (params) => {
+        cellRendererFramework: params => {
           return (
             <div className="d-flex align-items-center cursor-pointer">
               <div className="">
@@ -137,7 +137,7 @@ class Orders extends React.Component {
         field: "mobile",
         filter: "agSetColumnFilter",
         width: 150,
-        cellRendererFramework: (params) => {
+        cellRendererFramework: params => {
           return (
             <div className="d-flex align-items-center cursor-pointer">
               <div className="">
@@ -152,7 +152,7 @@ class Orders extends React.Component {
         field: "phone_no",
         filter: "agSetColumnFilter",
         width: 150,
-        cellRendererFramework: (params) => {
+        cellRendererFramework: params => {
           return (
             <div className="d-flex align-items-center cursor-pointer">
               <div className="">
@@ -167,7 +167,7 @@ class Orders extends React.Component {
         field: "company_name",
         filter: "agSetColumnFilter",
         width: 150,
-        cellRendererFramework: (params) => {
+        cellRendererFramework: params => {
           return (
             <div className="d-flex align-items-center cursor-pointer">
               <div className="">
@@ -182,7 +182,7 @@ class Orders extends React.Component {
         field: "company_type",
         filter: "agSetColumnFilter",
         width: 150,
-        cellRendererFramework: (params) => {
+        cellRendererFramework: params => {
           return (
             <div className="d-flex align-items-center cursor-pointer">
               <div className="">
@@ -197,7 +197,7 @@ class Orders extends React.Component {
         field: "company_type",
         filter: "agSetColumnFilter",
         width: 150,
-        cellRendererFramework: (params) => {
+        cellRendererFramework: params => {
           return (
             <div className="d-flex align-items-center cursor-pointer">
               <div className="">
@@ -212,7 +212,7 @@ class Orders extends React.Component {
         field: "place_supply",
         filter: "agSetColumnFilter",
         width: 180,
-        cellRendererFramework: (params) => {
+        cellRendererFramework: params => {
           return (
             <div className="d-flex align-items-center cursor-pointer">
               <div className="">
@@ -227,7 +227,7 @@ class Orders extends React.Component {
         field: "billing_city",
         filter: "agSetColumnFilter",
         width: 180,
-        cellRendererFramework: (params) => {
+        cellRendererFramework: params => {
           return (
             <div className="d-flex align-items-center cursor-pointer">
               {/* {this.state.billing_street && ( */}
@@ -248,7 +248,7 @@ class Orders extends React.Component {
         field: "billing_city",
         filter: "agSetColumnFilter",
         width: 180,
-        cellRendererFramework: (params) => {
+        cellRendererFramework: params => {
           return (
             <div className="d-flex align-items-center cursor-pointer">
               <div className="">
@@ -272,7 +272,7 @@ class Orders extends React.Component {
         field: "status",
         filter: "agSetColumnFilter",
         width: 150,
-        cellRendererFramework: (params) => {
+        cellRendererFramework: params => {
           return (
             <div className="d-flex align-items-center cursor-pointer">
               <div className="">
@@ -318,7 +318,7 @@ class Orders extends React.Component {
         headerName: "Actions",
         field: "transactions",
         width: 150,
-        cellRendererFramework: (params) => {
+        cellRendererFramework: params => {
           return (
             <div className="actions cursor-pointer">
               {this.state.Deletepermisson && (
@@ -375,7 +375,7 @@ class Orders extends React.Component {
   async componentDidMount() {
     let pageparmission = JSON.parse(localStorage.getItem("userData"));
     let newparmisson = pageparmission?.role?.find(
-      (value) => value?.pageName === "User List"
+      value => value?.pageName === "User List"
     );
     this.setState({ Viewpermisson: newparmisson?.permission.includes("View") });
     this.setState({
@@ -391,7 +391,7 @@ class Orders extends React.Component {
     const formdata = new FormData();
     formdata.append("user_id", pageparmission?.Userinfo?.id);
     formdata.append("role", pageparmission?.Userinfo?.role);
-    await axiosConfig.post("/getuserlist", formdata).then((response) => {
+    await axiosConfig.post("/getuserlist", formdata).then(response => {
       // console.log(response);
       let rowData = response?.data?.data?.users;
       this.setState({ rowData });
@@ -401,7 +401,7 @@ class Orders extends React.Component {
     const formdata = new FormData();
     formdata.append("user_id", pageparmission?.Userinfo?.id);
     formdata.append("role", pageparmission?.Userinfo?.role);
-    await axiosConfig.post("/getuserlist", formdata).then((response) => {
+    await axiosConfig.post("/getuserlist", formdata).then(response => {
       console.log(response);
       let rowData = response?.data?.data?.users;
       this.setState({ rowData });
@@ -413,12 +413,12 @@ class Orders extends React.Component {
         cancel: "cancel",
         catch: { text: "Delete ", value: "delete" },
       },
-    }).then((value) => {
+    }).then(value => {
       switch (value) {
         case "delete":
           const formData = new FormData();
           formData.append("user_id", id);
-          axiosConfig.post(`/userdelete`, formData).then((response) => {
+          axiosConfig.post(`/userdelete`, formData).then(response => {
             this.getUserList();
           });
           break;
@@ -427,7 +427,7 @@ class Orders extends React.Component {
     });
   }
 
-  onGridReady = (params) => {
+  onGridReady = params => {
     this.gridApi = params.api;
     this.gridColumnApi = params.columnApi;
     this.setState({
@@ -437,11 +437,11 @@ class Orders extends React.Component {
     });
   };
 
-  updateSearchQuery = (val) => {
+  updateSearchQuery = val => {
     this.gridApi.setQuickFilter(val);
   };
 
-  filterSize = (val) => {
+  filterSize = val => {
     if (this.gridApi) {
       this.gridApi.paginationSetPageSize(Number(val));
       this.setState({
@@ -597,12 +597,14 @@ class Orders extends React.Component {
                   </Input>
                 </Col>
               </Row> */}
-              <Row className="m-2">
+              <Row className="mt-2 ml-2 mr-2">
                 <Col>
-                  <h1 className="float-left">User List with Role</h1>
+                  <h1 className="float-left" style={{ fontWeight: "600" }}>
+                    Dead Party
+                  </h1>
                 </Col>
               </Row>
-              <CardBody>
+              <CardBody style={{ marginTop: "-1.5rem" }}>
                 {this.state.rowData === null ? null : (
                   <div className="ag-theme-material w-100 my-2 ag-grid-table">
                     <div className="d-flex flex-wrap justify-content-between align-items-center">
@@ -656,7 +658,7 @@ class Orders extends React.Component {
                         <div className="table-input mr-1">
                           <Input
                             placeholder="search..."
-                            onChange={(e) =>
+                            onChange={e =>
                               this.updateSearchQuery(e.target.value)
                             }
                             value={this.state.value}
@@ -673,7 +675,7 @@ class Orders extends React.Component {
                       </div>
                     </div>
                     <ContextLayout.Consumer>
-                      {(context) => (
+                      {context => (
                         <AgGridReact
                           gridOptions={{}}
                           rowSelection="multiple"

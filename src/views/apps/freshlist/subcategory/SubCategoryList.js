@@ -278,9 +278,9 @@ class SubCategoryList extends React.Component {
         <Col sm="12"></Col>
         <Col sm="12">
           <Card>
-            <Row className="m-2">
+            <Row className="mt-2 ml-2 mr-2">
               <Col lg="5" md="5" xs="12">
-                <h1 sm="6" className="float-left">
+                <h1 sm="6" className="float-left" style={{ fontWeight: "600" }}>
                   SubCategory List
                 </h1>
               </Col>
@@ -315,8 +315,14 @@ class SubCategoryList extends React.Component {
               </Col>
               <Col lg="2" md="2" className="mb-2">
                 <Button
-                  className="mt-2"
-                  color="primary"
+                  style={{
+                    cursor: "pointer",
+                    backgroundColor: "#39cccc",
+                    color: "white",
+                    fontWeight: "600",
+                  }}
+                  className="btn float-right mt-1"
+                  color="#39cccc"
                   onClick={this.handleShowSubCat}
                 >
                   Submit
@@ -326,15 +332,21 @@ class SubCategoryList extends React.Component {
                 <Route
                   render={({ history }) => (
                     <Button
-                      className="btn float-right mt-2"
-                      color="primary"
+                      style={{
+                        cursor: "pointer",
+                        backgroundColor: "#39cccc",
+                        color: "white",
+                        fontWeight: "600",
+                      }}
+                      className="btn float-right mt-1 "
+                      color="#39cccc"
                       onClick={() =>
                         history.push(
                           "/app/freshlist/subcategory/addSubCategory"
                         )
                       }
                     >
-                      + Add SubCategory
+                      + SubCategory
                     </Button>
                   )}
                 />

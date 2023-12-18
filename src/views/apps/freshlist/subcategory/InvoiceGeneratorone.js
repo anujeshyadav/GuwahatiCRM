@@ -1,6 +1,6 @@
-// InvoiceGenerator.js
 import React, { useEffect, useState } from "react";
 import { PDFViewer } from "@react-pdf/renderer";
+import { ToWords } from "to-words";
 import InvoiceTemplate from "./InvoiceTemplate";
 import ReactPDF from "@react-pdf/renderer";
 import POInVoice from "./POInVoice";
@@ -15,6 +15,9 @@ const InvoiceGenerator = props => {
   const [AllCharges, setAllCharges] = useState({});
   const [UserChoice, setUserChoice] = useState({});
   const [details, setDetails] = useState([]);
+  const [subTotal, setSubTotal] = useState("");
+  const [grandTotal, setGrandTotal] = useState("");
+  const [convertGrandTotal, setConvertGrandTotal] = useState("");
 
   useEffect(() => {
     console.log(props);
@@ -29,18 +32,39 @@ const InvoiceGenerator = props => {
       formdata.append("order_id", props.PrintData.order_id);
       axiosConfig
         .post(`/order_detail`, formdata)
-        .then((response) => {
+        .then(response => {
           console.log(response.data.data);
           setDetails(response.data.data);
         })
-        .catch((error) => {
+        .catch(error => {
           console.log(error);
         });
     }
 
     if (props?.PrintData) {
       console.log(props?.PrintData);
+      console.log(props?.PrintData.orderItems);
       setPrintview(props?.PrintData);
+
+      const subTotalAmt = props.PrintData.orderItems.reduce(
+        (accumulator, currentValue) => {
+          const { qty, product } = currentValue;
+          const itemTotal = qty * product.Product_MRP * product.Size;
+          return accumulator + itemTotal;
+        },
+        0
+      );
+      const gst = (subTotalAmt * 18) / 100;
+      const GrandTotal = gst + subTotalAmt;
+
+      setGrandTotal(GrandTotal);
+      setSubTotal(subTotalAmt);
+      console.log("subTotal", subTotalAmt);
+      console.log("gst", gst);
+
+      const toWords = new ToWords();
+      let words = toWords.convert(Number(GrandTotal), { currency: true });
+      setConvertGrandTotal(words);
     }
   }, []);
 
@@ -52,11 +76,13 @@ const InvoiceGenerator = props => {
           <POInVoice
             UserChoice={UserChoice}
             invoiceData={Printview}
-            CurrentWords={props.wordsNumber}
+            subTotal={subTotal}
+            grandTotal={grandTotal}
+            CurrentWords={convertGrandTotal}
             BilData={props}
             tableList={details}
             AllCharges={AllCharges}
-            fileName="Salesinvoice.pdf"
+            fileName="invoice.pdf"
           />
         )}
 
@@ -64,7 +90,9 @@ const InvoiceGenerator = props => {
           <POInvoiceTwo
             UserChoice={UserChoice}
             invoiceData={Printview}
-            CurrentWords={props.wordsNumber}
+            subTotal={subTotal}
+            grandTotal={grandTotal}
+            CurrentWords={convertGrandTotal}
             BilData={props}
             tableList={details}
             AllCharges={AllCharges}
@@ -75,7 +103,10 @@ const InvoiceGenerator = props => {
           <PoinvoiceThree
             UserChoice={UserChoice}
             invoiceData={Printview}
-            CurrentWords={props.wordsNumber}
+            subTotal={subTotal}
+            grandTotal={grandTotal}
+            // CurrentWords={props.wordsNumber}
+            CurrentWords={convertGrandTotal}
             BilData={props}
             tableList={details}
             AllCharges={AllCharges}
@@ -86,7 +117,9 @@ const InvoiceGenerator = props => {
           <POInvoiceone
             UserChoice={UserChoice}
             invoiceData={Printview}
-            CurrentWords={props.wordsNumber}
+            subTotal={subTotal}
+            grandTotal={grandTotal}
+            CurrentWords={convertGrandTotal}
             BilData={props}
             tableList={details}
             AllCharges={AllCharges}
@@ -97,7 +130,9 @@ const InvoiceGenerator = props => {
           <POInVoice
             UserChoice={UserChoice}
             invoiceData={Printview}
-            CurrentWords={props.wordsNumber}
+            subTotal={subTotal}
+            grandTotal={grandTotal}
+            CurrentWords={convertGrandTotal}
             BilData={props}
             tableList={details}
             AllCharges={AllCharges}

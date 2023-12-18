@@ -95,7 +95,8 @@ const StockTrxPOinvoice = ({
                   flexDirection: "row",
                   border: "1px solid black",
                   height: "100px",
-                }}>
+                }}
+              >
                 {UserChoice?.imagePosition &&
                 UserChoice?.imagePosition == "Left" ? (
                   <>
@@ -107,13 +108,15 @@ const StockTrxPOinvoice = ({
                       <>
                         <Image
                           style={{ width: "230px", padding: "25px 10px" }}
-                          src={`http://64.227.162.41:5000/Images/${AllData?.CompanyDetails?.logo}`}></Image>
+                          src={`http://64.227.162.41:5000/Images/${AllData?.CompanyDetails?.logo}`}
+                        ></Image>
                       </>
                     ) : (
                       <>
                         <Image
                           style={{ width: "230px", padding: "25px 10px" }}
-                          src={logo}></Image>
+                          src={logo}
+                        ></Image>
                       </>
                     )}
 
@@ -128,7 +131,8 @@ const StockTrxPOinvoice = ({
                           fontSize: "8px",
                           marginTop: "5px",
                           marginBottom: "2px",
-                        }}>
+                        }}
+                      >
                         {AllData?.CompanyDetails?.address &&
                           AllData?.CompanyDetails?.address}
                       </Text>
@@ -163,7 +167,8 @@ const StockTrxPOinvoice = ({
                           fontSize: "8px",
                           marginTop: "5px",
                           marginBottom: "2px",
-                        }}>
+                        }}
+                      >
                         {AllData?.CompanyDetails?.address &&
                           AllData?.CompanyDetails?.address}
                       </Text>
@@ -189,13 +194,15 @@ const StockTrxPOinvoice = ({
                       <>
                         <Image
                           style={{ width: "230px", padding: "25px 10px" }}
-                          src={`http://64.227.162.41:5000/Images/${AllData?.CompanyDetails?.logo}`}></Image>
+                          src={`http://64.227.162.41:5000/Images/${AllData?.CompanyDetails?.logo}`}
+                        ></Image>
                       </>
                     ) : (
                       <>
                         <Image
                           style={{ width: "230px", padding: "25px 10px" }}
-                          src={logo}></Image>
+                          src={logo}
+                        ></Image>
                       </>
                     )}
                   </>
@@ -208,20 +215,23 @@ const StockTrxPOinvoice = ({
                   borderRight: "1px solid black",
                   borderLeft: "1px solid black",
                   height: "180px",
-                }}>
+                }}
+              >
                 <View style={{ width: "66%" }}>
                   <View
                     style={{
                       width: "100%",
                       borderBottom: "1px solid black",
                       height: "90px",
-                    }}>
+                    }}
+                  >
                     <View
                       style={{
                         backgroundColor: "grey",
                         padding: "2px 2px",
                         flexDirection: "row",
-                      }}>
+                      }}
+                    >
                       {UserChoice?.billTo == "Left" && (
                         <Text
                           style={{
@@ -229,7 +239,8 @@ const StockTrxPOinvoice = ({
                             fontWeight: "1000",
                             marginLeft: "5px",
                             width: "100%",
-                          }}>
+                          }}
+                        >
                           Bill To
                         </Text>
                       )}
@@ -240,7 +251,8 @@ const StockTrxPOinvoice = ({
                             fontWeight: "1000",
                             marginLeft: "5px",
                             width: "100%",
-                          }}>
+                          }}
+                        >
                           Ship To
                         </Text>
                       )}
@@ -250,15 +262,18 @@ const StockTrxPOinvoice = ({
                         // width: "50%",
                         padding: "10px 10px",
                         // borderRight: "1px solid black",
-                      }}>
+                      }}
+                    >
                       {UserChoice?.billTo == "Left" && (
                         <View
-                          style={{ flexDirection: "", paddingBottom: "3px" }}>
+                          style={{ flexDirection: "", paddingBottom: "3px" }}
+                        >
                           <Text
                             style={{
                               fontSize: "10px",
                               fontWeight: "bold",
-                            }}>
+                            }}
+                          >
                             {`${AllData?.CompanyDetails?.name}
                              ${AllData?.CompanyDetails?.address}
                               ${AllData?.CompanyDetails?.mobileNo} 
@@ -269,7 +284,8 @@ const StockTrxPOinvoice = ({
                               fontSize: "10px",
                               width: "45%",
                               fontWeight: "bold",
-                            }}>
+                            }}
+                          >
                             {/* {`${AllData?.CompanyDetails?.currentAddress} `}
                             {`${AllData?.CompanyDetails?.State} `} */}
                           </Text>{" "}
@@ -277,12 +293,14 @@ const StockTrxPOinvoice = ({
                       )}
                       {UserChoice?.shipto == "Left" && (
                         <View
-                          style={{ flexDirection: "", paddingBottom: "3px" }}>
+                          style={{ flexDirection: "", paddingBottom: "3px" }}
+                        >
                           <Text
                             style={{
                               fontSize: "10px",
                               fontWeight: "bold",
-                            }}>
+                            }}
+                          >
                             {`${BilData?.ViewOneData?.warehouseToId?.firstName}
                              ${BilData?.ViewOneData?.warehouseToId?.City}
                                ${BilData?.ViewOneData?.warehouseToId?.State} 
@@ -294,7 +312,8 @@ const StockTrxPOinvoice = ({
                               fontSize: "10px",
                               width: "45%",
                               fontWeight: "bold",
-                            }}>
+                            }}
+                          >
                             {`${invoiceData?.address} `}
                             {`${invoiceData?.landMark} `}
                             Mobile No: {`${invoiceData?.MobileNo} `}
@@ -307,14 +326,16 @@ const StockTrxPOinvoice = ({
                     style={{
                       width: "100%",
                       height: "90px",
-                    }}>
+                    }}
+                  >
                     <View
                       style={{
                         padding: "2px 2px",
                         backgroundColor: "grey",
 
                         flexDirection: "row",
-                      }}>
+                      }}
+                    >
                       {UserChoice?.billTo == "right" && (
                         <Text
                           style={{
@@ -322,7 +343,8 @@ const StockTrxPOinvoice = ({
                             fontWeight: "1000",
                             marginLeft: "5px",
                             width: "100%",
-                          }}>
+                          }}
+                        >
                           Bill To
                         </Text>
                       )}
@@ -333,7 +355,8 @@ const StockTrxPOinvoice = ({
                             fontWeight: "1000",
                             marginLeft: "5px",
                             width: "100%",
-                          }}>
+                          }}
+                        >
                           Ship To
                         </Text>
                       )}
@@ -341,12 +364,14 @@ const StockTrxPOinvoice = ({
                     <View style={{ padding: "10px" }}>
                       {UserChoice?.billTo == "right" && (
                         <View
-                          style={{ flexDirection: "", paddingBottom: "3px" }}>
+                          style={{ flexDirection: "", paddingBottom: "3px" }}
+                        >
                           <Text
                             style={{
                               fontSize: "10px",
                               fontWeight: "bold",
-                            }}>
+                            }}
+                          >
                             {`${AllData?.CompanyDetails?.name}
                              ${AllData?.CompanyDetails?.address}
                               ${AllData?.CompanyDetails?.mobileNo} 
@@ -357,7 +382,8 @@ const StockTrxPOinvoice = ({
                               fontSize: "10px",
                               width: "45%",
                               fontWeight: "bold",
-                            }}>
+                            }}
+                          >
                             {/* {`${invoiceData?.adminDetail?.currentAddress} `}
                             {`${invoiceData?.adminDetail?.State} `} */}
                           </Text>{" "}
@@ -365,12 +391,14 @@ const StockTrxPOinvoice = ({
                       )}
                       {UserChoice?.shipto == "right" && (
                         <View
-                          style={{ flexDirection: "", paddingBottom: "3px" }}>
+                          style={{ flexDirection: "", paddingBottom: "3px" }}
+                        >
                           <Text
                             style={{
                               fontSize: "10px",
                               fontWeight: "bold",
-                            }}>
+                            }}
+                          >
                             {`${BilData?.ViewOneData?.warehouseToId?.firstName}
                              ${BilData?.ViewOneData?.warehouseToId?.City}
                                ${BilData?.ViewOneData?.warehouseToId?.State} 
@@ -382,7 +410,8 @@ const StockTrxPOinvoice = ({
                               fontSize: "10px",
                               width: "45%",
                               fontWeight: "bold",
-                            }}></Text>{" "}
+                            }}
+                          ></Text>{" "}
                         </View>
                       )}
                     </View>
@@ -394,7 +423,8 @@ const StockTrxPOinvoice = ({
                     // padding: "4px",
                     width: "34%",
                     borderLeft: "1px solid black",
-                  }}>
+                  }}
+                >
                   <View>
                     <View
                       style={{
@@ -403,14 +433,16 @@ const StockTrxPOinvoice = ({
                         alignItems: "center",
                         textAlign: "center",
                         backgroundColor: "grey",
-                      }}>
+                      }}
+                    >
                       <Text
                         style={{
                           fontSize: "12px",
                           fontWeight: "bold",
                           fontWeight: "1000",
                           width: "100%",
-                        }}>
+                        }}
+                      >
                         Invoice Details
                       </Text>{" "}
                     </View>
@@ -429,13 +461,15 @@ const StockTrxPOinvoice = ({
                         </Text>
                       </View> */}
                       <View
-                        style={{ flexDirection: "row", paddingBottom: "3px" }}>
+                        style={{ flexDirection: "row", paddingBottom: "3px" }}
+                      >
                         <Text
                           style={{
                             fontSize: "9px",
                             fontWeight: "bold",
                             width: "50%",
-                          }}>
+                          }}
+                        >
                           Receipt Date
                         </Text>{" "}
                         <Text style={{ fontSize: "9px", fontWeight: "bold" }}>
@@ -443,13 +477,15 @@ const StockTrxPOinvoice = ({
                         </Text>
                       </View>
                       <View
-                        style={{ flexDirection: "row", paddingBottom: "3px" }}>
+                        style={{ flexDirection: "row", paddingBottom: "3px" }}
+                      >
                         <Text
                           style={{
                             fontSize: "9px",
                             fontWeight: "bold",
                             width: "50%",
-                          }}>
+                          }}
+                        >
                           Receipt Time
                         </Text>{" "}
                         <Text style={{ fontSize: "9px", fontWeight: "bold" }}>
@@ -459,13 +495,15 @@ const StockTrxPOinvoice = ({
                         </Text>
                       </View>
                       <View
-                        style={{ flexDirection: "row", paddingBottom: "3px" }}>
+                        style={{ flexDirection: "row", paddingBottom: "3px" }}
+                      >
                         <Text
                           style={{
                             fontSize: "8px",
                             fontWeight: "bold",
                             width: "50%",
-                          }}>
+                          }}
+                        >
                           Term
                         </Text>{" "}
                         <Text style={{ fontSize: "8px", fontWeight: "bold" }}>
@@ -485,7 +523,8 @@ const StockTrxPOinvoice = ({
                   borderRight: "1px solid black",
                   borderLeft: "1px solid black",
                   height: "23px",
-                }}>
+                }}
+              >
                 <View
                   style={{
                     width: "4%",
@@ -493,14 +532,16 @@ const StockTrxPOinvoice = ({
                     justifyContent: "center",
 
                     borderRight: "1px solid black",
-                  }}>
+                  }}
+                >
                   <Text
                     style={{
                       fontSize: "9px",
                       color: "black",
                       fontWeight: "1000",
                       marginLeft: "3px",
-                    }}>
+                    }}
+                  >
                     #
                   </Text>
                 </View>
@@ -587,14 +628,16 @@ const StockTrxPOinvoice = ({
                     justifyContent: "center",
 
                     borderRight: "1px solid black",
-                  }}>
+                  }}
+                >
                   <Text
                     style={{
                       fontSize: "9px",
                       color: "black",
                       fontWeight: "1000",
                       marginLeft: "5px",
-                    }}>
+                    }}
+                  >
                     Product Name
                   </Text>
                 </View>
@@ -605,14 +648,16 @@ const StockTrxPOinvoice = ({
                     justifyContent: "center",
 
                     borderRight: "1px solid black",
-                  }}>
+                  }}
+                >
                   <Text
                     style={{
                       fontSize: "9px",
                       color: "black",
                       fontWeight: "1000",
                       marginLeft: "5px",
-                    }}>
+                    }}
+                  >
                     HSN/SAC
                   </Text>
                 </View>
@@ -624,14 +669,16 @@ const StockTrxPOinvoice = ({
 
                     padding: "5px 2px",
                     borderRight: "1px solid black",
-                  }}>
+                  }}
+                >
                   <Text
                     style={{
                       fontSize: "9px",
                       color: "black",
                       fontWeight: "1000",
                       marginLeft: "5px",
-                    }}>
+                    }}
+                  >
                     Qty
                   </Text>
                 </View>
@@ -643,14 +690,16 @@ const StockTrxPOinvoice = ({
 
                     padding: "5px 2px",
                     borderRight: "1px solid black",
-                  }}>
+                  }}
+                >
                   <Text
                     style={{
                       fontSize: "9px",
                       color: "black",
                       fontWeight: "1000",
                       marginLeft: "5px",
-                    }}>
+                    }}
+                  >
                     Size
                   </Text>
                 </View>
@@ -662,14 +711,16 @@ const StockTrxPOinvoice = ({
 
                     padding: "5px 2px",
                     borderRight: "1px solid black",
-                  }}>
+                  }}
+                >
                   <Text
                     style={{
                       fontSize: "9px",
                       color: "black",
                       fontWeight: "1000",
                       marginLeft: "5px",
-                    }}>
+                    }}
+                  >
                     Unit Type
                   </Text>
                 </View>
@@ -682,14 +733,16 @@ const StockTrxPOinvoice = ({
 
                     padding: "5px 2px",
                     borderRight: "1px solid black",
-                  }}>
+                  }}
+                >
                   <Text
                     style={{
                       fontSize: "9px",
                       color: "black",
                       fontWeight: "1000",
                       marginLeft: "5px",
-                    }}>
+                    }}
+                  >
                     Price
                   </Text>
                 </View>
@@ -702,13 +755,15 @@ const StockTrxPOinvoice = ({
                     padding: "5px 2px",
 
                     //   borderRight: "1px solid black",
-                  }}>
+                  }}
+                >
                   <Text
                     style={{
                       fontSize: "9px",
                       color: "black",
                       fontWeight: "1000",
-                    }}>
+                    }}
+                  >
                     Amount
                   </Text>
                 </View>
@@ -722,19 +777,22 @@ const StockTrxPOinvoice = ({
                       borderRight: "1px solid black",
                       borderLeft: "1px solid black",
                       height: "20px",
-                    }}>
+                    }}
+                  >
                     <View
                       style={{
                         width: "4%",
                         // padding: "2px 2px",
                         justifyContent: "center",
-                      }}>
+                      }}
+                    >
                       <Text
                         style={{
                           fontSize: "9px",
                           fontWeight: "1000",
                           marginLeft: "3px",
-                        }}>
+                        }}
+                      >
                         {i + 1}
                       </Text>
                     </View>
@@ -744,14 +802,16 @@ const StockTrxPOinvoice = ({
                         width: "18%",
                         // padding: "2px 2px",
                         justifyContent: "center",
-                      }}>
+                      }}
+                    >
                       <Text
                         style={{
                           fontSize: "8px",
 
                           fontWeight: "1000",
                           marginLeft: "5px",
-                        }}>
+                        }}
+                      >
                         {ele?.product?.Product_Title}
                       </Text>
                     </View>
@@ -760,14 +820,16 @@ const StockTrxPOinvoice = ({
                         width: "12%",
                         padding: "5px 2px",
                         justifyContent: "center",
-                      }}>
+                      }}
+                    >
                       <Text
                         style={{
                           fontSize: "8px",
 
                           fontWeight: "1000",
                           marginLeft: "5px",
-                        }}>
+                        }}
+                      >
                         {ele?.product?.HSN_Code}
                       </Text>
                     </View>
@@ -777,14 +839,16 @@ const StockTrxPOinvoice = ({
                         marginRight: "2px",
                         padding: "5px 2px",
                         justifyContent: "center",
-                      }}>
+                      }}
+                    >
                       <Text
                         style={{
                           fontSize: "9px",
                           fontWeight: "1000",
 
                           marginLeft: "5px",
-                        }}>
+                        }}
+                      >
                         {ele?.transferQty}
                       </Text>
                     </View>
@@ -794,14 +858,16 @@ const StockTrxPOinvoice = ({
                         marginRight: "2px",
                         padding: "5px 2px",
                         justifyContent: "center",
-                      }}>
+                      }}
+                    >
                       <Text
                         style={{
                           fontSize: "9px",
 
                           fontWeight: "1000",
                           marginLeft: "4px",
-                        }}>
+                        }}
+                      >
                         {ele?.Size}
                       </Text>
                     </View>
@@ -811,13 +877,15 @@ const StockTrxPOinvoice = ({
                         marginRight: "2px",
                         padding: "2px 2px",
                         justifyContent: "center",
-                      }}>
+                      }}
+                    >
                       <Text
                         style={{
                           fontSize: "8px",
                           fontWeight: "1000",
                           marginLeft: "4px",
-                        }}>
+                        }}
+                      >
                         {ele?.unitType && ele?.unitType?.split("(")[0]}
                       </Text>
                     </View>
@@ -827,13 +895,15 @@ const StockTrxPOinvoice = ({
                         marginRight: "2px",
                         padding: "2px 2px",
                         justifyContent: "center",
-                      }}>
+                      }}
+                    >
                       <Text
                         style={{
                           fontSize: "9px",
                           fontWeight: "1000",
                           marginLeft: "4px",
-                        }}>
+                        }}
+                      >
                         {ele?.price}
                       </Text>
                     </View>
@@ -844,13 +914,15 @@ const StockTrxPOinvoice = ({
                         width: "12%",
                         marginRight: "2px",
                         padding: "2px 2px",
-                      }}>
+                      }}
+                    >
                       <Text
                         style={{
                           fontSize: "9px",
                           fontWeight: "1000",
                           // marginLeft: "5px",
-                        }}>
+                        }}
+                      >
                         {ele?.totalPrice}
                       </Text>
                     </View>
@@ -864,20 +936,23 @@ const StockTrxPOinvoice = ({
                   borderLeft: "1px solid black",
                   borderTop: "1px solid black",
                   borderBottom: "1px solid black",
-                }}>
+                }}
+              >
                 <View
                   style={{
                     width: "55%",
                     padding: "10px 10px",
                     borderRight: "1px solid black",
                     //   height: "250px",
-                  }}>
+                  }}
+                >
                   <View style={{ flexDirection: "", paddingBottom: "3px" }}>
                     <Text
                       style={{
                         fontSize: "14px",
                         fontWeight: "bold",
-                      }}>
+                      }}
+                    >
                       Total In Words
                     </Text>{" "}
                     <Text
@@ -885,7 +960,8 @@ const StockTrxPOinvoice = ({
                         fontSize: "12px",
                         width: "95%",
                         fontWeight: "bold",
-                      }}>
+                      }}
+                    >
                       {CurrentWords}
                     </Text>{" "}
                   </View>
@@ -912,7 +988,8 @@ const StockTrxPOinvoice = ({
                         // margingTop: "50px",
                         // marginBottom: "40px",
                       }
-                    }>
+                    }
+                  >
                     <Text style={{ fontSize: "10px", marginTop: "15px" }}>
                       Terms and Conditions
                     </Text>
@@ -929,28 +1006,32 @@ const StockTrxPOinvoice = ({
                   style={{
                     width: "45%",
                     height: "120px",
-                  }}>
+                  }}
+                >
                   <View style={{ height: "120px" }}>
                     <View
                       style={{
                         padding: "10px",
 
                         height: "120px",
-                      }}>
+                      }}
+                    >
                       <View
                         style={{
                           flexDirection: "row",
                           gap: "10px",
                           paddingBottom: "3px",
                           justifyContent: "space-between",
-                        }}>
+                        }}
+                      >
                         <Text
                           style={{
                             fontSize: "10px",
                             fontWeight: "bold",
 
                             marginBottom: "6px",
-                          }}>
+                          }}
+                        >
                           Discount :
                         </Text>{" "}
                         <Text
@@ -959,7 +1040,8 @@ const StockTrxPOinvoice = ({
                             fontWeight: "bold",
 
                             marginBottom: "6px",
-                          }}>
+                          }}
+                        >
                           {AllCharges?.discount_value}0.00
                         </Text>
                       </View>
@@ -969,13 +1051,15 @@ const StockTrxPOinvoice = ({
                           gap: "10px",
                           paddingBottom: "3px",
                           justifyContent: "space-between",
-                        }}>
+                        }}
+                      >
                         <Text
                           style={{
                             fontSize: "10px",
                             fontWeight: "bold",
                             marginBottom: "6px",
-                          }}>
+                          }}
+                        >
                           Sub Total
                         </Text>{" "}
                         <Text
@@ -983,7 +1067,8 @@ const StockTrxPOinvoice = ({
                             fontSize: "10px",
                             fontWeight: "bold",
                             marginBottom: "6px",
-                          }}>
+                          }}
+                        >
                           {AllCharges?.subtotal}0.00
                         </Text>
                       </View>
@@ -993,14 +1078,16 @@ const StockTrxPOinvoice = ({
                           gap: "10px",
                           paddingBottom: "3px",
                           justifyContent: "space-between",
-                        }}>
+                        }}
+                      >
                         <Text
                           style={{
                             fontSize: "10px",
                             fontWeight: "bold",
                             // width: "70%",
                             marginBottom: "6px",
-                          }}>
+                          }}
+                        >
                           CGST({AllCharges?.cgst}0.00%)
                         </Text>{" "}
                         <Text
@@ -1009,7 +1096,8 @@ const StockTrxPOinvoice = ({
                             fontWeight: "bold",
 
                             marginBottom: "6px",
-                          }}>
+                          }}
+                        >
                           {AllCharges?.totcgst}0.00
                         </Text>
                       </View>
@@ -1019,14 +1107,16 @@ const StockTrxPOinvoice = ({
                           gap: "10px",
                           paddingBottom: "3px",
                           justifyContent: "space-between",
-                        }}>
+                        }}
+                      >
                         <Text
                           style={{
                             fontSize: "10px",
                             fontWeight: "bold",
 
                             marginBottom: "6px",
-                          }}>
+                          }}
+                        >
                           SGST( {AllCharges?.sgst}0.00%)
                         </Text>{" "}
                         <Text
@@ -1035,7 +1125,8 @@ const StockTrxPOinvoice = ({
                             fontWeight: "bold",
 
                             marginBottom: "6px",
-                          }}>
+                          }}
+                        >
                           {AllCharges?.totsgst}0.00
                         </Text>
                       </View>
@@ -1045,14 +1136,16 @@ const StockTrxPOinvoice = ({
                           gap: "10px",
                           paddingBottom: "3px",
                           justifyContent: "space-between",
-                        }}>
+                        }}
+                      >
                         <Text
                           style={{
                             fontSize: "10px",
                             fontWeight: "bold",
 
                             marginBottom: "6px",
-                          }}>
+                          }}
+                        >
                           Courier Charges
                         </Text>{" "}
                         <Text
@@ -1061,7 +1154,8 @@ const StockTrxPOinvoice = ({
                             fontWeight: "bold",
 
                             marginBottom: "6px",
-                          }}>
+                          }}
+                        >
                           {AllCharges?.delivery_charges}0.00
                         </Text>
                       </View>
@@ -1071,14 +1165,16 @@ const StockTrxPOinvoice = ({
                           gap: "10px",
                           paddingBottom: "3px",
                           justifyContent: "space-between",
-                        }}>
+                        }}
+                      >
                         <Text
                           style={{
                             fontSize: "10px",
                             fontWeight: "bold",
 
                             marginBottom: "6px",
-                          }}>
+                          }}
+                        >
                           Other Charges
                         </Text>{" "}
                         <Text
@@ -1087,7 +1183,8 @@ const StockTrxPOinvoice = ({
                             fontWeight: "bold",
 
                             marginBottom: "6px",
-                          }}>
+                          }}
+                        >
                           {AllCharges?.other_charges}0.00
                         </Text>
                       </View>
@@ -1098,13 +1195,15 @@ const StockTrxPOinvoice = ({
                           gap: "10px",
                           paddingBottom: "3px",
                           justifyContent: "space-between",
-                        }}>
+                        }}
+                      >
                         <Text
                           style={{
                             fontSize: "11px",
                             fontWeight: "bold",
                             marginTop: "2px",
-                          }}>
+                          }}
+                        >
                           Grand Total :
                         </Text>{" "}
                         <Text
@@ -1112,7 +1211,8 @@ const StockTrxPOinvoice = ({
                             fontSize: "11px",
                             fontWeight: "bold",
                             marginTop: "2px",
-                          }}>
+                          }}
+                        >
                           {BilData?.ViewOneData?.grandTotal &&
                             BilData?.ViewOneData?.grandTotal}
                         </Text>
@@ -1160,7 +1260,8 @@ const StockTrxPOinvoice = ({
                 justifyContent: "flex-end",
 
                 // alignItems: "flex-end",
-              }}>
+              }}
+            >
               <View
                 style={{
                   padding: "3px 3px ",
@@ -1169,14 +1270,16 @@ const StockTrxPOinvoice = ({
                   borderLeft: "1px solid black",
                   borderRight: "1px solid black",
                   width: "45%",
-                }}>
+                }}
+              >
                 <Text style={{ fontSize: "11px" }}> For</Text>
                 <Text
                   style={{
                     fontSize: "12px",
                     marginTop: "8px",
                     marginBottom: "8px",
-                  }}>
+                  }}
+                >
                   {" "}
                   {AllData?.CompanyDetails?.name &&
                     AllData?.CompanyDetails?.name}
@@ -1189,7 +1292,8 @@ const StockTrxPOinvoice = ({
                         style={{ height: "50px", marginTop: "15px" }}
                         src={`http://64.227.162.41:5000/Images/${AllData?.CompanyDetails?.signature}`}
                         width="200px"
-                        height="200px"></Image>
+                        height="200px"
+                      ></Image>
                     </>
                   ) : (
                     <>
@@ -1197,7 +1301,8 @@ const StockTrxPOinvoice = ({
                         style={{ height: "50px", marginTop: "15px" }}
                         src={signature}
                         width="200px"
-                        height="200px"></Image>
+                        height="200px"
+                      ></Image>
                     </>
                   )}
                 </View>
@@ -1207,7 +1312,8 @@ const StockTrxPOinvoice = ({
                     marginBottom: "2px",
                     marginTop: "20px",
                     justifyContent: "center",
-                  }}>
+                  }}
+                >
                   <Text style={{ fontSize: "10px" }}>Authorized Signature</Text>
                 </View>
               </View>

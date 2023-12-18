@@ -22,7 +22,10 @@ import "../../../../assets/scss/plugins/tables/_agGridStyleOverride.scss";
 import "../../../../assets/scss/pages/users.scss";
 import { Route, Link } from "react-router-dom";
 import swal from "sweetalert";
-import { AllCategoryList, DeleteCategory } from "../../../../ApiEndPoint/ApiCalling";
+import {
+  AllCategoryList,
+  DeleteCategory,
+} from "../../../../ApiEndPoint/ApiCalling";
 
 class CategoryList extends React.Component {
   state = {
@@ -53,7 +56,7 @@ class CategoryList extends React.Component {
         field: "image",
         filter: true,
         width: 100,
-        cellRendererFramework: (params) => {
+        cellRendererFramework: params => {
           let base = axiosConfig();
           return (
             <div className="d-flex align-items-center cursor-pointer">
@@ -75,7 +78,7 @@ class CategoryList extends React.Component {
         field: "name",
         filter: true,
         width: 200,
-        cellRendererFramework: (params) => {
+        cellRendererFramework: params => {
           return (
             <div className="d-flex align-items-center cursor-pointer">
               <span>{params?.data?.name}</span>
@@ -101,7 +104,7 @@ class CategoryList extends React.Component {
         field: "description",
         filter: true,
         width: 150,
-        cellRendererFramework: (params) => {
+        cellRendererFramework: params => {
           return (
             <div className="d-flex align-items-center cursor-pointer">
               <span className="" style={{ textTransform: "uppercase" }}>
@@ -116,7 +119,7 @@ class CategoryList extends React.Component {
         field: "createdAt",
         filter: true,
         width: 150,
-        cellRendererFramework: (params) => {
+        cellRendererFramework: params => {
           return (
             <div className="d-flex align-items-center cursor-pointer">
               <span className="" style={{ textTransform: "uppercase" }}>
@@ -131,7 +134,7 @@ class CategoryList extends React.Component {
         field: "status",
         filter: true,
         width: 100,
-        cellRendererFramework: (params) => {
+        cellRendererFramework: params => {
           return params.data.status === "Active" ? (
             <div className="badge badge-pill badge-success">
               {params.data.status}
@@ -148,7 +151,7 @@ class CategoryList extends React.Component {
         field: "sortorder",
         field: "transactions",
         width: 150,
-        cellRendererFramework: (params) => {
+        cellRendererFramework: params => {
           return (
             <div className="actions cursor-pointer">
               {/* {this.state.Viewpermisson && (
@@ -174,36 +177,36 @@ class CategoryList extends React.Component {
                 />
               )} */}
               {/* {this.state.Editpermisson && ( */}
-                <Route
-                  render={({ history }) => (
-                    <Edit
-                      className="mr-50"
-                      size="25px"
-                      color="blue"
-                      onClick={() =>
-                        history.push(
-                          `/app/freshlist/category/editCategory/${params?.data?._id}`
-                        )
-                      }
-                    />
-                  )}
-                />
+              <Route
+                render={({ history }) => (
+                  <Edit
+                    className="mr-50"
+                    size="25px"
+                    color="blue"
+                    onClick={() =>
+                      history.push(
+                        `/app/freshlist/category/editCategory/${params?.data?._id}`
+                      )
+                    }
+                  />
+                )}
+              />
               {/* )} */}
               {/* {this.state.Deletepermisson && ( */}
-                <Route
-                  render={({ history }) => (
-                    <Trash2
-                      className="mr-50"
-                      size="25px"
-                      color="red"
-                      onClick={() => {
-                        // let selectedData = this.gridApi.getSelectedRows();
-                        this.runthisfunction(params?.data?._id);
-                        // this.gridApi.updateRowData({ remove: selectedData });
-                      }}
-                    />
-                  )}
-                />
+              <Route
+                render={({ history }) => (
+                  <Trash2
+                    className="mr-50"
+                    size="25px"
+                    color="red"
+                    onClick={() => {
+                      // let selectedData = this.gridApi.getSelectedRows();
+                      this.runthisfunction(params?.data?._id);
+                      // this.gridApi.updateRowData({ remove: selectedData });
+                    }}
+                  />
+                )}
+              />
               {/* )} */}
             </div>
           );
@@ -216,7 +219,7 @@ class CategoryList extends React.Component {
     let pageparmission = JSON.parse(localStorage.getItem("userData"));
 
     let newparmisson = pageparmission?.role?.find(
-      (value) => value?.pageName === "Category List"
+      value => value?.pageName === "Category List"
     );
 
     this.setState({ Viewpermisson: newparmisson?.permission.includes("View") });
@@ -234,13 +237,13 @@ class CategoryList extends React.Component {
 
     data.append("user_id", pageparmission?._id);
     await AllCategoryList(pageparmission?._id)
-      .then((res) => {
+      .then(res => {
         console.log(res?.Category);
         if (res?.Category) {
           this.setState({ rowData: res?.Category });
         }
       })
-      .catch((err) => {
+      .catch(err => {
         console.log(err);
       });
     // await axiosConfig.post("/getcategory", data).then((response) => {
@@ -261,29 +264,29 @@ class CategoryList extends React.Component {
         cancel: "Cancel",
         catch: { text: "Delete ", value: "delete" },
       },
-    }).then((value) => {
+    }).then(value => {
       switch (value) {
         case "delete":
           let data = new FormData();
           let pageparmission = JSON.parse(localStorage.getItem("userData"));
 
-          DeleteCategory(id).then((res)=>{
-            console.log(res)
-            this.gridApi.updateRowData({ remove: selectedData });
-            swal("Success", "Category Deleted Successfully");
-
-          }).catch((err)=>{
-          console.log(err)
-          swal("Error", `Some Error Occured`);
-        })
-       
+          DeleteCategory(id)
+            .then(res => {
+              console.log(res);
+              this.gridApi.updateRowData({ remove: selectedData });
+              swal("Success", "Category Deleted Successfully");
+            })
+            .catch(err => {
+              console.log(err);
+              swal("Error", `Some Error Occured`);
+            });
 
           break;
         default:
       }
     });
   }
-  onGridReady = (params) => {
+  onGridReady = params => {
     this.gridApi = params.api;
     this.gridColumnApi = params.columnApi;
     this.setState({
@@ -292,10 +295,10 @@ class CategoryList extends React.Component {
       totalPages: this.gridApi.paginationGetTotalPages(),
     });
   };
-  updateSearchQuery = (val) => {
+  updateSearchQuery = val => {
     this.gridApi.setQuickFilter(val);
   };
-  filterSize = (val) => {
+  filterSize = val => {
     if (this.gridApi) {
       this.gridApi.paginationSetPageSize(Number(val));
       this.setState({
@@ -312,9 +315,9 @@ class CategoryList extends React.Component {
         <Col sm="12"></Col>
         <Col sm="12">
           <Card>
-            <Row className="m-2">
+            <Row className="mt-2 ml-2 mr-2">
               <Col>
-                <h1 sm="6" className="float-left">
+                <h1 sm="6" className="float-left" style={{ fontWeight: "600" }}>
                   Category List
                 </h1>
               </Col>
@@ -349,7 +352,7 @@ class CategoryList extends React.Component {
                 )}
               </Col> */}
             </Row>
-            <CardBody>
+            <CardBody style={{ marginTop: "-1.5rem" }}>
               {this.state.rowData === null ? null : (
                 <div className="ag-theme-material w-100 my-2 ag-grid-table">
                   <div className="d-flex flex-wrap justify-content-between align-items-center">
@@ -401,9 +404,7 @@ class CategoryList extends React.Component {
                       <div className="table-input mr-1">
                         <Input
                           placeholder="search..."
-                          onChange={(e) =>
-                            this.updateSearchQuery(e.target.value)
-                          }
+                          onChange={e => this.updateSearchQuery(e.target.value)}
                           value={this.state.value}
                         />
                       </div>
@@ -418,7 +419,7 @@ class CategoryList extends React.Component {
                     </div>
                   </div>
                   <ContextLayout.Consumer>
-                    {(context) => (
+                    {context => (
                       <AgGridReact
                         gridOptions={{}}
                         rowSelection="multiple"

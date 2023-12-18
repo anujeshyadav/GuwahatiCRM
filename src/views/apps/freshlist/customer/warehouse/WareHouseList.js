@@ -1,4 +1,6 @@
 import React, { useRef } from "react";
+import { ImDownload } from "react-icons/im";
+
 import {
   Card,
   CardBody,
@@ -591,11 +593,12 @@ class WareHouseList extends React.Component {
               <Col>
                 <div className="d-flex justify-content-end p-1">
                   <Button
-                    onClick={(e) => {
+                    onClick={e => {
                       e.preventDefault();
                       this.setState({ EditOneUserView: false });
                     }}
-                    color="danger">
+                    color="danger"
+                  >
                     Back
                   </Button>
                 </div>
@@ -611,11 +614,12 @@ class WareHouseList extends React.Component {
                     <Col>
                       <div className="d-flex justify-content-end p-1">
                         <Button
-                          onClick={(e) => {
+                          onClick={e => {
                             e.preventDefault();
                             this.setState({ ViewOneUserView: false });
                           }}
-                          color="danger">
+                          color="danger"
+                        >
                           Back
                         </Button>
                       </div>
@@ -627,9 +631,14 @@ class WareHouseList extends React.Component {
                 <>
                   <Col sm="12">
                     <Card>
-                      <Row className="m-2">
+                      <Row className="mt-2 ml-2 mr-2">
                         <Col>
-                          <h1 className="float-left">Warehouse List</h1>
+                          <h1
+                            className="float-left"
+                            style={{ fontWeight: "600" }}
+                          >
+                            Warehouse List
+                          </h1>
                         </Col>
                         <Col>
                           <FormGroup>
@@ -639,9 +648,10 @@ class WareHouseList extends React.Component {
                               placeholder="Select Warehouse"
                               name="warehouse"
                               value={this.state.warehouse}
-                              onChange={this.changeHandler}>
+                              onChange={this.changeHandler}
+                            >
                               <option value="">--Select WareHouse--</option>
-                              {this.state.wareHouseViewOne?.map((cat) => (
+                              {this.state.wareHouseViewOne?.map(cat => (
                                 <option value={cat?._id} key={cat?._id}>
                                   {cat?.WarehouseName}
                                 </option>
@@ -652,9 +662,16 @@ class WareHouseList extends React.Component {
 
                         <Col lg="2" md="2" className="mb-2">
                           <Button
+                            style={{
+                              cursor: "pointer",
+                              backgroundColor: "#39cccc",
+                              color: "white",
+                              fontWeight: "600",
+                            }}
                             className="mt-2"
-                            color="primary"
-                            onClick={this.handleShowWarehouse}>
+                            color="#39cccc"
+                            onClick={this.handleShowWarehouse}
+                          >
                             Submit
                           </Button>
                         </Col>
@@ -665,18 +682,18 @@ class WareHouseList extends React.Component {
                               title="filter coloumn"
                               size="30px"
                               onClick={this.LookupviewStart}
-                              color="primary"
-                              className="float-right"
+                              color="#39cccc"
+                              className="float-right mt-1"
                             />
                           </span>
                           <span className="mx-1">
                             <div className="dropdown-container float-right">
-                              <BsCloudDownloadFill
+                              <ImDownload
                                 style={{ cursor: "pointer" }}
                                 title="download file"
-                                size="30px"
-                                className="dropdown-button "
-                                color="primary"
+                                size="35px"
+                                className="dropdown-button mt-1"
+                                color="#39cccc"
                                 onClick={this.toggleDropdown}
                               />
                               {isOpen && (
@@ -684,12 +701,16 @@ class WareHouseList extends React.Component {
                                   style={{
                                     position: "absolute",
                                     zIndex: "1",
+                                    border: "1px solid #39cccc",
+                                    backgroundColor: "white",
                                   }}
-                                  className="dropdown-content dropdownmy">
+                                  className="dropdown-content dropdownmy"
+                                >
                                   <h5
                                     onClick={() => this.exportToPDF()}
                                     style={{ cursor: "pointer" }}
-                                    className=" mx-1 myactive mt-1">
+                                    className=" mx-1 myactive mt-1"
+                                  >
                                     .PDF
                                   </h5>
                                   <h5
@@ -697,25 +718,29 @@ class WareHouseList extends React.Component {
                                       this.gridApi.exportDataAsCsv()
                                     }
                                     style={{ cursor: "pointer" }}
-                                    className=" mx-1 myactive">
+                                    className=" mx-1 myactive"
+                                  >
                                     .CSV
                                   </h5>
                                   <h5
                                     onClick={this.convertCSVtoExcel}
                                     style={{ cursor: "pointer" }}
-                                    className=" mx-1 myactive">
+                                    className=" mx-1 myactive"
+                                  >
                                     .XLS
                                   </h5>
                                   <h5
                                     onClick={this.exportToExcel}
                                     style={{ cursor: "pointer" }}
-                                    className=" mx-1 myactive">
+                                    className=" mx-1 myactive"
+                                  >
                                     .XLSX
                                   </h5>
                                   <h5
                                     onClick={() => this.convertCsvToXml()}
                                     style={{ cursor: "pointer" }}
-                                    className=" mx-1 myactive">
+                                    className=" mx-1 myactive"
+                                  >
                                     .XML
                                   </h5>
                                 </div>
@@ -726,14 +751,20 @@ class WareHouseList extends React.Component {
                             <Route
                               render={({ history }) => (
                                 <Button
-                                  className="float-right mr-1"
-                                  color="primary"
-                                  size="sm"
+                                  style={{
+                                    cursor: "pointer",
+                                    backgroundColor: "#39cccc",
+                                    color: "white",
+                                    fontWeight: "600",
+                                  }}
+                                  className="float-right mr-1 "
+                                  color="#39cccc"
                                   onClick={() =>
                                     history.push(
                                       "/app/softNumen/warehouse/CreateWareHouse"
                                     )
-                                  }>
+                                  }
+                                >
                                   Create Warehouse
                                 </Button>
                               )}
@@ -771,27 +802,32 @@ class WareHouseList extends React.Component {
                                       <DropdownMenu right>
                                         <DropdownItem
                                           tag="div"
-                                          onClick={() => this.filterSize(5)}>
+                                          onClick={() => this.filterSize(5)}
+                                        >
                                           5
                                         </DropdownItem>
                                         <DropdownItem
                                           tag="div"
-                                          onClick={() => this.filterSize(20)}>
+                                          onClick={() => this.filterSize(20)}
+                                        >
                                           20
                                         </DropdownItem>
                                         <DropdownItem
                                           tag="div"
-                                          onClick={() => this.filterSize(50)}>
+                                          onClick={() => this.filterSize(50)}
+                                        >
                                           50
                                         </DropdownItem>
                                         <DropdownItem
                                           tag="div"
-                                          onClick={() => this.filterSize(100)}>
+                                          onClick={() => this.filterSize(100)}
+                                        >
                                           100
                                         </DropdownItem>
                                         <DropdownItem
                                           tag="div"
-                                          onClick={() => this.filterSize(134)}>
+                                          onClick={() => this.filterSize(134)}
+                                        >
                                           134
                                         </DropdownItem>
                                       </DropdownMenu>
@@ -801,7 +837,7 @@ class WareHouseList extends React.Component {
                                     <div className="table-input mr-1">
                                       <Input
                                         placeholder="search Item here..."
-                                        onChange={(e) =>
+                                        onChange={e =>
                                           this.updateSearchQuery(e.target.value)
                                         }
                                         value={this.state.value}
@@ -810,7 +846,7 @@ class WareHouseList extends React.Component {
                                   </div>
                                 </div>
                                 <ContextLayout.Consumer className="ag-theme-alpine">
-                                  {(context) => (
+                                  {context => (
                                     <AgGridReact
                                       id="myAgGrid"
                                       // gridOptions={{
@@ -871,7 +907,8 @@ class WareHouseList extends React.Component {
           isOpen={this.state.modal}
           toggle={this.LookupviewStart}
           className={this.props.className}
-          style={{ maxWidth: "1050px" }}>
+          style={{ maxWidth: "1050px" }}
+        >
           <ModalHeader toggle={this.LookupviewStart}>Change Fileds</ModalHeader>
           <ModalBody className="modalbodyhead">
             <Row>
@@ -884,15 +921,15 @@ class WareHouseList extends React.Component {
                         return (
                           <>
                             <div
-                              onClick={(e) =>
-                                this.handleChangeHeader(e, ele, i)
-                              }
+                              onClick={e => this.handleChangeHeader(e, ele, i)}
                               key={i}
-                              className="mycustomtag mt-1">
+                              className="mycustomtag mt-1"
+                            >
                               <span className="mt-1">
                                 <h5
                                   style={{ cursor: "pointer" }}
-                                  className="allfields">
+                                  className="allfields"
+                                >
                                   <input
                                     type="checkbox"
                                     // checked={check && check}
@@ -951,14 +988,15 @@ class WareHouseList extends React.Component {
                                             : ""
                                         }`,
                                       }}
-                                      className="allfields">
+                                      className="allfields"
+                                    >
                                       <IoMdRemoveCircleOutline
                                         onClick={() => {
                                           const SelectedCols =
                                             this.state.SelectedcolumnDefs.slice();
                                           const delindex =
                                             SelectedCols.findIndex(
-                                              (element) =>
+                                              element =>
                                                 element?.headerName ==
                                                 ele?.headerName
                                             );

@@ -17,6 +17,8 @@ import {
   ModalBody,
   Badge,
 } from "reactstrap";
+import { FaPencilAlt } from "react-icons/fa";
+
 import { ImDownload } from "react-icons/im";
 
 import { ContextLayout } from "../../../../utility/context/Layout";
@@ -204,14 +206,23 @@ class AccounSearch extends React.Component {
                     this.state.InsiderPermissions.View && (
                       <Route
                         render={({ history }) => (
-                          <Eye
-                            className="mr-50"
-                            size="25px"
-                            color="green"
-                            onClick={() => {
-                              this.handleChangeEdit(params?.data, "readonly");
+                          <span
+                            style={{
+                              border: "1px solid white",
+                              padding: "10px",
+                              borderRadius: "30px",
+                              backgroundColor: "#39cccc",
                             }}
-                          />
+                          >
+                            <Eye
+                              className=""
+                              size="20px"
+                              color="white"
+                              onClick={() => {
+                                this.handleChangeEdit(params?.data, "readonly");
+                              }}
+                            />
+                          </span>
                         )}
                       />
                     )}
@@ -219,14 +230,24 @@ class AccounSearch extends React.Component {
                     this.state.InsiderPermissions.Edit && (
                       <Route
                         render={({ history }) => (
-                          <Edit
-                            className="mr-50"
-                            size="25px"
-                            color="blue"
-                            onClick={() => {
-                              this.handleChangeEdit(params?.data, "Editable");
+                          <span
+                            style={{
+                              border: "1px solid white",
+                              padding: "10px",
+                              borderRadius: "30px",
+                              backgroundColor: "rgb(212, 111, 16)",
+                              marginLeft: "3px",
                             }}
-                          />
+                          >
+                            <FaPencilAlt
+                              className=""
+                              size="20px"
+                              color="white"
+                              onClick={() => {
+                                this.handleChangeEdit(params?.data, "Editable");
+                              }}
+                            />
+                          </span>
                         )}
                       />
                     )}
@@ -234,14 +255,24 @@ class AccounSearch extends React.Component {
                     this.state.InsiderPermissions.Delete && (
                       <Route
                         render={() => (
-                          <Trash2
-                            className="mr-50"
-                            size="25px"
-                            color="red"
-                            onClick={() => {
-                              this.runthisfunction(params?.data?._id);
+                          <span
+                            style={{
+                              border: "1px solid white",
+                              padding: "10px",
+                              borderRadius: "30px",
+                              backgroundColor: "rgb(236, 24, 9)",
+                              marginLeft: "3px",
                             }}
-                          />
+                          >
+                            <Trash2
+                              className=""
+                              size="20px"
+                              color="white"
+                              onClick={() => {
+                                this.runthisfunction(params?.data?._id);
+                              }}
+                            />
+                          </span>
                         )}
                       />
                     )}
