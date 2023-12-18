@@ -18,6 +18,7 @@ import {
   Label,
   Form,
   CustomInput,
+  Table,
 } from "reactstrap";
 import { ImDownload } from "react-icons/im";
 import { AiOutlineDownload } from "react-icons/ai";
@@ -44,6 +45,7 @@ import {
   Sales_OrderToDispatchList,
   ViewCompanyDetails,
   createOrderhistoryview,
+  view_Sales_orderList,
 } from "../../../../ApiEndPoint/ApiCalling";
 
 import { ContextLayout } from "../../../../utility/context/Layout";
@@ -63,6 +65,7 @@ import "../../../../assets/scss/pages/users.scss";
 import {
   FaArrowAltCircleLeft,
   FaArrowAltCircleRight,
+  FaDownload,
   FaFilter,
   FaPlus,
 } from "react-icons/fa";
@@ -80,6 +83,7 @@ import {
 import * as XLSX from "xlsx";
 import UserContext from "../../../../context/Context";
 import { CheckPermission } from "../house/CheckPermission";
+import ClosingStock from "../customer/ProductWIKI/ClosingStock";
 
 const SelectedColums = [];
 const toWords = new ToWords({
@@ -118,6 +122,7 @@ class InvoiceGenerator extends React.Component {
       AllbillMerged: [],
       rowData: [],
       InsiderPermissions: {},
+      ViewOneData: {},
       CompanyDetails: {},
       ShowBill: false,
       Applied_Charges: {},
@@ -128,6 +133,7 @@ class InvoiceGenerator extends React.Component {
       Mergebilllength: "",
       modal: false,
       modalOne: false,
+      modalTwo: false,
       sgst: "",
       discount: "",
       ViewBill: true,
@@ -205,6 +211,64 @@ class InvoiceGenerator extends React.Component {
               <>
                 <div className="badge badge-pill bg-warning">Cancelled</div>
               </>
+            );
+          },
+        },
+        {
+          headerName: "Actions",
+          field: "sortorder",
+          field: "transactions",
+          width: 120,
+          cellRendererFramework: (params) => {
+            return (
+              <div className="actions cursor-pointer">
+                {this.state.InsiderPermissions &&
+                  this.state.InsiderPermissions?.Edit && (
+                    <CornerDownLeft
+                      className="mr-50"
+                      size="25px"
+                      color="green"
+                      onClick={() => {
+                        localStorage.setItem(
+                          "OrderList",
+                          JSON.stringify(params.data)
+                        );
+                        this.props.history.push({
+                          pathname: `/app/AJGroup/order/placeOrderReturn/${params.data?._id}`,
+                          state: params.data,
+                        });
+                      }}
+                    />
+                  )}
+
+                {this.state.InsiderPermissions &&
+                  this.state.InsiderPermissions?.View && (
+                    <Route
+                      render={() => (
+                        <Eye
+                          className="mr-50"
+                          size="25px"
+                          color="green"
+                          onClick={() => {
+                            this.toggleModalTwo();
+                            console.log(params?.data);
+                            // debugger;
+                            this.setState({ ViewOneData: params?.data });
+
+                            // let selectedData = this.gridApi.getSelectedRows();
+                            // this.runthisfunction(params.data?._id);
+                            // this.gridApi.updateRowData({
+                            //   remove: selectedData,
+                            // });
+                          }}
+                        />
+                      )}
+                    />
+                  )}
+                {/* {this.state.Deletepermisson && (
+              
+              )} */}
+              </div>
             );
           },
         },
@@ -406,108 +470,6 @@ class InvoiceGenerator extends React.Component {
         },
 
         {
-          headerName: "Actions",
-          field: "sortorder",
-          field: "transactions",
-          width: 120,
-          cellRendererFramework: (params) => {
-            return (
-              <div className="actions cursor-pointer">
-                {this.state.InsiderPermissions &&
-                  this.state.InsiderPermissions?.Edit && (
-                    <CornerDownLeft
-                      className="mr-50"
-                      size="25px"
-                      color="green"
-                      onClick={() => {
-                        localStorage.setItem(
-                          "OrderList",
-                          JSON.stringify(params.data)
-                        );
-                        this.props.history.push({
-                          pathname: `/app/AJGroup/order/placeOrderReturn/${params.data?._id}`,
-                          state: params.data,
-                        });
-                      }}
-                    />
-                  )}
-
-                {/* {this.state.InsiderPermissions &&
-                  this.state.InsiderPermissions?.Delete && (
-                    <Route
-                      render={() => (
-                        <Trash2
-                          className="mr-50"
-                          size="25px"
-                          color="red"
-                          onClick={() => {
-                            let selectedData = this.gridApi.getSelectedRows();
-                            this.runthisfunction(params.data?._id);
-                            this.gridApi.updateRowData({
-                              remove: selectedData,
-                            });
-                          }}
-                        />
-                      )}
-                    />
-                  )} */}
-                {/* {this.state.Deletepermisson && (
-              
-              )} */}
-              </div>
-            );
-          },
-        },
-
-        // {
-        //   headerName: "total",
-        //   field: "total",
-        //   filter: true,
-        //   resizable: true,
-        //   width: 160,
-        //   cellRendererFramework: (params) => {
-        //     return (
-        //       <div className="d-flex align-items-center cursor-pointer">
-        //         <div>
-        //           <Badge color="success">{params.data?.total}</Badge>
-        //         </div>
-        //       </div>
-        //     );
-        //   },
-        // },
-        // {
-        //   headerName: "brandname ",
-        //   field: "brand_name",
-        //   filter: true,
-        //   resizable: true,
-        //   width: 180,
-        //   cellRendererFramework: (params) => {
-        //     return (
-        //       <div className="d-flex align-items-center cursor-pointer">
-        //         <div>
-        //           <span>{params.data?.brand_name}</span>
-        //         </div>
-        //       </div>
-        //     );
-        //   },
-        // },
-        // {
-        //   headerName: "city",
-        //   field: "city",
-        //   filter: true,
-        //   resizable: true,
-        //   width: 160,
-        //   cellRendererFramework: (params) => {
-        //     return (
-        //       <div className="d-flex align-items-center cursor-pointer">
-        //         <div>
-        //           <span>{params.data?.city}</span>
-        //         </div>
-        //       </div>
-        //     );
-        //   },
-        // },
-        {
           headerName: "order Creation date",
           field: "order_date",
           filter: true,
@@ -523,250 +485,6 @@ class InvoiceGenerator extends React.Component {
             );
           },
         },
-        // {
-        //   headerName: "deliverydate",
-        //   field: "delivery_date",
-        //   filter: true,
-        //   resizable: true,
-        //   width: 230,
-        //   cellRendererFramework: (params) => {
-        //     return (
-        //       <div className="d-flex align-items-center cursor-pointer">
-        //         <div>
-        //           <span>{params.data?.delivery_date}</span>
-        //         </div>
-        //       </div>
-        //     );
-        //   },
-        // },
-        // {
-        //   headerName: "description",
-        //   field: "description",
-        //   filter: "true",
-        //   width: 180,
-        //   cellRendererFramework: (params) => {
-        //     return (
-        //       <div className="d-flex align-items-center cursor-pointer">
-        //         <div className="">
-        //           <span>{params.data?.description}</span>
-        //         </div>
-        //       </div>
-        //     );
-        //   },
-        // },
-        // {
-        //   headerName: "discountprice",
-        //   field: "discountprice",
-        //   filter: "true",
-        //   width: 180,
-        //   cellRendererFramework: (params) => {
-        //     return (
-        //       <div className="d-flex align-items-center cursor-pointer">
-        //         <div className="">
-        //           <span>{params.data?.discountprice}</span>
-        //         </div>
-        //       </div>
-        //     );
-        //   },
-        // },
-        // {
-        //   headerName: "email",
-        //   field: "email",
-        //   filter: true,
-        //   resizable: true,
-        //   width: 190,
-        //   cellRendererFramework: (params) => {
-        //     return (
-        //       <div className="d-flex align-items-center cursor-pointer">
-        //         <div>
-        //           <span>{params.data?.email}</span>
-        //         </div>
-        //       </div>
-        //     );
-        //   },
-        // },
-
-        // {
-        //   headerName: "full_name",
-        //   field: "full_name",
-        //   filter: true,
-        //   resizable: true,
-        //   width: 170,
-        //   cellRendererFramework: (params) => {
-        //     return (
-        //       <div className="d-flex align-items-center cursor-pointer">
-        //         <div>
-        //           <span>{params.data?.full_name}</span>
-        //         </div>
-        //       </div>
-        //     );
-        //   },
-        // },
-
-        // {
-        //   headerName: "mobile",
-        //   field: "mobile",
-        //   filter: true,
-        //   resizable: true,
-        //   width: 190,
-        //   cellRendererFramework: (params) => {
-        //     return (
-        //       <div className="d-flex align-items-center cursor-pointer">
-        //         <div>
-        //           <span>{params.data?.mobile}</span>
-        //         </div>
-        //       </div>
-        //     );
-        //   },
-        // },
-        // {
-        //   headerName: "price",
-        //   field: "price",
-        //   filter: true,
-        //   resizable: true,
-        //   width: 150,
-        //   cellRendererFramework: (params) => {
-        //     return (
-        //       <div className="d-flex align-items-center cursor-pointer">
-        //         <div>
-        //           <span>{params.data?.price}</span>
-        //         </div>
-        //       </div>
-        //     );
-        //   },
-        // },
-
-        // {
-        //   headerName: "producttype",
-        //   field: "product_type",
-        //   filter: true,
-        //   resizable: true,
-        //   width: 190,
-        //   cellRendererFramework: (params) => {
-        //     return (
-        //       <div className="d-flex align-items-center cursor-pointer">
-        //         <div>
-        //           <span>{params.data?.product_type}</span>
-        //         </div>
-        //       </div>
-        //     );
-        //   },
-        // },
-        // {
-        //   headerName: "shippingfee",
-        //   field: "shipping_fee",
-        //   filter: true,
-        //   resizable: true,
-        //   width: 190,
-        //   cellRendererFramework: (params) => {
-        //     return (
-        //       <div className="d-flex align-items-center cursor-pointer">
-        //         <div>
-        //           <span>{params.data?.shipping_fee}</span>
-        //         </div>
-        //       </div>
-        //     );
-        //   },
-        // },
-        // {
-        //   headerName: "status",
-        //   field: "status",
-        //   filter: true,
-        //   resizable: true,
-        //   width: 180,
-        //   cellRendererFramework: (params) => {
-        //     return (
-        //       <div className="d-flex align-items-center cursor-pointer">
-        //         <div>
-        //           <span>{params.data?.status}</span>
-        //         </div>
-        //       </div>
-        //     );
-        //   },
-        // },
-        // {
-        //   headerName: "stock",
-        //   field: "stock",
-        //   filter: true,
-        //   resizable: true,
-        //   width: 180,
-        //   cellRendererFramework: (params) => {
-        //     return (
-        //       <div className="d-flex align-items-center cursor-pointer">
-        //         <div>
-        //           <span>{params.data?.stock}</span>
-        //         </div>
-        //       </div>
-        //     );
-        //   },
-        // },
-        // {
-        //   headerName: "subtotal",
-        //   field: "subtotal",
-        //   filter: true,
-        //   resizable: true,
-        //   width: 180,
-        //   cellRendererFramework: (params) => {
-        //     return (
-        //       <div className="d-flex align-items-center cursor-pointer">
-        //         <div>
-        //           <span>{params.data?.subtotal}</span>
-        //         </div>
-        //       </div>
-        //     );
-        //   },
-        // },
-        // {
-        //   headerName: "tags",
-        //   field: "tags",
-        //   filter: true,
-        //   resizable: true,
-        //   width: 180,
-        //   cellRendererFramework: (params) => {
-        //     return (
-        //       <div className="d-flex align-items-center cursor-pointer">
-        //         <div>
-        //           <span>{params.data?.tags}</span>
-        //         </div>
-        //       </div>
-        //     );
-        //   },
-        // },
-        // {
-        //   headerName: "tax_rate",
-        //   field: "tax_rate",
-        //   filter: true,
-        //   resizable: true,
-        //   width: 180,
-        //   cellRendererFramework: (params) => {
-        //     return (
-        //       <div className="d-flex align-items-center cursor-pointer">
-        //         <div>
-        //           <span>{params.data?.tax_rate}</span>
-        //         </div>
-        //       </div>
-        //     );
-        //   },
-        // },
-
-        // {
-        //   headerName: "Permitions",
-        //   field: "permitions",
-        //   filter: true,
-        //   width: 180,
-        //   cellRendererFramework: (params) => {
-        //     return (
-        //       <CustomInput
-        //         type="switch"
-        //         className="mr-1"
-        //         id="primary"
-        //         name="primary"
-        //         inline
-        //         onChange={this.handleSwitchChange}
-        //       ></CustomInput>
-        //     );
-        //   },
-        // },
       ],
       setMySelectedarr: [],
       SelectedCols: [],
@@ -848,6 +566,11 @@ class InvoiceGenerator extends React.Component {
       modalOne: !prevState.modalOne,
     }));
   };
+  toggleModalTwo = () => {
+    this.setState((prevState) => ({
+      modalTwo: !prevState.modalTwo,
+    }));
+  };
   changeHandler = (e) => {
     this.setState({ [e.target.name]: e.target.value });
   };
@@ -858,6 +581,9 @@ class InvoiceGenerator extends React.Component {
     // window.location.reload();
     // AddedBill = [];
     // console.log(AddedBill);
+  };
+  toggleModalcloseTwo = () => {
+    this.setState({ modalTwo: false });
   };
 
   handleChangeView = (data, types) => {
@@ -902,7 +628,8 @@ class InvoiceGenerator extends React.Component {
     const InsidePermissions = CheckPermission("Sales Invoice");
     console.log(InsidePermissions);
     this.setState({ InsiderPermissions: InsidePermissions });
-    createOrderhistoryview(userid)
+    // createOrderhistoryview(userid)
+    await view_Sales_orderList(userid)
       .then((res) => {
         console.log(res?.orderHistory);
         this.setState({ rowData: res?.orderHistory });
@@ -1936,6 +1663,113 @@ class InvoiceGenerator extends React.Component {
                 )}
               </>
             )}
+          </ModalBody>
+        </Modal>
+
+        <Modal
+          isOpen={this.state.modalTwo}
+          toggle={this.toggleModalTwo}
+          className={this.props.className}
+          style={{ maxWidth: "1050px" }}>
+          <ModalHeader toggle={this.toggleModalcloseTwo}>
+            View Order
+          </ModalHeader>
+          <ModalBody>
+            <div className="container">
+              <Row>
+                <Col>
+                  <Label>Party Name :</Label>
+                  <h5 className="mx-1">
+                    {this.state.ViewOneData &&
+                      this.state.ViewOneData?.partyId?.firstName}
+                  </h5>
+                </Col>
+                <Col>
+                  <Label>Date Created :</Label>
+                  <h5>
+                    {this.state.ViewOneData &&
+                      this.state.ViewOneData?.createdAt?.split("T")[0]}
+                  </h5>
+                </Col>
+                <Col>
+                  <Label>Address :</Label>
+                  <h5>
+                    <strong>
+                      {this.state.ViewOneData &&
+                        this.state.ViewOneData?.address}{" "}
+                    </strong>
+                    Rs/-
+                  </h5>
+                </Col>
+                <Col>
+                  <Label>Grand Total :</Label>
+                  <h5>
+                    <strong>
+                      {this.state.ViewOneData &&
+                        this.state.ViewOneData?.grandTotal}{" "}
+                    </strong>
+                    Rs/-
+                  </h5>
+                </Col>
+
+                {/* <Col>
+                <Label>Download Invoice :</Label>
+                <div className="d-flex justify-content-center">
+                  <FaDownload
+                    onClick={this.handleStockTrxInvoiceShow}
+                    color="#00c0e"
+                    fill="#00c0e"
+                    style={{ cursor: "pointer" }}
+                    size={20}
+                  />
+                </div>
+              </Col> */}
+              </Row>
+              <Row className="p-2">
+                <Col>
+                  <div className="d-flex justify-content-center">
+                    <h4>Product Details</h4>
+                  </div>
+                </Col>
+              </Row>
+              <Row>
+                <Col>
+                  <Table style={{ cursor: "pointer" }} striped>
+                    <thead>
+                      <tr>
+                        <th>#</th>
+                        <th>Product Name</th>
+                        <th>Price</th>
+                        <th>Size</th>
+                        <th>Unit</th>
+                        <th>Quantity</th>
+                        <th>Total</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {this.state.ViewOneData?.orderItems &&
+                        this.state.ViewOneData?.orderItems?.map((ele, i) => (
+                          <>
+                            <tr>
+                              <th scope="row">{i + 1}</th>
+                              <td>{ele?.product?.Product_Title}</td>
+                              <td>{ele?.product?.Product_MRP}</td>
+                              <td>{ele?.product?.Size}</td>
+                              <td>{ele?.unitQty}</td>
+                              <td>{ele?.qty}</td>
+                              <td>
+                                {ele?.product?.Product_MRP *
+                                  ele?.product?.Size *
+                                  ele?.qty}
+                              </td>
+                            </tr>
+                          </>
+                        ))}
+                    </tbody>
+                  </Table>
+                </Col>
+              </Row>
+            </div>
           </ModalBody>
         </Modal>
       </>

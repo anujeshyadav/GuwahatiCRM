@@ -146,7 +146,7 @@ class GoodDispatchList extends React.Component {
           field: "_id",
           filter: true,
           resizable: true,
-          width: 180,
+          width: 210,
           cellRendererFramework: (params) => {
             // console.log(params.data?.order_id);
 
@@ -194,7 +194,7 @@ class GoodDispatchList extends React.Component {
         },
         {
           headerName: "Dispatch",
-          field: "Dispatcg",
+          field: "Dispatch",
           filter: true,
           resizable: true,
           width: 140,
@@ -204,30 +204,32 @@ class GoodDispatchList extends React.Component {
             return (
               <div className="d-flex align-items-center justify-content-center cursor-pointer">
                 <div>
-                  {params?.data?.status == "completed" ? (
-                    <>
-                      {this.state.InsiderPermissions &&
-                        this.state.InsiderPermissions?.View && (
-                          <Route
-                            render={({ history }) => (
-                              <FaTruck
-                                title="Dispatch Now"
-                                onClick={() =>
-                                  history.push(
-                                    `/app/AjGroup/dispatch/CreateDispach/${params?.data?._id}`
-                                  )
-                                }
-                                // onClick={() => this.MergeBillNow(params.data)}
-                                fill="green"
-                                size="30px"
-                              />
-                            )}
+                  {this.state.InsiderPermissions &&
+                    this.state.InsiderPermissions?.View && (
+                      <Route
+                        render={({ history }) => (
+                          <FaTruck
+                            style={{ cursor: "pointer" }}
+                            title="Dispatch Now"
+                            onClick={() =>
+                              history.push({
+                                pathname: `/app/AjGroup/dispatch/CreateDispach/${params?.data?._id}`,
+                                state: { data: params?.data },
+                              })
+                            }
+                            // onClick={() => this.MergeBillNow(params.data)}
+                            fill="green"
+                            size="30px"
                           />
                         )}
+                      />
+                    )}
+                  {/* {params?.data?.status == "completed" ? (
+                    <>
                     </>
                   ) : (
                     "NA"
-                  )}
+                  )} */}
                   <span></span>
                 </div>
               </div>
@@ -508,7 +510,6 @@ class GoodDispatchList extends React.Component {
     await OrderDisPatchList()
       .then((res) => {
         console.log(res?.Invoice);
-        debugger;
         this.setState({ rowData: res?.Invoice });
         this.setState({ AllcolumnDefs: this.state.columnDefs });
 

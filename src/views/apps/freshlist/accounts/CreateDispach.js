@@ -20,6 +20,7 @@ import { Country, State, City } from "country-state-city";
 import Select from "react-select";
 import moment from "moment-timezone";
 import { Route } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 
 import swal from "sweetalert";
 import "../../../../../src/layouts/assets/scss/pages/users.scss";
@@ -39,12 +40,14 @@ const CreateDispach = () => {
   const [DeliveryBoy, setDeliveryBoy] = useState([]);
   const [Countries, setCountry] = useState({});
   const [formData, setFormData] = useState({});
+  const [DispatchData, setDispatchData] = useState({});
   const [dropdownValue, setdropdownValue] = useState({});
   const [index, setindex] = useState("");
   const [error, setError] = useState("");
   const [permissions, setpermissions] = useState({});
 
   const Context = useContext(UserContext);
+  let location = useLocation();
 
   const handleFileChange = (e, type, i) => {
     const { name, value, files } = e.target;
@@ -105,6 +108,10 @@ const CreateDispach = () => {
   };
   useEffect(() => {
     console.log(formData);
+    console.log(location?.state.data);
+    if (location?.state.data) {
+      setDispatchData(location?.state.data);
+    }
   }, [formData]);
   useEffect(() => {
     let pageparmission = JSON.parse(localStorage.getItem("userData"));

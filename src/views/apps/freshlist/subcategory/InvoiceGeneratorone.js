@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from "react";
-<<<<<<< HEAD
+
 import { PDFViewer, PDFDownloadLink } from "@react-pdf/renderer";
-=======
-import { PDFViewer } from "@react-pdf/renderer";
+
 import { ToWords } from "to-words";
->>>>>>> 67161165b7ba35c7b95b5e88eb330911ade07088
+
 import InvoiceTemplate from "./InvoiceTemplate";
 import ReactPDF from "@react-pdf/renderer";
 import POInVoice from "./POInVoice";
