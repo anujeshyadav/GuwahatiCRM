@@ -32,7 +32,7 @@ import { IoMdRemoveCircleOutline } from "react-icons/io";
 import "../../../../assets/scss/plugins/tables/_agGridStyleOverride.scss";
 import "../../../../assets/scss/pages/users.scss";
 // import StockTrxInvoice from "../../subcategory/StockTrxInvoice";
-import StockTrxInvoice from "../../subcategory/StockTrxInvoice";
+// import StockTrxInvoice from "../../subcategory/StockTrxInvoice";
 import {
   FaArrowAltCircleLeft,
   FaArrowAltCircleRight,
