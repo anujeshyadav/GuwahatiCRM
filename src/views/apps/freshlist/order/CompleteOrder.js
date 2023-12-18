@@ -92,8 +92,9 @@ class CompleteOrder extends React.Component {
 
         {
           headerName: "Actions",
+          field: "sortorder",
           field: "transactions",
-          width: 150,
+          width: 190,
           cellRendererFramework: params => {
             return (
               <div className="actions cursor-pointer">

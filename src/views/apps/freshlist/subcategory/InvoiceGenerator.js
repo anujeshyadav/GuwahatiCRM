@@ -803,6 +803,7 @@ class InvoiceGenerator extends React.Component {
   MergeBillNow = data => {
     let billnum = localStorage.getItem("billnumber");
     console.log("Bill", data);
+    console.log("grandTotal", data.grandTotal);
     console.log(billnum);
     // debugger;
     if (billnum) {

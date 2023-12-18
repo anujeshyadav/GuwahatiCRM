@@ -72,12 +72,15 @@ const POInvoiceone = ({
   invoiceData,
   CurrentWords,
   BilData,
+  subTotal,
+  grandTotal,
   tableList,
   AllCharges,
 }) => {
   console.log(invoiceData);
 
   console.log("BilData", BilData);
+  // console.log("Gst", Gst);
   console.log(CurrentWords);
   console.log(AllCharges);
 
@@ -280,7 +283,7 @@ const POInvoiceone = ({
                             }}
                           >
                             {`${invoiceData?.adminDetail?.firstName} ${invoiceData?.adminDetail?.lastName} `}
-                          </Text>{" "}
+                          </Text>
                           <Text
                             style={{
                               fontSize: "10px",
@@ -290,7 +293,7 @@ const POInvoiceone = ({
                           >
                             {`${invoiceData?.adminDetail?.currentAddress} `}
                             {`${invoiceData?.adminDetail?.State} `}
-                          </Text>{" "}
+                          </Text>
                         </View>
                       )}
                       {UserChoice?.shipto == "Left" && (
@@ -618,7 +621,7 @@ const POInvoiceone = ({
                 </View> */}
                 <View
                   style={{
-                    width: "18%",
+                    width: "15%",
                     padding: "5px 2px",
 
                     borderRight: "1px solid black",
@@ -637,7 +640,7 @@ const POInvoiceone = ({
                 </View>
                 <View
                   style={{
-                    width: "12%",
+                    width: "10%",
                     padding: "5px 2px",
 
                     borderRight: "1px solid black",
@@ -645,7 +648,7 @@ const POInvoiceone = ({
                 >
                   <Text
                     style={{
-                      fontSize: "10px",
+                      fontSize: "8px",
                       color: "black",
                       fontWeight: "1000",
                       marginLeft: "5px",
@@ -656,7 +659,7 @@ const POInvoiceone = ({
                 </View>
                 <View
                   style={{
-                    width: "12%",
+                    width: "10%",
                     marginRight: "2px",
                     padding: "5px 2px",
                     borderRight: "1px solid black",
@@ -675,7 +678,7 @@ const POInvoiceone = ({
                 </View>
                 <View
                   style={{
-                    width: "12%",
+                    width: "10%",
                     marginRight: "2px",
                     padding: "5px 2px",
                     borderRight: "1px solid black",
@@ -702,7 +705,7 @@ const POInvoiceone = ({
                 >
                   <Text
                     style={{
-                      fontSize: "10px",
+                      fontSize: "8px",
                       color: "black",
                       fontWeight: "1000",
                       marginLeft: "5px",
@@ -713,7 +716,7 @@ const POInvoiceone = ({
                 </View>
                 <View
                   style={{
-                    width: "12%",
+                    width: "10%",
                     marginRight: "2px",
                     padding: "5px 2px",
                     borderRight: "1px solid black",
@@ -732,7 +735,7 @@ const POInvoiceone = ({
                 </View>
                 <View
                   style={{
-                    width: "12%",
+                    width: "10%",
                     marginRight: "2px",
                     padding: "5px 2px",
                     borderRight: "1px solid black",
@@ -751,7 +754,7 @@ const POInvoiceone = ({
                 </View>
                 <View
                   style={{
-                    width: "12%",
+                    width: "10%",
                     marginRight: "2px",
                     padding: "5px 2px",
                     borderRight: "1px solid black",
@@ -770,7 +773,7 @@ const POInvoiceone = ({
                 </View>
                 <View
                   style={{
-                    // width: "15%",
+                    width: "12%",
                     marginRight: "2px",
                     padding: "5px 2px",
                     //   borderRight: "1px solid black",
@@ -824,7 +827,6 @@ const POInvoiceone = ({
                     <Text
                       style={{
                         fontSize: "10px",
-
                         fontWeight: "1000",
                         marginLeft: "5px",
                       }}
@@ -834,7 +836,7 @@ const POInvoiceone = ({
                   </View>
                   <View
                     style={{
-                      width: "12%",
+                      width: "10%",
                       padding: "2px 2px",
                     }}
                   >
@@ -851,7 +853,7 @@ const POInvoiceone = ({
                   </View>
                   <View
                     style={{
-                      width: "12%",
+                      width: "10%",
                       marginRight: "2px",
                       padding: "2px 2px",
                     }}
@@ -860,7 +862,7 @@ const POInvoiceone = ({
                       style={{
                         fontSize: "10px",
                         fontWeight: "1000",
-                        marginLeft: "0px",
+                        marginLeft: "5px",
                       }}
                     >
                       {ele?.qty}
@@ -868,7 +870,7 @@ const POInvoiceone = ({
                   </View>
                   <View
                     style={{
-                      width: "12%",
+                      width: "10%",
                       marginRight: "2px",
                       padding: "2px 2px",
                     }}
@@ -876,12 +878,14 @@ const POInvoiceone = ({
                     <Text
                       style={{
                         fontSize: "10px",
-
                         fontWeight: "1000",
-                        marginLeft: "0px",
+                        paddingRight: "20px",
+                        marginLeft: "5px",
+                        justifyContent: "flex-start",
+                        // justifyContent: "flex-start",
                       }}
                     >
-                      RS:20
+                      20%
                     </Text>
                   </View>
                   <View
@@ -894,9 +898,9 @@ const POInvoiceone = ({
                     <Text
                       style={{
                         fontSize: "10px",
-                        justifyContent: "flex-end",
+                        justifyContent: "flex-start",
                         fontWeight: "1000",
-                        marginLeft: "0px",
+                        marginLeft: "5px",
                       }}
                     >
                       {ele?.product["GST Rate"]}
@@ -904,17 +908,16 @@ const POInvoiceone = ({
                   </View>
                   <View
                     style={{
-                      width: "12%",
+                      width: "10%",
                       marginRight: "2px",
                       padding: "2px 2px",
                     }}
                   >
                     <Text
                       style={{
-                        fontSize: "10px",
-                        justifyContent: "flex-center",
+                        fontSize: "8px",
                         fontWeight: "1000",
-                        marginLeft: "0px",
+                        marginLeft: "5px",
                       }}
                     >
                       {ele?.unitQty}
@@ -922,7 +925,7 @@ const POInvoiceone = ({
                   </View>
                   <View
                     style={{
-                      width: "12%",
+                      width: "10%",
                       marginRight: "2px",
                       padding: "2px 2px",
                     }}
@@ -930,9 +933,8 @@ const POInvoiceone = ({
                     <Text
                       style={{
                         fontSize: "10px",
-                        justifyContent: "flex-end",
                         fontWeight: "1000",
-                        marginLeft: "0px",
+                        marginLeft: "5px",
                       }}
                     >
                       {ele?.product?.Size}
@@ -940,7 +942,7 @@ const POInvoiceone = ({
                   </View>
                   <View
                     style={{
-                      //   width: "12%",
+                      width: "10%",
                       marginRight: "2px",
                       padding: "2px 2px",
                     }}
@@ -954,6 +956,26 @@ const POInvoiceone = ({
                       }}
                     >
                       {ele?.product?.Product_MRP}
+                    </Text>
+                  </View>
+                  <View
+                    style={{
+                      width: "12%",
+                      marginRight: "2px",
+                      padding: "2px 2px",
+                    }}
+                  >
+                    <Text
+                      style={{
+                        fontSize: "10px",
+                        justifyContent: "flex-end",
+                        fontWeight: "1000",
+                        marginLeft: "5px",
+                      }}
+                    >
+                      {ele?.qty *
+                        ele?.product?.Size *
+                        ele?.product?.Product_MRP}
                     </Text>
                   </View>
                 </View>
@@ -984,7 +1006,7 @@ const POInvoiceone = ({
                       }}
                     >
                       Total In Words
-                    </Text>{" "}
+                    </Text>
                     <Text
                       style={{
                         fontSize: "12px",
@@ -1072,7 +1094,7 @@ const POInvoiceone = ({
                             marginBottom: "6px",
                           }}
                         >
-                          {AllCharges?.discount_value}.00
+                          {/* {AllCharges?.discount_value}.00 */}
                         </Text>
                       </View>
                       <View
@@ -1091,7 +1113,7 @@ const POInvoiceone = ({
                           }}
                         >
                           Sub Total
-                        </Text>{" "}
+                        </Text>
                         <Text
                           style={{
                             fontSize: "10px",
@@ -1099,7 +1121,8 @@ const POInvoiceone = ({
                             marginBottom: "6px",
                           }}
                         >
-                          {AllCharges?.subtotal}1312
+                          {subTotal}
+                          {/* {AllCharges?.subtotal} */}
                         </Text>
                       </View>
                       <View
@@ -1118,7 +1141,7 @@ const POInvoiceone = ({
                             marginBottom: "6px",
                           }}
                         >
-                          CGST({AllCharges?.cgst}.00%)
+                          CGST(9%)
                         </Text>{" "}
                         <Text
                           style={{
@@ -1128,7 +1151,7 @@ const POInvoiceone = ({
                             marginBottom: "6px",
                           }}
                         >
-                          {AllCharges?.totcgst}560
+                          {subTotal * 0.09}
                         </Text>
                       </View>
                       <View
@@ -1147,8 +1170,8 @@ const POInvoiceone = ({
                             marginBottom: "6px",
                           }}
                         >
-                          SGST( {AllCharges?.sgst}.00%)
-                        </Text>{" "}
+                          SGST(9%)
+                        </Text>
                         <Text
                           style={{
                             fontSize: "10px",
@@ -1157,7 +1180,7 @@ const POInvoiceone = ({
                             marginBottom: "6px",
                           }}
                         >
-                          {AllCharges?.totsgst}1421
+                          {subTotal * 0.09}
                         </Text>
                       </View>
                       <View
@@ -1186,7 +1209,8 @@ const POInvoiceone = ({
                             marginBottom: "6px",
                           }}
                         >
-                          {AllCharges?.delivery_charges}.00
+                          {/* {AllCharges?.delivery_charges}.00 */}
+                          00
                         </Text>
                       </View>
                       <View
@@ -1215,7 +1239,8 @@ const POInvoiceone = ({
                             marginBottom: "6px",
                           }}
                         >
-                          {AllCharges?.other_charges}.00
+                          {/* {subTotal * 0.09} */}
+                          00
                         </Text>
                       </View>
 
@@ -1235,7 +1260,7 @@ const POInvoiceone = ({
                           }}
                         >
                           Grand Total :
-                        </Text>{" "}
+                        </Text>
                         <Text
                           style={{
                             fontSize: "11px",
@@ -1243,7 +1268,8 @@ const POInvoiceone = ({
                             marginTop: "2px",
                           }}
                         >
-                          {invoiceData?.grandTotal}
+                          {grandTotal}
+                          {/* {invoiceData?.grandTotal} */}
                         </Text>
                       </View>
                     </View>

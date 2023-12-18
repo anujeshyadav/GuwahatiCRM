@@ -453,8 +453,14 @@ const SearchWarrenty = lazy(() =>
 const Campaignlist = lazy(() =>
   import("./views/apps/freshlist/customer/Campaign/Campaignlist")
 );
-const CreateWiki = lazy(() =>
-  import("./views/apps/freshlist/customer/ProductWIKI/CreateWiki")
+const ClosingStock = lazy(() =>
+  import("./views/apps/freshlist/customer/ProductWIKI/ClosingStock")
+);
+const LowStock = lazy(() =>
+  import("./views/apps/freshlist/customer/ProductWIKI/LowStock")
+);
+const DamagedStock = lazy(() =>
+  import("./views/apps/freshlist/customer/ProductWIKI/DamagedStock")
 );
 const CreateSupport = lazy(() =>
   import("./views/apps/freshlist/customer/Support/CreateSupport")
@@ -1992,8 +1998,16 @@ class AppRouter extends React.Component {
             component={Campaignlist}
           />
           <AppRoute
-            path="/app/softNumen/warranty/CreateWiki"
-            component={CreateWiki}
+            path="/app/softNumen/warranty/ClosingStock"
+            component={ClosingStock}
+          />
+          <AppRoute
+            path="/app/softNumen/warranty/LowStock"
+            component={LowStock}
+          />
+          <AppRoute
+            path="/app/softNumen/warranty/DamagedStock"
+            component={DamagedStock}
           />
           <AppRoute
             path="/app/softNumen/warranty/CreateSupport"

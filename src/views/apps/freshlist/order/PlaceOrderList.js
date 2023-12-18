@@ -1,5 +1,6 @@
 import React, { useRef } from "react";
 import { Route } from "react-router-dom";
+import { FaPencilAlt } from "react-icons/fa";
 import {
   Card,
   CardBody,
@@ -106,47 +107,72 @@ class PlaceOrderList extends React.Component {
               <div className="actions cursor-pointer">
                 {this.state.InsiderPermissions &&
                   this.state.InsiderPermissions?.Edit && (
-                    <CornerDownLeft
-                      className="mr-50"
-                      size="25px"
-                      color="green"
-                      onClick={() => {
-                        localStorage.setItem(
-                          "OrderList",
-                          JSON.stringify(params.data)
-                        );
-                        this.props.history.push({
-                          pathname: `/app/AJGroup/order/placeOrderReturn/${params.data?._id}`,
-                          state: params.data,
-                        });
+                    <span
+                      style={{
+                        border: "1px solid white",
+                        padding: "10px",
+                        borderRadius: "30px",
+                        backgroundColor: "green",
                       }}
-                    />
+                    >
+                      <CornerDownLeft
+                        className=""
+                        size="25px"
+                        color="white"
+                        onClick={() => {
+                          localStorage.setItem(
+                            "OrderList",
+                            JSON.stringify(params.data)
+                          );
+                          this.props.history.push({
+                            pathname: `/app/AJGroup/order/placeOrderReturn/${params.data?._id}`,
+                            state: params.data,
+                          });
+                        }}
+                      />
+                    </span>
                   )}
                 {this.state.InsiderPermissions &&
                   this.state.InsiderPermissions?.View && (
-                    <Eye
-                      className="mr-50"
-                      size="25px"
-                      color="green"
-                      onClick={() => {
-                        this.handleChangeView(params.data, "readonly");
+                    <span
+                      style={{
+                        border: "1px solid white",
+                        padding: "10px",
+                        borderRadius: "30px",
+                        backgroundColor: "#39cccc",
                       }}
-                    />
+                    >
+                      <Eye
+                        className=""
+                        size="20px"
+                        color="white"
+                        onClick={() => {
+                          this.handleChangeEdit(params?.data, "readonly");
+                        }}
+                      />
+                    </span>
                   )}
 
                 {this.state.InsiderPermissions &&
                   this.state.InsiderPermissions?.Edit && (
-                    <Edit
-                      className="mr-50"
-                      size="25px"
-                      color="blue"
-                      onClick={() =>
-                        this.props.history.push({
-                          pathname: `/app/freshlist/order/editplaceorder/${params.data?._id}`,
-                          state: params.data,
-                        })
-                      }
-                    />
+                    <span
+                      style={{
+                        border: "1px solid white",
+                        padding: "10px",
+                        borderRadius: "30px",
+                        backgroundColor: "rgb(212, 111, 16)",
+                        marginLeft: "3px",
+                      }}
+                    >
+                      <FaPencilAlt
+                        className=""
+                        size="20px"
+                        color="white"
+                        onClick={() => {
+                          this.handleChangeEdit(params?.data, "Editable");
+                        }}
+                      />
+                    </span>
                   )}
               </div>
             );

@@ -1,4 +1,6 @@
 import React, { useRef } from "react";
+import { ImDownload } from "react-icons/im";
+
 import { Route } from "react-router-dom";
 import xmlJs from "xml-js";
 import {
@@ -104,51 +106,49 @@ class HouseProductList extends React.Component {
   async componentDidMount() {
     const UserInformation = this.context?.UserInformatio;
     CreateProductXMLView()
-      .then((res) => {
+      .then(res => {
         const jsonData = xmlJs.xml2json(res.data, { compact: true, spaces: 2 });
         console.log(JSON.parse(jsonData)?.createProduct);
 
-        const inputs = JSON.parse(jsonData)?.createProduct?.input?.map(
-          (ele) => {
-            if (ele?.type._attributes.type == "file") {
-              return {
-                headerName: ele?.label._text,
-                field: ele?.name._text,
-                filter: true,
-                sortable: true,
-                cellRendererFramework: (params) => {
-                  return (
-                    <>
+        const inputs = JSON.parse(jsonData)?.createProduct?.input?.map(ele => {
+          if (ele?.type._attributes.type == "file") {
+            return {
+              headerName: ele?.label._text,
+              field: ele?.name._text,
+              filter: true,
+              sortable: true,
+              cellRendererFramework: params => {
+                return (
+                  <>
+                    <div className="actions cursor-pointer">
                       <div className="actions cursor-pointer">
-                        <div className="actions cursor-pointer">
-                          {params.data?.Product_image && (
-                            <img
-                              className="rounded-circle mr-50"
-                              src={`http://65.0.96.247:8000/Images/${params.data?.Product_image}`}
-                              alt="user avatar"
-                              height="40"
-                              width="40"
-                            />
-                          )}
-                        </div>
+                        {params.data?.Product_image && (
+                          <img
+                            className="rounded-circle mr-50"
+                            src={`http://65.0.96.247:8000/Images/${params.data?.Product_image}`}
+                            alt="user avatar"
+                            height="40"
+                            width="40"
+                          />
+                        )}
                       </div>
-                    </>
-                  );
-                },
-              };
-            } else {
-              return {
-                headerName: ele?.label._text,
-                field: ele?.name._text,
-                filter: true,
-                sortable: true,
-              };
-            }
+                    </div>
+                  </>
+                );
+              },
+            };
+          } else {
+            return {
+              headerName: ele?.label._text,
+              field: ele?.name._text,
+              filter: true,
+              sortable: true,
+            };
           }
-        );
+        });
         let dropdown = JSON.parse(jsonData).createProduct?.MyDropDown;
         if (dropdown.length) {
-          var mydropdownArray = dropdown?.map((ele) => {
+          var mydropdownArray = dropdown?.map(ele => {
             return {
               headerName: ele?.dropdown?.label?._text,
               field: ele?.dropdown?.name?._text,
@@ -180,7 +180,7 @@ class HouseProductList extends React.Component {
             field: "sortorder",
             field: "transactions",
             width: 190,
-            cellRendererFramework: (params) => {
+            cellRendererFramework: params => {
               return (
                 <div className="actions cursor-pointer">
                   <Route
@@ -231,7 +231,7 @@ class HouseProductList extends React.Component {
             field: "createdAt",
             filter: true,
             sortable: true,
-            cellRendererFramework: (params) => {
+            cellRendererFramework: params => {
               return (
                 <>
                   <div className="actions cursor-pointer">
@@ -246,7 +246,7 @@ class HouseProductList extends React.Component {
             field: "updatedAt",
             filter: true,
             sortable: true,
-            cellRendererFramework: (params) => {
+            cellRendererFramework: params => {
               return (
                 <>
                   <div className="actions cursor-pointer">
@@ -273,18 +273,18 @@ class HouseProductList extends React.Component {
         }
         this.setState({ SelectedCols: Product });
       })
-      .catch((err) => {
+      .catch(err => {
         console.log(err);
         swal("Error", "something went wrong try again");
       });
     let userdata = JSON.parse(localStorage.getItem("userData"));
 
     await ProductListView(userdata?._id)
-      .then((res) => {
+      .then(res => {
         console.log(res?.Product);
         this.setState({ rowData: res?.Product });
       })
-      .catch((err) => {
+      .catch(err => {
         console.log(err);
       });
   }
@@ -609,16 +609,21 @@ class HouseProductList extends React.Component {
                 <>
                   <Col sm="12">
                     <Card>
-                      <Row className="m-2">
+                      <Row className="mt-2 ml-2 mr-2">
                         <Col>
-                          <h1 className="float-left">Product List</h1>
+                          <h1
+                            className="float-left"
+                            style={{ fontWeight: "600" }}
+                          >
+                            Product List
+                          </h1>
                         </Col>
                         <Col>
                           <span className="mx-1">
                             <FaFilter
                               style={{ cursor: "pointer" }}
                               title="filter coloumn"
-                              size="25px"
+                              size="35px"
                               onClick={this.LookupviewStart}
                               color="#39cccc"
                               className="float-right"
@@ -626,10 +631,10 @@ class HouseProductList extends React.Component {
                           </span>
                           <span className="mx-1">
                             <div className="dropdown-container float-right">
-                              <BsCloudDownloadFill
+                              <ImDownload
                                 style={{ cursor: "pointer" }}
                                 title="download file"
-                                size="25px"
+                                size="35px"
                                 className="dropdown-button "
                                 color="#39cccc"
                                 onClick={this.toggleDropdown}
@@ -639,6 +644,8 @@ class HouseProductList extends React.Component {
                                   style={{
                                     position: "absolute",
                                     zIndex: "1",
+                                    border: "1px solid #39cccc",
+                                    backgroundColor: "white",
                                   }}
                                   className="dropdown-content dropdownmy"
                                 >
@@ -686,9 +693,15 @@ class HouseProductList extends React.Component {
                           <span>
                             <Route
                               render={({ history }) => (
-                                <Badge
+                                <Button
+                                  style={{
+                                    cursor: "pointer",
+                                    backgroundColor: "#39cccc",
+                                    color: "white",
+                                    fontWeight: "600",
+                                  }}
                                   className="btn  float-right mr-1"
-                                  color="primary"
+                                  color="#39cccc"
                                   onClick={() =>
                                     history.push(
                                       "/app/freshlist/house/AddProduct"
@@ -696,13 +709,13 @@ class HouseProductList extends React.Component {
                                   }
                                 >
                                   Add Product
-                                </Badge>
+                                </Button>
                               )}
                             />
                           </span>
                         </Col>
                       </Row>
-                      <CardBody>
+                      <CardBody style={{ marginTop: "-1.5rem" }}>
                         {this.state.rowData === null ? null : (
                           <div className="ag-theme-material w-100 my-2 ag-grid-table">
                             <div className="d-flex flex-wrap justify-content-between align-items-center">

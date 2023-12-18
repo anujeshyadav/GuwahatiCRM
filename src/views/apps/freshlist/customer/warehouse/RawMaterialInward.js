@@ -23,7 +23,6 @@ import { history } from "../../../../../history";
 import "../../../../../assets/scss/plugins/tables/_agGridStyleOverride.scss";
 import "../../../../../assets/scss/pages/users.scss";
 
-
 class RawMaterialInward extends React.Component {
   state = {
     rowData: [],
@@ -53,7 +52,7 @@ class RawMaterialInward extends React.Component {
         field: "WareHouseName",
         filter: true,
         width: 200,
-        cellRendererFramework: (params) => {
+        cellRendererFramework: params => {
           return (
             <div className="d-flex align-items-center cursor-pointer">
               <span>{params?.data?.category_name}</span>
@@ -66,7 +65,7 @@ class RawMaterialInward extends React.Component {
         field: "mobile",
         filter: true,
         width: 200,
-        cellRendererFramework: (params) => {
+        cellRendererFramework: params => {
           return (
             <div className="d-flex align-items-center cursor-pointer">
               <span>{params?.data?.category_name}</span>
@@ -79,7 +78,7 @@ class RawMaterialInward extends React.Component {
         field: "Email",
         filter: true,
         width: 200,
-        cellRendererFramework: (params) => {
+        cellRendererFramework: params => {
           return (
             <div className="d-flex align-items-center cursor-pointer">
               <span>{params?.data?.category_name}</span>
@@ -87,12 +86,12 @@ class RawMaterialInward extends React.Component {
           );
         },
       },
-     {
+      {
         headerName: "Status",
         field: "status",
         filter: true,
         width: 100,
-        cellRendererFramework: (params) => {
+        cellRendererFramework: params => {
           return params.data.status === "Active" ? (
             <div className="badge badge-pill badge-success">
               {params.data.status}
@@ -109,7 +108,7 @@ class RawMaterialInward extends React.Component {
         field: "sortorder",
         field: "transactions",
         width: 150,
-        cellRendererFramework: (params) => {
+        cellRendererFramework: params => {
           return (
             <div className="actions cursor-pointer">
               {/* {this.state.Viewpermisson && (
@@ -177,7 +176,7 @@ class RawMaterialInward extends React.Component {
     let pageparmission = JSON.parse(localStorage.getItem("userData"));
 
     let newparmisson = pageparmission?.role?.find(
-      (value) => value?.pageName === "Category List"
+      value => value?.pageName === "Category List"
     );
 
     this.setState({ Viewpermisson: newparmisson?.permission.includes("View") });
@@ -196,7 +195,7 @@ class RawMaterialInward extends React.Component {
     data.append("user_id", pageparmission?.Userinfo?.id);
     data.append("role", pageparmission?.Userinfo?.role);
 
-    await axiosConfig.post("/getcategory", data).then((response) => {
+    await axiosConfig.post("/getcategory", data).then(response => {
       let rowData = response.data.data?.category;
       console.log(rowData);
       if (rowData) {
@@ -214,7 +213,7 @@ class RawMaterialInward extends React.Component {
         cancel: "Cancel",
         catch: { text: "Delete ", value: "delete" },
       },
-    }).then((value) => {
+    }).then(value => {
       switch (value) {
         case "delete":
           let data = new FormData();
@@ -225,7 +224,7 @@ class RawMaterialInward extends React.Component {
           data.append("delete_id", id);
           axiosConfig
             .post("/deleterecord", data)
-            .then((resp) => {
+            .then(resp => {
               console.log(resp?.data.message);
               if (resp?.data.success) {
                 swal("Success", "Category Deleted Successfully");
@@ -236,7 +235,7 @@ class RawMaterialInward extends React.Component {
                 swal("Error", `${resp?.data.message}`);
               }
             })
-            .catch((err) => {
+            .catch(err => {
               console.log(err);
               // swal("Somethig Went Wrong");
             });
@@ -246,7 +245,7 @@ class RawMaterialInward extends React.Component {
       }
     });
   }
-  onGridReady = (params) => {
+  onGridReady = params => {
     this.gridApi = params.api;
     this.gridColumnApi = params.columnApi;
     this.setState({
@@ -255,10 +254,10 @@ class RawMaterialInward extends React.Component {
       totalPages: this.gridApi.paginationGetTotalPages(),
     });
   };
-  updateSearchQuery = (val) => {
+  updateSearchQuery = val => {
     this.gridApi.setQuickFilter(val);
   };
-  filterSize = (val) => {
+  filterSize = val => {
     if (this.gridApi) {
       this.gridApi.paginationSetPageSize(Number(val));
       this.setState({
@@ -275,16 +274,22 @@ class RawMaterialInward extends React.Component {
         <Col sm="12"></Col>
         <Col sm="12">
           <Card>
-            <Row className="m-2">
+            <Row className="mt-2 ml-2 mr-2">
               <Col>
-                <h1 sm="6" className="float-left">
-                Raw Material Inward List
+                <h1 sm="6" className="float-left" style={{ fontWeight: "600" }}>
+                  Raw Material Inward List
                 </h1>
               </Col>
               <Col>
                 <Button
-                  style={{ cursor: "pointer" }}
-                  className="btn btn-primary float-right"
+                  style={{
+                    cursor: "pointer",
+                    backgroundColor: "#39cccc",
+                    color: "white",
+                    fontWeight: "600",
+                  }}
+                  color="#39cccc"
+                  className=" float-right"
                   onClick={() =>
                     this.props.history.push(
                       "/app/softNumen/warehouse/CreateWareHouse"
@@ -312,7 +317,7 @@ class RawMaterialInward extends React.Component {
                 )}
               </Col> */}
             </Row>
-            <CardBody>
+            <CardBody style={{ marginTop: "-1.5rem" }}>
               {this.state.rowData === null ? null : (
                 <div className="ag-theme-material w-100 my-2 ag-grid-table">
                   <div className="d-flex flex-wrap justify-content-between align-items-center">
@@ -364,9 +369,7 @@ class RawMaterialInward extends React.Component {
                       <div className="table-input mr-1">
                         <Input
                           placeholder="search..."
-                          onChange={(e) =>
-                            this.updateSearchQuery(e.target.value)
-                          }
+                          onChange={e => this.updateSearchQuery(e.target.value)}
                           value={this.state.value}
                         />
                       </div>
@@ -381,7 +384,7 @@ class RawMaterialInward extends React.Component {
                     </div>
                   </div>
                   <ContextLayout.Consumer>
-                    {(context) => (
+                    {context => (
                       <AgGridReact
                         gridOptions={{}}
                         rowSelection="multiple"

@@ -792,7 +792,7 @@ const horizontalMenuConfig = [
         type: "item",
         icon: <BsFillCartXFill size={22} />,
         permissions: ["admin", "editor"],
-        navLink: "/app/softNumen/warranty/CreateWiki",
+        navLink: "/app/softNumen/warranty/ClosingStock",
       },
       {
         id: "Low Stock",
@@ -800,7 +800,7 @@ const horizontalMenuConfig = [
         type: "item",
         icon: <BsMinecart size={22} />,
         permissions: ["admin", "editor"],
-        navLink: "/app/softNumen/warranty/CreateWiki",
+        navLink: "/app/softNumen/warranty/LowStock",
       },
       {
         id: "Damaged Stock",
@@ -808,7 +808,7 @@ const horizontalMenuConfig = [
         type: "item",
         icon: <GiDamagedHouse size={22} />,
         permissions: ["admin", "editor"],
-        navLink: "/app/softNumen/warranty/CreateWiki",
+        navLink: "/app/softNumen/warranty/DamagedStock",
       },
       {
         id: "OverDue Stock",
