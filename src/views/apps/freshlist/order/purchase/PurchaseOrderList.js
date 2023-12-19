@@ -85,7 +85,6 @@ class PurchaseOrderViewList extends React.Component {
           headerName: "UID",
           valueGetter: "node.rowIndex + 1",
           field: "node.rowIndex + 1",
-          // checkboxSelection: true,
           width: 80,
           filter: true,
         },
@@ -97,7 +96,6 @@ class PurchaseOrderViewList extends React.Component {
           cellRendererFramework: params => {
             return (
               <div className="actions cursor-pointer">
-                {/* {this.state.Viewpermisson && ( */}
                 <CornerDownLeft
                   className="mr-50"
                   size="25px"
