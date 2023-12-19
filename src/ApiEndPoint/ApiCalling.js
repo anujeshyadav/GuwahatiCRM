@@ -185,6 +185,8 @@ import {
   Factory_Stock,
   Order_ViewList,
   orders_ID,
+  Create_order_by_cashbook,
+  CashbookList,
 } from "./Api";
 import axiosConfig from "../axiosConfig";
 import dotenv from "dotenv";
@@ -199,6 +201,12 @@ dotenv.config();
 
 // guwahati api calling open
 
+export const Cashbook_List = async id => {
+  let response = await axiosConfig
+    .get(`${CashbookList}` + id)
+    .then(res => res.data);
+  return response;
+};
 export const Createwarehousexml = async () => {
   let response = await axiosConfig
     .get(`${Create_warehouse_xmlView}`)
@@ -211,6 +219,13 @@ export const Stock_trxFactorytoWList = async id => {
     .then(res => res.data);
   return response;
 };
+// post api for create order by cashbook
+export const Ordercashbook = async data => {
+  let response = await axiosConfig
+    .post(`${Create_order_by_cashbook}`, data)
+    .then(res => res.data);
+  return response;
+};
 
 // export const CreateWarehousesave = async data => {
 export const StocktrxFtoW = async data => {
@@ -219,6 +234,7 @@ export const StocktrxFtoW = async data => {
     .then(res => res.data);
   return response;
 };
+
 export const WarehousetoWareHouseTrx = async data => {
   let response = await axiosConfig
     .post(`${Stock_trx_WarehousetoWareHouse}`, data)
@@ -417,6 +433,7 @@ export const createOrderhistoryview = async id => {
     .then(res => res.data);
   return response;
 };
+
 export const view_Sales_orderList = async id => {
   let response = await axiosConfig
     .get(`${view_Sales_order_List}` + id)
@@ -1319,62 +1336,62 @@ export const OrderDisPatchList = async id => {
     .then(res => res.data);
   return response;
 };
-export const Create_TargetList = async (id) => {
+export const Create_TargetList = async id => {
   let response = await axiosConfig
     .get(`${Create_Target_List}` + id)
-    .then((res) => res.data);
+    .then(res => res.data);
   return response;
 };
-export const Delete_targetINlist = async (id) => {
+export const Delete_targetINlist = async id => {
   let response = await axiosConfig
     .delete(`${Delete_target_INlist}` + id)
 
-    .then((res) => res.data);
+    .then(res => res.data);
   return response;
 };
 export const Delete_individualTarget = async (id, id1) => {
   let response = await axiosConfig
     .delete(`${Delete_individual_Target}` + id + "/product/" + id1)
-    .then((res) => res.data);
+    .then(res => res.data);
   return response;
 };
 export const Update_targetINlist = async (id, data) => {
   let response = await axiosConfig
     .put(Update_target_INlist + id, data)
-    .then((res) => res.data);
+    .then(res => res.data);
   return response;
 };
 export const Edit_StatusDispatchList = async (id, data) => {
   let response = await axiosConfig
     .put(`${Edit_Status_DispatchList}` + id, data)
-    .then((res) => res.data);
+    .then(res => res.data);
   return response;
 };
 
 // warehouse view by id aj gproup
 // View_Wareahouse_id;
-export const View_Wareahouseid = async (id) => {
+export const View_Wareahouseid = async id => {
   let response = await axiosConfig
     .get(`${View_Wareahouse_id}` + id)
-    .then((res) => res.data);
+    .then(res => res.data);
   return response;
 };
-export const WarehouseOutwardStocklist = async (id) => {
+export const WarehouseOutwardStocklist = async id => {
   let response = await axiosConfig
     .get(`${Warehouse_OutwardStock_list}` + id)
-    .then((res) => res.data);
+    .then(res => res.data);
   return response;
 };
-export const Warehouse_Temporarlylist = async (id) => {
+export const Warehouse_Temporarlylist = async id => {
   let response = await axiosConfig
     .get(`${Warehouse_Temporarly_list}` + id)
-    .then((res) => res.data);
+    .then(res => res.data);
   return response;
 };
-export const DeliveryBoyAssignedList = async (id) => {
+export const DeliveryBoyAssignedList = async id => {
   let response = await axiosConfig
     .get(`${DeliveryBoy_AssignedList}` + id)
-    .then((res) => res.data);
+    .then(res => res.data);
   return response;
 };
 export const Stockupdate = async (id, data) => {

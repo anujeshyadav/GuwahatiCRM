@@ -1,5 +1,6 @@
 import React, { useRef } from "react";
 import { Route } from "react-router-dom";
+import { ImDownload } from "react-icons/im";
 import {
   Label,
   Card,
@@ -597,7 +598,7 @@ class OrderList extends React.Component {
                       <FaFilter
                         style={{ cursor: "pointer" }}
                         title="filter coloumn"
-                        size="25px"
+                        size="35px"
                         onClick={this.LookupviewStart}
                         color="#39cccc"
                         className="float-right"
@@ -605,20 +606,22 @@ class OrderList extends React.Component {
                     </span>
                     <span className="mx-1">
                       <div className="dropdown-container float-right">
-                        <BsCloudDownloadFill
+                        <ImDownload
                           style={{ cursor: "pointer" }}
                           title="download file"
-                          size="25px"
+                          size="35px"
                           className="dropdown-button "
                           color="#39cccc"
                           onClick={this.toggleDropdown}
                         />
                         {isOpen && (
                           <div
-                            style={{
-                              position: "absolute",
-                              zIndex: "1",
-                            }}
+                          style={{
+                            position: "absolute",
+                            zIndex: "1",
+                            border: "1px solid #39cccc",
+                            backgroundColor: "white",
+                          }}
                             className="dropdown-content dropdownmy"
                           >
                             <h5
@@ -663,7 +666,7 @@ class OrderList extends React.Component {
                     <span>
                       <Route
                         render={({ history }) => (
-                          <Badge
+                          <Button
                             style={{ cursor: "pointer" }}
                             className="float-right mr-1"
                             color="primary"
@@ -672,7 +675,7 @@ class OrderList extends React.Component {
                             }
                           >
                             <FaPlus size={15} /> Create Order
-                          </Badge>
+                          </Button>
                         )}
                       />
                     </span>
