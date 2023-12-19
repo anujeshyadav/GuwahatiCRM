@@ -12,6 +12,7 @@ import {
   FormGroup,
   CustomInput,
   Badge,
+  Table,
 } from "reactstrap";
 import { history } from "../../../../history";
 import PhoneInput from "react-phone-input-2";
@@ -20,13 +21,15 @@ import { Country, State, City } from "country-state-city";
 import Select from "react-select";
 import moment from "moment-timezone";
 import { Route } from "react-router-dom";
-import { useLocation } from "react-router-dom";
+import { useLocation, useHistory } from "react-router-dom";
+import { Modal, ModalHeader, ModalBody, ModalFooter } from "reactstrap";
 
 import swal from "sweetalert";
 import "../../../../../src/layouts/assets/scss/pages/users.scss";
 
 import {
   CreateAccountList,
+  Edit_StatusDispatchList,
   GoodDispatchxmlView,
   Save_GoodDispatch,
 } from "../../../../ApiEndPoint/ApiCalling";
@@ -35,7 +38,7 @@ import "../../../../assets/scss/pages/users.scss";
 import UserContext from "../../../../context/Context";
 import { array } from "prop-types";
 
-const CreateDispach = () => {
+const CreateDispach = (args) => {
   const [CreatAccountView, setCreatAccountView] = useState([]);
   const [DeliveryBoy, setDeliveryBoy] = useState([]);
   const [Countries, setCountry] = useState({});
@@ -45,8 +48,12 @@ const CreateDispach = () => {
   const [index, setindex] = useState("");
   const [error, setError] = useState("");
   const [permissions, setpermissions] = useState({});
+  const [modal, setModal] = useState(false);
+
+  const toggle = () => setModal(!modal);
 
   const Context = useContext(UserContext);
+  let history = useHistory();
   let location = useLocation();
 
   const handleFileChange = (e, type, i) => {
@@ -107,10 +114,16 @@ const CreateDispach = () => {
     }
   };
   useEffect(() => {
-    console.log(formData);
-    console.log(location?.state.data);
-    if (location?.state.data) {
+    if (!!location?.state?.data) {
+      localStorage.setItem(
+        "DispatchItem",
+        JSON.stringify(location?.state.data)
+      );
+
       setDispatchData(location?.state.data);
+    } else {
+      let dispatchdata = JSON.parse(localStorage.getItem("DispatchItem"));
+      setDispatchData(dispatchdata);
     }
   }, [formData]);
   useEffect(() => {
@@ -149,8 +162,16 @@ const CreateDispach = () => {
 
   const submitHandler = (e) => {
     e.preventDefault();
+    console.log(formData);
+    console.log(DispatchData);
 
     let formdata = new FormData();
+
+    formdata.append(`userId`, DispatchData?.userId);
+    formdata.append(`orderId`, DispatchData?.orderId);
+    formdata.append(`status`, "InProcess");
+    formdata.append(`orderItems`, JSON.stringify(DispatchData?.orderItems));
+
     CreatAccountView?.map((ele, i) => {
       if (ele?.type?._attributes?.type == "text") {
         formdata.append(`${ele?.name._text}`, formData[ele?.name?._text]);
@@ -159,7 +180,6 @@ const CreateDispach = () => {
           formdata.append("file", formData?.CNUpload);
         }
         if (ele?.name?._text == "FetchSalesInvoice") {
-          formdata.append("invoice", formData?.FetchSalesInvoice);
         }
       } else {
         formdata.append(`${ele?.name._text}`, formData[ele?.name?._text]);
@@ -169,21 +189,26 @@ const CreateDispach = () => {
       `${dropdownValue?.MyDropdown?.dropdown.name?._text}`,
       formData.AssignDeliveryBoy
     );
-    formdata.append("status", formData?.status);
-    // formdata.forEach((value, key) => {
-    //   console.log(key, value);
-    // });
 
     Save_GoodDispatch(formdata)
       .then((res) => {
         console.log(res);
-        setFormData({});
+        let payload = { status: "Inprocess" };
+        Edit_StatusDispatchList(DispatchData?._id, payload)
+          .then((res) => {
+            console.log(res);
+            history.goBack();
+          })
+          .catch((err) => {
+            console.log(err);
+          });
         if (res.status) {
           swal("Good Dispatch Created Successfully");
         }
       })
       .catch((err) => {
         console.log(err.response);
+        swal("Something went wrong Please Try again After Some Time");
       });
   };
 
@@ -219,6 +244,69 @@ const CreateDispach = () => {
               <Row className="mb-2">
                 {CreatAccountView &&
                   CreatAccountView?.map((ele, i) => {
+                    if (ele?.Lookup?._text == "yes") {
+                      return (
+                        <>
+                          <>
+                            <Col key={i} lg="4" md="4" sm="12">
+                              <Label className="mb-1">
+                                {ele?.label?._text}
+                              </Label>
+
+                              <Input
+                                disabled
+                                className="form-control"
+                                onKeyDown={(e) => {
+                                  if (
+                                    ele?.type?._attributes?.type == "number"
+                                  ) {
+                                    ["e", "E", "+", "-"].includes(e.key) &&
+                                      e.preventDefault();
+                                  }
+                                }}
+                                type={ele?.type?._attributes?.type}
+                                placeholder="Click to fetch Details"
+                                name={ele?.name?._text}
+                                value={formData[ele?.name?._text]}
+                                onChange={(e) => {
+                                  handleInputChange(
+                                    e,
+                                    ele?.type?._attributes?.type,
+                                    i
+                                  );
+                                }}
+                              />
+                              <Button
+                                onClick={(e) => {
+                                  e.preventDefault();
+                                  toggle();
+                                }}
+                                style={{
+                                  position: "absolute",
+                                  right: 14,
+                                  top: 33,
+                                }}
+                                className="lookupview"
+                                color="primary">
+                                Fetch
+                              </Button>
+                              {index === i ? (
+                                <>
+                                  {error && (
+                                    <span style={{ color: "red" }}>
+                                      {error}
+                                    </span>
+                                  )}
+                                </>
+                              ) : (
+                                <></>
+                              )}
+                            </Col>
+                          </>
+                        </>
+                      );
+                    }
+
                     if (!!ele?.phoneinput) {
                       return (
                         <>
@@ -553,7 +641,7 @@ const CreateDispach = () => {
                   <div className="mt-1">
                     <FormGroup>
                       <Label>
-                        {dropdownValue?.MyDropdown?.dropdown?.label?._text}
+                        {dropdownValue?.MyDropdown?.dropdown?.label?._text} *
                       </Label>
                       <CustomInput
                         required
@@ -580,7 +668,7 @@ const CreateDispach = () => {
                 </Col>
               </Row>
               <hr />
-              <Col lg="6" md="6" sm="6" className="mb-2 mt-1">
+              {/* <Col lg="6" md="6" sm="6" className="mb-2 mt-1">
                 <Label className="mb-0">Status</Label>
                 <div
                   className="form-label-group"
@@ -606,7 +694,7 @@ const CreateDispach = () => {
                   />
                   <span style={{ marginRight: "3px" }}>Deactive</span>
                 </div>
-              </Col>
+              </Col> */}
               <Row>
                 <Button.Ripple
                   color="primary"
@@ -618,6 +706,104 @@ const CreateDispach = () => {
             </Form>
           </CardBody>
         </Card>
+        <Modal
+          size="xl"
+          // centered="true"
+          isOpen={modal}
+          toggle={toggle}
+          {...args}
+          // style={{ maxWidth: "1050px" }}
+        >
+          <ModalHeader toggle={toggle}>Invoice Details</ModalHeader>
+          <ModalBody>
+            <div className="container">
+              <Row>
+                <Col>
+                  <Label>Party Name :</Label>
+                  <h5 className="mx-1">
+                    {DispatchData && DispatchData?.partyId?.firstName}
+                  </h5>
+                </Col>
+                <Col>
+                  <Label>Date Created :</Label>
+                  <h5>
+                    {DispatchData && DispatchData?.createdAt?.split("T")[0]}
+                  </h5>
+                </Col>
+                <Col>
+                  <Label>Address :</Label>
+                  <h5>
+                    <strong>{DispatchData && DispatchData?.address} </strong>
+                  </h5>
+                </Col>
+                <Col>
+                  <Label>Grand Total :</Label>
+                  <h5>
+                    <strong>{DispatchData && DispatchData?.grandTotal} </strong>
+                    Rs/-
+                  </h5>
+                </Col>
+
+                {/* <Col>
+                <Label>Download Invoice :</Label>
+                <div className="d-flex justify-content-center">
+                  <FaDownload
+                    onClick={this.handleStockTrxInvoiceShow}
+                    color="#00c0e"
+                    fill="#00c0e"
+                    style={{ cursor: "pointer" }}
+                    size={20}
+                  />
+                </div>
+              </Col> */}
+              </Row>
+              <Row className="p-2">
+                <Col>
+                  <div className="d-flex justify-content-center">
+                    <h4>Product Details</h4>
+                  </div>
+                </Col>
+              </Row>
+              <Row>
+                <Col>
+                  <Table style={{ cursor: "pointer" }} striped>
+                    <thead>
+                      <tr>
+                        <th>#</th>
+                        <th>Product Name</th>
+                        <th>Price</th>
+                        <th>Size</th>
+                        <th>Unit</th>
+                        <th>Quantity</th>
+                        <th>Total</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {DispatchData?.orderItems &&
+                        DispatchData?.orderItems?.map((ele, i) => (
+                          <>
+                            <tr>
+                              <th scope="row">{i + 1}</th>
+                              <td>{ele?.productId?.Product_Title}</td>
+                              <td>{ele?.productId?.Product_MRP}</td>
+                              <td>{ele?.productId?.Size}</td>
+                              <td>{ele?.unitQty}</td>
+                              <td>{ele?.qty}</td>
+                              <td>
+                                {ele?.product?.Product_MRP *
+                                  ele?.product?.Size *
+                                  ele?.qty}
+                              </td>
+                            </tr>
+                          </>
+                        ))}
+                    </tbody>
+                  </Table>
+                </Col>
+              </Row>
+            </div>
+          </ModalBody>
+        </Modal>
       </div>
     </div>
   );

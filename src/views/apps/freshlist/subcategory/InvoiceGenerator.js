@@ -250,16 +250,9 @@ class InvoiceGenerator extends React.Component {
                           size="25px"
                           color="green"
                           onClick={() => {
+                            this.setState({ ViewOneData: params?.data });
                             this.toggleModalTwo();
                             console.log(params?.data);
-                            // debugger;
-                            this.setState({ ViewOneData: params?.data });
-
-                            // let selectedData = this.gridApi.getSelectedRows();
-                            // this.runthisfunction(params.data?._id);
-                            // this.gridApi.updateRowData({
-                            //   remove: selectedData,
-                            // });
                           }}
                         />
                       )}
@@ -666,6 +659,11 @@ class InvoiceGenerator extends React.Component {
   toggleModalOne = () => {
     this.setState((prevState) => ({
       modalOne: !prevState.modalOne,
+    }));
+  };
+  toggleModalTwo = () => {
+    this.setState((prevState) => ({
+      modalTwo: !prevState.modalTwo,
     }));
   };
   changeHandler = (e) => {
