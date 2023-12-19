@@ -1,7 +1,5 @@
 import React, { useRef } from "react";
-import { Route } from "react-router-dom";
 import xmlJs from "xml-js";
-import { ImDownload } from "react-icons/im";
 import {
   Card,
   CardBody,
@@ -16,18 +14,39 @@ import {
   Button,
   ModalHeader,
   ModalBody,
+  Badge,
+  Label,
+  Form,
+  CustomInput,
+  Table,
 } from "reactstrap";
+import { ImDownload } from "react-icons/im";
+import { AiOutlineDownload } from "react-icons/ai";
+// import { ToWords } from "to-words";
+import { Eye, ChevronDown, CornerDownLeft } from "react-feather";
+// import { history } from "../../../../history";
+// import Templatethree from "../../../../assets/Billtemp/Templatethree.png";
+// import Templatetwo from "../../../../assets/Billtemp/Templatetwo.png";
+// import templatefour from "../../../../assets/Billtemp/templatefour.png";
+// import templateone from "../../../../assets/Billtemp/templateone.png";
+// import "../../../../assets/scss/plugins/tables/_agGridStyleOverride.scss";
+import "../../../../../assets/scss/pages/users.scss";
+import InvoicGenerator from "../../subcategory/InvoiceGeneratorone";
+import { Route, Link } from "react-router-dom";
+import swal from "sweetalert";
+import {
+  Sales_OrderToDispatchList,
+  createOrderhistoryview,
+} from "../../../../../ApiEndPoint/ApiCalling";
+
 import { ContextLayout } from "../../../../../utility/context/Layout";
 import { AgGridReact } from "ag-grid-react";
 import "ag-grid-community/dist/styles/ag-grid.css";
-import EditAccount from "../../accounts/EditAccount";
-import ViewAccount from "../../accounts/ViewAccount";
+import ViewOrder from "../../../../../../src/views/apps/freshlist/order/ViewAll";
 import jsPDF from "jspdf";
-// import db from "../../../../context/indexdb";
 import "jspdf-autotable";
 import Logo from "../../../../../assets/img/profile/pages/logomain.png";
 import Papa from "papaparse";
-import { Eye, Trash2, ChevronDown, Edit } from "react-feather";
 import { IoMdRemoveCircleOutline } from "react-icons/io";
 import "../../../../../assets/scss/plugins/tables/_agGridStyleOverride.scss";
 import "../../../../../assets/scss/pages/users.scss";
@@ -35,14 +54,14 @@ import "../../../../../assets/scss/pages/users.scss";
 import {
   FaArrowAltCircleLeft,
   FaArrowAltCircleRight,
+  FaDownload,
   FaFilter,
 } from "react-icons/fa";
 import moment from "moment-timezone";
-import swal from "sweetalert";
 import {
-  TicketTool_ViewData,
-  ticketToolDeleteOne,
-  ticketToolList,
+  CreateAccountList,
+  CreateAccountView,
+  DeleteAccount,
 } from "../../../../../ApiEndPoint/ApiCalling";
 import {
   BsCloudDownloadFill,
@@ -51,10 +70,33 @@ import {
 } from "react-icons/bs";
 import * as XLSX from "xlsx";
 import UserContext from "../../../../../context/Context";
+import { CheckPermission } from "../../house/CheckPermission";
+// import ClosingStock from "../customer/ProductWIKI/ClosingStock";
 
 const SelectedColums = [];
-
-class Orderreport extends React.Component {
+// const toWords = new ToWords({
+//   localeCode: "en-IN",
+//   converterOptions: {
+//     currency: true,
+//     ignoreDecimal: false,
+//     ignoreZeroCurrency: false,
+//     doNotAddOnly: false,
+//     currencyOptions: {
+//       // can be used to override defaults for the selected locale
+//       name: "Rupee",
+//       plural: "Rupees",
+//       symbol: "₹",
+//       fractionalUnit: {
+//         name: "Paisa",
+//         plural: "Paise",
+//         symbol: "",
+//       },
+//     },
+//   },
+// });
+const AddedBill = [];
+const AllProduct = [];
+class InvoiceGenerator extends React.Component {
   static contextType = UserContext;
   constructor(props) {
     super(props);
@@ -62,14 +104,445 @@ class Orderreport extends React.Component {
     this.gridApi = null;
     this.state = {
       isOpen: false,
+      ShowMyBill: false,
+      BillNumber: "",
       Arrindex: "",
+      AllbillMerged: [],
       rowData: [],
+      InsiderPermissions: {},
+      ViewOneData: {},
+      CompanyDetails: {},
+      ShowBill: false,
+      Applied_Charges: {},
+      Billtoposition: "Left",
+      shipto: "right",
+      logoposition: "Left",
+      ButtonText: "Submit",
+      Mergebilllength: "",
+      modal: false,
+      modalOne: false,
+      modalTwo: false,
+      sgst: "",
+      discount: "",
+      ViewBill: true,
+      wordsNumber: "",
+      cgst: "",
+      otherCharges: "",
+      deliveryCharges: "",
+      PrintData: {},
+      Viewpermisson: null,
+      Editpermisson: null,
+      Createpermisson: null,
+      Deletepermisson: null,
+      getPageSize: "",
+      columnDefs: [
+        {
+          headerName: "S.No",
+          valueGetter: "node.rowIndex + 1",
+          field: "node.rowIndex + 1",
+          width: 80,
+          filter: true,
+        },
+        // {
+        //   headerName: "Add Bills",
+        //   width: 160,
+        //   filter: true,
+        //   cellRendererFramework: (params) => {
+        //     return (
+        //       <div className="d-flex align-items-center justify-content-center cursor-pointer">
+        //         <div>
+        //           <span>
+        //             <input
+        //               type="checkbox"
+        //               className="customcheckbox"
+        //               onClick={(e) => {
+        //                 this.handleMultipleBillsAdd(
+        //                   params?.data,
+        //                   e.target.checked
+        //                 );
+        //                 // console.log(e.target.checked);
+        //               }}
+        //             />
+        //             {/* <AiOutlineDownload
+        //               onClick={() => this.handleBillDownload(params.data)}
+        //               fill="green"
+        //               size="30px"
+        //             /> */}
+        //           </span>
+        //         </div>
+        //       </div>
+        //     );
+        //   },
+        // },
+        {
+          headerName: "Status",
+          field: "order_status",
+          filter: true,
+          width: 140,
+          cellRendererFramework: params => {
+            // console.log(params.data);
+            return params.data?.status === "completed" ? (
+              <div className="badge badge-pill badge-success">Completed</div>
+            ) : params.data?.status === "pending" ? (
+              <div className="badge badge-pill badge-warning">
+                {params.data?.status}
+              </div>
+            ) : params.data?.status === "return" ? (
+              <div className="badge badge-pill bg-danger">Returned</div>
+            ) : params.data?.status === "cancelled" ? (
+              <div className="badge badge-pill bg-danger">
+                {params.data.status}
+              </div>
+            ) : params.data?.status === "completed" ? (
+              <div className="badge badge-pill bg-success">Completed</div>
+            ) : (
+              <>
+                <div className="badge badge-pill bg-warning">Cancelled</div>
+              </>
+            );
+          },
+        },
+        // {
+        //   headerName: "Actions",
+        //   field: "sortorder",
+        //   field: "transactions",
+        //   width: 120,
+        //   cellRendererFramework: params => {
+        //     return (
+        //       <div className="actions cursor-pointer">
+        //         {this.state.InsiderPermissions &&
+        //           this.state.InsiderPermissions?.Edit && (
+        //             <CornerDownLeft
+        //               className="mr-50"
+        //               size="25px"
+        //               color="green"
+        //               onClick={() => {
+        //                 localStorage.setItem(
+        //                   "OrderList",
+        //                   JSON.stringify(params.data)
+        //                 );
+        //                 this.props.history.push({
+        //                   pathname: `/app/AJGroup/order/placeOrderReturn/${params.data?._id}`,
+        //                   state: params.data,
+        //                 });
+        //               }}
+        //             />
+        //           )}
+
+        //         {this.state.InsiderPermissions &&
+        //           this.state.InsiderPermissions?.View && (
+        //             <Route
+        //               render={() => (
+        //                 <Eye
+        //                   className="mr-50"
+        //                   size="25px"
+        //                   color="green"
+        //                   onClick={() => {
+        //                     this.toggleModalTwo();
+        //                     console.log(params?.data);
+        //                     // debugger;
+        //                     this.setState({ ViewOneData: params?.data });
+
+        //                     // let selectedData = this.gridApi.getSelectedRows();
+        //                     // this.runthisfunction(params.data?._id);
+        //                     // this.gridApi.updateRowData({
+        //                     //   remove: selectedData,
+        //                     // });
+        //                   }}
+        //                 />
+        //               )}
+        //             />
+        //           )}
+        //         {/* {this.state.Deletepermisson && (
+
+        //       )} */}
+        //       </div>
+        //     );
+        //   },
+        // },
+        {
+          headerName: "Orderid",
+          field: "_id",
+          filter: true,
+          resizable: true,
+          width: 200,
+          cellRendererFramework: params => {
+            return (
+              <div className="d-flex align-items-center cursor-pointer">
+                <div>
+                  <span>{params?.data?._id}</span>
+                </div>
+              </div>
+            );
+          },
+        },
+        // {
+        //   headerName: "Invoice",
+        //   field: "invoice",
+        //   filter: true,
+        //   resizable: true,
+        //   width: 140,
+        //   cellRendererFramework: params => {
+        //     // console.log(params?.data?.status);
+
+        //     return (
+        //       <div className="d-flex align-items-center justify-content-center cursor-pointer">
+        //         <div>
+        //           {/* {params?.data?.status == "completed" ? ( */}
+        //           <>
+        //             {this.state.InsiderPermissions &&
+        //               this.state.InsiderPermissions?.View && (
+        //                 <AiOutlineDownload
+        //                   // onClick={() => this.handleBillDownload(params.data)}
+        //                   onClick={() => this.MergeBillNow(params.data)}
+        //                   fill="green"
+        //                   size="30px"
+        //                 />
+        //               )}
+        //           </>
+        //           <span></span>
+        //         </div>
+        //       </div>
+        //     );
+        //   },
+        // },
+        {
+          headerName: "FullName",
+          field: "fullName",
+          filter: true,
+          resizable: true,
+          width: 150,
+          cellRendererFramework: params => {
+            return (
+              <div className="d-flex align-items-center justify-content-center cursor-pointer">
+                <div>
+                  <span>{params?.data?.fullName}</span>
+                </div>
+              </div>
+            );
+          },
+        },
+        {
+          headerName: "MobileNo",
+          field: "MobileNo",
+          filter: true,
+          resizable: true,
+          width: 160,
+          cellRendererFramework: params => {
+            return (
+              <div className="d-flex align-items-center justify-content-center cursor-pointer">
+                <div>
+                  <span>{params?.data?.MobileNo}</span>
+                </div>
+              </div>
+            );
+          },
+        },
+        {
+          headerName: "Address",
+          field: "address",
+          filter: true,
+          resizable: true,
+          width: 200,
+          cellRendererFramework: params => {
+            return (
+              <div className="d-flex align-items-center justify-content-center cursor-pointer">
+                <div>
+                  <span>{params?.data?.address}</span>
+                </div>
+              </div>
+            );
+          },
+        },
+        {
+          headerName: "GrandTotal",
+          field: "grandTotal",
+          filter: true,
+          resizable: true,
+          width: 150,
+          cellRendererFramework: params => {
+            return (
+              <div className="d-flex align-items-center justify-content-center cursor-pointer">
+                <div>
+                  <span>{params?.data?.grandTotal}</span>
+                </div>
+              </div>
+            );
+          },
+        },
+        {
+          headerName: "Tax Amount",
+          field: "taxAmount",
+          filter: true,
+          resizable: true,
+          width: 150,
+          cellRendererFramework: params => {
+            return (
+              <div className="d-flex align-items-center justify-content-center cursor-pointer">
+                <div>
+                  <span>{params?.data?.taxAmount}</span>
+                </div>
+              </div>
+            );
+          },
+        },
+        {
+          headerName: "Party Name",
+          field: "partyId.firstName",
+          filter: true,
+          resizable: true,
+          width: 210,
+          cellRendererFramework: params => {
+            return (
+              <div className="d-flex align-items-center cursor-pointer">
+                <div>
+                  <span>{params.data?.partyId?.firstName}</span>
+                </div>
+              </div>
+            );
+          },
+        },
+
+        {
+          headerName: "Total Product",
+          field: "params?.data?.orderItems?.length",
+          filter: true,
+          resizable: true,
+          width: 180,
+          cellRendererFramework: params => {
+            // console.log(params.data); completed
+            return (
+              <div className="d-flex cursor-pointer">
+                <div>{params?.data?.orderItems?.length} Products</div>
+              </div>
+            );
+          },
+        },
+
+        // {
+        //   headerName: "Actions",
+        //   field: "sortorder",
+        //   field: "transactions",
+        //   width: 120,
+        //   cellRendererFramework: params => {
+        //     return (
+        //       <div className="actions cursor-pointer">
+        //         {this.state.InsiderPermissions &&
+        //           this.state.InsiderPermissions?.Edit && (
+        //             <CornerDownLeft
+        //               className="mr-50"
+        //               size="25px"
+        //               color="green"
+        //               onClick={() => {
+        //                 localStorage.setItem(
+        //                   "OrderList",
+        //                   JSON.stringify(params.data)
+        //                 );
+        //                 this.props.history.push({
+        //                   pathname: `/app/AJGroup/order/placeOrderReturn/${params.data?._id}`,
+        //                   state: params.data,
+        //                 });
+        //               }}
+        //             />
+        //           )}
+
+        //         {/* {this.state.InsiderPermissions &&
+        //           this.state.InsiderPermissions?.Delete && (
+        //             <Route
+        //               render={() => (
+        //                 <Trash2
+        //                   className="mr-50"
+        //                   size="25px"
+        //                   color="red"
+        //                   onClick={() => {
+        //                     let selectedData = this.gridApi.getSelectedRows();
+        //                     this.runthisfunction(params.data?._id);
+        //                     this.gridApi.updateRowData({
+        //                       remove: selectedData,
+        //                     });
+        //                   }}
+        //                 />
+        //               )}
+        //             />
+        //           )} */}
+        //         {/* {this.state.Deletepermisson && (
+
+        //       )} */}
+        //       </div>
+        //     );
+        //   },
+        // },
+
+        // {
+        //   headerName: "total",
+        //   field: "total",
+        //   filter: true,
+        //   resizable: true,
+        //   width: 160,
+        //   cellRendererFramework: (params) => {
+        //     return (
+        //       <div className="d-flex align-items-center cursor-pointer">
+        //         <div>
+        //           <Badge color="success">{params.data?.total}</Badge>
+        //         </div>
+        //       </div>
+        //     );
+        //   },
+        // },
+        // {
+        //   headerName: "brandname ",
+        //   field: "brand_name",
+        //   filter: true,
+        //   resizable: true,
+        //   width: 180,
+        //   cellRendererFramework: (params) => {
+        //     return (
+        //       <div className="d-flex align-items-center cursor-pointer">
+        //         <div>
+        //           <span>{params.data?.brand_name}</span>
+        //         </div>
+        //       </div>
+        //     );
+        //   },
+        // },
+        // {
+        //   headerName: "city",
+        //   field: "city",
+        //   filter: true,
+        //   resizable: true,
+        //   width: 160,
+        //   cellRendererFramework: (params) => {
+        //     return (
+        //       <div className="d-flex align-items-center cursor-pointer">
+        //         <div>
+        //           <span>{params.data?.city}</span>
+        //         </div>
+        //       </div>
+        //     );
+        //   },
+        // },
+        {
+          headerName: "order Creation date",
+          field: "order_date",
+          filter: true,
+          resizable: true,
+          width: 230,
+          cellRendererFramework: params => {
+            return (
+              <div className="d-flex align-items-center cursor-pointer">
+                <div>
+                  <span>{params.data?.order_date}</span>
+                </div>
+              </div>
+            );
+          },
+        },
+      ],
       setMySelectedarr: [],
       SelectedCols: [],
       paginationPageSize: 5,
       currenPageSize: "",
       getPageSize: "",
-      columnDefs: [],
       AllcolumnDefs: [],
       SelectedcolumnDefs: [],
       defaultColDef: {
@@ -81,7 +554,92 @@ class Orderreport extends React.Component {
       },
     };
   }
+  // handleMultipleBillsAdd = (data, check) => {
+  //   this.setState({ PrintData: data });
+  //   let pageparmission = JSON.parse(localStorage.getItem("userData"));
+  //   if (check) {
+  //     AddedBill.push({
+  //       order_id: data?.order_id,
+  //       user_id: pageparmission?.Userinfo?.id,
+  //       role: pageparmission?.Userinfo?.role,
+  //     });
+  //   } else {
+  //     let index = AddedBill.findIndex(ele => ele?.order_id === data?.order_id);
+  //     AddedBill.splice(index, 1);
+  //   }
+  //   // console.log(AddedBill);
+  //   this.setState({ Mergebilllength: AddedBill?.length });
+  // };
 
+  // MergeBillNow = async data => {
+  //   let billnum = localStorage.getItem("billnumber");
+  //   console.log("Bill", data);
+  //   console.log("grandTotal", data.grandTotal);
+  //   console.log(billnum);
+  //   if (billnum) {
+  //     this.setState({ ShowBill: false });
+  //     this.setState({ PrintData: data });
+  //     await Sales_OrderToDispatchList(data?._id)
+  //       .then(res => {
+  //         console.log(res);
+  //       })
+  //       .catch(err => {
+  //         console.log(err);
+  //       });
+  //     const toWords = new ToWords();
+  //     let words = toWords.convert(Number(data?.grandTotal), { currency: true });
+  //     this.setState({ wordsNumber: words });
+  //     this.toggleModalOne();
+  //   } else {
+  //     swal("Select Bill Template");
+  //     this.setState({ ShowBill: true });
+  //     this.toggleModalOne();
+  //   }
+  //   console.log(data);
+  // };
+
+  // handleBillDownload = data => {
+  //   this.setState({ PrintData: data });
+  //   const toWords = new ToWords();
+  //   let words = toWords.convert(Number(data.sub_total), { currency: true });
+  //   this.setState({ wordsNumber: words });
+  //   this.toggleModal();
+  // };
+  toggleModal = () => {
+    this.setState(prevState => ({
+      modal: !prevState.modal,
+    }));
+  };
+  toggleModalOne = () => {
+    this.setState(prevState => ({
+      modalOne: !prevState.modalOne,
+    }));
+  };
+  changeHandler = e => {
+    this.setState({ [e.target.name]: e.target.value });
+  };
+  toggleModalclose = () => {
+    // debugger;
+    this.setState({ modalOne: false });
+    this.setState({ ShowMyBill: false });
+    // window.location.reload();
+    // AddedBill = [];
+    // console.log(AddedBill);
+  };
+  toggleModalcloseTwo = () => {
+    this.setState({ modalTwo: false });
+  };
+
+  handleChangeView = (data, types) => {
+    let type = types;
+    if (type == "readonly") {
+      this.setState({ ViewOneUserView: true });
+      this.setState({ ViewOneData: data });
+    } else {
+      this.setState({ EditOneUserView: true });
+      this.setState({ EditOneData: data });
+    }
+  };
   LookupviewStart = () => {
     this.setState(prevState => ({
       modal: !prevState.modal,
@@ -100,575 +658,80 @@ class Orderreport extends React.Component {
   };
 
   async componentDidMount() {
-    const UserInformation = this.context?.UserInformatio;
-    await ticketToolList()
+    const UserInformation = this.context;
+    console.log(UserInformation?.CompanyDetails);
+    this.setState({ CompanyDetails: UserInformation?.CompanyDetails });
+    let pageparmission = JSON.parse(localStorage.getItem("userData"));
+    let userid = pageparmission?._id;
+
+    let billnumner = localStorage.getItem("billnumber");
+    if (billnumner) {
+      this.setState({ ShowBill: false });
+      this.setState({ BillNumber: billnumner });
+    }
+    const InsidePermissions = CheckPermission("Sales Invoice");
+    console.log(InsidePermissions);
+    this.setState({ InsiderPermissions: InsidePermissions });
+    createOrderhistoryview(userid)
       .then(res => {
-        console.log(res?.TicketTool);
-        this.setState({ rowData: res?.TicketTool });
-      })
-      .catch(err => {
-        console.log(err);
-      });
-
-    TicketTool_ViewData()
-      .then(res => {
-        console.log(res);
-        let jsonData = xmlJs.xml2json(res.data, { compact: true, spaces: 2 });
-        // console.log(JSON.parse(jsonData)?.createTicket);
-        let CreatAccountView = JSON.parse(jsonData)?.createTicket;
-
-        const Checkbox = CreatAccountView?.CheckBox?.input?.map(ele => {
-          return {
-            headerName: ele?.label._text,
-            field: ele?.name._text,
-            filter: true,
-            sortable: true,
-          };
-        });
-        const partsmydropdown = CreatAccountView?.Parts?.MyDropDown?.map(
-          ele => {
-            return {
-              headerName: ele?.dropdown?.label._text,
-              field: ele?.dropdown?.name?._text,
-              filter: true,
-              sortable: true,
-            };
-          }
+        console.log(res?.orderHistory);
+        const Compltedstatus = res?.orderHistory?.filter(
+          ele => ele.status == "completed"
         );
+        this.setState({ rowData: Compltedstatus });
+        this.setState({ AllcolumnDefs: this.state.columnDefs });
 
-        let dropdown = CreatAccountView?.CurrentStatus?.MyDropDown?.dropdown;
-
-        const singledropdown = {
-          headerName: dropdown?.name._text,
-          field: dropdown?.name._text,
-          filter: true,
-          sortable: true,
-        };
-
-        const partinput = CreatAccountView?.Parts?.input?.map(ele => {
-          return {
-            headerName: ele?.label._text,
-            field: ele?.name._text,
-            filter: true,
-            sortable: true,
-          };
-        });
-
-        const productdropdown = CreatAccountView?.Product?.MyDropDown?.map(
-          ele => {
-            return {
-              headerName: ele?.dropdown?.label._text,
-              field: ele?.dropdown?.name?._text,
-              filter: true,
-              sortable: true,
-            };
-          }
-        );
-
-        const productinput = CreatAccountView?.Product?.input?.map(ele => {
-          return {
-            headerName: ele?.label._text,
-            field: ele?.name._text,
-            filter: true,
-            sortable: true,
-          };
-        });
-
-        const allinput = CreatAccountView?.input?.map(ele => {
-          return {
-            headerName: ele?.label._text,
-            field: ele?.name._text,
-            filter: true,
-            sortable: true,
-          };
-        });
-
-        // formdata.append("id", randomNumber);
-        let myHeadings = [
-          ...Checkbox,
-          ...partsmydropdown,
-          singledropdown,
-          ...partinput,
-          ...productinput,
-          ...allinput,
-          ...productdropdown,
-        ];
-        // console.log(myHeadings);
-        let Product = [
-          {
-            headerName: "Actions",
-            field: "sortorder",
-            field: "transactions",
-            width: 190,
-            cellRendererFramework: params => {
-              return (
-                <div className="actions cursor-pointer">
-                  <Route
-                    render={({ history }) => (
-                      <Eye
-                        className="mr-50"
-                        size="25px"
-                        color="green"
-                        onClick={() => {
-                          this.handleChangeEdit(params.data, "readonly");
-                        }}
-                      />
-                    )}
-                  />
-                  <Route
-                    render={({ history }) => (
-                      <Edit
-                        className="mr-50"
-                        size="25px"
-                        color="blue"
-                        onClick={() => {
-                          this.handleChangeEdit(params.data, "Editable");
-                        }}
-                      />
-                    )}
-                  />
-
-                  <Route
-                    render={() => (
-                      <Trash2
-                        className="mr-50"
-                        size="25px"
-                        color="red"
-                        onClick={() => {
-                          this.runthisfunction(params?.data?._id);
-                        }}
-                      />
-                    )}
-                  />
-                </div>
-              );
-            },
-          },
-          {
-            headerName: "Whatsapp",
-            field: "whatsapp",
-            filter: true,
-            sortable: true,
-            cellRendererFramework: params => {
-              return params.data?.whatsapp === "true" ? (
-                <div className="badge badge-pill badge-success">YES</div>
-              ) : params.data?.whatsapp === "false" ? (
-                <div className="badge badge-pill badge-warning">NO</div>
-              ) : (
-                "NA"
-              );
-            },
-          },
-          {
-            headerName: "SMS",
-            field: "sms",
-            filter: true,
-            sortable: true,
-            cellRendererFramework: params => {
-              return params.data?.sms === "true" ? (
-                <div className="badge badge-pill badge-success">YES</div>
-              ) : params.data?.sms === "false" ? (
-                <div className="badge badge-pill badge-warning">No</div>
-              ) : (
-                "NA"
-              );
-            },
-          },
-          {
-            headerName: "Gmail",
-            field: "gmail",
-            filter: true,
-            sortable: true,
-            cellRendererFramework: params => {
-              return params.data?.gmail === "true" ? (
-                <div className="badge badge-pill badge-success">YES</div>
-              ) : params.data?.gmail === "false" ? (
-                <div className="badge badge-pill badge-warning">NO</div>
-              ) : (
-                "NA"
-              );
-            },
-          },
-          ...myHeadings,
-          {
-            headerName: "Created date",
-            field: "createdAt",
-            filter: true,
-            sortable: true,
-            cellRendererFramework: params => {
-              let convertedTime = "NA";
-              if (params?.data?.createdAt == undefined) {
-                convertedTime = "NA";
-              }
-              if (params?.data?.createdAt) {
-                convertedTime = params?.data?.createdAt;
-              }
-              if (
-                UserInformation?.timeZone !== undefined &&
-                params?.data?.createdAt !== undefined
-              ) {
-                if (params?.data?.createdAt != undefined) {
-                  convertedTime = moment(params?.data?.createdAt?.split(".")[0])
-                    .tz(UserInformation?.timeZone.split("-")[0])
-                    .format(UserInformation?.dateTimeFormat);
-                }
-              }
-
-              return (
-                <>
-                  <div className="actions cursor-pointer">
-                    {convertedTime == "NA" ? (
-                      "NA"
-                    ) : (
-                      <span>
-                        {convertedTime} &nbsp;
-                        {UserInformation?.timeZone &&
-                          UserInformation?.timeZone.split("-")[1]}
-                      </span>
-                    )}
-                  </div>
-                </>
-              );
-            },
-          },
-          {
-            headerName: "Updated date",
-            field: "updatedAt",
-            filter: true,
-            sortable: true,
-            cellRendererFramework: params => {
-              let convertedTime = "NA";
-              if (params?.data?.updatedAt == undefined) {
-                convertedTime = "NA";
-              }
-              if (params?.data?.updatedAt) {
-                convertedTime = params?.data?.updatedAt;
-              }
-              if (
-                UserInformation?.timeZone !== undefined &&
-                params?.data?.updatedAt !== undefined
-              ) {
-                if (params?.data?.updatedAt != undefined) {
-                  convertedTime = moment(params?.data?.updatedAt?.split(".")[0])
-                    .tz(UserInformation?.timeZone.split("-")[0])
-                    .format(UserInformation?.dateTimeFormat);
-                }
-              }
-
-              return (
-                <>
-                  <div className="actions cursor-pointer">
-                    {convertedTime == "NA" ? (
-                      "NA"
-                    ) : (
-                      <span>
-                        {convertedTime} &nbsp;
-                        {UserInformation?.timeZone &&
-                          UserInformation?.timeZone.split("-")[1]}
-                      </span>
-                    )}
-                  </div>
-                </>
-              );
-            },
-          },
-        ];
-
-        this.setState({ AllcolumnDefs: Product });
-
-        let userHeading = JSON.parse(localStorage.getItem("Ticketsearch"));
+        let userHeading = JSON.parse(localStorage.getItem("SalesOrderList"));
         if (userHeading?.length) {
           this.setState({ columnDefs: userHeading });
           this.gridApi.setColumnDefs(userHeading);
           this.setState({ SelectedcolumnDefs: userHeading });
         } else {
-          this.setState({ columnDefs: Product });
-          this.setState({ SelectedcolumnDefs: Product });
+          this.setState({ columnDefs: this.state.columnDefs });
+          this.setState({ SelectedcolumnDefs: this.state.columnDefs });
         }
-        this.setState({ SelectedCols: Product });
+        this.setState({ SelectedCols: this.state.columnDefs });
       })
       .catch(err => {
         console.log(err);
       });
-
-    // await CreateAccountView()
-    //   .then((res) => {
-    //     var mydropdownArray = [];
-    //     var adddropdown = [];
-    //     const jsonData = xmlJs.xml2json(res.data, { compact: true, spaces: 2 });
-    //     console.log(JSON.parse(jsonData));
-
-    //     const inputs = JSON.parse(jsonData).CreateAccount?.input?.map((ele) => {
-    //       return {
-    //         headerName: ele?.label._text,
-    //         field: ele?.name._text,
-    //         filter: true,
-    //         sortable: true,
-    //       };
-    //     });
-    //     let Radioinput =
-    //       JSON.parse(jsonData).CreateAccount?.Radiobutton?.input[0]?.name
-    //         ?._text;
-    //     const addRadio = [
-    //       {
-    //         headerName: Radioinput,
-    //         field: Radioinput,
-    //         filter: true,
-    //         sortable: true,
-    //         cellRendererFramework: (params) => {
-    //           return params.data?.Status === "Active" ? (
-    //             <div className="badge badge-pill badge-success">
-    //               {params.data.Status}
-    //             </div>
-    //           ) : params.data?.Status === "Deactive" ? (
-    //             <div className="badge badge-pill badge-warning">
-    //               {params.data.Status}
-    //             </div>
-    //           ) : (
-    //             "NA"
-    //           );
-    //         },
-    //       },
-    //     ];
-
-    //     let dropdown = JSON.parse(jsonData).CreateAccount?.MyDropdown?.dropdown;
-    //     if (dropdown.length) {
-    //       var mydropdownArray = dropdown?.map((ele) => {
-    //         return {
-    //           headerName: ele?.label,
-    //           field: ele?.name,
-    //           filter: true,
-    //           sortable: true,
-    //         };
-    //       });
-    //     } else {
-    //       var adddropdown = [
-    //         {
-    //           headerName: dropdown?.label._text,
-    //           field: dropdown?.name._text,
-    //           filter: true,
-    //           sortable: true,
-    //         },
-    //       ];
-    //     }
-
-    //     let myHeadings = [
-    //       // ...checkboxinput,
-    //       ...inputs,
-    //       ...adddropdown,
-    //       ...addRadio,
-    //       ...mydropdownArray,
-    //     ];
-    //     // console.log(myHeadings);
-    //     let Product = [
-    //       {
-    //         headerName: "Actions",
-    //         field: "sortorder",
-    //         field: "transactions",
-    //         width: 190,
-    //         cellRendererFramework: (params) => {
-    //           return (
-    //             <div className="actions cursor-pointer">
-    //               <Route
-    //                 render={({ history }) => (
-    //                   <Eye
-    //                     className="mr-50"
-    //                     size="25px"
-    //                     color="green"
-    //                     onClick={() => {
-    //                       this.handleChangeEdit(params.data, "readonly");
-    //                     }}
-    //                   />
-    //                 )}
-    //               />
-    //               <Route
-    //                 render={({ history }) => (
-    //                   <Edit
-    //                     className="mr-50"
-    //                     size="25px"
-    //                     color="blue"
-    //                     onClick={() => {
-    //                       this.handleChangeEdit(params.data, "Editable");
-    //                     }}
-    //                   />
-    //                 )}
-    //               />
-
-    //               <Route
-    //                 render={() => (
-    //                   <Trash2
-    //                     className="mr-50"
-    //                     size="25px"
-    //                     color="red"
-    //                     onClick={() => {
-    //                       this.runthisfunction(params?.data?._id);
-    //                     }}
-    //                   />
-    //                 )}
-    //               />
-    //             </div>
-    //           );
-    //         },
-    //       },
-    //       {
-    //         headerName: "Whatsapp",
-    //         field: "whatsapp",
-    //         filter: true,
-    //         sortable: true,
-    //         cellRendererFramework: (params) => {
-    //           console.log(params?.data?.whatsapp);
-    //           return params.data?.whatsapp === true ? (
-    //             <div className="badge badge-pill badge-success">YES</div>
-    //           ) : params.data?.whatsapp === false ? (
-    //             <div className="badge badge-pill badge-warning">NO</div>
-    //           ) : (
-    //             "NA"
-    //           );
-    //         },
-    //       },
-    //       {
-    //         headerName: "SMS",
-    //         field: "sms",
-    //         filter: true,
-    //         sortable: true,
-    //         cellRendererFramework: (params) => {
-    //           console.log(params?.data?.sms);
-    //           return params.data?.sms === true ? (
-    //             <div className="badge badge-pill badge-success">YES</div>
-    //           ) : params.data?.sms === false ? (
-    //             <div className="badge badge-pill badge-warning">No</div>
-    //           ) : (
-    //             "NA"
-    //           );
-    //         },
-    //       },
-    //       {
-    //         headerName: "Gmail",
-    //         field: "gmail",
-    //         filter: true,
-    //         sortable: true,
-    //         cellRendererFramework: (params) => {
-    //           console.log(params?.data?.gmail);
-    //           return params.data?.gmail === true ? (
-    //             <div className="badge badge-pill badge-success">YES</div>
-    //           ) : params.data?.gmail === false ? (
-    //             <div className="badge badge-pill badge-warning">NO</div>
-    //           ) : (
-    //             "NA"
-    //           );
-    //         },
-    //       },
-    //       ...myHeadings,
-    //       {
-    //         headerName: "Created date",
-    //         field: "createdAt",
-    //         filter: true,
-    //         sortable: true,
-    //         cellRendererFramework: (params) => {
-    //           let convertedTime = "NA";
-    //           if (params?.data?.createdAt == undefined) {
-    //             convertedTime = "NA";
-    //           }
-    //           if (params?.data?.createdAt) {
-    //             convertedTime = params?.data?.createdAt;
-    //           }
-    //           if (
-    //             UserInformation?.timeZone !== undefined &&
-    //             params?.data?.createdAt !== undefined
-    //           ) {
-    //             if (params?.data?.createdAt != undefined) {
-    //               convertedTime = moment(params?.data?.createdAt?.split(".")[0])
-    //                 .tz(UserInformation?.timeZone.split("-")[0])
-    //                 .format(UserInformation?.dateTimeFormat);
-    //             }
-    //           }
-
-    //           return (
-    //             <>
-    //               <div className="actions cursor-pointer">
-    //                 {convertedTime == "NA" ? (
-    //                   "NA"
-    //                 ) : (
-    //                   <span>
-    //                     {convertedTime} &nbsp;
-    //                     {UserInformation?.timeZone &&
-    //                       UserInformation?.timeZone.split("-")[1]}
-    //                   </span>
-    //                 )}
-    //               </div>
-    //             </>
-    //           );
-    //         },
-    //       },
-    //       {
-    //         headerName: "Updated date",
-    //         field: "updatedAt",
-    //         filter: true,
-    //         sortable: true,
-    //         cellRendererFramework: (params) => {
-    //           let convertedTime = "NA";
-    //           if (params?.data?.updatedAt == undefined) {
-    //             convertedTime = "NA";
-    //           }
-    //           if (params?.data?.updatedAt) {
-    //             convertedTime = params?.data?.updatedAt;
-    //           }
-    //           if (
-    //             UserInformation?.timeZone !== undefined &&
-    //             params?.data?.updatedAt !== undefined
-    //           ) {
-    //             if (params?.data?.updatedAt != undefined) {
-    //               convertedTime = moment(params?.data?.updatedAt?.split(".")[0])
-    //                 .tz(UserInformation?.timeZone.split("-")[0])
-    //                 .format(UserInformation?.dateTimeFormat);
-    //             }
-    //           }
-
-    //           return (
-    //             <>
-    //               <div className="actions cursor-pointer">
-    //                 {convertedTime == "NA" ? (
-    //                   "NA"
-    //                 ) : (
-    //                   <span>
-    //                     {convertedTime} &nbsp;
-    //                     {UserInformation?.timeZone &&
-    //                       UserInformation?.timeZone.split("-")[1]}
-    //                   </span>
-    //                 )}
-    //               </div>
-    //             </>
-    //           );
-    //         },
-    //       },
-    //     ];
-
-    //     this.setState({ AllcolumnDefs: Product });
-
-    //     let userHeading = JSON.parse(localStorage.getItem("Ticketsearch"));
-    //     if (userHeading?.length) {
-    //       this.setState({ columnDefs: userHeading });
-    //       this.gridApi.setColumnDefs(userHeading);
-    //       this.setState({ SelectedcolumnDefs: userHeading });
-    //     } else {
-    //       this.setState({ columnDefs: Product });
-    //       this.setState({ SelectedcolumnDefs: Product });
-    //     }
-    //     this.setState({ SelectedCols: Product });
-    //   })
-    //   .catch((err) => {
-    //     console.log(err);
-    //     swal("Error", "something went wrong try again");
-    //   });
-    // await CreateAccountList()
-    //   .then((res) => {
-    //     let value = res?.CreateAccount;
-    //     this.setState({ rowData: value });
-    //   })
-    //   .catch((err) => {
-    //     console.log(err);
-    //   });
+    let userchoice = JSON.parse(localStorage.getItem("billUI"));
+    console.log(userchoice);
+    if (userchoice) {
+      this.setState({ logoposition: userchoice?.imagePosition });
+      this.setState({ Billtoposition: userchoice?.billTo });
+      this.setState({ shipto: userchoice?.shipto });
+    }
+    let newparmisson = pageparmission?.role?.find(
+      value => value?.pageName === "invoice Generator"
+    );
+    this.setState({ Viewpermisson: newparmisson?.permission.includes("View") });
+    this.setState({
+      Createpermisson: newparmisson?.permission.includes("Create"),
+    });
+    this.setState({
+      Editpermisson: newparmisson?.permission.includes("Edit"),
+    });
+    this.setState({
+      Deletepermisson: newparmisson?.permission.includes("Delete"),
+    });
   }
+
+  submitHandler = e => {
+    e.preventDefault();
+    let mychoice = {
+      imagePosition: this.state.logoposition,
+      billTo: this.state.Billtoposition,
+      shipto: this.state.shipto,
+    };
+
+    if (mychoice.billTo == mychoice.shipto) {
+      swal("Can not set Bill to and Ship to on one Same side");
+    } else {
+      localStorage.setItem("billUI", JSON.stringify(mychoice));
+      this.setState({ ShowMyBill: true });
+    }
+  };
   toggleDropdown = () => {
     this.setState(prevState => ({ isOpen: !prevState.isOpen }));
   };
@@ -682,7 +745,7 @@ class Orderreport extends React.Component {
     }).then(value => {
       switch (value) {
         case "delete":
-          ticketToolDeleteOne(id)
+          DeleteAccount(id)
             .then(res => {
               let selectedData = this.gridApi.getSelectedRows();
               this.gridApi.updateRowData({ remove: selectedData });
@@ -695,7 +758,12 @@ class Orderreport extends React.Component {
       }
     });
   }
-
+  // handleBillSet = i => {
+  //   this.setState({ BillNumber: i });
+  //   localStorage.setItem("billnumber", i);
+  //   this.toggleModalOne();
+  //   // this.setState({ ShowBill: false });
+  // };
   onGridReady = params => {
     this.gridApi = params.api;
     this.gridColumnApi = params.columnApi;
@@ -761,14 +829,14 @@ class Orderreport extends React.Component {
     doc.addImage(Logo, "JPEG", 10, 10, 50, 30);
     let date = new Date();
     doc.setCreationDate(date);
-    doc.text("UserAccount", 14, 51);
+    doc.text("OrderList", 14, 51);
     doc.autoTable({
       head: [Object.keys(parsedData[0])],
       body: tableData,
       startY: 60,
     });
 
-    doc.save("UserList.pdf");
+    doc.save("OrderList.pdf");
   }
 
   exportToPDF = async () => {
@@ -814,7 +882,7 @@ class Orderreport extends React.Component {
     const url = window.URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = "Userlist.xlsx";
+    a.download = "OrderList.xlsx";
     document.body.appendChild(a);
     a.click();
     window.URL.revokeObjectURL(url);
@@ -838,7 +906,7 @@ class Orderreport extends React.Component {
         const wb = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(wb, ws, "Sheet1");
         const excelType = "xls";
-        XLSX.writeFile(wb, `UserList.${excelType}`);
+        XLSX.writeFile(wb, `OrderList.${excelType}`);
       },
     });
   };
@@ -891,7 +959,7 @@ class Orderreport extends React.Component {
         const blob = new Blob([xmlString], { type: "text/xml" });
         const link = document.createElement("a");
         link.href = URL.createObjectURL(blob);
-        link.download = "output.xml";
+        link.download = "OrderList.xml";
         link.click();
       },
     });
@@ -904,7 +972,7 @@ class Orderreport extends React.Component {
     this.setState({ SelectedcolumnDefs: this.state.SelectedcolumnDefs });
     this.setState({ rowData: this.state.rowData });
     localStorage.setItem(
-      "Ticketsearch",
+      "SalesOrderList",
       JSON.stringify(this.state.SelectedcolumnDefs)
     );
     this.LookupviewStart();
@@ -941,6 +1009,7 @@ class Orderreport extends React.Component {
       SelectedcolumnDefs,
       isOpen,
       SelectedCols,
+      InsiderPermissions,
       AllcolumnDefs,
     } = this.state;
     return (
@@ -955,6 +1024,7 @@ class Orderreport extends React.Component {
                     onClick={e => {
                       e.preventDefault();
                       this.setState({ EditOneUserView: false });
+                      this.componentDidMount();
                     }}
                     color="danger"
                   >
@@ -963,13 +1033,16 @@ class Orderreport extends React.Component {
                 </div>
               </Col>
 
-              <EditAccount EditOneData={this.state.EditOneData} />
+              {/* <EditAccount EditOneData={this.state.EditOneData} /> */}
             </Row>
           ) : (
             <>
               {this.state.ViewOneUserView && this.state.ViewOneUserView ? (
                 <>
-                  <Row className="card">
+                  <Row>
+                    <Col>
+                      <h1 className="float-left">View User</h1>
+                    </Col>
                     <Col>
                       <div className="d-flex justify-content-end p-1">
                         <Button
@@ -983,94 +1056,128 @@ class Orderreport extends React.Component {
                         </Button>
                       </div>
                     </Col>
-                    <ViewAccount ViewOneData={this.state.ViewOneData} />
+                    <ViewOrder ViewOneData={this.state.ViewOneData} />
                   </Row>
                 </>
               ) : (
                 <>
                   <Col sm="12">
                     <Card>
-                      <Row className="mt-2 ml-2 mr-2">
-                        <Col>
+                      <Row className="ml-2 mr-2 mt-2">
+                        <Col lg="9" sm="8" xs="8">
                           <h1
                             className="float-left"
                             style={{ fontWeight: "600" }}
                           >
-                            Order Report
+                            Sales Order Report
                           </h1>
                         </Col>
-                        <Col>
-                          <span className="mx-1">
-                            <FaFilter
-                              style={{ cursor: "pointer" }}
-                              title="filter coloumn"
-                              size="35px"
-                              onClick={this.LookupviewStart}
-                              color="#39cccc"
-                              className="float-right"
-                            />
-                          </span>
-                          <span className="mx-1">
-                            <div className="dropdown-container float-right">
-                              <ImDownload
-                                style={{ cursor: "pointer" }}
-                                title="download file"
-                                size="35px"
-                                className="dropdown-button "
+
+                        {/* {this.state.InsiderPermissions &&
+                          this.state.InsiderPermissions?.Create && (
+                            <Col lg="2" sm="2" xs="2">
+                              <Button
+                                className="float-right  "
                                 color="#39cccc"
-                                onClick={this.toggleDropdown}
-                              />
-                              {isOpen && (
-                                <div
-                                  style={{
-                                    position: "absolute",
-                                    zIndex: "1",
-                                    border: "1px solid #39cccc",
-                                    backgroundColor: "white",
-                                  }}
-                                  className="dropdown-content dropdownmy"
-                                >
-                                  <h5
-                                    onClick={() => this.exportToPDF()}
+                                style={{
+                                  cursor: "pointer",
+                                  backgroundColor: "#39cccc",
+                                  color: "white",
+                                  fontWeight: "600",
+                                }}
+                                onClick={e => {
+                                  let billnumber =
+                                    localStorage.getItem("billnumber");
+                                  if (billnumber) {
+                                    // swal("You already Selected Bill Type");
+                                    this.setState({ ShowBill: true });
+                                    this.toggleModalOne();
+                                  } else {
+                                    this.setState({ ShowBill: true });
+                                    this.toggleModalOne();
+                                  }
+                                }}
+                              >
+                                Invoice Template
+                              </Button>
+                            </Col>
+                          )} */}
+                        <Col>
+                          {InsiderPermissions && InsiderPermissions?.View && (
+                            <>
+                              <span className="">
+                                <FaFilter
+                                  style={{ cursor: "pointer" }}
+                                  title="filter coloumn"
+                                  size="35px"
+                                  onClick={this.LookupviewStart}
+                                  color="#39cccc"
+                                  className="float-right"
+                                />
+                              </span>
+                              <span className="">
+                                <div className="dropdown-container float-right">
+                                  <ImDownload
                                     style={{ cursor: "pointer" }}
-                                    className=" mx-1 myactive mt-1"
-                                  >
-                                    .PDF
-                                  </h5>
-                                  <h5
-                                    onClick={() =>
-                                      this.gridApi.exportDataAsCsv()
-                                    }
-                                    style={{ cursor: "pointer" }}
-                                    className=" mx-1 myactive"
-                                  >
-                                    .CSV
-                                  </h5>
-                                  <h5
-                                    onClick={this.convertCSVtoExcel}
-                                    style={{ cursor: "pointer" }}
-                                    className=" mx-1 myactive"
-                                  >
-                                    .XLS
-                                  </h5>
-                                  <h5
-                                    onClick={this.exportToExcel}
-                                    style={{ cursor: "pointer" }}
-                                    className=" mx-1 myactive"
-                                  >
-                                    .XLSX
-                                  </h5>
-                                  <h5
-                                    onClick={() => this.convertCsvToXml()}
-                                    style={{ cursor: "pointer" }}
-                                    className=" mx-1 myactive"
-                                  >
-                                    .XML
-                                  </h5>
+                                    title="download file"
+                                    size="35px"
+                                    className="dropdown-button "
+                                    color="#39cccc"
+                                    onClick={this.toggleDropdown}
+                                  />
+                                  {isOpen && (
+                                    <div
+                                      style={{
+                                        position: "absolute",
+                                        zIndex: "1",
+                                        border: "1px solid #39cccc",
+                                        backgroundColor: "white",
+                                      }}
+                                      className="dropdown-content dropdownmy"
+                                    >
+                                      <h5
+                                        onClick={() => this.exportToPDF()}
+                                        style={{ cursor: "pointer" }}
+                                        className=" mx-1 myactive mt-1"
+                                      >
+                                        .PDF
+                                      </h5>
+                                      <h5
+                                        onClick={() =>
+                                          this.gridApi.exportDataAsCsv()
+                                        }
+                                        style={{ cursor: "pointer" }}
+                                        className=" mx-1 myactive"
+                                      >
+                                        .CSV
+                                      </h5>
+                                      <h5
+                                        onClick={this.convertCSVtoExcel}
+                                        style={{ cursor: "pointer" }}
+                                        className=" mx-1 myactive"
+                                      >
+                                        .XLS
+                                      </h5>
+                                      <h5
+                                        onClick={this.exportToExcel}
+                                        style={{ cursor: "pointer" }}
+                                        className=" mx-1 myactive"
+                                      >
+                                        .XLSX
+                                      </h5>
+                                      <h5
+                                        onClick={() => this.convertCsvToXml()}
+                                        style={{ cursor: "pointer" }}
+                                        className=" mx-1 myactive"
+                                      >
+                                        .XML
+                                      </h5>
+                                    </div>
+                                  )}
                                 </div>
-                              )}
-                            </div>
-                          </span>
+                              </span>
+                            </>
+                          )}
                         </Col>
                       </Row>
                       <CardBody style={{ marginTop: "-1.5rem" }}>
@@ -1362,8 +1469,384 @@ class Orderreport extends React.Component {
             </Row>
           </ModalBody>
         </Modal>
+        <Modal
+          isOpen={this.state.modalOne}
+          toggle={this.toggleModalOne}
+          className={this.props.className}
+          style={{ maxWidth: "1050px" }}
+        >
+          <ModalHeader toggle={this.toggleModalclose}>
+            {this.state.ShowBill ? "Select Bill Format" : "Download BIll"}
+          </ModalHeader>
+          <ModalBody>
+            {this.state.ShowBill && this.state.ShowBill ? (
+              <>
+                <div className="d-flex justify-content-center">
+                  <h4>Choose Bill type</h4>
+                </div>
+                <Row className="container p-5">
+                  <Col lg="3" md="3" s="3">
+                    <div className="imagebackground p-1">
+                      <img
+                        onClick={e => this.handleBillSet(1)}
+                        style={{ cursor: "pointer" }}
+                        width={130}
+                        height={150}
+                        src={Templatethree}
+                        alt="template"
+                      />
+                    </div>
+                  </Col>
+                  <Col lg="3" md="3" s="3">
+                    <div className="imagebackground p-1">
+                      <img
+                        onClick={e => this.handleBillSet(2)}
+                        className="imagebackground"
+                        style={{ cursor: "pointer" }}
+                        width={130}
+                        height={150}
+                        src={Templatetwo}
+                        alt="template"
+                      />
+                    </div>
+                  </Col>
+                  <Col lg="3" md="3" s="3">
+                    <div className="imagebackground p-1">
+                      <img
+                        onClick={e => this.handleBillSet(3)}
+                        className="imagebackground"
+                        style={{ cursor: "pointer" }}
+                        width={130}
+                        height={150}
+                        src={templateone}
+                        alt="template"
+                      />
+                    </div>
+                  </Col>
+                  <Col lg="3" md="3" s="3">
+                    <div className="imagebackground p-1">
+                      <img
+                        onClick={e => this.handleBillSet(4)}
+                        className="imagebackground"
+                        style={{ cursor: "pointer" }}
+                        width={130}
+                        height={150}
+                        src={templatefour}
+                        alt="template"
+                      />
+                    </div>
+                  </Col>
+                </Row>
+              </>
+            ) : (
+              <>
+                {this.state.ShowMyBill && this.state.ShowMyBill ? (
+                  <>
+                    {this.state.ViewBill && this.state.ViewBill ? (
+                      <>
+                        <div style={{ width: "100%" }} className="">
+                          <InvoicGenerator
+                            CompanyDetails={this.state.CompanyDetails}
+                            BillNumber={this.state.BillNumber}
+                            PrintData={this.state.PrintData}
+                            Applied_Charges={this.state.Applied_Charges}
+                            AllbillMerged={this.state.AllbillMerged}
+                            wordsNumber={this.state.wordsNumber}
+                            sgst={this.state.sgst}
+                            cgst={this.state.cgst}
+                            deliveryCharges={this.state.deliveryCharges}
+                            otherCharges={this.state.otherCharges}
+                            discount={this.state.discount}
+                            // AddedBill={AddedBill}
+                          />
+                        </div>
+                      </>
+                    ) : (
+                      <>
+                        <div style={{ width: "100%" }} className="">
+                          <Form onSubmit={e => this.handleSubmit(e)}>
+                            <Row className="main div heading px-3 py-3">
+                              <Col lg="6" className="mb-2">
+                                <Label>SGST</Label>
+                                <select
+                                  required
+                                  className="form-control"
+                                  value={this.state.sgst}
+                                  onChange={this.changeHandler}
+                                  name="sgst"
+                                >
+                                  <option value="not selected">
+                                    --Select--
+                                  </option>
+                                  <option value="5">5%</option>
+                                  <option value="9">9%</option>
+                                  <option value="12">12%</option>
+                                </select>
+                              </Col>
+                              <Col lg="6" className="mb-2">
+                                <Label>CGST</Label>
+                                <select
+                                  required
+                                  className="form-control"
+                                  name="cgst"
+                                  placeholder="Enter CGST"
+                                  value={this.state.cgst}
+                                  onChange={this.changeHandler}
+                                >
+                                  <option value="not selected">
+                                    --Select--
+                                  </option>
+                                  <option value="5">5%</option>
+                                  <option value="9">9%</option>
+                                  <option value="12">12%</option>
+                                </select>
+                              </Col>
+                              <Col lg="6">
+                                <Label className="mt-2">Other Charges</Label>
+                                <Input
+                                  type="number"
+                                  name="otherCharges"
+                                  placeholder="Enter Other Charges"
+                                  value={this.state.otherCharges}
+                                  onChange={this.changeHandler}
+                                ></Input>
+                              </Col>
+                              <Col lg="6">
+                                <Label className="mt-2">Delivery Charges</Label>
+                                <Input
+                                  type="number"
+                                  name="deliveryCharges"
+                                  placeholder="Enter Delivery Charges"
+                                  value={this.state.deliveryCharges}
+                                  onChange={this.changeHandler}
+                                ></Input>
+                              </Col>
+                              <Col lg="6">
+                                <Label className="mt-2">Discount </Label>
+                                <Input
+                                  type="number"
+                                  name="discount"
+                                  placeholder="Enter discount value"
+                                  value={this.state.discount}
+                                  onChange={this.changeHandler}
+                                ></Input>
+                              </Col>
+                            </Row>
+                            <Row>
+                              <Col lg="12" className="mt-2 mb-2">
+                                <div className="d-flex justify-content-center">
+                                  <Button
+                                    disabled={
+                                      this.state.ButtonText === "InProcess"
+                                        ? true
+                                        : false
+                                    }
+                                    color="primary"
+                                    type="submit"
+                                  >
+                                    {this.state.ButtonText}
+                                  </Button>
+                                </div>
+                              </Col>
+                            </Row>
+                          </Form>
+                        </div>
+                      </>
+                    )}
+                  </>
+                ) : (
+                  <>
+                    <Form className="m-1" onSubmit={this.submitHandler}>
+                      <Row className="mb-2">
+                        <Col lg="4" md="4" className="mb-2">
+                          <Label>Logo Position</Label>
+                          <CustomInput
+                            type="select"
+                            placeholder="Select Type"
+                            name="logoposition"
+                            value={this.state.logoposition}
+                            onChange={this.changeHandler}
+                          >
+                            <option>---Select---</option>
+                            <option value="Left">Left</option>
+                            <option value="right">Right</option>
+                          </CustomInput>
+                        </Col>
+                        <Col lg="4" md="4" className="mb-2">
+                          <Label>ship to position</Label>
+                          <CustomInput
+                            type="select"
+                            placeholder="Select Type"
+                            name="shipto"
+                            value={this.state.shipto}
+                            onChange={this.changeHandler}
+                          >
+                            <option>---Select---</option>
+                            <option value="Left">Left</option>
+                            <option value="right">Right</option>
+                          </CustomInput>
+                          <span>
+                            {this.state.shipto == this.state.Billtoposition ? (
+                              <span style={{ color: "red" }}>
+                                Bill to and ship to cannot be same
+                              </span>
+                            ) : null}
+                          </span>
+                        </Col>
+
+                        <Col lg="4" md="4" className="mb-2">
+                          <Label>Bill to position</Label>
+                          <CustomInput
+                            type="select"
+                            placeholder="Select Type"
+                            name="Billtoposition"
+                            value={this.state.Billtoposition}
+                            onChange={this.changeHandler}
+                          >
+                            <option>---Select---</option>
+                            <option value="Left">Left</option>
+                            <option value="right">Right</option>
+                          </CustomInput>
+                          <span>
+                            {this.state.shipto == this.state.Billtoposition ? (
+                              <span style={{ color: "red" }}>
+                                Bill to and ship to cannot be same
+                              </span>
+                            ) : null}
+                          </span>
+                        </Col>
+                      </Row>
+
+                      <Row>
+                        <Col>
+                          <div className="d-flex justify-content-center">
+                            <Button.Ripple
+                              color="primary"
+                              type="submit"
+                              className="mr-1 mb-1"
+                            >
+                              Submit
+                            </Button.Ripple>
+                          </div>
+                        </Col>
+                      </Row>
+                    </Form>
+                  </>
+                )}
+              </>
+            )}
+          </ModalBody>
+        </Modal>
+
+        <Modal
+          isOpen={this.state.modalTwo}
+          toggle={this.toggleModalTwo}
+          className={this.props.className}
+          style={{ maxWidth: "1050px" }}
+        >
+          <ModalHeader toggle={this.toggleModalcloseTwo}>
+            View Order
+          </ModalHeader>
+          <ModalBody>
+            <div className="container">
+              <Row>
+                <Col>
+                  <Label>Party Name :</Label>
+                  <h5 className="mx-1">
+                    {this.state.ViewOneData &&
+                      this.state.ViewOneData?.partyId?.firstName}
+                  </h5>
+                </Col>
+                <Col>
+                  <Label>Date Created :</Label>
+                  <h5>
+                    {this.state.ViewOneData &&
+                      this.state.ViewOneData?.createdAt?.split("T")[0]}
+                  </h5>
+                </Col>
+                <Col>
+                  <Label>Address :</Label>
+                  <h5>
+                    <strong>
+                      {this.state.ViewOneData &&
+                        this.state.ViewOneData?.address}{" "}
+                    </strong>
+                    Rs/-
+                  </h5>
+                </Col>
+                <Col>
+                  <Label>Grand Total :</Label>
+                  <h5>
+                    <strong>
+                      {this.state.ViewOneData &&
+                        this.state.ViewOneData?.grandTotal}{" "}
+                    </strong>
+                    Rs/-
+                  </h5>
+                </Col>
+
+                {/* <Col>
+                <Label>Download Invoice :</Label>
+                <div className="d-flex justify-content-center">
+                  <FaDownload
+                    onClick={this.handleStockTrxInvoiceShow}
+                    color="#00c0e"
+                    fill="#00c0e"
+                    style={{ cursor: "pointer" }}
+                    size={20}
+                  />
+                </div>
+              </Col> */}
+              </Row>
+              <Row className="p-2">
+                <Col>
+                  <div className="d-flex justify-content-center">
+                    <h4>Product Details</h4>
+                  </div>
+                </Col>
+              </Row>
+              <Row>
+                <Col>
+                  <Table style={{ cursor: "pointer" }} striped>
+                    <thead>
+                      <tr>
+                        <th>#</th>
+                        <th>Product Name</th>
+                        <th>Price</th>
+                        <th>Size</th>
+                        <th>Unit</th>
+                        <th>Quantity</th>
+                        <th>Total</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {this.state.ViewOneData?.orderItems &&
+                        this.state.ViewOneData?.orderItems?.map((ele, i) => (
+                          <>
+                            <tr>
+                              <th scope="row">{i + 1}</th>
+                              <td>{ele?.product?.Product_Title}</td>
+                              <td>{ele?.product?.Product_MRP}</td>
+                              <td>{ele?.product?.Size}</td>
+                              <td>{ele?.unitQty}</td>
+                              <td>{ele?.qty}</td>
+                              <td>
+                                {ele?.product?.Product_MRP *
+                                  ele?.product?.Size *
+                                  ele?.qty}
+                              </td>
+                            </tr>
+                          </>
+                        ))}
+                    </tbody>
+                  </Table>
+                </Col>
+              </Row>
+            </div>
+          </ModalBody>
+        </Modal>
       </>
     );
   }
 }
-export default Orderreport;
+export default InvoiceGenerator;

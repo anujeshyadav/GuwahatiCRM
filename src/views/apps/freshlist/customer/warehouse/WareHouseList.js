@@ -111,7 +111,7 @@ class WareHouseList extends React.Component {
     let userData = JSON.parse(localStorage.getItem("userData"));
     await CreateWarehouseList(userData._id)
       .then(res => {
-        console.log(res);
+        console.log(res.Warehouse);
         if (res.Warehouse) {
           this.setState({ wareHouseViewOne: res?.Warehouse });
         }
@@ -555,7 +555,6 @@ class WareHouseList extends React.Component {
   };
 
   handleShowWarehouse = e => {
-    debugger;
     e.preventDefault();
     if (this.state.warehouse != "NA") {
       console.log(this.state.wareHouseViewOne[0]);

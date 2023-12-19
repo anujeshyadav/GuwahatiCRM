@@ -19,66 +19,39 @@ import "../../../../../assets/scss/pages/users.scss";
 import {
   SavePurchaseOrder,
   CreatePartyList,
+  UnitListView,
   ProductListView,
 } from "../../../../../ApiEndPoint/ApiCalling";
 import "../../../../../assets/scss/pages/users.scss";
 let GrandTotal = [];
 let SelectedITems = [];
+let SelectedSize = [];
 const AddPurchaseOrder = args => {
   const [Index, setIndex] = useState("");
   const [index, setindex] = useState("");
   const [error, setError] = useState("");
   const [ProductList, setProductList] = useState([]);
   const [PartyList, setPartyList] = useState([]);
+  const [PartyId, setPartyId] = useState("");
+  const [UnitList, setUnitList] = useState([]);
+  const [priceTotal, setPriceTotal] = useState(0);
   const [grandTotalAmt, setGrandTotalAmt] = useState(0);
   const [UserInfo, setUserInfo] = useState({});
   const [dateofDelivery, setDateofDelivery] = useState("");
   const [product, setProduct] = useState([
     {
-      product: "",
+      // product: "",
       productId: "",
       availableQty: "",
       qty: 1,
       price: "",
+      unitType: "",
+      Size: "",
       totalprice: "",
-      partyId: "",
-      DateofDelivery: "",
+      // partyId: "",
+      // DateofDelivery: "",
     },
   ]);
-
-  const handleProductChangeProduct = (e, index, avalaibleSize) => {
-    if (avalaibleSize >= e.target.value) {
-      setIndex(index);
-      const { name, value } = e.target;
-      const list = [...product];
-      list[index][name] = value;
-      product.map(ele => {});
-      let amt = 0;
-      if (list.length > 0) {
-        const x = list?.map(val => {
-          console.log(val.qty * val.price);
-          list[index]["totalprice"] = val.qty * val.price;
-          return val.qty * val.price;
-        });
-        amt = x.reduce((a, b) => a + b, 0);
-        console.log("GrandTotal", amt);
-      }
-      setProduct(list);
-      setGrandTotalAmt(amt);
-    } else {
-      return null;
-    }
-  };
-
-  const handleSelectionParty = (selectedList, selectedItem, index) => {
-    setProduct(prevProductList => {
-      const updatedProductList = [...prevProductList];
-      const updatedProduct = { ...updatedProductList[index] };
-      updatedProduct.partyId = selectedItem?._id;
-      updatedProductList[index] = updatedProduct;
-      return updatedProductList;
-    });
-  };
   const handleSelection = (selectedList, selectedItem, index) => {
     SelectedITems.push(selectedItem);
     console.log(selectedItem);
@@ -89,15 +62,97 @@ const AddPurchaseOrder = args => {
       updatedProduct.productId = selectedItem._id;
       updatedProduct.availableQty = selectedItem.Size;
       updatedProductList[index] = updatedProduct; // Replace the product at the specified index with the updated one
+      // let myarr = prevProductList?.map((ele, i) => {
+      //   let indextotal = ele?.qty * SelectedITems[i]?.Product_MRP;
+      //   GrandTotal[index] = indextotal;
+      //   return indextotal;
+      // });
+      // console.log(myarr);
+      // let amt = myarr.reduce((a, b) => a + b, 0);
+      // setGrandTotalAmt(amt);
+      return updatedProductList; // Return the updated product list to set the state
+    });
+  };
+  // const handleProductChangeProduct = (e, index, avalaibleSize) => {
+  //   if (avalaibleSize >= e.target.value) {
+  //     setIndex(index);
+  //     const { name, value } = e.target;
+  //     const list = [...product];
+  //     list[index][name] = value;
+  //     product.map(ele => {});
+  //     let amt = 0;
+  //     if (list.length > 0) {
+  //       const x = list?.map(val => {
+  //         console.log(val.qty * val.price);
+  //         list[index]["totalprice"] = val.qty * val.price;
+  //         return val.qty * val.price;
+  //       });
+  //       amt = x.reduce((a, b) => a + b, 0);
+  //       console.log("GrandTotal", amt);
+  //     }
+  //     setProduct(list);
+  //     setGrandTotalAmt(amt);
+  //   } else {
+  //     return null;
+  //   }
+  // };
+
+  const handleRequredQty = (e, index, avalaibleSize) => {
+    const { name, value } = e.target;
+    if (Number(value) <= avalaibleSize) {
+      if (Number(value != 0)) {
+        setIndex(index);
+        console.log(product);
+        const list = [...product];
+        list[index][name] = Number(value);
+        // console.log(GrandTotal);
+
+        let amt = 0;
+        if (list.length > 0) {
+          const x = list?.map(val => {
+            console.log(val.qty * val.price);
+            GrandTotal[index] = val.Size * val.qty * val.price;
+
+            list[index]["totalprice"] = val.Size * val.qty * val.price;
+            return val.Size * val.qty * val.price;
+          });
+          amt = x.reduce((a, b) => a + b);
+        }
+        console.log(list);
+        setProduct(list);
+        setGrandTotalAmt(amt);
+      }
+    }
+  };
+  const handleSelectionUnit = (selectedList, selectedItem, index) => {
+    SelectedSize.push(selectedItem);
+    setProduct(prevProductList => {
+      // debugger;
+      const updatedUnitList = [...prevProductList];
+      const updatedProduct = { ...updatedUnitList[index] }; // Create a copy of the product at the specified index
+      updatedProduct.Size = selectedItem.unitQty;
+      updatedProduct.unitType = selectedItem.primaryUnit;
+      updatedUnitList[index] = updatedProduct;
       let myarr = prevProductList?.map((ele, i) => {
-        let indextotal = ele?.qty * SelectedITems[i]?.Product_MRP;
+        updatedUnitList[index]["totalprice"] =
+          ele?.qty * ele.price * SelectedSize[i]?.unitQty;
+        let indextotal = ele?.price * ele.qty * SelectedSize[i]?.unitQty;
         GrandTotal[index] = indextotal;
         return indextotal;
       });
-      console.log(myarr);
-      let amt = myarr.reduce((a, b) => a + b, 0);
+      let amt = myarr.reduce((a, b) => a + b);
+      console.log(amt);
       setGrandTotalAmt(amt);
-      return updatedProductList; // Return the updated product list to set the state
+      return updatedUnitList; // Return the updated product list to set the state
+    });
+  };
+  const handleSelectionParty = (selectedList, selectedItem, index) => {
+    setProduct(prevProductList => {
+      const updatedProductList = [...prevProductList];
+      const updatedProduct = { ...updatedProductList[index] };
+      updatedProduct.partyId = selectedItem?._id;
+      updatedProductList[index] = updatedProduct;
+      return updatedProductList;
     });
   };
 
@@ -124,6 +179,14 @@ const AddPurchaseOrder = args => {
       .catch(err => {
         console.log(err);
       });
+    UnitListView(userId)
+      .then(res => {
+        console.log(res.Unit);
+        setUnitList(res.Unit);
+      })
+      .catch(err => {
+        console.log(err);
+      });
   }, []);
   useEffect(() => {
     const userInfo = JSON.parse(localStorage.getItem("userData"));
@@ -135,14 +198,16 @@ const AddPurchaseOrder = args => {
     setProduct([
       ...product,
       {
-        product: "",
+        // product: "",
         productId: "",
         availableQty: "",
         qty: 1,
         price: "",
         totalprice: "",
-        DateofDelivery: "",
-        partyId: "",
+        // DateofDelivery: "",
+        // partyId: "",
+        unitQty: "",
+        unitType: "",
       },
     ]);
   };
@@ -169,6 +234,8 @@ const AddPurchaseOrder = args => {
       state: UserInfo?.State,
       city: UserInfo?.City,
       orderItems: product,
+      DateofDelivery: dateofDelivery,
+      partyId: PartyId,
       // created_by: UserInfo?._id,
     };
     if (error) {
@@ -257,7 +324,7 @@ const AddPurchaseOrder = args => {
               {product &&
                 product?.map((product, index) => (
                   <Row className="" key={index}>
-                    <Col className="mb-1" lg="2" md="2" sm="12">
+                    <Col className="mb-1">
                       <div className="">
                         <Label>ProductName</Label>
                         <Multiselect
@@ -275,7 +342,7 @@ const AddPurchaseOrder = args => {
                         />
                       </div>
                     </Col>
-                    <Col className="mb-1" lg="2" md="2" sm="12">
+                    <Col className="mb-1">
                       <div className="">
                         <Label>Available Size</Label>
                         <Input
@@ -286,7 +353,7 @@ const AddPurchaseOrder = args => {
                         />
                       </div>
                     </Col>
-                    <Col className="mb-1" lg="2" md="2" sm="12">
+                    <Col className="mb-1">
                       <div className="">
                         <Label>Required Size</Label>
                         <Input
@@ -296,16 +363,34 @@ const AddPurchaseOrder = args => {
                           autocomplete="off"
                           value={product?.qty}
                           onChange={e =>
-                            handleProductChangeProduct(
-                              e,
-                              index,
-                              product?.availableQty
-                            )
+                            handleRequredQty(e, index, product?.availableQty)
                           }
                         />
                       </div>
                     </Col>
-                    <Col className="mb-1" lg="2" md="2" sm="12">
+                    <Col className="mb-1">
+                      <div className="">
+                        <Label>Choose Unit</Label>
+                        <Multiselect
+                          required
+                          selectionLimit={1}
+                          isObject="false"
+                          options={UnitList}
+                          onSelect={(selectedList, selectedItem) =>
+                            handleSelectionUnit(
+                              selectedList,
+                              selectedItem,
+                              index
+                            )
+                          }
+                          onRemove={(selectedList, selectedItem) => {
+                            onRemove1(selectedList, selectedItem, index);
+                          }}
+                          displayValue="primaryUnit"
+                        />
+                      </div>
+                    </Col>
+                    <Col className="mb-1">
                       <div className="">
                         <Label>Price</Label>
                         <Input
@@ -317,7 +402,7 @@ const AddPurchaseOrder = args => {
                         />
                       </div>
                     </Col>
-                    <Col className="mb-1" lg="2" md="2" sm="12">
+                    <Col className="mb-1">
                       <div className="">
                         <Label>Total Price</Label>
                         <Input
@@ -325,11 +410,11 @@ const AddPurchaseOrder = args => {
                           name="totalprice"
                           readOnly
                           placeholder="TtlPrice"
-                          value={product.price * product?.qty}
+                          value={product.Size * product.price * product.qty}
                         />
                       </div>
                     </Col>
-                    <Col className="d-flex mt-1 abb" lg="3" md="3" sm="12">
+                    <Col className="d-flex mt-1 abb">
                       <div className="btnStyle">
                         {index ? (
                           <Button

@@ -23,14 +23,7 @@ import {
 import { ImDownload } from "react-icons/im";
 import { AiOutlineDownload } from "react-icons/ai";
 import { ToWords } from "to-words";
-import {
-  Eye,
-  Trash2,
-  ChevronDown,
-  Edit,
-  CloudLightning,
-  CornerDownLeft,
-} from "react-feather";
+import { Eye, ChevronDown, CornerDownLeft } from "react-feather";
 import { history } from "../../../../history";
 import Templatethree from "../../../../assets/Billtemp/Templatethree.png";
 import Templatetwo from "../../../../assets/Billtemp/Templatetwo.png";
@@ -43,16 +36,12 @@ import { Route, Link } from "react-router-dom";
 import swal from "sweetalert";
 import {
   Sales_OrderToDispatchList,
-  ViewCompanyDetails,
   createOrderhistoryview,
-  view_Sales_orderList,
 } from "../../../../ApiEndPoint/ApiCalling";
 
 import { ContextLayout } from "../../../../utility/context/Layout";
 import { AgGridReact } from "ag-grid-react";
 import "ag-grid-community/dist/styles/ag-grid.css";
-import EditAccount from "../accounts/EditAccount";
-// import ViewAccount from "../accounts/ViewAccount";
 import ViewOrder from "../../../../../src/views/apps/freshlist/order/ViewAll";
 import jsPDF from "jspdf";
 import "jspdf-autotable";
@@ -67,7 +56,6 @@ import {
   FaArrowAltCircleRight,
   FaDownload,
   FaFilter,
-  FaPlus,
 } from "react-icons/fa";
 import moment from "moment-timezone";
 import {
@@ -191,7 +179,7 @@ class InvoiceGenerator extends React.Component {
           field: "order_status",
           filter: true,
           width: 140,
-          cellRendererFramework: (params) => {
+          cellRendererFramework: params => {
             // console.log(params.data);
             return params.data?.status === "completed" ? (
               <div className="badge badge-pill badge-success">Completed</div>
@@ -219,7 +207,7 @@ class InvoiceGenerator extends React.Component {
           field: "sortorder",
           field: "transactions",
           width: 120,
-          cellRendererFramework: (params) => {
+          cellRendererFramework: params => {
             return (
               <div className="actions cursor-pointer">
                 {this.state.InsiderPermissions &&
@@ -278,7 +266,7 @@ class InvoiceGenerator extends React.Component {
           filter: true,
           resizable: true,
           width: 180,
-          cellRendererFramework: (params) => {
+          cellRendererFramework: params => {
             // console.log(params.data?.order_id);
 
             return (
@@ -329,7 +317,7 @@ class InvoiceGenerator extends React.Component {
           filter: true,
           resizable: true,
           width: 140,
-          cellRendererFramework: (params) => {
+          cellRendererFramework: params => {
             // console.log(params?.data?.status);
 
             return (
@@ -347,9 +335,6 @@ class InvoiceGenerator extends React.Component {
                         />
                       )}
                   </>
-                  {/* ) : ( */}
-                  {/* "NA"
-                  )} */}
                   <span></span>
                 </div>
               </div>
@@ -362,7 +347,7 @@ class InvoiceGenerator extends React.Component {
           filter: true,
           resizable: true,
           width: 150,
-          cellRendererFramework: (params) => {
+          cellRendererFramework: params => {
             return (
               <div className="d-flex align-items-center justify-content-center cursor-pointer">
                 <div>
@@ -378,7 +363,7 @@ class InvoiceGenerator extends React.Component {
           filter: true,
           resizable: true,
           width: 160,
-          cellRendererFramework: (params) => {
+          cellRendererFramework: params => {
             return (
               <div className="d-flex align-items-center justify-content-center cursor-pointer">
                 <div>
@@ -394,7 +379,7 @@ class InvoiceGenerator extends React.Component {
           filter: true,
           resizable: true,
           width: 200,
-          cellRendererFramework: (params) => {
+          cellRendererFramework: params => {
             return (
               <div className="d-flex align-items-center justify-content-center cursor-pointer">
                 <div>
@@ -410,7 +395,7 @@ class InvoiceGenerator extends React.Component {
           filter: true,
           resizable: true,
           width: 150,
-          cellRendererFramework: (params) => {
+          cellRendererFramework: params => {
             return (
               <div className="d-flex align-items-center justify-content-center cursor-pointer">
                 <div>
@@ -426,7 +411,7 @@ class InvoiceGenerator extends React.Component {
           filter: true,
           resizable: true,
           width: 150,
-          cellRendererFramework: (params) => {
+          cellRendererFramework: params => {
             return (
               <div className="d-flex align-items-center justify-content-center cursor-pointer">
                 <div>
@@ -442,7 +427,7 @@ class InvoiceGenerator extends React.Component {
           filter: true,
           resizable: true,
           width: 210,
-          cellRendererFramework: (params) => {
+          cellRendererFramework: params => {
             return (
               <div className="d-flex align-items-center cursor-pointer">
                 <div>
@@ -459,7 +444,7 @@ class InvoiceGenerator extends React.Component {
           filter: true,
           resizable: true,
           width: 180,
-          cellRendererFramework: (params) => {
+          cellRendererFramework: params => {
             // console.log(params.data);
             return (
               <div className="d-flex cursor-pointer">
@@ -474,7 +459,7 @@ class InvoiceGenerator extends React.Component {
           field: "sortorder",
           field: "transactions",
           width: 120,
-          cellRendererFramework: (params) => {
+          cellRendererFramework: params => {
             return (
               <div className="actions cursor-pointer">
                 {this.state.InsiderPermissions &&
@@ -577,7 +562,7 @@ class InvoiceGenerator extends React.Component {
           filter: true,
           resizable: true,
           width: 230,
-          cellRendererFramework: (params) => {
+          cellRendererFramework: params => {
             return (
               <div className="d-flex align-items-center cursor-pointer">
                 <div>
@@ -614,29 +599,26 @@ class InvoiceGenerator extends React.Component {
         role: pageparmission?.Userinfo?.role,
       });
     } else {
-      let index = AddedBill.findIndex(
-        (ele) => ele?.order_id === data?.order_id
-      );
+      let index = AddedBill.findIndex(ele => ele?.order_id === data?.order_id);
       AddedBill.splice(index, 1);
     }
     // console.log(AddedBill);
     this.setState({ Mergebilllength: AddedBill?.length });
   };
 
-  MergeBillNow = async (data) => {
+  MergeBillNow = async data => {
     let billnum = localStorage.getItem("billnumber");
     console.log("Bill", data);
     console.log("grandTotal", data.grandTotal);
     console.log(billnum);
-    // debugger;
     if (billnum) {
       this.setState({ ShowBill: false });
       this.setState({ PrintData: data });
       await Sales_OrderToDispatchList(data?._id)
-        .then((res) => {
+        .then(res => {
           console.log(res);
         })
-        .catch((err) => {
+        .catch(err => {
           console.log(err);
         });
       const toWords = new ToWords();
@@ -651,7 +633,7 @@ class InvoiceGenerator extends React.Component {
     console.log(data);
   };
 
-  handleBillDownload = (data) => {
+  handleBillDownload = data => {
     this.setState({ PrintData: data });
     const toWords = new ToWords();
     let words = toWords.convert(Number(data.sub_total), { currency: true });
@@ -659,16 +641,16 @@ class InvoiceGenerator extends React.Component {
     this.toggleModal();
   };
   toggleModal = () => {
-    this.setState((prevState) => ({
+    this.setState(prevState => ({
       modal: !prevState.modal,
     }));
   };
   toggleModalOne = () => {
-    this.setState((prevState) => ({
+    this.setState(prevState => ({
       modalOne: !prevState.modalOne,
     }));
   };
-  changeHandler = (e) => {
+  changeHandler = e => {
     this.setState({ [e.target.name]: e.target.value });
   };
   toggleModalclose = () => {
@@ -694,7 +676,7 @@ class InvoiceGenerator extends React.Component {
     }
   };
   LookupviewStart = () => {
-    this.setState((prevState) => ({
+    this.setState(prevState => ({
       modal: !prevState.modal,
     }));
   };
@@ -726,7 +708,7 @@ class InvoiceGenerator extends React.Component {
     console.log(InsidePermissions);
     this.setState({ InsiderPermissions: InsidePermissions });
     createOrderhistoryview(userid)
-      .then((res) => {
+      .then(res => {
         console.log(res?.orderHistory);
         this.setState({ rowData: res?.orderHistory });
         this.setState({ AllcolumnDefs: this.state.columnDefs });
@@ -742,10 +724,9 @@ class InvoiceGenerator extends React.Component {
         }
         this.setState({ SelectedCols: this.state.columnDefs });
       })
-      .catch((err) => {
+      .catch(err => {
         console.log(err);
       });
-    // console.log(pageparmission.role);
     let userchoice = JSON.parse(localStorage.getItem("billUI"));
     console.log(userchoice);
     if (userchoice) {
@@ -754,9 +735,8 @@ class InvoiceGenerator extends React.Component {
       this.setState({ shipto: userchoice?.shipto });
     }
     let newparmisson = pageparmission?.role?.find(
-      (value) => value?.pageName === "invoice Generator"
+      value => value?.pageName === "invoice Generator"
     );
-    // console.log(newparmisson);
     this.setState({ Viewpermisson: newparmisson?.permission.includes("View") });
     this.setState({
       Createpermisson: newparmisson?.permission.includes("Create"),
@@ -769,7 +749,7 @@ class InvoiceGenerator extends React.Component {
     });
   }
 
-  submitHandler = (e) => {
+  submitHandler = e => {
     e.preventDefault();
     let mychoice = {
       imagePosition: this.state.logoposition,
@@ -785,7 +765,7 @@ class InvoiceGenerator extends React.Component {
     }
   };
   toggleDropdown = () => {
-    this.setState((prevState) => ({ isOpen: !prevState.isOpen }));
+    this.setState(prevState => ({ isOpen: !prevState.isOpen }));
   };
 
   runthisfunction(id) {
@@ -794,15 +774,15 @@ class InvoiceGenerator extends React.Component {
         cancel: "cancel",
         catch: { text: "Delete ", value: "delete" },
       },
-    }).then((value) => {
+    }).then(value => {
       switch (value) {
         case "delete":
           DeleteAccount(id)
-            .then((res) => {
+            .then(res => {
               let selectedData = this.gridApi.getSelectedRows();
               this.gridApi.updateRowData({ remove: selectedData });
             })
-            .catch((err) => {
+            .catch(err => {
               console.log(err);
             });
           break;
@@ -810,13 +790,13 @@ class InvoiceGenerator extends React.Component {
       }
     });
   }
-  handleBillSet = (i) => {
+  handleBillSet = i => {
     this.setState({ BillNumber: i });
     localStorage.setItem("billnumber", i);
     this.toggleModalOne();
     // this.setState({ ShowBill: false });
   };
-  onGridReady = (params) => {
+  onGridReady = params => {
     this.gridApi = params.api;
     this.gridColumnApi = params.columnApi;
     this.gridRef.current = params.api;
@@ -828,11 +808,11 @@ class InvoiceGenerator extends React.Component {
     });
   };
 
-  updateSearchQuery = (val) => {
+  updateSearchQuery = val => {
     this.gridApi.setQuickFilter(val);
   };
 
-  filterSize = (val) => {
+  filterSize = val => {
     if (this.gridApi) {
       this.gridApi.paginationSetPageSize(Number(val));
       this.setState({
@@ -847,7 +827,7 @@ class InvoiceGenerator extends React.Component {
       SelectedColums?.push(value);
     } else {
       const delindex = SelectedColums?.findIndex(
-        (ele) => ele?.headerName === value?.headerName
+        ele => ele?.headerName === value?.headerName
       );
 
       SelectedColums?.splice(delindex, 1);
@@ -858,14 +838,14 @@ class InvoiceGenerator extends React.Component {
       Papa.parse(csvData, {
         header: true,
         skipEmptyLines: true,
-        complete: (result) => {
+        complete: result => {
           if (result.data && result.data.length > 0) {
             resolve(result.data);
           } else {
             reject(new Error("No data found in the CSV"));
           }
         },
-        error: (error) => {
+        error: error => {
           reject(error);
         },
       });
@@ -877,7 +857,7 @@ class InvoiceGenerator extends React.Component {
 
     const doc = new jsPDF("landscape", "mm", size, false);
     doc.setTextColor(5, 87, 97);
-    const tableData = parsedData.map((row) => Object.values(row));
+    const tableData = parsedData.map(row => Object.values(row));
     doc.addImage(Logo, "JPEG", 10, 10, 50, 30);
     let date = new Date();
     doc.setCreationDate(date);
@@ -902,14 +882,14 @@ class InvoiceGenerator extends React.Component {
       console.error("Error parsing CSV:", error);
     }
   };
-  processCell = (params) => {
+  processCell = params => {
     // console.log(params);
     // Customize cell content as needed
     return params.value;
   };
 
   convertCsvToExcel(csvData) {
-    return new Promise((resolve) => {
+    return new Promise(resolve => {
       Papa.parse(csvData, {
         header: true,
         dynamicTyping: true,
@@ -940,7 +920,7 @@ class InvoiceGenerator extends React.Component {
     window.URL.revokeObjectURL(url);
   }
 
-  exportToExcel = async (e) => {
+  exportToExcel = async e => {
     const CsvData = this.gridApi.getDataAsCsv({
       processCellCallback: this.processCell,
     });
@@ -953,7 +933,7 @@ class InvoiceGenerator extends React.Component {
       processCellCallback: this.processCell,
     });
     Papa.parse(CsvData, {
-      complete: (result) => {
+      complete: result => {
         const ws = XLSX.utils.json_to_sheet(result.data);
         const wb = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(wb, ws, "Sheet1");
@@ -989,13 +969,13 @@ class InvoiceGenerator extends React.Component {
       processCellCallback: this.processCell,
     });
     Papa.parse(CsvData, {
-      complete: (result) => {
+      complete: result => {
         const rows = result.data;
 
         // Create XML
         let xmlString = "<root>\n";
 
-        rows.forEach((row) => {
+        rows.forEach(row => {
           xmlString += "  <row>\n";
           row.forEach((cell, index) => {
             xmlString += `    <field${index + 1}>${cell}</field${index + 1}>\n`;
@@ -1017,7 +997,7 @@ class InvoiceGenerator extends React.Component {
     });
   };
 
-  HandleSetVisibleField = (e) => {
+  HandleSetVisibleField = e => {
     e.preventDefault();
     this.gridApi.setColumnDefs(this.state.SelectedcolumnDefs);
     this.setState({ columnDefs: this.state.SelectedcolumnDefs });
@@ -1033,10 +1013,10 @@ class InvoiceGenerator extends React.Component {
   HeadingRightShift = () => {
     const updatedSelectedColumnDefs = [
       ...new Set([
-        ...this.state.SelectedcolumnDefs.map((item) => JSON.stringify(item)),
-        ...SelectedColums.map((item) => JSON.stringify(item)),
+        ...this.state.SelectedcolumnDefs.map(item => JSON.stringify(item)),
+        ...SelectedColums.map(item => JSON.stringify(item)),
       ]),
-    ].map((item) => JSON.parse(item));
+    ].map(item => JSON.parse(item));
     this.setState({
       SelectedcolumnDefs: [...new Set(updatedSelectedColumnDefs)], // Update the state with the combined array
     });
@@ -1073,12 +1053,13 @@ class InvoiceGenerator extends React.Component {
               <Col>
                 <div className="d-flex justify-content-end p-1">
                   <Button
-                    onClick={(e) => {
+                    onClick={e => {
                       e.preventDefault();
                       this.setState({ EditOneUserView: false });
                       this.componentDidMount();
                     }}
-                    color="danger">
+                    color="danger"
+                  >
                     Back
                   </Button>
                 </div>
@@ -1097,11 +1078,12 @@ class InvoiceGenerator extends React.Component {
                     <Col>
                       <div className="d-flex justify-content-end p-1">
                         <Button
-                          onClick={(e) => {
+                          onClick={e => {
                             e.preventDefault();
                             this.setState({ ViewOneUserView: false });
                           }}
-                          color="danger">
+                          color="danger"
+                        >
                           Back
                         </Button>
                       </div>
@@ -1117,7 +1099,8 @@ class InvoiceGenerator extends React.Component {
                         <Col lg="9" sm="8" xs="8">
                           <h1
                             className="float-left"
-                            style={{ fontWeight: "600" }}>
+                            style={{ fontWeight: "600" }}
+                          >
                             Sales Order List
                           </h1>
                         </Col>
@@ -1134,7 +1117,7 @@ class InvoiceGenerator extends React.Component {
                                   color: "white",
                                   fontWeight: "600",
                                 }}
-                                onClick={(e) => {
+                                onClick={e => {
                                   let billnumber =
                                     localStorage.getItem("billnumber");
                                   if (billnumber) {
@@ -1145,7 +1128,8 @@ class InvoiceGenerator extends React.Component {
                                     this.setState({ ShowBill: true });
                                     this.toggleModalOne();
                                   }
-                                }}>
+                                }}
+                              >
                                 Invoice Template
                               </Button>
                             </Col>
@@ -1181,11 +1165,13 @@ class InvoiceGenerator extends React.Component {
                                         border: "1px solid #39cccc",
                                         backgroundColor: "white",
                                       }}
-                                      className="dropdown-content dropdownmy">
+                                      className="dropdown-content dropdownmy"
+                                    >
                                       <h5
                                         onClick={() => this.exportToPDF()}
                                         style={{ cursor: "pointer" }}
-                                        className=" mx-1 myactive mt-1">
+                                        className=" mx-1 myactive mt-1"
+                                      >
                                         .PDF
                                       </h5>
                                       <h5
@@ -1193,25 +1179,29 @@ class InvoiceGenerator extends React.Component {
                                           this.gridApi.exportDataAsCsv()
                                         }
                                         style={{ cursor: "pointer" }}
-                                        className=" mx-1 myactive">
+                                        className=" mx-1 myactive"
+                                      >
                                         .CSV
                                       </h5>
                                       <h5
                                         onClick={this.convertCSVtoExcel}
                                         style={{ cursor: "pointer" }}
-                                        className=" mx-1 myactive">
+                                        className=" mx-1 myactive"
+                                      >
                                         .XLS
                                       </h5>
                                       <h5
                                         onClick={this.exportToExcel}
                                         style={{ cursor: "pointer" }}
-                                        className=" mx-1 myactive">
+                                        className=" mx-1 myactive"
+                                      >
                                         .XLSX
                                       </h5>
                                       <h5
                                         onClick={() => this.convertCsvToXml()}
                                         style={{ cursor: "pointer" }}
-                                        className=" mx-1 myactive">
+                                        className=" mx-1 myactive"
+                                      >
                                         .XML
                                       </h5>
                                     </div>
@@ -1247,27 +1237,32 @@ class InvoiceGenerator extends React.Component {
                                   <DropdownMenu right>
                                     <DropdownItem
                                       tag="div"
-                                      onClick={() => this.filterSize(5)}>
+                                      onClick={() => this.filterSize(5)}
+                                    >
                                       5
                                     </DropdownItem>
                                     <DropdownItem
                                       tag="div"
-                                      onClick={() => this.filterSize(20)}>
+                                      onClick={() => this.filterSize(20)}
+                                    >
                                       20
                                     </DropdownItem>
                                     <DropdownItem
                                       tag="div"
-                                      onClick={() => this.filterSize(50)}>
+                                      onClick={() => this.filterSize(50)}
+                                    >
                                       50
                                     </DropdownItem>
                                     <DropdownItem
                                       tag="div"
-                                      onClick={() => this.filterSize(100)}>
+                                      onClick={() => this.filterSize(100)}
+                                    >
                                       100
                                     </DropdownItem>
                                     <DropdownItem
                                       tag="div"
-                                      onClick={() => this.filterSize(134)}>
+                                      onClick={() => this.filterSize(134)}
+                                    >
                                       134
                                     </DropdownItem>
                                   </DropdownMenu>
@@ -1277,7 +1272,7 @@ class InvoiceGenerator extends React.Component {
                                 <div className="table-input mr-1">
                                   <Input
                                     placeholder="search Item here..."
-                                    onChange={(e) =>
+                                    onChange={e =>
                                       this.updateSearchQuery(e.target.value)
                                     }
                                     value={this.state.value}
@@ -1286,7 +1281,7 @@ class InvoiceGenerator extends React.Component {
                               </div>
                             </div>
                             <ContextLayout.Consumer className="ag-theme-alpine">
-                              {(context) => (
+                              {context => (
                                 <AgGridReact
                                   id="myAgGrid"
                                   // gridOptions={{
@@ -1343,7 +1338,8 @@ class InvoiceGenerator extends React.Component {
           isOpen={this.state.modal}
           toggle={this.LookupviewStart}
           className={this.props.className}
-          style={{ maxWidth: "1050px" }}>
+          style={{ maxWidth: "1050px" }}
+        >
           <ModalHeader toggle={this.LookupviewStart}>Change Fileds</ModalHeader>
           <ModalBody className="modalbodyhead">
             <Row>
@@ -1356,15 +1352,15 @@ class InvoiceGenerator extends React.Component {
                         return (
                           <>
                             <div
-                              onClick={(e) =>
-                                this.handleChangeHeader(e, ele, i)
-                              }
+                              onClick={e => this.handleChangeHeader(e, ele, i)}
                               key={i}
-                              className="mycustomtag mt-1">
+                              className="mycustomtag mt-1"
+                            >
                               <span className="mt-1">
                                 <h5
                                   style={{ cursor: "pointer" }}
-                                  className="allfields">
+                                  className="allfields"
+                                >
                                   <input
                                     type="checkbox"
                                     // checked={check && check}
@@ -1423,14 +1419,15 @@ class InvoiceGenerator extends React.Component {
                                             : ""
                                         }`,
                                       }}
-                                      className="allfields">
+                                      className="allfields"
+                                    >
                                       <IoMdRemoveCircleOutline
                                         onClick={() => {
                                           const SelectedCols =
                                             this.state.SelectedcolumnDefs.slice();
                                           const delindex =
                                             SelectedCols.findIndex(
-                                              (element) =>
+                                              element =>
                                                 element?.headerName ==
                                                 ele?.headerName
                                             );
@@ -1508,7 +1505,8 @@ class InvoiceGenerator extends React.Component {
           isOpen={this.state.modalOne}
           toggle={this.toggleModalOne}
           className={this.props.className}
-          style={{ maxWidth: "1050px" }}>
+          style={{ maxWidth: "1050px" }}
+        >
           <ModalHeader toggle={this.toggleModalclose}>
             {this.state.ShowBill ? "Select Bill Format" : "Download BIll"}
           </ModalHeader>
@@ -1522,7 +1520,7 @@ class InvoiceGenerator extends React.Component {
                   <Col lg="3" md="3" s="3">
                     <div className="imagebackground p-1">
                       <img
-                        onClick={(e) => this.handleBillSet(1)}
+                        onClick={e => this.handleBillSet(1)}
                         style={{ cursor: "pointer" }}
                         width={130}
                         height={150}
@@ -1534,7 +1532,7 @@ class InvoiceGenerator extends React.Component {
                   <Col lg="3" md="3" s="3">
                     <div className="imagebackground p-1">
                       <img
-                        onClick={(e) => this.handleBillSet(2)}
+                        onClick={e => this.handleBillSet(2)}
                         className="imagebackground"
                         style={{ cursor: "pointer" }}
                         width={130}
@@ -1547,7 +1545,7 @@ class InvoiceGenerator extends React.Component {
                   <Col lg="3" md="3" s="3">
                     <div className="imagebackground p-1">
                       <img
-                        onClick={(e) => this.handleBillSet(3)}
+                        onClick={e => this.handleBillSet(3)}
                         className="imagebackground"
                         style={{ cursor: "pointer" }}
                         width={130}
@@ -1560,7 +1558,7 @@ class InvoiceGenerator extends React.Component {
                   <Col lg="3" md="3" s="3">
                     <div className="imagebackground p-1">
                       <img
-                        onClick={(e) => this.handleBillSet(4)}
+                        onClick={e => this.handleBillSet(4)}
                         className="imagebackground"
                         style={{ cursor: "pointer" }}
                         width={130}
@@ -1598,7 +1596,7 @@ class InvoiceGenerator extends React.Component {
                     ) : (
                       <>
                         <div style={{ width: "100%" }} className="">
-                          <Form onSubmit={(e) => this.handleSubmit(e)}>
+                          <Form onSubmit={e => this.handleSubmit(e)}>
                             <Row className="main div heading px-3 py-3">
                               <Col lg="6" className="mb-2">
                                 <Label>SGST</Label>
@@ -1607,7 +1605,8 @@ class InvoiceGenerator extends React.Component {
                                   className="form-control"
                                   value={this.state.sgst}
                                   onChange={this.changeHandler}
-                                  name="sgst">
+                                  name="sgst"
+                                >
                                   <option value="not selected">
                                     --Select--
                                   </option>
@@ -1624,7 +1623,8 @@ class InvoiceGenerator extends React.Component {
                                   name="cgst"
                                   placeholder="Enter CGST"
                                   value={this.state.cgst}
-                                  onChange={this.changeHandler}>
+                                  onChange={this.changeHandler}
+                                >
                                   <option value="not selected">
                                     --Select--
                                   </option>
@@ -1640,7 +1640,8 @@ class InvoiceGenerator extends React.Component {
                                   name="otherCharges"
                                   placeholder="Enter Other Charges"
                                   value={this.state.otherCharges}
-                                  onChange={this.changeHandler}></Input>
+                                  onChange={this.changeHandler}
+                                ></Input>
                               </Col>
                               <Col lg="6">
                                 <Label className="mt-2">Delivery Charges</Label>
@@ -1649,7 +1650,8 @@ class InvoiceGenerator extends React.Component {
                                   name="deliveryCharges"
                                   placeholder="Enter Delivery Charges"
                                   value={this.state.deliveryCharges}
-                                  onChange={this.changeHandler}></Input>
+                                  onChange={this.changeHandler}
+                                ></Input>
                               </Col>
                               <Col lg="6">
                                 <Label className="mt-2">Discount </Label>
@@ -1658,7 +1660,8 @@ class InvoiceGenerator extends React.Component {
                                   name="discount"
                                   placeholder="Enter discount value"
                                   value={this.state.discount}
-                                  onChange={this.changeHandler}></Input>
+                                  onChange={this.changeHandler}
+                                ></Input>
                               </Col>
                             </Row>
                             <Row>
@@ -1671,7 +1674,8 @@ class InvoiceGenerator extends React.Component {
                                         : false
                                     }
                                     color="primary"
-                                    type="submit">
+                                    type="submit"
+                                  >
                                     {this.state.ButtonText}
                                   </Button>
                                 </div>
@@ -1693,7 +1697,8 @@ class InvoiceGenerator extends React.Component {
                             placeholder="Select Type"
                             name="logoposition"
                             value={this.state.logoposition}
-                            onChange={this.changeHandler}>
+                            onChange={this.changeHandler}
+                          >
                             <option>---Select---</option>
                             <option value="Left">Left</option>
                             <option value="right">Right</option>
@@ -1706,7 +1711,8 @@ class InvoiceGenerator extends React.Component {
                             placeholder="Select Type"
                             name="shipto"
                             value={this.state.shipto}
-                            onChange={this.changeHandler}>
+                            onChange={this.changeHandler}
+                          >
                             <option>---Select---</option>
                             <option value="Left">Left</option>
                             <option value="right">Right</option>
@@ -1727,7 +1733,8 @@ class InvoiceGenerator extends React.Component {
                             placeholder="Select Type"
                             name="Billtoposition"
                             value={this.state.Billtoposition}
-                            onChange={this.changeHandler}>
+                            onChange={this.changeHandler}
+                          >
                             <option>---Select---</option>
                             <option value="Left">Left</option>
                             <option value="right">Right</option>
@@ -1748,7 +1755,8 @@ class InvoiceGenerator extends React.Component {
                             <Button.Ripple
                               color="primary"
                               type="submit"
-                              className="mr-1 mb-1">
+                              className="mr-1 mb-1"
+                            >
                               Submit
                             </Button.Ripple>
                           </div>
@@ -1766,7 +1774,8 @@ class InvoiceGenerator extends React.Component {
           isOpen={this.state.modalTwo}
           toggle={this.toggleModalTwo}
           className={this.props.className}
-          style={{ maxWidth: "1050px" }}>
+          style={{ maxWidth: "1050px" }}
+        >
           <ModalHeader toggle={this.toggleModalcloseTwo}>
             View Order
           </ModalHeader>

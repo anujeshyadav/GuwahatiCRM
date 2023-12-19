@@ -45,36 +45,33 @@ const CreateOrder = args => {
       availableQty: "",
       qty: 1,
       price: "",
-      totalprice: "", //no
       Size: "",
       unitType: "",
-      // partyId: "", //no
-      // DateofDelivery: "", //no
+      totalprice: "",
     },
   ]);
 
   const handleRequredQty = (e, index, avalaibleSize) => {
-    setIndex(index);
-    console.log(product);
     const { name, value } = e.target;
-    const list = [...product];
-    list[index][name] = Number(value);
-    // console.log(GrandTotal);
+    if (Number(value) <= avalaibleSize) {
+      if (Number(value != 0)) {
+        setIndex(index);
+        const list = [...product];
+        list[index][name] = Number(value);
 
-    let amt = 0;
-    if (list.length > 0) {
-      const x = list?.map(val => {
-        console.log(val.qty * val.price);
-        GrandTotal[index] = val.Size * val.qty * val.price;
-
-        list[index]["totalprice"] = val.Size * val.qty * val.price;
-        return val.Size * val.qty * val.price;
-      });
-      amt = x.reduce((a, b) => a + b);
+        let amt = 0;
+        if (list.length > 0) {
+          const x = list?.map(val => {
+            GrandTotal[index] = val.Size * val.qty * val.price;
+            list[index]["totalprice"] = val.Size * val.qty * val.price;
+            return val.Size * val.qty * val.price;
+          });
+          amt = x.reduce((a, b) => a + b);
+        }
+        setProduct(list);
+        setGrandTotalAmt(amt);
+      }
     }
-    console.log(list);
-    setProduct(list);
-    setGrandTotalAmt(amt);
   };
 
   const handleSelectionParty = (selectedList, selectedItem, index) => {
@@ -104,7 +101,6 @@ const CreateOrder = args => {
       updatedProduct.unitType = selectedItem.primaryUnit;
       updatedUnitList[index] = updatedProduct;
       let myarr = prevProductList?.map((ele, i) => {
-        // console.log(ele?.qty * ele.price * SelectedSize[i]?.unitQty);
         updatedUnitList[index]["totalprice"] =
           ele?.qty * ele.price * SelectedSize[i]?.unitQty;
         let indextotal = ele?.price * ele.qty * SelectedSize[i]?.unitQty;
@@ -112,16 +108,11 @@ const CreateOrder = args => {
         return indextotal;
       });
       let amt = myarr.reduce((a, b) => a + b);
-      console.log(amt);
-      // setPriceTotal(amt);
       setGrandTotalAmt(amt);
-      return updatedUnitList; // Return the updated product list to set the state
+      return updatedUnitList; // Return the updated product list
     });
   };
   let subtotal = product?.reduce((acc, product) => acc + product.totalprice, 0);
-  console.log(subtotal);
-  // let UnitPrice = product?.reduce((acc, product) => acc + product.unitQty, 0);
-  // let totalPrice = UnitPrice * subtotal;
   let taxRate = 0.1; // 10%
   let tax = subtotal * taxRate;
   let discountRate = 0.2;
@@ -132,7 +123,6 @@ const CreateOrder = args => {
     const userId = JSON.parse(localStorage.getItem("userData"))._id;
     ProductListView(userId)
       .then(res => {
-        console.log(res?.Product);
         setProductList(res?.Product);
       })
       .catch(err => {
@@ -147,7 +137,6 @@ const CreateOrder = args => {
       });
     UnitListView(userId)
       .then(res => {
-        console.log(res.Unit);
         setUnitList(res.Unit);
       })
       .catch(err => {
@@ -188,7 +177,6 @@ const CreateOrder = args => {
       userId: UserInfo?._id,
       fullName: fullname,
       address: UserInfo?.currentAddress,
-      // grandTotal: Grandtotals,
       grandTotal: grandTotalAmt,
       MobileNo: UserInfo?.mobileNumber,
       country: UserInfo?.Country,
@@ -198,11 +186,10 @@ const CreateOrder = args => {
       DateofDelivery: dateofDelivery,
       partyId: PartyId,
     };
-    console.log(payload);
     if (error) {
       swal("Error occured while Entering Details");
     } else {
-      SaveOrder(ObjOrder)
+      SaveOrder(payload)
         .then(res => {
           swal("Order Created Successfully");
           //  history.push("/app/softnumen/order/orderList")
@@ -215,7 +202,6 @@ const CreateOrder = args => {
 
   const onRemove1 = (selectedList, removedItem, index) => {
     console.log(selectedList);
-    console.log(index);
   };
   return (
     <div>
@@ -282,7 +268,6 @@ const CreateOrder = args => {
               {product &&
                 product?.map((product, index) => (
                   <Row className="" key={index}>
-                    {console.log(product)}
                     <Col className="mb-1">
                       <div className="">
                         <Label>ProductName</Label>
@@ -320,7 +305,6 @@ const CreateOrder = args => {
                           type="number"
                           name="qty"
                           min={0}
-                          // max={product?.availableQty}
                           placeholder="Req_Qty"
                           required
                           autocomplete="off"

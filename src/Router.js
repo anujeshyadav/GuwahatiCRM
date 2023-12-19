@@ -1564,7 +1564,7 @@ class AppRouter extends React.Component {
             component={SalesReturnView}
           />
           <AppRoute
-            path="/app/AJGroup/order/purchaseReturn/:id"
+            path="/app/AJGroup/order/purchaseReturn"
             component={PurchaseReturn}
           />
           <AppRoute
