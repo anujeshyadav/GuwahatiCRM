@@ -605,7 +605,7 @@ class CreditNoteList extends React.Component {
                               </span>
                               <span className="mx-1">
                                 <div className="dropdown-container float-right">
-                                  <BsCloudDownloadFill
+                                  <ImDownload
                                     style={{ cursor: "pointer" }}
                                     title="download file"
                                     size="25px"

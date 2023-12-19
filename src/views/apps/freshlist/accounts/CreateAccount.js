@@ -657,12 +657,12 @@ const CreateAccount = () => {
                   }}>
                   <input
                     required
-                    style={{ marginRight: "3px" }}
+                    style={{ marginRight: "3px"  }}
                     type="radio"
                     name="status"
-                    value="Active"
+                    value="Active" 
                   />
-                  <span style={{ marginRight: "20px" }}>Active</span>
+                  <span style={{ marginRight: "20px"  }}>Active</span>
 
                   <input
                     required
