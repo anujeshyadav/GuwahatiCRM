@@ -26,7 +26,7 @@ import jsPDF from "jspdf";
 import "jspdf-autotable";
 import Logo from "../../../../../assets/img/profile/pages/logomain.png";
 import Papa from "papaparse";
-import { Eye, Trash2, ChevronDown, Edit, CornerDownLeft } from "react-feather";
+import { Eye, ChevronDown, Edit, CornerDownLeft } from "react-feather";
 import { IoMdRemoveCircleOutline } from "react-icons/io";
 import "../../../../../assets/scss/plugins/tables/_agGridStyleOverride.scss";
 import "../../../../../assets/scss/pages/users.scss";
@@ -43,7 +43,6 @@ import {
   Delete_targetINlist,
 } from "../../../../../ApiEndPoint/ApiCalling";
 import {
-  BsCloudDownloadFill,
   BsFillArrowDownSquareFill,
   BsFillArrowUpSquareFill,
 } from "react-icons/bs";

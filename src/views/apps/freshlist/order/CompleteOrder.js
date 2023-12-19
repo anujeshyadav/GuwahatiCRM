@@ -1,7 +1,7 @@
 import React, { useRef } from "react";
 import { Route } from "react-router-dom";
-import xmlJs from "xml-js";
 import {
+  Label,
   Card,
   CardBody,
   Input,
@@ -16,29 +16,32 @@ import {
   ModalHeader,
   ModalBody,
   Badge,
+  Table,
+  CustomInput,
 } from "reactstrap";
-import { ImDownload } from "react-icons/im";
 import { ContextLayout } from "../../../../utility/context/Layout";
 import { AgGridReact } from "ag-grid-react";
 import "ag-grid-community/dist/styles/ag-grid.css";
+// import ViewOrder from "../order/ViewAll";
 import jsPDF from "jspdf";
 import "jspdf-autotable";
 import Logo from "../../../../assets/img/profile/pages/logomain.png";
 import Papa from "papaparse";
-import { Eye, Trash2, ChevronDown, CornerDownLeft } from "react-feather";
+import { Eye, Trash2, ChevronDown, Edit, CornerDownLeft } from "react-feather";
 import { IoMdRemoveCircleOutline } from "react-icons/io";
 import "../../../../assets/scss/plugins/tables/_agGridStyleOverride.scss";
 import "../../../../assets/scss/pages/users.scss";
-import ViewOrder from "../order/ViewAll";
-import CompletedOrder from "../order/completed/ViewCompleted";
+// import StockTrxInvoice from "../../subcategory/StockTrxInvoice";
+import StockTrxInvoice from "../subcategory/StockTrxInvoice";
 import {
   FaArrowAltCircleLeft,
   FaArrowAltCircleRight,
+  FaDownload,
   FaFilter,
+  FaPlus,
 } from "react-icons/fa";
 import swal from "sweetalert";
 import {
-  DeleteAccount,
   createOrderhistoryview,
   Delete_targetINlist,
 } from "../../../../ApiEndPoint/ApiCalling";
@@ -62,11 +65,12 @@ class CompleteOrder extends React.Component {
     this.state = {
       isOpen: false,
       Arrindex: "",
-      InsiderPermissions: {},
       rowData: [],
+      ShowBill: false,
       modal: false,
       modalone: false,
       ViewData: {},
+      InsiderPermissions: {},
       setMySelectedarr: [],
       SelectedCols: [],
       paginationPageSize: 5,
@@ -92,24 +96,11 @@ class CompleteOrder extends React.Component {
 
         {
           headerName: "Actions",
-          field: "sortorder",
           field: "transactions",
-          width: 190,
+          width: 180,
           cellRendererFramework: params => {
             return (
               <div className="actions cursor-pointer">
-                {this.state.InsiderPermissions &&
-                  this.state.InsiderPermissions?.View && (
-                    <Eye
-                      className="mr-50"
-                      size="25px"
-                      color="green"
-                      onClick={() => {
-                        this.handleChangeView(params.data, "readonly");
-                      }}
-                    />
-                  )}
-
                 {this.state.InsiderPermissions &&
                   this.state.InsiderPermissions?.Edit && (
                     <CornerDownLeft
@@ -128,15 +119,32 @@ class CompleteOrder extends React.Component {
                       }}
                     />
                   )}
-
-                {/* <Trash2
-                  className="mr-50"
-                  size="25px"
-                  color="Red"
-                  onClick={() => {
-                    this.runthisfunction(params?.data?._id);
-                  }}
-                /> */}
+                {this.state.InsiderPermissions &&
+                  this.state.InsiderPermissions?.View && (
+                    <Eye
+                      className="mr-50"
+                      size="25px"
+                      color="green"
+                      onClick={() => {
+                        this.togglemodal();
+                        this.handleChangeView(params.data, "readonly");
+                      }}
+                    />
+                  )}
+                {this.state.InsiderPermissions &&
+                  this.state.InsiderPermissions?.Edit && (
+                    <Edit
+                      className="mr-50"
+                      size="25px"
+                      color="blue"
+                      onClick={() =>
+                        this.props.history.push({
+                          pathname: `/app/freshlist/order/editOrder/${params.data?._id}`,
+                          state: params.data,
+                        })
+                      }
+                    />
+                  )}
               </div>
             );
           },
@@ -147,26 +155,48 @@ class CompleteOrder extends React.Component {
           filter: true,
           width: 150,
           cellRendererFramework: params => {
-            return params.value === "completed" ? (
+            return params.value == "completed" ? (
               <div className="badge badge-pill badge-success">
+                {params.data.status}
+              </div>
+            ) : params.value == "pending" ? (
+              <div className="badge badge-pill badge-warning">
+                {params.data.status}
+              </div>
+            ) : params.value == "return" ? (
+              <div className="badge badge-pill badge-danger">
                 {params.data.status}
               </div>
             ) : null;
           },
         },
         {
-          headerName: "Product_Title",
+          headerName: "Full Name",
           field: "orderItems",
           filter: true,
           width: 180,
           valueGetter: params => {
             if (params.data.orderItems && params.data.orderItems.length > 0) {
-              return params.data.orderItems[0].product.Product_Title;
+              return params.data.fullName;
             }
             return null;
           },
         },
 
+        {
+          headerName: "Product Name",
+          field: "orderItems",
+          filter: true,
+          width: 220,
+          valueGetter: params => {
+            if (params.data.orderItems && params.data.orderItems.length > 0) {
+              return params?.data?.orderItems?.map(val => {
+                return val?.product?.Product_Title;
+              });
+            }
+            return null;
+          },
+        },
         {
           headerName: "Price",
           field: "orderItems",
@@ -215,33 +245,6 @@ class CompleteOrder extends React.Component {
             return null;
           },
         },
-
-        {
-          headerName: "MobileNo",
-          field: "MobileNo",
-          filter: true,
-          width: 150,
-          cellRendererFramework: params => {
-            return (
-              <div>
-                <span>{params.data?.MobileNo}</span>
-              </div>
-            );
-          },
-        },
-        {
-          headerName: "Discount",
-          field: "discount",
-          filter: true,
-          width: 200,
-          cellRendererFramework: params => {
-            return (
-              <div>
-                <span>{params.data?.discount}</span>
-              </div>
-            );
-          },
-        },
       ],
     };
   }
@@ -256,9 +259,11 @@ class CompleteOrder extends React.Component {
     }));
   };
 
-  handleChangeEdit = (data, types) => {
+  handleChangeView = (data, types) => {
     let type = types;
     if (type == "readonly") {
+      console.log("ResponseData", data.orderItems);
+      console.log("Test", data);
       this.setState({ ViewOneUserView: true });
       this.setState({ ViewOneData: data });
     } else {
@@ -267,32 +272,24 @@ class CompleteOrder extends React.Component {
     }
   };
 
-  handleChangeView = (data, types) => {
-    let type = types;
-    if (type == "readonly") {
-      this.setState({ ViewOneUserView: true });
-      this.setState({ ViewOneData: data });
-    } else {
-      this.setState({ EditOneUserView: true });
-      this.setState({ EditOneData: data });
-    }
-  };
   async componentDidMount() {
-    const InsidePermissions = CheckPermission("Complete Order");
-    this.setState({ InsiderPermissions: InsidePermissions });
     const userId = JSON.parse(localStorage.getItem("userData"))._id;
+    const UserInformation = this.context?.UserInformatio;
+    const InsidePermissions = CheckPermission("Sales Order");
+    console.log(InsidePermissions);
+    this.setState({ InsiderPermissions: InsidePermissions });
     await createOrderhistoryview(userId)
       .then(res => {
-        console.log(res.orderHistory);
+        // this.setState({ rowData: res?.orderHistory });
+        // console.log(res?.orderHistory);
         const ComplteStatus = res?.orderHistory?.filter(
           ele => ele.status == "completed"
         );
-        // console.log(ComplteStatus);
         this.setState({ rowData: ComplteStatus });
         this.setState({ AllcolumnDefs: this.state.columnDefs });
         this.setState({ SelectedCols: this.state.columnDefs });
 
-        let userHeading = JSON.parse(localStorage.getItem("TargetList"));
+        let userHeading = JSON.parse(localStorage.getItem("OrderListshow"));
         if (userHeading?.length) {
           this.setState({ columnDefs: userHeading });
           this.gridApi.setColumnDefs(userHeading);
@@ -306,6 +303,16 @@ class CompleteOrder extends React.Component {
         console.log(err);
       });
   }
+
+  togglemodal = () => {
+    this.setState(prevState => ({
+      modalone: !prevState.modalone,
+    }));
+    this.setState({ ShowBill: false });
+  };
+  handleStockTrxInvoiceShow = () => {
+    this.setState({ ShowBill: true });
+  };
   toggleDropdown = () => {
     this.setState(prevState => ({ isOpen: !prevState.isOpen }));
   };
@@ -420,8 +427,6 @@ class CompleteOrder extends React.Component {
     }
   };
   processCell = params => {
-    // console.log(params);
-    // Customize cell content as needed
     return params.value;
   };
 
@@ -521,10 +526,6 @@ class CompleteOrder extends React.Component {
         });
 
         xmlString += "</root>";
-
-        // setXmlData(xmlString);
-
-        // Create a download link
         const blob = new Blob([xmlString], { type: "text/xml" });
         const link = document.createElement("a");
         link.href = URL.createObjectURL(blob);
@@ -542,7 +543,7 @@ class CompleteOrder extends React.Component {
     this.setState({ SelectedcolumnDefs: this.state.SelectedcolumnDefs });
     this.setState({ rowData: this.state.rowData });
     localStorage.setItem(
-      "TargetList",
+      "OrderListshow",
       JSON.stringify(this.state.SelectedcolumnDefs)
     );
     this.LookupviewStart();
@@ -578,244 +579,205 @@ class CompleteOrder extends React.Component {
       defaultColDef,
       SelectedcolumnDefs,
       isOpen,
-      SelectedCols,
       InsiderPermissions,
+      SelectedCols,
       AllcolumnDefs,
     } = this.state;
     return (
       <>
         <Col className="app-user-list">
-          {this.state.EditOneUserView && this.state.EditOneUserView ? (
-            <Row className="card">
-              <Col>
-                <div className="d-flex justify-content-end p-1">
-                  <Button
-                    onClick={e => {
-                      e.preventDefault();
-                      this.setState({ EditOneUserView: false });
-                    }}
-                    color="danger"
-                  >
-                    Back
-                  </Button>
-                </div>
-              </Col>
-            </Row>
-          ) : (
-            <>
-              {this.state.ViewOneUserView && this.state.ViewOneUserView ? (
-                <>
-                  <Row className="card">
-                    <Col>
-                      <div className="d-flex justify-content-end p-1">
-                        <Button
-                          onClick={e => {
-                            e.preventDefault();
-                            this.setState({ ViewOneUserView: false });
-                          }}
-                          color="danger"
-                        >
-                          Back
-                        </Button>
-                      </div>
-                    </Col>
-                    <CompletedOrder ViewOneData={this.state.ViewOneData} />
-                  </Row>
-                </>
-              ) : (
-                <>
-                  <Col sm="12">
-                    <Card>
-                      <Row className="ml-2 mt-2 mr-2">
-                        <Col>
-                          <h1
-                            className="float-left"
-                            style={{ fontWeight: "600" }}
+          <Col sm="12">
+            <Card>
+              <Row className="ml-2 mt-2 mr-2">
+                <Col>
+                  <h1 className="float-left " style={{ fontWeight: "600" }}>
+                    {" "}
+                    Complete Order List
+                  </h1>
+                </Col>
+                {InsiderPermissions && InsiderPermissions?.View && (
+                  <Col>
+                    <span className="mx-1">
+                      <FaFilter
+                        style={{ cursor: "pointer" }}
+                        title="filter coloumn"
+                        size="25px"
+                        onClick={this.LookupviewStart}
+                        color="#39cccc"
+                        className="float-right"
+                      />
+                    </span>
+                    <span className="mx-1">
+                      <div className="dropdown-container float-right">
+                        <BsCloudDownloadFill
+                          style={{ cursor: "pointer" }}
+                          title="download file"
+                          size="25px"
+                          className="dropdown-button "
+                          color="#39cccc"
+                          onClick={this.toggleDropdown}
+                        />
+                        {isOpen && (
+                          <div
+                            style={{
+                              position: "absolute",
+                              zIndex: "1",
+                            }}
+                            className="dropdown-content dropdownmy"
                           >
-                            Complete Order
-                          </h1>
-                        </Col>
-                        {InsiderPermissions && InsiderPermissions?.View && (
-                          <Col>
-                            <span className="mx-1">
-                              <FaFilter
-                                style={{ cursor: "pointer" }}
-                                title="filter coloumn"
-                                size="35px"
-                                onClick={this.LookupviewStart}
-                                color="#39cccc"
-                                className="float-right"
-                              />
-                            </span>
-                            <span className="mx-1">
-                              <div className="dropdown-container float-right">
-                                <ImDownload
-                                  style={{ cursor: "pointer" }}
-                                  title="download file"
-                                  size="35px"
-                                  className="dropdown-button "
-                                  color="#39cccc"
-                                  onClick={this.toggleDropdown}
-                                />
-                                {isOpen && (
-                                  <div
-                                    style={{
-                                      position: "absolute",
-                                      zIndex: "1",
-                                      border: "1px solid #39cccc",
-                                      backgroundColor: "white",
-                                    }}
-                                    className="dropdown-content dropdownmy"
-                                  >
-                                    <h5
-                                      onClick={() => this.exportToPDF()}
-                                      style={{ cursor: "pointer" }}
-                                      className=" mx-1 myactive mt-1"
-                                    >
-                                      .PDF
-                                    </h5>
-                                    <h5
-                                      onClick={() =>
-                                        this.gridApi.exportDataAsCsv()
-                                      }
-                                      style={{ cursor: "pointer" }}
-                                      className=" mx-1 myactive"
-                                    >
-                                      .CSV
-                                    </h5>
-                                    <h5
-                                      onClick={this.convertCSVtoExcel}
-                                      style={{ cursor: "pointer" }}
-                                      className=" mx-1 myactive"
-                                    >
-                                      .XLS
-                                    </h5>
-                                    <h5
-                                      onClick={this.exportToExcel}
-                                      style={{ cursor: "pointer" }}
-                                      className=" mx-1 myactive"
-                                    >
-                                      .XLSX
-                                    </h5>
-                                    <h5
-                                      onClick={() => this.convertCsvToXml()}
-                                      style={{ cursor: "pointer" }}
-                                      className=" mx-1 myactive"
-                                    >
-                                      .XML
-                                    </h5>
-                                  </div>
-                                )}
-                              </div>
-                            </span>
-                          </Col>
-                        )}
-                      </Row>
-                      <CardBody style={{ marginTop: "-1.5rem" }}>
-                        {this.state.rowData === null ? null : (
-                          <div className="ag-theme-material w-100 my-2 ag-grid-table">
-                            <div className="d-flex flex-wrap justify-content-between align-items-center">
-                              <div className="mb-1">
-                                <UncontrolledDropdown className="p-1 ag-dropdown">
-                                  <DropdownToggle tag="div">
-                                    {this.gridApi
-                                      ? this.state.currenPageSize
-                                      : "" * this.state.getPageSize -
-                                        (this.state.getPageSize - 1)}
-                                    -
-                                    {this.state.rowData.length -
-                                      this.state.currenPageSize *
-                                        this.state.getPageSize >
-                                    0
-                                      ? this.state.currenPageSize *
-                                        this.state.getPageSize
-                                      : this.state.rowData.length}
-                                    of {this.state.rowData.length}
-                                    <ChevronDown className="ml-50" size={15} />
-                                  </DropdownToggle>
-                                  <DropdownMenu right>
-                                    <DropdownItem
-                                      tag="div"
-                                      onClick={() => this.filterSize(5)}
-                                    >
-                                      5
-                                    </DropdownItem>
-                                    <DropdownItem
-                                      tag="div"
-                                      onClick={() => this.filterSize(20)}
-                                    >
-                                      20
-                                    </DropdownItem>
-                                    <DropdownItem
-                                      tag="div"
-                                      onClick={() => this.filterSize(50)}
-                                    >
-                                      50
-                                    </DropdownItem>
-                                    <DropdownItem
-                                      tag="div"
-                                      onClick={() => this.filterSize(100)}
-                                    >
-                                      100
-                                    </DropdownItem>
-                                    <DropdownItem
-                                      tag="div"
-                                      onClick={() => this.filterSize(134)}
-                                    >
-                                      134
-                                    </DropdownItem>
-                                  </DropdownMenu>
-                                </UncontrolledDropdown>
-                              </div>
-                              <div className="d-flex flex-wrap justify-content-end mb-1">
-                                <div className="table-input mr-1">
-                                  <Input
-                                    placeholder="search Item here..."
-                                    onChange={e =>
-                                      this.updateSearchQuery(e.target.value)
-                                    }
-                                    value={this.state.value}
-                                  />
-                                </div>
-                              </div>
-                            </div>
-                            <ContextLayout.Consumer className="ag-theme-alpine">
-                              {context => (
-                                <AgGridReact
-                                  id="myAgGrid"
-                                  gridOptions={this.gridOptions}
-                                  rowSelection="multiple"
-                                  defaultColDef={defaultColDef}
-                                  columnDefs={columnDefs}
-                                  rowData={rowData}
-                                  onGridReady={this.onGridReady}
-                                  colResizeDefault={"shift"}
-                                  animateRows={true}
-                                  floatingFilter={false}
-                                  pagination={true}
-                                  rowHeight={38}
-                                  // paginationTop={true}
-                                  // paginationBottom={false}
-                                  // paginateChildRows={true}
-                                  paginationPageSize={
-                                    this.state.paginationPageSize
-                                  }
-                                  pivotPanelShow="always"
-                                  enableRtl={context.state.direction === "rtl"}
-                                  ref={this.gridRef}
-                                  domLayout="autoHeight"
-                                />
-                              )}
-                            </ContextLayout.Consumer>
+                            <h5
+                              onClick={() => this.exportToPDF()}
+                              style={{ cursor: "pointer" }}
+                              className=" mx-1 myactive mt-1"
+                            >
+                              .PDF
+                            </h5>
+                            <h5
+                              onClick={() => this.gridApi.exportDataAsCsv()}
+                              style={{ cursor: "pointer" }}
+                              className=" mx-1 myactive"
+                            >
+                              .CSV
+                            </h5>
+                            <h5
+                              onClick={this.convertCSVtoExcel}
+                              style={{ cursor: "pointer" }}
+                              className=" mx-1 myactive"
+                            >
+                              .XLS
+                            </h5>
+                            <h5
+                              onClick={this.exportToExcel}
+                              style={{ cursor: "pointer" }}
+                              className=" mx-1 myactive"
+                            >
+                              .XLSX
+                            </h5>
+                            <h5
+                              onClick={() => this.convertCsvToXml()}
+                              style={{ cursor: "pointer" }}
+                              className=" mx-1 myactive"
+                            >
+                              .XML
+                            </h5>
                           </div>
                         )}
-                      </CardBody>
-                    </Card>
+                      </div>
+                    </span>
+                    <span>
+                      <Route
+                        render={({ history }) => (
+                          <Badge
+                            style={{ cursor: "pointer" }}
+                            className="float-right mr-1"
+                            color="primary"
+                            onClick={() =>
+                              history.push("/app/softnumen/order/createorder")
+                            }
+                          >
+                            <FaPlus size={15} /> Create Order
+                          </Badge>
+                        )}
+                      />
+                    </span>
                   </Col>
-                </>
-              )}
-            </>
-          )}
+                )}
+              </Row>
+              <CardBody style={{ marginTop: "-1.5rem" }}>
+                {this.state.rowData === null ? null : (
+                  <div className="ag-theme-material w-100 my-2 ag-grid-table">
+                    <div className="d-flex flex-wrap justify-content-between align-items-center">
+                      <div className="mb-1">
+                        <UncontrolledDropdown className="p-1 ag-dropdown">
+                          <DropdownToggle tag="div">
+                            {this.gridApi
+                              ? this.state.currenPageSize
+                              : "" * this.state.getPageSize -
+                                (this.state.getPageSize - 1)}{" "}
+                            -{" "}
+                            {this.state.rowData.length -
+                              this.state.currenPageSize *
+                                this.state.getPageSize >
+                            0
+                              ? this.state.currenPageSize *
+                                this.state.getPageSize
+                              : this.state.rowData.length}{" "}
+                            of {this.state.rowData.length}
+                            <ChevronDown className="ml-50" size={15} />
+                          </DropdownToggle>
+                          <DropdownMenu right>
+                            <DropdownItem
+                              tag="div"
+                              onClick={() => this.filterSize(5)}
+                            >
+                              5
+                            </DropdownItem>
+                            <DropdownItem
+                              tag="div"
+                              onClick={() => this.filterSize(20)}
+                            >
+                              20
+                            </DropdownItem>
+                            <DropdownItem
+                              tag="div"
+                              onClick={() => this.filterSize(50)}
+                            >
+                              50
+                            </DropdownItem>
+                            <DropdownItem
+                              tag="div"
+                              onClick={() => this.filterSize(100)}
+                            >
+                              100
+                            </DropdownItem>
+                            <DropdownItem
+                              tag="div"
+                              onClick={() => this.filterSize(134)}
+                            >
+                              134
+                            </DropdownItem>
+                          </DropdownMenu>
+                        </UncontrolledDropdown>
+                      </div>
+                      <div className="d-flex flex-wrap justify-content-end mb-1">
+                        <div className="table-input mr-1">
+                          <Input
+                            placeholder="search Item here..."
+                            onChange={e =>
+                              this.updateSearchQuery(e.target.value)
+                            }
+                            value={this.state.value}
+                          />
+                        </div>
+                      </div>
+                    </div>
+                    <ContextLayout.Consumer className="ag-theme-alpine">
+                      {context => (
+                        <AgGridReact
+                          id="myAgGrid"
+                          gridOptions={this.gridOptions}
+                          rowSelection="multiple"
+                          defaultColDef={defaultColDef}
+                          columnDefs={columnDefs}
+                          rowData={rowData}
+                          onGridReady={this.onGridReady}
+                          colResizeDefault={"shift"}
+                          animateRows={true}
+                          floatingFilter={false}
+                          pagination={true}
+                          paginationPageSize={this.state.paginationPageSize}
+                          pivotPanelShow="always"
+                          enableRtl={context.state.direction === "rtl"}
+                          ref={this.gridRef} // Attach the ref to the grid
+                          domLayout="autoHeight" // Adjust layout as needed
+                        />
+                      )}
+                    </ContextLayout.Consumer>
+                  </div>
+                )}
+              </CardBody>
+            </Card>
+          </Col>
         </Col>
 
         <Modal
@@ -925,17 +887,6 @@ class CompleteOrder extends React.Component {
                                               SelectedcolumnDefs: SelectedCols, // Update the state with the modified array
                                             });
                                           }
-                                          // const delindex =
-                                          //   SelectedCols.findIndex(
-                                          //     (element) =>
-                                          //       element?.headerName ==
-                                          //       ele?.headerName
-                                          //   );
-
-                                          // SelectedCols?.splice(delindex, 1);
-                                          // this.setState({
-                                          //   SelectedcolumnDefs: SelectedCols,
-                                          // });
                                         }}
                                         style={{ cursor: "pointer" }}
                                         size="25px"
@@ -977,9 +928,18 @@ class CompleteOrder extends React.Component {
             <Row>
               <Col>
                 <div className="d-flex justify-content-center">
-                  <Button onClick={this.HandleSetVisibleField} color="primary">
+                  {/* <Button onClick={this.HandleSetVisibleField} color="primary">
                     Submit
-                  </Button>
+                  </Button> */}
+
+                  <Badge
+                    style={{ cursor: "pointer" }}
+                    className=""
+                    color="primary"
+                    onClick={this.HandleSetVisibleField}
+                  >
+                    Submit
+                  </Badge>
                 </div>
               </Col>
             </Row>
@@ -987,18 +947,140 @@ class CompleteOrder extends React.Component {
         </Modal>
         <Modal
           isOpen={this.state.modalone}
-          toggle={this.toggleModal}
-          className="modal-dialog modal-xl"
-          // className="modal-dialog modal-lg"
-          size="lg"
-          backdrop={true}
-          fullscreen={true}
+          toggle={this.togglemodal}
+          className={this.props.className}
+          style={{ maxWidth: "1050px" }}
         >
-          <ModalHeader toggle={this.toggleModal}>View Details</ModalHeader>
-          <ModalBody className="myproducttable">
-            {/* <div className="container"> */}
-            {/* <TargetAssignedOne ViewData={this.state.ViewData} /> */}
-            {/* </div> */}
+          <ModalHeader toggle={this.togglemodal}>
+            {this.state.ShowBill ? "Bill Download" : "All Products"}
+          </ModalHeader>
+          <ModalBody
+            className={`${this.state.ShowBill ? "p-1" : "modalbodyhead"}`}
+          >
+            <Row className="p-2">
+              <Col>
+                <div className="d-flex justify-content-center">
+                  <h4>Sales Order List</h4>
+                </div>
+              </Col>
+            </Row>
+            {this.state.ShowBill ? (
+              <>
+                <StockTrxInvoice ViewOneData={this.state.ViewOneData} />
+              </>
+            ) : (
+              <>
+                {this.state.ViewOneUserView ? (
+                  <>
+                    <Row>
+                      <Col className="d-flex">
+                        <div>
+                          <span>UserName:</span>
+                        </div>
+                        <div>
+                          <h5 className="">
+                            {this.state.ViewOneData &&
+                              this.state.ViewOneData?.fullName}
+                          </h5>
+                        </div>
+                      </Col>
+
+                      <Col className="d-flex">
+                        <div>
+                          <span>Grand Total :</span>
+                        </div>
+                        <div>
+                          <strong>
+                            {this.state.ViewOneData &&
+                              this.state.ViewOneData?.grandTotal}
+                          </strong>
+                          Rs/-
+                        </div>
+                      </Col>
+                      <Col>
+                        {this.state.ViewOneData?.status == "completed" ? (
+                          <>
+                            <div className="d-flex justify-content-center">
+                              <h5>
+                                Status:
+                                <Badge className="mx-2" color="primary">
+                                  {this.state.ViewOneData?.status}
+                                </Badge>
+                              </h5>
+                            </div>
+                          </>
+                        ) : (
+                          <>
+                            <h5>
+                              status:
+                              <Badge className="mx-2" color="primary">
+                                {this.state.ViewOneData?.status}
+                              </Badge>
+                            </h5>
+                          </>
+                        )}
+                      </Col>
+                      {/* <Col>
+                        <Label>Download Invoice :</Label>
+                        <div className="d-flex justify-content-center">
+                          <FaDownload
+                            onClick={this.handleStockTrxInvoiceShow}
+                            color="#00c0e"
+                            fill="#00c0e"
+                            style={{ cursor: "pointer" }}
+                            size={20}
+                          />
+                        </div>
+                      </Col> */}
+                    </Row>
+
+                    <Row>
+                      <Col>
+                        <Table style={{ cursor: "pointer" }} striped>
+                          <thead>
+                            <tr>
+                              <th>#</th>
+                              <th>Product Name</th>
+                              <th>Price</th>
+                              <th>Size</th>
+                              <th>Unit</th>
+                              <th>HSN CODE</th>
+                              <th>GST</th>
+                              <th>Quantity</th>
+                              <th>Total</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {this.state.ViewOneData?.orderItems &&
+                              this.state.ViewOneData?.orderItems?.map(
+                                (ele, i) => (
+                                  <>
+                                    <tr>
+                                      <th scope="row">{i + 1}</th>
+                                      <td>{ele?.product?.Product_Title}</td>
+                                      <td>{ele?.product?.Product_MRP}</td>
+                                      <td>{ele?.product?.Size}</td>
+                                      <td>{ele?.unitQty}</td>
+                                      <td>{ele?.product?.HSN_Code}</td>
+                                      <td>{ele?.product["GST Rate"]}</td>
+                                      <td>{ele?.qty}</td>
+                                      <td>
+                                        {ele?.product?.Product_MRP *
+                                          ele?.product?.Size *
+                                          ele?.qty}
+                                      </td>
+                                    </tr>
+                                  </>
+                                )
+                              )}
+                          </tbody>
+                        </Table>
+                      </Col>
+                    </Row>
+                  </>
+                ) : null}
+              </>
+            )}
           </ModalBody>
         </Modal>
       </>
