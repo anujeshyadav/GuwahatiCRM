@@ -97,6 +97,8 @@ export const Purchase_Status_Order =
 
 export const Sales_OrderTo_DispatchList = "/invoice/save-invoice/";
 export const Order_DisPatchList = "/invoice/view-invoice";
+export const Edit_Status_DispatchList = "/invoice/update-status/";
+export const DeliveryBoy_AssignedList = "/good-dispatch/view-order-list/";
 export const Debit_note_Order_List = "/debit-note/view-debit-note";
 export const Credit_note_Order_List = "/credit-note/view-credit-note/";
 export const GoodDispatch_xmlView = "/good-dispatch/get-xml";
