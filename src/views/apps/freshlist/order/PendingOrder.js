@@ -17,7 +17,9 @@ import {
   Table,
   Label,
   CustomInput,
+  Badge,
 } from "reactstrap";
+import OtpInput from "react-otp-input";
 import { ImDownload } from "react-icons/im";
 import { ContextLayout } from "../../../../utility/context/Layout";
 import { AgGridReact } from "ag-grid-react";
@@ -63,7 +65,10 @@ class PendingOrder extends React.Component {
     this.gridApi = null;
     this.state = {
       isOpen: false,
+      OtpScreen: false,
       Arrindex: "",
+      emailotp: "",
+      Delivery_Status: "",
       rowData: [],
       modal: false,
       modalone: false,
@@ -123,9 +128,7 @@ class PendingOrder extends React.Component {
                       />
                     </span>
                   )}
-                {/* )} */}
-                {/* {this.state.Editpermisson && ( */}
-                {this.state.InsiderPermissions &&
+                {/* {this.state.InsiderPermissions &&
                   this.state.InsiderPermissions?.Edit && (
                     <span
                       style={{
@@ -144,18 +147,7 @@ class PendingOrder extends React.Component {
                         }}
                       />
                     </span>
-                  )}
-                {/* )} */}
-                {/* {this.state.Deletepermisson && ( */}
-                {/* <Trash2
-                  className="mr-50"
-                  size="25px"
-                  color="Red"
-                  onClick={() => {
-                    this.runthisfunction(params?.data?._id);
-                  }}
-                /> */}
-                {/* )} */}
+                  )} */}
               </div>
             );
           },
@@ -324,7 +316,14 @@ class PendingOrder extends React.Component {
       modal: !prevState.modal,
     }));
   };
-
+  HandleStatusChange = (e) => {
+    e.preventDefault();
+    console.log(this.state.Delivery_Status);
+    if (this.state.Delivery_Status == "Completed") {
+      this.setState({ OtpScreen: true });
+    } else {
+    }
+  };
   handleChangeView = (data, types) => {
     let type = types;
     if (type == "readonly") {
@@ -1058,71 +1057,154 @@ class PendingOrder extends React.Component {
         <Modal
           isOpen={this.state.modalone}
           toggle={this.toggleModal}
-          className="modal-dialog modal-xl"
+          className={`${
+            this.state.OtpScreen
+              ? "modal-dialog modal-sm"
+              : "modal-dialog modal-xl"
+          }`}
+          // className="modal-dialog modal-xl"
           // className="modal-dialog modal-lg"
           size="lg"
           backdrop={true}
           fullscreen={true}>
-          <ModalHeader toggle={this.toggleModal}>View Details</ModalHeader>
+          <ModalHeader toggle={this.toggleModal}>
+            {this.state.OtpScreen ? "Enter Details" : "View Product Details"}
+            View Product Details
+          </ModalHeader>
           <ModalBody>
             <div className="container">
-              <Row>
-                <Col>
-                  <Label>Customer Name :</Label>
-                  <div className="">
-                    Name-{" "}
-                    <strong>
-                      {this.state.ViewOneData &&
-                        `${this.state.ViewOneData?.userId?.firstName} ${this.state.ViewOneData?.userId?.lastName}`}
-                    </strong>
+              {this.state.OtpScreen && this.state.OtpScreen ? (
+                <>
+                  <div className="d-flex justify-content-center">
+                    <h5>
+                      <strong>Enter Otp To Mark Complete Delevery</strong>
+                    </h5>
                   </div>
-                  <div className="">
-                    Mobile-{" "}
-                    {this.state.ViewOneData &&
-                      ` ${this.state.ViewOneData?.userId?.mobileNumber}`}
-                  </div>
-                  <div className="">
-                    Email -{" "}
-                    {this.state.ViewOneData &&
-                      `  ${this.state.ViewOneData?.userId?.email} `}
-                  </div>
-                </Col>
-                <Col>
-                  <Label>Date Created :</Label>
-                  <h5>
-                    {this.state.ViewOneData &&
-                      this.state.ViewOneData?.createdAt?.split("T")[0]}
-                  </h5>
-                </Col>
-                <Col>
-                  <Label>Address :</Label>
-                  <h5>
-                    <strong>
-                      {this.state.ViewOneData &&
-                        this.state.ViewOneData?.userId?.currentAddress}{" "}
-                    </strong>
-                  </h5>
-                </Col>
-                <Col>
-                  <Label>Grand Total :</Label>
-                  <h5>
-                    <strong>
-                      {this.state.ViewOneData &&
-                        this.state.ViewOneData?.grandTotal}{" "}
-                    </strong>
-                    Rs/-
-                  </h5>
-                </Col>
-                <Col>
-                  <Label>Change Status :</Label>
-                  <CustomInput className="form-control" type="select">
-                    <option>--select--</option>
-                    <option value="Completed">Completed</option>
-                    <option value="Cancelled">Cancelled</option>
-                  </CustomInput>
-                </Col>
+                  <Row>
+                    <Col lg="12" md="12" sm="12">
+                      <div className="d-flex justify-content-center">
+                        <OtpInput
+                          containerStyle="true inputdata"
+                          inputStyle="true inputdataone"
+                          className="otpinputtype"
+                          value={this.state.emailotp}
+                          name="emailotp"
+                          onChange={(otp) => this.setState({ emailotp: otp })}
+                          numInputs={6}
+                          renderSeparator={<span>-</span>}
+                          renderInput={(props) => (
+                            <input className="inputs" {...props} />
+                          )}
+                        />
+                      </div>
+                    </Col>
+                  </Row>
+                  <Row>
+                    {/* <Col lg="6" md="6" sm="6">
+                      <div className="d-flex justify-content-center">
+                        <Button
+                          style={{ cursor: "pointer" }}
+                          onClick={(e) => {
+                            e.preventDefault();
+                            this.setState({ OtpScreen: false });
+                          }}
+                          color="primary">
+                          Back
+                        </Button>
+                      </div>
+                    </Col> */}
+                    <Col lg="12" md="12" sm="12">
+                      <div className="d-flex justify-content-center">
+                        <Button color="primary">Submit</Button>
+                      </div>
+                    </Col>
+                  </Row>
+                </>
+              ) : (
+                <>
+                  <Row>
+                    <Col>
+                      <Label>Customer Name :</Label>
+                      <div className="">
+                        Name-{" "}
+                        <strong>
+                          {this.state.ViewOneData &&
+                            `${this.state.ViewOneData?.userId?.firstName} ${this.state.ViewOneData?.userId?.lastName}`}
+                        </strong>
+                      </div>
+                      <div className="">
+                        Mobile-{" "}
+                        {this.state.ViewOneData &&
+                          ` ${this.state.ViewOneData?.userId?.mobileNumber}`}
+                      </div>
+                      <div className="">
+                        Email -{" "}
+                        {this.state.ViewOneData &&
+                          `  ${this.state.ViewOneData?.userId?.email} `}
+                      </div>
+                    </Col>
+                    <Col>
+                      <Label>Date Created :</Label>
+                      <h5>
+                        {this.state.ViewOneData &&
+                          this.state.ViewOneData?.createdAt?.split("T")[0]}
+                      </h5>
+                    </Col>
+                    <Col>
+                      <Label>Address :</Label>
+                      <h5>
+                        <strong>
+                          {this.state.ViewOneData &&
+                            this.state.ViewOneData?.userId?.currentAddress}{" "}
+                        </strong>
+                      </h5>
+                    </Col>
+                    <Col>
+                      <Label>Grand Total :</Label>
+                      <h5>
+                        <strong>
+                          {this.state.ViewOneData &&
+                            this.state.ViewOneData?.grandTotal}{" "}
+                        </strong>
+                        Rs/-
+                      </h5>
+                    </Col>
+                    <Col>
+                      <Label>Change Status :</Label>
+                      <CustomInput
+                        onChange={(e) => {
+                          this.setState({ Delivery_Status: e.target.value });
+                        }}
+                        className="form-control"
+                        type="select">
+                        <option>--select--</option>
+                        <option value="Completed">Completed</option>
+                        <option value="Cancelled">Cancelled</option>
+                      </CustomInput>
+                      {this.state.Delivery_Status == "Completed" ? null : (
+                        <>
+                          {this.state.Delivery_Status == "Cancelled" && (
+                            <Row>
+                              <Col className="mt-1">
+                                <label> Reason for Cancellation</label>
+                                <Input className="form-control" type="text" />
+                              </Col>
+                            </Row>
+                          )}
+                        </>
+                      )}
+                      {this.state.Delivery_Status == "Cancelled" ||
+                      this.state.Delivery_Status == "Completed" ? (
+                        <Badge
+                          onClick={this.HandleStatusChange}
+                          className="mt-1"
+                          color="primary">
+                          Submit
+                        </Badge>
+                      ) : null}
+                    </Col>
 
-                {/* <Col>
+                    {/* <Col>
                 <Label>Download Invoice :</Label>
                 <div className="d-flex justify-content-center">
                   <FaDownload
@@ -1134,54 +1216,58 @@ class PendingOrder extends React.Component {
                   />
                 </div>
               </Col> */}
-              </Row>
-              <Row className="p-2">
-                <Col>
-                  <div className="d-flex justify-content-center">
-                    <h4>
-                      {" "}
-                      <strong>Product Details</strong>
-                    </h4>
-                  </div>
-                </Col>
-              </Row>
-              <Row>
-                <Col>
-                  <Table style={{ cursor: "pointer" }} striped>
-                    <thead>
-                      <tr>
-                        <th>#</th>
-                        <th>Product Name</th>
-                        <th>Price</th>
-                        <th>Size</th>
-                        <th>Unit</th>
-                        <th>Quantity</th>
-                        <th>Total</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {this.state.ViewOneData?.orderItems &&
-                        this.state.ViewOneData?.orderItems?.map((ele, i) => (
-                          <>
-                            <tr>
-                              <th scope="row">{i + 1}</th>
-                              <td>{ele?.productId?.Product_Title}</td>
-                              <td>{ele?.productId?.Product_MRP}</td>
-                              <td>{ele?.productId?.Size}</td>
-                              <td>{ele?.unitQty}</td>
-                              <td>{ele?.qty}</td>
-                              <td>
-                                {ele?.product?.Product_MRP *
-                                  ele?.product?.Size *
-                                  ele?.qty}
-                              </td>
-                            </tr>
-                          </>
-                        ))}
-                    </tbody>
-                  </Table>
-                </Col>
-              </Row>
+                  </Row>
+                  <Row className="p-2">
+                    <Col>
+                      <div className="d-flex justify-content-center">
+                        <h4>
+                          {" "}
+                          <strong>Product Details</strong>
+                        </h4>
+                      </div>
+                    </Col>
+                  </Row>
+                  <Row>
+                    <Col>
+                      <Table style={{ cursor: "pointer" }} striped>
+                        <thead>
+                          <tr>
+                            <th>#</th>
+                            <th>Product Name</th>
+                            <th>Price</th>
+                            <th>Size</th>
+                            <th>Unit</th>
+                            <th>Quantity</th>
+                            <th>Total</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {this.state.ViewOneData?.orderItems &&
+                            this.state.ViewOneData?.orderItems?.map(
+                              (ele, i) => (
+                                <>
+                                  <tr>
+                                    <th scope="row">{i + 1}</th>
+                                    <td>{ele?.productId?.Product_Title}</td>
+                                    <td>{ele?.productId?.Product_MRP}</td>
+                                    <td>{ele?.productId?.Size}</td>
+                                    <td>{ele?.unitQty}</td>
+                                    <td>{ele?.qty}</td>
+                                    <td>
+                                      {ele?.product?.Product_MRP *
+                                        ele?.product?.Size *
+                                        ele?.qty}
+                                    </td>
+                                  </tr>
+                                </>
+                              )
+                            )}
+                        </tbody>
+                      </Table>
+                    </Col>
+                  </Row>
+                </>
+              )}
             </div>
           </ModalBody>
         </Modal>
