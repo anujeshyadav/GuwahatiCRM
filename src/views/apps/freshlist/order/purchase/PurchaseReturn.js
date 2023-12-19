@@ -108,6 +108,7 @@ class PurchaseReturn extends React.Component {
                       size="25px"
                       color="green"
                       onClick={() => {
+                        this.togglemodal();
                         this.handleChangeView(params.data, "readonly");
                       }}
                     />
@@ -237,6 +238,7 @@ class PurchaseReturn extends React.Component {
   handleChangeView = (data, types) => {
     let type = types;
     if (type == "readonly") {
+      console.log("ResponseData", data.orderItems);
       this.setState({ ViewOneUserView: true });
       this.setState({ ViewOneData: data });
     } else {

@@ -1,5 +1,5 @@
 import React, { useRef } from "react";
-import xmlJs from "xml-js";
+import { Route } from "react-router-dom";
 import {
   Card,
   CardBody,
@@ -11,57 +11,35 @@ import {
   DropdownMenu,
   DropdownItem,
   DropdownToggle,
-  Button,
   ModalHeader,
   ModalBody,
   Badge,
-  Label,
-  Form,
-  CustomInput,
   Table,
 } from "reactstrap";
-import { ImDownload } from "react-icons/im";
-import { AiOutlineDownload } from "react-icons/ai";
-// import { ToWords } from "to-words";
-import { Eye, ChevronDown, CornerDownLeft } from "react-feather";
-// import { history } from "../../../../history";
-// import Templatethree from "../../../../assets/Billtemp/Templatethree.png";
-// import Templatetwo from "../../../../assets/Billtemp/Templatetwo.png";
-// import templatefour from "../../../../assets/Billtemp/templatefour.png";
-// import templateone from "../../../../assets/Billtemp/templateone.png";
-// import "../../../../assets/scss/plugins/tables/_agGridStyleOverride.scss";
-import "../../../../../assets/scss/pages/users.scss";
-import InvoicGenerator from "../../subcategory/InvoiceGeneratorone";
-import { Route, Link } from "react-router-dom";
-import swal from "sweetalert";
-import {
-  Sales_OrderToDispatchList,
-  createOrderhistoryview,
-} from "../../../../../ApiEndPoint/ApiCalling";
-
 import { ContextLayout } from "../../../../../utility/context/Layout";
 import { AgGridReact } from "ag-grid-react";
 import "ag-grid-community/dist/styles/ag-grid.css";
-import ViewOrder from "../../../../../../src/views/apps/freshlist/order/ViewAll";
 import jsPDF from "jspdf";
 import "jspdf-autotable";
 import Logo from "../../../../../assets/img/profile/pages/logomain.png";
 import Papa from "papaparse";
+import { Eye, Trash2, ChevronDown, Edit, CornerDownLeft } from "react-feather";
 import { IoMdRemoveCircleOutline } from "react-icons/io";
 import "../../../../../assets/scss/plugins/tables/_agGridStyleOverride.scss";
 import "../../../../../assets/scss/pages/users.scss";
-
+import StockTrxInvoice from "../../subcategory/StockTrxInvoice";
+// import StockTrxInvoice from "../subcategory/StockTrxInvoice";
 import {
   FaArrowAltCircleLeft,
   FaArrowAltCircleRight,
   FaDownload,
   FaFilter,
+  FaPlus,
 } from "react-icons/fa";
-import moment from "moment-timezone";
+import swal from "sweetalert";
 import {
-  CreateAccountList,
-  CreateAccountView,
-  DeleteAccount,
+  createOrderhistoryview,
+  Delete_targetINlist,
 } from "../../../../../ApiEndPoint/ApiCalling";
 import {
   BsCloudDownloadFill,
@@ -71,32 +49,10 @@ import {
 import * as XLSX from "xlsx";
 import UserContext from "../../../../../context/Context";
 import { CheckPermission } from "../../house/CheckPermission";
-// import ClosingStock from "../customer/ProductWIKI/ClosingStock";
 
 const SelectedColums = [];
-// const toWords = new ToWords({
-//   localeCode: "en-IN",
-//   converterOptions: {
-//     currency: true,
-//     ignoreDecimal: false,
-//     ignoreZeroCurrency: false,
-//     doNotAddOnly: false,
-//     currencyOptions: {
-//       // can be used to override defaults for the selected locale
-//       name: "Rupee",
-//       plural: "Rupees",
-//       symbol: "₹",
-//       fractionalUnit: {
-//         name: "Paisa",
-//         plural: "Paise",
-//         symbol: "",
-//       },
-//     },
-//   },
-// });
-const AddedBill = [];
-const AllProduct = [];
-class InvoiceGenerator extends React.Component {
+
+class Salesreport extends React.Component {
   static contextType = UserContext;
   constructor(props) {
     super(props);
@@ -104,440 +60,13 @@ class InvoiceGenerator extends React.Component {
     this.gridApi = null;
     this.state = {
       isOpen: false,
-      ShowMyBill: false,
-      BillNumber: "",
       Arrindex: "",
-      AllbillMerged: [],
       rowData: [],
-      InsiderPermissions: {},
-      ViewOneData: {},
-      CompanyDetails: {},
       ShowBill: false,
-      Applied_Charges: {},
-      Billtoposition: "Left",
-      shipto: "right",
-      logoposition: "Left",
-      ButtonText: "Submit",
-      Mergebilllength: "",
       modal: false,
-      modalOne: false,
-      modalTwo: false,
-      sgst: "",
-      discount: "",
-      ViewBill: true,
-      wordsNumber: "",
-      cgst: "",
-      otherCharges: "",
-      deliveryCharges: "",
-      PrintData: {},
-      Viewpermisson: null,
-      Editpermisson: null,
-      Createpermisson: null,
-      Deletepermisson: null,
-      getPageSize: "",
-      columnDefs: [
-        {
-          headerName: "S.No",
-          valueGetter: "node.rowIndex + 1",
-          field: "node.rowIndex + 1",
-          width: 80,
-          filter: true,
-        },
-        // {
-        //   headerName: "Add Bills",
-        //   width: 160,
-        //   filter: true,
-        //   cellRendererFramework: (params) => {
-        //     return (
-        //       <div className="d-flex align-items-center justify-content-center cursor-pointer">
-        //         <div>
-        //           <span>
-        //             <input
-        //               type="checkbox"
-        //               className="customcheckbox"
-        //               onClick={(e) => {
-        //                 this.handleMultipleBillsAdd(
-        //                   params?.data,
-        //                   e.target.checked
-        //                 );
-        //                 // console.log(e.target.checked);
-        //               }}
-        //             />
-        //             {/* <AiOutlineDownload
-        //               onClick={() => this.handleBillDownload(params.data)}
-        //               fill="green"
-        //               size="30px"
-        //             /> */}
-        //           </span>
-        //         </div>
-        //       </div>
-        //     );
-        //   },
-        // },
-        {
-          headerName: "Status",
-          field: "order_status",
-          filter: true,
-          width: 140,
-          cellRendererFramework: params => {
-            // console.log(params.data);
-            return params.data?.status === "completed" ? (
-              <div className="badge badge-pill badge-success">Completed</div>
-            ) : params.data?.status === "pending" ? (
-              <div className="badge badge-pill badge-warning">
-                {params.data?.status}
-              </div>
-            ) : params.data?.status === "return" ? (
-              <div className="badge badge-pill bg-danger">Returned</div>
-            ) : params.data?.status === "cancelled" ? (
-              <div className="badge badge-pill bg-danger">
-                {params.data.status}
-              </div>
-            ) : params.data?.status === "completed" ? (
-              <div className="badge badge-pill bg-success">Completed</div>
-            ) : (
-              <>
-                <div className="badge badge-pill bg-warning">Cancelled</div>
-              </>
-            );
-          },
-        },
-        // {
-        //   headerName: "Actions",
-        //   field: "sortorder",
-        //   field: "transactions",
-        //   width: 120,
-        //   cellRendererFramework: params => {
-        //     return (
-        //       <div className="actions cursor-pointer">
-        //         {this.state.InsiderPermissions &&
-        //           this.state.InsiderPermissions?.Edit && (
-        //             <CornerDownLeft
-        //               className="mr-50"
-        //               size="25px"
-        //               color="green"
-        //               onClick={() => {
-        //                 localStorage.setItem(
-        //                   "OrderList",
-        //                   JSON.stringify(params.data)
-        //                 );
-        //                 this.props.history.push({
-        //                   pathname: `/app/AJGroup/order/placeOrderReturn/${params.data?._id}`,
-        //                   state: params.data,
-        //                 });
-        //               }}
-        //             />
-        //           )}
-
-        //         {this.state.InsiderPermissions &&
-        //           this.state.InsiderPermissions?.View && (
-        //             <Route
-        //               render={() => (
-        //                 <Eye
-        //                   className="mr-50"
-        //                   size="25px"
-        //                   color="green"
-        //                   onClick={() => {
-        //                     this.toggleModalTwo();
-        //                     console.log(params?.data);
-        //                     // debugger;
-        //                     this.setState({ ViewOneData: params?.data });
-
-        //                     // let selectedData = this.gridApi.getSelectedRows();
-        //                     // this.runthisfunction(params.data?._id);
-        //                     // this.gridApi.updateRowData({
-        //                     //   remove: selectedData,
-        //                     // });
-        //                   }}
-        //                 />
-        //               )}
-        //             />
-        //           )}
-        //         {/* {this.state.Deletepermisson && (
-
-        //       )} */}
-        //       </div>
-        //     );
-        //   },
-        // },
-        {
-          headerName: "Orderid",
-          field: "_id",
-          filter: true,
-          resizable: true,
-          width: 200,
-          cellRendererFramework: params => {
-            return (
-              <div className="d-flex align-items-center cursor-pointer">
-                <div>
-                  <span>{params?.data?._id}</span>
-                </div>
-              </div>
-            );
-          },
-        },
-        // {
-        //   headerName: "Invoice",
-        //   field: "invoice",
-        //   filter: true,
-        //   resizable: true,
-        //   width: 140,
-        //   cellRendererFramework: params => {
-        //     // console.log(params?.data?.status);
-
-        //     return (
-        //       <div className="d-flex align-items-center justify-content-center cursor-pointer">
-        //         <div>
-        //           {/* {params?.data?.status == "completed" ? ( */}
-        //           <>
-        //             {this.state.InsiderPermissions &&
-        //               this.state.InsiderPermissions?.View && (
-        //                 <AiOutlineDownload
-        //                   // onClick={() => this.handleBillDownload(params.data)}
-        //                   onClick={() => this.MergeBillNow(params.data)}
-        //                   fill="green"
-        //                   size="30px"
-        //                 />
-        //               )}
-        //           </>
-        //           <span></span>
-        //         </div>
-        //       </div>
-        //     );
-        //   },
-        // },
-        {
-          headerName: "FullName",
-          field: "fullName",
-          filter: true,
-          resizable: true,
-          width: 150,
-          cellRendererFramework: params => {
-            return (
-              <div className="d-flex align-items-center justify-content-center cursor-pointer">
-                <div>
-                  <span>{params?.data?.fullName}</span>
-                </div>
-              </div>
-            );
-          },
-        },
-        {
-          headerName: "MobileNo",
-          field: "MobileNo",
-          filter: true,
-          resizable: true,
-          width: 160,
-          cellRendererFramework: params => {
-            return (
-              <div className="d-flex align-items-center justify-content-center cursor-pointer">
-                <div>
-                  <span>{params?.data?.MobileNo}</span>
-                </div>
-              </div>
-            );
-          },
-        },
-        {
-          headerName: "Address",
-          field: "address",
-          filter: true,
-          resizable: true,
-          width: 200,
-          cellRendererFramework: params => {
-            return (
-              <div className="d-flex align-items-center justify-content-center cursor-pointer">
-                <div>
-                  <span>{params?.data?.address}</span>
-                </div>
-              </div>
-            );
-          },
-        },
-        {
-          headerName: "GrandTotal",
-          field: "grandTotal",
-          filter: true,
-          resizable: true,
-          width: 150,
-          cellRendererFramework: params => {
-            return (
-              <div className="d-flex align-items-center justify-content-center cursor-pointer">
-                <div>
-                  <span>{params?.data?.grandTotal}</span>
-                </div>
-              </div>
-            );
-          },
-        },
-        {
-          headerName: "Tax Amount",
-          field: "taxAmount",
-          filter: true,
-          resizable: true,
-          width: 150,
-          cellRendererFramework: params => {
-            return (
-              <div className="d-flex align-items-center justify-content-center cursor-pointer">
-                <div>
-                  <span>{params?.data?.taxAmount}</span>
-                </div>
-              </div>
-            );
-          },
-        },
-        {
-          headerName: "Party Name",
-          field: "partyId.firstName",
-          filter: true,
-          resizable: true,
-          width: 210,
-          cellRendererFramework: params => {
-            return (
-              <div className="d-flex align-items-center cursor-pointer">
-                <div>
-                  <span>{params.data?.partyId?.firstName}</span>
-                </div>
-              </div>
-            );
-          },
-        },
-
-        {
-          headerName: "Total Product",
-          field: "params?.data?.orderItems?.length",
-          filter: true,
-          resizable: true,
-          width: 180,
-          cellRendererFramework: params => {
-            // console.log(params.data); completed
-            return (
-              <div className="d-flex cursor-pointer">
-                <div>{params?.data?.orderItems?.length} Products</div>
-              </div>
-            );
-          },
-        },
-
-        // {
-        //   headerName: "Actions",
-        //   field: "sortorder",
-        //   field: "transactions",
-        //   width: 120,
-        //   cellRendererFramework: params => {
-        //     return (
-        //       <div className="actions cursor-pointer">
-        //         {this.state.InsiderPermissions &&
-        //           this.state.InsiderPermissions?.Edit && (
-        //             <CornerDownLeft
-        //               className="mr-50"
-        //               size="25px"
-        //               color="green"
-        //               onClick={() => {
-        //                 localStorage.setItem(
-        //                   "OrderList",
-        //                   JSON.stringify(params.data)
-        //                 );
-        //                 this.props.history.push({
-        //                   pathname: `/app/AJGroup/order/placeOrderReturn/${params.data?._id}`,
-        //                   state: params.data,
-        //                 });
-        //               }}
-        //             />
-        //           )}
-
-        //         {/* {this.state.InsiderPermissions &&
-        //           this.state.InsiderPermissions?.Delete && (
-        //             <Route
-        //               render={() => (
-        //                 <Trash2
-        //                   className="mr-50"
-        //                   size="25px"
-        //                   color="red"
-        //                   onClick={() => {
-        //                     let selectedData = this.gridApi.getSelectedRows();
-        //                     this.runthisfunction(params.data?._id);
-        //                     this.gridApi.updateRowData({
-        //                       remove: selectedData,
-        //                     });
-        //                   }}
-        //                 />
-        //               )}
-        //             />
-        //           )} */}
-        //         {/* {this.state.Deletepermisson && (
-
-        //       )} */}
-        //       </div>
-        //     );
-        //   },
-        // },
-
-        // {
-        //   headerName: "total",
-        //   field: "total",
-        //   filter: true,
-        //   resizable: true,
-        //   width: 160,
-        //   cellRendererFramework: (params) => {
-        //     return (
-        //       <div className="d-flex align-items-center cursor-pointer">
-        //         <div>
-        //           <Badge color="success">{params.data?.total}</Badge>
-        //         </div>
-        //       </div>
-        //     );
-        //   },
-        // },
-        // {
-        //   headerName: "brandname ",
-        //   field: "brand_name",
-        //   filter: true,
-        //   resizable: true,
-        //   width: 180,
-        //   cellRendererFramework: (params) => {
-        //     return (
-        //       <div className="d-flex align-items-center cursor-pointer">
-        //         <div>
-        //           <span>{params.data?.brand_name}</span>
-        //         </div>
-        //       </div>
-        //     );
-        //   },
-        // },
-        // {
-        //   headerName: "city",
-        //   field: "city",
-        //   filter: true,
-        //   resizable: true,
-        //   width: 160,
-        //   cellRendererFramework: (params) => {
-        //     return (
-        //       <div className="d-flex align-items-center cursor-pointer">
-        //         <div>
-        //           <span>{params.data?.city}</span>
-        //         </div>
-        //       </div>
-        //     );
-        //   },
-        // },
-        {
-          headerName: "order Creation date",
-          field: "order_date",
-          filter: true,
-          resizable: true,
-          width: 230,
-          cellRendererFramework: params => {
-            return (
-              <div className="d-flex align-items-center cursor-pointer">
-                <div>
-                  <span>{params.data?.order_date}</span>
-                </div>
-              </div>
-            );
-          },
-        },
-      ],
+      modalone: false,
+      ViewData: {},
+      InsiderPermissions: {},
       setMySelectedarr: [],
       SelectedCols: [],
       paginationPageSize: 5,
@@ -552,93 +81,141 @@ class InvoiceGenerator extends React.Component {
         resizable: true,
         suppressMenu: true,
       },
+      columnDefs: [
+        {
+          headerName: "UID",
+          valueGetter: "node.rowIndex + 1",
+          field: "node.rowIndex + 1",
+          width: 80,
+          filter: true,
+        },
+
+        {
+          headerName: "Actions",
+          field: "transactions",
+          width: 180,
+          cellRendererFramework: params => {
+            return (
+              <div className="actions cursor-pointer">
+                {this.state.InsiderPermissions &&
+                  this.state.InsiderPermissions?.View && (
+                    <Eye
+                      className="mr-50"
+                      size="25px"
+                      color="green"
+                      onClick={() => {
+                        this.togglemodal();
+                        this.handleChangeView(params.data, "readonly");
+                      }}
+                    />
+                  )}
+              </div>
+            );
+          },
+        },
+        {
+          headerName: "Status",
+          field: "status",
+          filter: true,
+          width: 150,
+          cellRendererFramework: params => {
+            return params.value == "completed" ? (
+              <div className="badge badge-pill badge-success">
+                {params.data.status}
+              </div>
+            ) : params.value == "pending" ? (
+              <div className="badge badge-pill badge-warning">
+                {params.data.status}
+              </div>
+            ) : params.value == "return" ? (
+              <div className="badge badge-pill badge-danger">
+                {params.data.status}
+              </div>
+            ) : null;
+          },
+        },
+        {
+          headerName: "Full Name",
+          field: "orderItems",
+          filter: true,
+          width: 180,
+          valueGetter: params => {
+            if (params.data.orderItems && params.data.orderItems.length > 0) {
+              return params.data.fullName;
+            }
+            return null;
+          },
+        },
+
+        {
+          headerName: "Product Name",
+          field: "orderItems",
+          filter: true,
+          width: 220,
+          valueGetter: params => {
+            if (params.data.orderItems && params.data.orderItems.length > 0) {
+              return params?.data?.orderItems?.map(val => {
+                return val?.product?.Product_Title;
+              });
+            }
+            return null;
+          },
+        },
+        {
+          headerName: "Price",
+          field: "orderItems",
+          filter: true,
+          width: 150,
+          valueGetter: params => {
+            if (params.data.orderItems && params.data.orderItems.length > 0) {
+              return params.data.orderItems[0].price;
+            }
+            return null;
+          },
+        },
+        {
+          headerName: "Size",
+          field: "orderItems",
+          filter: true,
+          width: 150,
+          valueGetter: params => {
+            if (params.data.orderItems && params.data.orderItems.length > 0) {
+              return params.data.orderItems[0].qty; // Return the price
+            }
+            return null;
+          },
+        },
+        {
+          headerName: "GST Rate",
+          field: "orderItems",
+          filter: true,
+          width: 180,
+          valueGetter: params => {
+            if (params.data.orderItems && params.data.orderItems.length > 0) {
+              return params.data.orderItems[0].product["GST Rate"]; // Return the price
+            }
+            return null; // Or handle cases where there's no price
+          },
+        },
+        {
+          headerName: "HSN Code",
+          field: "orderItems",
+          filter: true,
+          width: 180,
+          valueGetter: params => {
+            if (params.data.orderItems && params.data.orderItems.length > 0) {
+              return params.data.orderItems[0].product.HSN_Code; // Return the price
+            }
+            return null;
+          },
+        },
+      ],
     };
   }
-  // handleMultipleBillsAdd = (data, check) => {
-  //   this.setState({ PrintData: data });
-  //   let pageparmission = JSON.parse(localStorage.getItem("userData"));
-  //   if (check) {
-  //     AddedBill.push({
-  //       order_id: data?.order_id,
-  //       user_id: pageparmission?.Userinfo?.id,
-  //       role: pageparmission?.Userinfo?.role,
-  //     });
-  //   } else {
-  //     let index = AddedBill.findIndex(ele => ele?.order_id === data?.order_id);
-  //     AddedBill.splice(index, 1);
-  //   }
-  //   // console.log(AddedBill);
-  //   this.setState({ Mergebilllength: AddedBill?.length });
-  // };
-
-  // MergeBillNow = async data => {
-  //   let billnum = localStorage.getItem("billnumber");
-  //   console.log("Bill", data);
-  //   console.log("grandTotal", data.grandTotal);
-  //   console.log(billnum);
-  //   if (billnum) {
-  //     this.setState({ ShowBill: false });
-  //     this.setState({ PrintData: data });
-  //     await Sales_OrderToDispatchList(data?._id)
-  //       .then(res => {
-  //         console.log(res);
-  //       })
-  //       .catch(err => {
-  //         console.log(err);
-  //       });
-  //     const toWords = new ToWords();
-  //     let words = toWords.convert(Number(data?.grandTotal), { currency: true });
-  //     this.setState({ wordsNumber: words });
-  //     this.toggleModalOne();
-  //   } else {
-  //     swal("Select Bill Template");
-  //     this.setState({ ShowBill: true });
-  //     this.toggleModalOne();
-  //   }
-  //   console.log(data);
-  // };
-
-  // handleBillDownload = data => {
-  //   this.setState({ PrintData: data });
-  //   const toWords = new ToWords();
-  //   let words = toWords.convert(Number(data.sub_total), { currency: true });
-  //   this.setState({ wordsNumber: words });
-  //   this.toggleModal();
-  // };
   toggleModal = () => {
     this.setState(prevState => ({
-      modal: !prevState.modal,
+      modalone: !prevState.modalone,
     }));
-  };
-  toggleModalOne = () => {
-    this.setState(prevState => ({
-      modalOne: !prevState.modalOne,
-    }));
-  };
-  changeHandler = e => {
-    this.setState({ [e.target.name]: e.target.value });
-  };
-  toggleModalclose = () => {
-    // debugger;
-    this.setState({ modalOne: false });
-    this.setState({ ShowMyBill: false });
-    // window.location.reload();
-    // AddedBill = [];
-    // console.log(AddedBill);
-  };
-  toggleModalcloseTwo = () => {
-    this.setState({ modalTwo: false });
-  };
-
-  handleChangeView = (data, types) => {
-    let type = types;
-    if (type == "readonly") {
-      this.setState({ ViewOneUserView: true });
-      this.setState({ ViewOneData: data });
-    } else {
-      this.setState({ EditOneUserView: true });
-      this.setState({ EditOneData: data });
-    }
   };
   LookupviewStart = () => {
     this.setState(prevState => ({
@@ -646,9 +223,10 @@ class InvoiceGenerator extends React.Component {
     }));
   };
 
-  handleChangeEdit = (data, types) => {
+  handleChangeView = (data, types) => {
     let type = types;
     if (type == "readonly") {
+      console.log("ResponseData", data.orderItems);
       this.setState({ ViewOneUserView: true });
       this.setState({ ViewOneData: data });
     } else {
@@ -658,30 +236,18 @@ class InvoiceGenerator extends React.Component {
   };
 
   async componentDidMount() {
-    const UserInformation = this.context;
-    console.log(UserInformation?.CompanyDetails);
-    this.setState({ CompanyDetails: UserInformation?.CompanyDetails });
-    let pageparmission = JSON.parse(localStorage.getItem("userData"));
-    let userid = pageparmission?._id;
-
-    let billnumner = localStorage.getItem("billnumber");
-    if (billnumner) {
-      this.setState({ ShowBill: false });
-      this.setState({ BillNumber: billnumner });
-    }
-    const InsidePermissions = CheckPermission("Sales Invoice");
+    const userId = JSON.parse(localStorage.getItem("userData"))._id;
+    const UserInformation = this.context?.UserInformatio;
+    const InsidePermissions = CheckPermission("Sales Order");
     console.log(InsidePermissions);
     this.setState({ InsiderPermissions: InsidePermissions });
-    createOrderhistoryview(userid)
+    await createOrderhistoryview(userId)
       .then(res => {
-        console.log(res?.orderHistory);
-        const Compltedstatus = res?.orderHistory?.filter(
-          ele => ele.status == "completed"
-        );
-        this.setState({ rowData: Compltedstatus });
+        this.setState({ rowData: res?.orderHistory });
         this.setState({ AllcolumnDefs: this.state.columnDefs });
+        this.setState({ SelectedCols: this.state.columnDefs });
 
-        let userHeading = JSON.parse(localStorage.getItem("SalesOrderList"));
+        let userHeading = JSON.parse(localStorage.getItem("OrderListshow"));
         if (userHeading?.length) {
           this.setState({ columnDefs: userHeading });
           this.gridApi.setColumnDefs(userHeading);
@@ -690,47 +256,20 @@ class InvoiceGenerator extends React.Component {
           this.setState({ columnDefs: this.state.columnDefs });
           this.setState({ SelectedcolumnDefs: this.state.columnDefs });
         }
-        this.setState({ SelectedCols: this.state.columnDefs });
       })
       .catch(err => {
         console.log(err);
       });
-    let userchoice = JSON.parse(localStorage.getItem("billUI"));
-    console.log(userchoice);
-    if (userchoice) {
-      this.setState({ logoposition: userchoice?.imagePosition });
-      this.setState({ Billtoposition: userchoice?.billTo });
-      this.setState({ shipto: userchoice?.shipto });
-    }
-    let newparmisson = pageparmission?.role?.find(
-      value => value?.pageName === "invoice Generator"
-    );
-    this.setState({ Viewpermisson: newparmisson?.permission.includes("View") });
-    this.setState({
-      Createpermisson: newparmisson?.permission.includes("Create"),
-    });
-    this.setState({
-      Editpermisson: newparmisson?.permission.includes("Edit"),
-    });
-    this.setState({
-      Deletepermisson: newparmisson?.permission.includes("Delete"),
-    });
   }
 
-  submitHandler = e => {
-    e.preventDefault();
-    let mychoice = {
-      imagePosition: this.state.logoposition,
-      billTo: this.state.Billtoposition,
-      shipto: this.state.shipto,
-    };
-
-    if (mychoice.billTo == mychoice.shipto) {
-      swal("Can not set Bill to and Ship to on one Same side");
-    } else {
-      localStorage.setItem("billUI", JSON.stringify(mychoice));
-      this.setState({ ShowMyBill: true });
-    }
+  togglemodal = () => {
+    this.setState(prevState => ({
+      modalone: !prevState.modalone,
+    }));
+    this.setState({ ShowBill: false });
+  };
+  handleStockTrxInvoiceShow = () => {
+    this.setState({ ShowBill: true });
   };
   toggleDropdown = () => {
     this.setState(prevState => ({ isOpen: !prevState.isOpen }));
@@ -745,7 +284,7 @@ class InvoiceGenerator extends React.Component {
     }).then(value => {
       switch (value) {
         case "delete":
-          DeleteAccount(id)
+          Delete_targetINlist(id)
             .then(res => {
               let selectedData = this.gridApi.getSelectedRows();
               this.gridApi.updateRowData({ remove: selectedData });
@@ -758,12 +297,7 @@ class InvoiceGenerator extends React.Component {
       }
     });
   }
-  // handleBillSet = i => {
-  //   this.setState({ BillNumber: i });
-  //   localStorage.setItem("billnumber", i);
-  //   this.toggleModalOne();
-  //   // this.setState({ ShowBill: false });
-  // };
+
   onGridReady = params => {
     this.gridApi = params.api;
     this.gridColumnApi = params.columnApi;
@@ -829,14 +363,14 @@ class InvoiceGenerator extends React.Component {
     doc.addImage(Logo, "JPEG", 10, 10, 50, 30);
     let date = new Date();
     doc.setCreationDate(date);
-    doc.text("OrderList", 14, 51);
+    doc.text("UserAccount", 14, 51);
     doc.autoTable({
       head: [Object.keys(parsedData[0])],
       body: tableData,
       startY: 60,
     });
 
-    doc.save("OrderList.pdf");
+    doc.save("UserList.pdf");
   }
 
   exportToPDF = async () => {
@@ -851,8 +385,6 @@ class InvoiceGenerator extends React.Component {
     }
   };
   processCell = params => {
-    // console.log(params);
-    // Customize cell content as needed
     return params.value;
   };
 
@@ -882,7 +414,7 @@ class InvoiceGenerator extends React.Component {
     const url = window.URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = "OrderList.xlsx";
+    a.download = "Userlist.xlsx";
     document.body.appendChild(a);
     a.click();
     window.URL.revokeObjectURL(url);
@@ -906,7 +438,7 @@ class InvoiceGenerator extends React.Component {
         const wb = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(wb, ws, "Sheet1");
         const excelType = "xls";
-        XLSX.writeFile(wb, `OrderList.${excelType}`);
+        XLSX.writeFile(wb, `UserList.${excelType}`);
       },
     });
   };
@@ -952,14 +484,10 @@ class InvoiceGenerator extends React.Component {
         });
 
         xmlString += "</root>";
-
-        // setXmlData(xmlString);
-
-        // Create a download link
         const blob = new Blob([xmlString], { type: "text/xml" });
         const link = document.createElement("a");
         link.href = URL.createObjectURL(blob);
-        link.download = "OrderList.xml";
+        link.download = "output.xml";
         link.click();
       },
     });
@@ -967,12 +495,13 @@ class InvoiceGenerator extends React.Component {
 
   HandleSetVisibleField = e => {
     e.preventDefault();
+    debugger;
     this.gridApi.setColumnDefs(this.state.SelectedcolumnDefs);
     this.setState({ columnDefs: this.state.SelectedcolumnDefs });
     this.setState({ SelectedcolumnDefs: this.state.SelectedcolumnDefs });
     this.setState({ rowData: this.state.rowData });
     localStorage.setItem(
-      "SalesOrderList",
+      "OrderListshow",
       JSON.stringify(this.state.SelectedcolumnDefs)
     );
     this.LookupviewStart();
@@ -990,11 +519,11 @@ class InvoiceGenerator extends React.Component {
     });
   };
   handleLeftShift = () => {
-    let SelectedCols = this.state.SelectedcolumnDefs.slice();
+    let SelectedCols = this.state.SelectedcolumnDefs?.slice();
     let delindex = this.state.Arrindex; /* Your delete index here */
 
     if (SelectedCols && delindex >= 0) {
-      const splicedElement = SelectedCols.splice(delindex, 1); // Remove the element
+      const splicedElement = SelectedCols?.splice(delindex, 1); // Remove the element
 
       this.setState({
         SelectedcolumnDefs: SelectedCols, // Update the state with the modified array
@@ -1008,299 +537,189 @@ class InvoiceGenerator extends React.Component {
       defaultColDef,
       SelectedcolumnDefs,
       isOpen,
-      SelectedCols,
       InsiderPermissions,
+      SelectedCols,
       AllcolumnDefs,
     } = this.state;
     return (
       <>
-        {/* <ExcelReader /> */}
-        <Row className="app-user-list">
-          {this.state.EditOneUserView && this.state.EditOneUserView ? (
-            <Row className="card">
-              <Col>
-                <div className="d-flex justify-content-end p-1">
-                  <Button
-                    onClick={e => {
-                      e.preventDefault();
-                      this.setState({ EditOneUserView: false });
-                      this.componentDidMount();
-                    }}
-                    color="danger"
-                  >
-                    Back
-                  </Button>
-                </div>
-              </Col>
-
-              {/* <EditAccount EditOneData={this.state.EditOneData} /> */}
-            </Row>
-          ) : (
-            <>
-              {this.state.ViewOneUserView && this.state.ViewOneUserView ? (
-                <>
-                  <Row>
-                    <Col>
-                      <h1 className="float-left">View User</h1>
-                    </Col>
-                    <Col>
-                      <div className="d-flex justify-content-end p-1">
-                        <Button
-                          onClick={e => {
-                            e.preventDefault();
-                            this.setState({ ViewOneUserView: false });
-                          }}
-                          color="danger"
-                        >
-                          Back
-                        </Button>
-                      </div>
-                    </Col>
-                    <ViewOrder ViewOneData={this.state.ViewOneData} />
-                  </Row>
-                </>
-              ) : (
-                <>
-                  <Col sm="12">
-                    <Card>
-                      <Row className="ml-2 mr-2 mt-2">
-                        <Col lg="9" sm="8" xs="8">
-                          <h1
-                            className="float-left"
-                            style={{ fontWeight: "600" }}
+        <Col className="app-user-list">
+          <Col sm="12">
+            <Card>
+              <Row className="ml-2 mt-2 mr-2">
+                <Col>
+                  <h1 className="float-left " style={{ fontWeight: "600" }}>
+                    Order Report
+                  </h1>
+                </Col>
+                {InsiderPermissions && InsiderPermissions?.View && (
+                  <Col>
+                    <span className="mx-1">
+                      <FaFilter
+                        style={{ cursor: "pointer" }}
+                        title="filter coloumn"
+                        size="25px"
+                        onClick={this.LookupviewStart}
+                        color="#39cccc"
+                        className="float-right"
+                      />
+                    </span>
+                    <span className="mx-1">
+                      <div className="dropdown-container float-right">
+                        <BsCloudDownloadFill
+                          style={{ cursor: "pointer" }}
+                          title="download file"
+                          size="25px"
+                          className="dropdown-button "
+                          color="#39cccc"
+                          onClick={this.toggleDropdown}
+                        />
+                        {isOpen && (
+                          <div
+                            style={{
+                              position: "absolute",
+                              zIndex: "1",
+                            }}
+                            className="dropdown-content dropdownmy"
                           >
-                            Sales Order Report
-                          </h1>
-                        </Col>
-
-                        {/* {this.state.InsiderPermissions &&
-                          this.state.InsiderPermissions?.Create && (
-                            <Col lg="2" sm="2" xs="2">
-                              <Button
-                                className="float-right  "
-                                color="#39cccc"
-                                style={{
-                                  cursor: "pointer",
-                                  backgroundColor: "#39cccc",
-                                  color: "white",
-                                  fontWeight: "600",
-                                }}
-                                onClick={e => {
-                                  let billnumber =
-                                    localStorage.getItem("billnumber");
-                                  if (billnumber) {
-                                    // swal("You already Selected Bill Type");
-                                    this.setState({ ShowBill: true });
-                                    this.toggleModalOne();
-                                  } else {
-                                    this.setState({ ShowBill: true });
-                                    this.toggleModalOne();
-                                  }
-                                }}
-                              >
-                                Invoice Template
-                              </Button>
-                            </Col>
-                          )} */}
-                        <Col>
-                          {InsiderPermissions && InsiderPermissions?.View && (
-                            <>
-                              <span className="">
-                                <FaFilter
-                                  style={{ cursor: "pointer" }}
-                                  title="filter coloumn"
-                                  size="35px"
-                                  onClick={this.LookupviewStart}
-                                  color="#39cccc"
-                                  className="float-right"
-                                />
-                              </span>
-                              <span className="">
-                                <div className="dropdown-container float-right">
-                                  <ImDownload
-                                    style={{ cursor: "pointer" }}
-                                    title="download file"
-                                    size="35px"
-                                    className="dropdown-button "
-                                    color="#39cccc"
-                                    onClick={this.toggleDropdown}
-                                  />
-                                  {isOpen && (
-                                    <div
-                                      style={{
-                                        position: "absolute",
-                                        zIndex: "1",
-                                        border: "1px solid #39cccc",
-                                        backgroundColor: "white",
-                                      }}
-                                      className="dropdown-content dropdownmy"
-                                    >
-                                      <h5
-                                        onClick={() => this.exportToPDF()}
-                                        style={{ cursor: "pointer" }}
-                                        className=" mx-1 myactive mt-1"
-                                      >
-                                        .PDF
-                                      </h5>
-                                      <h5
-                                        onClick={() =>
-                                          this.gridApi.exportDataAsCsv()
-                                        }
-                                        style={{ cursor: "pointer" }}
-                                        className=" mx-1 myactive"
-                                      >
-                                        .CSV
-                                      </h5>
-                                      <h5
-                                        onClick={this.convertCSVtoExcel}
-                                        style={{ cursor: "pointer" }}
-                                        className=" mx-1 myactive"
-                                      >
-                                        .XLS
-                                      </h5>
-                                      <h5
-                                        onClick={this.exportToExcel}
-                                        style={{ cursor: "pointer" }}
-                                        className=" mx-1 myactive"
-                                      >
-                                        .XLSX
-                                      </h5>
-                                      <h5
-                                        onClick={() => this.convertCsvToXml()}
-                                        style={{ cursor: "pointer" }}
-                                        className=" mx-1 myactive"
-                                      >
-                                        .XML
-                                      </h5>
-                                    </div>
-                                  )}
-                                </div>
-                              </span>
-                            </>
-                          )}
-                        </Col>
-                      </Row>
-                      <CardBody style={{ marginTop: "-1.5rem" }}>
-                        {this.state.rowData === null ? null : (
-                          <div className="ag-theme-material w-100 my-2 ag-grid-table">
-                            <div className="d-flex flex-wrap justify-content-between align-items-center">
-                              <div className="mb-1">
-                                <UncontrolledDropdown className="p-1 ag-dropdown">
-                                  <DropdownToggle tag="div">
-                                    {this.gridApi
-                                      ? this.state.currenPageSize
-                                      : "" * this.state.getPageSize -
-                                        (this.state.getPageSize - 1)}{" "}
-                                    -{" "}
-                                    {this.state.rowData.length -
-                                      this.state.currenPageSize *
-                                        this.state.getPageSize >
-                                    0
-                                      ? this.state.currenPageSize *
-                                        this.state.getPageSize
-                                      : this.state.rowData.length}{" "}
-                                    of {this.state.rowData.length}
-                                    <ChevronDown className="ml-50" size={15} />
-                                  </DropdownToggle>
-                                  <DropdownMenu right>
-                                    <DropdownItem
-                                      tag="div"
-                                      onClick={() => this.filterSize(5)}
-                                    >
-                                      5
-                                    </DropdownItem>
-                                    <DropdownItem
-                                      tag="div"
-                                      onClick={() => this.filterSize(20)}
-                                    >
-                                      20
-                                    </DropdownItem>
-                                    <DropdownItem
-                                      tag="div"
-                                      onClick={() => this.filterSize(50)}
-                                    >
-                                      50
-                                    </DropdownItem>
-                                    <DropdownItem
-                                      tag="div"
-                                      onClick={() => this.filterSize(100)}
-                                    >
-                                      100
-                                    </DropdownItem>
-                                    <DropdownItem
-                                      tag="div"
-                                      onClick={() => this.filterSize(134)}
-                                    >
-                                      134
-                                    </DropdownItem>
-                                  </DropdownMenu>
-                                </UncontrolledDropdown>
-                              </div>
-                              <div className="d-flex flex-wrap justify-content-end mb-1">
-                                <div className="table-input mr-1">
-                                  <Input
-                                    placeholder="search Item here..."
-                                    onChange={e =>
-                                      this.updateSearchQuery(e.target.value)
-                                    }
-                                    value={this.state.value}
-                                  />
-                                </div>
-                              </div>
-                            </div>
-                            <ContextLayout.Consumer className="ag-theme-alpine">
-                              {context => (
-                                <AgGridReact
-                                  id="myAgGrid"
-                                  // gridOptions={{
-                                  //   domLayout: "autoHeight",
-                                  //   // or other layout options
-                                  // }}
-                                  gridOptions={this.gridOptions}
-                                  rowSelection="multiple"
-                                  defaultColDef={defaultColDef}
-                                  columnDefs={columnDefs}
-                                  rowData={rowData}
-                                  // onGridReady={(params) => {
-                                  //   this.gridApi = params.api;
-                                  //   this.gridColumnApi = params.columnApi;
-                                  //   this.gridRef.current = params.api;
-
-                                  //   this.setState({
-                                  //     currenPageSize:
-                                  //       this.gridApi.paginationGetCurrentPage() +
-                                  //       1,
-                                  //     getPageSize:
-                                  //       this.gridApi.paginationGetPageSize(),
-                                  //     totalPages:
-                                  //       this.gridApi.paginationGetTotalPages(),
-                                  //   });
-                                  // }}
-                                  onGridReady={this.onGridReady}
-                                  colResizeDefault={"shift"}
-                                  animateRows={true}
-                                  floatingFilter={false}
-                                  pagination={true}
-                                  paginationPageSize={
-                                    this.state.paginationPageSize
-                                  }
-                                  pivotPanelShow="always"
-                                  enableRtl={context.state.direction === "rtl"}
-                                  ref={this.gridRef} // Attach the ref to the grid
-                                  domLayout="autoHeight" // Adjust layout as needed
-                                />
-                              )}
-                            </ContextLayout.Consumer>
+                            <h5
+                              onClick={() => this.exportToPDF()}
+                              style={{ cursor: "pointer" }}
+                              className=" mx-1 myactive mt-1"
+                            >
+                              .PDF
+                            </h5>
+                            <h5
+                              onClick={() => this.gridApi.exportDataAsCsv()}
+                              style={{ cursor: "pointer" }}
+                              className=" mx-1 myactive"
+                            >
+                              .CSV
+                            </h5>
+                            <h5
+                              onClick={this.convertCSVtoExcel}
+                              style={{ cursor: "pointer" }}
+                              className=" mx-1 myactive"
+                            >
+                              .XLS
+                            </h5>
+                            <h5
+                              onClick={this.exportToExcel}
+                              style={{ cursor: "pointer" }}
+                              className=" mx-1 myactive"
+                            >
+                              .XLSX
+                            </h5>
+                            <h5
+                              onClick={() => this.convertCsvToXml()}
+                              style={{ cursor: "pointer" }}
+                              className=" mx-1 myactive"
+                            >
+                              .XML
+                            </h5>
                           </div>
                         )}
-                      </CardBody>
-                    </Card>
+                      </div>
+                    </span>
                   </Col>
-                </>
-              )}
-            </>
-          )}
-        </Row>
+                )}
+              </Row>
+              <CardBody style={{ marginTop: "-1.5rem" }}>
+                {this.state.rowData === null ? null : (
+                  <div className="ag-theme-material w-100 my-2 ag-grid-table">
+                    <div className="d-flex flex-wrap justify-content-between align-items-center">
+                      <div className="mb-1">
+                        <UncontrolledDropdown className="p-1 ag-dropdown">
+                          <DropdownToggle tag="div">
+                            {this.gridApi
+                              ? this.state.currenPageSize
+                              : "" * this.state.getPageSize -
+                                (this.state.getPageSize - 1)}{" "}
+                            -{" "}
+                            {this.state.rowData.length -
+                              this.state.currenPageSize *
+                                this.state.getPageSize >
+                            0
+                              ? this.state.currenPageSize *
+                                this.state.getPageSize
+                              : this.state.rowData.length}{" "}
+                            of {this.state.rowData.length}
+                            <ChevronDown className="ml-50" size={15} />
+                          </DropdownToggle>
+                          <DropdownMenu right>
+                            <DropdownItem
+                              tag="div"
+                              onClick={() => this.filterSize(5)}
+                            >
+                              5
+                            </DropdownItem>
+                            <DropdownItem
+                              tag="div"
+                              onClick={() => this.filterSize(20)}
+                            >
+                              20
+                            </DropdownItem>
+                            <DropdownItem
+                              tag="div"
+                              onClick={() => this.filterSize(50)}
+                            >
+                              50
+                            </DropdownItem>
+                            <DropdownItem
+                              tag="div"
+                              onClick={() => this.filterSize(100)}
+                            >
+                              100
+                            </DropdownItem>
+                            <DropdownItem
+                              tag="div"
+                              onClick={() => this.filterSize(134)}
+                            >
+                              134
+                            </DropdownItem>
+                          </DropdownMenu>
+                        </UncontrolledDropdown>
+                      </div>
+                      <div className="d-flex flex-wrap justify-content-end mb-1">
+                        <div className="table-input mr-1">
+                          <Input
+                            placeholder="search Item here..."
+                            onChange={e =>
+                              this.updateSearchQuery(e.target.value)
+                            }
+                            value={this.state.value}
+                          />
+                        </div>
+                      </div>
+                    </div>
+                    <ContextLayout.Consumer className="ag-theme-alpine">
+                      {context => (
+                        <AgGridReact
+                          id="myAgGrid"
+                          gridOptions={this.gridOptions}
+                          rowSelection="multiple"
+                          defaultColDef={defaultColDef}
+                          columnDefs={columnDefs}
+                          rowData={rowData}
+                          onGridReady={this.onGridReady}
+                          colResizeDefault={"shift"}
+                          animateRows={true}
+                          floatingFilter={false}
+                          pagination={true}
+                          paginationPageSize={this.state.paginationPageSize}
+                          pivotPanelShow="always"
+                          enableRtl={context.state.direction === "rtl"}
+                          ref={this.gridRef} // Attach the ref to the grid
+                          domLayout="autoHeight" // Adjust layout as needed
+                        />
+                      )}
+                    </ContextLayout.Consumer>
+                  </div>
+                )}
+              </CardBody>
+            </Card>
+          </Col>
+        </Col>
 
         <Modal
           isOpen={this.state.modal}
@@ -1312,7 +731,7 @@ class InvoiceGenerator extends React.Component {
           <ModalBody className="modalbodyhead">
             <Row>
               <Col lg="4" md="4" sm="12" xl="4" xs="12">
-                <h4>Avilable Columns</h4>
+                <h4>Available Columns</h4>
                 <div className="mainshffling">
                   <div class="ex1">
                     {AllcolumnDefs &&
@@ -1392,9 +811,9 @@ class InvoiceGenerator extends React.Component {
                                       <IoMdRemoveCircleOutline
                                         onClick={() => {
                                           const SelectedCols =
-                                            this.state.SelectedcolumnDefs.slice();
+                                            this.state.SelectedcolumnDefs?.slice();
                                           const delindex =
-                                            SelectedCols.findIndex(
+                                            SelectedCols?.findIndex(
                                               element =>
                                                 element?.headerName ==
                                                 ele?.headerName
@@ -1402,24 +821,13 @@ class InvoiceGenerator extends React.Component {
 
                                           if (SelectedCols && delindex >= 0) {
                                             const splicedElement =
-                                              SelectedCols.splice(delindex, 1); // Remove the element
+                                              SelectedCols?.splice(delindex, 1); // Remove the element
                                             // splicedElement contains the removed element, if needed
 
                                             this.setState({
                                               SelectedcolumnDefs: SelectedCols, // Update the state with the modified array
                                             });
                                           }
-                                          // const delindex =
-                                          //   SelectedCols.findIndex(
-                                          //     (element) =>
-                                          //       element?.headerName ==
-                                          //       ele?.headerName
-                                          //   );
-
-                                          // SelectedCols?.splice(delindex, 1);
-                                          // this.setState({
-                                          //   SelectedcolumnDefs: SelectedCols,
-                                          // });
                                         }}
                                         style={{ cursor: "pointer" }}
                                         size="25px"
@@ -1461,392 +869,163 @@ class InvoiceGenerator extends React.Component {
             <Row>
               <Col>
                 <div className="d-flex justify-content-center">
-                  <Button onClick={this.HandleSetVisibleField} color="primary">
+                  {/* <Button onClick={this.HandleSetVisibleField} color="primary">
                     Submit
-                  </Button>
+                  </Button> */}
+
+                  <Badge
+                    style={{ cursor: "pointer" }}
+                    className=""
+                    color="primary"
+                    onClick={this.HandleSetVisibleField}
+                  >
+                    Submit
+                  </Badge>
                 </div>
               </Col>
             </Row>
           </ModalBody>
         </Modal>
         <Modal
-          isOpen={this.state.modalOne}
-          toggle={this.toggleModalOne}
+          isOpen={this.state.modalone}
+          toggle={this.togglemodal}
           className={this.props.className}
           style={{ maxWidth: "1050px" }}
         >
-          <ModalHeader toggle={this.toggleModalclose}>
-            {this.state.ShowBill ? "Select Bill Format" : "Download BIll"}
+          <ModalHeader toggle={this.togglemodal}>
+            {this.state.ShowBill ? "Bill Download" : "All Products"}
           </ModalHeader>
-          <ModalBody>
-            {this.state.ShowBill && this.state.ShowBill ? (
-              <>
+          <ModalBody
+            className={`${this.state.ShowBill ? "p-1" : "modalbodyhead"}`}
+          >
+            <Row className="p-2">
+              <Col>
                 <div className="d-flex justify-content-center">
-                  <h4>Choose Bill type</h4>
+                  <h4>Sales Order List</h4>
                 </div>
-                <Row className="container p-5">
-                  <Col lg="3" md="3" s="3">
-                    <div className="imagebackground p-1">
-                      <img
-                        onClick={e => this.handleBillSet(1)}
-                        style={{ cursor: "pointer" }}
-                        width={130}
-                        height={150}
-                        src={Templatethree}
-                        alt="template"
-                      />
-                    </div>
-                  </Col>
-                  <Col lg="3" md="3" s="3">
-                    <div className="imagebackground p-1">
-                      <img
-                        onClick={e => this.handleBillSet(2)}
-                        className="imagebackground"
-                        style={{ cursor: "pointer" }}
-                        width={130}
-                        height={150}
-                        src={Templatetwo}
-                        alt="template"
-                      />
-                    </div>
-                  </Col>
-                  <Col lg="3" md="3" s="3">
-                    <div className="imagebackground p-1">
-                      <img
-                        onClick={e => this.handleBillSet(3)}
-                        className="imagebackground"
-                        style={{ cursor: "pointer" }}
-                        width={130}
-                        height={150}
-                        src={templateone}
-                        alt="template"
-                      />
-                    </div>
-                  </Col>
-                  <Col lg="3" md="3" s="3">
-                    <div className="imagebackground p-1">
-                      <img
-                        onClick={e => this.handleBillSet(4)}
-                        className="imagebackground"
-                        style={{ cursor: "pointer" }}
-                        width={130}
-                        height={150}
-                        src={templatefour}
-                        alt="template"
-                      />
-                    </div>
-                  </Col>
-                </Row>
+              </Col>
+            </Row>
+            {this.state.ShowBill ? (
+              <>
+                <StockTrxInvoice ViewOneData={this.state.ViewOneData} />
               </>
             ) : (
               <>
-                {this.state.ShowMyBill && this.state.ShowMyBill ? (
+                {this.state.ViewOneUserView ? (
                   <>
-                    {this.state.ViewBill && this.state.ViewBill ? (
-                      <>
-                        <div style={{ width: "100%" }} className="">
-                          <InvoicGenerator
-                            CompanyDetails={this.state.CompanyDetails}
-                            BillNumber={this.state.BillNumber}
-                            PrintData={this.state.PrintData}
-                            Applied_Charges={this.state.Applied_Charges}
-                            AllbillMerged={this.state.AllbillMerged}
-                            wordsNumber={this.state.wordsNumber}
-                            sgst={this.state.sgst}
-                            cgst={this.state.cgst}
-                            deliveryCharges={this.state.deliveryCharges}
-                            otherCharges={this.state.otherCharges}
-                            discount={this.state.discount}
-                            // AddedBill={AddedBill}
+                    <Row>
+                      <Col className="d-flex">
+                        <div>
+                          <span>UserName:</span>
+                        </div>
+                        <div>
+                          <h5 className="">
+                            {this.state.ViewOneData &&
+                              this.state.ViewOneData?.fullName}
+                          </h5>
+                        </div>
+                      </Col>
+
+                      <Col className="d-flex">
+                        <div>
+                          <span>Grand Total :</span>
+                        </div>
+                        <div>
+                          <strong>
+                            {this.state.ViewOneData &&
+                              this.state.ViewOneData?.grandTotal}
+                          </strong>
+                          Rs/-
+                        </div>
+                      </Col>
+                      <Col>
+                        {this.state.ViewOneData?.status == "completed" ? (
+                          <>
+                            <div className="d-flex justify-content-center">
+                              <h5>
+                                Status:
+                                <Badge className="mx-2" color="primary">
+                                  {this.state.ViewOneData?.status}
+                                </Badge>
+                              </h5>
+                            </div>
+                          </>
+                        ) : (
+                          <>
+                            <h5>
+                              status:
+                              <Badge className="mx-2" color="primary">
+                                {this.state.ViewOneData?.status}
+                              </Badge>
+                            </h5>
+                          </>
+                        )}
+                      </Col>
+                      {/* <Col>
+                        <Label>Download Invoice :</Label>
+                        <div className="d-flex justify-content-center">
+                          <FaDownload
+                            onClick={this.handleStockTrxInvoiceShow}
+                            color="#00c0e"
+                            fill="#00c0e"
+                            style={{ cursor: "pointer" }}
+                            size={20}
                           />
                         </div>
-                      </>
-                    ) : (
-                      <>
-                        <div style={{ width: "100%" }} className="">
-                          <Form onSubmit={e => this.handleSubmit(e)}>
-                            <Row className="main div heading px-3 py-3">
-                              <Col lg="6" className="mb-2">
-                                <Label>SGST</Label>
-                                <select
-                                  required
-                                  className="form-control"
-                                  value={this.state.sgst}
-                                  onChange={this.changeHandler}
-                                  name="sgst"
-                                >
-                                  <option value="not selected">
-                                    --Select--
-                                  </option>
-                                  <option value="5">5%</option>
-                                  <option value="9">9%</option>
-                                  <option value="12">12%</option>
-                                </select>
-                              </Col>
-                              <Col lg="6" className="mb-2">
-                                <Label>CGST</Label>
-                                <select
-                                  required
-                                  className="form-control"
-                                  name="cgst"
-                                  placeholder="Enter CGST"
-                                  value={this.state.cgst}
-                                  onChange={this.changeHandler}
-                                >
-                                  <option value="not selected">
-                                    --Select--
-                                  </option>
-                                  <option value="5">5%</option>
-                                  <option value="9">9%</option>
-                                  <option value="12">12%</option>
-                                </select>
-                              </Col>
-                              <Col lg="6">
-                                <Label className="mt-2">Other Charges</Label>
-                                <Input
-                                  type="number"
-                                  name="otherCharges"
-                                  placeholder="Enter Other Charges"
-                                  value={this.state.otherCharges}
-                                  onChange={this.changeHandler}
-                                ></Input>
-                              </Col>
-                              <Col lg="6">
-                                <Label className="mt-2">Delivery Charges</Label>
-                                <Input
-                                  type="number"
-                                  name="deliveryCharges"
-                                  placeholder="Enter Delivery Charges"
-                                  value={this.state.deliveryCharges}
-                                  onChange={this.changeHandler}
-                                ></Input>
-                              </Col>
-                              <Col lg="6">
-                                <Label className="mt-2">Discount </Label>
-                                <Input
-                                  type="number"
-                                  name="discount"
-                                  placeholder="Enter discount value"
-                                  value={this.state.discount}
-                                  onChange={this.changeHandler}
-                                ></Input>
-                              </Col>
-                            </Row>
-                            <Row>
-                              <Col lg="12" className="mt-2 mb-2">
-                                <div className="d-flex justify-content-center">
-                                  <Button
-                                    disabled={
-                                      this.state.ButtonText === "InProcess"
-                                        ? true
-                                        : false
-                                    }
-                                    color="primary"
-                                    type="submit"
-                                  >
-                                    {this.state.ButtonText}
-                                  </Button>
-                                </div>
-                              </Col>
-                            </Row>
-                          </Form>
-                        </div>
-                      </>
-                    )}
-                  </>
-                ) : (
-                  <>
-                    <Form className="m-1" onSubmit={this.submitHandler}>
-                      <Row className="mb-2">
-                        <Col lg="4" md="4" className="mb-2">
-                          <Label>Logo Position</Label>
-                          <CustomInput
-                            type="select"
-                            placeholder="Select Type"
-                            name="logoposition"
-                            value={this.state.logoposition}
-                            onChange={this.changeHandler}
-                          >
-                            <option>---Select---</option>
-                            <option value="Left">Left</option>
-                            <option value="right">Right</option>
-                          </CustomInput>
-                        </Col>
-                        <Col lg="4" md="4" className="mb-2">
-                          <Label>ship to position</Label>
-                          <CustomInput
-                            type="select"
-                            placeholder="Select Type"
-                            name="shipto"
-                            value={this.state.shipto}
-                            onChange={this.changeHandler}
-                          >
-                            <option>---Select---</option>
-                            <option value="Left">Left</option>
-                            <option value="right">Right</option>
-                          </CustomInput>
-                          <span>
-                            {this.state.shipto == this.state.Billtoposition ? (
-                              <span style={{ color: "red" }}>
-                                Bill to and ship to cannot be same
-                              </span>
-                            ) : null}
-                          </span>
-                        </Col>
+                      </Col> */}
+                    </Row>
 
-                        <Col lg="4" md="4" className="mb-2">
-                          <Label>Bill to position</Label>
-                          <CustomInput
-                            type="select"
-                            placeholder="Select Type"
-                            name="Billtoposition"
-                            value={this.state.Billtoposition}
-                            onChange={this.changeHandler}
-                          >
-                            <option>---Select---</option>
-                            <option value="Left">Left</option>
-                            <option value="right">Right</option>
-                          </CustomInput>
-                          <span>
-                            {this.state.shipto == this.state.Billtoposition ? (
-                              <span style={{ color: "red" }}>
-                                Bill to and ship to cannot be same
-                              </span>
-                            ) : null}
-                          </span>
-                        </Col>
-                      </Row>
-
-                      <Row>
-                        <Col>
-                          <div className="d-flex justify-content-center">
-                            <Button.Ripple
-                              color="primary"
-                              type="submit"
-                              className="mr-1 mb-1"
-                            >
-                              Submit
-                            </Button.Ripple>
-                          </div>
-                        </Col>
-                      </Row>
-                    </Form>
+                    <Row>
+                      <Col>
+                        <Table style={{ cursor: "pointer" }} striped>
+                          <thead>
+                            <tr>
+                              <th>#</th>
+                              <th>Product Name</th>
+                              <th>Price</th>
+                              <th>Size</th>
+                              <th>Unit</th>
+                              <th>HSN CODE</th>
+                              <th>GST</th>
+                              <th>Quantity</th>
+                              <th>Total</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {this.state.ViewOneData?.orderItems &&
+                              this.state.ViewOneData?.orderItems?.map(
+                                (ele, i) => (
+                                  <>
+                                    <tr>
+                                      <th scope="row">{i + 1}</th>
+                                      <td>{ele?.product?.Product_Title}</td>
+                                      <td>{ele?.product?.Product_MRP}</td>
+                                      <td>{ele?.product?.Size}</td>
+                                      <td>{ele?.unitQty}</td>
+                                      <td>{ele?.product?.HSN_Code}</td>
+                                      <td>{ele?.product["GST Rate"]}</td>
+                                      <td>{ele?.qty}</td>
+                                      <td>
+                                        {ele?.product?.Product_MRP *
+                                          ele?.product?.Size *
+                                          ele?.qty}
+                                      </td>
+                                    </tr>
+                                  </>
+                                )
+                              )}
+                          </tbody>
+                        </Table>
+                      </Col>
+                    </Row>
                   </>
-                )}
+                ) : null}
               </>
             )}
-          </ModalBody>
-        </Modal>
-
-        <Modal
-          isOpen={this.state.modalTwo}
-          toggle={this.toggleModalTwo}
-          className={this.props.className}
-          style={{ maxWidth: "1050px" }}
-        >
-          <ModalHeader toggle={this.toggleModalcloseTwo}>
-            View Order
-          </ModalHeader>
-          <ModalBody>
-            <div className="container">
-              <Row>
-                <Col>
-                  <Label>Party Name :</Label>
-                  <h5 className="mx-1">
-                    {this.state.ViewOneData &&
-                      this.state.ViewOneData?.partyId?.firstName}
-                  </h5>
-                </Col>
-                <Col>
-                  <Label>Date Created :</Label>
-                  <h5>
-                    {this.state.ViewOneData &&
-                      this.state.ViewOneData?.createdAt?.split("T")[0]}
-                  </h5>
-                </Col>
-                <Col>
-                  <Label>Address :</Label>
-                  <h5>
-                    <strong>
-                      {this.state.ViewOneData &&
-                        this.state.ViewOneData?.address}{" "}
-                    </strong>
-                    Rs/-
-                  </h5>
-                </Col>
-                <Col>
-                  <Label>Grand Total :</Label>
-                  <h5>
-                    <strong>
-                      {this.state.ViewOneData &&
-                        this.state.ViewOneData?.grandTotal}{" "}
-                    </strong>
-                    Rs/-
-                  </h5>
-                </Col>
-
-                {/* <Col>
-                <Label>Download Invoice :</Label>
-                <div className="d-flex justify-content-center">
-                  <FaDownload
-                    onClick={this.handleStockTrxInvoiceShow}
-                    color="#00c0e"
-                    fill="#00c0e"
-                    style={{ cursor: "pointer" }}
-                    size={20}
-                  />
-                </div>
-              </Col> */}
-              </Row>
-              <Row className="p-2">
-                <Col>
-                  <div className="d-flex justify-content-center">
-                    <h4>Product Details</h4>
-                  </div>
-                </Col>
-              </Row>
-              <Row>
-                <Col>
-                  <Table style={{ cursor: "pointer" }} striped>
-                    <thead>
-                      <tr>
-                        <th>#</th>
-                        <th>Product Name</th>
-                        <th>Price</th>
-                        <th>Size</th>
-                        <th>Unit</th>
-                        <th>Quantity</th>
-                        <th>Total</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {this.state.ViewOneData?.orderItems &&
-                        this.state.ViewOneData?.orderItems?.map((ele, i) => (
-                          <>
-                            <tr>
-                              <th scope="row">{i + 1}</th>
-                              <td>{ele?.product?.Product_Title}</td>
-                              <td>{ele?.product?.Product_MRP}</td>
-                              <td>{ele?.product?.Size}</td>
-                              <td>{ele?.unitQty}</td>
-                              <td>{ele?.qty}</td>
-                              <td>
-                                {ele?.product?.Product_MRP *
-                                  ele?.product?.Size *
-                                  ele?.qty}
-                              </td>
-                            </tr>
-                          </>
-                        ))}
-                    </tbody>
-                  </Table>
-                </Col>
-              </Row>
-            </div>
           </ModalBody>
         </Modal>
       </>
     );
   }
 }
-export default InvoiceGenerator;
+export default Salesreport;
