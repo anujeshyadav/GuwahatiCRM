@@ -1,5 +1,10 @@
 import React, { useRef } from "react";
 import { ImDownload } from "react-icons/im";
+
+import {
+  
+  FaPlus,
+} from "react-icons/fa";
 import {
   Card,
   CardBody,
@@ -24,7 +29,7 @@ import jsPDF from "jspdf";
 import "jspdf-autotable";
 import Logo from "../../../../assets/img/profile/pages/logomain.png";
 import Papa from "papaparse";
-import { Eye, Trash2, ChevronDown, Edit } from "react-feather";
+import { Eye, Trash2, ChevronDown, Edit, CornerDownLeft } from "react-feather";
 import { IoMdRemoveCircleOutline } from "react-icons/io";
 import "../../../../assets/scss/plugins/tables/_agGridStyleOverride.scss";
 import "../../../../assets/scss/pages/users.scss";
@@ -41,6 +46,7 @@ import {
   SparePart_List,
   SparesPartsView,
   DeleteAccount,
+  Cashbook_List
 } from "../../../../ApiEndPoint/ApiCalling";
 import {
   BsCloudDownloadFill,
@@ -49,6 +55,7 @@ import {
 } from "react-icons/bs";
 import * as XLSX from "xlsx";
 import UserContext from "../../../../context/Context";
+import { CheckPermission } from "../../freshlist/house/CheckPermission";
 
 const SelectedColums = [];
 
@@ -65,6 +72,7 @@ class Cashbook extends React.Component {
       setMySelectedarr: [],
       SelectedCols: [],
       paginationPageSize: 5,
+      InsiderPermissions:{},
       currenPageSize: "",
       getPageSize: "",
       columnDefs: [],
@@ -77,61 +85,217 @@ class Cashbook extends React.Component {
         resizable: true,
         suppressMenu: true,
       },
+      columnDefs: [
+        {
+          headerName: "UID",
+          valueGetter: "node.rowIndex + 1",
+          field: "node.rowIndex + 1",
+          width: 80,
+          filter: true,
+        },
+
+        {
+          headerName: "Actions",
+          field: "transactions",
+          width: 180,
+          cellRendererFramework: params => {
+            return (
+              <div className="actions cursor-pointer">
+              <Eye
+              className="mr-50"
+              size="25px"
+              color="green"
+              // onClick={() =>
+              //   history.push(
+              //     `/app/freshlist/customer/viewCustomer/${params.data?._id}`
+              //   )
+              // }
+              onClick={e => {
+                this.togglemodal();
+                this.setState({ ViewOneData: paramsd
+                 });
+                this.setState({ ViewOneUserView: true });
+                this.setState({ EditOneUserView: false });
+              }}
+            />
+              </div>
+            );
+          },
+        },
+        {
+          headerName: "Status",
+          field: "status",
+          filter: true,
+          width: 150,
+          cellRendererFramework: params => {
+            return params.data?.status == "completed" ? (
+              <div className="badge badge-pill badge-success">
+                {params.data.status}
+              </div>
+            ) : params.data?.status == "pending" ? (
+              <div className="badge badge-pill badge-warning">
+                {params.data.status}
+              </div>
+            ) : params.data?.status == "return" ? (
+              <div className="badge badge-pill badge-danger">
+                {params.data.status}
+              </div>
+            ) : null;
+          },
+        },
+        {
+          headerName: "Full Name",
+          field: "fullName",
+          filter: true,
+          width: 180,
+          cellRendererFramework: (params) => {
+            return (
+              <>
+                <div className="actions cursor-pointer">
+                  <span>{params?.data?.fullName}</span>
+                </div>
+              </>
+            );
+          },
+        },
+
+        {
+          headerName: "Product ",
+          field: "orderItems",
+          filter: true,
+          width: 220,
+          cellRendererFramework: (params) => {
+            return (
+              <>
+                <div className="actions cursor-pointer">
+                  <span>{params.data.orderItems && params.data.orderItems.length
+                  }</span>
+                </div>
+              </>
+            );
+          },
+        },
+        {
+          headerName: "Price",
+          field: "orderItems",
+          filter: true,
+          width: 150,
+          cellRendererFramework: (params) => {
+            return (
+              <>
+                <div className="actions cursor-pointer">
+                  <span>{params?.data?.orderItems.price}</span>
+                </div>
+              </>
+            );
+          },
+        },
+        {
+          headerName: "Size",
+          field: "orderItems",
+          filter: true,
+          width: 150,
+          cellRendererFramework: (params) => {
+            return (
+              <>
+                <div className="actions cursor-pointer">
+                  <span>{params?.data?.fullName}</span>
+                </div>
+              </>
+            );
+          },
+        },
+        {
+          headerName: "GST Rate",
+          field: "orderItems",
+          filter: true,
+          width: 180,
+          cellRendererFramework: (params) => {
+            return (
+              <>
+                <div className="actions cursor-pointer">
+                  <span>{params?.data?.fullName}</span>
+                </div>
+              </>
+            );
+          },
+        },
+        {
+          headerName: "HSN Code",
+          field: "orderItems",
+          filter: true,
+          width: 180,
+          cellRendererFramework: (params) => {
+            return (
+              <>
+                <div className="actions cursor-pointer">
+                  <span>{params?.data?.fullName}</span>
+                </div>
+              </>
+            );
+          },
+        },
+      ],
     };
   }
+  // toggleModal = () => {
+  //   this.setState(prevState => ({
+  //     modalone: !prevState.modalone,
+  //   }));
+  // };
 
-  LookupviewStart = () => {
-    this.setState(prevState => ({
-      modal: !prevState.modal,
-    }));
-  };
+  // LookupviewStart = () => {
+  //   this.setState(prevState => ({
+  //     modal: !prevState.modal,
+  //   }));
+  // };
 
-  handleChangeEdit = (data, types) => {
-    let type = types;
-    if (type == "readonly") {
-      this.setState({ ViewOneUserView: true });
-      this.setState({ ViewOneData: data });
-    } else {
-      this.setState({ EditOneUserView: true });
-      this.setState({ EditOneData: data });
-    }
-  };
+  // handleChangeEdit = (data, types) => {
+  //   let type = types;
+  //   if (type == "readonly") {
+  //     this.setState({ ViewOneUserView: true });
+  //     this.setState({ ViewOneData: data });
+  //   } else {
+  //     this.setState({ EditOneUserView: true });
+  //     this.setState({ EditOneData: data });
+  //   }
+  // };
 
-  async componentDidMount() {
-    let headings;
-    // let inputs;
-    let maxKeys = 0;
-    let elementWithMaxKeys = null;
-    const UserInformation = this.context?.UserInformatio;
-    await SparesPartsView()
-      .then(res => {
-        console.log(res?.SparePart);
-        this.setState({ rowData: res?.SparePart });
-        for (const element of res?.SparePart) {
-          const numKeys = Object.keys(element).length;
-          if (numKeys > maxKeys) {
-            maxKeys = numKeys;
-            elementWithMaxKeys = element;
-          }
-        }
-        console.log(maxKeys);
-        let findheading = Object.keys(elementWithMaxKeys);
-        let index = findheading.indexOf("_id");
-        if (index > -1) {
-          findheading.splice(index, 1);
-        }
-        let index1 = findheading.indexOf("__v");
-        if (index1 > -1) {
-          findheading.splice(index1, 1);
-        }
-        headings = findheading?.map(ele => {
-          return {
-            headerName: ele,
-            field: ele,
-            filter: true,
-            sortable: true,
-          };
-        });
+  // async componentDidMount() {
+  //   let headings;
+  //   // let inputs;
+  //   let maxKeys = 0;
+  //   let elementWithMaxKeys = null;
+  //   const UserInformation = this.context?.UserInformatio;
+  //   await SparesPartsView()
+  //     .then(res => {
+  //       console.log(res?.SparePart);
+  //       this.setState({ rowData: res?.SparePart });
+  //       for (const element of res?.SparePart) {
+  //         const numKeys = Object.keys(element).length;
+  //         if (numKeys > maxKeys) {
+  //           maxKeys = numKeys;
+  //           elementWithMaxKeys = element;
+  //         }
+  //       }
+  //       console.log(maxKeys);
+  //       let findheading = Object.keys(elementWithMaxKeys);
+  //       let index = findheading.indexOf("_id");
+  //       if (index > -1) {
+  //         findheading.splice(index, 1);
+  //       }
+  //       let index1 = findheading.indexOf("__v");
+  //       if (index1 > -1) {
+  //         findheading.splice(index1, 1);
+  //       }
+  //       headings = findheading?.map(ele => {
+  //         return {
+  //           headerName: ele,
+  //           field: ele,
+  //           filter: true,
+  //           sortable: true,
+  //         };
+  //       });
         // var adddropdown = [];
         // const inputs = res?.SparePart?.map(ele => {
         //   console.log(ele);
@@ -189,14 +353,14 @@ class Cashbook extends React.Component {
         //   ];
         // }
 
-        let myHeadings = [
+        // let myHeadings = [
           // ...checkboxinput,
-          ...headings,
+          // ...headings,
           // ...adddropdown,
           // ...addRadio,
           // ...mydropdownArray,
-        ];
-        let Product = [
+        // ];
+        // let Product = [
           // {
           //   headerName: "Actions",
           //   field: "sortorder",
@@ -293,7 +457,7 @@ class Cashbook extends React.Component {
           //     );
           //   },
           // },
-          ...myHeadings,
+          // ...myHeadings,
           // {
           //   headerName: "Created date",
           //   field: "createdAt",
@@ -376,26 +540,26 @@ class Cashbook extends React.Component {
           //     );
           //   },
           // },
-        ];
-        this.setState({ AllcolumnDefs: Product });
+      //   ];
+      //   this.setState({ AllcolumnDefs: Product });
 
-        let userHeading = JSON.parse(
-          localStorage.getItem("UserSearchParSearch")
-        );
-        if (userHeading?.length) {
-          this.setState({ columnDefs: userHeading });
-          this.gridApi.setColumnDefs(userHeading);
-          this.setState({ SelectedcolumnDefs: userHeading });
-        } else {
-          this.setState({ columnDefs: Product });
-          this.setState({ SelectedcolumnDefs: Product });
-        }
-        this.setState({ SelectedCols: Product });
-      })
-      .catch(err => {
-        console.log(err);
+      //   let userHeading = JSON.parse(
+      //     localStorage.getItem("UserSearchParSearch")
+      //   );
+      //   if (userHeading?.length) {
+      //     this.setState({ columnDefs: userHeading });
+      //     this.gridApi.setColumnDefs(userHeading);
+      //     this.setState({ SelectedcolumnDefs: userHeading });
+      //   } else {
+      //     this.setState({ columnDefs: Product });
+      //     this.setState({ SelectedcolumnDefs: Product });
+      //   }
+      //   this.setState({ SelectedCols: Product });
+      // })
+      // .catch(err => {
+      //   console.log(err);
         // swal("Error", "something went wrong try again");
-      });
+      // });
     // await SparePart_List()
     //   .then(res => {
     //     console.log(res.Parts);
@@ -404,10 +568,10 @@ class Cashbook extends React.Component {
     //   .catch(err => {
     //     console.log(err);
     //   });
-  }
-  toggleDropdown = () => {
-    this.setState(prevState => ({ isOpen: !prevState.isOpen }));
-  };
+  // }
+  // toggleDropdown = () => {
+  //   this.setState(prevState => ({ isOpen: !prevState.isOpen }));
+  // };
 
   // runthisfunction(id) {
   //   swal("Warning", "Sure You Want to Delete it", {
@@ -431,6 +595,329 @@ class Cashbook extends React.Component {
   //     }
   //   });
   // }
+
+  // onGridReady = params => {
+  //   this.gridApi = params.api;
+  //   this.gridColumnApi = params.columnApi;
+  //   this.gridRef.current = params.api;
+
+  //   this.setState({
+  //     currenPageSize: this.gridApi.paginationGetCurrentPage() + 1,
+  //     getPageSize: this.gridApi.paginationGetPageSize(),
+  //     totalPages: this.gridApi.paginationGetTotalPages(),
+  //   });
+  // };
+
+  // updateSearchQuery = val => {
+  //   this.gridApi.setQuickFilter(val);
+  // };
+
+  // filterSize = val => {
+  //   if (this.gridApi) {
+  //     this.gridApi.paginationSetPageSize(Number(val));
+  //     this.setState({
+  //       currenPageSize: val,
+  //       getPageSize: val,
+  //     });
+  //   }
+  // };
+  // handleChangeHeader = (e, value, index) => {
+  //   let check = e.target.checked;
+  //   if (check) {
+  //     SelectedColums?.push(value);
+  //   } else {
+  //     const delindex = SelectedColums?.findIndex(
+  //       ele => ele?.headerName === value?.headerName
+  //     );
+
+  //     SelectedColums?.splice(delindex, 1);
+  //   }
+  // };
+  // parseCsv(csvData) {
+  //   return new Promise((resolve, reject) => {
+  //     Papa.parse(csvData, {
+  //       header: true,
+  //       skipEmptyLines: true,
+  //       complete: result => {
+  //         if (result.data && result.data.length > 0) {
+  //           resolve(result.data);
+  //         } else {
+  //           reject(new Error("No data found in the CSV"));
+  //         }
+  //       },
+  //       error: error => {
+  //         reject(error);
+  //       },
+  //     });
+  //   });
+  // }
+  // generatePDF(parsedData) {
+  //   let pdfsize = [Object.keys(parsedData[0])][0].length;
+  //   let size = pdfsize > 15 ? "a1" : pdfsize < 14 > 10 ? "a3" : "a4";
+
+  //   const doc = new jsPDF("landscape", "mm", size, false);
+  //   doc.setTextColor(5, 87, 97);
+  //   const tableData = parsedData.map(row => Object.values(row));
+  //   doc.addImage(Logo, "JPEG", 10, 10, 50, 30);
+  //   let date = new Date();
+  //   doc.setCreationDate(date);
+  //   doc.text("UserAccount", 14, 51);
+  //   doc.autoTable({
+  //     head: [Object.keys(parsedData[0])],
+  //     body: tableData,
+  //     startY: 60,
+  //   });
+
+  //   doc.save("UserList.pdf");
+  // }
+
+  // exportToPDF = async () => {
+  //   const csvData = this.gridApi.getDataAsCsv({
+  //     processCellCallback: this.processCell,
+  //   });
+  //   try {
+  //     const parsedData = await this.parseCsv(csvData);
+  //     this.generatePDF(parsedData);
+  //   } catch (error) {
+  //     console.error("Error parsing CSV:", error);
+  //   }
+  // };
+  // processCell = params => {
+  //   console.log(params);
+  //   Customize cell content as needed
+  //   return params.value;
+  // };
+
+  // convertCsvToExcel(csvData) {
+  //   return new Promise(resolve => {
+  //     Papa.parse(csvData, {
+  //       header: true,
+  //       dynamicTyping: true,
+  //       skipEmptyLines: true,
+  //       complete: function (result) {
+  //         const worksheet = XLSX.utils.json_to_sheet(result.data);
+  //         const workbook = XLSX.utils.book_new();
+  //         XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
+  //         const excelBuffer = XLSX.write(workbook, {
+  //           bookType: "xlsx",
+  //           type: "array",
+  //         });
+  //         const blob = new Blob([excelBuffer], {
+  //           type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+  //         });
+  //         resolve(blob);
+  //       },
+  //     });
+  //   });
+  // }
+  // downloadExcelFile(blob) {
+  //   const url = window.URL.createObjectURL(blob);
+  //   const a = document.createElement("a");
+  //   a.href = url;
+  //   a.download = "Userlist.xlsx";
+  //   document.body.appendChild(a);
+  //   a.click();
+  //   window.URL.revokeObjectURL(url);
+  // }
+
+  // exportToExcel = async e => {
+  //   const CsvData = this.gridApi.getDataAsCsv({
+  //     processCellCallback: this.processCell,
+  //   });
+  //   const blob = await this.convertCsvToExcel(CsvData);
+  //   this.downloadExcelFile(blob);
+  // };
+
+  // convertCSVtoExcel = () => {
+  //   const CsvData = this.gridApi.getDataAsCsv({
+  //     processCellCallback: this.processCell,
+  //   });
+  //   Papa.parse(CsvData, {
+  //     complete: result => {
+  //       const ws = XLSX.utils.json_to_sheet(result.data);
+  //       const wb = XLSX.utils.book_new();
+  //       XLSX.utils.book_append_sheet(wb, ws, "Sheet1");
+  //       const excelType = "xls";
+  //       XLSX.writeFile(wb, `UserList.${excelType}`);
+  //     },
+  //   });
+  // };
+
+  // shiftElementUp = () => {
+  //   let currentIndex = this.state.Arrindex;
+  //   if (currentIndex > 0) {
+  //     const myArrayCopy = [...this.state.SelectedcolumnDefs];
+  //     const elementToMove = myArrayCopy.splice(currentIndex, 1)[0];
+  //     this.setState({ Arrindex: currentIndex - 1 });
+  //     myArrayCopy.splice(currentIndex - 1, 0, elementToMove);
+  //     this.setState({ SelectedcolumnDefs: myArrayCopy });
+  //   }
+  // };
+
+  // shiftElementDown = () => {
+  //   let currentIndex = this.state.Arrindex;
+  //   if (currentIndex < this.state.SelectedcolumnDefs.length - 1) {
+  //     const myArrayCopy = [...this.state.SelectedcolumnDefs];
+  //     const elementToMove = myArrayCopy.splice(currentIndex, 1)[0];
+  //     this.setState({ Arrindex: currentIndex + 1 });
+  //     myArrayCopy.splice(currentIndex + 1, 0, elementToMove);
+  //     this.setState({ SelectedcolumnDefs: myArrayCopy });
+  //   }
+  // };
+  // convertCsvToXml = () => {
+  //   const CsvData = this.gridApi.getDataAsCsv({
+  //     processCellCallback: this.processCell,
+  //   });
+  //   Papa.parse(CsvData, {
+  //     complete: result => {
+  //       const rows = result.data;
+
+       
+  //       let xmlString = "<root>\n";
+
+  //       rows.forEach(row => {
+  //         xmlString += "  <row>\n";
+  //         row.forEach((cell, index) => {
+  //           xmlString += `    <field${index + 1}>${cell}</field${index + 1}>\n`;
+  //         });
+  //         xmlString += "  </row>\n";
+  //       });
+
+  //       xmlString += "</root>";
+
+        // setXmlData(xmlString);
+
+        // Create a download link
+  //       const blob = new Blob([xmlString], { type: "text/xml" });
+  //       const link = document.createElement("a");
+  //       link.href = URL.createObjectURL(blob);
+  //       link.download = "output.xml";
+  //       link.click();
+  //     },
+  //   });
+  // };
+
+  // HandleSetVisibleField = e => {
+  //   e.preventDefault();
+  //   this.gridApi.setColumnDefs(this.state.SelectedcolumnDefs);
+  //   this.setState({ columnDefs: this.state.SelectedcolumnDefs });
+  //   this.setState({ SelectedcolumnDefs: this.state.SelectedcolumnDefs });
+  //   this.setState({ rowData: this.state.rowData });
+  //   localStorage.setItem(
+  //     "UserSearchParSearch",
+  //     JSON.stringify(this.state.SelectedcolumnDefs)
+  //   );
+  //   this.LookupviewStart();
+  // };
+
+  // HeadingRightShift = () => {
+  //   const updatedSelectedColumnDefs = [
+  //     ...new Set([
+  //       ...this.state.SelectedcolumnDefs.map(item => JSON.stringify(item)),
+  //       ...SelectedColums.map(item => JSON.stringify(item)),
+  //     ]),
+  //   ].map(item => JSON.parse(item));
+  //   this.setState({
+  //     SelectedcolumnDefs: [...new Set(updatedSelectedColumnDefs)], // Update the state with the combined array
+  //   });
+  // };
+  // handleLeftShift = () => {
+  //   let SelectedCols = this.state.SelectedcolumnDefs.slice();
+  //   let delindex = this.state.Arrindex; /* Your delete index here */
+
+  //   if (SelectedCols && delindex >= 0) {
+  //     SelectedCols.splice(delindex, 1); // Remove the element
+  //     this.setState({
+  //       SelectedcolumnDefs: SelectedCols, // Update the state with the modified array
+  //     });
+  //   }
+  // };
+  toggleModal = () => {
+    this.setState(prevState => ({
+      modalone: !prevState.modalone,
+    }));
+  };
+  LookupviewStart = () => {
+    this.setState(prevState => ({
+      modal: !prevState.modal,
+    }));
+  };
+
+  handleChangeView = (data, types) => {
+    let type = types;
+    if (type == "readonly") {
+      this.setState({ ViewOneUserView: true });
+      this.setState({ ViewOneData: data });
+    } else {
+      this.setState({ EditOneUserView: true });
+      this.setState({ EditOneData: data });
+    }
+  };
+
+  async componentDidMount() {
+    const userId = JSON.parse(localStorage.getItem("userData"))?._id;
+    const UserInformation = this.context?.UserInformatio;
+    const InsidePermissions = CheckPermission("Cashbook");
+    console.log(InsidePermissions);
+    this.setState({ InsiderPermissions: InsidePermissions });
+    await Cashbook_List(userId)
+      .then(res => {
+        debugger
+        this.setState({ rowData: res?.CashBook});
+        console.log(res?.CashBook);
+        this.setState({ AllcolumnDefs: this.state.columnDefs });
+        this.setState({ SelectedCols: this.state.columnDefs });
+
+        let userHeading = JSON.parse(localStorage.getItem("OrderListshow"));
+        if (userHeading?.length) {
+          this.setState({ columnDefs: userHeading });
+          this.gridApi.setColumnDefs(userHeading);
+          this.setState({ SelectedcolumnDefs: userHeading });
+        } else {
+          this.setState({ columnDefs: this.state.columnDefs });
+          this.setState({ SelectedcolumnDefs: this.state.columnDefs });
+        }
+      })
+      .catch(err => {
+        console.log(err);
+      });
+  }
+
+  togglemodal = () => {
+    this.setState(prevState => ({
+      modalone: !prevState.modalone,
+    }));
+    this.setState({ ShowBill: false });
+  };
+  handleStockTrxInvoiceShow = () => {
+    this.setState({ ShowBill: true });
+  };
+  toggleDropdown = () => {
+    this.setState(prevState => ({ isOpen: !prevState.isOpen }));
+  };
+
+  runthisfunction(id) {
+    swal("Warning", "Sure You Want to Delete it", {
+      buttons: {
+        cancel: "cancel",
+        catch: { text: "Delete ", value: "delete" },
+      },
+    }).then(value => {
+      switch (value) {
+        case "delete":
+          Delete_targetINlist(id)
+            .then(res => {
+              let selectedData = this.gridApi.getSelectedRows();
+              this.gridApi.updateRowData({ remove: selectedData });
+            })
+            .catch(err => {
+              console.log(err);
+            });
+          break;
+        default:
+      }
+    });
+  }
 
   onGridReady = params => {
     this.gridApi = params.api;
@@ -519,8 +1006,6 @@ class Cashbook extends React.Component {
     }
   };
   processCell = params => {
-    // console.log(params);
-    // Customize cell content as needed
     return params.value;
   };
 
@@ -620,10 +1105,6 @@ class Cashbook extends React.Component {
         });
 
         xmlString += "</root>";
-
-        // setXmlData(xmlString);
-
-        // Create a download link
         const blob = new Blob([xmlString], { type: "text/xml" });
         const link = document.createElement("a");
         link.href = URL.createObjectURL(blob);
@@ -635,12 +1116,13 @@ class Cashbook extends React.Component {
 
   HandleSetVisibleField = e => {
     e.preventDefault();
+    debugger;
     this.gridApi.setColumnDefs(this.state.SelectedcolumnDefs);
     this.setState({ columnDefs: this.state.SelectedcolumnDefs });
     this.setState({ SelectedcolumnDefs: this.state.SelectedcolumnDefs });
     this.setState({ rowData: this.state.rowData });
     localStorage.setItem(
-      "UserSearchParSearch",
+      "OrderListshow",
       JSON.stringify(this.state.SelectedcolumnDefs)
     );
     this.LookupviewStart();
@@ -658,11 +1140,12 @@ class Cashbook extends React.Component {
     });
   };
   handleLeftShift = () => {
-    let SelectedCols = this.state.SelectedcolumnDefs.slice();
+    let SelectedCols = this.state.SelectedcolumnDefs?.slice();
     let delindex = this.state.Arrindex; /* Your delete index here */
 
     if (SelectedCols && delindex >= 0) {
-      SelectedCols.splice(delindex, 1); // Remove the element
+      const splicedElement = SelectedCols?.splice(delindex, 1); // Remove the element
+
       this.setState({
         SelectedcolumnDefs: SelectedCols, // Update the state with the modified array
       });
@@ -805,6 +1288,22 @@ class Cashbook extends React.Component {
                               )}
                             </div>
                           </span>
+                          <span>
+                          <Route
+                            render={({ history }) => (
+                              <Button
+                                style={{ cursor: "pointer" }}
+                                className="float-right mr-1"
+                                color="primary"
+                                onClick={() =>
+                                  history.push("/app/SoftNumen/parts/Addorderbycashbook")
+                                }
+                              >
+                                <FaPlus size={15} /> Add order
+                              </Button>
+                            )}
+                          />
+                        </span>
                         </Col>
                       </Row>
                       <CardBody style={{ marginTop: "-1.5rem" }}>

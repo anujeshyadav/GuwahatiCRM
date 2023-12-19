@@ -24,6 +24,10 @@ export const Update_Sales_person_save = "/sales-person/update-sales-person/";
 export const Create_Sales_person_List = "/sales-person/view-sales-person";
 export const Create_Sales_person_save = "/sales-person/save-sales-person";
 export const Create_Party_List = "/party/view-party";
+// "creatorderbycashbook"
+export const Create_order_by_cashbook = "/cashbook/cashbook-order";
+//cashbookgetapi
+export const CashbookList = '/cashbook/view-order-list/'
 
 export const Save_Promotion = "/promotion/save-promotion";
 export const View_Promotion_List = "/promotion/view-promotion/";
