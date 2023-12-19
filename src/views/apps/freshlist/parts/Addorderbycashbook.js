@@ -22,12 +22,13 @@ import {
   CreatePartyList,
   UnitListView,
   BaseUnitListView,
+  Ordercashbook
 } from "../../../../ApiEndPoint/ApiCalling";
 import "../../../../assets/scss/pages/users.scss";
 let GrandTotal = [];
 let SelectedITems = [];
 let SelectedSize = [];
-const CreateOrder = args => {
+const Addorderbycashbook = args => {
   const [Index, setIndex] = useState("");
   const [index, setindex] = useState("");
   const [error, setError] = useState("");
@@ -101,7 +102,7 @@ const CreateOrder = args => {
       const updatedUnitList = [...prevProductList];
       const updatedProduct = { ...updatedUnitList[index] }; // Create a copy of the product at the specified index
       updatedProduct.Size = selectedItem.unitQty;
-      updatedProduct.unitType = selectedItem.primaryUnit;
+      updatedProduct.unitQty = selectedItem.primaryUnit;
       updatedUnitList[index] = updatedProduct;
       let myarr = prevProductList?.map((ele, i) => {
         // console.log(ele?.qty * ele.price * SelectedSize[i]?.unitQty);
@@ -202,7 +203,7 @@ const CreateOrder = args => {
     if (error) {
       swal("Error occured while Entering Details");
     } else {
-      SaveOrder(ObjOrder)
+      Ordercashbook(payload)
         .then(res => {
           swal("Order Created Successfully");
           //  history.push("/app/softnumen/order/orderList")
@@ -224,7 +225,7 @@ const CreateOrder = args => {
           <Row className="m-2">
             <Col className="">
               <div>
-                <h1 className="">Create Sales Order</h1>
+                <h1 className="">Add Order By Cashbook</h1>
               </div>
             </Col>
             <Col>
@@ -235,7 +236,7 @@ const CreateOrder = args => {
                     color="danger"
                     size="sm"
                     onClick={() =>
-                      history.push("/app/softnumen/order/orderList")
+                      history.push("/app/SoftNumen/parts/Cashbook")
                     }
                   >
                     Back
@@ -467,4 +468,4 @@ const CreateOrder = args => {
     </div>
   );
 };
-export default CreateOrder;
+export default Addorderbycashbook;
