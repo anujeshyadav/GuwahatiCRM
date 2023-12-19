@@ -184,6 +184,8 @@ import {
   Factory_Stock,
   Order_ViewList,
   orders_ID,
+  Create_order_by_cashbook,
+  CashbookList
 } from "./Api";
 import axiosConfig from "../axiosConfig";
 import dotenv from "dotenv";
@@ -198,6 +200,12 @@ dotenv.config();
 
 // guwahati api calling open
 
+export const Cashbook_List = async (id) => {
+  let response = await axiosConfig
+    .get(`${CashbookList}`+id)
+    .then((res) => res.data);
+  return response;
+};
 export const Createwarehousexml = async () => {
   let response = await axiosConfig
     .get(`${Create_warehouse_xmlView}`)
@@ -210,6 +218,13 @@ export const Stock_trxFactorytoWList = async (id) => {
     .then((res) => res.data);
   return response;
 };
+// post api for create order by cashbook
+export const Ordercashbook = async (data) => {
+  let response = await axiosConfig
+    .post(`${Create_order_by_cashbook}`, data)
+    .then((res) => res.data);
+  return response;
+};
 
 // export const CreateWarehousesave = async data => {
 export const StocktrxFtoW = async (data) => {
@@ -218,6 +233,7 @@ export const StocktrxFtoW = async (data) => {
     .then((res) => res.data);
   return response;
 };
+
 export const WarehousetoWareHouseTrx = async (data) => {
   let response = await axiosConfig
     .post(`${Stock_trx_WarehousetoWareHouse}`, data)
@@ -422,6 +438,7 @@ export const createOrderhistoryview = async (id) => {
     .then((res) => res.data);
   return response;
 };
+
 export const view_Sales_orderList = async (id) => {
   let response = await axiosConfig
     .get(`${view_Sales_order_List}` + id)
