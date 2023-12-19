@@ -16,6 +16,8 @@ import {
   ModalHeader,
   ModalBody,
   Badge,
+  Label,
+  Table,
 } from "reactstrap";
 import { ImDownload } from "react-icons/im";
 import { ContextLayout } from "../../../../utility/context/Layout";
@@ -69,7 +71,8 @@ class GoodDispatchList extends React.Component {
       rowData: [],
       setMySelectedarr: [],
       InsiderPermissions: {},
-
+      modal: false,
+      ViewOneData: {},
       SelectedCols: [],
       paginationPageSize: 5,
       currenPageSize: "",
@@ -114,12 +117,72 @@ class GoodDispatchList extends React.Component {
         //   },
         // },
         {
+          headerName: "Actions",
+          field: "sortorder",
+          field: "transactions",
+          width: 190,
+          cellRendererFramework: (params) => {
+            return (
+              <div className="actions cursor-pointer">
+                {this.state.InsiderPermissions &&
+                  this.state.InsiderPermissions?.View && (
+                    <Route
+                      render={({ history }) => (
+                        <Eye
+                          className="mr-50"
+                          size="25px"
+                          color="green"
+                          onClick={() => {
+                            this.setState({ ViewOneData: params?.data });
+                            this.toggleModal();
+                            console.log(params?.data);
+                          }}
+                        />
+                      )}
+                    />
+                  )}
+                {/* {this.state.InsiderPermissions &&
+                  this.state.InsiderPermissions?.Edit && (
+                    <Route
+                      render={({ history }) => (
+                        <Edit
+                          className="mr-50"
+                          size="25px"
+                          color="blue"
+                          onClick={() => {
+                            // this.handleChangeEdit(params.data, "Editable");
+                          }}
+                        />
+                      )}
+                    />
+                  )} */}
+
+                {this.state.InsiderPermissions &&
+                  this.state.InsiderPermissions?.Delete && (
+                    <Route
+                      render={() => (
+                        <Trash2
+                          className="mr-50"
+                          size="25px"
+                          color="red"
+                          onClick={() => {
+                            // this.runthisfunction(params?.data?._id);
+                          }}
+                        />
+                      )}
+                    />
+                  )}
+              </div>
+            );
+          },
+        },
+        {
           headerName: "Status",
           field: "order_status",
           filter: true,
           width: 140,
           cellRendererFramework: (params) => {
-            // console.log(params.data);
+            console.log(params.data);
             return params.data?.status === "completed" ? (
               <div className="badge badge-pill badge-success">Completed</div>
             ) : params.data?.status === "pending" ? (
@@ -132,11 +195,15 @@ class GoodDispatchList extends React.Component {
               <div className="badge badge-pill bg-danger">
                 {params.data.status}
               </div>
-            ) : params.data?.status === "completed" ? (
-              <div className="badge badge-pill bg-success">Completed</div>
+            ) : params.data?.status === "Inprocess" ? (
+              <div className="badge badge-pill bg-success">
+                {params.data.status}
+              </div>
             ) : (
               <>
-                <div className="badge badge-pill bg-warning">Cancelled</div>
+                <div className="badge badge-pill bg-warning">
+                  {params.data.status}
+                </div>
               </>
             );
           },
@@ -205,24 +272,36 @@ class GoodDispatchList extends React.Component {
               <div className="d-flex align-items-center justify-content-center cursor-pointer">
                 <div>
                   {this.state.InsiderPermissions &&
-                    this.state.InsiderPermissions?.View && (
-                      <Route
-                        render={({ history }) => (
-                          <FaTruck
-                            style={{ cursor: "pointer" }}
-                            title="Dispatch Now"
-                            onClick={() =>
-                              history.push({
-                                pathname: `/app/AjGroup/dispatch/CreateDispach/${params?.data?._id}`,
-                                state: { data: params?.data },
-                              })
-                            }
-                            // onClick={() => this.MergeBillNow(params.data)}
-                            fill="green"
-                            size="30px"
-                          />
+                    this.state.InsiderPermissions?.Create && (
+                      <>
+                        {params.data?.status === "Inprocess" ? (
+                          <>
+                            <div className="badge badge-pill bg-success">
+                              {params.data.status}
+                            </div>
+                          </>
+                        ) : (
+                          <>
+                            <Route
+                              render={({ history }) => (
+                                <FaTruck
+                                  style={{ cursor: "pointer" }}
+                                  title="Dispatch Now"
+                                  onClick={() =>
+                                    history.push({
+                                      pathname: `/app/AjGroup/dispatch/CreateDispach/${params?.data?._id}`,
+                                      state: { data: params?.data },
+                                    })
+                                  }
+                                  // onClick={() => this.MergeBillNow(params.data)}
+                                  fill="green"
+                                  size="30px"
+                                />
+                              )}
+                            />
+                          </>
                         )}
-                      />
+                      </>
                     )}
                   {/* {params?.data?.status == "completed" ? (
                     <>
@@ -349,65 +428,6 @@ class GoodDispatchList extends React.Component {
           },
         },
 
-        {
-          headerName: "Actions",
-          field: "sortorder",
-          field: "transactions",
-          width: 190,
-          cellRendererFramework: (params) => {
-            return (
-              <div className="actions cursor-pointer">
-                {this.state.InsiderPermissions &&
-                  this.state.InsiderPermissions?.View && (
-                    <Route
-                      render={({ history }) => (
-                        <Eye
-                          className="mr-50"
-                          size="25px"
-                          color="green"
-                          onClick={() => {
-                            // this.handleChangeEdit(params.data, "readonly");
-                          }}
-                        />
-                      )}
-                    />
-                  )}
-                {this.state.InsiderPermissions &&
-                  this.state.InsiderPermissions?.Edit && (
-                    <Route
-                      render={({ history }) => (
-                        <Edit
-                          className="mr-50"
-                          size="25px"
-                          color="blue"
-                          onClick={() => {
-                            // this.handleChangeEdit(params.data, "Editable");
-                          }}
-                        />
-                      )}
-                    />
-                  )}
-
-                {this.state.InsiderPermissions &&
-                  this.state.InsiderPermissions?.Delete && (
-                    <Route
-                      render={() => (
-                        <Trash2
-                          className="mr-50"
-                          size="25px"
-                          color="red"
-                          onClick={() => {
-                            // this.runthisfunction(params?.data?._id);
-                          }}
-                        />
-                      )}
-                    />
-                  )}
-              </div>
-            );
-          },
-        },
-
         // {
         //   headerName: "total",
         //   field: "total",
@@ -485,6 +505,11 @@ class GoodDispatchList extends React.Component {
     };
   }
 
+  toggleModal = () => {
+    this.setState((prevState) => ({
+      modalOne: !prevState.modalOne,
+    }));
+  };
   LookupviewStart = () => {
     this.setState((prevState) => ({
       modal: !prevState.modal,
@@ -1432,6 +1457,109 @@ class GoodDispatchList extends React.Component {
                 </div>
               </Col>
             </Row>
+          </ModalBody>
+        </Modal>
+        <Modal
+          isOpen={this.state.modalOne}
+          toggle={this.toggleModal}
+          className={this.props.className}
+          style={{ maxWidth: "1050px" }}>
+          <ModalHeader toggle={this.toggleModal}>View Order</ModalHeader>
+          <ModalBody>
+            <div className="container">
+              <Row>
+                <Col>
+                  <Label>Party Name :</Label>
+                  <h5 className="mx-1">
+                    {this.state.ViewOneData &&
+                      this.state.ViewOneData?.partyId?.firstName}
+                  </h5>
+                </Col>
+                <Col>
+                  <Label>Date Created :</Label>
+                  <h5>
+                    {this.state.ViewOneData &&
+                      this.state.ViewOneData?.createdAt?.split("T")[0]}
+                  </h5>
+                </Col>
+                <Col>
+                  <Label>Address :</Label>
+                  <h5>
+                    <strong>
+                      {this.state.ViewOneData &&
+                        this.state.ViewOneData?.address}{" "}
+                    </strong>
+                  </h5>
+                </Col>
+                <Col>
+                  <Label>Grand Total :</Label>
+                  <h5>
+                    <strong>
+                      {this.state.ViewOneData &&
+                        this.state.ViewOneData?.grandTotal}{" "}
+                    </strong>
+                    Rs/-
+                  </h5>
+                </Col>
+
+                {/* <Col>
+                <Label>Download Invoice :</Label>
+                <div className="d-flex justify-content-center">
+                  <FaDownload
+                    onClick={this.handleStockTrxInvoiceShow}
+                    color="#00c0e"
+                    fill="#00c0e"
+                    style={{ cursor: "pointer" }}
+                    size={20}
+                  />
+                </div>
+              </Col> */}
+              </Row>
+              <Row className="p-2">
+                <Col>
+                  <div className="d-flex justify-content-center">
+                    <h4>Product Details</h4>
+                  </div>
+                </Col>
+              </Row>
+              <Row>
+                <Col>
+                  <Table style={{ cursor: "pointer" }} striped>
+                    <thead>
+                      <tr>
+                        <th>#</th>
+                        <th>Product Name</th>
+                        <th>Price</th>
+                        <th>Size</th>
+                        <th>Unit</th>
+                        <th>Quantity</th>
+                        <th>Total</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {this.state.ViewOneData?.orderItems &&
+                        this.state.ViewOneData?.orderItems?.map((ele, i) => (
+                          <>
+                            <tr>
+                              <th scope="row">{i + 1}</th>
+                              <td>{ele?.productId?.Product_Title}</td>
+                              <td>{ele?.productId?.Product_MRP}</td>
+                              <td>{ele?.productId?.Size}</td>
+                              <td>{ele?.unitQty}</td>
+                              <td>{ele?.qty}</td>
+                              <td>
+                                {ele?.product?.Product_MRP *
+                                  ele?.product?.Size *
+                                  ele?.qty}
+                              </td>
+                            </tr>
+                          </>
+                        ))}
+                    </tbody>
+                  </Table>
+                </Col>
+              </Row>
+            </div>
           </ModalBody>
         </Modal>
       </>

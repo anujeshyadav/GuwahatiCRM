@@ -20,8 +20,6 @@ const InvoiceGenerator = (props) => {
   const [convertGrandTotal, setConvertGrandTotal] = useState("");
 
   useEffect(() => {
-    console.log(props);
-
     let userchoice = JSON.parse(localStorage.getItem("billUI"));
     setUserChoice(userchoice);
     if (props?.AddedBill?.length > 0) {
