@@ -146,37 +146,56 @@ class PurchaseInvoice extends React.Component {
           width: 80,
           filter: true,
         },
-        // {
-        //   headerName: "Add Bills",
-        //   width: 160,
-        //   filter: true,
-        //   cellRendererFramework: (params) => {
-        //     return (
-        //       <div className="d-flex align-items-center justify-content-center cursor-pointer">
-        //         <div>
-        //           <span>
-        //             <input
-        //               type="checkbox"
-        //               className="customcheckbox"
-        //               onClick={(e) => {
-        //                 this.handleMultipleBillsAdd(
-        //                   params?.data,
-        //                   e.target.checked
-        //                 );
-        //                 // console.log(e.target.checked);
-        //               }}
-        //             />
-        //             {/* <AiOutlineDownload
-        //               onClick={() => this.handleBillDownload(params.data)}
-        //               fill="green"
-        //               size="30px"
-        //             /> */}
-        //           </span>
-        //         </div>
-        //       </div>
-        //     );
-        //   },
-        // },
+        {
+          headerName: "Actions",
+          field: "sortorder",
+          field: "transactions",
+          width: 120,
+          cellRendererFramework: params => {
+            return (
+              <div className="actions cursor-pointer">
+                {this.state.InsiderPermissions &&
+                  this.state.InsiderPermissions?.Edit && (
+                    <CornerDownLeft
+                      className="mr-50"
+                      size="25px"
+                      color="green"
+                      onClick={() => {
+                        localStorage.setItem(
+                          "OrderList",
+                          JSON.stringify(params.data)
+                        );
+                        this.props.history.push({
+                          pathname: `/app/AJGroup/order/placeOrderReturn/${params.data?._id}`,
+                          state: params.data,
+                        });
+                      }}
+                    />
+                  )}
+
+                {this.state.InsiderPermissions &&
+                  this.state.InsiderPermissions?.Delete && (
+                    <Route
+                      render={() => (
+                        <Trash2
+                          className="mr-50"
+                          size="25px"
+                          color="red"
+                          onClick={() => {
+                            let selectedData = this.gridApi.getSelectedRows();
+                            this.runthisfunction(params.data?._id);
+                            this.gridApi.updateRowData({
+                              remove: selectedData,
+                            });
+                          }}
+                        />
+                      )}
+                    />
+                  )}
+              </div>
+            );
+          },
+        },
         {
           headerName: "Status",
           field: "order_status",
@@ -403,108 +422,6 @@ class PurchaseInvoice extends React.Component {
         },
 
         {
-          headerName: "Actions",
-          field: "sortorder",
-          field: "transactions",
-          width: 120,
-          cellRendererFramework: params => {
-            return (
-              <div className="actions cursor-pointer">
-                {this.state.InsiderPermissions &&
-                  this.state.InsiderPermissions?.Edit && (
-                    <CornerDownLeft
-                      className="mr-50"
-                      size="25px"
-                      color="green"
-                      onClick={() => {
-                        localStorage.setItem(
-                          "OrderList",
-                          JSON.stringify(params.data)
-                        );
-                        this.props.history.push({
-                          pathname: `/app/AJGroup/order/placeOrderReturn/${params.data?._id}`,
-                          state: params.data,
-                        });
-                      }}
-                    />
-                  )}
-
-                {this.state.InsiderPermissions &&
-                  this.state.InsiderPermissions?.Delete && (
-                    <Route
-                      render={() => (
-                        <Trash2
-                          className="mr-50"
-                          size="25px"
-                          color="red"
-                          onClick={() => {
-                            let selectedData = this.gridApi.getSelectedRows();
-                            this.runthisfunction(params.data?._id);
-                            this.gridApi.updateRowData({
-                              remove: selectedData,
-                            });
-                          }}
-                        />
-                      )}
-                    />
-                  )}
-                {/* {this.state.Deletepermisson && (
-              
-              )} */}
-              </div>
-            );
-          },
-        },
-
-        // {
-        //   headerName: "total",
-        //   field: "total",
-        //   filter: true,
-        //   resizable: true,
-        //   width: 160,
-        //   cellRendererFramework: (params) => {
-        //     return (
-        //       <div className="d-flex align-items-center cursor-pointer">
-        //         <div>
-        //           <Badge color="success">{params.data?.total}</Badge>
-        //         </div>
-        //       </div>
-        //     );
-        //   },
-        // },
-        // {
-        //   headerName: "brandname ",
-        //   field: "brand_name",
-        //   filter: true,
-        //   resizable: true,
-        //   width: 180,
-        //   cellRendererFramework: (params) => {
-        //     return (
-        //       <div className="d-flex align-items-center cursor-pointer">
-        //         <div>
-        //           <span>{params.data?.brand_name}</span>
-        //         </div>
-        //       </div>
-        //     );
-        //   },
-        // },
-        // {
-        //   headerName: "city",
-        //   field: "city",
-        //   filter: true,
-        //   resizable: true,
-        //   width: 160,
-        //   cellRendererFramework: (params) => {
-        //     return (
-        //       <div className="d-flex align-items-center cursor-pointer">
-        //         <div>
-        //           <span>{params.data?.city}</span>
-        //         </div>
-        //       </div>
-        //     );
-        //   },
-        // },
-        {
           headerName: "order Creation date",
           field: "order_date",
           filter: true,
@@ -520,250 +437,6 @@ class PurchaseInvoice extends React.Component {
             );
           },
         },
-        // {
-        //   headerName: "deliverydate",
-        //   field: "delivery_date",
-        //   filter: true,
-        //   resizable: true,
-        //   width: 230,
-        //   cellRendererFramework: (params) => {
-        //     return (
-        //       <div className="d-flex align-items-center cursor-pointer">
-        //         <div>
-        //           <span>{params.data?.delivery_date}</span>
-        //         </div>
-        //       </div>
-        //     );
-        //   },
-        // },
-        // {
-        //   headerName: "description",
-        //   field: "description",
-        //   filter: "true",
-        //   width: 180,
-        //   cellRendererFramework: (params) => {
-        //     return (
-        //       <div className="d-flex align-items-center cursor-pointer">
-        //         <div className="">
-        //           <span>{params.data?.description}</span>
-        //         </div>
-        //       </div>
-        //     );
-        //   },
-        // },
-        // {
-        //   headerName: "discountprice",
-        //   field: "discountprice",
-        //   filter: "true",
-        //   width: 180,
-        //   cellRendererFramework: (params) => {
-        //     return (
-        //       <div className="d-flex align-items-center cursor-pointer">
-        //         <div className="">
-        //           <span>{params.data?.discountprice}</span>
-        //         </div>
-        //       </div>
-        //     );
-        //   },
-        // },
-        // {
-        //   headerName: "email",
-        //   field: "email",
-        //   filter: true,
-        //   resizable: true,
-        //   width: 190,
-        //   cellRendererFramework: (params) => {
-        //     return (
-        //       <div className="d-flex align-items-center cursor-pointer">
-        //         <div>
-        //           <span>{params.data?.email}</span>
-        //         </div>
-        //       </div>
-        //     );
-        //   },
-        // },
-
-        // {
-        //   headerName: "full_name",
-        //   field: "full_name",
-        //   filter: true,
-        //   resizable: true,
-        //   width: 170,
-        //   cellRendererFramework: (params) => {
-        //     return (
-        //       <div className="d-flex align-items-center cursor-pointer">
-        //         <div>
-        //           <span>{params.data?.full_name}</span>
-        //         </div>
-        //       </div>
-        //     );
-        //   },
-        // },
-
-        // {
-        //   headerName: "mobile",
-        //   field: "mobile",
-        //   filter: true,
-        //   resizable: true,
-        //   width: 190,
-        //   cellRendererFramework: (params) => {
-        //     return (
-        //       <div className="d-flex align-items-center cursor-pointer">
-        //         <div>
-        //           <span>{params.data?.mobile}</span>
-        //         </div>
-        //       </div>
-        //     );
-        //   },
-        // },
-        // {
-        //   headerName: "price",
-        //   field: "price",
-        //   filter: true,
-        //   resizable: true,
-        //   width: 150,
-        //   cellRendererFramework: (params) => {
-        //     return (
-        //       <div className="d-flex align-items-center cursor-pointer">
-        //         <div>
-        //           <span>{params.data?.price}</span>
-        //         </div>
-        //       </div>
-        //     );
-        //   },
-        // },
-
-        // {
-        //   headerName: "producttype",
-        //   field: "product_type",
-        //   filter: true,
-        //   resizable: true,
-        //   width: 190,
-        //   cellRendererFramework: (params) => {
-        //     return (
-        //       <div className="d-flex align-items-center cursor-pointer">
-        //         <div>
-        //           <span>{params.data?.product_type}</span>
-        //         </div>
-        //       </div>
-        //     );
-        //   },
-        // },
-        // {
-        //   headerName: "shippingfee",
-        //   field: "shipping_fee",
-        //   filter: true,
-        //   resizable: true,
-        //   width: 190,
-        //   cellRendererFramework: (params) => {
-        //     return (
-        //       <div className="d-flex align-items-center cursor-pointer">
-        //         <div>
-        //           <span>{params.data?.shipping_fee}</span>
-        //         </div>
-        //       </div>
-        //     );
-        //   },
-        // },
-        // {
-        //   headerName: "status",
-        //   field: "status",
-        //   filter: true,
-        //   resizable: true,
-        //   width: 180,
-        //   cellRendererFramework: (params) => {
-        //     return (
-        //       <div className="d-flex align-items-center cursor-pointer">
-        //         <div>
-        //           <span>{params.data?.status}</span>
-        //         </div>
-        //       </div>
-        //     );
-        //   },
-        // },
-        // {
-        //   headerName: "stock",
-        //   field: "stock",
-        //   filter: true,
-        //   resizable: true,
-        //   width: 180,
-        //   cellRendererFramework: (params) => {
-        //     return (
-        //       <div className="d-flex align-items-center cursor-pointer">
-        //         <div>
-        //           <span>{params.data?.stock}</span>
-        //         </div>
-        //       </div>
-        //     );
-        //   },
-        // },
-        // {
-        //   headerName: "subtotal",
-        //   field: "subtotal",
-        //   filter: true,
-        //   resizable: true,
-        //   width: 180,
-        //   cellRendererFramework: (params) => {
-        //     return (
-        //       <div className="d-flex align-items-center cursor-pointer">
-        //         <div>
-        //           <span>{params.data?.subtotal}</span>
-        //         </div>
-        //       </div>
-        //     );
-        //   },
-        // },
-        // {
-        //   headerName: "tags",
-        //   field: "tags",
-        //   filter: true,
-        //   resizable: true,
-        //   width: 180,
-        //   cellRendererFramework: (params) => {
-        //     return (
-        //       <div className="d-flex align-items-center cursor-pointer">
-        //         <div>
-        //           <span>{params.data?.tags}</span>
-        //         </div>
-        //       </div>
-        //     );
-        //   },
-        // },
-        // {
-        //   headerName: "tax_rate",
-        //   field: "tax_rate",
-        //   filter: true,
-        //   resizable: true,
-        //   width: 180,
-        //   cellRendererFramework: (params) => {
-        //     return (
-        //       <div className="d-flex align-items-center cursor-pointer">
-        //         <div>
-        //           <span>{params.data?.tax_rate}</span>
-        //         </div>
-        //       </div>
-        //     );
-        //   },
-        // },
-
-        // {
-        //   headerName: "Permitions",
-        //   field: "permitions",
-        //   filter: true,
-        //   width: 180,
-        //   cellRendererFramework: (params) => {
-        //     return (
-        //       <CustomInput
-        //         type="switch"
-        //         className="mr-1"
-        //         id="primary"
-        //         name="primary"
-        //         inline
-        //         onChange={this.handleSwitchChange}
-        //       ></CustomInput>
-        //     );
-        //   },
-        // },
       ],
       setMySelectedarr: [],
       SelectedCols: [],

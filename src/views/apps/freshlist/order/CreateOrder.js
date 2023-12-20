@@ -94,7 +94,6 @@ const CreateOrder = args => {
   const handleSelectionUnit = (selectedList, selectedItem, index) => {
     SelectedSize.push(selectedItem);
     setProduct(prevProductList => {
-      // debugger;
       const updatedUnitList = [...prevProductList];
       const updatedProduct = { ...updatedUnitList[index] }; // Create a copy of the product at the specified index
       updatedProduct.Size = selectedItem.unitQty;
@@ -396,27 +395,6 @@ const CreateOrder = args => {
                 <Col className="mb-1" lg="12" md="12" sm="12">
                   <div className=" d-flex justify-content-end">
                     <ul className="subtotal">
-                      {/* <li>
-                        <Label className="">
-                          SubTotal:
-                          <strong>{priceTotal}</strong>
-                        </Label>
-                      </li> */}
-                      {/* <li>
-                        <Label className="">
-                          Shipping Cost : <strong>RS {subtotal}</strong>
-                        </Label>
-                      </li> */}
-                      {/* <li>
-                        <Label className="">
-                          Tax: <strong>RS {tax}</strong>
-                        </Label>
-                      </li>
-                      <li>
-                        <Label className="">
-                          Discount : <strong>RS {discountAmount}</strong>
-                        </Label>
-                      </li> */}
                       <li>
                         <Label className="pr-5">
                           Grand Total:

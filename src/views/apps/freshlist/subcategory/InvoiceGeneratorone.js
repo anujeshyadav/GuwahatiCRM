@@ -9,7 +9,7 @@ import POInvoiceone from "./POInvoiceone";
 import POInvoiceTwo from "./POInvoiceTwo";
 import PoinvoiceThree from "./PoinvoiceThree";
 
-const InvoiceGenerator = (props) => {
+const InvoiceGenerator = props => {
   console.log(props);
   const [Printview, setPrintview] = useState({});
   const [AllCharges, setAllCharges] = useState({});
@@ -30,11 +30,11 @@ const InvoiceGenerator = (props) => {
       formdata.append("order_id", props.PrintData.order_id);
       axiosConfig
         .post(`/order_detail`, formdata)
-        .then((response) => {
+        .then(response => {
           console.log(response.data.data);
           setDetails(response.data.data);
         })
-        .catch((error) => {
+        .catch(error => {
           console.log(error);
         });
     }
