@@ -289,7 +289,7 @@ const PoinvoiceThree = ({
                           width: "50%",
                         }}
                       >
-                        Ship To123
+                        Ship To
                       </Text>
                     )}
                   </View>
@@ -431,11 +431,12 @@ const PoinvoiceThree = ({
                     <View style={{ flexDirection: "", paddingBottom: "3px" }}>
                       <Text
                         style={{
-                          fontSize: "13px",
+                          fontSize: "10px",
                           fontWeight: "bold",
                         }}
                       >
                         {/* {invoiceData?.company_name} */}
+                        {`${invoiceData?.adminDetail?.firstName} ${invoiceData?.adminDetail?.lastName} `}
                       </Text>{" "}
                       <Text
                         style={{
@@ -448,7 +449,9 @@ const PoinvoiceThree = ({
                       {invoiceData?.billing_city_name}
                       {invoiceData?.billing_state_name} ,
                       {invoiceData?.billing_pincode} */}
-                      </Text>{" "}
+                        {`${invoiceData?.adminDetail?.currentAddress} `}
+                        {`${invoiceData?.adminDetail?.State} `}
+                      </Text>
                     </View>
                   )}
                   {UserChoice?.shipto == "Left" && (
@@ -468,6 +471,7 @@ const PoinvoiceThree = ({
                           fontWeight: "bold",
                         }}
                       >
+                        {/* fvd vdf vf vvv Avdvs vsfvASDv sdvs sd gsdg */}
                         {/* {invoiceData?.shipping_street}
                       {invoiceData?.shippingcity_city_name}{" "}
                       {invoiceData?.shippingstate_state_name} ,
@@ -491,6 +495,7 @@ const PoinvoiceThree = ({
                           fontWeight: "bold",
                         }}
                       >
+                        {`${invoiceData?.fullName} `}
                         {/* {invoiceData?.company_name} */}
                       </Text>{" "}
                       <Text
@@ -500,10 +505,9 @@ const PoinvoiceThree = ({
                           fontWeight: "bold",
                         }}
                       >
-                        {/* {invoiceData?.billing_street},
-                      {invoiceData?.billing_city_name}
-                      {invoiceData?.billing_state_name} ,
-                      {invoiceData?.billing_pincode} */}
+                        {`${invoiceData?.address} `}
+                        {`${invoiceData?.landMark} `}
+                        Mobile No: {`${invoiceData?.MobileNo} `}
                       </Text>{" "}
                     </View>
                   )}
@@ -524,11 +528,25 @@ const PoinvoiceThree = ({
                           fontWeight: "bold",
                         }}
                       >
-                        {/* {invoiceData?.shipping_street}
+                        {`${invoiceData?.fullName} `}
+                        {/* {invoiceData?.shipping_street}111
                       {invoiceData?.shippingcity_city_name}{" "}
                       {invoiceData?.shippingstate_state_name} ,
                       {invoiceData?.shipping_pincode} */}
-                      </Text>{" "}
+                      </Text>
+                      <Text
+                        style={{
+                          fontSize: "10px",
+                          width: "45%",
+                          fontWeight: "bold",
+                        }}
+                      >
+                        {`${invoiceData?.address} `}
+                        {`${invoiceData?.landMark} `}
+                        Mobile No: {`${invoiceData?.MobileNo} `}
+                        {/* {`${invoiceData?.adminDetail?.currentAddress} `}2222
+                        {`${invoiceData?.adminDetail?.State} `} */}
+                      </Text>
                     </View>
                   )}
                 </View>

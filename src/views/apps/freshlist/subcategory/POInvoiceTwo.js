@@ -77,13 +77,8 @@ const POInvoiceone = ({
   tableList,
   AllCharges,
 }) => {
-  console.log(invoiceData);
-
-  console.log("BilData", BilData);
-  // console.log("Gst", Gst);
-  console.log(CurrentWords);
-  console.log(AllCharges);
-
+  console.log("checkingBillTOShipTo", invoiceData.adminDetail);
+  console.log("BilData", BilData.PrintData.adminDetail);
   // const { items, customerName, date, total, place_supply } = invoiceData;
   const curentDate = new Date();
   console.log(curentDate.toTimeString().split(" ")[0]);
@@ -267,9 +262,7 @@ const POInvoiceone = ({
                     </View>
                     <View
                       style={{
-                        // width: "50%",
                         padding: "10px 10px",
-                        // borderRight: "1px solid black",
                       }}
                     >
                       {UserChoice?.billTo == "Left" && (
@@ -374,7 +367,7 @@ const POInvoiceone = ({
                             }}
                           >
                             {`${invoiceData?.adminDetail?.firstName} ${invoiceData?.adminDetail?.lastName} `}
-                          </Text>{" "}
+                          </Text>
                           <Text
                             style={{
                               fontSize: "10px",
@@ -384,7 +377,7 @@ const POInvoiceone = ({
                           >
                             {`${invoiceData?.adminDetail?.currentAddress} `}
                             {`${invoiceData?.adminDetail?.State} `}
-                          </Text>{" "}
+                          </Text>
                         </View>
                       )}
                       {UserChoice?.shipto == "right" && (
@@ -408,7 +401,7 @@ const POInvoiceone = ({
                           >
                             {`${invoiceData?.address} `}
                             {`${invoiceData?.landMark} `}
-                            Mobile No: {`${invoiceData?.MobileNo} `}
+                            Mobile No: {`${invoiceData?.MobileNo}`}
                           </Text>{" "}
                         </View>
                       )}

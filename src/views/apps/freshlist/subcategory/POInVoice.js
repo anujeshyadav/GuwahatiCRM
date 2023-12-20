@@ -409,7 +409,7 @@ const POInVoice = ({
                       }}
                     >
                       {`${invoiceData?.adminDetail?.firstName} ${invoiceData?.adminDetail?.lastName} `}
-                    </Text>{" "}
+                    </Text>
                     <Text
                       style={{
                         fontSize: "10px",
@@ -442,7 +442,7 @@ const POInVoice = ({
                       {`${invoiceData?.address} `}
                       {`${invoiceData?.landMark} `}
                       Mobile No: {`${invoiceData?.MobileNo} `}
-                    </Text>{" "}
+                    </Text>
                   </View>
                 )}
               </View>
@@ -481,7 +481,6 @@ const POInVoice = ({
                 style={{
                   width: "15%",
                   padding: "5px 2px",
-
                   borderRight: "1px solid black",
                 }}
               >

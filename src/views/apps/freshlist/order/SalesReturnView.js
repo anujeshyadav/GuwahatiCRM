@@ -57,7 +57,7 @@ const SalesReturnView = args => {
     if (location?.state) {
       setOrderedListData(location?.state.orderItems);
       let grandTotal = location?.state.orderItems.reduce(
-        (a, b) => a + b.price,
+        (a, b) => a + b.product.Product_MRP,
         0
       );
 
@@ -65,13 +65,12 @@ const SalesReturnView = args => {
       localStorage.setItem("EditoneProduct", location?.state);
       setEditdata(location?.state);
     } else {
-      // let mydata = localStorage.getItem("EditoneProduct");
       setOrderedListData(getFromLocalData);
       let grandTotal = location?.state.orderItems.reduce(
-        (a, b) => a + b.price,
+        (a, b) => a + b.product.Product_MRP,
         0
       );
-
+      console.log(grandTotal);
       setGrandTotalAmt(grandTotal);
     }
   }, []);
@@ -170,6 +169,7 @@ const SalesReturnView = args => {
             <Form className="m-1" onSubmit={submitHandler}>
               {OrderedListData &&
                 OrderedListData?.map((item, index) => {
+                  console.log(item);
                   return (
                     <Row className="" key={index}>
                       <Col className="mb-1" lg="2" md="2" sm="12">
@@ -192,7 +192,7 @@ const SalesReturnView = args => {
                             name="price"
                             readOnly
                             placeholder="Price"
-                            value={item?.price}
+                            value={item?.product?.Product_MRP}
                           />
                         </div>
                       </Col>
@@ -228,7 +228,12 @@ const SalesReturnView = args => {
                 <Col className="mb-1" lg="12" md="12" sm="12">
                   <div className=" d-flex justify-content-end">
                     <Label className="pr-5">
-                      Grand Total : <stron>{grandTotalAmt}</stron>
+                      Grand Total :
+                      <strong>
+                        {grandTotalAmt && grandTotalAmt == "NaN"
+                          ? 0
+                          : grandTotalAmt}
+                      </strong>
                     </Label>
                   </div>
                 </Col>

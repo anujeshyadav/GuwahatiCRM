@@ -143,37 +143,6 @@ class InvoiceGenerator extends React.Component {
           width: 80,
           filter: true,
         },
-        // {
-        //   headerName: "Add Bills",
-        //   width: 160,
-        //   filter: true,
-        //   cellRendererFramework: (params) => {
-        //     return (
-        //       <div className="d-flex align-items-center justify-content-center cursor-pointer">
-        //         <div>
-        //           <span>
-        //             <input
-        //               type="checkbox"
-        //               className="customcheckbox"
-        //               onClick={(e) => {
-        //                 this.handleMultipleBillsAdd(
-        //                   params?.data,
-        //                   e.target.checked
-        //                 );
-        //                 // console.log(e.target.checked);
-        //               }}
-        //             />
-        //             {/* <AiOutlineDownload
-        //               onClick={() => this.handleBillDownload(params.data)}
-        //               fill="green"
-        //               size="30px"
-        //             /> */}
-        //           </span>
-        //         </div>
-        //       </div>
-        //     );
-        //   },
-        // },
         {
           headerName: "Status",
           field: "order_status",
@@ -260,44 +229,9 @@ class InvoiceGenerator extends React.Component {
           resizable: true,
           width: 180,
           cellRendererFramework: params => {
-            // console.log(params.data?.order_id);
-
             return (
               <div className="d-flex align-items-center cursor-pointer">
                 <div>
-                  {/* <select
-                  // className="form-control"
-                  defaultValue={params.data?.order_status}
-                  onChange={(e) => {
-                    // console.log(e.target.value);
-                    let data = new FormData();
-                    data.append("order_id", params.data?.order_id);
-                    data.append("order_status", e.target.value);
-                    axiosConfig
-                      .post(`/change_order_status`, data)
-                      .then((res) => {
-                        console.log(res?.data.message);
-                        if (res?.data.message) {
-                          this.componentDidMount();
-                          swal("status Updated Succesfully");
-                        }
-                      })
-                      .catch((err) => {
-                        console.log(err);
-                      });
-                  }}
-                  name="changestatus"
-                  id="changeStatus"
-                >
-                  <option value={params.data?.order_status}>
-                    {params.data?.order_status}
-                  </option>
-                  <option value="Pending">--UpdateStatus--</option>
-                  <option value="Pending">Pending</option>
-                  <option value="Completed">Completed</option>
-                  <option value="Rejected">Rejected</option>
-                  <option value="Cancelled">Cancelled</option>
-                </select> */}
                   <span>{params?.data?._id}</span>
                 </div>
               </div>
@@ -311,8 +245,6 @@ class InvoiceGenerator extends React.Component {
           resizable: true,
           width: 140,
           cellRendererFramework: params => {
-            // console.log(params?.data?.status);
-
             return (
               <div className="d-flex align-items-center justify-content-center cursor-pointer">
                 <div>
@@ -501,54 +433,6 @@ class InvoiceGenerator extends React.Component {
           },
         },
 
-        // {
-        //   headerName: "total",
-        //   field: "total",
-        //   filter: true,
-        //   resizable: true,
-        //   width: 160,
-        //   cellRendererFramework: (params) => {
-        //     return (
-        //       <div className="d-flex align-items-center cursor-pointer">
-        //         <div>
-        //           <Badge color="success">{params.data?.total}</Badge>
-        //         </div>
-        //       </div>
-        //     );
-        //   },
-        // },
-        // {
-        //   headerName: "brandname ",
-        //   field: "brand_name",
-        //   filter: true,
-        //   resizable: true,
-        //   width: 180,
-        //   cellRendererFramework: (params) => {
-        //     return (
-        //       <div className="d-flex align-items-center cursor-pointer">
-        //         <div>
-        //           <span>{params.data?.brand_name}</span>
-        //         </div>
-        //       </div>
-        //     );
-        //   },
-        // },
-        // {
-        //   headerName: "city",
-        //   field: "city",
-        //   filter: true,
-        //   resizable: true,
-        //   width: 160,
-        //   cellRendererFramework: (params) => {
-        //     return (
-        //       <div className="d-flex align-items-center cursor-pointer">
-        //         <div>
-        //           <span>{params.data?.city}</span>
-        //         </div>
-        //       </div>
-        //     );
-        //   },
-        // },
         {
           headerName: "order Creation date",
           field: "order_date",
@@ -602,8 +486,8 @@ class InvoiceGenerator extends React.Component {
   MergeBillNow = async data => {
     let billnum = localStorage.getItem("billnumber");
     console.log("Bill", data);
-    console.log("grandTotal", data.grandTotal);
-    console.log(billnum);
+    // console.log("grandTotal", data.grandTotal);
+    // console.log(billnum);
     if (billnum) {
       this.setState({ ShowBill: false });
       this.setState({ PrintData: data });
@@ -707,7 +591,7 @@ class InvoiceGenerator extends React.Component {
     this.setState({ InsiderPermissions: InsidePermissions });
     createOrderhistoryview(userid)
       .then(res => {
-        console.log(res?.orderHistory);
+        // console.log(res?.orderHistory);
         this.setState({ rowData: res?.orderHistory });
         this.setState({ AllcolumnDefs: this.state.columnDefs });
 
