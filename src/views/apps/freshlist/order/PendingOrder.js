@@ -68,6 +68,7 @@ class PendingOrder extends React.Component {
       OtpScreen: false,
       Arrindex: "",
       emailotp: "",
+      CancelReason: "",
       Delivery_Status: "",
       rowData: [],
       modal: false,
@@ -121,7 +122,7 @@ class PendingOrder extends React.Component {
                         color="white"
                         onClick={() => {
                           console.log(params?.data);
-                          debugger;
+
                           this.setState({ ViewOneData: params?.data });
                           this.toggleModal();
                         }}
@@ -322,6 +323,7 @@ class PendingOrder extends React.Component {
     if (this.state.Delivery_Status == "Completed") {
       this.setState({ OtpScreen: true });
     } else {
+      console.log(this.state.CancelReason);
     }
   };
   handleChangeView = (data, types) => {
@@ -1068,8 +1070,7 @@ class PendingOrder extends React.Component {
           backdrop={true}
           fullscreen={true}>
           <ModalHeader toggle={this.toggleModal}>
-            {this.state.OtpScreen ? "Enter Details" : "View Product Details"}
-            View Product Details
+            {this.state.OtpScreen ? "Enter OTP" : "View Product Details"}
           </ModalHeader>
           <ModalBody>
             <div className="container">
@@ -1187,7 +1188,15 @@ class PendingOrder extends React.Component {
                             <Row>
                               <Col className="mt-1">
                                 <label> Reason for Cancellation</label>
-                                <Input className="form-control" type="text" />
+                                <Input
+                                  onChange={(e) => {
+                                    this.setState({
+                                      CancelReason: e.target.value,
+                                    });
+                                  }}
+                                  className="form-control"
+                                  type="text"
+                                />
                               </Col>
                             </Row>
                           )}
