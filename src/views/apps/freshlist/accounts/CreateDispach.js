@@ -790,8 +790,8 @@ const CreateDispach = (args) => {
                               <td>{ele?.unitQty}</td>
                               <td>{ele?.qty}</td>
                               <td>
-                                {ele?.product?.Product_MRP *
-                                  ele?.product?.Size *
+                                {ele?.productId?.Product_MRP *
+                                  ele?.productId?.Size *
                                   ele?.qty}
                               </td>
                             </tr>

@@ -1555,7 +1555,10 @@ class NavbarUser extends React.PureComponent {
             <div className="user-nav d-sm-flex d-none">
               <div className="user-name text-bold-600">
                 {pageparmission &&
-                  `${pageparmission?.firstName}   ${pageparmission?.lastName}`}{" "}
+                  `${
+                    pageparmission?.firstName &&
+                    pageparmission?.firstName?.slice(0, 8)
+                  }. `}{" "}
               </div>
               <div>{pageparmission && pageparmission?.rolename?.roleName}</div>
               {/* <span className="user-status">{this.state.userData.name}</span> */}

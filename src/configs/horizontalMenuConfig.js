@@ -354,7 +354,7 @@ const horizontalMenuConfig = [
         type: "item",
         icon: <IoReceiptOutline size={22} />,
         permissions: ["admin", "editor"],
-        navLink: "/app/SoftNumen/parts/PartCatalougue",
+        navLink: "/app/SoftNumen/parts/ReceiptList",
       },
       {
         id: "payment",
