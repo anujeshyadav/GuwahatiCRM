@@ -516,16 +516,16 @@ class GoodDispatchList extends React.Component {
     }));
   };
 
-  handleChangeEdit = (data, types) => {
-    let type = types;
-    if (type == "readonly") {
-      this.setState({ ViewOneUserView: true });
-      this.setState({ ViewOneData: data });
-    } else {
-      this.setState({ EditOneUserView: true });
-      this.setState({ EditOneData: data });
-    }
-  };
+  // handleChangeEdit = (data, types) => {
+  //   let type = types;
+  //   if (type == "readonly") {
+  //     this.setState({ ViewOneUserView: true });
+  //     this.setState({ ViewOneData: data });
+  //   } else {
+  //     this.setState({ EditOneUserView: true });
+  //     this.setState({ EditOneData: data });
+  //   }
+  // };
 
   async componentDidMount() {
     const UserInformation = this.context?.UserInformatio;
@@ -554,210 +554,6 @@ class GoodDispatchList extends React.Component {
       .catch((err) => {
         console.log(err);
       });
-    // GoodDispatchxmlView()
-    // .then((res) => {
-    //   var mydropdownArray = [];
-    //   var adddropdown = [];
-    //   const jsonData = xmlJs.xml2json(res.data, { compact: true, spaces: 2 });
-    //   let headerSet = JSON.parse(jsonData)?.GoodDispatch?.input;
-    //   let indexB = headerSet?.indexOf("CNUpload");
-    //   // Find the index of 'c' in the array
-    //   let indexC = headerSet?.indexOf("FetchSalesInvoice");
-
-    //   // Check if 'b' and 'c' exist in the array before removing
-    //   if (indexB !== -1 && indexC !== -1) {
-    //     // Use splice to remove elements from the array
-    //     headerSet?.splice(indexB, 1); // Remove 'b'
-    //     headerSet?.splice(indexC - 1, 1); // Since 'b' is removed, remove 'c' from updated index
-    //   }
-
-    //   const inputs = headerSet?.map((ele) => {
-    //     return {
-    //       headerName: ele?.label._text,
-    //       field: ele?.name._text,
-    //       filter: true,
-    //       sortable: true,
-    //     };
-    //   });
-
-    //   let myHeadings = [
-    //     // ...checkboxinput,
-    //     ...inputs,
-    //     // ...adddropdown,
-    //     // ...addRadio,
-    //     ...mydropdownArray,
-    //   ];
-    //   // console.log(myHeadings);
-    //   let Product = [
-    //     {
-    //       headerName: "Actions",
-    //       field: "sortorder",
-    //       field: "transactions",
-    //       width: 190,
-    //       cellRendererFramework: (params) => {
-    //         return (
-    //           <div className="actions cursor-pointer">
-    //             {this.state.InsiderPermissions &&
-    //               this.state.InsiderPermissions?.View && (
-    //                 <Route
-    //                   render={({ history }) => (
-    //                     <Eye
-    //                       className="mr-50"
-    //                       size="25px"
-    //                       color="green"
-    //                       onClick={() => {
-    //                         this.handleChangeEdit(params.data, "readonly");
-    //                       }}
-    //                     />
-    //                   )}
-    //                 />
-    //               )}
-    //             {this.state.InsiderPermissions &&
-    //               this.state.InsiderPermissions?.Edit && (
-    //                 <Route
-    //                   render={({ history }) => (
-    //                     <Edit
-    //                       className="mr-50"
-    //                       size="25px"
-    //                       color="blue"
-    //                       onClick={() => {
-    //                         this.handleChangeEdit(params.data, "Editable");
-    //                       }}
-    //                     />
-    //                   )}
-    //                 />
-    //               )}
-
-    //             {this.state.InsiderPermissions &&
-    //               this.state.InsiderPermissions?.Delete && (
-    //                 <Route
-    //                   render={() => (
-    //                     <Trash2
-    //                       className="mr-50"
-    //                       size="25px"
-    //                       color="red"
-    //                       onClick={() => {
-    //                         this.runthisfunction(params?.data?._id);
-    //                       }}
-    //                     />
-    //                   )}
-    //                 />
-    //               )}
-    //           </div>
-    //         );
-    //       },
-    //     },
-
-    //     ...myHeadings,
-    //     //   {
-    //     //     headerName: "Status",
-    //     //     field: "status",
-    //     //     filter: true,
-    //     //     width: 100,
-    //     //     cellRendererFramework: (params) => {
-    //     //       return params.data.status === "Active" ? (
-    //     //         <div className="badge badge-pill badge-success">
-    //     //           {params.data.status}
-    //     //         </div>
-    //     //       ) : params.data.status === "Deactive" ? (
-    //     //         <div className="badge badge-pill badge-warning">
-    //     //           {params.data.status}
-    //     //         </div>
-    //     //       ) : null;
-    //     //     },
-    //     //   },
-    //     {
-    //       headerName: "CNUpload",
-    //       field: "CnUpload",
-    //       filter: true,
-    //       sortable: true,
-    //       cellRendererFramework: (params) => {
-    //         return (
-    //           <>
-    //             <div className="actions cursor-pointer">
-    //               <img
-    //                 src={`http://64.227.162.41:5000/Images/${params?.data?.CNUpload}`}
-    //                 alt="CNUpload Not Find"
-    //               />
-    //             </div>
-    //           </>
-    //         );
-    //       },
-    //     },
-    //     {
-    //       headerName: "FetchSalesInvoice",
-    //       field: "FetchSalesInvoice",
-    //       filter: true,
-    //       sortable: true,
-    //       cellRendererFramework: (params) => {
-    //         return (
-    //           <>
-    //             <div className="actions cursor-pointer">
-    //               <img
-    //                 src={`http://64.227.162.41:5000/Images/${params?.data?.FetchSalesInvoice}`}
-    //                 alt="FetchSalesInvoice Not Find"
-    //               />
-    //             </div>
-    //           </>
-    //         );
-    //       },
-    //     },
-    //     {
-    //       headerName: "Updated date",
-    //       field: "updatedAt",
-    //       filter: true,
-    //       sortable: true,
-    //       cellRendererFramework: (params) => {
-    //         return (
-    //           <>
-    //             <div className="actions cursor-pointer">
-    //               <div className="actions cursor-pointer">
-    //                 <span>{params?.data?.createdAt}</span>
-    //               </div>
-    //             </div>
-    //           </>
-    //         );
-    //       },
-    //     },
-    //   ];
-
-    //   this.setState({ AllcolumnDefs: Product });
-
-    //   let userHeading = JSON.parse(localStorage.getItem("PartyList"));
-    //   if (userHeading?.length) {
-    //     this.setState({ columnDefs: userHeading });
-    //     this.gridApi.setColumnDefs(userHeading);
-    //     this.setState({ SelectedcolumnDefs: userHeading });
-    //   } else {
-    //     this.setState({ columnDefs: Product });
-    //     this.setState({ SelectedcolumnDefs: Product });
-    //   }
-    //   this.setState({ SelectedCols: Product });
-    // })
-    // .catch((err) => {
-    //   console.log(err);
-    // });
-
-    // await GoodDispatchListView(userId)
-    //   .then((res) => {
-    //     // console.log(res.GoodDispatch[0].CNUpload);
-
-    //     // Find the index of 'b' in the array
-    //     let indexB = res?.GoodDispatch?.indexOf("CNUpload");
-    //     // Find the index of 'c' in the array
-    //     let indexC = res?.GoodDispatch?.indexOf("FetchSalesInvoice");
-
-    //     // Check if 'b' and 'c' exist in the array before removing
-    //     if (indexB !== -1 && indexC !== -1) {
-    //       // Use splice to remove elements from the array
-    //       res?.GoodDispatch?.splice(indexB, 1); // Remove 'b'
-    //       res?.GoodDispatch?.splice(indexC - 1, 1); // Since 'b' is removed, remove 'c' from updated index
-    //     }
-    //     // this.setState({ rowData: res.GoodDispatch });
-    //   })
-    //   .catch((err) => {
-    //     console.log(err);
-    //   });
   }
   toggleDropdown = () => {
     this.setState((prevState) => ({ isOpen: !prevState.isOpen }));
@@ -1548,8 +1344,8 @@ class GoodDispatchList extends React.Component {
                               <td>{ele?.unitQty}</td>
                               <td>{ele?.qty}</td>
                               <td>
-                                {ele?.product?.Product_MRP *
-                                  ele?.product?.Size *
+                                {ele?.productId?.Product_MRP *
+                                  ele?.productId?.Size *
                                   ele?.qty}
                               </td>
                             </tr>

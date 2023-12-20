@@ -156,15 +156,17 @@ class OrderList extends React.Component {
           filter: true,
           width: 150,
           cellRendererFramework: params => {
-            return params.value == "completed" ? (
+            return params.value == "Completed" ? (
               <div className="badge badge-pill badge-success">
                 {params.data.status}
               </div>
-            ) : params.value == "pending" ? (
+            ) : params.value == "InProcess" ? (
               <div className="badge badge-pill badge-warning">
                 {params.data.status}
               </div>
-            ) : params.value == "return" ? (
+            ) : params.value == "pending" ? (
+              <div className="badge badge-pill badge-info">Pending</div>
+            ) : params.value == "Cancelled" ? (
               <div className="badge badge-pill badge-danger">
                 {params.data.status}
               </div>
@@ -282,7 +284,6 @@ class OrderList extends React.Component {
     await createOrderhistoryview(userId)
       .then(res => {
         this.setState({ rowData: res?.orderHistory });
-        console.log(res?.orderHistory);
         this.setState({ AllcolumnDefs: this.state.columnDefs });
         this.setState({ SelectedCols: this.state.columnDefs });
 

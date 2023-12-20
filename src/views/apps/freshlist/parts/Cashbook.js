@@ -19,6 +19,10 @@ import {
   Button,
   ModalHeader,
   ModalBody,
+  Label,
+  Table,
+  Badge,
+  CustomInput,
 } from "reactstrap";
 import { ContextLayout } from "../../../../utility/context/Layout";
 import { AgGridReact } from "ag-grid-react";
@@ -46,7 +50,7 @@ import {
   SparePart_List,
   SparesPartsView,
   DeleteAccount,
-  Cashbook_List
+  Cashbook_List,
 } from "../../../../ApiEndPoint/ApiCalling";
 import {
   BsCloudDownloadFill,
@@ -72,7 +76,7 @@ class Cashbook extends React.Component {
       setMySelectedarr: [],
       SelectedCols: [],
       paginationPageSize: 5,
-      InsiderPermissions:{},
+      InsiderPermissions: {},
       currenPageSize: "",
       getPageSize: "",
       columnDefs: [],
@@ -98,26 +102,18 @@ class Cashbook extends React.Component {
           headerName: "Actions",
           field: "transactions",
           width: 180,
-          cellRendererFramework: params => {
+          cellRendererFramework: (params) => {
             return (
               <div className="actions cursor-pointer">
-              <Eye
-              className="mr-50"
-              size="25px"
-              color="green"
-              // onClick={() =>
-              //   history.push(
-              //     `/app/freshlist/customer/viewCustomer/${params.data?._id}`
-              //   )
-              // }
-              onClick={e => {
-                this.togglemodal();
-                this.setState({ ViewOneData: paramsd
-                 });
-                this.setState({ ViewOneUserView: true });
-                this.setState({ EditOneUserView: false });
-              }}
-            />
+                <Eye
+                  className="mr-50"
+                  size="25px"
+                  color="green"
+                  onClick={(e) => {
+                    this.togglemodal();
+                    this.setState({ ViewOneData: params.data });
+                  }}
+                />
               </div>
             );
           },
@@ -127,7 +123,7 @@ class Cashbook extends React.Component {
           field: "status",
           filter: true,
           width: 150,
-          cellRendererFramework: params => {
+          cellRendererFramework: (params) => {
             return params.data?.status == "completed" ? (
               <div className="badge badge-pill badge-success">
                 {params.data.status}
@@ -137,6 +133,10 @@ class Cashbook extends React.Component {
                 {params.data.status}
               </div>
             ) : params.data?.status == "return" ? (
+              <div className="badge badge-pill badge-danger">
+                {params.data.status}
+              </div>
+            ) : params.data?.status == "Cancelled" ? (
               <div className="badge badge-pill badge-danger">
                 {params.data.status}
               </div>
@@ -168,8 +168,9 @@ class Cashbook extends React.Component {
             return (
               <>
                 <div className="actions cursor-pointer">
-                  <span>{params.data.orderItems && params.data.orderItems.length
-                  }</span>
+                  <span>
+                    {params.data.orderItems && params.data.orderItems.length}
+                  </span>
                 </div>
               </>
             );
@@ -296,278 +297,278 @@ class Cashbook extends React.Component {
   //           sortable: true,
   //         };
   //       });
-        // var adddropdown = [];
-        // const inputs = res?.SparePart?.map(ele => {
-        //   console.log(ele);
-        //   Object.keys(ele).map(key => ({
-        //     headerName: key,
-        //     field: key,
-        //     filter: true,
-        //     sortable: true,
-        //   }));
-        // });
+  // var adddropdown = [];
+  // const inputs = res?.SparePart?.map(ele => {
+  //   console.log(ele);
+  //   Object.keys(ele).map(key => ({
+  //     headerName: key,
+  //     field: key,
+  //     filter: true,
+  //     sortable: true,
+  //   }));
+  // });
 
-        // let Radioinput =
-        //   JSON.parse(jsonData).CreateAccount?.Radiobutton?.input[0]?.name
-        //     ?._text;
-        // const addRadio = [
-        //   {
-        //     headerName: Radioinput,
-        //     field: Radioinput,
-        //     filter: true,
-        //     sortable: true,
-        //     cellRendererFramework: params => {
-        //       return params.data?.Status === "Active" ? (
-        //         <div className="badge badge-pill badge-success">
-        //           {params.data.Status}
-        //         </div>
-        //       ) : params.data?.Status === "Deactive" ? (
-        //         <div className="badge badge-pill badge-warning">
-        //           {params.data.Status}
-        //         </div>
-        //       ) : (
-        //         "NA"
-        //       );
-        //     },
-        //   },
-        // ];
+  // let Radioinput =
+  //   JSON.parse(jsonData).CreateAccount?.Radiobutton?.input[0]?.name
+  //     ?._text;
+  // const addRadio = [
+  //   {
+  //     headerName: Radioinput,
+  //     field: Radioinput,
+  //     filter: true,
+  //     sortable: true,
+  //     cellRendererFramework: params => {
+  //       return params.data?.Status === "Active" ? (
+  //         <div className="badge badge-pill badge-success">
+  //           {params.data.Status}
+  //         </div>
+  //       ) : params.data?.Status === "Deactive" ? (
+  //         <div className="badge badge-pill badge-warning">
+  //           {params.data.Status}
+  //         </div>
+  //       ) : (
+  //         "NA"
+  //       );
+  //     },
+  //   },
+  // ];
 
-        // let dropdown = JSON.parse(jsonData).CreateAccount?.MyDropdown?.dropdown;
-        // if (dropdown?.length) {
-        //   var mydropdownArray = dropdown?.map(ele => {
-        //     return {
-        //       headerName: ele?.label,
-        //       field: ele?.name,
-        //       filter: true,
-        //       sortable: true,
-        //     };
-        //   });
-        // } else {
-        //   var adddropdown = [
-        //     {
-        //       headerName: dropdown?.label._text,
-        //       field: dropdown?.name._text,
-        //       filter: true,
-        //       sortable: true,
-        //     },
-        //   ];
-        // }
+  // let dropdown = JSON.parse(jsonData).CreateAccount?.MyDropdown?.dropdown;
+  // if (dropdown?.length) {
+  //   var mydropdownArray = dropdown?.map(ele => {
+  //     return {
+  //       headerName: ele?.label,
+  //       field: ele?.name,
+  //       filter: true,
+  //       sortable: true,
+  //     };
+  //   });
+  // } else {
+  //   var adddropdown = [
+  //     {
+  //       headerName: dropdown?.label._text,
+  //       field: dropdown?.name._text,
+  //       filter: true,
+  //       sortable: true,
+  //     },
+  //   ];
+  // }
 
-        // let myHeadings = [
-          // ...checkboxinput,
-          // ...headings,
-          // ...adddropdown,
-          // ...addRadio,
-          // ...mydropdownArray,
-        // ];
-        // let Product = [
-          // {
-          //   headerName: "Actions",
-          //   field: "sortorder",
-          //   field: "transactions",
-          //   width: 190,
-          //   cellRendererFramework: params => {
-          //     return (
-          //       <div className="actions cursor-pointer">
-          //         <Route
-          //           render={({ history }) => (
-          //             <Eye
-          //               className="mr-50"
-          //               size="25px"
-          //               color="green"
-          //               onClick={() => {
-          //                 this.handleChangeEdit(params.data, "readonly");
-          //               }}
-          //             />
-          //           )}
-          //         />
-          //         <Route
-          //           render={({ history }) => (
-          //             <Edit
-          //               className="mr-50"
-          //               size="25px"
-          //               color="blue"
-          //               onClick={() => {
-          //                 this.handleChangeEdit(params.data, "Editable");
-          //               }}
-          //             />
-          //           )}
-          //         />
-          //         <Route
-          //           render={() => (
-          //             <Trash2
-          //               className="mr-50"
-          //               size="25px"
-          //               color="red"
-          //               onClick={() => {
-          //                 this.runthisfunction(params?.data?._id);
-          //               }}
-          //             />
-          //           )}
-          //         />
-          //       </div>
-          //     );
-          //   },
-          // },
-          // {
-          //   headerName: "Whatsapp",
-          //   field: "whatsapp",
-          //   filter: true,
-          //   sortable: true,
-          //   cellRendererFramework: params => {
-          //     console.log(params?.data?.whatsapp);
-          //     return params.data?.whatsapp === true || "undefined" ? (
-          //       <div className="badge badge-pill badge-success">YES</div>
-          //     ) : params.data?.whatsapp === false ? (
-          //       <div className="badge badge-pill badge-warning">NO</div>
-          //     ) : (
-          //       "NA"
-          //     );
-          //   },
-          // },
-          // {
-          //   headerName: "SMS",
-          //   field: "sms",
-          //   filter: true,
-          //   sortable: true,
-          //   cellRendererFramework: params => {
-          //     console.log(params?.data?.sms);
-          //     return params.data?.sms === true ? (
-          //       <div className="badge badge-pill badge-success">YES</div>
-          //     ) : params.data?.sms === false ? (
-          //       <div className="badge badge-pill badge-warning">No</div>
-          //     ) : (
-          //       "NA"
-          //     );
-          //   },
-          // },
-          // {
-          //   headerName: "Gmail",
-          //   field: "gmail",
-          //   filter: true,
-          //   sortable: true,
-          //   cellRendererFramework: params => {
-          //     console.log(params?.data?.gmail);
-          //     return params.data?.gmail === true ? (
-          //       <div className="badge badge-pill badge-success">YES</div>
-          //     ) : params.data?.gmail === false ? (
-          //       <div className="badge badge-pill badge-warning">NO</div>
-          //     ) : (
-          //       "NA"
-          //     );
-          //   },
-          // },
-          // ...myHeadings,
-          // {
-          //   headerName: "Created date",
-          //   field: "createdAt",
-          //   filter: true,
-          //   sortable: true,
-          //   cellRendererFramework: params => {
-          //     let convertedTime = "NA";
-          //     if (params?.data?.createdAt == undefined) {
-          //       convertedTime = "NA";
-          //     }
-          //     if (params?.data?.createdAt) {
-          //       convertedTime = params?.data?.createdAt;
-          //     }
-          //     if (
-          //       UserInformation?.timeZone !== undefined &&
-          //       params?.data?.createdAt !== undefined
-          //     ) {
-          //       if (params?.data?.createdAt != undefined) {
-          //         convertedTime = moment(params?.data?.createdAt?.split(".")[0])
-          //           .tz(UserInformation?.timeZone.split("-")[0])
-          //           .format(UserInformation?.dateTimeFormat);
-          //       }
-          //     }
+  // let myHeadings = [
+  // ...checkboxinput,
+  // ...headings,
+  // ...adddropdown,
+  // ...addRadio,
+  // ...mydropdownArray,
+  // ];
+  // let Product = [
+  // {
+  //   headerName: "Actions",
+  //   field: "sortorder",
+  //   field: "transactions",
+  //   width: 190,
+  //   cellRendererFramework: params => {
+  //     return (
+  //       <div className="actions cursor-pointer">
+  //         <Route
+  //           render={({ history }) => (
+  //             <Eye
+  //               className="mr-50"
+  //               size="25px"
+  //               color="green"
+  //               onClick={() => {
+  //                 this.handleChangeEdit(params.data, "readonly");
+  //               }}
+  //             />
+  //           )}
+  //         />
+  //         <Route
+  //           render={({ history }) => (
+  //             <Edit
+  //               className="mr-50"
+  //               size="25px"
+  //               color="blue"
+  //               onClick={() => {
+  //                 this.handleChangeEdit(params.data, "Editable");
+  //               }}
+  //             />
+  //           )}
+  //         />
+  //         <Route
+  //           render={() => (
+  //             <Trash2
+  //               className="mr-50"
+  //               size="25px"
+  //               color="red"
+  //               onClick={() => {
+  //                 this.runthisfunction(params?.data?._id);
+  //               }}
+  //             />
+  //           )}
+  //         />
+  //       </div>
+  //     );
+  //   },
+  // },
+  // {
+  //   headerName: "Whatsapp",
+  //   field: "whatsapp",
+  //   filter: true,
+  //   sortable: true,
+  //   cellRendererFramework: params => {
+  //     console.log(params?.data?.whatsapp);
+  //     return params.data?.whatsapp === true || "undefined" ? (
+  //       <div className="badge badge-pill badge-success">YES</div>
+  //     ) : params.data?.whatsapp === false ? (
+  //       <div className="badge badge-pill badge-warning">NO</div>
+  //     ) : (
+  //       "NA"
+  //     );
+  //   },
+  // },
+  // {
+  //   headerName: "SMS",
+  //   field: "sms",
+  //   filter: true,
+  //   sortable: true,
+  //   cellRendererFramework: params => {
+  //     console.log(params?.data?.sms);
+  //     return params.data?.sms === true ? (
+  //       <div className="badge badge-pill badge-success">YES</div>
+  //     ) : params.data?.sms === false ? (
+  //       <div className="badge badge-pill badge-warning">No</div>
+  //     ) : (
+  //       "NA"
+  //     );
+  //   },
+  // },
+  // {
+  //   headerName: "Gmail",
+  //   field: "gmail",
+  //   filter: true,
+  //   sortable: true,
+  //   cellRendererFramework: params => {
+  //     console.log(params?.data?.gmail);
+  //     return params.data?.gmail === true ? (
+  //       <div className="badge badge-pill badge-success">YES</div>
+  //     ) : params.data?.gmail === false ? (
+  //       <div className="badge badge-pill badge-warning">NO</div>
+  //     ) : (
+  //       "NA"
+  //     );
+  //   },
+  // },
+  // ...myHeadings,
+  // {
+  //   headerName: "Created date",
+  //   field: "createdAt",
+  //   filter: true,
+  //   sortable: true,
+  //   cellRendererFramework: params => {
+  //     let convertedTime = "NA";
+  //     if (params?.data?.createdAt == undefined) {
+  //       convertedTime = "NA";
+  //     }
+  //     if (params?.data?.createdAt) {
+  //       convertedTime = params?.data?.createdAt;
+  //     }
+  //     if (
+  //       UserInformation?.timeZone !== undefined &&
+  //       params?.data?.createdAt !== undefined
+  //     ) {
+  //       if (params?.data?.createdAt != undefined) {
+  //         convertedTime = moment(params?.data?.createdAt?.split(".")[0])
+  //           .tz(UserInformation?.timeZone.split("-")[0])
+  //           .format(UserInformation?.dateTimeFormat);
+  //       }
+  //     }
 
-          //     return (
-          //       <>
-          //         <div className="actions cursor-pointer">
-          //           {convertedTime == "NA" ? (
-          //             "NA"
-          //           ) : (
-          //             <span>
-          //               {convertedTime} &nbsp;
-          //               {UserInformation?.timeZone &&
-          //                 UserInformation?.timeZone.split("-")[1]}
-          //             </span>
-          //           )}
-          //         </div>
-          //       </>
-          //     );
-          //   },
-          // },
-          // {
-          //   headerName: "Updated date",
-          //   field: "updatedAt",
-          //   filter: true,
-          //   sortable: true,
-          //   cellRendererFramework: params => {
-          //     let convertedTime = "NA";
-          //     if (params?.data?.updatedAt == undefined) {
-          //       convertedTime = "NA";
-          //     }
-          //     if (params?.data?.updatedAt) {
-          //       convertedTime = params?.data?.updatedAt;
-          //     }
-          //     if (
-          //       UserInformation?.timeZone !== undefined &&
-          //       params?.data?.updatedAt !== undefined
-          //     ) {
-          //       if (params?.data?.updatedAt != undefined) {
-          //         convertedTime = moment(params?.data?.updatedAt?.split(".")[0])
-          //           .tz(UserInformation?.timeZone.split("-")[0])
-          //           .format(UserInformation?.dateTimeFormat);
-          //       }
-          //     }
+  //     return (
+  //       <>
+  //         <div className="actions cursor-pointer">
+  //           {convertedTime == "NA" ? (
+  //             "NA"
+  //           ) : (
+  //             <span>
+  //               {convertedTime} &nbsp;
+  //               {UserInformation?.timeZone &&
+  //                 UserInformation?.timeZone.split("-")[1]}
+  //             </span>
+  //           )}
+  //         </div>
+  //       </>
+  //     );
+  //   },
+  // },
+  // {
+  //   headerName: "Updated date",
+  //   field: "updatedAt",
+  //   filter: true,
+  //   sortable: true,
+  //   cellRendererFramework: params => {
+  //     let convertedTime = "NA";
+  //     if (params?.data?.updatedAt == undefined) {
+  //       convertedTime = "NA";
+  //     }
+  //     if (params?.data?.updatedAt) {
+  //       convertedTime = params?.data?.updatedAt;
+  //     }
+  //     if (
+  //       UserInformation?.timeZone !== undefined &&
+  //       params?.data?.updatedAt !== undefined
+  //     ) {
+  //       if (params?.data?.updatedAt != undefined) {
+  //         convertedTime = moment(params?.data?.updatedAt?.split(".")[0])
+  //           .tz(UserInformation?.timeZone.split("-")[0])
+  //           .format(UserInformation?.dateTimeFormat);
+  //       }
+  //     }
 
-          //     return (
-          //       <>
-          //         <div className="actions cursor-pointer">
-          //           {convertedTime == "NA" ? (
-          //             "NA"
-          //           ) : (
-          //             <span>
-          //               {convertedTime} &nbsp;
-          //               {UserInformation?.timeZone &&
-          //                 UserInformation?.timeZone.split("-")[1]}
-          //             </span>
-          //           )}
-          //         </div>
-          //       </>
-          //     );
-          //   },
-          // },
-      //   ];
-      //   this.setState({ AllcolumnDefs: Product });
+  //     return (
+  //       <>
+  //         <div className="actions cursor-pointer">
+  //           {convertedTime == "NA" ? (
+  //             "NA"
+  //           ) : (
+  //             <span>
+  //               {convertedTime} &nbsp;
+  //               {UserInformation?.timeZone &&
+  //                 UserInformation?.timeZone.split("-")[1]}
+  //             </span>
+  //           )}
+  //         </div>
+  //       </>
+  //     );
+  //   },
+  // },
+  //   ];
+  //   this.setState({ AllcolumnDefs: Product });
 
-      //   let userHeading = JSON.parse(
-      //     localStorage.getItem("UserSearchParSearch")
-      //   );
-      //   if (userHeading?.length) {
-      //     this.setState({ columnDefs: userHeading });
-      //     this.gridApi.setColumnDefs(userHeading);
-      //     this.setState({ SelectedcolumnDefs: userHeading });
-      //   } else {
-      //     this.setState({ columnDefs: Product });
-      //     this.setState({ SelectedcolumnDefs: Product });
-      //   }
-      //   this.setState({ SelectedCols: Product });
-      // })
-      // .catch(err => {
-      //   console.log(err);
-        // swal("Error", "something went wrong try again");
-      // });
-    // await SparePart_List()
-    //   .then(res => {
-    //     console.log(res.Parts);
-    //     // this.setState({ rowData: res?.Parts });
-    //   })
-    //   .catch(err => {
-    //     console.log(err);
-    //   });
+  //   let userHeading = JSON.parse(
+  //     localStorage.getItem("UserSearchParSearch")
+  //   );
+  //   if (userHeading?.length) {
+  //     this.setState({ columnDefs: userHeading });
+  //     this.gridApi.setColumnDefs(userHeading);
+  //     this.setState({ SelectedcolumnDefs: userHeading });
+  //   } else {
+  //     this.setState({ columnDefs: Product });
+  //     this.setState({ SelectedcolumnDefs: Product });
+  //   }
+  //   this.setState({ SelectedCols: Product });
+  // })
+  // .catch(err => {
+  //   console.log(err);
+  // swal("Error", "something went wrong try again");
+  // });
+  // await SparePart_List()
+  //   .then(res => {
+  //     console.log(res.Parts);
+  //     // this.setState({ rowData: res?.Parts });
+  //   })
+  //   .catch(err => {
+  //     console.log(err);
+  //   });
   // }
   // toggleDropdown = () => {
   //   this.setState(prevState => ({ isOpen: !prevState.isOpen }));
@@ -772,7 +773,6 @@ class Cashbook extends React.Component {
   //     complete: result => {
   //       const rows = result.data;
 
-       
   //       let xmlString = "<root>\n";
 
   //       rows.forEach(row => {
@@ -785,9 +785,9 @@ class Cashbook extends React.Component {
 
   //       xmlString += "</root>";
 
-        // setXmlData(xmlString);
+  // setXmlData(xmlString);
 
-        // Create a download link
+  // Create a download link
   //       const blob = new Blob([xmlString], { type: "text/xml" });
   //       const link = document.createElement("a");
   //       link.href = URL.createObjectURL(blob);
@@ -833,12 +833,12 @@ class Cashbook extends React.Component {
   //   }
   // };
   toggleModal = () => {
-    this.setState(prevState => ({
+    this.setState((prevState) => ({
       modalone: !prevState.modalone,
     }));
   };
   LookupviewStart = () => {
-    this.setState(prevState => ({
+    this.setState((prevState) => ({
       modal: !prevState.modal,
     }));
   };
@@ -861,9 +861,9 @@ class Cashbook extends React.Component {
     console.log(InsidePermissions);
     this.setState({ InsiderPermissions: InsidePermissions });
     await Cashbook_List(userId)
-      .then(res => {
-        debugger
-        this.setState({ rowData: res?.CashBook});
+      .then((res) => {
+        debugger;
+        this.setState({ rowData: res?.CashBook });
         console.log(res?.CashBook);
         this.setState({ AllcolumnDefs: this.state.columnDefs });
         this.setState({ SelectedCols: this.state.columnDefs });
@@ -878,13 +878,13 @@ class Cashbook extends React.Component {
           this.setState({ SelectedcolumnDefs: this.state.columnDefs });
         }
       })
-      .catch(err => {
+      .catch((err) => {
         console.log(err);
       });
   }
 
   togglemodal = () => {
-    this.setState(prevState => ({
+    this.setState((prevState) => ({
       modalone: !prevState.modalone,
     }));
     this.setState({ ShowBill: false });
@@ -893,7 +893,7 @@ class Cashbook extends React.Component {
     this.setState({ ShowBill: true });
   };
   toggleDropdown = () => {
-    this.setState(prevState => ({ isOpen: !prevState.isOpen }));
+    this.setState((prevState) => ({ isOpen: !prevState.isOpen }));
   };
 
   runthisfunction(id) {
@@ -902,15 +902,15 @@ class Cashbook extends React.Component {
         cancel: "cancel",
         catch: { text: "Delete ", value: "delete" },
       },
-    }).then(value => {
+    }).then((value) => {
       switch (value) {
         case "delete":
           Delete_targetINlist(id)
-            .then(res => {
+            .then((res) => {
               let selectedData = this.gridApi.getSelectedRows();
               this.gridApi.updateRowData({ remove: selectedData });
             })
-            .catch(err => {
+            .catch((err) => {
               console.log(err);
             });
           break;
@@ -919,7 +919,7 @@ class Cashbook extends React.Component {
     });
   }
 
-  onGridReady = params => {
+  onGridReady = (params) => {
     this.gridApi = params.api;
     this.gridColumnApi = params.columnApi;
     this.gridRef.current = params.api;
@@ -931,11 +931,11 @@ class Cashbook extends React.Component {
     });
   };
 
-  updateSearchQuery = val => {
+  updateSearchQuery = (val) => {
     this.gridApi.setQuickFilter(val);
   };
 
-  filterSize = val => {
+  filterSize = (val) => {
     if (this.gridApi) {
       this.gridApi.paginationSetPageSize(Number(val));
       this.setState({
@@ -950,7 +950,7 @@ class Cashbook extends React.Component {
       SelectedColums?.push(value);
     } else {
       const delindex = SelectedColums?.findIndex(
-        ele => ele?.headerName === value?.headerName
+        (ele) => ele?.headerName === value?.headerName
       );
 
       SelectedColums?.splice(delindex, 1);
@@ -961,14 +961,14 @@ class Cashbook extends React.Component {
       Papa.parse(csvData, {
         header: true,
         skipEmptyLines: true,
-        complete: result => {
+        complete: (result) => {
           if (result.data && result.data.length > 0) {
             resolve(result.data);
           } else {
             reject(new Error("No data found in the CSV"));
           }
         },
-        error: error => {
+        error: (error) => {
           reject(error);
         },
       });
@@ -980,7 +980,7 @@ class Cashbook extends React.Component {
 
     const doc = new jsPDF("landscape", "mm", size, false);
     doc.setTextColor(5, 87, 97);
-    const tableData = parsedData.map(row => Object.values(row));
+    const tableData = parsedData.map((row) => Object.values(row));
     doc.addImage(Logo, "JPEG", 10, 10, 50, 30);
     let date = new Date();
     doc.setCreationDate(date);
@@ -1005,12 +1005,12 @@ class Cashbook extends React.Component {
       console.error("Error parsing CSV:", error);
     }
   };
-  processCell = params => {
+  processCell = (params) => {
     return params.value;
   };
 
   convertCsvToExcel(csvData) {
-    return new Promise(resolve => {
+    return new Promise((resolve) => {
       Papa.parse(csvData, {
         header: true,
         dynamicTyping: true,
@@ -1041,7 +1041,7 @@ class Cashbook extends React.Component {
     window.URL.revokeObjectURL(url);
   }
 
-  exportToExcel = async e => {
+  exportToExcel = async (e) => {
     const CsvData = this.gridApi.getDataAsCsv({
       processCellCallback: this.processCell,
     });
@@ -1054,7 +1054,7 @@ class Cashbook extends React.Component {
       processCellCallback: this.processCell,
     });
     Papa.parse(CsvData, {
-      complete: result => {
+      complete: (result) => {
         const ws = XLSX.utils.json_to_sheet(result.data);
         const wb = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(wb, ws, "Sheet1");
@@ -1090,13 +1090,13 @@ class Cashbook extends React.Component {
       processCellCallback: this.processCell,
     });
     Papa.parse(CsvData, {
-      complete: result => {
+      complete: (result) => {
         const rows = result.data;
 
         // Create XML
         let xmlString = "<root>\n";
 
-        rows.forEach(row => {
+        rows.forEach((row) => {
           xmlString += "  <row>\n";
           row.forEach((cell, index) => {
             xmlString += `    <field${index + 1}>${cell}</field${index + 1}>\n`;
@@ -1114,7 +1114,7 @@ class Cashbook extends React.Component {
     });
   };
 
-  HandleSetVisibleField = e => {
+  HandleSetVisibleField = (e) => {
     e.preventDefault();
     debugger;
     this.gridApi.setColumnDefs(this.state.SelectedcolumnDefs);
@@ -1131,10 +1131,10 @@ class Cashbook extends React.Component {
   HeadingRightShift = () => {
     const updatedSelectedColumnDefs = [
       ...new Set([
-        ...this.state.SelectedcolumnDefs.map(item => JSON.stringify(item)),
-        ...SelectedColums.map(item => JSON.stringify(item)),
+        ...this.state.SelectedcolumnDefs.map((item) => JSON.stringify(item)),
+        ...SelectedColums.map((item) => JSON.stringify(item)),
       ]),
-    ].map(item => JSON.parse(item));
+    ].map((item) => JSON.parse(item));
     this.setState({
       SelectedcolumnDefs: [...new Set(updatedSelectedColumnDefs)], // Update the state with the combined array
     });
@@ -1169,12 +1169,11 @@ class Cashbook extends React.Component {
               <Col>
                 <div className="d-flex justify-content-end p-1">
                   <Button
-                    onClick={e => {
+                    onClick={(e) => {
                       e.preventDefault();
                       this.setState({ EditOneUserView: false });
                     }}
-                    color="danger"
-                  >
+                    color="danger">
                     Back
                   </Button>
                 </div>
@@ -1190,12 +1189,11 @@ class Cashbook extends React.Component {
                     <Col>
                       <div className="d-flex justify-content-end p-1">
                         <Button
-                          onClick={e => {
+                          onClick={(e) => {
                             e.preventDefault();
                             this.setState({ ViewOneUserView: false });
                           }}
-                          color="danger"
-                        >
+                          color="danger">
                           Back
                         </Button>
                       </div>
@@ -1211,8 +1209,7 @@ class Cashbook extends React.Component {
                         <Col>
                           <h1
                             className="float-left"
-                            style={{ fontWeight: "600" }}
-                          >
+                            style={{ fontWeight: "600" }}>
                             Cashbook
                           </h1>
                         </Col>
@@ -1245,13 +1242,11 @@ class Cashbook extends React.Component {
                                     border: "1px solid #39cccc",
                                     backgroundColor: "white",
                                   }}
-                                  className="dropdown-content dropdownmy"
-                                >
+                                  className="dropdown-content dropdownmy">
                                   <h5
                                     onClick={() => this.exportToPDF()}
                                     style={{ cursor: "pointer" }}
-                                    className=" mx-1 myactive mt-1"
-                                  >
+                                    className=" mx-1 myactive mt-1">
                                     .PDF
                                   </h5>
                                   <h5
@@ -1259,29 +1254,25 @@ class Cashbook extends React.Component {
                                       this.gridApi.exportDataAsCsv()
                                     }
                                     style={{ cursor: "pointer" }}
-                                    className=" mx-1 myactive"
-                                  >
+                                    className=" mx-1 myactive">
                                     .CSV
                                   </h5>
                                   <h5
                                     onClick={this.convertCSVtoExcel}
                                     style={{ cursor: "pointer" }}
-                                    className=" mx-1 myactive"
-                                  >
+                                    className=" mx-1 myactive">
                                     .XLS
                                   </h5>
                                   <h5
                                     onClick={this.exportToExcel}
                                     style={{ cursor: "pointer" }}
-                                    className=" mx-1 myactive"
-                                  >
+                                    className=" mx-1 myactive">
                                     .XLSX
                                   </h5>
                                   <h5
                                     onClick={() => this.convertCsvToXml()}
                                     style={{ cursor: "pointer" }}
-                                    className=" mx-1 myactive"
-                                  >
+                                    className=" mx-1 myactive">
                                     .XML
                                   </h5>
                                 </div>
@@ -1289,21 +1280,22 @@ class Cashbook extends React.Component {
                             </div>
                           </span>
                           <span>
-                          <Route
-                            render={({ history }) => (
-                              <Button
-                                style={{ cursor: "pointer" }}
-                                className="float-right mr-1"
-                                color="primary"
-                                onClick={() =>
-                                  history.push("/app/SoftNumen/parts/Addorderbycashbook")
-                                }
-                              >
-                                <FaPlus size={15} /> Add order
-                              </Button>
-                            )}
-                          />
-                        </span>
+                            <Route
+                              render={({ history }) => (
+                                <Button
+                                  style={{ cursor: "pointer" }}
+                                  className="float-right mr-1"
+                                  color="primary"
+                                  onClick={() =>
+                                    history.push(
+                                      "/app/SoftNumen/parts/Addorderbycashbook"
+                                    )
+                                  }>
+                                  <FaPlus size={15} /> Add order
+                                </Button>
+                              )}
+                            />
+                          </span>
                         </Col>
                       </Row>
                       <CardBody style={{ marginTop: "-1.5rem" }}>
@@ -1331,32 +1323,27 @@ class Cashbook extends React.Component {
                                   <DropdownMenu right>
                                     <DropdownItem
                                       tag="div"
-                                      onClick={() => this.filterSize(5)}
-                                    >
+                                      onClick={() => this.filterSize(5)}>
                                       5
                                     </DropdownItem>
                                     <DropdownItem
                                       tag="div"
-                                      onClick={() => this.filterSize(20)}
-                                    >
+                                      onClick={() => this.filterSize(20)}>
                                       20
                                     </DropdownItem>
                                     <DropdownItem
                                       tag="div"
-                                      onClick={() => this.filterSize(50)}
-                                    >
+                                      onClick={() => this.filterSize(50)}>
                                       50
                                     </DropdownItem>
                                     <DropdownItem
                                       tag="div"
-                                      onClick={() => this.filterSize(100)}
-                                    >
+                                      onClick={() => this.filterSize(100)}>
                                       100
                                     </DropdownItem>
                                     <DropdownItem
                                       tag="div"
-                                      onClick={() => this.filterSize(134)}
-                                    >
+                                      onClick={() => this.filterSize(134)}>
                                       134
                                     </DropdownItem>
                                   </DropdownMenu>
@@ -1366,7 +1353,7 @@ class Cashbook extends React.Component {
                                 <div className="table-input mr-1">
                                   <Input
                                     placeholder="search Item here..."
-                                    onChange={e =>
+                                    onChange={(e) =>
                                       this.updateSearchQuery(e.target.value)
                                     }
                                     value={this.state.value}
@@ -1375,7 +1362,7 @@ class Cashbook extends React.Component {
                               </div>
                             </div>
                             <ContextLayout.Consumer className="ag-theme-alpine">
-                              {context => (
+                              {(context) => (
                                 <AgGridReact
                                   id="myAgGrid"
                                   gridOptions={this.gridOptions}
@@ -1413,8 +1400,7 @@ class Cashbook extends React.Component {
           isOpen={this.state.modal}
           toggle={this.LookupviewStart}
           className={this.props.className}
-          style={{ maxWidth: "1050px" }}
-        >
+          style={{ maxWidth: "1050px" }}>
           <ModalHeader toggle={this.LookupviewStart}>Change Fileds</ModalHeader>
           <ModalBody className="modalbodyhead">
             <Row>
@@ -1427,15 +1413,15 @@ class Cashbook extends React.Component {
                         return (
                           <>
                             <div
-                              onClick={e => this.handleChangeHeader(e, ele, i)}
+                              onClick={(e) =>
+                                this.handleChangeHeader(e, ele, i)
+                              }
                               key={i}
-                              className="mycustomtag mt-1"
-                            >
+                              className="mycustomtag mt-1">
                               <span className="mt-1">
                                 <h5
                                   style={{ cursor: "pointer" }}
-                                  className="allfields"
-                                >
+                                  className="allfields">
                                   <input
                                     type="checkbox"
                                     // checked={check && check}
@@ -1494,15 +1480,14 @@ class Cashbook extends React.Component {
                                             : ""
                                         }`,
                                       }}
-                                      className="allfields"
-                                    >
+                                      className="allfields">
                                       <IoMdRemoveCircleOutline
                                         onClick={() => {
                                           const SelectedCols =
                                             this.state.SelectedcolumnDefs.slice();
                                           const delindex =
                                             SelectedCols.findIndex(
-                                              element =>
+                                              (element) =>
                                                 element?.headerName ==
                                                 ele?.headerName
                                             );
@@ -1562,6 +1547,164 @@ class Cashbook extends React.Component {
                 </div>
               </Col>
             </Row>
+          </ModalBody>
+        </Modal>
+        <Modal
+          isOpen={this.state.modalone}
+          toggle={this.togglemodal}
+          className="modal-dialog modal-xl"
+          // className="modal-dialog modal-xl"
+          // className="modal-dialog modal-lg"
+          size="lg"
+          backdrop={true}
+          fullscreen={true}>
+          <ModalHeader toggle={this.togglemodal}>View Details</ModalHeader>
+          <ModalBody>
+            <div className="container">
+              <Row>
+                <Col>
+                  <Label>Customer Name :</Label>
+                  <div className="">
+                    Name-{" "}
+                    <strong>
+                      {this.state.ViewOneData &&
+                        `${this.state.ViewOneData?.userId?.firstName} ${this.state.ViewOneData?.userId?.lastName}`}
+                    </strong>
+                  </div>
+                  <div className="">
+                    Mobile-{" "}
+                    {this.state.ViewOneData &&
+                      ` ${this.state.ViewOneData?.userId?.mobileNumber}`}
+                  </div>
+                  <div className="">
+                    Email -{" "}
+                    {this.state.ViewOneData &&
+                      `  ${this.state.ViewOneData?.userId?.email} `}
+                  </div>
+                </Col>
+                <Col>
+                  <Label>Date Created :</Label>
+                  <h5>
+                    {this.state.ViewOneData &&
+                      this.state.ViewOneData?.createdAt?.split("T")[0]}
+                  </h5>
+                </Col>
+                <Col>
+                  <Label>Address :</Label>
+                  <h5>
+                    <strong>
+                      {this.state.ViewOneData &&
+                        this.state.ViewOneData?.userId?.currentAddress}{" "}
+                    </strong>
+                  </h5>
+                </Col>
+                <Col>
+                  <Label>Grand Total :</Label>
+                  <h5>
+                    <strong>
+                      {this.state.ViewOneData &&
+                        this.state.ViewOneData?.grandTotal}{" "}
+                    </strong>
+                    Rs/-
+                  </h5>
+                </Col>
+                {this.state.InsiderPermissions &&
+                  this.state.InsiderPermissions?.Edit && (
+                    <Col>
+                      <Label>Change Payment Status :</Label>
+                      <CustomInput
+                        onChange={(e) => {
+                          this.setState({
+                            Delivery_Status: e.target.value,
+                          });
+                        }}
+                        className="form-control"
+                        type="select">
+                        <option>--select--</option>
+                        <option value="Completed">Completed</option>
+                        <option value="Cancelled">Cancelled</option>
+                      </CustomInput>
+                      {this.state.Delivery_Status == "Completed" ? null : (
+                        <>
+                          {this.state.Delivery_Status == "Cancelled" && (
+                            <Row>
+                              <Col className="mt-1">
+                                <label> Reason for Cancellation</label>
+                                <Input
+                                  required
+                                  onChange={(e) => {
+                                    this.setState({
+                                      CancelReason: e.target.value,
+                                    });
+                                  }}
+                                  className="form-control"
+                                  type="text"
+                                />
+                              </Col>
+                            </Row>
+                          )}
+                        </>
+                      )}
+                      {this.state.Delivery_Status == "Cancelled" ||
+                      this.state.Delivery_Status == "Completed" ? (
+                        <Badge
+                          onClick={this.HandleStatusChange}
+                          className="mt-1"
+                          color="primary">
+                          Submit
+                        </Badge>
+                      ) : null}
+                    </Col>
+                  )}
+              </Row>
+              <Row className="p-2">
+                <Col>
+                  <div className="d-flex justify-content-center">
+                    <h4>
+                      {" "}
+                      <strong>Product Details</strong>
+                    </h4>
+                  </div>
+                </Col>
+              </Row>
+              <Row>
+                <Col>
+                  <Table style={{ cursor: "pointer" }} striped>
+                    <thead>
+                      <tr>
+                        <th>#</th>
+                        <th>Product Name</th>
+                        <th>Price</th>
+                        <th>Size</th>
+                        <th>Unit</th>
+                        <th>Quantity</th>
+                        <th>Total</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {this.state.ViewOneData?.orderItems &&
+                        this.state.ViewOneData?.orderItems?.map((ele, i) => (
+                          <>
+                            <tr>
+                              <th scope="row">{i + 1}</th>
+                              <td>{ele?.productId?.Product_Title}</td>
+                              <td>{ele?.productId?.Product_MRP}</td>
+                              <td>{ele?.productId?.Size}</td>
+                              <td>{ele?.unitQty}</td>
+                              <td>{ele?.qty}</td>
+                              <td>
+                                {ele?.productId?.Product_MRP *
+                                  ele?.productId?.Size *
+                                  ele?.qty}
+                              </td>
+                            </tr>
+                          </>
+                        ))}
+                    </tbody>
+                  </Table>
+                </Col>
+              </Row>
+            </div>
           </ModalBody>
         </Modal>
       </>

@@ -39,6 +39,7 @@ const AddPart = lazy(() => import("./views/apps/freshlist/parts/AddPart"));
 const PartList = lazy(() => import("./views/apps/freshlist/parts/PartList"));
 
 const Cashbook = lazy(() => import("./views/apps/freshlist/parts/Cashbook"));
+const ReceiptList = lazy(() => import("./views/apps/freshlist/parts/Receipt"));
 const PartCatalougue = lazy(() =>
   import("./views/apps/freshlist/parts/PartCatalougue")
 );
@@ -491,8 +492,8 @@ const SupplierWarranty = lazy(() =>
 const CreateOrder = lazy(() =>
   import("./views/apps/freshlist/order/CreateOrder")
 );
-const Addorderbycashbook = lazy(()=>
-import('./views/apps/freshlist/parts/Addorderbycashbook')
+const Addorderbycashbook = lazy(() =>
+  import("./views/apps/freshlist/parts/Addorderbycashbook")
 );
 const OrderList = lazy(() => import("./views/apps/freshlist/order/OrderList"));
 const PendingOrder = lazy(() =>
@@ -1255,10 +1256,10 @@ const accessControl = lazy(() =>
 const RouteConfig = ({ component: Component, fullLayout, ...rest }) => (
   <Route
     {...rest}
-    render={props => {
+    render={(props) => {
       return (
         <ContextLayout.Consumer>
-          {context => {
+          {(context) => {
             let LayoutTag =
               fullLayout === true
                 ? context.fullLayout
@@ -1278,7 +1279,7 @@ const RouteConfig = ({ component: Component, fullLayout, ...rest }) => (
     }}
   />
 );
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
   return {
     user: state.auth.login.userRole,
   };
@@ -1329,7 +1330,14 @@ class AppRouter extends React.Component {
           />
           <AppRoute path="/app/SoftNumen/parts/PartList" component={PartList} />
           <AppRoute path="/app/SoftNumen/parts/Cashbook" component={Cashbook} />
-          <AppRoute path="/app/SoftNumen/parts/Addorderbycashbook" component={Addorderbycashbook} />
+          <AppRoute
+            path="/app/SoftNumen/parts/ReceiptList"
+            component={ReceiptList}
+          />
+          <AppRoute
+            path="/app/SoftNumen/parts/Addorderbycashbook"
+            component={Addorderbycashbook}
+          />
           <AppRoute
             path="/app/SoftNumen/parts/PartCatalougue"
             component={PartCatalougue}
@@ -1531,8 +1539,6 @@ class AppRouter extends React.Component {
             path="/app/softnumen/order/createorder"
             component={CreateOrder}
           />
-          
-          
           <AppRoute
             path="/app/softnumen/order/pendingOrder"
             component={PendingOrder}

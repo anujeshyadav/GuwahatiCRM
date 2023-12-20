@@ -189,7 +189,7 @@ const Addorderbycashbook = args => {
       userId: UserInfo?._id,
       fullName: fullname,
       address: UserInfo?.currentAddress,
-      // grandTotal: Grandtotals,
+      status: "Completed",
       grandTotal: grandTotalAmt,
       MobileNo: UserInfo?.mobileNumber,
       country: UserInfo?.Country,
