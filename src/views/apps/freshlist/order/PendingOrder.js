@@ -421,7 +421,11 @@ class PendingOrder extends React.Component {
     await DeliveryBoyAssignedList(userId)
       .then((res) => {
         console.log(res?.OrderList);
-        this.setState({ rowData: res?.OrderList });
+        let showdata = res?.OrderList?.filter(
+          (ele) => ele?.status?.toLowerCase() !== "completed"
+        );
+        console.log(showdata);
+        this.setState({ rowData: showdata });
         this.setState({ AllcolumnDefs: this.state.columnDefs });
         this.setState({ SelectedCols: this.state.columnDefs });
 
