@@ -616,12 +616,12 @@ class OrderList extends React.Component {
                         />
                         {isOpen && (
                           <div
-                          style={{
-                            position: "absolute",
-                            zIndex: "1",
-                            border: "1px solid #39cccc",
-                            backgroundColor: "white",
-                          }}
+                            style={{
+                              position: "absolute",
+                              zIndex: "1",
+                              border: "1px solid #39cccc",
+                              backgroundColor: "white",
+                            }}
                             className="dropdown-content dropdownmy"
                           >
                             <h5
