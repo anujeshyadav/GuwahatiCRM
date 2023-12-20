@@ -62,7 +62,6 @@ class PurchaseCompleted extends React.Component {
       modal: false,
       modalone: false,
       ViewData: {},
-
       setMySelectedarr: [],
       SelectedCols: [],
       paginationPageSize: 5,
@@ -82,7 +81,6 @@ class PurchaseCompleted extends React.Component {
           headerName: "UID",
           valueGetter: "node.rowIndex + 1",
           field: "node.rowIndex + 1",
-          // checkboxSelection: true,
           width: 80,
           filter: true,
         },

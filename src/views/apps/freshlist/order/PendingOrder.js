@@ -41,7 +41,6 @@ import {
 } from "react-icons/fa";
 import swal from "sweetalert";
 import {
-  createOrderhistoryview,
   Delete_targetINlist,
   DeliveryBoyAssignedList,
 } from "../../../../ApiEndPoint/ApiCalling";
@@ -138,7 +137,8 @@ class PendingOrder extends React.Component {
                         borderRadius: "30px",
                         backgroundColor: "rgb(212, 111, 16)",
                         marginLeft: "3px",
-                      }}>
+                      }}
+                    >
                       <FaPencilAlt
                         className=""
                         size="20px"
@@ -323,7 +323,10 @@ class PendingOrder extends React.Component {
     if (this.state.Delivery_Status == "Completed") {
       this.setState({ OtpScreen: true });
     } else {
-      console.log(this.state.CancelReason);
+      if(this.state.CancelReason){
+        console.log(this.state.CancelReason);
+
+      }
     }
   };
   handleChangeView = (data, types) => {
@@ -349,7 +352,7 @@ class PendingOrder extends React.Component {
 
   async componentDidMount() {
     const InsidePermissions = CheckPermission("Pending Order");
-    console.log(InsidePermissions);
+    // console.log(InsidePermissions);
     this.setState({ InsiderPermissions: InsidePermissions });
     const userId = JSON.parse(localStorage.getItem("userData"))?._id;
     await DeliveryBoyAssignedList(userId)
@@ -604,7 +607,7 @@ class PendingOrder extends React.Component {
 
   HandleSetVisibleField = (e) => {
     e.preventDefault();
-    debugger;
+    
     this.gridApi.setColumnDefs(this.state.SelectedcolumnDefs);
     this.setState({ columnDefs: this.state.SelectedcolumnDefs });
     this.setState({ SelectedcolumnDefs: this.state.SelectedcolumnDefs });
@@ -1069,9 +1072,7 @@ class PendingOrder extends React.Component {
           size="lg"
           backdrop={true}
           fullscreen={true}>
-          <ModalHeader toggle={this.toggleModal}>
-            {this.state.OtpScreen ? "Enter OTP" : "View Product Details"}
-          </ModalHeader>
+          <ModalHeader toggle={this.toggleModal}>View Details</ModalHeader>
           <ModalBody>
             <div className="container">
               {this.state.OtpScreen && this.state.OtpScreen ? (
@@ -1170,48 +1171,54 @@ class PendingOrder extends React.Component {
                         Rs/-
                       </h5>
                     </Col>
-                    <Col>
-                      <Label>Change Status :</Label>
-                      <CustomInput
-                        onChange={(e) => {
-                          this.setState({ Delivery_Status: e.target.value });
-                        }}
-                        className="form-control"
-                        type="select">
-                        <option>--select--</option>
-                        <option value="Completed">Completed</option>
-                        <option value="Cancelled">Cancelled</option>
-                      </CustomInput>
-                      {this.state.Delivery_Status == "Completed" ? null : (
-                        <>
-                          {this.state.Delivery_Status == "Cancelled" && (
-                            <Row>
-                              <Col className="mt-1">
-                                <label> Reason for Cancellation</label>
-                                <Input
-                                  onChange={(e) => {
-                                    this.setState({
-                                      CancelReason: e.target.value,
-                                    });
-                                  }}
-                                  className="form-control"
-                                  type="text"
-                                />
-                              </Col>
-                            </Row>
+                    {this.state.InsiderPermissions &&
+                      this.state.InsiderPermissions?.Edit && (
+                        <Col>
+                          <Label>Change Status :</Label>
+                          <CustomInput
+                            onChange={(e) => {
+                              this.setState({
+                                Delivery_Status: e.target.value,
+                              });
+                            }}
+                            className="form-control"
+                            type="select">
+                            <option>--select--</option>
+                            <option value="Completed">Completed</option>
+                            <option value="Cancelled">Cancelled</option>
+                          </CustomInput>
+                          {this.state.Delivery_Status == "Completed" ? null : (
+                            <>
+                              {this.state.Delivery_Status == "Cancelled" && (
+                                <Row>
+                                  <Col className="mt-1">
+                                    <label> Reason for Cancellation</label>
+                                    <Input
+                                      required
+                                      onChange={(e) => {
+                                        this.setState({
+                                          CancelReason: e.target.value,
+                                        });
+                                      }}
+                                      className="form-control"
+                                      type="text"
+                                    />
+                                  </Col>
+                                </Row>
+                              )}
+                            </>
                           )}
-                        </>
+                          {this.state.Delivery_Status == "Cancelled" ||
+                          this.state.Delivery_Status == "Completed" ? (
+                            <Badge
+                              onClick={this.HandleStatusChange}
+                              className="mt-1"
+                              color="primary">
+                              Submit
+                            </Badge>
+                          ) : null}
+                        </Col>
                       )}
-                      {this.state.Delivery_Status == "Cancelled" ||
-                      this.state.Delivery_Status == "Completed" ? (
-                        <Badge
-                          onClick={this.HandleStatusChange}
-                          className="mt-1"
-                          color="primary">
-                          Submit
-                        </Badge>
-                      ) : null}
-                    </Col>
 
                     {/* <Col>
                 <Label>Download Invoice :</Label>

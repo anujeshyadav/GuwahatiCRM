@@ -23,7 +23,6 @@ import { ContextLayout } from "../../../../utility/context/Layout";
 import { AgGridReact } from "ag-grid-react";
 import "ag-grid-community/dist/styles/ag-grid.css";
 import EditAccount from "../accounts/EditAccount";
-// import ViewAccount from "../accounts/ViewAccount";
 import ViewOrder from "../order/ViewAll";
 import jsPDF from "jspdf";
 import "jspdf-autotable";
@@ -60,7 +59,6 @@ import * as XLSX from "xlsx";
 import UserContext from "../../../../context/Context";
 import SalesReturnView from "./SalesReturnView";
 import { CheckPermission } from "./CheckPermission";
-// import TargetAssignedOne from "./TargetAssignedOne";
 
 const SelectedColums = [];
 
@@ -286,9 +284,6 @@ class SalesOrderReturn extends React.Component {
     this.setState({ InsiderPermissions: InsidePermissions });
     await SalesReturnProductList()
       .then(res => {
-        console.log(res);
-        console.log(UserInformation.firstName);
-
         this.setState({ rowData: res?.SalesReturn });
         // this.setState({ userName: UserInformation.firstName });
         this.setState({ AllcolumnDefs: this.state.columnDefs });

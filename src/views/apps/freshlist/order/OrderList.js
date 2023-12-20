@@ -33,7 +33,7 @@ import { IoMdRemoveCircleOutline } from "react-icons/io";
 import "../../../../assets/scss/plugins/tables/_agGridStyleOverride.scss";
 import "../../../../assets/scss/pages/users.scss";
 // import StockTrxInvoice from "../../subcategory/StockTrxInvoice";
-// import StockTrxInvoice from "../../subcategory/StockTrxInvoice";
+import StockTrxInvoice from "../subcategory/StockTrxInvoice";
 import {
   FaArrowAltCircleLeft,
   FaArrowAltCircleRight,
@@ -263,6 +263,8 @@ class OrderList extends React.Component {
   handleChangeView = (data, types) => {
     let type = types;
     if (type == "readonly") {
+      console.log("ResponseData", data.orderItems);
+      console.log("Test", data);
       this.setState({ ViewOneUserView: true });
       this.setState({ ViewOneData: data });
     } else {
@@ -964,38 +966,37 @@ class OrderList extends React.Component {
                   <>
                     <Row>
                       <Col>
-                        <Label>WareHouse Name :</Label>
-                        <h5 className="mx-1">
+                        <Label>UserName:</Label>
+                        <h5 className="">
                           {this.state.ViewOneData &&
-                            this.state.ViewOneData?.warehouseToId?.firstName}
+                            this.state.ViewOneData?.fullName}
                         </h5>
                       </Col>
-                      <Col>
+                      {/* <Col>
                         <Label>Stock trx date :</Label>
                         <h5>
                           {this.state.ViewOneData &&
                             this.state.ViewOneData?.stockTransferDate}
                         </h5>
-                      </Col>
+                      </Col> */}
                       <Col>
                         <Label>Grand Total :</Label>
                         <h5>
                           <strong>
                             {this.state.ViewOneData &&
-                              this.state.ViewOneData?.grandTotal}{" "}
+                              this.state.ViewOneData?.grandTotal}
                           </strong>
                           Rs/-
                         </h5>
                       </Col>
                       <Col>
-                        {this.state.ViewOneData?.transferStatus ==
-                        "Completed" ? (
+                        {this.state.ViewOneData?.status == "completed" ? (
                           <>
                             <div className="d-flex justify-content-center">
                               <h5>
-                                status:
+                                Status:
                                 <Badge className="mx-2" color="primary">
-                                  {this.state.ViewOneData?.transferStatus}
+                                  {this.state.ViewOneData?.status}
                                 </Badge>
                               </h5>
                             </div>
@@ -1005,22 +1006,13 @@ class OrderList extends React.Component {
                             <h5>
                               status:
                               <Badge className="mx-2" color="primary">
-                                {this.state.ViewOneData?.transferStatus}
+                                {this.state.ViewOneData?.status}
                               </Badge>
                             </h5>
-                            {/* <Col>
-                        <Label>Change Status</Label>
-                        <CustomInput onChange={this.UpdateStock} type="select">
-                          <option value="NA">--Select--</option>
-                          <option value="Completed">Completed</option>
-                          <option value="Pending">Pending</option>
-                          <option value="Hold">Hold</option>
-                        </CustomInput>
-                      </Col> */}
                           </>
                         )}
                       </Col>
-                      <Col>
+                      {/* <Col>
                         <Label>Download Invoice :</Label>
                         <div className="d-flex justify-content-center">
                           <FaDownload
@@ -1031,7 +1023,7 @@ class OrderList extends React.Component {
                             size={20}
                           />
                         </div>
-                      </Col>
+                      </Col> */}
                     </Row>
                     <Row className="p-2">
                       <Col>
@@ -1050,26 +1042,30 @@ class OrderList extends React.Component {
                               <th>Price</th>
                               <th>Size</th>
                               <th>Unit</th>
+                              <th>HSN CODE</th>
+                              <th>GST</th>
                               <th>Quantity</th>
                               <th>Total</th>
                             </tr>
                           </thead>
                           <tbody>
-                            {this.state.ViewOneData?.productItems &&
-                              this.state.ViewOneData?.productItems?.map(
+                            {this.state.ViewOneData?.orderItems &&
+                              this.state.ViewOneData?.orderItems?.map(
                                 (ele, i) => (
                                   <>
                                     <tr>
                                       <th scope="row">{i + 1}</th>
                                       <td>{ele?.product?.Product_Title}</td>
-                                      <td>{ele?.price}</td>
-                                      <td>{ele?.Size}</td>
-                                      <td>{ele?.unitType}</td>
-                                      <td>{ele?.transferQty}</td>
+                                      <td>{ele?.product?.Product_MRP}</td>
+                                      <td>{ele?.product?.Size}</td>
+                                      <td>{ele?.unitQty}</td>
+                                      <td>{ele?.product?.HSN_Code}</td>
+                                      <td>{ele?.product["GST Rate"]}</td>
+                                      <td>{ele?.qty}</td>
                                       <td>
-                                        {ele?.price *
-                                          ele?.Size *
-                                          ele?.transferQty}
+                                        {ele?.product?.Product_MRP *
+                                          ele?.product?.Size *
+                                          ele?.qty}
                                       </td>
                                     </tr>
                                   </>

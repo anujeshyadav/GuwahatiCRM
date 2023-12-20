@@ -342,7 +342,7 @@ class OutwardStock extends React.Component {
     // await ViewFactoryStock()
     await WarehouseOutwardStocklist(userid)
       .then(res => {
-        // console.log(res?.Warehouse);
+        console.log(res?.Warehouse);
         let rowData = res?.Warehouse;
 
         if (rowData) {
