@@ -316,6 +316,7 @@ class PendingOrder extends React.Component {
       modalone: !prevState.modalone,
     }));
     this.setState({ OtpScreen: false });
+    this.componentDidMount()
   };
   LookupviewStart = () => {
     this.setState((prevState) => ({
@@ -424,7 +425,9 @@ class PendingOrder extends React.Component {
       .then((res) => {
         console.log(res?.OrderList);
         let showdata = res?.OrderList?.filter(
-          (ele) => ele?.status?.toLowerCase() !== "completed"
+          (ele) =>
+            ele?.status?.toLowerCase() !== "completed" &&
+            ele?.status?.toLowerCase() !== "cancelled"
         );
         console.log(showdata);
         this.setState({ rowData: showdata });

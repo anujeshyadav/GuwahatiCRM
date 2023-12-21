@@ -57,11 +57,11 @@ const PlaceOrderReturn = args => {
     ).orderItems;
     if (location?.state) {
       setOrderedListData(location?.state.orderItems);
+      console.log("test", location?.state.orderItems);
       let grandTotal = location?.state.orderItems.reduce(
-        (a, b) => a + b.price,
+        (a, b) => a + b.product.Product_MRP,
         0
       );
-
       setGrandTotalAmt(grandTotal);
       localStorage.setItem("EditoneProduct", location?.state);
       setEditdata(location?.state);
@@ -69,10 +69,9 @@ const PlaceOrderReturn = args => {
       // let mydata = localStorage.getItem("EditoneProduct");
       setOrderedListData(getFromLocalData);
       let grandTotal = location?.state.orderItems.reduce(
-        (a, b) => a + b.price,
+        (a, b) => a + b.product.Product_MRP,
         0
       );
-
       setGrandTotalAmt(grandTotal);
     }
   }, []);
@@ -94,7 +93,6 @@ const PlaceOrderReturn = args => {
   }, []);
   useEffect(() => {
     const userInfo = JSON.parse(localStorage.getItem("userData"));
-    console.log(userInfo);
     setUserInfo(userInfo);
   }, []);
 
@@ -128,8 +126,6 @@ const PlaceOrderReturn = args => {
       PlaceOrderReturn_Product(payload)
         .then(res => {
           swal(" PlaceOrder Returned Successfully");
-
-          console.log(res);
         })
         .catch(err => {
           console.log(err);
@@ -170,6 +166,7 @@ const PlaceOrderReturn = args => {
             <Form className="m-1" onSubmit={submitHandler}>
               {OrderedListData &&
                 OrderedListData?.map((item, index) => {
+                  console.log(item);
                   return (
                     <Row className="" key={index}>
                       <Col className="mb-1" lg="2" md="2" sm="12">
@@ -192,7 +189,7 @@ const PlaceOrderReturn = args => {
                             name="price"
                             readOnly
                             placeholder="Price"
-                            value={item?.price}
+                            value={item?.product?.Product_MRP}
                           />
                         </div>
                       </Col>

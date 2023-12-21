@@ -28,7 +28,6 @@ import { IoMdRemoveCircleOutline } from "react-icons/io";
 import "../../../../../assets/scss/plugins/tables/_agGridStyleOverride.scss";
 import "../../../../../assets/scss/pages/users.scss";
 import StockTrxInvoice from "../../subcategory/StockTrxInvoice";
-// import StockTrxInvoice from "../subcategory/StockTrxInvoice";
 import {
   FaArrowAltCircleLeft,
   FaArrowAltCircleRight,
@@ -62,6 +61,8 @@ class Salesreport extends React.Component {
       isOpen: false,
       Arrindex: "",
       rowData: [],
+      startDate: "",
+      EndDate: "",
       ShowBill: false,
       modal: false,
       modalone: false,
@@ -556,7 +557,7 @@ class Salesreport extends React.Component {
                 <Col>
                   <h1 className="float-left " style={{ fontWeight: "600" }}>
                     {" "}
-                    Sales Order
+                    Sales Order Report
                   </h1>
                 </Col>
                 {InsiderPermissions && InsiderPermissions?.View && (
