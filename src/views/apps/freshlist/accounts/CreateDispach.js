@@ -248,7 +248,7 @@ const CreateDispach = (args) => {
                       return (
                         <>
                           <>
-                            <Col key={i} lg="4" md="4" sm="12">
+                            <Col key={i} lg="3" md="3" sm="12">
                               <Label className="mb-1">
                                 {ele?.label?._text}
                               </Label>
@@ -310,7 +310,7 @@ const CreateDispach = (args) => {
                     if (!!ele?.phoneinput) {
                       return (
                         <>
-                          <Col key={i} lg="4" md="4" sm="12">
+                          <Col key={i} lg="3" md="3" sm="12">
                             <FormGroup>
                               <Label className="mb-1">
                                 {ele?.label?._text}
@@ -355,7 +355,7 @@ const CreateDispach = (args) => {
                       if (ele?.label._text?.includes("ountry")) {
                         console.log(ele);
                         return (
-                          <Col key={i} lg="4" md="4" sm="12">
+                          <Col key={i} lg="3" md="3" sm="12">
                             <FormGroup>
                               <Label className="mb-1">
                                 {ele?.label?._text}
@@ -506,7 +506,7 @@ const CreateDispach = (args) => {
                         <>
                           {!!ele?.number ? (
                             <>
-                              <Col key={i} lg="4" md="4" sm="12">
+                              <Col key={i} lg="3" md="3" sm="12">
                                 <FormGroup key={i}>
                                   <Label className="mb-1">
                                     {ele?.label?._text}
@@ -551,7 +551,7 @@ const CreateDispach = (args) => {
                               </Col>
                             </>
                           ) : (
-                            <Col key={i} lg="4" md="4" sm="12">
+                            <Col key={i} lg="3" md="3" sm="12">
                               <FormGroup key={i}>
                                 {ele?.type?._attributes?.type &&
                                 ele?.type?._attributes?.type == "file" ? (
@@ -637,7 +637,7 @@ const CreateDispach = (args) => {
                       );
                     }
                   })}
-                <Col lg="4" md="4">
+                <Col lg="3" md="3" sm="12">
                   <div className="mt-1">
                     <FormGroup>
                       <Label>
@@ -667,7 +667,7 @@ const CreateDispach = (args) => {
                   </div>
                 </Col>
               </Row>
-              <hr />
+
               {/* <Col lg="6" md="6" sm="6" className="mb-2 mt-1">
                 <Label className="mb-0">Status</Label>
                 <div
@@ -696,12 +696,16 @@ const CreateDispach = (args) => {
                 </div>
               </Col> */}
               <Row>
-                <Button.Ripple
-                  color="primary"
-                  type="submit"
-                  className="mr-1 mt-2 mx-2">
-                  Submit
-                </Button.Ripple>
+                <Col>
+                  <div className="d-flex justify-content-center">
+                    <Button.Ripple
+                      color="primary"
+                      type="submit"
+                      className="mr-1 mt-2 mx-2">
+                      Submit
+                    </Button.Ripple>
+                  </div>
+                </Col>
               </Row>
             </Form>
           </CardBody>

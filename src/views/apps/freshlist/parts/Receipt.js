@@ -150,7 +150,7 @@ class Receipt extends React.Component {
           filter: true,
           width: 140,
           cellRendererFramework: (params) => {
-            // console.log(params.data);
+            console.log(params.data);
             return params.data?.status === "completed" ? (
               <div className="badge badge-pill badge-success">Completed</div>
             ) : params.data?.status === "pending" ? (
@@ -353,7 +353,7 @@ class Receipt extends React.Component {
         },
         {
           headerName: "Party Name",
-          field: "partyId.firstName",
+          field: "userId.firstName",
           filter: true,
           resizable: true,
           width: 210,
@@ -361,7 +361,7 @@ class Receipt extends React.Component {
             return (
               <div className="d-flex align-items-center cursor-pointer">
                 <div>
-                  <span>{params.data?.partyId?.firstName}</span>
+                  <span>{params.data?.userId?.firstName}</span>
                 </div>
               </div>
             );
@@ -488,7 +488,7 @@ class Receipt extends React.Component {
         // },
         {
           headerName: "order Creation date",
-          field: "order_date",
+          field: "createdAt",
           filter: true,
           resizable: true,
           width: 230,
@@ -496,7 +496,7 @@ class Receipt extends React.Component {
             return (
               <div className="d-flex align-items-center cursor-pointer">
                 <div>
-                  <span>{params.data?.order_date}</span>
+                  <span>{params.data?.createdAt?.split("T")[0]}</span>
                 </div>
               </div>
             );
@@ -1039,7 +1039,7 @@ class Receipt extends React.Component {
                           <h1
                             className="float-left"
                             style={{ fontWeight: "600" }}>
-                            Sales Order List
+                            Completed order List
                           </h1>
                         </Col>
 

@@ -325,10 +325,10 @@ class PendingOrder extends React.Component {
   HandleStatusChange = async (e) => {
     e.preventDefault();
     console.log(this.state.Delivery_Status);
-    debugger;
+    
     await Goods_DeliveryOTP(this.state.ViewOneData?.userId?._id)
       .then((res) => {
-        debugger;
+       
         console.log(res);
         swal("success", "OTP Sent Successfully To Your Registered email id");
         this.setState({ OtpScreen: true });
@@ -372,6 +372,7 @@ class PendingOrder extends React.Component {
   };
   handleSubmitOTP = async (e) => {
     e.preventDefault();
+   
     let payload = {
       userId: this.state.ViewOneData?.userId?._id,
       orderId: this.state.ViewOneData?.orderId,
@@ -390,6 +391,7 @@ class PendingOrder extends React.Component {
       })
       .catch((err) => {
         console.log(err);
+        swal("Please Enter Correct OTP");
       });
   };
   // handleChangeView = (data, types) => {
@@ -448,7 +450,7 @@ class PendingOrder extends React.Component {
   };
 
   runthisfunction(id) {
-    debugger;
+   
     swal("Warning", "Sure You Want to Delete it", {
       buttons: {
         cancel: "cancel",
@@ -1271,7 +1273,7 @@ class PendingOrder extends React.Component {
                         {this.state.ViewOneData &&
                           this.state.ViewOneData?.status == "InProcess" && (
                             <Col>
-                              <Label>Change Status :</Label>
+                              <Label>Change Delivery Status :</Label>
                               <CustomInput
                                 onChange={(e) => {
                                   this.setState({

@@ -23,13 +23,15 @@ import {
   SavePlaceOrder,
   ProductListView,
   CreatePartyList,
+  UnitListView,
 } from "../../../../ApiEndPoint/ApiCalling";
 import "../../../../assets/scss/pages/users.scss";
 import { useHistory } from "react-router-dom";
 
 let GrandTotal = [];
 let SelectedITems = [];
-const PlaceOrder = args => {
+let SelectedSize = [];
+const PlaceOrder = (args) => {
   const [Index, setIndex] = useState("");
   const [index, setindex] = useState("");
   const [error, setError] = useState("");
@@ -67,7 +69,7 @@ const PlaceOrder = args => {
 
       let amt = 0;
       if (list.length > 0) {
-        const x = list?.map(val => {
+        const x = list?.map((val) => {
           console.log(val.qty * val.price);
           list[index]["totalprice"] = val.qty * val.price;
           return val.qty * val.price;
@@ -85,7 +87,7 @@ const PlaceOrder = args => {
   };
 
   const handleSelectionParty = (selectedList, selectedItem, index) => {
-    setProduct(prevProductList => {
+    setProduct((prevProductList) => {
       const updatedProductList = [...prevProductList];
       const updatedProduct = { ...updatedProductList[index] };
       updatedProduct.partyId = selectedItem?._id;
@@ -95,7 +97,7 @@ const PlaceOrder = args => {
   };
   const handleSelectionUnit = (selectedList, selectedItem, index) => {
     SelectedSize.push(selectedItem);
-    setProduct(prevProductList => {
+    setProduct((prevProductList) => {
       // debugger;
       const updatedUnitList = [...prevProductList];
       const updatedProduct = { ...updatedUnitList[index] }; // Create a copy of the product at the specified index
@@ -116,7 +118,7 @@ const PlaceOrder = args => {
   };
   const handleSelection = (selectedList, selectedItem, index) => {
     SelectedITems.push(selectedItem);
-    setProduct(prevProductList => {
+    setProduct((prevProductList) => {
       const updatedProductList = [...prevProductList];
       const updatedProduct = { ...updatedProductList[index] }; // Create a copy of the product at the specified index
       updatedProduct.price = selectedItem.Product_MRP; // Update the price of the copied product
@@ -143,19 +145,26 @@ const PlaceOrder = args => {
   useEffect(() => {
     const userId = JSON.parse(localStorage.getItem("userData"))._id;
     ProductListView(userId)
-      .then(res => {
+      .then((res) => {
         console.log(res.Product);
         setProductList(res?.Product);
       })
-      .catch(err => {
+      .catch((err) => {
         console.log(err);
       });
     CreatePartyList()
-      .then(res => {
+      .then((res) => {
         console.log(res.Party);
         setPartyList(res.Party);
       })
-      .catch(err => {
+      .catch((err) => {
+        console.log(err);
+      });
+    UnitListView(userId)
+      .then((res) => {
+        setUnitList(res.Unit);
+      })
+      .catch((err) => {
         console.log(err);
       });
   }, []);
@@ -183,7 +192,7 @@ const PlaceOrder = args => {
       },
     ]);
   };
-  let removeMoreProduct = i => {
+  let removeMoreProduct = (i) => {
     let newFormValues = [...product];
     newFormValues.splice(i, 1);
     GrandTotal.splice(i, 1);
@@ -192,7 +201,7 @@ const PlaceOrder = args => {
     setProduct(newFormValues);
   };
 
-  const submitHandler = e => {
+  const submitHandler = (e) => {
     e.preventDefault();
     console.log("Final ", product);
     let fullname = UserInfo.firstName + " " + UserInfo?.lastName;
@@ -212,7 +221,7 @@ const PlaceOrder = args => {
       swal("Error occured while Entering Details");
     } else {
       SavePlaceOrder(ObjOrder)
-        .then(res => {
+        .then((res) => {
           console.log(res);
           // if (res.status) {
           //   setFormData({});
@@ -220,7 +229,7 @@ const PlaceOrder = args => {
           swal("Order Place Successfully");
           // }
         })
-        .catch(err => {
+        .catch((err) => {
           console.log(err);
         });
     }
@@ -247,8 +256,7 @@ const PlaceOrder = args => {
                   color="warning"
                   onClick={() =>
                     history.push("/app/AjGroup/order/placeOrderList")
-                  }
-                >
+                  }>
                   Back
                 </Button>
               </div>
@@ -282,7 +290,7 @@ const PlaceOrder = args => {
                       type="date"
                       name="DateofDelivery"
                       value={dateofDelivery}
-                      onChange={e => setDateofDelivery(e.target.value)}
+                      onChange={(e) => setDateofDelivery(e.target.value)}
                     />
                   </div>
                 </Col>
@@ -319,7 +327,7 @@ const PlaceOrder = args => {
                           name="qty"
                           placeholder="Req_Qty"
                           value={product?.availableQty}
-                          onChange={e => handleProductChangeProduct(e, index)}
+                          onChange={(e) => handleProductChangeProduct(e, index)}
                         />
                       </div>
                     </Col>
@@ -332,7 +340,7 @@ const PlaceOrder = args => {
                           placeholder="Req_Qty"
                           autocomplete="off"
                           value={product?.qty}
-                          onChange={e =>
+                          onChange={(e) =>
                             handleProductChangeProduct(
                               e,
                               index,
@@ -342,7 +350,7 @@ const PlaceOrder = args => {
                         />
                       </div>
                     </Col>
-                    <Col className="mb-1">
+                    <Col className="mb-1" lg="2" md="2" sm="12">
                       <div className="">
                         <Label>Choose Unit</Label>
                         <Multiselect
@@ -396,8 +404,7 @@ const PlaceOrder = args => {
                             type="button"
                             color="danger"
                             className="button remove "
-                            onClick={() => removeMoreProduct(index)}
-                          >
+                            onClick={() => removeMoreProduct(index)}>
                             -
                           </Button>
                         ) : null}
@@ -408,8 +415,7 @@ const PlaceOrder = args => {
                           className="ml-1 mb-1"
                           color="primary"
                           type="button"
-                          onClick={() => addMoreProduct()}
-                        >
+                          onClick={() => addMoreProduct()}>
                           +
                         </Button>
                       </div>
@@ -457,8 +463,7 @@ const PlaceOrder = args => {
                     <Button.Ripple
                       color="primary"
                       type="submit"
-                      className="mt-2"
-                    >
+                      className="mt-2">
                       Submit
                     </Button.Ripple>
                   </div>

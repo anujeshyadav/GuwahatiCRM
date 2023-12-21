@@ -655,6 +655,7 @@ class UserProfile extends React.Component {
                             <Col sm="12" lg="6" md="6" className="p-1">
                               <Label>GST Number</Label>
                               <Input
+                                type="text"
                                 required
                                 name="gstNumber"
                                 className="from-control"
@@ -673,6 +674,7 @@ class UserProfile extends React.Component {
                                 <Label>Bill Prefix</Label>
                                 <Input
                                   required
+                                  type="text"
                                   name="Prefix"
                                   className="from-control"
                                   placeholder="Prefix Enter here"
@@ -681,14 +683,22 @@ class UserProfile extends React.Component {
                                 />
                               </Col>
                               <Col sm="12" lg="6" md="6" className="p-1">
-                                <Label>Bill Suffix</Label>
+                                <Label>Bill Postfix</Label>
                                 <Input
                                   required
+                                  type="text"
                                   name="Suffix"
                                   className="from-control"
                                   placeholder="suffix Enter here"
                                   value={this.state.Suffix}
-                                  onChange={this.changeHandler}
+                                  onChange={(e) => {
+                                    const newValue = e.target.value.replace(
+                                      /[^0-9]/g,
+                                      ""
+                                    );
+                                    this.setState({ Suffix: newValue });
+                                  }}
+                                  // onChange={this.changeHandler}
                                 />
                               </Col>
                             </Row>
