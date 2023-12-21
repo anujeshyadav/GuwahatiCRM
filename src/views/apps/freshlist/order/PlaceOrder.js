@@ -236,7 +236,6 @@ const PlaceOrder = args => {
 
   const onRemove1 = (selectedList, removedItem, index) => {
     console.log(selectedList);
-    console.log(index);
   };
   return (
     <div>
