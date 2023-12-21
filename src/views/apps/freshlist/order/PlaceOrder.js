@@ -53,7 +53,6 @@ const PlaceOrder = args => {
       price: "",
       totalprice: "",
       unitQty: "",
-      // partyId: "",
       Size: "",
       unitType: "",
     },
