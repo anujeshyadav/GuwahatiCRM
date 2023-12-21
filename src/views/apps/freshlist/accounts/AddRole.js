@@ -381,11 +381,11 @@ export const Roles = [
         permission: ["View", "Create", "Edit", "Delete"],
       },
       {
-        title: "Raw Material Inward",
+        title: "Item Inward",
         permission: ["View", "Create", "Edit", "Delete"],
       },
       {
-        title: "Raw Material Outward",
+        title: "Item Outward",
         permission: ["View", "Create", "Edit", "Delete"],
       },
       {

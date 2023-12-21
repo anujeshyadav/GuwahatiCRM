@@ -955,7 +955,7 @@ const horizontalMenuConfig = [
           },
           {
             id: "rawmaterialinward ",
-            title: "Raw Material Inward",
+            title: "Item Inward",
             type: "item",
             icon: <FaCartArrowDown size={22} />,
             permissions: ["admin", "editor"],
@@ -963,7 +963,7 @@ const horizontalMenuConfig = [
           },
           {
             id: "rawmaterialoutward",
-            title: "Raw Material Outward",
+            title: "Item Outward",
             type: "item",
             icon: <BsCart4 size={22} />,
             permissions: ["admin", "editor"],

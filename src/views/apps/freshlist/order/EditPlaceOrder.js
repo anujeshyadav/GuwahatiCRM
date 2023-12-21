@@ -69,7 +69,20 @@ const EditPlaceOrder = args => {
     console.log(location.state);
     setUserName(location.state.fullName);
     setEditdata(location?.state);
-    setGrandTotalAmt(location?.state?.grandTotal);
+
+    if (location?.state) {
+      let grandTotal = location?.state.orderItems.reduce(
+        (a, b) => a + b.product.Product_MRP,
+        0
+      );
+      setGrandTotalAmt(grandTotal);
+    } else {
+      let grandTotal = location?.state.orderItems.reduce(
+        (a, b) => a + b.product.Product_MRP,
+        0
+      );
+      setGrandTotalAmt(grandTotal);
+    }
   }, []);
 
   useEffect(() => {
@@ -158,9 +171,6 @@ const EditPlaceOrder = args => {
 
               {product &&
                 product?.orderItems?.map((product, index) => {
-                  {
-                    /* console.log(product); */
-                  }
                   return (
                     <Row className="" key={index}>
                       <Col className="mb-1">
@@ -183,8 +193,8 @@ const EditPlaceOrder = args => {
                             type="number"
                             disabled
                             placeholder="Price"
-                            name="Price"
-                            value={product.price}
+                            name="Product_MRP"
+                            value={product.product?.Product_MRP}
                           />
                         </FormGroup>
                       </Col>
