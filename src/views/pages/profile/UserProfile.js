@@ -38,6 +38,8 @@ class UserProfile extends React.Component {
       firstName: "",
       lastName: "",
       modal: false,
+      Prefix: "",
+      Suffix: "",
       Createmode: false,
       // formData: {
       //   Country: '',
@@ -230,6 +232,8 @@ class UserProfile extends React.Component {
     formData.append("mobileNo", this.state.CompanyNumber);
     formData.append("file", this.state.Companylogo);
     formData.append("gstNo", this.state.gstNumber);
+    formData.append("Prefix", this.state.Prefix);
+    formData.append("Suffix", this.state.Suffix);
     formData.append("address", this.state.CompanyAddress);
     formData.append("signature", this.state.Signature);
 
@@ -660,6 +664,35 @@ class UserProfile extends React.Component {
                               />
                             </Col>
                           </Row>
+                          <div className="container">
+                            {/* <div className="d-flex justify-content-center">
+                              <h3>Add Bills Prefix and Suffix</h3>
+                            </div> */}
+                            <Row>
+                              <Col sm="12" lg="6" md="6" className="p-1">
+                                <Label>Bill Prefix</Label>
+                                <Input
+                                  required
+                                  name="Prefix"
+                                  className="from-control"
+                                  placeholder="Prefix Enter here"
+                                  value={this.state.Prefix}
+                                  onChange={this.changeHandler}
+                                />
+                              </Col>
+                              <Col sm="12" lg="6" md="6" className="p-1">
+                                <Label>Bill Suffix</Label>
+                                <Input
+                                  required
+                                  name="Suffix"
+                                  className="from-control"
+                                  placeholder="suffix Enter here"
+                                  value={this.state.Suffix}
+                                  onChange={this.changeHandler}
+                                />
+                              </Col>
+                            </Row>
+                          </div>
                           <Row>
                             <Col>
                               <CheckBoxesVuexy

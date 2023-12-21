@@ -126,7 +126,7 @@ const CreateAccount = () => {
     let userdata = JSON.parse(localStorage.getItem("userData"));
     Get_RoleList()
       .then((res) => {
-        console.log(res?.Role);
+        // console.log(res?.Role);
         let ShowList = res?.Role?.filter(
           (item, i) => item?.position > userdata?.rolename?.position
         );

@@ -99,6 +99,8 @@ export const Purchase_Status_Order =
 
 export const Sales_OrderTo_DispatchList = "/invoice/save-invoice/";
 export const Order_DisPatchList = "/invoice/view-invoice";
+export const Goods_Delivery_OTP = "/good-dispatch/send-otp/";
+export const Goods_Delivery_OTP_Auth = "good-dispatch/verify-authentication/";
 export const Edit_Status_DispatchList = "/invoice/update-status/";
 export const DeliveryBoy_AssignedList = "/good-dispatch/view-order-list/";
 export const Debit_note_Order_List = "/debit-note/view-debit-note";

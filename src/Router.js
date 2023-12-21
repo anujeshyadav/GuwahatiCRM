@@ -39,6 +39,7 @@ const AddPart = lazy(() => import("./views/apps/freshlist/parts/AddPart"));
 const PartList = lazy(() => import("./views/apps/freshlist/parts/PartList"));
 
 const Cashbook = lazy(() => import("./views/apps/freshlist/parts/Cashbook"));
+const ReceiptList = lazy(() => import("./views/apps/freshlist/parts/Receipt"));
 const PartCatalougue = lazy(() =>
   import("./views/apps/freshlist/parts/PartCatalougue")
 );
@@ -1329,6 +1330,10 @@ class AppRouter extends React.Component {
           />
           <AppRoute path="/app/SoftNumen/parts/PartList" component={PartList} />
           <AppRoute path="/app/SoftNumen/parts/Cashbook" component={Cashbook} />
+          <AppRoute
+            path="/app/SoftNumen/parts/ReceiptList"
+            component={ReceiptList}
+          />
           <AppRoute
             path="/app/SoftNumen/parts/Addorderbycashbook"
             component={Addorderbycashbook}

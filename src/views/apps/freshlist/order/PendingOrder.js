@@ -43,6 +43,8 @@ import swal from "sweetalert";
 import {
   Delete_targetINlist,
   DeliveryBoyAssignedList,
+  Goods_DeliveryOTP,
+  Goods_DeliveryOTP_Auth,
 } from "../../../../ApiEndPoint/ApiCalling";
 import {
   BsCloudDownloadFill,
@@ -114,6 +116,7 @@ class PendingOrder extends React.Component {
                         padding: "10px",
                         borderRadius: "30px",
                         backgroundColor: "#39cccc",
+                        cursor: "pointer",
                       }}>
                       <Eye
                         className=""
@@ -137,6 +140,7 @@ class PendingOrder extends React.Component {
                         borderRadius: "30px",
                         backgroundColor: "rgb(212, 111, 16)",
                         marginLeft: "3px",
+                         cursor:"pointer"
                       }}
                     >
                       <FaPencilAlt
@@ -159,7 +163,7 @@ class PendingOrder extends React.Component {
           filter: true,
           width: 150,
           cellRendererFramework: (params) => {
-            return params.data?.status === "completed" ? (
+            return params.data?.status === "Completed" ? (
               <div className="badge badge-pill badge-success">
                 {params.data.status}
               </div>
@@ -311,34 +315,93 @@ class PendingOrder extends React.Component {
     this.setState((prevState) => ({
       modalone: !prevState.modalone,
     }));
+    this.setState({ OtpScreen: false });
   };
   LookupviewStart = () => {
     this.setState((prevState) => ({
       modal: !prevState.modal,
     }));
   };
-  HandleStatusChange = (e) => {
+  HandleStatusChange = async (e) => {
     e.preventDefault();
     console.log(this.state.Delivery_Status);
-    if (this.state.Delivery_Status == "Completed") {
-      this.setState({ OtpScreen: true });
-    } else {
-      if(this.state.CancelReason){
-        console.log(this.state.CancelReason);
+    debugger;
+    await Goods_DeliveryOTP(this.state.ViewOneData?.userId?._id)
+      .then((res) => {
+        debugger;
+        console.log(res);
+        swal("success", "OTP Sent Successfully To Your Registered email id");
+        this.setState({ OtpScreen: true });
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+    // if (this.state.Delivery_Status == "Completed") {
+    //   console.log(this.state.ViewOneData);
+    //   debugger;
+    //   await Goods_DeliveryOTP(this.state.ViewOneData?.userId?._id)
+    //     .then((res) => {
+    //       debugger;
+    //       console.log(res);
+    //       swal("success", "OTP Send Successfully To your Registered Mail");
+    //       this.setState({ OtpScreen: true });
+    //     })
+    //     .catch((err) => {
+    //       console.log(err);
+    //     });
+    // } else {
+    //   if (this.state.CancelReason) {
+    //     // console.log(this.state.CancelReason);
+    //     // let payload = {
+    //     //   userId: this.state.ViewOneData?.userId?._id,
+    //     //   orderId: "",
+    //     //   status: this.state.Delivery_Status,
+    //     //   otp: Number(this.state.emailotp),
+    //     //   reason: this.state.CancelReason,
+    //     // };
+    //     // await Goods_DeliveryOTP_Auth(this.state.ViewOneData?._id, payload)
+    //       // .then((res) => {
+    //       //   console.log(res);
+    //       // })
+    //       // .catch((err) => {
+    //       //   console.log(err);
+    //       // });
 
-      }
-    }
+    //     }
+    // }
   };
-  handleChangeView = (data, types) => {
-    let type = types;
-    if (type == "readonly") {
-      this.setState({ ViewOneUserView: true });
-      this.setState({ ViewOneData: data });
-    } else {
-      this.setState({ EditOneUserView: true });
-      this.setState({ EditOneData: data });
-    }
+  handleSubmitOTP = async (e) => {
+    e.preventDefault();
+    let payload = {
+      userId: this.state.ViewOneData?.userId?._id,
+      orderId: this.state.ViewOneData?.orderId,
+      status: this.state.Delivery_Status,
+      otp: Number(this.state.emailotp),
+      paymentMode: `${this.state.PayMode ? this.state.PayMode : "Cancelled"}`,
+      reason: `${
+        this.state.CancelReason ? this.state.CancelReason : "Delivered"
+      }`,
+    };
+    await Goods_DeliveryOTP_Auth(this.state.ViewOneData?._id, payload)
+      .then((res) => {
+        console.log(res);
+        this.toggleModal();
+        swal("Submittted Successfully");
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   };
+  // handleChangeView = (data, types) => {
+  //   let type = types;
+  //   if (type == "readonly") {
+  //     this.setState({ ViewOneUserView: true });
+  //     this.setState({ ViewOneData: data });
+  //   } else {
+  //     this.setState({ EditOneUserView: true });
+  //     this.setState({ EditOneData: data });
+  //   }
+  // };
   // handleChangeEdit = (data, types) => {
   //   let type = types;
   //   if (type == "readonly") {
@@ -358,7 +421,11 @@ class PendingOrder extends React.Component {
     await DeliveryBoyAssignedList(userId)
       .then((res) => {
         console.log(res?.OrderList);
-        this.setState({ rowData: res?.OrderList });
+        let showdata = res?.OrderList?.filter(
+          (ele) => ele?.status?.toLowerCase() !== "completed"
+        );
+        console.log(showdata);
+        this.setState({ rowData: showdata });
         this.setState({ AllcolumnDefs: this.state.columnDefs });
         this.setState({ SelectedCols: this.state.columnDefs });
 
@@ -607,7 +674,7 @@ class PendingOrder extends React.Component {
 
   HandleSetVisibleField = (e) => {
     e.preventDefault();
-    
+
     this.gridApi.setColumnDefs(this.state.SelectedcolumnDefs);
     this.setState({ columnDefs: this.state.SelectedcolumnDefs });
     this.setState({ SelectedcolumnDefs: this.state.SelectedcolumnDefs });
@@ -657,42 +724,11 @@ class PendingOrder extends React.Component {
       <>
         <Col className="app-user-list">
           {this.state.EditOneUserView && this.state.EditOneUserView ? (
-            <Row className="card">
-              <Col>
-                <div className="d-flex justify-content-end p-1">
-                  <Button
-                    onClick={(e) => {
-                      e.preventDefault();
-                      this.setState({ EditOneUserView: false });
-                    }}
-                    color="danger">
-                    Back
-                  </Button>
-                </div>
-              </Col>
-
-              {/* <EditAccount EditOneData={this.state.EditOneData} /> */}
-            </Row>
+            <></>
           ) : (
             <>
               {this.state.ViewOneUserView && this.state.ViewOneUserView ? (
-                <>
-                  <Row className="card">
-                    <Col>
-                      <div className="d-flex justify-content-end p-1">
-                        <Button
-                          onClick={(e) => {
-                            e.preventDefault();
-                            this.setState({ ViewOneUserView: false });
-                          }}
-                          color="danger">
-                          Back
-                        </Button>
-                      </div>
-                    </Col>
-                    <PendingView ViewOneData={this.state.ViewOneData} />
-                  </Row>
-                </>
+                <></>
               ) : (
                 <>
                   <Col sm="12">
@@ -706,76 +742,75 @@ class PendingOrder extends React.Component {
                           </h1>
                         </Col>
 
-                        {this.state.InsiderPermissions &&
-                          this.state.InsiderPermissions?.View && (
-                            <Col>
-                              <span className="mx-1">
-                                <FaFilter
+                        {InsiderPermissions && InsiderPermissions?.View && (
+                          <Col>
+                            <span className="mx-1">
+                              <FaFilter
+                                style={{ cursor: "pointer" }}
+                                title="filter coloumn"
+                                size="35px"
+                                onClick={this.LookupviewStart}
+                                color="#39cccc"
+                                className="float-right"
+                              />
+                            </span>
+                            <span className="mx-1">
+                              <div className="dropdown-container float-right">
+                                <ImDownload
                                   style={{ cursor: "pointer" }}
-                                  title="filter coloumn"
+                                  title="download file"
                                   size="35px"
-                                  onClick={this.LookupviewStart}
+                                  className="dropdown-button "
                                   color="#39cccc"
-                                  className="float-right"
+                                  onClick={this.toggleDropdown}
                                 />
-                              </span>
-                              <span className="mx-1">
-                                <div className="dropdown-container float-right">
-                                  <ImDownload
-                                    style={{ cursor: "pointer" }}
-                                    title="download file"
-                                    size="35px"
-                                    className="dropdown-button "
-                                    color="#39cccc"
-                                    onClick={this.toggleDropdown}
-                                  />
-                                  {isOpen && (
-                                    <div
-                                      style={{
-                                        position: "absolute",
-                                        zIndex: "1",
-                                        border: "1px solid #39cccc",
-                                        backgroundColor: "white",
-                                      }}
-                                      className="dropdown-content dropdownmy">
-                                      <h5
-                                        onClick={() => this.exportToPDF()}
-                                        style={{ cursor: "pointer" }}
-                                        className=" mx-1 myactive mt-1">
-                                        .PDF
-                                      </h5>
-                                      <h5
-                                        onClick={() =>
-                                          this.gridApi.exportDataAsCsv()
-                                        }
-                                        style={{ cursor: "pointer" }}
-                                        className=" mx-1 myactive">
-                                        .CSV
-                                      </h5>
-                                      <h5
-                                        onClick={this.convertCSVtoExcel}
-                                        style={{ cursor: "pointer" }}
-                                        className=" mx-1 myactive">
-                                        .XLS
-                                      </h5>
-                                      <h5
-                                        onClick={this.exportToExcel}
-                                        style={{ cursor: "pointer" }}
-                                        className=" mx-1 myactive">
-                                        .XLSX
-                                      </h5>
-                                      <h5
-                                        onClick={() => this.convertCsvToXml()}
-                                        style={{ cursor: "pointer" }}
-                                        className=" mx-1 myactive">
-                                        .XML
-                                      </h5>
-                                    </div>
-                                  )}
-                                </div>
-                              </span>
-                            </Col>
-                          )}
+                                {isOpen && (
+                                  <div
+                                    style={{
+                                      position: "absolute",
+                                      zIndex: "1",
+                                      border: "1px solid #39cccc",
+                                      backgroundColor: "white",
+                                    }}
+                                    className="dropdown-content dropdownmy">
+                                    <h5
+                                      onClick={() => this.exportToPDF()}
+                                      style={{ cursor: "pointer" }}
+                                      className=" mx-1 myactive mt-1">
+                                      .PDF
+                                    </h5>
+                                    <h5
+                                      onClick={() =>
+                                        this.gridApi.exportDataAsCsv()
+                                      }
+                                      style={{ cursor: "pointer" }}
+                                      className=" mx-1 myactive">
+                                      .CSV
+                                    </h5>
+                                    <h5
+                                      onClick={this.convertCSVtoExcel}
+                                      style={{ cursor: "pointer" }}
+                                      className=" mx-1 myactive">
+                                      .XLS
+                                    </h5>
+                                    <h5
+                                      onClick={this.exportToExcel}
+                                      style={{ cursor: "pointer" }}
+                                      className=" mx-1 myactive">
+                                      .XLSX
+                                    </h5>
+                                    <h5
+                                      onClick={() => this.convertCsvToXml()}
+                                      style={{ cursor: "pointer" }}
+                                      className=" mx-1 myactive">
+                                      .XML
+                                    </h5>
+                                  </div>
+                                )}
+                              </div>
+                            </span>
+                          </Col>
+                        )}
                       </Row>
                       <CardBody style={{ marginTop: "-1.5rem" }}>
                         {this.state.rowData === null ? null : (
@@ -1059,6 +1094,7 @@ class PendingOrder extends React.Component {
             </Row>
           </ModalBody>
         </Modal>
+
         <Modal
           isOpen={this.state.modalone}
           toggle={this.toggleModal}
@@ -1067,8 +1103,6 @@ class PendingOrder extends React.Component {
               ? "modal-dialog modal-sm"
               : "modal-dialog modal-xl"
           }`}
-          // className="modal-dialog modal-xl"
-          // className="modal-dialog modal-lg"
           size="lg"
           backdrop={true}
           fullscreen={true}>
@@ -1079,9 +1113,15 @@ class PendingOrder extends React.Component {
                 <>
                   <div className="d-flex justify-content-center">
                     <h5>
-                      <strong>Enter Otp To Mark Complete Delevery</strong>
+                      <strong>
+                        Enter Otp To Mark {this.state.Delivery_Status} Delivery
+                      </strong>
                     </h5>
                   </div>
+                  <span
+                    id="alerts"
+                    className="alerts"
+                    style={{ color: "red" }}></span>
                   <Row>
                     <Col lg="12" md="12" sm="12">
                       <div className="d-flex justify-content-center">
@@ -1115,11 +1155,65 @@ class PendingOrder extends React.Component {
                         </Button>
                       </div>
                     </Col> */}
-                    <Col lg="12" md="12" sm="12">
-                      <div className="d-flex justify-content-center">
-                        <Button color="primary">Submit</Button>
-                      </div>
-                    </Col>
+                    {this.state.emailotp &&
+                      this.state.emailotp?.length == 6 && (
+                        <>
+                          {this.state.Delivery_Status &&
+                            this.state.Delivery_Status == "Completed" && (
+                              <Row>
+                                <Col
+                                  lg="12"
+                                  md="12"
+                                  sm="12"
+                                  className="mb-1 mt-1">
+                                  <div className="d-flex justify-content-center">
+                                    <Label className="mb-0">
+                                      Payment Mode *
+                                    </Label>
+                                    <div
+                                      onChange={(e) =>
+                                        this.setState({
+                                          PayMode: e.target.value,
+                                        })
+                                      }
+                                      className="form-label-group mt-1">
+                                      <input
+                                        required
+                                        style={{ marginRight: "3px" }}
+                                        type="radio"
+                                        name="status"
+                                        value="Online"
+                                      />
+                                      <span style={{ marginRight: "20px" }}>
+                                        Online
+                                      </span>
+
+                                      <input
+                                        required
+                                        style={{ marginRight: "3px" }}
+                                        type="radio"
+                                        name="status"
+                                        value="Cash"
+                                      />
+                                      <span style={{ marginRight: "3px" }}>
+                                        Cash
+                                      </span>
+                                    </div>
+                                  </div>
+                                </Col>
+                              </Row>
+                            )}
+                          <Col lg="12" md="12" sm="12">
+                            <div className="d-flex justify-content-center">
+                              <Button
+                                onClick={this.handleSubmitOTP}
+                                color="primary">
+                                Submit
+                              </Button>
+                            </div>
+                          </Col>
+                        </>
+                      )}
                   </Row>
                 </>
               ) : (
@@ -1171,54 +1265,62 @@ class PendingOrder extends React.Component {
                         Rs/-
                       </h5>
                     </Col>
-                    {this.state.InsiderPermissions &&
-                      this.state.InsiderPermissions?.Edit && (
-                        <Col>
-                          <Label>Change Status :</Label>
-                          <CustomInput
-                            onChange={(e) => {
-                              this.setState({
-                                Delivery_Status: e.target.value,
-                              });
-                            }}
-                            className="form-control"
-                            type="select">
-                            <option>--select--</option>
-                            <option value="Completed">Completed</option>
-                            <option value="Cancelled">Cancelled</option>
-                          </CustomInput>
-                          {this.state.Delivery_Status == "Completed" ? null : (
-                            <>
-                              {this.state.Delivery_Status == "Cancelled" && (
-                                <Row>
-                                  <Col className="mt-1">
-                                    <label> Reason for Cancellation</label>
-                                    <Input
-                                      required
-                                      onChange={(e) => {
-                                        this.setState({
-                                          CancelReason: e.target.value,
-                                        });
-                                      }}
-                                      className="form-control"
-                                      type="text"
-                                    />
-                                  </Col>
-                                </Row>
+                    {InsiderPermissions && InsiderPermissions?.Edit && (
+                      <>
+                        {}
+                        {this.state.ViewOneData &&
+                          this.state.ViewOneData?.status == "InProcess" && (
+                            <Col>
+                              <Label>Change Status :</Label>
+                              <CustomInput
+                                onChange={(e) => {
+                                  this.setState({
+                                    Delivery_Status: e.target.value,
+                                  });
+                                }}
+                                className="form-control"
+                                type="select">
+                                <option>--select--</option>
+                                <option value="Completed">Completed</option>
+                                <option value="Cancelled">Cancelled</option>
+                              </CustomInput>
+                              {this.state.Delivery_Status ==
+                              "Completed" ? null : (
+                                <>
+                                  {this.state.Delivery_Status ==
+                                    "Cancelled" && (
+                                    <Row>
+                                      <Col className="mt-1">
+                                        <label> Reason for Cancellation</label>
+                                        <Input
+                                          required
+                                          onChange={(e) => {
+                                            this.setState({
+                                              CancelReason: e.target.value,
+                                            });
+                                          }}
+                                          className="form-control"
+                                          type="text"
+                                        />
+                                      </Col>
+                                    </Row>
+                                  )}
+                                </>
                               )}
-                            </>
+                              {this.state.Delivery_Status == "Cancelled" ||
+                              this.state.Delivery_Status == "Completed" ? (
+                                <Badge
+                                  style={{ cursor: "pointer" }}
+                                  onClick={this.HandleStatusChange}
+                                  className="mt-1"
+                                  color="primary">
+                                  Submit
+                                </Badge>
+                              ) : null}
+                            </Col>
                           )}
-                          {this.state.Delivery_Status == "Cancelled" ||
-                          this.state.Delivery_Status == "Completed" ? (
-                            <Badge
-                              onClick={this.HandleStatusChange}
-                              className="mt-1"
-                              color="primary">
-                              Submit
-                            </Badge>
-                          ) : null}
-                        </Col>
-                      )}
+                      </>
+                    )}
 
                     {/* <Col>
                 <Label>Download Invoice :</Label>
@@ -1270,8 +1372,8 @@ class PendingOrder extends React.Component {
                                     <td>{ele?.unitQty}</td>
                                     <td>{ele?.qty}</td>
                                     <td>
-                                      {ele?.product?.Product_MRP *
-                                        ele?.product?.Size *
+                                      {ele?.productId?.Product_MRP *
+                                        ele?.productId?.Size *
                                         ele?.qty}
                                     </td>
                                   </tr>
