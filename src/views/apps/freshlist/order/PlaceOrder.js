@@ -53,7 +53,6 @@ const PlaceOrder = (args) => {
       price: "",
       totalprice: "",
       unitQty: "",
-      // partyId: "",
       Size: "",
       unitType: "",
     },
@@ -244,7 +243,6 @@ const PlaceOrder = (args) => {
 
   const onRemove1 = (selectedList, removedItem, index) => {
     console.log(selectedList);
-    console.log(index);
   };
   return (
     <div>
