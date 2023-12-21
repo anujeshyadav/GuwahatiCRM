@@ -495,7 +495,6 @@ class Salesreport extends React.Component {
   };
 
   handleSubmitDate = () => {
-    // console.log(this.state.startDate, this.state.EndDate);
     console.log(this.state.rowData);
     const filteredItems = this.state.rowData.filter(item => {
       const dateList = new Date(item.updatedAt);
@@ -503,7 +502,6 @@ class Salesreport extends React.Component {
       return onlyDate >= this.state.startDate && onlyDate <= this.state.EndDate;
     });
     this.setState({ rowData: filteredItems });
-    console.log(filteredItems);
   };
   convertCsvToXml = () => {
     const CsvData = this.gridApi.getDataAsCsv({
@@ -614,6 +612,7 @@ class Salesreport extends React.Component {
                   <Button
                     type="submit"
                     className="mt-1"
+                    color="primary"
                     onClick={this.handleSubmitDate}
                   >
                     Submit

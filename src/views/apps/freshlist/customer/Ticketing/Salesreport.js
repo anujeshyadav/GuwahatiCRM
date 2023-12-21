@@ -376,7 +376,6 @@ class Salesreport extends React.Component {
       body: tableData,
       startY: 60,
     });
-
     doc.save("UserList.pdf");
   }
 
