@@ -28,21 +28,15 @@ export const Create_Party_List = "/party/view-party";
 // "creatorderbycashbook"
 export const Create_order_by_cashbook = "/cashbook/cashbook-order";
 //cashbookgetapi
-<<<<<<< HEAD
-export const CashbookList = '/cashbook/view-order-list/'
-//CreateWareHouse
-export const Create_Ware_House = '/raw-material/get-xml'
-=======
 export const CashbookList = "/cashbook/view-order-list/";
 
->>>>>>> 0548da8db7d0720b0395c329c74823f1af30ca56
 export const Save_Promotion = "/promotion/save-promotion";
 export const View_Promotion_List = "/promotion/view-promotion/";
 export const Create_transporter_xmlView = "/transporter/get-xml";
 export const Create_transporter_save = "/transporter/save-transporter";
 export const Create_Transporter_List = "/transporter/view-transporter";
 export const Delete_Transporter_List = "/transporter/delete-transporter/";
-
+export const Create_Ware_House = '/raw-material/get-xml'
 export const Create_unit_xmlView = "/unit/get-xml";
 
 export const AddPrimaryUnit = "/primary-unit/save-primary-unit/";
