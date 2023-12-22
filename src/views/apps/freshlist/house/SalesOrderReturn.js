@@ -105,7 +105,7 @@ class SalesOrderReturn extends React.Component {
           headerName: "Actions",
           field: "transactions",
           width: 180,
-          cellRendererFramework: params => {
+          cellRendererFramework: (params) => {
             return (
               <div className="actions cursor-pointer">
                 {this.state.InsiderPermissions &&
@@ -135,15 +135,30 @@ class SalesOrderReturn extends React.Component {
         //     return null;
         //   },
         // },
-
+        {
+          headerName: "order Creation date",
+          field: "createdAt",
+          filter: true,
+          resizable: true,
+          width: 230,
+          cellRendererFramework: (params) => {
+            return (
+              <div className="d-flex align-items-center cursor-pointer">
+                <div>
+                  <span>{params.data?.createdAt?.split("T")[0]}</span>
+                </div>
+              </div>
+            );
+          },
+        },
         {
           headerName: "Product Name",
           field: "returnItems",
           filter: true,
           width: 220,
-          valueGetter: params => {
+          valueGetter: (params) => {
             if (params.data.returnItems && params.data.returnItems.length > 0) {
-              return params?.data?.returnItems?.map(val => {
+              return params?.data?.returnItems?.map((val) => {
                 return val?.productId.Product_Title;
               });
             }
@@ -155,9 +170,9 @@ class SalesOrderReturn extends React.Component {
           field: "returnItems",
           filter: true,
           width: 220,
-          valueGetter: params => {
+          valueGetter: (params) => {
             if (params.data.returnItems && params.data.returnItems.length > 0) {
-              return params?.data?.returnItems?.map(val => {
+              return params?.data?.returnItems?.map((val) => {
                 return val?.productId.Size;
               });
             }
@@ -169,9 +184,9 @@ class SalesOrderReturn extends React.Component {
           field: "returnItems",
           filter: true,
           width: 220,
-          valueGetter: params => {
+          valueGetter: (params) => {
             if (params.data.returnItems && params.data.returnItems.length > 0) {
-              return params?.data?.returnItems?.map(val => {
+              return params?.data?.returnItems?.map((val) => {
                 return val?.productId.HSN_Code;
               });
             }
@@ -209,7 +224,7 @@ class SalesOrderReturn extends React.Component {
           field: "email",
           filter: true,
           width: 200,
-          cellRendererFramework: params => {
+          cellRendererFramework: (params) => {
             return (
               <div>
                 <span>{params.data?.email}</span>
@@ -223,7 +238,7 @@ class SalesOrderReturn extends React.Component {
           field: "mobileNumber",
           filter: true,
           width: 150,
-          cellRendererFramework: params => {
+          cellRendererFramework: (params) => {
             return (
               <div>
                 <span>{params.data?.mobileNumber}</span>

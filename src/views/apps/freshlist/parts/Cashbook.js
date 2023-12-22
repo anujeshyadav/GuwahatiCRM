@@ -124,14 +124,20 @@ class Cashbook extends React.Component {
           filter: true,
           width: 150,
           cellRendererFramework: (params) => {
-            return params.data?.status == "completed" ? (
+            return params.data?.status == "Completed" ? (
               <div className="badge badge-pill badge-success">
                 {params.data.status}
               </div>
             ) : params.data?.status == "pending" ? (
-              <div className="badge badge-pill badge-warning">
-                {params.data.status}
-              </div>
+              <>
+                {params.data?.cashBookType == "CashOrder" ? (
+                  <>
+                    <div className="badge badge-pill badge-success">
+                      Completed
+                    </div>
+                  </>
+                ) : null}
+              </>
             ) : params.data?.status == "return" ? (
               <div className="badge badge-pill badge-danger">
                 {params.data.status}
@@ -177,15 +183,15 @@ class Cashbook extends React.Component {
           },
         },
         {
-          headerName: "Price",
-          field: "orderItems",
+          headerName: "Total",
+          field: "grandTotal",
           filter: true,
           width: 150,
           cellRendererFramework: (params) => {
             return (
               <>
                 <div className="actions cursor-pointer">
-                  <span>{params?.data?.orderItems.price}</span>
+                  <span>{params?.data?.grandTotal}</span>
                 </div>
               </>
             );
@@ -862,9 +868,15 @@ class Cashbook extends React.Component {
     this.setState({ InsiderPermissions: InsidePermissions });
     await Cashbook_List(userId)
       .then((res) => {
+        let myarr = res?.Orders?.filter(
+          (ele, i) =>
+            ele?.cashBookType == "CashOrder" || ele?.paymentMode == "Cash"
+        );
         debugger;
-        this.setState({ rowData: res?.CashBook });
-        console.log(res?.CashBook);
+        console.log(myarr);
+        if (myarr?.length) {
+          this.setState({ rowData: myarr });
+        }
         this.setState({ AllcolumnDefs: this.state.columnDefs });
         this.setState({ SelectedCols: this.state.columnDefs });
 
@@ -1612,7 +1624,7 @@ class Cashbook extends React.Component {
                   this.state.InsiderPermissions?.Edit && (
                     <Col>
                       <Label>Change Payment Status :</Label>
-                      <CustomInput
+                      {/* <CustomInput
                         onChange={(e) => {
                           this.setState({
                             Delivery_Status: e.target.value,
@@ -1623,8 +1635,8 @@ class Cashbook extends React.Component {
                         <option>--select--</option>
                         <option value="Completed">Completed</option>
                         <option value="Cancelled">Cancelled</option>
-                      </CustomInput>
-                      {this.state.Delivery_Status == "Completed" ? null : (
+                      </CustomInput> */}
+                      {/* {this.state.Delivery_Status == "Completed" ? null : (
                         <>
                           {this.state.Delivery_Status == "Cancelled" && (
                             <Row>
@@ -1644,8 +1656,8 @@ class Cashbook extends React.Component {
                             </Row>
                           )}
                         </>
-                      )}
-                      {this.state.Delivery_Status == "Cancelled" ||
+                      )} */}
+                      {/* {this.state.Delivery_Status == "Cancelled" ||
                       this.state.Delivery_Status == "Completed" ? (
                         <Badge
                           onClick={this.HandleStatusChange}
@@ -1653,7 +1665,7 @@ class Cashbook extends React.Component {
                           color="primary">
                           Submit
                         </Badge>
-                      ) : null}
+                      ) : null} */}
                     </Col>
                   )}
               </Row>
@@ -1687,14 +1699,14 @@ class Cashbook extends React.Component {
                           <>
                             <tr>
                               <th scope="row">{i + 1}</th>
-                              <td>{ele?.productId?.Product_Title}</td>
-                              <td>{ele?.productId?.Product_MRP}</td>
-                              <td>{ele?.productId?.Size}</td>
+                              <td>{ele?.product?.Product_Title}</td>
+                              <td>{ele?.product?.Product_MRP}</td>
+                              <td>{ele?.product?.Size}</td>
                               <td>{ele?.unitQty}</td>
                               <td>{ele?.qty}</td>
                               <td>
-                                {ele?.productId?.Product_MRP *
-                                  ele?.productId?.Size *
+                                {ele?.product?.Product_MRP *
+                                  ele?.product?.Size *
                                   ele?.qty}
                               </td>
                             </tr>

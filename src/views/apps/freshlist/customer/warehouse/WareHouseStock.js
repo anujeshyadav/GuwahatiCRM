@@ -109,19 +109,7 @@ class WareHouseStock extends React.Component {
             );
           },
         },
-        // {
-        //   headerName: "Transfer Qty",
-        //   field: "transferQty",
-        //   filter: true,
-        //   width: 200,
-        //   cellRendererFramework: (params) => {
-        //     return (
-        //       <div>
-        //         <span>{params.data?.transferQty} </span>
-        //       </div>
-        //     );
-        //   },
-        // },
+
         {
           headerName: "UnitType",
           field: "unitType",

@@ -8,6 +8,9 @@ import {
   SAVE_GoodDispatch,
   Stock_trx_FtoW,
   DeliveryBoy_AssignedList,
+  Get_Damaged_stock,
+  Save_Damaged_stock,
+  Delete_Damaged_stock,
   view_Sales_order_List,
   Goods_Delivery_OTP,
   Goods_Delivery_OTP_Auth,
@@ -29,6 +32,7 @@ import {
   Purchase_Edit_Order,
   Purchase_Status_Order,
   Place_Order_List,
+  Update_Damaged_stock,
   Save_Place_Order,
   SavePurchase_Order,
   Sales_OrderTo_DispatchList,
@@ -181,6 +185,7 @@ import {
   COMMENT_PRODUCT_WIKI,
   DELETE_PRODUCT_WIKI,
   productwiki_View,
+  Target_Achievement,
   ticketTool_View,
   CreaterOrder_View,
   AddOrderComment,
@@ -1424,6 +1429,12 @@ export const Goods_DeliveryOTP = async (id) => {
     .then((res) => res.data);
   return response;
 };
+export const TargetAchievement = async (id) => {
+  let response = await axiosConfig
+    .get(`${Target_Achievement}` + id)
+    .then((res) => res.data);
+  return response;
+};
 export const Goods_DeliveryOTP_Auth = async (id, data) => {
   let response = await axiosConfig
     .post(`${Goods_Delivery_OTP_Auth}` + id, data)
@@ -1433,6 +1444,33 @@ export const Goods_DeliveryOTP_Auth = async (id, data) => {
 export const Stockupdate = async (id, data) => {
   let response = await axiosConfig
     .put(`${Stock_update}` + id, data)
-    .then(res => res.data);
+    .then((res) => res.data);
+  return response;
+};
+
+// damaged stock
+
+export const Get_Damagedstock = async (id) => {
+  let response = await axiosConfig
+    .get(`${Get_Damaged_stock}` + id)
+    .then((res) => res.data);
+  return response;
+};
+export const Save_Damagedstock = async (data) => {
+  let response = await axiosConfig
+    .post(`${Save_Damaged_stock}`, data)
+    .then((res) => res.data);
+  return response;
+};
+export const Delete_Damagedstock = async (warehouseid, id) => {
+  let response = await axiosConfig
+    .delete(`${Delete_Damaged_stock + warehouseid}/${id}`)
+    .then((res) => res.data);
+  return response;
+};
+export const Update_Damagedstock = async (id, data) => {
+  let response = await axiosConfig
+    .put(`${Update_Damaged_stock}` + id, data)
+    .then((res) => res.data);
   return response;
 };

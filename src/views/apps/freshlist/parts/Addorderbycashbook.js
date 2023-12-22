@@ -200,15 +200,16 @@ const Addorderbycashbook = args => {
       partyId: PartyId,
     };
     console.log(payload);
+
     if (error) {
       swal("Error occured while Entering Details");
     } else {
       Ordercashbook(payload)
-        .then(res => {
+        .then((res) => {
           swal("Order Created Successfully");
           //  history.push("/app/softnumen/order/orderList")
         })
-        .catch(err => {
+        .catch((err) => {
           console.log(err);
         });
     }

@@ -309,19 +309,19 @@ const CreateTarget = args => {
   useEffect(() => {
     let userData = JSON.parse(localStorage.getItem("userData"));
     Warehouse_Temporarlylist(userData?._id)
-      .then(res => {
+      .then((res) => {
         console.log(res?.adminDetails);
-        let myWarehouse = res?.adminDetails?.filter((ele, i) =>
-          ele?.rolename?.roleName
-            ?.split(" ")
-            .join("")
-            .toLowerCase()
-            .includes("warehouse")
-        );
+        // let myWarehouse = res?.adminDetails?.filter((ele, i) =>
+        //   ele?.rolename?.roleName
+        //     ?.split(" ")
+        //     .join("")
+        //     .toLowerCase()
+        //     .includes("warehouse")
+        // );
 
-        setWarehouseList(myWarehouse);
+        setWarehouseList(res?.adminDetails);
       })
-      .catch(err => {
+      .catch((err) => {
         console.log(err);
       });
 
@@ -334,19 +334,19 @@ const CreateTarget = args => {
     //     console.log(err);
     //   });
     UnitListView(userData?._id)
-      .then(res => {
+      .then((res) => {
         console.log(res?.Unit);
         setUnitList(res?.Unit);
       })
-      .catch(err => {
+      .catch((err) => {
         console.log(err);
       });
     ProductListView(userData?._id)
-      .then(res => {
+      .then((res) => {
         console.log(res.Product);
         setProductList(res?.Product);
       })
-      .catch(err => {
+      .catch((err) => {
         console.log(err);
       });
   }, []);
@@ -402,7 +402,7 @@ const CreateTarget = args => {
       },
     ]);
   };
-  let removeMoreProduct = i => {
+  let removeMoreProduct = (i) => {
     let newFormValues = [...product];
     newFormValues.splice(i, 1);
     GrandTotal.splice(i, 1);
@@ -417,9 +417,9 @@ const CreateTarget = args => {
   //   setPart(newFormValues);
   // };
 
-  const WareHousetoWareHouse = e => {
+  const WareHousetoWareHouse = (e) => {
     e.preventDefault();
-
+    // body: warehouse, productId, Size, unitType, transferQty, price, totalPrice;
     let userdata = JSON.parse(localStorage.getItem("userData"));
     let Allproduct = product?.map((ele, i) => {
       console.log(ele);
@@ -444,19 +444,19 @@ const CreateTarget = args => {
     };
     console.log(payload);
     WarehousetoWareHouseTrx(payload)
-      .then(res => {
+      .then((res) => {
         //   window.location.reload();
         // history.goBack();
         swal("Stock transerffered is Initiated");
 
         console.log(res);
       })
-      .catch(err => {
+      .catch((err) => {
         console.log(err);
         swal("Something Went Wrong");
       });
   };
-  const submitHandler = e => {
+  const submitHandler = (e) => {
     e.preventDefault();
     let userdata = JSON.parse(localStorage.getItem("userData"));
     // console.log(product);
@@ -491,7 +491,7 @@ const CreateTarget = args => {
       swal("Error occured while Entering Details");
     } else {
       StocktrxFtoW(payload)
-        .then(res => {
+        .then((res) => {
           // if (res.status) {
           //   setFormData({});
           //   window.location.reload();
@@ -499,7 +499,7 @@ const CreateTarget = args => {
           // }
           console.log(res);
         })
-        .catch(err => {
+        .catch((err) => {
           console.log(err);
         });
     }
@@ -511,6 +511,7 @@ const CreateTarget = args => {
   };
   const onSelectone = (selectedList, selectedItem, index) => {
     console.log(selectedList);
+
     setWareHouseone(selectedList);
     // const list = [...product];
     let MySelectedwarehouseProduct = selectedList[0].productItems?.map(

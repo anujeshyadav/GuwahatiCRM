@@ -261,7 +261,7 @@ const horizontalMenuConfig = [
         navLink: "/app/softNumen/order/OrderSearch",
       },
       {
-        id: "Achievement",
+        id: "achievement",
         title: "Achievement",
         type: "item",
         icon: <BsTrophy size={22} />,
@@ -362,7 +362,7 @@ const horizontalMenuConfig = [
         type: "item",
         icon: <FaDollarSign size={22} />,
         permissions: ["admin", "editor"],
-        navLink: "/app/SoftNumen/parts/PartList",
+        navLink: "/app/AJgroup/purchase/PaymentListAll",
       },
       {
         id: "cashbook",
