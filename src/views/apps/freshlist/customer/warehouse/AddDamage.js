@@ -1039,6 +1039,7 @@ import {
   StocktrxFtoW,
   WarehousetoWareHouseTrx,
   Warehouse_Temporarlylist,
+  Save_Damagedstock,
 } from "../../../../../ApiEndPoint/ApiCalling";
 import "../../../../../assets/scss/pages/users.scss";
 import Timepickers from "../../../../forms/form-elements/datepicker/Timepicker";
@@ -1400,37 +1401,28 @@ const CreateTarget = (args) => {
   //   setPart(newFormValues);
   // };
 
-  const WareHousetoWareHouse = (e) => {
+  const DamagedStockSubmitHandler = async (e) => {
     e.preventDefault();
+    // body: warehouse, productId, Size, unitType, transferQty, price, totalPrice;
 
     let userdata = JSON.parse(localStorage.getItem("userData"));
-    let Allproduct = product?.map((ele, i) => {
-      console.log(ele);
-      return {
-        productId: ele?.productId,
-        unitType: ele?.unitType,
-        price: ele?.price,
-        Size: ele?.Size,
-        transferQty: ele?.transferQty,
-        totalPrice: ele?.totalprice,
-        currentStock: ele?.transferQty * ele?.Size,
-      };
-    });
     let payload = {
-      productItems: Allproduct,
-      warehouseToId: WareHousetwo[0]?._id,
-      warehouseFromId: WareHouseone[0]?._id,
-      stockTransferDate: StockTrxdate,
-      grandTotal: grandTotalAmt,
-      transferStatus: "InProcess",
-      created_by: userdata?._id,
+      warehouse: userdata?._id,
+      productId: product[0]?.productId,
+      Size: product[0]?.Size,
+      unitType: product[0]?.unitType,
+      transferQty: product[0]?.transferQty,
+      price: product[0]?.price,
+      totalPrice:
+        product[0]?.transferQty * product[0]?.Size * product[0]?.price,
+      currentStock: product[0]?.transferQty * product[0]?.Size,
     };
-    console.log(payload);
-    WarehousetoWareHouseTrx(payload)
+
+    await Save_Damagedstock(payload)
       .then((res) => {
         //   window.location.reload();
         // history.goBack();
-        swal("Stock transerffered is Initiated");
+        swal("Damadged Stock Created");
 
         console.log(res);
       })
@@ -1557,7 +1549,7 @@ const CreateTarget = (args) => {
           </Col>
         </Row>
         <CardBody>
-          <Form className="mx-1" onSubmit={WareHousetoWareHouse}>
+          <Form className="mx-1" onSubmit={DamagedStockSubmitHandler}>
             <Row>
               <Col className="mb-1" lg="3" md="3" sm="12">
                 <div className="">
@@ -1673,7 +1665,7 @@ const CreateTarget = (args) => {
                   </Col>
                   <Col className="mb-1" lg="2" md="2" sm="12">
                     <div className="">
-                      <Label>Quantity To be Transfer</Label>
+                      <Label>Damadged Quantity</Label>
                       <Input
                         type="number"
                         min={0}

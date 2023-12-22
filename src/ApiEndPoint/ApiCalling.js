@@ -553,9 +553,9 @@ export const PlaceOrder_Edit = async (payload, id) => {
   return response;
 };
 
-export const DebitnoteOrderList = async () => {
+export const DebitnoteOrderList = async (id) => {
   let response = await axiosConfig
-    .get(`${Debit_note_Order_List}`)
+    .get(`${Debit_note_Order_List}` + id)
     .then((res) => res.data);
   return response;
 };
@@ -1477,6 +1477,31 @@ export const Delete_Damagedstock = async (warehouseid, id) => {
 export const Update_Damagedstock = async (id, data) => {
   let response = await axiosConfig
     .put(`${Update_Damaged_stock}` + id, data)
+    .then((res) => res.data);
+  return response;
+};
+export const _Post = async (URL, id, data) => {
+  let response = await axiosConfig
+    .post(`${URL}` + id, data)
+    .then((res) => res.data);
+  return response;
+};
+
+export const _Get = async (URL, id, data) => {
+  let response = await axiosConfig
+    .get(`${URL}` + id, data)
+    .then((res) => res.data);
+  return response;
+};
+export const _Put = async (URL, id, data) => {
+  let response = await axiosConfig
+    .put(`${URL}` + id, data)
+    .then((res) => res.data);
+  return response;
+};
+export const _Delete = async (URL, id, data) => {
+  let response = await axiosConfig
+    .delete(`${URL}` + id, data)
     .then((res) => res.data);
   return response;
 };
