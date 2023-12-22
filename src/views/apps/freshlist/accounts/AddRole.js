@@ -37,6 +37,7 @@ export const Roles = [
       // },
     ],
   },
+ 
   {
     title: "Sales",
     TabName: [
@@ -408,6 +409,34 @@ export const Roles = [
         title: "Dispatch Detail",
         permission: ["View", "Create", "Edit", "Delete"],
       },
+    ],
+  },
+  {
+    title: "Production",
+    TabName: [
+      {
+        title: "Item",
+        permission: ["View", "Create", "Edit", "Delete"],
+      },
+      {
+        title: "Production Process",
+        permission: ["View", "Create", "Edit", "Delete"],
+      },
+      {
+        title: "Wastage Material",
+        permission: ["View", "Create", "Edit", "Delete"],
+      },
+      {
+        title: "Wastage Stock Return",
+        permission: ["View", "Create", "Edit", "Delete"],
+      },
+      {
+        title: "Price Calculater",
+        permission: ["View", "Create", "Edit", "Delete"],
+      },
+      
+      
+     
     ],
   },
 

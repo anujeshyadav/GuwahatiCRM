@@ -570,8 +570,12 @@ const CreateQuote = lazy(() =>
 const WareHouseListSoft = lazy(() =>
   import("./views/apps/freshlist/customer/warehouse/WareHouseList")
 );
+
 const CreateWareHouse = lazy(() =>
   import("./views/apps/freshlist/customer/warehouse/CreateWareHouse")
+);
+const Inwordwarehousecreate = lazy(() =>
+  import("./views/apps/freshlist/customer/warehouse/Inwordwarehousecreate")
 );
 const RawMaterialInward = lazy(() =>
   import("./views/apps/freshlist/customer/warehouse/RawMaterialInward")
@@ -737,6 +741,23 @@ const UpdateExistingRole = lazy(() =>
 const CreateAccount = lazy(() =>
   import("./views/apps/freshlist/accounts/CreateAccount")
 );
+const Createitemforproduction = lazy(()=>
+import("./views/apps/freshlist/Production/Createitemforproduction")
+)
+const pricecalculaterproduction =lazy(()=>
+import("./views/apps/freshlist/Production/pricecalculaterproduction")
+
+)
+const productionprocesspage =lazy(()=>
+import("./views/apps/freshlist/Production/productionprocesspage")
+)
+const wastagematerialproduction =lazy(()=>
+import("./views/apps/freshlist/Production/wastagematerialproduction")
+)
+const wastagestockreturnproduction =lazy(()=>
+import("./views/apps/freshlist/Production/wastagestockreturnproduction")
+)
+
 const CreateStockTrx = lazy(() =>
   import("./views/apps/freshlist/accounts/CreateStockTrx")
 );
@@ -932,12 +953,16 @@ const ServiceMaster = lazy(() =>
 const AccounSearch = lazy(() =>
   import("./views/apps/freshlist/house/AccounSearch")
 );
+
 const StockTransferList = lazy(() =>
   import("./views/apps/freshlist/house/StockTransferList")
 );
 const PromotionalActivityList = lazy(() =>
   import("./views/apps/freshlist/house/PromotionalActivityList")
 );
+const Productionitem = lazy (()=>
+import("./views/apps/freshlist/Production/Itemproduct")
+)
 const TargetCreationList = lazy(() =>
   import("./views/apps/freshlist/house/TargetCreation")
 );
@@ -2069,10 +2094,17 @@ class AppRouter extends React.Component {
             path="/app/softNumen/system/WareHouseListSoft"
             component={WareHouseListSoft}
           />
+        
+        
+
           <AppRoute
             path="/app/softNumen/warehouse/CreateWareHouse"
             component={CreateWareHouse}
           />
+          <AppRoute
+          path="/app/softNumen/warehouse/Inwordwarehousecreate"
+          component={Inwordwarehousecreate}
+        />
           <AppRoute
             path="/app/softNumen/warehouse/RawMaterialInward"
             component={RawMaterialInward}
@@ -2459,6 +2491,7 @@ class AppRouter extends React.Component {
             path="/app/SoftNumen/accounSearch"
             component={AccounSearch}
           />
+         
           <AppRoute
             path="/app/AjGroup/StockTransferList"
             component={StockTransferList}
@@ -2467,6 +2500,31 @@ class AppRouter extends React.Component {
             path="/app/AjGroup/PromotionalActivityList"
             component={PromotionalActivityList}
           />
+          <AppRoute
+          path="/views/apps/freshlist/Production/Itemproduct"
+          component={Productionitem}
+        />
+        <AppRoute
+        path="/views/apps/freshlist/Production/Createitemforproduction"
+        component={Createitemforproduction}
+      />
+      <AppRoute
+        path="/views/apps/freshlist/Production/pricecalculaterproduction"
+        component={pricecalculaterproduction}
+      />
+      <AppRoute
+        path="/views/apps/freshlist/Production/productionprocesspage"
+        component={productionprocesspage}
+      />
+      <AppRoute
+        path="/views/apps/freshlist/Production/wastagematerialproduction"
+        component={wastagematerialproduction}
+      />
+      <AppRoute
+      path="/views/apps/freshlist/Production/wastagestockreturnproduction"
+      component={wastagestockreturnproduction}
+    />
+
           <AppRoute
             path="/app/SoftNumen/TargetCreationList"
             component={TargetCreationList}

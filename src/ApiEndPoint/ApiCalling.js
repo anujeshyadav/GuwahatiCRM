@@ -188,7 +188,7 @@ import {
   Order_ViewList,
   orders_ID,
   Create_order_by_cashbook,
-  CashbookList,
+  CashbookList,Create_Ware_House
 } from "./Api";
 import axiosConfig from "../axiosConfig";
 import dotenv from "dotenv";
@@ -253,6 +253,12 @@ export const CreateWarehousesave = async (data) => {
 export const CreateWarehouseList = async (id) => {
   let response = await axiosConfig
     .get(`${Create_Warehouse_List}` + id)
+    .then((res) => res.data);
+  return response;
+};
+export const CreateWareHousegetXml = async () => {
+  let response = await axiosConfig
+    .get(`${Create_Ware_House}`)
     .then((res) => res.data);
   return response;
 };

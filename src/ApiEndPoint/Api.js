@@ -28,7 +28,8 @@ export const Create_Party_List = "/party/view-party";
 export const Create_order_by_cashbook = "/cashbook/cashbook-order";
 //cashbookgetapi
 export const CashbookList = '/cashbook/view-order-list/'
-
+//CreateWareHouse
+export const Create_Ware_House = '/raw-material/get-xml'
 export const Save_Promotion = "/promotion/save-promotion";
 export const View_Promotion_List = "/promotion/view-promotion/";
 export const Create_transporter_xmlView = "/transporter/get-xml";
