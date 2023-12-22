@@ -75,7 +75,7 @@ const OrderView = ({ ViewOneData }) => {
         <Card>
           <Form className="p-3">
             <Row className="mb-2">
-              <Col className="ml-1" lg="4" md="4" sm="12">
+              <Col className="" lg="4" md="4" sm="12">
                 <FormGroup>
                   <Label>FullName</Label>
                   <Input

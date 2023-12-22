@@ -1,5 +1,5 @@
 import React, { useRef } from "react";
-import { FaPencilAlt } from "react-icons/fa";
+import { Route } from "react-router-dom";
 import {
   Card,
   CardBody,
@@ -14,26 +14,21 @@ import {
   Button,
   ModalHeader,
   ModalBody,
-  Table,
-  Label,
-  CustomInput,
-  Badge,
 } from "reactstrap";
-import OtpInput from "react-otp-input";
-import { ImDownload } from "react-icons/im";
-import { ContextLayout } from "../../../../utility/context/Layout";
+
+import { ContextLayout } from "../../../../../utility/context/Layout";
 import { AgGridReact } from "ag-grid-react";
 import "ag-grid-community/dist/styles/ag-grid.css";
-import PendingView from "../order/Pending";
+import PendingView from "../../order/Pending";
 import jsPDF from "jspdf";
 import "jspdf-autotable";
-import Logo from "../../../../assets/img/profile/pages/logomain.png";
+import Logo from "../../../../../assets/img/profile/pages/logomain.png";
 import Papa from "papaparse";
-import { Eye, Trash2, ChevronDown, Edit } from "react-feather";
+import { Eye, ChevronDown, Edit } from "react-feather";
 import { IoMdRemoveCircleOutline } from "react-icons/io";
-import "../../../../assets/scss/plugins/tables/_agGridStyleOverride.scss";
-import "../../../../assets/scss/pages/users.scss";
-
+import "../../../../../assets/scss/plugins/tables/_agGridStyleOverride.scss";
+import "../../../../../assets/scss/pages/users.scss";
+import { ImDownload } from "react-icons/im";
 import {
   FaArrowAltCircleLeft,
   FaArrowAltCircleRight,
@@ -41,24 +36,20 @@ import {
 } from "react-icons/fa";
 import swal from "sweetalert";
 import {
+  PurchaseOrderList,
   Delete_targetINlist,
-  DeliveryBoyAssignedList,
-  Goods_DeliveryOTP,
-  Goods_DeliveryOTP_Auth,
-} from "../../../../ApiEndPoint/ApiCalling";
+} from "../../../../../ApiEndPoint/ApiCalling";
 import {
   BsCloudDownloadFill,
   BsFillArrowDownSquareFill,
   BsFillArrowUpSquareFill,
 } from "react-icons/bs";
 import * as XLSX from "xlsx";
-import UserContext from "../../../../context/Context";
-import { CheckPermission } from "../house/CheckPermission";
-import ClosingStock from "../customer/ProductWIKI/ClosingStock";
+import UserContext from "../../../../../context/Context";
 
 const SelectedColums = [];
 
-class PendingOrder extends React.Component {
+class PaymentList extends React.Component {
   static contextType = UserContext;
   constructor(props) {
     super(props);
@@ -66,23 +57,16 @@ class PendingOrder extends React.Component {
     this.gridApi = null;
     this.state = {
       isOpen: false,
-      OtpScreen: false,
       Arrindex: "",
-      emailotp: "",
-      CancelReason: "",
-      Delivery_Status: "",
       rowData: [],
       modal: false,
       modalone: false,
-      InsiderPermissions: {},
-      ViewOneData: {},
       ViewData: {},
       setMySelectedarr: [],
       SelectedCols: [],
       paginationPageSize: 5,
       currenPageSize: "",
       getPageSize: "",
-      // columnDefs: [],
       AllcolumnDefs: [],
       SelectedcolumnDefs: [],
       defaultColDef: {
@@ -97,7 +81,6 @@ class PendingOrder extends React.Component {
           headerName: "UID",
           valueGetter: "node.rowIndex + 1",
           field: "node.rowIndex + 1",
-          // checkboxSelection: true,
           width: 80,
           filter: true,
         },
@@ -108,51 +91,39 @@ class PendingOrder extends React.Component {
           cellRendererFramework: (params) => {
             return (
               <div className="actions cursor-pointer">
-                {this.state.InsiderPermissions &&
-                  this.state.InsiderPermissions?.View && (
-                    <span
-                      style={{
-                        border: "1px solid white",
-                        padding: "10px",
-                        borderRadius: "30px",
-                        backgroundColor: "#39cccc",
-                        cursor: "pointer",
-                      }}>
-                      <Eye
-                        className=""
-                        size="20px"
-                        color="white"
-                        onClick={() => {
-                          console.log(params?.data);
-
-                          this.setState({ ViewOneData: params?.data });
-                          this.toggleModal();
-                        }}
-                      />
-                    </span>
-                  )}
-                {/* {this.state.InsiderPermissions &&
-                  this.state.InsiderPermissions?.Edit && (
-                    <span
-                      style={{
-                        border: "1px solid white",
-                        padding: "10px",
-                        borderRadius: "30px",
-                        backgroundColor: "rgb(212, 111, 16)",
-                        marginLeft: "3px",
-                         cursor:"pointer"
-                      }}
-                    >
-                      <FaPencilAlt
-                        className=""
-                        size="20px"
-                        color="white"
-                        onClick={() => {
-                          this.handleChangeEdit(params?.data, "Editable");
-                        }}
-                      />
-                    </span>
-                  )} */}
+                {/* {this.state.Viewpermisson && ( */}
+                <Eye
+                  className="mr-50"
+                  size="25px"
+                  color="green"
+                  onClick={() => {
+                    this.handleChangeView(params.data, "readonly");
+                  }}
+                />
+                {/* )} */}
+                {/* {this.state.Editpermisson && ( */}
+                {/* <Edit
+                  className="mr-50"
+                  size="25px"
+                  color="blue"
+                  onClick={() =>
+                    this.props.history.push({
+                      pathname: `/app/AJGroup/order/editPending/${params.data?._id}`,
+                      state: params.data,
+                    })
+                  }
+                /> */}
+                {/* )} */}
+                {/* {this.state.Deletepermisson && ( */}
+                {/* <Trash2
+                  className="mr-50"
+                  size="25px"
+                  color="Red"
+                  onClick={() => {
+                    this.runthisfunction(params?.data?._id);
+                  }}
+                /> */}
+                {/* )} */}
               </div>
             );
           },
@@ -163,138 +134,163 @@ class PendingOrder extends React.Component {
           filter: true,
           width: 150,
           cellRendererFramework: (params) => {
-            return params.data?.status === "Completed" ? (
+            return (
               <div className="badge badge-pill badge-success">
                 {params.data.status}
               </div>
-            ) : params.data?.status === "InProcess" ? (
-              <div className="badge badge-pill badge-warning">
-                {params.data.status}
-              </div>
-            ) : params.data?.status === "Cancelled" ? (
-              <div className="badge badge-pill badge-danger">
-                {params.data.status}
-              </div>
-            ) : null;
-          },
-        },
-
-        // {
-        //   headerName: "GST Rate",
-        //   field: "orderItems",
-        //   filter: true,
-        //   width: 180,
-        //   valueGetter: (params) => {
-        //     if (params.data.orderItems && params.data.orderItems.length > 0) {
-        //       return params.data.orderItems[0].product["GST Rate"]; // Return the price
-        //     }
-        //     return null; // Or handle cases where there's no price
-        //   },
-        // },
-        // {
-        //   headerName: "HSN Code",
-        //   field: "orderItems",
-        //   filter: true,
-        //   width: 180,
-        //   valueGetter: (params) => {
-        //     if (params.data.orderItems && params.data.orderItems.length > 0) {
-        //       return params.data.orderItems[0].product.HSN_Code; // Return the price
-        //     }
-        //     return null;
-        //   },
-        // },
-
-        {
-          headerName: "firstName",
-          field: "userId.firstName",
-          filter: true,
-          width: 200,
-          cellRendererFramework: (params) => {
-            return (
-              <div>
-                <span>{params.data?.userId?.firstName}</span>
-              </div>
             );
           },
         },
         {
-          headerName: "lastName",
-          field: "userId.lastName",
+          headerName: "Product_Title",
+          field: "orderItems",
           filter: true,
-          width: 200,
-          cellRendererFramework: (params) => {
-            return (
-              <div>
-                <span>{params.data?.userId?.lastName}</span>
-              </div>
-            );
+          width: 180,
+          valueGetter: (params) => {
+            if (params.data.orderItems && params.data.orderItems.length > 0) {
+              return params.data.orderItems[0].product.Product_Title;
+            }
+            return null;
           },
         },
         {
-          headerName: "CurrentAddress",
-          field: "userId.currentAddress",
+          headerName: "Category",
+          field: "orderItems",
+          filter: true,
+          width: 180,
+          valueGetter: (params) => {
+            if (params.data.orderItems && params.data.orderItems.length > 0) {
+              return params.data.orderItems[0].product.category;
+            }
+            return null;
+          },
+        },
+        {
+          headerName: "SubCategory",
+          field: "orderItems",
+          filter: true,
+          width: 180,
+          valueGetter: (params) => {
+            if (params.data.orderItems && params.data.orderItems.length > 0) {
+              return params.data.orderItems[0].product.SubCategory;
+            }
+            return null;
+          },
+        },
+        {
+          headerName: "Price",
+          field: "orderItems",
+          filter: true,
+          width: 150,
+          valueGetter: (params) => {
+            if (params.data.orderItems && params.data.orderItems.length > 0) {
+              return params.data.orderItems[0].price;
+            }
+            return null;
+          },
+        },
+        {
+          headerName: "Size",
+          field: "orderItems",
+          filter: true,
+          width: 150,
+          valueGetter: (params) => {
+            if (params.data.orderItems && params.data.orderItems.length > 0) {
+              return params.data.orderItems[0].qty; // Return the price
+            }
+            return null;
+          },
+        },
+        {
+          headerName: "GST Rate",
+          field: "orderItems",
+          filter: true,
+          width: 180,
+          valueGetter: (params) => {
+            if (params.data.orderItems && params.data.orderItems.length > 0) {
+              return params.data.orderItems[0].product["GST Rate"]; // Return the price
+            }
+            return null; // Or handle cases where there's no price
+          },
+        },
+        {
+          headerName: "HSN Code",
+          field: "orderItems",
+          filter: true,
+          width: 180,
+          valueGetter: (params) => {
+            if (params.data.orderItems && params.data.orderItems.length > 0) {
+              return params.data.orderItems[0].product.HSN_Code; // Return the price
+            }
+            return null;
+          },
+        },
+
+        {
+          headerName: "Country",
+          field: "country",
           filter: true,
           width: 200,
           cellRendererFramework: (params) => {
             return (
               <div>
-                <span>{params.data?.userId?.currentAddress}</span>
+                <span>{params.data?.country}</span>
               </div>
             );
           },
         },
         {
           headerName: "State",
-          field: "userId.state",
+          field: "state",
           filter: true,
           width: 200,
           cellRendererFramework: (params) => {
             return (
               <div>
-                <span>{params.data?.userId?.State}</span>
+                <span>{params.data?.state}</span>
               </div>
             );
           },
         },
         {
           headerName: "City",
-          field: "userId.city",
+          field: "city",
           filter: true,
-          width: 180,
+          width: 200,
           cellRendererFramework: (params) => {
             return (
               <div>
-                <span>{params.data?.userId?.City}</span>
+                <span>{params.data?.city}</span>
               </div>
             );
           },
         },
         {
-          headerName: "email",
-          field: "email",
+          headerName: "MobileNo",
+          field: "MobileNo",
           filter: true,
-          width: 220,
+          width: 150,
           cellRendererFramework: (params) => {
             return (
               <div>
-                <span>{params.data?.userId?.email}</span>
+                <span>{params.data?.MobileNo}</span>
               </div>
             );
           },
         },
-        // {
-        //   headerName: "Discount",
-        //   field: "discount",
-        //   filter: true,
-        //   width: 200,
-        //   cellRendererFramework: (params) => {
-        //     return (
-        //       <div>
-        //         <span>{params.data?.discount}</span>
-        //       </div>
-        //     );
-        //   },
-        // },
+        {
+          headerName: "Discount",
+          field: "discount",
+          filter: true,
+          width: 200,
+          cellRendererFramework: (params) => {
+            return (
+              <div>
+                <span>{params.data?.discount}</span>
+              </div>
+            );
+          },
+        },
         {
           headerName: "GrandTotal",
           field: "grandTotal",
@@ -315,106 +311,48 @@ class PendingOrder extends React.Component {
     this.setState((prevState) => ({
       modalone: !prevState.modalone,
     }));
-    this.setState({ OtpScreen: false });
-    this.componentDidMount();
   };
   LookupviewStart = () => {
     this.setState((prevState) => ({
       modal: !prevState.modal,
     }));
   };
-  HandleStatusChange = async (e) => {
-    e.preventDefault();
-    console.log(this.state.Delivery_Status);
 
-    await Goods_DeliveryOTP(this.state.ViewOneData?.userId?._id)
-      .then((res) => {
-        debugger;
-        console.log(res);
-        swal("success", "OTP Sent Successfully To Your Registered email id");
-        this.setState({ OtpScreen: true });
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-    // if (this.state.Delivery_Status == "Completed") {
-    //   console.log(this.state.ViewOneData);
-    //   debugger;
-    //   await Goods_DeliveryOTP(this.state.ViewOneData?.userId?._id)
-    //     .then((res) => {
-    //       debugger;
-    //       console.log(res);
-    //       swal("success", "OTP Send Successfully To your Registered Mail");
-    //       this.setState({ OtpScreen: true });
-    //     })
-    //     .catch((err) => {
-    //       console.log(err);
-    //     });
-    // } else {
-    //   if (this.state.CancelReason) {
-    //     // console.log(this.state.CancelReason);
-    //     // let payload = {
-    //     //   userId: this.state.ViewOneData?.userId?._id,
-    //     //   orderId: "",
-    //     //   status: this.state.Delivery_Status,
-    //     //   otp: Number(this.state.emailotp),
-    //     //   reason: this.state.CancelReason,
-    //     // };
-    //     // await Goods_DeliveryOTP_Auth(this.state.ViewOneData?._id, payload)
-    //       // .then((res) => {
-    //       //   console.log(res);
-    //       // })
-    //       // .catch((err) => {
-    //       //   console.log(err);
-    //       // });
-
-    //     }
-    // }
+  handleChangeView = (data, types) => {
+    let type = types;
+    if (type == "readonly") {
+      this.setState({ ViewOneUserView: true });
+      this.setState({ ViewOneData: data });
+    } else {
+      this.setState({ EditOneUserView: true });
+      this.setState({ EditOneData: data });
+    }
   };
-  handleSubmitOTP = async (e) => {
-    e.preventDefault();
-
-    let payload = {
-      userId: this.state.ViewOneData?.userId?._id,
-      orderId: this.state.ViewOneData?.orderId,
-      status: this.state.Delivery_Status,
-      otp: Number(this.state.emailotp),
-      paymentMode: `${this.state.PayMode ? this.state.PayMode : "Cancelled"}`,
-      reason: `${
-        this.state.CancelReason ? this.state.CancelReason : "Delivered"
-      }`,
-    };
-    await Goods_DeliveryOTP_Auth(this.state.ViewOneData?._id, payload)
-      .then((res) => {
-        console.log(res);
-        this.toggleModal();
-        swal("Submittted Successfully");
-      })
-      .catch((err) => {
-        console.log(err);
-        swal("Please Enter Correct OTP");
-      });
-  };
+  // handleChangeEdit = (data, types) => {
+  //   let type = types;
+  //   if (type == "readonly") {
+  //     this.setState({ ViewOneUserView: true });
+  //     this.setState({ ViewOneData: data });
+  //   } else {
+  //     this.setState({ EditOneUserView: true });
+  //     this.setState({ EditOneData: data });
+  //   }
+  // };
 
   async componentDidMount() {
-    const InsidePermissions = CheckPermission("Pending Order");
-    // console.log(InsidePermissions);
-    this.setState({ InsiderPermissions: InsidePermissions });
-    const userId = JSON.parse(localStorage.getItem("userData"))?._id;
-    await DeliveryBoyAssignedList(userId)
+    const UserInformation = this.context?.UserInformatio;
+    let userId = JSON.parse(localStorage.getItem("userData"))._id;
+    await PurchaseOrderList(userId)
       .then((res) => {
-        console.log(res?.OrderList);
-        let showdata = res?.OrderList?.filter(
-          (ele) =>
-            ele?.status?.toLowerCase() !== "completed" &&
-            ele?.status?.toLowerCase() !== "cancelled"
+        console.log(res?.orderHistory);
+        const completedStatus = res?.orderHistory?.filter((ele) =>
+          ele.status == "completed" ? ele.status : null
         );
-        console.log(showdata);
-        this.setState({ rowData: showdata });
+        this.setState({ rowData: completedStatus });
         this.setState({ AllcolumnDefs: this.state.columnDefs });
         this.setState({ SelectedCols: this.state.columnDefs });
 
-        let userHeading = JSON.parse(localStorage.getItem("PendingOrderList"));
+        let userHeading = JSON.parse(localStorage.getItem("TargetList"));
         if (userHeading?.length) {
           this.setState({ columnDefs: userHeading });
           this.gridApi.setColumnDefs(userHeading);
@@ -427,12 +365,21 @@ class PendingOrder extends React.Component {
       .catch((err) => {
         console.log(err);
       });
+    // await CreateAccountList()
+    //   .then((res) => {
+    //     let value = res?.User;
+    //     this.setState({ rowData: value });
+    //   })
+    //   .catch((err) => {
+    //     console.log(err);
+    //   });
   }
   toggleDropdown = () => {
     this.setState((prevState) => ({ isOpen: !prevState.isOpen }));
   };
 
   runthisfunction(id) {
+    debugger;
     swal("Warning", "Sure You Want to Delete it", {
       buttons: {
         cancel: "cancel",
@@ -658,13 +605,13 @@ class PendingOrder extends React.Component {
 
   HandleSetVisibleField = (e) => {
     e.preventDefault();
-
+    debugger;
     this.gridApi.setColumnDefs(this.state.SelectedcolumnDefs);
     this.setState({ columnDefs: this.state.SelectedcolumnDefs });
     this.setState({ SelectedcolumnDefs: this.state.SelectedcolumnDefs });
     this.setState({ rowData: this.state.rowData });
     localStorage.setItem(
-      "PendingOrderList",
+      "TargetList",
       JSON.stringify(this.state.SelectedcolumnDefs)
     );
     this.LookupviewStart();
@@ -700,7 +647,6 @@ class PendingOrder extends React.Component {
       defaultColDef,
       SelectedcolumnDefs,
       isOpen,
-      InsiderPermissions,
       SelectedCols,
       AllcolumnDefs,
     } = this.state;
@@ -708,93 +654,126 @@ class PendingOrder extends React.Component {
       <>
         <Col className="app-user-list">
           {this.state.EditOneUserView && this.state.EditOneUserView ? (
-            <></>
+            <Row className="card">
+              <Col>
+                <div className="d-flex justify-content-end p-1">
+                  <Button
+                    onClick={(e) => {
+                      e.preventDefault();
+                      this.setState({ EditOneUserView: false });
+                    }}
+                    color="danger">
+                    Back
+                  </Button>
+                </div>
+              </Col>
+
+              {/* <EditAccount EditOneData={this.state.EditOneData} /> */}
+            </Row>
           ) : (
             <>
               {this.state.ViewOneUserView && this.state.ViewOneUserView ? (
-                <></>
+                <>
+                  <Row className="card">
+                    <Row className="m-2">
+                      <Col>
+                        <h2>Pending Purchase Order</h2>
+                      </Col>
+                      <Col className="" style={{ display: "contents" }}>
+                        {/* <div className="d-flex justify-content-end p-1"> */}
+                        <Button
+                          onClick={(e) => {
+                            e.preventDefault();
+                            this.setState({ ViewOneUserView: false });
+                          }}
+                          color="danger">
+                          Back
+                        </Button>
+                        {/* </div> */}
+                      </Col>
+                    </Row>
+                    <PendingView ViewOneData={this.state.ViewOneData} />
+                  </Row>
+                </>
               ) : (
                 <>
                   <Col sm="12">
                     <Card>
-                      <Row className="ml-2 mr-2 mt-2">
+                      <Row className="mt-2 ml-2 mr-2">
                         <Col>
                           <h1
                             className="float-left"
                             style={{ fontWeight: "600" }}>
-                            Sales Pending List
+                            Purchase Complte List
                           </h1>
                         </Col>
-
-                        {InsiderPermissions && InsiderPermissions?.View && (
-                          <Col>
-                            <span className="mx-1">
-                              <FaFilter
+                        <Col>
+                          <span className="mx-1">
+                            <FaFilter
+                              style={{ cursor: "pointer" }}
+                              title="filter coloumn"
+                              size="35px"
+                              onClick={this.LookupviewStart}
+                              color="#39cccc"
+                              className="float-right"
+                            />
+                          </span>
+                          <span className="mx-1">
+                            <div className="dropdown-container float-right">
+                              <ImDownload
                                 style={{ cursor: "pointer" }}
-                                title="filter coloumn"
+                                title="download file"
                                 size="35px"
-                                onClick={this.LookupviewStart}
+                                className="dropdown-button "
                                 color="#39cccc"
-                                className="float-right"
+                                onClick={this.toggleDropdown}
                               />
-                            </span>
-                            <span className="mx-1">
-                              <div className="dropdown-container float-right">
-                                <ImDownload
-                                  style={{ cursor: "pointer" }}
-                                  title="download file"
-                                  size="35px"
-                                  className="dropdown-button "
-                                  color="#39cccc"
-                                  onClick={this.toggleDropdown}
-                                />
-                                {isOpen && (
-                                  <div
-                                    style={{
-                                      position: "absolute",
-                                      zIndex: "1",
-                                      border: "1px solid #39cccc",
-                                      backgroundColor: "white",
-                                    }}
-                                    className="dropdown-content dropdownmy">
-                                    <h5
-                                      onClick={() => this.exportToPDF()}
-                                      style={{ cursor: "pointer" }}
-                                      className=" mx-1 myactive mt-1">
-                                      .PDF
-                                    </h5>
-                                    <h5
-                                      onClick={() =>
-                                        this.gridApi.exportDataAsCsv()
-                                      }
-                                      style={{ cursor: "pointer" }}
-                                      className=" mx-1 myactive">
-                                      .CSV
-                                    </h5>
-                                    <h5
-                                      onClick={this.convertCSVtoExcel}
-                                      style={{ cursor: "pointer" }}
-                                      className=" mx-1 myactive">
-                                      .XLS
-                                    </h5>
-                                    <h5
-                                      onClick={this.exportToExcel}
-                                      style={{ cursor: "pointer" }}
-                                      className=" mx-1 myactive">
-                                      .XLSX
-                                    </h5>
-                                    <h5
-                                      onClick={() => this.convertCsvToXml()}
-                                      style={{ cursor: "pointer" }}
-                                      className=" mx-1 myactive">
-                                      .XML
-                                    </h5>
-                                  </div>
-                                )}
-                              </div>
-                            </span>
-                          </Col>
-                        )}
+                              {isOpen && (
+                                <div
+                                  style={{
+                                    position: "absolute",
+                                    zIndex: "1",
+                                    border: "1px solid #39cccc",
+                                    backgroundColor: "white",
+                                  }}
+                                  className="dropdown-content dropdownmy">
+                                  <h5
+                                    onClick={() => this.exportToPDF()}
+                                    style={{ cursor: "pointer" }}
+                                    className=" mx-1 myactive mt-1">
+                                    .PDF
+                                  </h5>
+                                  <h5
+                                    onClick={() =>
+                                      this.gridApi.exportDataAsCsv()
+                                    }
+                                    style={{ cursor: "pointer" }}
+                                    className=" mx-1 myactive">
+                                    .CSV
+                                  </h5>
+                                  <h5
+                                    onClick={this.convertCSVtoExcel}
+                                    style={{ cursor: "pointer" }}
+                                    className=" mx-1 myactive">
+                                    .XLS
+                                  </h5>
+                                  <h5
+                                    onClick={this.exportToExcel}
+                                    style={{ cursor: "pointer" }}
+                                    className=" mx-1 myactive">
+                                    .XLSX
+                                  </h5>
+                                  <h5
+                                    onClick={() => this.convertCsvToXml()}
+                                    style={{ cursor: "pointer" }}
+                                    className=" mx-1 myactive">
+                                    .XML
+                                  </h5>
+                                </div>
+                              )}
+                            </div>
+                          </span>
+                        </Col>
                       </Row>
                       <CardBody style={{ marginTop: "-1.5rem" }}>
                         {this.state.rowData === null ? null : (
@@ -1078,303 +1057,22 @@ class PendingOrder extends React.Component {
             </Row>
           </ModalBody>
         </Modal>
-
         <Modal
           isOpen={this.state.modalone}
           toggle={this.toggleModal}
-          className={`${
-            this.state.OtpScreen
-              ? "modal-dialog modal-sm"
-              : "modal-dialog modal-xl"
-          }`}
+          className="modal-dialog modal-xl"
           size="lg"
           backdrop={true}
           fullscreen={true}>
           <ModalHeader toggle={this.toggleModal}>View Details</ModalHeader>
-          <ModalBody>
-            <div className="container">
-              {this.state.OtpScreen && this.state.OtpScreen ? (
-                <>
-                  <div className="d-flex justify-content-center">
-                    <h5>
-                      <strong>
-                        Enter Otp To Mark {this.state.Delivery_Status} Delivery
-                      </strong>
-                    </h5>
-                  </div>
-                  <span
-                    id="alerts"
-                    className="alerts"
-                    style={{ color: "red" }}></span>
-                  <Row>
-                    <Col lg="12" md="12" sm="12">
-                      <div className="d-flex justify-content-center">
-                        <OtpInput
-                          containerStyle="true inputdata"
-                          inputStyle="true inputdataone"
-                          className="otpinputtype"
-                          value={this.state.emailotp}
-                          name="emailotp"
-                          onChange={(otp) => this.setState({ emailotp: otp })}
-                          numInputs={6}
-                          renderSeparator={<span>-</span>}
-                          renderInput={(props) => (
-                            <input className="inputs" {...props} />
-                          )}
-                        />
-                      </div>
-                    </Col>
-                  </Row>
-                  <Row>
-                    {/* <Col lg="6" md="6" sm="6">
-                      <div className="d-flex justify-content-center">
-                        <Button
-                          style={{ cursor: "pointer" }}
-                          onClick={(e) => {
-                            e.preventDefault();
-                            this.setState({ OtpScreen: false });
-                          }}
-                          color="primary">
-                          Back
-                        </Button>
-                      </div>
-                    </Col> */}
-                    {this.state.emailotp &&
-                      this.state.emailotp?.length == 6 && (
-                        <>
-                          {this.state.Delivery_Status &&
-                            this.state.Delivery_Status == "Completed" && (
-                              <Row>
-                                <Col
-                                  lg="12"
-                                  md="12"
-                                  sm="12"
-                                  className="mb-1 mt-1">
-                                  <div className="d-flex justify-content-center">
-                                    <Label className="mb-0">
-                                      Payment Mode *
-                                    </Label>
-                                    <div
-                                      onChange={(e) =>
-                                        this.setState({
-                                          PayMode: e.target.value,
-                                        })
-                                      }
-                                      className="form-label-group mt-1">
-                                      <input
-                                        required
-                                        style={{ marginRight: "3px" }}
-                                        type="radio"
-                                        name="status"
-                                        value="Online"
-                                      />
-                                      <span style={{ marginRight: "20px" }}>
-                                        Online
-                                      </span>
-
-                                      <input
-                                        required
-                                        style={{ marginRight: "3px" }}
-                                        type="radio"
-                                        name="status"
-                                        value="Cash"
-                                      />
-                                      <span style={{ marginRight: "3px" }}>
-                                        Cash
-                                      </span>
-                                    </div>
-                                  </div>
-                                </Col>
-                              </Row>
-                            )}
-                          <Col lg="12" md="12" sm="12">
-                            <div className="d-flex justify-content-center">
-                              <Button
-                                onClick={this.handleSubmitOTP}
-                                color="primary">
-                                Submit
-                              </Button>
-                            </div>
-                          </Col>
-                        </>
-                      )}
-                  </Row>
-                </>
-              ) : (
-                <>
-                  <Row>
-                    <Col>
-                      <Label>Customer Name :</Label>
-                      <div className="">
-                        Name-{" "}
-                        <strong>
-                          {this.state.ViewOneData &&
-                            `${this.state.ViewOneData?.userId?.firstName} ${this.state.ViewOneData?.userId?.lastName}`}
-                        </strong>
-                      </div>
-                      <div className="">
-                        Mobile-{" "}
-                        {this.state.ViewOneData &&
-                          ` ${this.state.ViewOneData?.userId?.mobileNumber}`}
-                      </div>
-                      <div className="">
-                        Email -{" "}
-                        {this.state.ViewOneData &&
-                          `  ${this.state.ViewOneData?.userId?.email} `}
-                      </div>
-                    </Col>
-                    <Col>
-                      <Label>Date Created :</Label>
-                      <h5>
-                        {this.state.ViewOneData &&
-                          this.state.ViewOneData?.createdAt?.split("T")[0]}
-                      </h5>
-                    </Col>
-                    <Col>
-                      <Label>Address :</Label>
-                      <h5>
-                        <strong>
-                          {this.state.ViewOneData &&
-                            this.state.ViewOneData?.userId?.currentAddress}{" "}
-                        </strong>
-                      </h5>
-                    </Col>
-                    <Col>
-                      <Label>Grand Total :</Label>
-                      <h5>
-                        <strong>
-                          {this.state.ViewOneData &&
-                            this.state.ViewOneData?.grandTotal}{" "}
-                        </strong>
-                        Rs/-
-                      </h5>
-                    </Col>
-                    {InsiderPermissions && InsiderPermissions?.Edit && (
-                      <>
-                        {}
-                        {this.state.ViewOneData &&
-                          this.state.ViewOneData?.status == "InProcess" && (
-                            <Col>
-                              <Label>Change Delivery Status :</Label>
-                              <CustomInput
-                                onChange={(e) => {
-                                  this.setState({
-                                    Delivery_Status: e.target.value,
-                                  });
-                                }}
-                                className="form-control"
-                                type="select">
-                                <option>--select--</option>
-                                <option value="Completed">Completed</option>
-                                <option value="Cancelled">Cancelled</option>
-                              </CustomInput>
-                              {this.state.Delivery_Status ==
-                              "Completed" ? null : (
-                                <>
-                                  {this.state.Delivery_Status ==
-                                    "Cancelled" && (
-                                    <Row>
-                                      <Col className="mt-1">
-                                        <label> Reason for Cancellation</label>
-                                        <Input
-                                          required
-                                          onChange={(e) => {
-                                            this.setState({
-                                              CancelReason: e.target.value,
-                                            });
-                                          }}
-                                          className="form-control"
-                                          type="text"
-                                        />
-                                      </Col>
-                                    </Row>
-                                  )}
-                                </>
-                              )}
-                              {this.state.Delivery_Status == "Cancelled" ||
-                              this.state.Delivery_Status == "Completed" ? (
-                                <Badge
-                                  style={{ cursor: "pointer" }}
-                                  onClick={this.HandleStatusChange}
-                                  className="mt-1"
-                                  color="primary">
-                                  Submit
-                                </Badge>
-                              ) : null}
-                            </Col>
-                          )}
-                      </>
-                    )}
-
-                    {/* <Col>
-                <Label>Download Invoice :</Label>
-                <div className="d-flex justify-content-center">
-                  <FaDownload
-                    onClick={this.handleStockTrxInvoiceShow}
-                    color="#00c0e"
-                    fill="#00c0e"
-                    style={{ cursor: "pointer" }}
-                    size={20}
-                  />
-                </div>
-              </Col> */}
-                  </Row>
-                  <Row className="p-2">
-                    <Col>
-                      <div className="d-flex justify-content-center">
-                        <h4>
-                          {" "}
-                          <strong>Product Details</strong>
-                        </h4>
-                      </div>
-                    </Col>
-                  </Row>
-                  <Row>
-                    <Col>
-                      <Table style={{ cursor: "pointer" }} striped>
-                        <thead>
-                          <tr>
-                            <th>#</th>
-                            <th>Product Name</th>
-                            <th>Price</th>
-                            <th>Size</th>
-                            <th>Unit</th>
-                            <th>Quantity</th>
-                            <th>Total</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {this.state.ViewOneData?.orderItems &&
-                            this.state.ViewOneData?.orderItems?.map(
-                              (ele, i) => (
-                                <>
-                                  <tr>
-                                    <th scope="row">{i + 1}</th>
-                                    <td>{ele?.productId?.Product_Title}</td>
-                                    <td>{ele?.productId?.Product_MRP}</td>
-                                    <td>{ele?.productId?.Size}</td>
-                                    <td>{ele?.unitQty}</td>
-                                    <td>{ele?.qty}</td>
-                                    <td>
-                                      {ele?.productId?.Product_MRP *
-                                        ele?.productId?.Size *
-                                        ele?.qty}
-                                    </td>
-                                  </tr>
-                                </>
-                              )
-                            )}
-                        </tbody>
-                      </Table>
-                    </Col>
-                  </Row>
-                </>
-              )}
-            </div>
+          <ModalBody className="myproducttable">
+            {/* <div className="container"> */}
+            {/* <TargetAssignedOne ViewData={this.state.ViewData} /> */}
+            {/* </div> */}
           </ModalBody>
         </Modal>
       </>
     );
   }
 }
-export default PendingOrder;
+export default PaymentList;

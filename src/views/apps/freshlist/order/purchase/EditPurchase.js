@@ -76,8 +76,7 @@ const EditPurchase = args => {
                       className="float-right mr-1"
                       color="primary"
                       size="sm"
-                      onClick={() => history.goBack()}
-                    >
+                      onClick={() => history.goBack()}>
                       Back
                     </Button>
                   )}
@@ -89,16 +88,16 @@ const EditPurchase = args => {
           <CardBody>
             <Form className="m-1" onSubmit={submitHandler}>
               <Row>
-                <Col lg="6" md="6" sm="6" className="mb-2">
+                <Col lg="4" md="4" sm="4" className="mb-2">
                   <Label>Status</Label>
                   <CustomInput
                     required
                     type="select"
-                    placeholder="City"
-                    name="city"
+                    placeholder="status"
+                    name="status"
                     value={status}
-                    onChange={handleChange}
-                  >
+                    onChange={handleChange}>
+                    <option value="">--Select--</option>
                     <option value="pending">pending</option>
                     <option value="cancelled">cancelled</option>
                     <option value="completed">completed</option>
@@ -109,8 +108,7 @@ const EditPurchase = args => {
                     <Button.Ripple
                       color="primary"
                       type="submit"
-                      className="mt-2"
-                    >
+                      className="mt-2">
                       Submit
                     </Button.Ripple>
                   </div>

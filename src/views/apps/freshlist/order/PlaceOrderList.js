@@ -104,7 +104,7 @@ class PlaceOrderList extends React.Component {
           headerName: "Actions",
           field: "transactions",
           width: 180,
-          cellRendererFramework: params => {
+          cellRendererFramework: (params) => {
             return (
               <div className="actions cursor-pointer">
                 {this.state.InsiderPermissions &&
@@ -115,8 +115,7 @@ class PlaceOrderList extends React.Component {
                         padding: "10px",
                         borderRadius: "30px",
                         backgroundColor: "green",
-                      }}
-                    >
+                      }}>
                       <CornerDownLeft
                         className=""
                         size="25px"
@@ -142,8 +141,7 @@ class PlaceOrderList extends React.Component {
                         padding: "10px",
                         borderRadius: "30px",
                         backgroundColor: "#39cccc",
-                      }}
-                    >
+                      }}>
                       <Eye
                         className=""
                         size="20px"
@@ -165,8 +163,7 @@ class PlaceOrderList extends React.Component {
                         borderRadius: "30px",
                         backgroundColor: "rgb(212, 111, 16)",
                         marginLeft: "3px",
-                      }}
-                    >
+                      }}>
                       <FaPencilAlt
                         className=""
                         size="20px"
@@ -189,7 +186,7 @@ class PlaceOrderList extends React.Component {
           field: "status",
           filter: true,
           width: 150,
-          cellRendererFramework: params => {
+          cellRendererFramework: (params) => {
             return params.value === "completed" ? (
               <div className="badge badge-pill badge-success">
                 {params.data.status}
@@ -206,11 +203,27 @@ class PlaceOrderList extends React.Component {
           },
         },
         {
+          headerName: "order Creation date",
+          field: "createdAt",
+          filter: true,
+          resizable: true,
+          width: 230,
+          cellRendererFramework: (params) => {
+            return (
+              <div className="d-flex align-items-center cursor-pointer">
+                <div>
+                  <span>{params.data?.createdAt?.split("T")[0]}</span>
+                </div>
+              </div>
+            );
+          },
+        },
+        {
           headerName: "Full Name",
           field: "orderItems",
           filter: true,
           width: 180,
-          valueGetter: params => {
+          valueGetter: (params) => {
             if (params.data.orderItems && params.data.orderItems.length > 0) {
               return params.data.fullName;
             }
@@ -223,9 +236,9 @@ class PlaceOrderList extends React.Component {
           field: "orderItems",
           filter: true,
           width: 220,
-          valueGetter: params => {
+          valueGetter: (params) => {
             if (params.data.orderItems && params.data.orderItems.length > 0) {
-              return params?.data?.orderItems?.map(val => {
+              return params?.data?.orderItems?.map((val) => {
                 return val?.product?.Product_Title;
               });
             }
@@ -237,7 +250,7 @@ class PlaceOrderList extends React.Component {
           field: "orderItems",
           filter: true,
           width: 150,
-          valueGetter: params => {
+          valueGetter: (params) => {
             if (params.data.orderItems && params.data.orderItems.length > 0) {
               return params.data.orderItems[0].price;
             }
@@ -249,7 +262,7 @@ class PlaceOrderList extends React.Component {
           field: "orderItems",
           filter: true,
           width: 150,
-          valueGetter: params => {
+          valueGetter: (params) => {
             if (params.data.orderItems && params.data.orderItems.length > 0) {
               return params.data.orderItems[0].qty; // Return the price
             }
@@ -261,7 +274,7 @@ class PlaceOrderList extends React.Component {
           field: "orderItems",
           filter: true,
           width: 180,
-          valueGetter: params => {
+          valueGetter: (params) => {
             if (params.data.orderItems && params.data.orderItems.length > 0) {
               return params.data.orderItems[0].product["GST Rate"]; // Return the price
             }
@@ -273,7 +286,7 @@ class PlaceOrderList extends React.Component {
           field: "orderItems",
           filter: true,
           width: 180,
-          valueGetter: params => {
+          valueGetter: (params) => {
             if (params.data.orderItems && params.data.orderItems.length > 0) {
               return params.data.orderItems[0].product.HSN_Code; // Return the price
             }

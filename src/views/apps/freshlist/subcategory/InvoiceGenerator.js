@@ -148,7 +148,7 @@ class InvoiceGenerator extends React.Component {
           field: "order_status",
           filter: true,
           width: 140,
-          cellRendererFramework: params => {
+          cellRendererFramework: (params) => {
             // console.log(params.data);
             return params.data?.status === "completed" ? (
               <div className="badge badge-pill badge-success">Completed</div>
@@ -176,7 +176,7 @@ class InvoiceGenerator extends React.Component {
           field: "sortorder",
           field: "transactions",
           width: 120,
-          cellRendererFramework: params => {
+          cellRendererFramework: (params) => {
             return (
               <div className="actions cursor-pointer">
                 {this.state.InsiderPermissions &&
@@ -228,11 +228,27 @@ class InvoiceGenerator extends React.Component {
           filter: true,
           resizable: true,
           width: 180,
-          cellRendererFramework: params => {
+          cellRendererFramework: (params) => {
             return (
               <div className="d-flex align-items-center cursor-pointer">
                 <div>
                   <span>{params?.data?._id}</span>
+                </div>
+              </div>
+            );
+          },
+        },
+        {
+          headerName: "order Creation date",
+          field: "createdAt",
+          filter: true,
+          resizable: true,
+          width: 230,
+          cellRendererFramework: (params) => {
+            return (
+              <div className="d-flex align-items-center cursor-pointer">
+                <div>
+                  <span>{params.data?.createdAt?.split("T")[0]}</span>
                 </div>
               </div>
             );
@@ -244,7 +260,7 @@ class InvoiceGenerator extends React.Component {
           filter: true,
           resizable: true,
           width: 140,
-          cellRendererFramework: params => {
+          cellRendererFramework: (params) => {
             return (
               <div className="d-flex align-items-center justify-content-center cursor-pointer">
                 <div>
@@ -272,7 +288,7 @@ class InvoiceGenerator extends React.Component {
           filter: true,
           resizable: true,
           width: 150,
-          cellRendererFramework: params => {
+          cellRendererFramework: (params) => {
             return (
               <div className="d-flex align-items-center justify-content-center cursor-pointer">
                 <div>
@@ -288,7 +304,7 @@ class InvoiceGenerator extends React.Component {
           filter: true,
           resizable: true,
           width: 160,
-          cellRendererFramework: params => {
+          cellRendererFramework: (params) => {
             return (
               <div className="d-flex align-items-center justify-content-center cursor-pointer">
                 <div>
@@ -304,7 +320,7 @@ class InvoiceGenerator extends React.Component {
           filter: true,
           resizable: true,
           width: 200,
-          cellRendererFramework: params => {
+          cellRendererFramework: (params) => {
             return (
               <div className="d-flex align-items-center justify-content-center cursor-pointer">
                 <div>
@@ -320,7 +336,7 @@ class InvoiceGenerator extends React.Component {
           filter: true,
           resizable: true,
           width: 150,
-          cellRendererFramework: params => {
+          cellRendererFramework: (params) => {
             return (
               <div className="d-flex align-items-center justify-content-center cursor-pointer">
                 <div>
@@ -336,7 +352,7 @@ class InvoiceGenerator extends React.Component {
           filter: true,
           resizable: true,
           width: 150,
-          cellRendererFramework: params => {
+          cellRendererFramework: (params) => {
             return (
               <div className="d-flex align-items-center justify-content-center cursor-pointer">
                 <div>
@@ -352,7 +368,7 @@ class InvoiceGenerator extends React.Component {
           filter: true,
           resizable: true,
           width: 210,
-          cellRendererFramework: params => {
+          cellRendererFramework: (params) => {
             return (
               <div className="d-flex align-items-center cursor-pointer">
                 <div>
@@ -369,7 +385,7 @@ class InvoiceGenerator extends React.Component {
           filter: true,
           resizable: true,
           width: 180,
-          cellRendererFramework: params => {
+          cellRendererFramework: (params) => {
             // console.log(params.data);
             return (
               <div className="d-flex cursor-pointer">
@@ -384,7 +400,7 @@ class InvoiceGenerator extends React.Component {
           field: "sortorder",
           field: "transactions",
           width: 120,
-          cellRendererFramework: params => {
+          cellRendererFramework: (params) => {
             return (
               <div className="actions cursor-pointer">
                 {this.state.InsiderPermissions &&
@@ -428,23 +444,6 @@ class InvoiceGenerator extends React.Component {
                 {/* {this.state.Deletepermisson && (
               
               )} */}
-              </div>
-            );
-          },
-        },
-
-        {
-          headerName: "order Creation date",
-          field: "order_date",
-          filter: true,
-          resizable: true,
-          width: 230,
-          cellRendererFramework: params => {
-            return (
-              <div className="d-flex align-items-center cursor-pointer">
-                <div>
-                  <span>{params.data?.order_date}</span>
-                </div>
               </div>
             );
           },

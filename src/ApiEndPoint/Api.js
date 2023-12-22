@@ -58,6 +58,10 @@ export const Category_List = "/categories/view-category/";
 export const Create_SubCategory = "/categories/save-subcategory";
 export const Create_Product_XMLView = "/product/get-xml";
 export const Save_Product = "/product/save-product";
+export const Get_Damaged_stock = "/stock-updation/get-damage-item/"; //get
+export const Save_Damaged_stock = "/stock-updation/save-damage-item"; //post
+export const Delete_Damaged_stock = "/stock-updation/delete-item/"; //delete
+export const Update_Damaged_stock = "/stock-updation/update-status/"; //put
 export const Stock_trx_FtoW = "/factory/stock-transfer-FTW";
 export const Stock_trx_WarehousetoWareHouse =
   "/stock-updation/stock-transfer-warehouse";
@@ -68,7 +72,8 @@ export const Warehouse_Stock = "/warehouse/view-warehouse-stock/";
 export const Warehouse_Inward_list = "/stock-updation/view-in-ward-stock/";
 export const Warehouse_OutwardStock_list =
   "/stock-updation/view-out-ward-stock/";
-export const Warehouse_Temporarly_list = "/user/view-warehouse/";
+export const Warehouse_Temporarly_list = "/user/view-user-by-id/";
+// export const Warehouse_Temporarly_list = "/user/view-warehouse/";
 export const Stock_update = "/stock-updation/update-warehoue-to-warehouse/";
 // export const Stock_update = "/factory/update-factory-warehouse/";
 
@@ -122,6 +127,7 @@ export const Create_Customer_xmlView = "/customer/get-xml";
 export const Create_Target_xml_view = "/target-creation/get-xml";
 
 export const Create_Target_List = "/target-creation/view-target-creation/";
+export const Target_Achievement = "/target-creation/target-achieve/";
 export const Delete_target_INlist = "/target-creation/delete-target-creation/";
 export const Update_target_INlist = "/target-creation/update-target-creation/";
 export const Delete_individual_Target = "/target-creation/";

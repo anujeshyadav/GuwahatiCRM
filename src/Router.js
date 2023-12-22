@@ -512,6 +512,9 @@ const PendingPurchase = lazy(() =>
 const PurchaseCompleted = lazy(() =>
   import("./views/apps/freshlist/order/purchase/PurchaseCompleted")
 );
+const PaymentListAll = lazy(() =>
+  import("./views/apps/freshlist/order/purchase/PaymentList")
+);
 const EditPurchase = lazy(() =>
   import("./views/apps/freshlist/order/purchase/EditPurchase")
 );
@@ -594,6 +597,9 @@ const OutwardStock = lazy(() =>
 );
 const WareHouseStock = lazy(() =>
   import("./views/apps/freshlist/customer/warehouse/WareHouseStock")
+);
+const AddDamage = lazy(() =>
+  import("./views/apps/freshlist/customer/warehouse/AddDamage")
 );
 const DamageReport = lazy(() =>
   import("./views/apps/freshlist/customer/warehouse/DamageReport")
@@ -1281,10 +1287,10 @@ const accessControl = lazy(() =>
 const RouteConfig = ({ component: Component, fullLayout, ...rest }) => (
   <Route
     {...rest}
-    render={props => {
+    render={(props) => {
       return (
         <ContextLayout.Consumer>
-          {context => {
+          {(context) => {
             let LayoutTag =
               fullLayout === true
                 ? context.fullLayout
@@ -1304,7 +1310,7 @@ const RouteConfig = ({ component: Component, fullLayout, ...rest }) => (
     }}
   />
 );
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
   return {
     user: state.auth.login.userRole,
   };
@@ -1587,6 +1593,10 @@ class AppRouter extends React.Component {
           <AppRoute
             path="/app/AJgroup/purchase/purchaseCompleted"
             component={PurchaseCompleted}
+          />
+          <AppRoute
+            path="/app/AJgroup/purchase/PaymentListAll"
+            component={PaymentListAll}
           />
           <AppRoute
             path="/app/AJgroup/order/AddPurchaseOrder"
@@ -2128,6 +2138,10 @@ class AppRouter extends React.Component {
           <AppRoute
             path="/app/softNumen/warehouse/WareHouseStock"
             component={WareHouseStock}
+          />
+          <AppRoute
+            path="/app/Jupitech/warehouse/AddDamage"
+            component={AddDamage}
           />
           <AppRoute
             path="/app/softNumen/warehouse/DamageReport"
