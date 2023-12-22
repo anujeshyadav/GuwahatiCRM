@@ -20,13 +20,12 @@ import {
   Label,
   Table,
   CustomInput,
+  FormGroup,
 } from "reactstrap";
 
 import { ContextLayout } from "../../../../../utility/context/Layout";
 import { AgGridReact } from "ag-grid-react";
 import "ag-grid-community/dist/styles/ag-grid.css";
-import EditAccount from "../../accounts/EditAccount";
-import ViewAccount from "../../accounts/ViewAccount";
 import jsPDF from "jspdf";
 import "jspdf-autotable";
 import Logo from "../../../../../assets/img/profile/pages/logomain.png";
@@ -43,9 +42,9 @@ import {
   FaFilter,
   FaPlus,
 } from "react-icons/fa";
-import moment from "moment-timezone";
 import swal from "sweetalert";
 import {
+  CreateAccountList,
   DeleteAccount,
   Stockupdate,
   ViewFactoryStock,
@@ -53,7 +52,6 @@ import {
   Warehouse_Inwardlist,
 } from "../../../../../ApiEndPoint/ApiCalling";
 import {
-  BsCloudDownloadFill,
   BsFillArrowDownSquareFill,
   BsFillArrowUpSquareFill,
 } from "react-icons/bs";
@@ -73,7 +71,7 @@ class StockTransfer extends React.Component {
     this.state = {
       isOpen: false,
       ShowBill: false,
-
+      wareHouseViewOne: [],
       Arrindex: "",
       rowData: [],
       setMySelectedarr: [],
@@ -103,11 +101,6 @@ class StockTransfer extends React.Component {
                   className="mr-50"
                   size="25px"
                   color="green"
-                  // onClick={() =>
-                  //   history.push(
-                  //     `/app/freshlist/customer/viewCustomer/${params.data?._id}`
-                  //   )
-                  // }
                   onClick={e => {
                     this.togglemodal();
                     this.setState({ ViewOneData: params?.data });
@@ -337,19 +330,22 @@ class StockTransfer extends React.Component {
     let userid = pageparmission?._id;
     await this.ViewStockList();
 
-    // Stock_trxFactorytoWList(userid)
-    // .then((res) => {
-    //   console.log(res);
-    // })
-    // .catch((err) => {
-    //   console.log(err);
-    // });
+    let userData = JSON.parse(localStorage.getItem("userData"));
+    await CreateAccountList(userData._id)
+      .then(res => {
+        console.log(res.adminDetails);
+        if (res.adminDetails) {
+          this.setState({ wareHouseViewOne: res?.adminDetails });
+        }
+      })
+      .catch(err => {
+        console.log(err);
+      });
   }
 
   ViewStockList = async () => {
     let pageparmission = JSON.parse(localStorage.getItem("userData"));
     let userid = pageparmission?._id;
-    // await ViewFactoryStock()
     await Warehouse_Inwardlist(userid)
       .then(res => {
         console.log(res?.Warehouse);
@@ -375,19 +371,6 @@ class StockTransfer extends React.Component {
     await ViewOneWarehouseStock(userid)
       .then(res => {
         console.log(res?.Factory);
-        // this.setState({ rowData: res?.Factory });
-        // this.setState({ AllcolumnDefs: this.state.columnDefs });
-
-        // let userHeading = JSON.parse(localStorage.getItem("FactoryStock"));
-        // if (userHeading?.length) {
-        //   this.setState({ columnDefs: userHeading });
-        //   this.gridApi.setColumnDefs(userHeading);
-        //   this.setState({ SelectedcolumnDefs: userHeading });
-        // } else {
-        //   this.setState({ columnDefs: this.state.columnDefs });
-        //   this.setState({ SelectedcolumnDefs: this.state.columnDefs });
-        // }
-        // this.setState({ SelectedCols: this.state.columnDefs });
       })
       .catch(err => {
         console.log(err);
@@ -609,10 +592,6 @@ class StockTransfer extends React.Component {
         });
 
         xmlString += "</root>";
-
-        // setXmlData(xmlString);
-
-        // Create a download link
         const blob = new Blob([xmlString], { type: "text/xml" });
         const link = document.createElement("a");
         link.href = URL.createObjectURL(blob);
@@ -634,7 +613,24 @@ class StockTransfer extends React.Component {
     );
     this.LookupviewStart();
   };
+  handleShowWarehouse = e => {
+    e.preventDefault();
+    if (this.state.warehouse != "NA") {
+      console.log(this.state.wareHouseViewOne[0]);
+      let selecteddata = this.state.wareHouseViewOne?.filter(
+        (ele, i) => ele?._id == this.state.warehouse
+      );
+      this.setState({ Show: true });
+      this.setState({ rowData: selecteddata });
+    } else {
+      swal("You did not select Any Warehouse");
+    }
+  };
+  changeHandler = e => {
+    console.log(e.target.value, this.state.warehouse);
 
+    this.setState({ [e.target.name]: e.target.value });
+  };
   HeadingRightShift = () => {
     const updatedSelectedColumnDefs = [
       ...new Set([
@@ -670,7 +666,6 @@ class StockTransfer extends React.Component {
     } = this.state;
     return (
       <>
-        {/* <ExcelReader /> */}
         <Row className="app-user-list">
           <Col sm="12">
             <Card>
@@ -679,6 +674,41 @@ class StockTransfer extends React.Component {
                   <h1 className="float-left" style={{ fontWeight: "600" }}>
                     Inward Stock List
                   </h1>
+                </Col>
+                <Col>
+                  <FormGroup>
+                    <Label>Select Warehouse</Label>
+                    <CustomInput
+                      type="select"
+                      placeholder="Select Warehouse"
+                      name="warehouse"
+                      value={this.state.warehouse}
+                      onChange={this.changeHandler}
+                    >
+                      <option value="">--Select WareHouse--</option>
+                      {this.state.wareHouseViewOne?.map(cat => (
+                        <option value={cat?._id} key={cat?._id}>
+                          {cat?.firstName}
+                        </option>
+                      ))}
+                    </CustomInput>
+                  </FormGroup>
+                </Col>
+
+                <Col lg="2" md="2" className="mb-2">
+                  <Button
+                    style={{
+                      cursor: "pointer",
+                      backgroundColor: "#39cccc",
+                      color: "white",
+                      fontWeight: "600",
+                    }}
+                    className="mt-2"
+                    color="#39cccc"
+                    onClick={this.handleShowWarehouse}
+                  >
+                    Submit
+                  </Button>
                 </Col>
                 <Col>
                   <span className="mx-1">
@@ -998,17 +1028,6 @@ class StockTransfer extends React.Component {
                                               SelectedcolumnDefs: SelectedCols, // Update the state with the modified array
                                             });
                                           }
-                                          // const delindex =
-                                          //   SelectedCols.findIndex(
-                                          //     (element) =>
-                                          //       element?.headerName ==
-                                          //       ele?.headerName
-                                          //   );
-
-                                          // SelectedCols?.splice(delindex, 1);
-                                          // this.setState({
-                                          //   SelectedcolumnDefs: SelectedCols,
-                                          // });
                                         }}
                                         style={{ cursor: "pointer" }}
                                         size="25px"

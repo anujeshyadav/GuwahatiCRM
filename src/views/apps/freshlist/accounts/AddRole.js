@@ -382,11 +382,11 @@ export const Roles = [
         permission: ["View", "Create", "Edit", "Delete"],
       },
       {
-        title: "Raw Material Inward",
+        title: "Item Inward",
         permission: ["View", "Create", "Edit", "Delete"],
       },
       {
-        title: "Raw Material Outward",
+        title: "Item Outward",
         permission: ["View", "Create", "Edit", "Delete"],
       },
       {
@@ -558,6 +558,10 @@ export const Roles = [
       },
       {
         title: "Earning Report",
+        permission: ["View", "Create", "Edit", "Delete"],
+      },
+      {
+        title: "WareHouse Report",
         permission: ["View", "Create", "Edit", "Delete"],
       },
     ],

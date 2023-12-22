@@ -15,13 +15,12 @@ import {
   ModalHeader,
   ModalBody,
   Badge,
+  Table,
 } from "reactstrap";
 import { ImDownload } from "react-icons/im";
 import { ContextLayout } from "../../../../../utility/context/Layout";
 import { AgGridReact } from "ag-grid-react";
 import "ag-grid-community/dist/styles/ag-grid.css";
-// import GoodDispatchEdit from "./GoodDispatchEdit";
-// import GoodDispatchEdit from "../.";
 import GoodDispatchView from "../../accounts/GoodDispatchView";
 import jsPDF from "jspdf";
 import "jspdf-autotable";
@@ -47,14 +46,13 @@ import {
   OrderDisPatchList,
 } from "../../../../../ApiEndPoint/ApiCalling";
 import {
-  BsCloudDownloadFill,
   BsFillArrowDownSquareFill,
   BsFillArrowUpSquareFill,
 } from "react-icons/bs";
 import * as XLSX from "xlsx";
 import UserContext from "../../../../../context/Context";
 import { CheckPermission } from "../../house/CheckPermission";
-import { AiOutlineDownload } from "react-icons/ai";
+import { Label } from "recharts";
 const SelectedColums = [];
 
 class GoodDispatchList extends React.Component {
@@ -69,7 +67,6 @@ class GoodDispatchList extends React.Component {
       rowData: [],
       setMySelectedarr: [],
       InsiderPermissions: {},
-
       SelectedCols: [],
       paginationPageSize: 5,
       currenPageSize: "",
@@ -99,38 +96,8 @@ class GoodDispatchList extends React.Component {
                           size="25px"
                           color="green"
                           onClick={() => {
-                            // this.handleChangeEdit(params.data, "readonly");
-                          }}
-                        />
-                      )}
-                    />
-                  )}
-                {/* {this.state.InsiderPermissions &&
-                  this.state.InsiderPermissions?.Edit && (
-                    <Route
-                      render={({ history }) => (
-                        <Edit
-                          className="mr-50"
-                          size="25px"
-                          color="blue"
-                          onClick={() => {
-                            // this.handleChangeEdit(params.data, "Editable");
-                          }}
-                        />
-                      )}
-                    />
-                  )} */}
-
-                {this.state.InsiderPermissions &&
-                  this.state.InsiderPermissions?.Delete && (
-                    <Route
-                      render={() => (
-                        <Trash2
-                          className=""
-                          size="25px"
-                          color="red"
-                          onClick={() => {
-                            // this.runthisfunction(params?.data?._id);
+                            this.setState({ ViewOneData: params?.data });
+                            this.toggleModal();
                           }}
                         />
                       )}
@@ -147,25 +114,14 @@ class GoodDispatchList extends React.Component {
           width: 140,
           cellRendererFramework: params => {
             // console.log(params.data);
-            return params.data?.status === "completed" ? (
-              <div className="badge badge-pill badge-success">Completed</div>
-            ) : params.data?.status === "pending" ? (
-              <div className="badge badge-pill badge-warning">
-                {params.data?.status}
-              </div>
-            ) : params.data?.status === "return" ? (
-              <div className="badge badge-pill bg-danger">Returned</div>
-            ) : params.data?.status === "cancelled" ? (
-              <div className="badge badge-pill bg-danger">
-                {params.data.status}
-              </div>
-            ) : params.data?.status === "completed" ? (
-              <div className="badge badge-pill bg-success">Completed</div>
-            ) : (
+            return params.data?.status === "completed" ||
+              params.data?.status === "Completed" ? (
               <>
-                <div className="badge badge-pill bg-warning">Cancelled</div>
+                <div className="badge badge-pill bg-success">
+                  {params.data?.status}
+                </div>
               </>
-            );
+            ) : null;
           },
         },
         {
@@ -338,71 +294,17 @@ class GoodDispatchList extends React.Component {
             );
           },
         },
-
-        // {
-        //   headerName: "total",
-        //   field: "total",
-        //   filter: true,
-        //   resizable: true,
-        //   width: 160,
-        //   cellRendererFramework: (params) => {
-        //     return (
-        //       <div className="d-flex align-items-center cursor-pointer">
-        //         <div>
-        //           <Badge color="success">{params.data?.total}</Badge>
-        //         </div>
-        //       </div>
-        //     );
-        //   },
-        // },
-        // {
-        //   headerName: "brandname ",
-        //   field: "brand_name",
-        //   filter: true,
-        //   resizable: true,
-        //   width: 180,
-        //   cellRendererFramework: (params) => {
-        //     return (
-        //       <div className="d-flex align-items-center cursor-pointer">
-        //         <div>
-        //           <span>{params.data?.brand_name}</span>
-        //         </div>
-        //       </div>
-        //     );
-        //   },
-        // },
-        // {
-        //   headerName: "city",
-        //   field: "city",
-        //   filter: true,
-        //   resizable: true,
-        //   width: 160,
-        //   cellRendererFramework: (params) => {
-        //     return (
-        //       <div className="d-flex align-items-center cursor-pointer">
-        //         <div>
-        //           <span>{params.data?.city}</span>
-        //         </div>
-        //       </div>
-        //     );
-        //   },
-        // },
-        // {
-        //   headerName: "order Creation date",
-        //   field: "order_date",
-        //   filter: true,
-        //   resizable: true,
-        //   width: 230,
-        //   cellRendererFramework: (params) => {
-        //     return (
-        //       <div className="d-flex align-items-center cursor-pointer">
-        //         <div>
-        //           <span>{params.data?.order_date}</span>
-        //         </div>
-        //       </div>
-        //     );
-        //   },
-        // },
+        {
+          headerName: "Create Date",
+          field: "orderItems",
+          filter: true,
+          width: 180,
+          valueGetter: params => {
+            const dateList = new Date(params.data.updatedAt);
+            const onlyDate = dateList.toISOString().split("T")[0];
+            return onlyDate;
+          },
+        },
       ],
       AllcolumnDefs: [],
       SelectedcolumnDefs: [],
@@ -421,7 +323,24 @@ class GoodDispatchList extends React.Component {
       modal: !prevState.modal,
     }));
   };
-
+  handleDate = e => {
+    const { name, value } = e.target;
+    this.setState({ [name]: value });
+  };
+  toggleModal = () => {
+    this.setState(prevState => ({
+      modalOne: !prevState.modalOne,
+    }));
+  };
+  handleSubmitDate = () => {
+    console.log(this.state.rowData);
+    const filteredItems = this.state.rowData.filter(item => {
+      const dateList = new Date(item.updatedAt);
+      const onlyDate = dateList.toISOString().split("T")[0];
+      return onlyDate >= this.state.startDate && onlyDate <= this.state.EndDate;
+    });
+    this.setState({ rowData: filteredItems });
+  };
   handleChangeEdit = (data, types) => {
     let type = types;
     if (type == "readonly") {
@@ -440,8 +359,11 @@ class GoodDispatchList extends React.Component {
     const userId = JSON.parse(localStorage.getItem("userData"))._id;
     await OrderDisPatchList()
       .then(res => {
-        console.log(res?.Invoice);
-        this.setState({ rowData: res?.Invoice });
+        const completedStatus = res?.Invoice?.filter(
+          ele => ele.status == "completed" || ele.status == "Completed"
+        );
+        console.log(completedStatus);
+        this.setState({ rowData: completedStatus });
         this.setState({ AllcolumnDefs: this.state.columnDefs });
 
         let userHeading = JSON.parse(
@@ -986,14 +908,41 @@ class GoodDispatchList extends React.Component {
                     <Card>
                       <Row className="ml-2 mr-2 mt-2">
                         <Col>
-                          <h1
+                          <h4
                             className="float-left"
                             style={{ fontWeight: "600" }}
                           >
                             Good Dispatch Report
-                          </h1>
+                          </h4>
                         </Col>
-
+                        <Col>
+                          <Label>Start Date</Label>
+                          <Input
+                            type="date"
+                            name="startDate"
+                            value={this.state.startDate}
+                            onChange={this.handleDate}
+                          />
+                        </Col>
+                        <Col>
+                          <Label>End Date</Label>
+                          <Input
+                            type="date"
+                            name="EndDate"
+                            value={this.state.EndDate}
+                            onChange={this.handleDate}
+                          />
+                        </Col>
+                        <Col>
+                          <Button
+                            type="submit"
+                            className=""
+                            color="primary"
+                            onClick={this.handleSubmitDate}
+                          >
+                            Submit
+                          </Button>
+                        </Col>
                         {InsiderPermissions && InsiderPermissions?.View && (
                           <Col>
                             <span className="mx-1">
@@ -1357,6 +1306,110 @@ class GoodDispatchList extends React.Component {
                 </div>
               </Col>
             </Row>
+          </ModalBody>
+        </Modal>
+        <Modal
+          isOpen={this.state.modalOne}
+          toggle={this.toggleModal}
+          className={this.props.className}
+          style={{ maxWidth: "1050px" }}
+        >
+          <ModalHeader toggle={this.toggleModal}>View Order</ModalHeader>
+          <ModalBody>
+            <div className="container">
+              <Row>
+                <Col>
+                  <Label>Party Name :</Label>
+                  <h5 className="mx-1">
+                    {this.state.ViewOneData &&
+                      this.state.ViewOneData?.partyId?.firstName}
+                  </h5>
+                </Col>
+                <Col>
+                  <Label>Date Created :</Label>
+                  <h5>
+                    {this.state.ViewOneData &&
+                      this.state.ViewOneData?.createdAt?.split("T")[0]}
+                  </h5>
+                </Col>
+                <Col>
+                  <Label>Address :</Label>
+                  <h5>
+                    <strong>
+                      {this.state.ViewOneData &&
+                        this.state.ViewOneData?.address}{" "}
+                    </strong>
+                  </h5>
+                </Col>
+                <Col>
+                  <Label>Grand Total :</Label>
+                  <h5>
+                    <strong>
+                      {this.state.ViewOneData &&
+                        this.state.ViewOneData?.grandTotal}{" "}
+                    </strong>
+                    Rs/-
+                  </h5>
+                </Col>
+
+                {/* <Col>
+                <Label>Download Invoice :</Label>
+                <div className="d-flex justify-content-center">
+                  <FaDownload
+                    onClick={this.handleStockTrxInvoiceShow}
+                    color="#00c0e"
+                    fill="#00c0e"
+                    style={{ cursor: "pointer" }}
+                    size={20}
+                  />
+                </div>
+              </Col> */}
+              </Row>
+              <Row className="p-2">
+                <Col>
+                  <div className="d-flex justify-content-center">
+                    <h4>Product Details</h4>
+                  </div>
+                </Col>
+              </Row>
+              <Row>
+                <Col>
+                  <Table style={{ cursor: "pointer" }} striped>
+                    <thead>
+                      <tr>
+                        <th>#</th>
+                        <th>Product Name</th>
+                        <th>Price</th>
+                        <th>Size</th>
+                        <th>Unit</th>
+                        <th>Quantity</th>
+                        <th>Total</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {this.state.ViewOneData?.orderItems &&
+                        this.state.ViewOneData?.orderItems?.map((ele, i) => (
+                          <>
+                            <tr>
+                              <th scope="row">{i + 1}</th>
+                              <td>{ele?.productId?.Product_Title}</td>
+                              <td>{ele?.productId?.Product_MRP}</td>
+                              <td>{ele?.productId?.Size}</td>
+                              <td>{ele?.unitQty}</td>
+                              <td>{ele?.qty}</td>
+                              <td>
+                                {ele?.productId?.Product_MRP *
+                                  ele?.productId?.Size *
+                                  ele?.qty}
+                              </td>
+                            </tr>
+                          </>
+                        ))}
+                    </tbody>
+                  </Table>
+                </Col>
+              </Row>
+            </div>
           </ModalBody>
         </Modal>
       </>

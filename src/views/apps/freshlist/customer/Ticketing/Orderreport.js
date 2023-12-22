@@ -15,6 +15,8 @@ import {
   ModalBody,
   Badge,
   Table,
+  Label,
+  Button,
 } from "reactstrap";
 import { ContextLayout } from "../../../../../utility/context/Layout";
 import { AgGridReact } from "ag-grid-react";
@@ -28,7 +30,6 @@ import { IoMdRemoveCircleOutline } from "react-icons/io";
 import "../../../../../assets/scss/plugins/tables/_agGridStyleOverride.scss";
 import "../../../../../assets/scss/pages/users.scss";
 import StockTrxInvoice from "../../subcategory/StockTrxInvoice";
-// import StockTrxInvoice from "../subcategory/StockTrxInvoice";
 import {
   FaArrowAltCircleLeft,
   FaArrowAltCircleRight,
@@ -62,6 +63,8 @@ class Salesreport extends React.Component {
       isOpen: false,
       Arrindex: "",
       rowData: [],
+      startDate: "",
+      EndDate: "",
       ShowBill: false,
       modal: false,
       modalone: false,
@@ -128,6 +131,14 @@ class Salesreport extends React.Component {
                 {params.data.status}
               </div>
             ) : params.value == "return" ? (
+              <div className="badge badge-pill badge-danger">
+                {params.data.status}
+              </div>
+            ) : params.value == "InProcess" ? (
+              <div className="badge badge-pill badge-secondary">
+                {params.data.status}
+              </div>
+            ) : params.value == "cancelled" ? (
               <div className="badge badge-pill badge-danger">
                 {params.data.status}
               </div>
@@ -209,6 +220,18 @@ class Salesreport extends React.Component {
             return null;
           },
         },
+
+        {
+          headerName: "Create Date",
+          field: "orderItems",
+          filter: true,
+          width: 180,
+          valueGetter: params => {
+            const dateList = new Date(params.data.updatedAt);
+            const onlyDate = dateList.toISOString().split("T")[0];
+            return onlyDate;
+          },
+        },
       ],
     };
   }
@@ -243,6 +266,7 @@ class Salesreport extends React.Component {
     this.setState({ InsiderPermissions: InsidePermissions });
     await createOrderhistoryview(userId)
       .then(res => {
+        console.log(res?.orderHistory);
         this.setState({ rowData: res?.orderHistory });
         this.setState({ AllcolumnDefs: this.state.columnDefs });
         this.setState({ SelectedCols: this.state.columnDefs });
@@ -464,6 +488,20 @@ class Salesreport extends React.Component {
       this.setState({ SelectedcolumnDefs: myArrayCopy });
     }
   };
+  handleDate = e => {
+    const { name, value } = e.target;
+    this.setState({ [name]: value });
+  };
+
+  handleSubmitDate = () => {
+    console.log(this.state.rowData);
+    const filteredItems = this.state.rowData.filter(item => {
+      const dateList = new Date(item.updatedAt);
+      const onlyDate = dateList.toISOString().split("T")[0];
+      return onlyDate >= this.state.startDate && onlyDate <= this.state.EndDate;
+    });
+    this.setState({ rowData: filteredItems });
+  };
   convertCsvToXml = () => {
     const CsvData = this.gridApi.getDataAsCsv({
       processCellCallback: this.processCell,
@@ -472,7 +510,6 @@ class Salesreport extends React.Component {
       complete: result => {
         const rows = result.data;
 
-        // Create XML
         let xmlString = "<root>\n";
 
         rows.forEach(row => {
@@ -551,6 +588,34 @@ class Salesreport extends React.Component {
                   <h1 className="float-left " style={{ fontWeight: "600" }}>
                     Order Report
                   </h1>
+                </Col>
+                <Col>
+                  <Label>Start Date</Label>
+                  <Input
+                    type="date"
+                    name="startDate"
+                    value={this.state.startDate}
+                    onChange={this.handleDate}
+                  />
+                </Col>
+                <Col>
+                  <Label>End Date</Label>
+                  <Input
+                    type="date"
+                    name="EndDate"
+                    value={this.state.EndDate}
+                    onChange={this.handleDate}
+                  />
+                </Col>
+                <Col>
+                  <Button
+                    type="submit"
+                    className="mt-1"
+                    color="primary"
+                    onClick={this.handleSubmitDate}
+                  >
+                    Submit
+                  </Button>
                 </Col>
                 {InsiderPermissions && InsiderPermissions?.View && (
                   <Col>

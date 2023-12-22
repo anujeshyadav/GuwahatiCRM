@@ -105,7 +105,7 @@ class PendingOrder extends React.Component {
           headerName: "Actions",
           field: "transactions",
           width: 180,
-          cellRendererFramework: (params) => {
+          cellRendererFramework: params => {
             return (
               <div className="actions cursor-pointer">
                 {this.state.InsiderPermissions &&
@@ -117,7 +117,8 @@ class PendingOrder extends React.Component {
                         borderRadius: "30px",
                         backgroundColor: "#39cccc",
                         cursor: "pointer",
-                      }}>
+                      }}
+                    >
                       <Eye
                         className=""
                         size="20px"
@@ -162,7 +163,7 @@ class PendingOrder extends React.Component {
           field: "status",
           filter: true,
           width: 150,
-          cellRendererFramework: (params) => {
+          cellRendererFramework: params => {
             return params.data?.status === "Completed" ? (
               <div className="badge badge-pill badge-success">
                 {params.data.status}
@@ -209,7 +210,7 @@ class PendingOrder extends React.Component {
           field: "userId.firstName",
           filter: true,
           width: 200,
-          cellRendererFramework: (params) => {
+          cellRendererFramework: params => {
             return (
               <div>
                 <span>{params.data?.userId?.firstName}</span>
@@ -222,7 +223,7 @@ class PendingOrder extends React.Component {
           field: "userId.lastName",
           filter: true,
           width: 200,
-          cellRendererFramework: (params) => {
+          cellRendererFramework: params => {
             return (
               <div>
                 <span>{params.data?.userId?.lastName}</span>
@@ -235,7 +236,7 @@ class PendingOrder extends React.Component {
           field: "userId.currentAddress",
           filter: true,
           width: 200,
-          cellRendererFramework: (params) => {
+          cellRendererFramework: params => {
             return (
               <div>
                 <span>{params.data?.userId?.currentAddress}</span>
@@ -248,7 +249,7 @@ class PendingOrder extends React.Component {
           field: "userId.state",
           filter: true,
           width: 200,
-          cellRendererFramework: (params) => {
+          cellRendererFramework: params => {
             return (
               <div>
                 <span>{params.data?.userId?.State}</span>
@@ -261,7 +262,7 @@ class PendingOrder extends React.Component {
           field: "userId.city",
           filter: true,
           width: 180,
-          cellRendererFramework: (params) => {
+          cellRendererFramework: params => {
             return (
               <div>
                 <span>{params.data?.userId?.City}</span>
@@ -274,7 +275,7 @@ class PendingOrder extends React.Component {
           field: "email",
           filter: true,
           width: 220,
-          cellRendererFramework: (params) => {
+          cellRendererFramework: params => {
             return (
               <div>
                 <span>{params.data?.userId?.email}</span>
@@ -300,7 +301,7 @@ class PendingOrder extends React.Component {
           field: "grandTotal",
           filter: true,
           width: 200,
-          cellRendererFramework: (params) => {
+          cellRendererFramework: params => {
             return (
               <div>
                 <span>{params.data?.grandTotal}</span>
@@ -312,28 +313,28 @@ class PendingOrder extends React.Component {
     };
   }
   toggleModal = () => {
-    this.setState((prevState) => ({
+    this.setState(prevState => ({
       modalone: !prevState.modalone,
     }));
     this.setState({ OtpScreen: false });
   };
   LookupviewStart = () => {
-    this.setState((prevState) => ({
+    this.setState(prevState => ({
       modal: !prevState.modal,
     }));
   };
-  HandleStatusChange = async (e) => {
+  HandleStatusChange = async e => {
     e.preventDefault();
     console.log(this.state.Delivery_Status);
     debugger;
     await Goods_DeliveryOTP(this.state.ViewOneData?.userId?._id)
-      .then((res) => {
+      .then(res => {
         debugger;
         console.log(res);
         swal("success", "OTP Sent Successfully To Your Registered email id");
         this.setState({ OtpScreen: true });
       })
-      .catch((err) => {
+      .catch(err => {
         console.log(err);
       });
     // if (this.state.Delivery_Status == "Completed") {
@@ -370,7 +371,7 @@ class PendingOrder extends React.Component {
     //     }
     // }
   };
-  handleSubmitOTP = async (e) => {
+  handleSubmitOTP = async e => {
     e.preventDefault();
     let payload = {
       userId: this.state.ViewOneData?.userId?._id,
@@ -383,35 +384,15 @@ class PendingOrder extends React.Component {
       }`,
     };
     await Goods_DeliveryOTP_Auth(this.state.ViewOneData?._id, payload)
-      .then((res) => {
+      .then(res => {
         console.log(res);
         this.toggleModal();
         swal("Submittted Successfully");
       })
-      .catch((err) => {
+      .catch(err => {
         console.log(err);
       });
   };
-  // handleChangeView = (data, types) => {
-  //   let type = types;
-  //   if (type == "readonly") {
-  //     this.setState({ ViewOneUserView: true });
-  //     this.setState({ ViewOneData: data });
-  //   } else {
-  //     this.setState({ EditOneUserView: true });
-  //     this.setState({ EditOneData: data });
-  //   }
-  // };
-  // handleChangeEdit = (data, types) => {
-  //   let type = types;
-  //   if (type == "readonly") {
-  //     this.setState({ ViewOneUserView: true });
-  //     this.setState({ ViewOneData: data });
-  //   } else {
-  //     this.setState({ EditOneUserView: true });
-  //     this.setState({ EditOneData: data });
-  //   }
-  // };
 
   async componentDidMount() {
     const InsidePermissions = CheckPermission("Pending Order");
@@ -419,10 +400,10 @@ class PendingOrder extends React.Component {
     this.setState({ InsiderPermissions: InsidePermissions });
     const userId = JSON.parse(localStorage.getItem("userData"))?._id;
     await DeliveryBoyAssignedList(userId)
-      .then((res) => {
+      .then(res => {
         console.log(res?.OrderList);
         let showdata = res?.OrderList?.filter(
-          (ele) => ele?.status?.toLowerCase() !== "completed"
+          ele => ele?.status?.toLowerCase() !== "completed"
         );
         console.log(showdata);
         this.setState({ rowData: showdata });
@@ -439,12 +420,12 @@ class PendingOrder extends React.Component {
           this.setState({ SelectedcolumnDefs: this.state.columnDefs });
         }
       })
-      .catch((err) => {
+      .catch(err => {
         console.log(err);
       });
   }
   toggleDropdown = () => {
-    this.setState((prevState) => ({ isOpen: !prevState.isOpen }));
+    this.setState(prevState => ({ isOpen: !prevState.isOpen }));
   };
 
   runthisfunction(id) {
@@ -454,15 +435,15 @@ class PendingOrder extends React.Component {
         cancel: "cancel",
         catch: { text: "Delete ", value: "delete" },
       },
-    }).then((value) => {
+    }).then(value => {
       switch (value) {
         case "delete":
           Delete_targetINlist(id)
-            .then((res) => {
+            .then(res => {
               let selectedData = this.gridApi.getSelectedRows();
               this.gridApi.updateRowData({ remove: selectedData });
             })
-            .catch((err) => {
+            .catch(err => {
               console.log(err);
             });
           break;
@@ -471,7 +452,7 @@ class PendingOrder extends React.Component {
     });
   }
 
-  onGridReady = (params) => {
+  onGridReady = params => {
     this.gridApi = params.api;
     this.gridColumnApi = params.columnApi;
     this.gridRef.current = params.api;
@@ -483,11 +464,11 @@ class PendingOrder extends React.Component {
     });
   };
 
-  updateSearchQuery = (val) => {
+  updateSearchQuery = val => {
     this.gridApi.setQuickFilter(val);
   };
 
-  filterSize = (val) => {
+  filterSize = val => {
     if (this.gridApi) {
       this.gridApi.paginationSetPageSize(Number(val));
       this.setState({
@@ -502,7 +483,7 @@ class PendingOrder extends React.Component {
       SelectedColums?.push(value);
     } else {
       const delindex = SelectedColums?.findIndex(
-        (ele) => ele?.headerName === value?.headerName
+        ele => ele?.headerName === value?.headerName
       );
 
       SelectedColums?.splice(delindex, 1);
@@ -513,14 +494,14 @@ class PendingOrder extends React.Component {
       Papa.parse(csvData, {
         header: true,
         skipEmptyLines: true,
-        complete: (result) => {
+        complete: result => {
           if (result.data && result.data.length > 0) {
             resolve(result.data);
           } else {
             reject(new Error("No data found in the CSV"));
           }
         },
-        error: (error) => {
+        error: error => {
           reject(error);
         },
       });
@@ -532,7 +513,7 @@ class PendingOrder extends React.Component {
 
     const doc = new jsPDF("landscape", "mm", size, false);
     doc.setTextColor(5, 87, 97);
-    const tableData = parsedData.map((row) => Object.values(row));
+    const tableData = parsedData.map(row => Object.values(row));
     doc.addImage(Logo, "JPEG", 10, 10, 50, 30);
     let date = new Date();
     doc.setCreationDate(date);
@@ -557,14 +538,14 @@ class PendingOrder extends React.Component {
       console.error("Error parsing CSV:", error);
     }
   };
-  processCell = (params) => {
+  processCell = params => {
     // console.log(params);
     // Customize cell content as needed
     return params.value;
   };
 
   convertCsvToExcel(csvData) {
-    return new Promise((resolve) => {
+    return new Promise(resolve => {
       Papa.parse(csvData, {
         header: true,
         dynamicTyping: true,
@@ -595,7 +576,7 @@ class PendingOrder extends React.Component {
     window.URL.revokeObjectURL(url);
   }
 
-  exportToExcel = async (e) => {
+  exportToExcel = async e => {
     const CsvData = this.gridApi.getDataAsCsv({
       processCellCallback: this.processCell,
     });
@@ -608,7 +589,7 @@ class PendingOrder extends React.Component {
       processCellCallback: this.processCell,
     });
     Papa.parse(CsvData, {
-      complete: (result) => {
+      complete: result => {
         const ws = XLSX.utils.json_to_sheet(result.data);
         const wb = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(wb, ws, "Sheet1");
@@ -644,13 +625,13 @@ class PendingOrder extends React.Component {
       processCellCallback: this.processCell,
     });
     Papa.parse(CsvData, {
-      complete: (result) => {
+      complete: result => {
         const rows = result.data;
 
         // Create XML
         let xmlString = "<root>\n";
 
-        rows.forEach((row) => {
+        rows.forEach(row => {
           xmlString += "  <row>\n";
           row.forEach((cell, index) => {
             xmlString += `    <field${index + 1}>${cell}</field${index + 1}>\n`;
@@ -672,7 +653,7 @@ class PendingOrder extends React.Component {
     });
   };
 
-  HandleSetVisibleField = (e) => {
+  HandleSetVisibleField = e => {
     e.preventDefault();
 
     this.gridApi.setColumnDefs(this.state.SelectedcolumnDefs);
@@ -689,10 +670,10 @@ class PendingOrder extends React.Component {
   HeadingRightShift = () => {
     const updatedSelectedColumnDefs = [
       ...new Set([
-        ...this.state.SelectedcolumnDefs.map((item) => JSON.stringify(item)),
-        ...SelectedColums.map((item) => JSON.stringify(item)),
+        ...this.state.SelectedcolumnDefs.map(item => JSON.stringify(item)),
+        ...SelectedColums.map(item => JSON.stringify(item)),
       ]),
-    ].map((item) => JSON.parse(item));
+    ].map(item => JSON.parse(item));
     this.setState({
       SelectedcolumnDefs: [...new Set(updatedSelectedColumnDefs)], // Update the state with the combined array
     });
@@ -737,7 +718,8 @@ class PendingOrder extends React.Component {
                         <Col>
                           <h1
                             className="float-left"
-                            style={{ fontWeight: "600" }}>
+                            style={{ fontWeight: "600" }}
+                          >
                             Sales Pending List
                           </h1>
                         </Col>
@@ -772,11 +754,13 @@ class PendingOrder extends React.Component {
                                       border: "1px solid #39cccc",
                                       backgroundColor: "white",
                                     }}
-                                    className="dropdown-content dropdownmy">
+                                    className="dropdown-content dropdownmy"
+                                  >
                                     <h5
                                       onClick={() => this.exportToPDF()}
                                       style={{ cursor: "pointer" }}
-                                      className=" mx-1 myactive mt-1">
+                                      className=" mx-1 myactive mt-1"
+                                    >
                                       .PDF
                                     </h5>
                                     <h5
@@ -784,25 +768,29 @@ class PendingOrder extends React.Component {
                                         this.gridApi.exportDataAsCsv()
                                       }
                                       style={{ cursor: "pointer" }}
-                                      className=" mx-1 myactive">
+                                      className=" mx-1 myactive"
+                                    >
                                       .CSV
                                     </h5>
                                     <h5
                                       onClick={this.convertCSVtoExcel}
                                       style={{ cursor: "pointer" }}
-                                      className=" mx-1 myactive">
+                                      className=" mx-1 myactive"
+                                    >
                                       .XLS
                                     </h5>
                                     <h5
                                       onClick={this.exportToExcel}
                                       style={{ cursor: "pointer" }}
-                                      className=" mx-1 myactive">
+                                      className=" mx-1 myactive"
+                                    >
                                       .XLSX
                                     </h5>
                                     <h5
                                       onClick={() => this.convertCsvToXml()}
                                       style={{ cursor: "pointer" }}
-                                      className=" mx-1 myactive">
+                                      className=" mx-1 myactive"
+                                    >
                                       .XML
                                     </h5>
                                   </div>
@@ -837,27 +825,32 @@ class PendingOrder extends React.Component {
                                   <DropdownMenu right>
                                     <DropdownItem
                                       tag="div"
-                                      onClick={() => this.filterSize(5)}>
+                                      onClick={() => this.filterSize(5)}
+                                    >
                                       5
                                     </DropdownItem>
                                     <DropdownItem
                                       tag="div"
-                                      onClick={() => this.filterSize(20)}>
+                                      onClick={() => this.filterSize(20)}
+                                    >
                                       20
                                     </DropdownItem>
                                     <DropdownItem
                                       tag="div"
-                                      onClick={() => this.filterSize(50)}>
+                                      onClick={() => this.filterSize(50)}
+                                    >
                                       50
                                     </DropdownItem>
                                     <DropdownItem
                                       tag="div"
-                                      onClick={() => this.filterSize(100)}>
+                                      onClick={() => this.filterSize(100)}
+                                    >
                                       100
                                     </DropdownItem>
                                     <DropdownItem
                                       tag="div"
-                                      onClick={() => this.filterSize(134)}>
+                                      onClick={() => this.filterSize(134)}
+                                    >
                                       134
                                     </DropdownItem>
                                   </DropdownMenu>
@@ -867,7 +860,7 @@ class PendingOrder extends React.Component {
                                 <div className="table-input mr-1">
                                   <Input
                                     placeholder="search Item here..."
-                                    onChange={(e) =>
+                                    onChange={e =>
                                       this.updateSearchQuery(e.target.value)
                                     }
                                     value={this.state.value}
@@ -876,7 +869,7 @@ class PendingOrder extends React.Component {
                               </div>
                             </div>
                             <ContextLayout.Consumer className="ag-theme-alpine">
-                              {(context) => (
+                              {context => (
                                 <AgGridReact
                                   id="myAgGrid"
                                   // gridOptions={{
@@ -933,7 +926,8 @@ class PendingOrder extends React.Component {
           isOpen={this.state.modal}
           toggle={this.LookupviewStart}
           className={this.props.className}
-          style={{ maxWidth: "1050px" }}>
+          style={{ maxWidth: "1050px" }}
+        >
           <ModalHeader toggle={this.LookupviewStart}>Change Fileds</ModalHeader>
           <ModalBody className="modalbodyhead">
             <Row>
@@ -946,15 +940,15 @@ class PendingOrder extends React.Component {
                         return (
                           <>
                             <div
-                              onClick={(e) =>
-                                this.handleChangeHeader(e, ele, i)
-                              }
+                              onClick={e => this.handleChangeHeader(e, ele, i)}
                               key={i}
-                              className="mycustomtag mt-1">
+                              className="mycustomtag mt-1"
+                            >
                               <span className="mt-1">
                                 <h5
                                   style={{ cursor: "pointer" }}
-                                  className="allfields">
+                                  className="allfields"
+                                >
                                   <input
                                     type="checkbox"
                                     // checked={check && check}
@@ -1013,14 +1007,15 @@ class PendingOrder extends React.Component {
                                             : ""
                                         }`,
                                       }}
-                                      className="allfields">
+                                      className="allfields"
+                                    >
                                       <IoMdRemoveCircleOutline
                                         onClick={() => {
                                           const SelectedCols =
                                             this.state.SelectedcolumnDefs?.slice();
                                           const delindex =
                                             SelectedCols?.findIndex(
-                                              (element) =>
+                                              element =>
                                                 element?.headerName ==
                                                 ele?.headerName
                                             );
@@ -1105,7 +1100,8 @@ class PendingOrder extends React.Component {
           }`}
           size="lg"
           backdrop={true}
-          fullscreen={true}>
+          fullscreen={true}
+        >
           <ModalHeader toggle={this.toggleModal}>View Details</ModalHeader>
           <ModalBody>
             <div className="container">
@@ -1121,7 +1117,8 @@ class PendingOrder extends React.Component {
                   <span
                     id="alerts"
                     className="alerts"
-                    style={{ color: "red" }}></span>
+                    style={{ color: "red" }}
+                  ></span>
                   <Row>
                     <Col lg="12" md="12" sm="12">
                       <div className="d-flex justify-content-center">
@@ -1131,10 +1128,10 @@ class PendingOrder extends React.Component {
                           className="otpinputtype"
                           value={this.state.emailotp}
                           name="emailotp"
-                          onChange={(otp) => this.setState({ emailotp: otp })}
+                          onChange={otp => this.setState({ emailotp: otp })}
                           numInputs={6}
                           renderSeparator={<span>-</span>}
-                          renderInput={(props) => (
+                          renderInput={props => (
                             <input className="inputs" {...props} />
                           )}
                         />
@@ -1165,18 +1162,20 @@ class PendingOrder extends React.Component {
                                   lg="12"
                                   md="12"
                                   sm="12"
-                                  className="mb-1 mt-1">
+                                  className="mb-1 mt-1"
+                                >
                                   <div className="d-flex justify-content-center">
                                     <Label className="mb-0">
                                       Payment Mode *
                                     </Label>
                                     <div
-                                      onChange={(e) =>
+                                      onChange={e =>
                                         this.setState({
                                           PayMode: e.target.value,
                                         })
                                       }
-                                      className="form-label-group mt-1">
+                                      className="form-label-group mt-1"
+                                    >
                                       <input
                                         required
                                         style={{ marginRight: "3px" }}
@@ -1207,7 +1206,8 @@ class PendingOrder extends React.Component {
                             <div className="d-flex justify-content-center">
                               <Button
                                 onClick={this.handleSubmitOTP}
-                                color="primary">
+                                color="primary"
+                              >
                                 Submit
                               </Button>
                             </div>
@@ -1273,13 +1273,14 @@ class PendingOrder extends React.Component {
                             <Col>
                               <Label>Change Status :</Label>
                               <CustomInput
-                                onChange={(e) => {
+                                onChange={e => {
                                   this.setState({
                                     Delivery_Status: e.target.value,
                                   });
                                 }}
                                 className="form-control"
-                                type="select">
+                                type="select"
+                              >
                                 <option>--select--</option>
                                 <option value="Completed">Completed</option>
                                 <option value="Cancelled">Cancelled</option>
@@ -1294,7 +1295,7 @@ class PendingOrder extends React.Component {
                                         <label> Reason for Cancellation</label>
                                         <Input
                                           required
-                                          onChange={(e) => {
+                                          onChange={e => {
                                             this.setState({
                                               CancelReason: e.target.value,
                                             });
@@ -1313,7 +1314,8 @@ class PendingOrder extends React.Component {
                                   style={{ cursor: "pointer" }}
                                   onClick={this.HandleStatusChange}
                                   className="mt-1"
-                                  color="primary">
+                                  color="primary"
+                                >
                                   Submit
                                 </Badge>
                               ) : null}

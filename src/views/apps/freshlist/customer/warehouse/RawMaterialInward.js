@@ -35,7 +35,6 @@ class RawMaterialInward extends React.Component {
     getPageSize: "",
     defaultColDef: {
       sortable: true,
-      // editable: true,
       resizable: true,
       suppressMenu: true,
     },
@@ -277,7 +276,7 @@ class RawMaterialInward extends React.Component {
             <Row className="mt-2 ml-2 mr-2">
               <Col>
                 <h1 sm="6" className="float-left" style={{ fontWeight: "600" }}>
-                  Raw Material Inward List
+                  Item Inward List
                 </h1>
               </Col>
               <Col>

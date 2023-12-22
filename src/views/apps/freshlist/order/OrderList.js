@@ -279,7 +279,7 @@ class OrderList extends React.Component {
     const userId = JSON.parse(localStorage.getItem("userData"))._id;
     const UserInformation = this.context?.UserInformatio;
     const InsidePermissions = CheckPermission("Sales Order");
-    console.log(InsidePermissions);
+    // console.log(InsidePermissions);
     this.setState({ InsiderPermissions: InsidePermissions });
     await createOrderhistoryview(userId)
       .then(res => {
@@ -617,12 +617,12 @@ class OrderList extends React.Component {
                         />
                         {isOpen && (
                           <div
-                          style={{
-                            position: "absolute",
-                            zIndex: "1",
-                            border: "1px solid #39cccc",
-                            backgroundColor: "white",
-                          }}
+                            style={{
+                              position: "absolute",
+                              zIndex: "1",
+                              border: "1px solid #39cccc",
+                              backgroundColor: "white",
+                            }}
                             className="dropdown-content dropdownmy"
                           >
                             <h5
