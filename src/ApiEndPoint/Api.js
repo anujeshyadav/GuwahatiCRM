@@ -1,4 +1,4 @@
-// Guwahati open
+// Guwahati open api EndPoints
 export const Get_Role = "/role/get-role";
 export const Create_Role = "/role/create-role";
 export const Get_Role_by_id = "/role/get-role-by-id/";
