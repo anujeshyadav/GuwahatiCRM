@@ -1,4 +1,4 @@
-// Guwahati open
+// Guwahati open api EndPoints
 export const Get_Role = "/role/get-role";
 export const Create_Role = "/role/create-role";
 export const Get_Role_by_id = "/role/get-role-by-id/";
@@ -10,6 +10,7 @@ export const Create_warehouse_save = "/warehouse/save-warehouse";
 export const View_Wareahouse_id = "/user/view-user/";
 // export const View_Wareahouse_id = "/warehouse/view-warehouse-by-id/";
 export const Create_Warehouse_List = "/warehouse/view-warehouse/";
+// export const Create_Warehouse_List = "/warehouse/delete-warehouse/";
 export const Create_Party_XML = "/party/get-xml";
 export const Create_Party_save = "/party/save-party";
 export const Create_Sales_personXMlView = "/sales-person/get-xml";
@@ -27,7 +28,7 @@ export const Create_Party_List = "/party/view-party";
 // "creatorderbycashbook"
 export const Create_order_by_cashbook = "/cashbook/cashbook-order";
 //cashbookgetapi
-export const CashbookList = '/cashbook/view-order-list/'
+export const CashbookList = "/cashbook/view-order-list/";
 
 export const Save_Promotion = "/promotion/save-promotion";
 export const View_Promotion_List = "/promotion/view-promotion/";
@@ -35,7 +36,7 @@ export const Create_transporter_xmlView = "/transporter/get-xml";
 export const Create_transporter_save = "/transporter/save-transporter";
 export const Create_Transporter_List = "/transporter/view-transporter";
 export const Delete_Transporter_List = "/transporter/delete-transporter/";
-
+export const Create_Ware_House = '/raw-material/get-xml'
 export const Create_unit_xmlView = "/unit/get-xml";
 
 export const AddPrimaryUnit = "/primary-unit/save-primary-unit/";

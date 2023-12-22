@@ -17,6 +17,7 @@ import {
   ModalBody,
   Badge,
   Table,
+  Label,
 } from "reactstrap";
 
 import { ContextLayout } from "../../../../../utility/context/Layout";
@@ -61,6 +62,8 @@ class purchasereportamount extends React.Component {
       isOpen: false,
       Arrindex: "",
       rowData: [],
+      startDate: "",
+      EndDate: "",
       modal: false,
       modalone: false,
       ViewData: {},
@@ -204,6 +207,17 @@ class purchasereportamount extends React.Component {
             return null;
           },
         },
+        {
+          headerName: "Create Date",
+          field: "orderItems",
+          filter: true,
+          width: 180,
+          valueGetter: params => {
+            const dateList = new Date(params.data.updatedAt);
+            const onlyDate = dateList.toISOString().split("T")[0];
+            return onlyDate;
+          },
+        },
       ],
     };
   }
@@ -220,16 +234,20 @@ class purchasereportamount extends React.Component {
     }));
   };
 
-  // handleChangeView = (data, types) => {
-  //   let type = types;
-  //   if (type == "readonly") {
-  //     this.setState({ ViewOneUserView: true });
-  //     this.setState({ ViewOneData: data });
-  //   } else {
-  //     this.setState({ EditOneUserView: true });
-  //     this.setState({ EditOneData: data });
-  //   }
-  // };
+  handleDate = e => {
+    const { name, value } = e.target;
+    this.setState({ [name]: value });
+  };
+
+  handleSubmitDate = () => {
+    console.log(this.state.rowData);
+    const filteredItems = this.state.rowData.filter(item => {
+      const dateList = new Date(item.updatedAt);
+      const onlyDate = dateList.toISOString().split("T")[0];
+      return onlyDate >= this.state.startDate && onlyDate <= this.state.EndDate;
+    });
+    this.setState({ rowData: filteredItems });
+  };
 
   handleChangeView = (data, types) => {
     let type = types;
@@ -546,9 +564,37 @@ class purchasereportamount extends React.Component {
               <Card>
                 <Row className="ml-2 mr-2 mt-2">
                   <Col>
-                    <h1 className="float-left" style={{ fontWeight: "600" }}>
+                    <h2 className="float-left" style={{ fontWeight: "600" }}>
                       Purchased Report
-                    </h1>
+                    </h2>
+                  </Col>
+                  <Col>
+                    <Label>Start Date</Label>
+                    <Input
+                      type="date"
+                      name="startDate"
+                      value={this.state.startDate}
+                      onChange={this.handleDate}
+                    />
+                  </Col>
+                  <Col>
+                    <Label>End Date</Label>
+                    <Input
+                      type="date"
+                      name="EndDate"
+                      value={this.state.EndDate}
+                      onChange={this.handleDate}
+                    />
+                  </Col>
+                  <Col>
+                    <Button
+                      type="submit"
+                      className="mt-1"
+                      color="primary"
+                      onClick={this.handleSubmitDate}
+                    >
+                      Submit
+                    </Button>
                   </Col>
                   <Col>
                     <span className="mx-1">
@@ -620,29 +666,6 @@ class purchasereportamount extends React.Component {
                         )}
                       </div>
                     </span>
-                    {/* <span>
-                            <Route
-                              render={({ history }) => (
-                                <Button
-                                  style={{
-                                    cursor: "pointer",
-                                    backgroundColor: "#39cccc",
-                                    color: "white",
-                                    fontWeight: "600",
-                                  }}
-                                  className="float-right mr-1"
-                                  color="#39cccc"
-                                  onClick={() =>
-                                    history.push(
-                                      "/app/AJgroup/order/AddPurchaseOrder"
-                                    )
-                                  }
-                                >
-                                  <FaPlus size={15} /> Add Purchase Order
-                                </Button>
-                              )}
-                            />
-                          </span> */}
                   </Col>
                 </Row>
                 <CardBody style={{ marginTop: "-1.5rem" }}>

@@ -291,11 +291,11 @@ class RawMaterialInward extends React.Component {
                   className=" float-right"
                   onClick={() =>
                     this.props.history.push(
-                      "/app/softNumen/warehouse/CreateWareHouse"
+                      "/app/softNumen/warehouse/Inwordwarehousecreate"
                     )
                   }
                 >
-                  + RawMaterialInward
+                  + Raw Material Inward
                 </Button>
               </Col>
               {/* <Col>

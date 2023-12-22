@@ -133,6 +133,7 @@ const CreateAccount = () => {
         // console.log(userdata?.rolename?.position);
         // console.log(ShowList);
         setdropdownValue(ShowList);
+        console.log(ShowList);
       })
       .catch((err) => {
         console.log(err);
@@ -143,6 +144,7 @@ const CreateAccount = () => {
         const jsonData = xmlJs.xml2json(res.data, { compact: true, spaces: 2 });
         setCreatAccountView(JSON.parse(jsonData)?.CreateUser?.input);
         setdropdownValue(JSON.parse(jsonData));
+        
       })
       .catch((err) => {
         console.log(err);

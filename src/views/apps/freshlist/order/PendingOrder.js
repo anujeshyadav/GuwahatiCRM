@@ -316,7 +316,7 @@ class PendingOrder extends React.Component {
       modalone: !prevState.modalone,
     }));
     this.setState({ OtpScreen: false });
-    this.componentDidMount()
+    this.componentDidMount();
   };
   LookupviewStart = () => {
     this.setState((prevState) => ({
@@ -326,10 +326,10 @@ class PendingOrder extends React.Component {
   HandleStatusChange = async (e) => {
     e.preventDefault();
     console.log(this.state.Delivery_Status);
-    
+
     await Goods_DeliveryOTP(this.state.ViewOneData?.userId?._id)
       .then((res) => {
-       
+        debugger;
         console.log(res);
         swal("success", "OTP Sent Successfully To Your Registered email id");
         this.setState({ OtpScreen: true });
@@ -373,7 +373,7 @@ class PendingOrder extends React.Component {
   };
   handleSubmitOTP = async (e) => {
     e.preventDefault();
-   
+
     let payload = {
       userId: this.state.ViewOneData?.userId?._id,
       orderId: this.state.ViewOneData?.orderId,
@@ -395,26 +395,6 @@ class PendingOrder extends React.Component {
         swal("Please Enter Correct OTP");
       });
   };
-  // handleChangeView = (data, types) => {
-  //   let type = types;
-  //   if (type == "readonly") {
-  //     this.setState({ ViewOneUserView: true });
-  //     this.setState({ ViewOneData: data });
-  //   } else {
-  //     this.setState({ EditOneUserView: true });
-  //     this.setState({ EditOneData: data });
-  //   }
-  // };
-  // handleChangeEdit = (data, types) => {
-  //   let type = types;
-  //   if (type == "readonly") {
-  //     this.setState({ ViewOneUserView: true });
-  //     this.setState({ ViewOneData: data });
-  //   } else {
-  //     this.setState({ EditOneUserView: true });
-  //     this.setState({ EditOneData: data });
-  //   }
-  // };
 
   async componentDidMount() {
     const InsidePermissions = CheckPermission("Pending Order");
@@ -453,7 +433,6 @@ class PendingOrder extends React.Component {
   };
 
   runthisfunction(id) {
-   
     swal("Warning", "Sure You Want to Delete it", {
       buttons: {
         cancel: "cancel",
