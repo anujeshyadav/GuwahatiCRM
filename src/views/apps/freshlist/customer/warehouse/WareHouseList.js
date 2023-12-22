@@ -30,7 +30,6 @@ import Logo from "../../../../../assets/img/profile/pages/logomain.png";
 import Papa from "papaparse";
 import { Eye, Trash2, ChevronDown, Edit } from "react-feather";
 import { IoMdRemoveCircleOutline } from "react-icons/io";
-import { history } from "../../../../../history";
 import "../../../../../assets/scss/plugins/tables/_agGridStyleOverride.scss";
 import "../../../../../assets/scss/pages/users.scss";
 import { Route } from "react-router-dom";
@@ -50,7 +49,6 @@ import {
   ViewProductWareHouseList,
 } from "../../../../../ApiEndPoint/ApiCalling";
 import {
-  BsCloudDownloadFill,
   BsFillArrowDownSquareFill,
   BsFillArrowUpSquareFill,
 } from "react-icons/bs";
@@ -115,7 +113,6 @@ class WareHouseList extends React.Component {
         if (res.Warehouse) {
           this.setState({ wareHouseViewOne: res?.Warehouse });
         }
-        // this.setState({ rowData: res?.Warehouse });
       })
       .catch(err => {
         console.log(err);
@@ -124,7 +121,6 @@ class WareHouseList extends React.Component {
     await Createwarehousexml()
       .then(res => {
         var mydropdownArray = [];
-        var adddropdown = [];
         const jsonData = xmlJs.xml2json(res.data, { compact: true, spaces: 2 });
 
         const inputs = JSON.parse(jsonData).AddWareHouse?.input?.map(ele => {

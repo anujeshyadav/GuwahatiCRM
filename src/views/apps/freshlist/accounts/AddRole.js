@@ -531,6 +531,10 @@ export const Roles = [
         title: "Earning Report",
         permission: ["View", "Create", "Edit", "Delete"],
       },
+      {
+        title: "WareHouse Report",
+        permission: ["View", "Create", "Edit", "Delete"],
+      },
     ],
   },
   {

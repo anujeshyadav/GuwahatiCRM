@@ -10,6 +10,7 @@ export const Create_warehouse_save = "/warehouse/save-warehouse";
 export const View_Wareahouse_id = "/user/view-user/";
 // export const View_Wareahouse_id = "/warehouse/view-warehouse-by-id/";
 export const Create_Warehouse_List = "/warehouse/view-warehouse/";
+// export const Create_Warehouse_List = "/warehouse/delete-warehouse/";
 export const Create_Party_XML = "/party/get-xml";
 export const Create_Party_save = "/party/save-party";
 export const Create_Sales_personXMlView = "/sales-person/get-xml";
@@ -27,7 +28,7 @@ export const Create_Party_List = "/party/view-party";
 // "creatorderbycashbook"
 export const Create_order_by_cashbook = "/cashbook/cashbook-order";
 //cashbookgetapi
-export const CashbookList = '/cashbook/view-order-list/'
+export const CashbookList = "/cashbook/view-order-list/";
 
 export const Save_Promotion = "/promotion/save-promotion";
 export const View_Promotion_List = "/promotion/view-promotion/";

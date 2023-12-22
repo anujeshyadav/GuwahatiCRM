@@ -15,6 +15,8 @@ import {
   ModalBody,
   Badge,
   Table,
+  Label,
+  Button,
 } from "reactstrap";
 import { ContextLayout } from "../../../../../utility/context/Layout";
 import { AgGridReact } from "ag-grid-react";
@@ -120,7 +122,8 @@ class Salesreport extends React.Component {
           filter: true,
           width: 150,
           cellRendererFramework: params => {
-            return params.value == "completed" ? (
+            return params.value == "completed" ||
+              params.value == "Completed" ? (
               <div className="badge badge-pill badge-success">
                 {params.data.status}
               </div>
@@ -210,6 +213,17 @@ class Salesreport extends React.Component {
             return null;
           },
         },
+        {
+          headerName: "Create Date",
+          field: "orderItems",
+          filter: true,
+          width: 180,
+          valueGetter: params => {
+            const dateList = new Date(params.data.updatedAt);
+            const onlyDate = dateList.toISOString().split("T")[0];
+            return onlyDate;
+          },
+        },
       ],
     };
   }
@@ -245,11 +259,11 @@ class Salesreport extends React.Component {
     this.setState({ InsiderPermissions: InsidePermissions });
     await createOrderhistoryview(userId)
       .then(res => {
-        // this.setState({ rowData: res?.orderHistory });
-        // console.log(res?.orderHistory);
+        console.log(res?.orderHistory);
         const ComplteStatus = res?.orderHistory?.filter(
-          ele => ele.status == "completed"
+          ele => ele.status == "completed" || ele.status == "Completed"
         );
+        console.log(ComplteStatus);
         this.setState({ rowData: ComplteStatus });
         this.setState({ AllcolumnDefs: this.state.columnDefs });
         this.setState({ SelectedCols: this.state.columnDefs });
@@ -281,7 +295,20 @@ class Salesreport extends React.Component {
   toggleDropdown = () => {
     this.setState(prevState => ({ isOpen: !prevState.isOpen }));
   };
+  handleDate = e => {
+    const { name, value } = e.target;
+    this.setState({ [name]: value });
+  };
 
+  handleSubmitDate = () => {
+    console.log(this.state.rowData);
+    const filteredItems = this.state.rowData.filter(item => {
+      const dateList = new Date(item.updatedAt);
+      const onlyDate = dateList.toISOString().split("T")[0];
+      return onlyDate >= this.state.startDate && onlyDate <= this.state.EndDate;
+    });
+    this.setState({ rowData: filteredItems });
+  };
   runthisfunction(id) {
     swal("Warning", "Sure You Want to Delete it", {
       buttons: {
@@ -554,10 +581,37 @@ class Salesreport extends React.Component {
             <Card>
               <Row className="ml-2 mt-2 mr-2">
                 <Col>
-                  <h1 className="float-left " style={{ fontWeight: "600" }}>
-                    {" "}
+                  <h2 className="float-left " style={{ fontWeight: "600" }}>
                     Sales Order Report
-                  </h1>
+                  </h2>
+                </Col>
+                <Col>
+                  <Label>Start Date</Label>
+                  <Input
+                    type="date"
+                    name="startDate"
+                    value={this.state.startDate}
+                    onChange={this.handleDate}
+                  />
+                </Col>
+                <Col>
+                  <Label>End Date</Label>
+                  <Input
+                    type="date"
+                    name="EndDate"
+                    value={this.state.EndDate}
+                    onChange={this.handleDate}
+                  />
+                </Col>
+                <Col>
+                  <Button
+                    type="submit"
+                    className="mt-1"
+                    color="primary"
+                    onClick={this.handleSubmitDate}
+                  >
+                    Submit
+                  </Button>
                 </Col>
                 {InsiderPermissions && InsiderPermissions?.View && (
                   <Col>
@@ -755,11 +809,7 @@ class Salesreport extends React.Component {
                                   style={{ cursor: "pointer" }}
                                   className="allfields"
                                 >
-                                  <input
-                                    type="checkbox"
-                                    // checked={check && check}
-                                    className="mx-1"
-                                  />
+                                  <input type="checkbox" className="mx-1" />
 
                                   {ele?.headerName}
                                 </h5>
@@ -829,10 +879,9 @@ class Salesreport extends React.Component {
                                           if (SelectedCols && delindex >= 0) {
                                             const splicedElement =
                                               SelectedCols?.splice(delindex, 1); // Remove the element
-                                            // splicedElement contains the removed element, if needed
 
                                             this.setState({
-                                              SelectedcolumnDefs: SelectedCols, // Update the state with the modified array
+                                              SelectedcolumnDefs: SelectedCols, // Update the state with the
                                             });
                                           }
                                         }}
