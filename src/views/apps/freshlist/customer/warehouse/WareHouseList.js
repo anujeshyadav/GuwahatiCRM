@@ -564,8 +564,6 @@ class WareHouseList extends React.Component {
     }
   };
   changeHandler = e => {
-    console.log(e.target.value, this.state.warehouse);
-
     this.setState({ [e.target.name]: e.target.value });
   };
   render() {
