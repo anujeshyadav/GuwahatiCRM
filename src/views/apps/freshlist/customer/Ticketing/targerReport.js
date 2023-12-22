@@ -1,6 +1,5 @@
 import React, { useRef } from "react";
 import { Route } from "react-router-dom";
-import xmlJs from "xml-js";
 import { ImDownload } from "react-icons/im";
 import {
   Card,
@@ -16,14 +15,16 @@ import {
   Button,
   ModalHeader,
   ModalBody,
+  Badge,
+  Label,
 } from "reactstrap";
+
 import { ContextLayout } from "../../../../../utility/context/Layout";
 import { AgGridReact } from "ag-grid-react";
 import "ag-grid-community/dist/styles/ag-grid.css";
 import EditAccount from "../../accounts/EditAccount";
-import ViewAccount from "../../accounts/ViewAccount";
+// import ViewAccount from "../accounts/ViewAccount";
 import jsPDF from "jspdf";
-// import db from "../../../../context/indexdb";
 import "jspdf-autotable";
 import Logo from "../../../../../assets/img/profile/pages/logomain.png";
 import Papa from "papaparse";
@@ -36,13 +37,14 @@ import {
   FaArrowAltCircleLeft,
   FaArrowAltCircleRight,
   FaFilter,
+  FaPlus,
 } from "react-icons/fa";
-import moment from "moment-timezone";
 import swal from "sweetalert";
 import {
-  TicketTool_ViewData,
-  ticketToolDeleteOne,
-  ticketToolList,
+  CreateUserList,
+  CreateAccountList,
+  Create_TargetList,
+  Delete_targetINlist,
 } from "../../../../../ApiEndPoint/ApiCalling";
 import {
   BsCloudDownloadFill,
@@ -51,10 +53,12 @@ import {
 } from "react-icons/bs";
 import * as XLSX from "xlsx";
 import UserContext from "../../../../../context/Context";
+import TargetAssignedOne from "../../house/TargetAssignedOne";
+import { CheckPermission } from "../../house/CheckPermission";
 
 const SelectedColums = [];
 
-class targerReport extends React.Component {
+class TargetReport extends React.Component {
   static contextType = UserContext;
   constructor(props) {
     super(props);
@@ -64,12 +68,18 @@ class targerReport extends React.Component {
       isOpen: false,
       Arrindex: "",
       rowData: [],
+      modal: false,
+      modalone: false,
+      ViewData: {},
+      startDate: "",
+      EndDate: "",
+      InsiderPermissions: {},
       setMySelectedarr: [],
       SelectedCols: [],
       paginationPageSize: 5,
       currenPageSize: "",
       getPageSize: "",
-      columnDefs: [],
+      // columnDefs: [],
       AllcolumnDefs: [],
       SelectedcolumnDefs: [],
       defaultColDef: {
@@ -79,15 +89,162 @@ class targerReport extends React.Component {
         resizable: true,
         suppressMenu: true,
       },
+      columnDefs: [
+        {
+          headerName: "UID",
+          valueGetter: "node.rowIndex + 1",
+          field: "node.rowIndex + 1",
+          width: 80,
+          filter: true,
+        },
+
+        {
+          headerName: "Actions",
+          field: "transactions",
+          width: 120,
+          cellRendererFramework: params => {
+            return (
+              <div className="actions cursor-pointer">
+                {this.state.InsiderPermissions &&
+                  this.state.InsiderPermissions?.View && (
+                    <Eye
+                      className="mr-50"
+                      size="25px"
+                      color="green"
+                      onClick={() => {
+                        this.setState({ ViewData: params?.data });
+                        this.toggleModal();
+                      }}
+                    />
+                  )}
+              </div>
+            );
+          },
+        },
+        {
+          headerName: "FullName",
+          field: "salesPersonId.firstName",
+          filter: "agSetColumnFilter",
+          width: 200,
+          cellRendererFramework: params => {
+            return (
+              <div className="d-flex align-items-center cursor-pointer">
+                <div className="">
+                  <span>
+                    {params.data?.salesPersonId?.firstName +
+                      params.data?.salesPersonId?.lastName}
+                  </span>
+                </div>
+              </div>
+            );
+          },
+        },
+        {
+          headerName: "Product Assigned",
+          field: "Product Name",
+          filter: "agSetColumnFilter",
+          width: 200,
+          cellRendererFramework: params => {
+            return (
+              <div className="d-flex align-items-center cursor-pointer">
+                <div className="">
+                  <span>
+                    {params?.data?.products?.length &&
+                      params?.data?.products?.length}{" "}
+                    Product
+                  </span>
+                </div>
+              </div>
+            );
+          },
+        },
+        {
+          headerName: "Target Start Date",
+          field: "startDate",
+          filter: "agSetColumnFilter",
+          width: 200,
+          cellRendererFramework: params => {
+            return (
+              <div className="d-flex align-items-center cursor-pointer">
+                <div className="">
+                  <span>{params.data?.startDate?.split("T")[0]}</span>
+                </div>
+              </div>
+            );
+          },
+        },
+        {
+          headerName: "Target End Date",
+          field: "endDate",
+          filter: "agSetColumnFilter",
+          width: 200,
+          cellRendererFramework: params => {
+            return (
+              <div className="d-flex align-items-center cursor-pointer">
+                <div className="">
+                  <span>{params.data?.endDate?.split("T")[0]}</span>
+                </div>
+              </div>
+            );
+          },
+        },
+        {
+          headerName: "Created at",
+          field: "createdAt",
+          filter: "agSetColumnFilter",
+          width: 200,
+          cellRendererFramework: params => {
+            return (
+              <div className="d-flex align-items-center cursor-pointer">
+                <div className="">
+                  <span>{params.data?.createdAt?.split(" ")[0]}</span>
+                </div>
+              </div>
+            );
+          },
+        },
+        {
+          headerName: "updatedAt",
+          field: "updatedAt",
+          filter: "agSetColumnFilter",
+          width: 200,
+          cellRendererFramework: params => {
+            return (
+              <div className="d-flex align-items-center cursor-pointer">
+                <div className="">
+                  <span>{params.data?.updatedAt?.split(" ")[0]}</span>
+                </div>
+              </div>
+            );
+          },
+        },
+      ],
     };
   }
-
+  toggleModal = () => {
+    this.setState(prevState => ({
+      modalone: !prevState.modalone,
+    }));
+  };
   LookupviewStart = () => {
     this.setState(prevState => ({
       modal: !prevState.modal,
     }));
   };
+  handleDate = e => {
+    const { name, value } = e.target;
+    this.setState({ [name]: value });
+  };
 
+  handleSubmitDate = () => {
+    console.log(this.state.rowData);
+    const filteredItems = this.state.rowData.filter(item => {
+      const dateList = new Date(item.updatedAt);
+      const onlyDate = dateList.toISOString().split("T")[0];
+      return onlyDate >= this.state.startDate && onlyDate <= this.state.EndDate;
+    });
+    this.setState({ rowData: filteredItems });
+  };
   handleChangeEdit = (data, types) => {
     let type = types;
     if (type == "readonly") {
@@ -100,574 +257,29 @@ class targerReport extends React.Component {
   };
 
   async componentDidMount() {
-    const UserInformation = this.context?.UserInformatio;
-    await ticketToolList()
+    let userId = JSON.parse(localStorage.getItem("userData"))._id;
+    const InsidePermissions = CheckPermission("Target Creation");
+    this.setState({ InsiderPermissions: InsidePermissions });
+    await Create_TargetList(userId)
       .then(res => {
-        console.log(res?.TicketTool);
-        this.setState({ rowData: res?.TicketTool });
-      })
-      .catch(err => {
-        console.log(err);
-      });
+        console.log(res.TargetCreation);
+        this.setState({ rowData: res?.TargetCreation });
+        this.setState({ AllcolumnDefs: this.state.columnDefs });
+        this.setState({ SelectedCols: this.state.columnDefs });
 
-    TicketTool_ViewData()
-      .then(res => {
-        console.log(res);
-        let jsonData = xmlJs.xml2json(res.data, { compact: true, spaces: 2 });
-        // console.log(JSON.parse(jsonData)?.createTicket);
-        let CreatAccountView = JSON.parse(jsonData)?.createTicket;
-
-        const Checkbox = CreatAccountView?.CheckBox?.input?.map(ele => {
-          return {
-            headerName: ele?.label._text,
-            field: ele?.name._text,
-            filter: true,
-            sortable: true,
-          };
-        });
-        const partsmydropdown = CreatAccountView?.Parts?.MyDropDown?.map(
-          ele => {
-            return {
-              headerName: ele?.dropdown?.label._text,
-              field: ele?.dropdown?.name?._text,
-              filter: true,
-              sortable: true,
-            };
-          }
-        );
-
-        let dropdown = CreatAccountView?.CurrentStatus?.MyDropDown?.dropdown;
-
-        const singledropdown = {
-          headerName: dropdown?.name._text,
-          field: dropdown?.name._text,
-          filter: true,
-          sortable: true,
-        };
-
-        const partinput = CreatAccountView?.Parts?.input?.map(ele => {
-          return {
-            headerName: ele?.label._text,
-            field: ele?.name._text,
-            filter: true,
-            sortable: true,
-          };
-        });
-
-        const productdropdown = CreatAccountView?.Product?.MyDropDown?.map(
-          ele => {
-            return {
-              headerName: ele?.dropdown?.label._text,
-              field: ele?.dropdown?.name?._text,
-              filter: true,
-              sortable: true,
-            };
-          }
-        );
-
-        const productinput = CreatAccountView?.Product?.input?.map(ele => {
-          return {
-            headerName: ele?.label._text,
-            field: ele?.name._text,
-            filter: true,
-            sortable: true,
-          };
-        });
-
-        const allinput = CreatAccountView?.input?.map(ele => {
-          return {
-            headerName: ele?.label._text,
-            field: ele?.name._text,
-            filter: true,
-            sortable: true,
-          };
-        });
-
-        // formdata.append("id", randomNumber);
-        let myHeadings = [
-          ...Checkbox,
-          ...partsmydropdown,
-          singledropdown,
-          ...partinput,
-          ...productinput,
-          ...allinput,
-          ...productdropdown,
-        ];
-        // console.log(myHeadings);
-        let Product = [
-          {
-            headerName: "Actions",
-            field: "sortorder",
-            field: "transactions",
-            width: 190,
-            cellRendererFramework: params => {
-              return (
-                <div className="actions cursor-pointer">
-                  <Route
-                    render={({ history }) => (
-                      <Eye
-                        className="mr-50"
-                        size="25px"
-                        color="green"
-                        onClick={() => {
-                          this.handleChangeEdit(params.data, "readonly");
-                        }}
-                      />
-                    )}
-                  />
-                  <Route
-                    render={({ history }) => (
-                      <Edit
-                        className="mr-50"
-                        size="25px"
-                        color="blue"
-                        onClick={() => {
-                          this.handleChangeEdit(params.data, "Editable");
-                        }}
-                      />
-                    )}
-                  />
-
-                  <Route
-                    render={() => (
-                      <Trash2
-                        className="mr-50"
-                        size="25px"
-                        color="red"
-                        onClick={() => {
-                          this.runthisfunction(params?.data?._id);
-                        }}
-                      />
-                    )}
-                  />
-                </div>
-              );
-            },
-          },
-          {
-            headerName: "Whatsapp",
-            field: "whatsapp",
-            filter: true,
-            sortable: true,
-            cellRendererFramework: params => {
-              return params.data?.whatsapp === "true" ? (
-                <div className="badge badge-pill badge-success">YES</div>
-              ) : params.data?.whatsapp === "false" ? (
-                <div className="badge badge-pill badge-warning">NO</div>
-              ) : (
-                "NA"
-              );
-            },
-          },
-          {
-            headerName: "SMS",
-            field: "sms",
-            filter: true,
-            sortable: true,
-            cellRendererFramework: params => {
-              return params.data?.sms === "true" ? (
-                <div className="badge badge-pill badge-success">YES</div>
-              ) : params.data?.sms === "false" ? (
-                <div className="badge badge-pill badge-warning">No</div>
-              ) : (
-                "NA"
-              );
-            },
-          },
-          {
-            headerName: "Gmail",
-            field: "gmail",
-            filter: true,
-            sortable: true,
-            cellRendererFramework: params => {
-              return params.data?.gmail === "true" ? (
-                <div className="badge badge-pill badge-success">YES</div>
-              ) : params.data?.gmail === "false" ? (
-                <div className="badge badge-pill badge-warning">NO</div>
-              ) : (
-                "NA"
-              );
-            },
-          },
-          ...myHeadings,
-          {
-            headerName: "Created date",
-            field: "createdAt",
-            filter: true,
-            sortable: true,
-            cellRendererFramework: params => {
-              let convertedTime = "NA";
-              if (params?.data?.createdAt == undefined) {
-                convertedTime = "NA";
-              }
-              if (params?.data?.createdAt) {
-                convertedTime = params?.data?.createdAt;
-              }
-              if (
-                UserInformation?.timeZone !== undefined &&
-                params?.data?.createdAt !== undefined
-              ) {
-                if (params?.data?.createdAt != undefined) {
-                  convertedTime = moment(params?.data?.createdAt?.split(".")[0])
-                    .tz(UserInformation?.timeZone.split("-")[0])
-                    .format(UserInformation?.dateTimeFormat);
-                }
-              }
-
-              return (
-                <>
-                  <div className="actions cursor-pointer">
-                    {convertedTime == "NA" ? (
-                      "NA"
-                    ) : (
-                      <span>
-                        {convertedTime} &nbsp;
-                        {UserInformation?.timeZone &&
-                          UserInformation?.timeZone.split("-")[1]}
-                      </span>
-                    )}
-                  </div>
-                </>
-              );
-            },
-          },
-          {
-            headerName: "Updated date",
-            field: "updatedAt",
-            filter: true,
-            sortable: true,
-            cellRendererFramework: params => {
-              let convertedTime = "NA";
-              if (params?.data?.updatedAt == undefined) {
-                convertedTime = "NA";
-              }
-              if (params?.data?.updatedAt) {
-                convertedTime = params?.data?.updatedAt;
-              }
-              if (
-                UserInformation?.timeZone !== undefined &&
-                params?.data?.updatedAt !== undefined
-              ) {
-                if (params?.data?.updatedAt != undefined) {
-                  convertedTime = moment(params?.data?.updatedAt?.split(".")[0])
-                    .tz(UserInformation?.timeZone.split("-")[0])
-                    .format(UserInformation?.dateTimeFormat);
-                }
-              }
-
-              return (
-                <>
-                  <div className="actions cursor-pointer">
-                    {convertedTime == "NA" ? (
-                      "NA"
-                    ) : (
-                      <span>
-                        {convertedTime} &nbsp;
-                        {UserInformation?.timeZone &&
-                          UserInformation?.timeZone.split("-")[1]}
-                      </span>
-                    )}
-                  </div>
-                </>
-              );
-            },
-          },
-        ];
-
-        this.setState({ AllcolumnDefs: Product });
-
-        let userHeading = JSON.parse(localStorage.getItem("Ticketsearch"));
+        let userHeading = JSON.parse(localStorage.getItem("TargetList"));
         if (userHeading?.length) {
           this.setState({ columnDefs: userHeading });
           this.gridApi.setColumnDefs(userHeading);
           this.setState({ SelectedcolumnDefs: userHeading });
         } else {
-          this.setState({ columnDefs: Product });
-          this.setState({ SelectedcolumnDefs: Product });
+          this.setState({ columnDefs: this.state.columnDefs });
+          this.setState({ SelectedcolumnDefs: this.state.columnDefs });
         }
-        this.setState({ SelectedCols: Product });
       })
       .catch(err => {
         console.log(err);
       });
-
-    // await CreateAccountView()
-    //   .then((res) => {
-    //     var mydropdownArray = [];
-    //     var adddropdown = [];
-    //     const jsonData = xmlJs.xml2json(res.data, { compact: true, spaces: 2 });
-    //     console.log(JSON.parse(jsonData));
-
-    //     const inputs = JSON.parse(jsonData).CreateAccount?.input?.map((ele) => {
-    //       return {
-    //         headerName: ele?.label._text,
-    //         field: ele?.name._text,
-    //         filter: true,
-    //         sortable: true,
-    //       };
-    //     });
-    //     let Radioinput =
-    //       JSON.parse(jsonData).CreateAccount?.Radiobutton?.input[0]?.name
-    //         ?._text;
-    //     const addRadio = [
-    //       {
-    //         headerName: Radioinput,
-    //         field: Radioinput,
-    //         filter: true,
-    //         sortable: true,
-    //         cellRendererFramework: (params) => {
-    //           return params.data?.Status === "Active" ? (
-    //             <div className="badge badge-pill badge-success">
-    //               {params.data.Status}
-    //             </div>
-    //           ) : params.data?.Status === "Deactive" ? (
-    //             <div className="badge badge-pill badge-warning">
-    //               {params.data.Status}
-    //             </div>
-    //           ) : (
-    //             "NA"
-    //           );
-    //         },
-    //       },
-    //     ];
-
-    //     let dropdown = JSON.parse(jsonData).CreateAccount?.MyDropdown?.dropdown;
-    //     if (dropdown.length) {
-    //       var mydropdownArray = dropdown?.map((ele) => {
-    //         return {
-    //           headerName: ele?.label,
-    //           field: ele?.name,
-    //           filter: true,
-    //           sortable: true,
-    //         };
-    //       });
-    //     } else {
-    //       var adddropdown = [
-    //         {
-    //           headerName: dropdown?.label._text,
-    //           field: dropdown?.name._text,
-    //           filter: true,
-    //           sortable: true,
-    //         },
-    //       ];
-    //     }
-
-    //     let myHeadings = [
-    //       // ...checkboxinput,
-    //       ...inputs,
-    //       ...adddropdown,
-    //       ...addRadio,
-    //       ...mydropdownArray,
-    //     ];
-    //     // console.log(myHeadings);
-    //     let Product = [
-    //       {
-    //         headerName: "Actions",
-    //         field: "sortorder",
-    //         field: "transactions",
-    //         width: 190,
-    //         cellRendererFramework: (params) => {
-    //           return (
-    //             <div className="actions cursor-pointer">
-    //               <Route
-    //                 render={({ history }) => (
-    //                   <Eye
-    //                     className="mr-50"
-    //                     size="25px"
-    //                     color="green"
-    //                     onClick={() => {
-    //                       this.handleChangeEdit(params.data, "readonly");
-    //                     }}
-    //                   />
-    //                 )}
-    //               />
-    //               <Route
-    //                 render={({ history }) => (
-    //                   <Edit
-    //                     className="mr-50"
-    //                     size="25px"
-    //                     color="blue"
-    //                     onClick={() => {
-    //                       this.handleChangeEdit(params.data, "Editable");
-    //                     }}
-    //                   />
-    //                 )}
-    //               />
-
-    //               <Route
-    //                 render={() => (
-    //                   <Trash2
-    //                     className="mr-50"
-    //                     size="25px"
-    //                     color="red"
-    //                     onClick={() => {
-    //                       this.runthisfunction(params?.data?._id);
-    //                     }}
-    //                   />
-    //                 )}
-    //               />
-    //             </div>
-    //           );
-    //         },
-    //       },
-    //       {
-    //         headerName: "Whatsapp",
-    //         field: "whatsapp",
-    //         filter: true,
-    //         sortable: true,
-    //         cellRendererFramework: (params) => {
-    //           console.log(params?.data?.whatsapp);
-    //           return params.data?.whatsapp === true ? (
-    //             <div className="badge badge-pill badge-success">YES</div>
-    //           ) : params.data?.whatsapp === false ? (
-    //             <div className="badge badge-pill badge-warning">NO</div>
-    //           ) : (
-    //             "NA"
-    //           );
-    //         },
-    //       },
-    //       {
-    //         headerName: "SMS",
-    //         field: "sms",
-    //         filter: true,
-    //         sortable: true,
-    //         cellRendererFramework: (params) => {
-    //           console.log(params?.data?.sms);
-    //           return params.data?.sms === true ? (
-    //             <div className="badge badge-pill badge-success">YES</div>
-    //           ) : params.data?.sms === false ? (
-    //             <div className="badge badge-pill badge-warning">No</div>
-    //           ) : (
-    //             "NA"
-    //           );
-    //         },
-    //       },
-    //       {
-    //         headerName: "Gmail",
-    //         field: "gmail",
-    //         filter: true,
-    //         sortable: true,
-    //         cellRendererFramework: (params) => {
-    //           console.log(params?.data?.gmail);
-    //           return params.data?.gmail === true ? (
-    //             <div className="badge badge-pill badge-success">YES</div>
-    //           ) : params.data?.gmail === false ? (
-    //             <div className="badge badge-pill badge-warning">NO</div>
-    //           ) : (
-    //             "NA"
-    //           );
-    //         },
-    //       },
-    //       ...myHeadings,
-    //       {
-    //         headerName: "Created date",
-    //         field: "createdAt",
-    //         filter: true,
-    //         sortable: true,
-    //         cellRendererFramework: (params) => {
-    //           let convertedTime = "NA";
-    //           if (params?.data?.createdAt == undefined) {
-    //             convertedTime = "NA";
-    //           }
-    //           if (params?.data?.createdAt) {
-    //             convertedTime = params?.data?.createdAt;
-    //           }
-    //           if (
-    //             UserInformation?.timeZone !== undefined &&
-    //             params?.data?.createdAt !== undefined
-    //           ) {
-    //             if (params?.data?.createdAt != undefined) {
-    //               convertedTime = moment(params?.data?.createdAt?.split(".")[0])
-    //                 .tz(UserInformation?.timeZone.split("-")[0])
-    //                 .format(UserInformation?.dateTimeFormat);
-    //             }
-    //           }
-
-    //           return (
-    //             <>
-    //               <div className="actions cursor-pointer">
-    //                 {convertedTime == "NA" ? (
-    //                   "NA"
-    //                 ) : (
-    //                   <span>
-    //                     {convertedTime} &nbsp;
-    //                     {UserInformation?.timeZone &&
-    //                       UserInformation?.timeZone.split("-")[1]}
-    //                   </span>
-    //                 )}
-    //               </div>
-    //             </>
-    //           );
-    //         },
-    //       },
-    //       {
-    //         headerName: "Updated date",
-    //         field: "updatedAt",
-    //         filter: true,
-    //         sortable: true,
-    //         cellRendererFramework: (params) => {
-    //           let convertedTime = "NA";
-    //           if (params?.data?.updatedAt == undefined) {
-    //             convertedTime = "NA";
-    //           }
-    //           if (params?.data?.updatedAt) {
-    //             convertedTime = params?.data?.updatedAt;
-    //           }
-    //           if (
-    //             UserInformation?.timeZone !== undefined &&
-    //             params?.data?.updatedAt !== undefined
-    //           ) {
-    //             if (params?.data?.updatedAt != undefined) {
-    //               convertedTime = moment(params?.data?.updatedAt?.split(".")[0])
-    //                 .tz(UserInformation?.timeZone.split("-")[0])
-    //                 .format(UserInformation?.dateTimeFormat);
-    //             }
-    //           }
-
-    //           return (
-    //             <>
-    //               <div className="actions cursor-pointer">
-    //                 {convertedTime == "NA" ? (
-    //                   "NA"
-    //                 ) : (
-    //                   <span>
-    //                     {convertedTime} &nbsp;
-    //                     {UserInformation?.timeZone &&
-    //                       UserInformation?.timeZone.split("-")[1]}
-    //                   </span>
-    //                 )}
-    //               </div>
-    //             </>
-    //           );
-    //         },
-    //       },
-    //     ];
-
-    //     this.setState({ AllcolumnDefs: Product });
-
-    //     let userHeading = JSON.parse(localStorage.getItem("Ticketsearch"));
-    //     if (userHeading?.length) {
-    //       this.setState({ columnDefs: userHeading });
-    //       this.gridApi.setColumnDefs(userHeading);
-    //       this.setState({ SelectedcolumnDefs: userHeading });
-    //     } else {
-    //       this.setState({ columnDefs: Product });
-    //       this.setState({ SelectedcolumnDefs: Product });
-    //     }
-    //     this.setState({ SelectedCols: Product });
-    //   })
-    //   .catch((err) => {
-    //     console.log(err);
-    //     swal("Error", "something went wrong try again");
-    //   });
-    // await CreateAccountList()
-    //   .then((res) => {
-    //     let value = res?.CreateAccount;
-    //     this.setState({ rowData: value });
-    //   })
-    //   .catch((err) => {
-    //     console.log(err);
-    //   });
   }
   toggleDropdown = () => {
     this.setState(prevState => ({ isOpen: !prevState.isOpen }));
@@ -682,7 +294,7 @@ class targerReport extends React.Component {
     }).then(value => {
       switch (value) {
         case "delete":
-          ticketToolDeleteOne(id)
+          Delete_targetINlist(id)
             .then(res => {
               let selectedData = this.gridApi.getSelectedRows();
               this.gridApi.updateRowData({ remove: selectedData });
@@ -885,9 +497,6 @@ class targerReport extends React.Component {
 
         xmlString += "</root>";
 
-        // setXmlData(xmlString);
-
-        // Create a download link
         const blob = new Blob([xmlString], { type: "text/xml" });
         const link = document.createElement("a");
         link.href = URL.createObjectURL(blob);
@@ -899,12 +508,13 @@ class targerReport extends React.Component {
 
   HandleSetVisibleField = e => {
     e.preventDefault();
+    debugger;
     this.gridApi.setColumnDefs(this.state.SelectedcolumnDefs);
     this.setState({ columnDefs: this.state.SelectedcolumnDefs });
     this.setState({ SelectedcolumnDefs: this.state.SelectedcolumnDefs });
     this.setState({ rowData: this.state.rowData });
     localStorage.setItem(
-      "Ticketsearch",
+      "TargetList",
       JSON.stringify(this.state.SelectedcolumnDefs)
     );
     this.LookupviewStart();
@@ -922,11 +532,11 @@ class targerReport extends React.Component {
     });
   };
   handleLeftShift = () => {
-    let SelectedCols = this.state.SelectedcolumnDefs.slice();
+    let SelectedCols = this.state.SelectedcolumnDefs?.slice();
     let delindex = this.state.Arrindex; /* Your delete index here */
 
     if (SelectedCols && delindex >= 0) {
-      const splicedElement = SelectedCols.splice(delindex, 1); // Remove the element
+      const splicedElement = SelectedCols?.splice(delindex, 1); // Remove the element
 
       this.setState({
         SelectedcolumnDefs: SelectedCols, // Update the state with the modified array
@@ -990,88 +600,117 @@ class targerReport extends React.Component {
                 <>
                   <Col sm="12">
                     <Card>
-                      <Row className="mt-2 ml-2 mr-2">
+                      <Row className="ml-2 mt-2 mr-2">
                         <Col>
                           <h1
                             className="float-left"
                             style={{ fontWeight: "600" }}
                           >
-                            Targer Report
+                            Target Report
                           </h1>
                         </Col>
                         <Col>
-                          <span className="mx-1">
-                            <FaFilter
-                              style={{ cursor: "pointer" }}
-                              title="filter coloumn"
-                              size="35px"
-                              onClick={this.LookupviewStart}
-                              color="#39cccc"
-                              className="float-right"
-                            />
-                          </span>
-                          <span className="mx-1">
-                            <div className="dropdown-container float-right">
-                              <ImDownload
-                                style={{ cursor: "pointer" }}
-                                title="download file"
-                                size="35px"
-                                className="dropdown-button "
-                                color="#39cccc"
-                                onClick={this.toggleDropdown}
-                              />
-                              {isOpen && (
-                                <div
-                                  style={{
-                                    position: "absolute",
-                                    zIndex: "1",
-                                    border: "1px solid #39cccc",
-                                    backgroundColor: "white",
-                                  }}
-                                  className="dropdown-content dropdownmy"
-                                >
-                                  <h5
-                                    onClick={() => this.exportToPDF()}
-                                    style={{ cursor: "pointer" }}
-                                    className=" mx-1 myactive mt-1"
-                                  >
-                                    .PDF
-                                  </h5>
-                                  <h5
-                                    onClick={() =>
-                                      this.gridApi.exportDataAsCsv()
-                                    }
-                                    style={{ cursor: "pointer" }}
-                                    className=" mx-1 myactive"
-                                  >
-                                    .CSV
-                                  </h5>
-                                  <h5
-                                    onClick={this.convertCSVtoExcel}
-                                    style={{ cursor: "pointer" }}
-                                    className=" mx-1 myactive"
-                                  >
-                                    .XLS
-                                  </h5>
-                                  <h5
-                                    onClick={this.exportToExcel}
-                                    style={{ cursor: "pointer" }}
-                                    className=" mx-1 myactive"
-                                  >
-                                    .XLSX
-                                  </h5>
-                                  <h5
-                                    onClick={() => this.convertCsvToXml()}
-                                    style={{ cursor: "pointer" }}
-                                    className=" mx-1 myactive"
-                                  >
-                                    .XML
-                                  </h5>
-                                </div>
-                              )}
-                            </div>
-                          </span>
+                          <Label>Start Date</Label>
+                          <Input
+                            type="date"
+                            name="startDate"
+                            value={this.state.startDate}
+                            onChange={this.handleDate}
+                          />
                         </Col>
+                        <Col>
+                          <Label>End Date</Label>
+                          <Input
+                            type="date"
+                            name="EndDate"
+                            value={this.state.EndDate}
+                            onChange={this.handleDate}
+                          />
+                        </Col>
+                        <Col>
+                          <Button
+                            type="submit"
+                            className="mt-1"
+                            color="primary"
+                            onClick={this.handleSubmitDate}
+                          >
+                            Submit
+                          </Button>
+                        </Col>
+                        {this.state.InsiderPermissions &&
+                          this.state.InsiderPermissions?.View && (
+                            <Col>
+                              <span className="mx-1">
+                                <FaFilter
+                                  style={{ cursor: "pointer" }}
+                                  title="filter coloumn"
+                                  size="25px"
+                                  onClick={this.LookupviewStart}
+                                  color="#39cccc"
+                                  className="float-right"
+                                />
+                              </span>
+                              <span className="mx-1">
+                                <div className="dropdown-container float-right">
+                                  <BsCloudDownloadFill
+                                    style={{ cursor: "pointer" }}
+                                    title="download file"
+                                    size="25px"
+                                    className="dropdown-button "
+                                    color="#39cccc"
+                                    onClick={this.toggleDropdown}
+                                  />
+                                  {isOpen && (
+                                    <div
+                                      style={{
+                                        position: "absolute",
+                                        zIndex: "1",
+                                      }}
+                                      className="dropdown-content dropdownmy"
+                                    >
+                                      <h5
+                                        onClick={() => this.exportToPDF()}
+                                        style={{ cursor: "pointer" }}
+                                        className=" mx-1 myactive mt-1"
+                                      >
+                                        .PDF
+                                      </h5>
+                                      <h5
+                                        onClick={() =>
+                                          this.gridApi.exportDataAsCsv()
+                                        }
+                                        style={{ cursor: "pointer" }}
+                                        className=" mx-1 myactive"
+                                      >
+                                        .CSV
+                                      </h5>
+                                      <h5
+                                        onClick={this.convertCSVtoExcel}
+                                        style={{ cursor: "pointer" }}
+                                        className=" mx-1 myactive"
+                                      >
+                                        .XLS
+                                      </h5>
+                                      <h5
+                                        onClick={this.exportToExcel}
+                                        style={{ cursor: "pointer" }}
+                                        className=" mx-1 myactive"
+                                      >
+                                        .XLSX
+                                      </h5>
+                                      <h5
+                                        onClick={() => this.convertCsvToXml()}
+                                        style={{ cursor: "pointer" }}
+                                        className=" mx-1 myactive"
+                                      >
+                                        .XML
+                                      </h5>
+                                    </div>
+                                  )}
+                                </div>
+                              </span>
+                            </Col>
+                          )}
                       </Row>
                       <CardBody style={{ marginTop: "-1.5rem" }}>
                         {this.state.rowData === null ? null : (
@@ -1145,30 +784,11 @@ class targerReport extends React.Component {
                               {context => (
                                 <AgGridReact
                                   id="myAgGrid"
-                                  // gridOptions={{
-                                  //   domLayout: "autoHeight",
-                                  //   // or other layout options
-                                  // }}
                                   gridOptions={this.gridOptions}
                                   rowSelection="multiple"
                                   defaultColDef={defaultColDef}
                                   columnDefs={columnDefs}
                                   rowData={rowData}
-                                  // onGridReady={(params) => {
-                                  //   this.gridApi = params.api;
-                                  //   this.gridColumnApi = params.columnApi;
-                                  //   this.gridRef.current = params.api;
-
-                                  //   this.setState({
-                                  //     currenPageSize:
-                                  //       this.gridApi.paginationGetCurrentPage() +
-                                  //       1,
-                                  //     getPageSize:
-                                  //       this.gridApi.paginationGetPageSize(),
-                                  //     totalPages:
-                                  //       this.gridApi.paginationGetTotalPages(),
-                                  //   });
-                                  // }}
                                   onGridReady={this.onGridReady}
                                   colResizeDefault={"shift"}
                                   animateRows={true}
@@ -1285,9 +905,9 @@ class targerReport extends React.Component {
                                       <IoMdRemoveCircleOutline
                                         onClick={() => {
                                           const SelectedCols =
-                                            this.state.SelectedcolumnDefs.slice();
+                                            this.state.SelectedcolumnDefs?.slice();
                                           const delindex =
-                                            SelectedCols.findIndex(
+                                            SelectedCols?.findIndex(
                                               element =>
                                                 element?.headerName ==
                                                 ele?.headerName
@@ -1295,24 +915,13 @@ class targerReport extends React.Component {
 
                                           if (SelectedCols && delindex >= 0) {
                                             const splicedElement =
-                                              SelectedCols.splice(delindex, 1); // Remove the element
+                                              SelectedCols?.splice(delindex, 1); // Remove the element
                                             // splicedElement contains the removed element, if needed
 
                                             this.setState({
                                               SelectedcolumnDefs: SelectedCols, // Update the state with the modified array
                                             });
                                           }
-                                          // const delindex =
-                                          //   SelectedCols.findIndex(
-                                          //     (element) =>
-                                          //       element?.headerName ==
-                                          //       ele?.headerName
-                                          //   );
-
-                                          // SelectedCols?.splice(delindex, 1);
-                                          // this.setState({
-                                          //   SelectedcolumnDefs: SelectedCols,
-                                          // });
                                         }}
                                         style={{ cursor: "pointer" }}
                                         size="25px"
@@ -1362,8 +971,22 @@ class targerReport extends React.Component {
             </Row>
           </ModalBody>
         </Modal>
+        <Modal
+          isOpen={this.state.modalone}
+          toggle={this.toggleModal}
+          className="modal-dialog modal-xl"
+          // className="modal-dialog modal-lg"
+          size="lg"
+          backdrop={true}
+          fullscreen={true}
+        >
+          <ModalHeader toggle={this.toggleModal}>View Details</ModalHeader>
+          <ModalBody className="myproducttable">
+            <TargetAssignedOne ViewData={this.state.ViewData} />
+          </ModalBody>
+        </Modal>
       </>
     );
   }
 }
-export default targerReport;
+export default TargetReport;
