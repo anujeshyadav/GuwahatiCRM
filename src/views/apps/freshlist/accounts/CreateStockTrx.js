@@ -216,10 +216,8 @@ const CreateTarget = args => {
     });
   };
   const handleSelectionProduct = (selectedList, selectedItem, index) => {
-    // product[index]["AvailaleQty"] = myproduct?.Size;
-    debugger;
     SelectedITems.push(selectedItem);
-    setProduct(prevProductList => {
+    setProduct((prevProductList) => {
       const updatedProductList = [...prevProductList]; // Create a copy of the productList array
       const updatedProduct = { ...updatedProductList[index] }; // Create a copy of the product at the specified index
       updatedProduct.price = selectedItem?.Product_MRP; // Update the price of the copied product

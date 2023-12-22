@@ -91,7 +91,7 @@ class DebitNoteList extends React.Component {
           headerName: "Actions",
           field: "transactions",
           width: 180,
-          cellRendererFramework: params => {
+          cellRendererFramework: (params) => {
             return (
               <div className="actions cursor-pointer">
                 <Eye
@@ -123,63 +123,111 @@ class DebitNoteList extends React.Component {
           field: "productItems",
           filter: true,
           width: 220,
-          valueGetter: params => {
-            if (
-              params.data.productItems &&
-              params.data.productItems.length > 0
-            ) {
-              return params?.data?.productItems?.map(val => {
-                return val?.productId?.Product_Title;
-              });
-            }
-            return null;
+          cellRendererFramework: (params) => {
+            console.log(params.data);
+            return (
+              <div>
+                <span>
+                  {params.data?.productItems?.length &&
+                    params.data?.productItems?.length}{" "}
+                  Product
+                </span>
+              </div>
+            );
           },
         },
-
         {
-          headerName: "GST Rate",
-          field: "productId",
+          headerName: "Order Id",
+          field: "purchaseOrderId",
           filter: true,
           width: 220,
-          valueGetter: params => {
-            if (
-              params.data.productItems &&
-              params.data.productItems.length > 0
-            ) {
-              return params?.data?.productItems?.map(val => {
-                return val?.productId["GST Rate"];
-              });
-            }
-            return null;
+          cellRendererFramework: (params) => {
+            console.log(params.data);
+            return (
+              <div>
+                <span>
+                  {params.data?.purchaseOrderId && params.data?.purchaseOrderId}{" "}
+                </span>
+              </div>
+            );
           },
         },
 
-        {
-          headerName: "Product MRP",
-          field: "productId",
-          filter: true,
-          width: 180,
-          valueGetter: params => {
-            if (
-              params.data.productItems &&
-              params.data.productItems.length > 0
-            ) {
-              return params?.data?.productItems?.map(val => {
-                return val?.productId?.Product_MRP;
-              });
-            }
-            return null;
-          },
-        },
         {
           headerName: "Total Amount",
           field: "totalAmount",
           filter: true,
-          width: 150,
-          cellRendererFramework: params => {
+          width: 260,
+          cellRendererFramework: (params) => {
+            return (
+              <div className="d-flex justify-content-center mt-1 font-weight-500">
+                <Badge color="primary">{params.data?.totalAmount}</Badge>
+              </div>
+            );
+          },
+        },
+        {
+          headerName: "Name",
+          field: "userId.firstName",
+          filter: true,
+          width: 220,
+          cellRendererFramework: (params) => {
             return (
               <div>
-                <span>{params.data?.totalAmount}</span>
+                <span>{params.data?.userId?.firstName}</span>
+              </div>
+            );
+          },
+        },
+        {
+          headerName: "Name",
+          field: "userId.lastName",
+          filter: true,
+          width: 220,
+          cellRendererFramework: (params) => {
+            return (
+              <div>
+                <span>{params.data?.userId?.lastName}</span>
+              </div>
+            );
+          },
+        },
+        {
+          headerName: "Name",
+          field: "userId.email",
+          filter: true,
+          width: 220,
+          cellRendererFramework: (params) => {
+            return (
+              <div>
+                <span>{params.data?.userId?.email}</span>
+              </div>
+            );
+          },
+        },
+        {
+          headerName: "Mobile Number",
+          field: "userId.mobileNumber",
+          filter: true,
+          width: 220,
+          cellRendererFramework: (params) => {
+            return (
+              <div>
+                <span>{params.data?.userId?.mobileNumber}</span>
+              </div>
+            );
+          },
+        },
+
+        {
+          headerName: "createdAt",
+          field: "createdAt",
+          filter: true,
+          width: 150,
+          cellRendererFramework: (params) => {
+            return (
+              <div>
+                <span>{params.data?.createdAt}</span>
               </div>
             );
           },
@@ -233,15 +281,16 @@ class DebitNoteList extends React.Component {
 
   async componentDidMount() {
     const UserInformation = this.context?.UserInformatio;
-
-    await DebitnoteOrderList()
-      .then(res => {
+ const userInfo = JSON.parse(localStorage.getItem("userData"))?._id;
+    await DebitnoteOrderList(userInfo)
+      .then((res) => {
+       
         console.log(res.DebitNote);
         this.setState({ rowData: res?.DebitNote });
         this.setState({ AllcolumnDefs: this.state.columnDefs });
         this.setState({ SelectedCols: this.state.columnDefs });
 
-        let userHeading = JSON.parse(localStorage.getItem("TargetList"));
+        let userHeading = JSON.parse(localStorage.getItem("DebitNoteList"));
         if (userHeading?.length) {
           this.setState({ columnDefs: userHeading });
           this.gridApi.setColumnDefs(userHeading);
@@ -251,7 +300,7 @@ class DebitNoteList extends React.Component {
           this.setState({ SelectedcolumnDefs: this.state.columnDefs });
         }
       })
-      .catch(err => {
+      .catch((err) => {
         console.log(err);
       });
   }
@@ -479,13 +528,13 @@ class DebitNoteList extends React.Component {
 
   HandleSetVisibleField = e => {
     e.preventDefault();
-    debugger;
+   
     this.gridApi.setColumnDefs(this.state.SelectedcolumnDefs);
     this.setState({ columnDefs: this.state.SelectedcolumnDefs });
     this.setState({ SelectedcolumnDefs: this.state.SelectedcolumnDefs });
     this.setState({ rowData: this.state.rowData });
     localStorage.setItem(
-      "TargetList",
+      "DebitNoteList",
       JSON.stringify(this.state.SelectedcolumnDefs)
     );
     this.LookupviewStart();
