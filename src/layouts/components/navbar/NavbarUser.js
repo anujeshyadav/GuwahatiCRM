@@ -1568,7 +1568,7 @@ class NavbarUser extends React.PureComponent {
               {this.state.LoginData?.profileImage ? (
                 <>
                   <img
-                    src={`http://65.0.96.247:8000//Images/${user?.UserInformatio?.profileImage}`}
+                    src={`http://64.227.162.41:5000/Images/${user?.UserInformatio?.profileImage}`}
                     className="round"
                     height="30"
                     width="30"

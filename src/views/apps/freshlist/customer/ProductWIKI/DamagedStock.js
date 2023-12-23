@@ -96,68 +96,68 @@ class DamagedStock extends React.Component {
           width: 150,
           filter: true,
         },
-        {
-          headerName: "Actions",
-          field: "sortorder",
-          field: "transactions",
-          width: 150,
-          cellRendererFramework: (params) => {
-            return (
-              <div className="actions cursor-pointer">
-                {/* {this.state.InsiderPermissions &&
-                  this.state.InsiderPermissions?.View && (
-                    <Eye
-                      className="mr-50"
-                      size="25px"
-                      color="green"
-                      // onClick={() =>
-                      //   history.push(
-                      //     `/app/freshlist/customer/viewCustomer/${params.data?._id}`
-                      //   )
-                      // }
-                      onClick={(e) => {
-                        this.togglemodal();
-                        this.setState({ ViewOneData: params?.data });
-                        this.setState({ ViewOneUserView: true });
-                        this.setState({ EditOneUserView: false });
+        // {
+        //   headerName: "Actions",
+        //   field: "sortorder",
+        //   field: "transactions",
+        //   width: 150,
+        //   cellRendererFramework: (params) => {
+        //     return (
+        //       <div className="actions cursor-pointer">
+        //         {this.state.InsiderPermissions &&
+        //           this.state.InsiderPermissions?.View && (
+        //             <Eye
+        //               className="mr-50"
+        //               size="25px"
+        //               color="green"
+        //               // onClick={() =>
+        //               //   history.push(
+        //               //     `/app/freshlist/customer/viewCustomer/${params.data?._id}`
+        //               //   )
+        //               // }
+        //               onClick={(e) => {
+        //                 this.togglemodal();
+        //                 this.setState({ ViewOneData: params?.data });
+        //                 this.setState({ ViewOneUserView: true });
+        //                 this.setState({ EditOneUserView: false });
 
-                        // console.log(params?.data);
-                      }}
-                    />
-                  )} */}
+        //                 // console.log(params?.data);
+        //               }}
+        //             />
+        //           )}
 
-                {/* {this.state.InsiderPermissions &&
-                  this.state.InsiderPermissions?.Edit && (
-                    <Edit
-                      className="mr-50"
-                      size="25px"
-                      color="blue"
-                      onClick={(e) => {
-                        this.togglemodal();
-                        this.setState({ ViewOneData: params?.data });
-                        this.setState({ EditOneUserView: true });
-                        this.setState({ ViewOneUserView: false });
+        //         {this.state.InsiderPermissions &&
+        //           this.state.InsiderPermissions?.Edit && (
+        //             <Edit
+        //               className="mr-50"
+        //               size="25px"
+        //               color="blue"
+        //               onClick={(e) => {
+        //                 this.togglemodal();
+        //                 this.setState({ ViewOneData: params?.data });
+        //                 this.setState({ EditOneUserView: true });
+        //                 this.setState({ ViewOneUserView: false });
 
-                        console.log(params?.data);
-                      }}
-                    />
-                  )} */}
+        //                 console.log(params?.data);
+        //               }}
+        //             />
+        //           )}
 
-                {this.state.InsiderPermissions &&
-                  this.state.InsiderPermissions?.Edit && (
-                    <Trash2
-                      className="mr-50"
-                      size="25px"
-                      color="red"
-                      onClick={() => {
-                        this.runthisfunction(params.data?._id);
-                      }}
-                    />
-                  )}
-              </div>
-            );
-          },
-        },
+        //         {this.state.InsiderPermissions &&
+        //           this.state.InsiderPermissions?.Edit && (
+        //             <Trash2
+        //               className="mr-50"
+        //               size="25px"
+        //               color="red"
+        //               onClick={() => {
+        //                 this.runthisfunction(params.data);
+        //               }}
+        //             />
+        //           )}
+        //       </div>
+        //     );
+        //   },
+        // },
         {
           headerName: "Status",
           field: "warehouse.typeStatus",
@@ -325,7 +325,6 @@ class DamagedStock extends React.Component {
               // console.log(res);
               swal("success", "Status Updated Successfully");
               this.togglemodal();
-              this.ViewStockList();
             })
             .catch((err) => {
               console.log(err);
@@ -370,12 +369,16 @@ class DamagedStock extends React.Component {
     this.setState({ InsiderPermissions: InsidePermissions });
     await Get_Damagedstock(userid)
       .then((res) => {
-        debugger;
+        
         console.log(res?.damageItems);
+        
+        let Data = res?.damageItem?.filter(
+          (ele) => ele?.warehouse?.typeStatus == "Damadged"
+        );
         let rowData = res?.damageItems;
 
-        if (rowData) {
-          this.setState({ rowData: rowData });
+        if (Data.length) {
+          this.setState({ rowData: Data });
           this.setState({ AllcolumnDefs: this.state.columnDefs });
 
           let userHeading = JSON.parse(localStorage.getItem("DamagedStock"));
@@ -395,59 +398,15 @@ class DamagedStock extends React.Component {
       });
   }
 
-  ViewStockList = async () => {
-    let pageparmission = JSON.parse(localStorage.getItem("userData"));
-    let userid = pageparmission?._id;
-    // await ViewFactoryStock()
-    await WarehouseOutwardStocklist(userid)
-      .then((res) => {
-        // console.log(res?.Warehouse);
-        // let rowData = res?.Warehouse;
-        // if (rowData) {
-        //   this.setState({ rowData: rowData });
-        //   this.setState({ AllcolumnDefs: this.state.columnDefs });
-        //   let userHeading = JSON.parse(localStorage.getItem("DamagedStock"));
-        //   if (userHeading?.length) {
-        //     this.setState({ columnDefs: userHeading });
-        //     this.gridApi.setColumnDefs(userHeading);
-        //     this.setState({ SelectedcolumnDefs: userHeading });
-        //   } else {
-        //     this.setState({ columnDefs: this.state.columnDefs });
-        //     this.setState({ SelectedcolumnDefs: this.state.columnDefs });
-        //   }
-        //   this.setState({ SelectedCols: this.state.columnDefs });
-        // }
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-    // await ViewOneWarehouseStock(userid)
-    //   .then((res) => {
-    //     console.log(res?.Factory);
-    // this.setState({ rowData: res?.Factory });
-    // this.setState({ AllcolumnDefs: this.state.columnDefs });
-
-    // let userHeading = JSON.parse(localStorage.getItem("DamagedStock"));
-    // if (userHeading?.length) {
-    //   this.setState({ columnDefs: userHeading });
-    //   this.gridApi.setColumnDefs(userHeading);
-    //   this.setState({ SelectedcolumnDefs: userHeading });
-    // } else {
-    //   this.setState({ columnDefs: this.state.columnDefs });
-    //   this.setState({ SelectedcolumnDefs: this.state.columnDefs });
-    // }
-    // this.setState({ SelectedCols: this.state.columnDefs });
-    // })
-    // .catch((err) => {
-    //   console.log(err);
-    // });
-  };
-
   toggleDropdown = () => {
     this.setState((prevState) => ({ isOpen: !prevState.isOpen }));
   };
 
-  runthisfunction(id) {
+  runthisfunction(data) {
+
+    // console.log(data);
+    // console.log(data?.warehouse?._id);
+    // console.log(data?.damageItem?.productId._id);
     let pageparmission = JSON.parse(localStorage.getItem("userData"));
     let userid = pageparmission?._id;
     swal("Warning", "Sure You Want to Delete it", {
@@ -458,7 +417,10 @@ class DamagedStock extends React.Component {
     }).then((value) => {
       switch (value) {
         case "delete":
-          Delete_Damagedstock(userid, id)
+          Delete_Damagedstock(
+            data?.warehouse?._id,
+            data?.damageItem?.productId._id
+          )
             .then((res) => {
               let selectedData = this.gridApi.getSelectedRows();
               this.gridApi.updateRowData({ remove: selectedData });

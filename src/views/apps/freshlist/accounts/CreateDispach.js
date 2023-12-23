@@ -30,6 +30,7 @@ import "../../../../../src/layouts/assets/scss/pages/users.scss";
 import {
   CreateAccountList,
   Edit_StatusDispatchList,
+  Get_RoleList,
   GoodDispatchxmlView,
   Save_GoodDispatch,
 } from "../../../../ApiEndPoint/ApiCalling";
@@ -41,13 +42,14 @@ import { array } from "prop-types";
 const CreateDispach = (args) => {
   const [CreatAccountView, setCreatAccountView] = useState([]);
   const [DeliveryBoy, setDeliveryBoy] = useState([]);
+  const [AllUsers, setAllUsers] = useState([]);
   const [Countries, setCountry] = useState({});
   const [formData, setFormData] = useState({});
   const [DispatchData, setDispatchData] = useState({});
   const [dropdownValue, setdropdownValue] = useState({});
   const [index, setindex] = useState("");
   const [error, setError] = useState("");
-  const [permissions, setpermissions] = useState({});
+  const [RoleList, setRoleList] = useState([]);
   const [modal, setModal] = useState(false);
 
   const toggle = () => setModal(!modal);
@@ -130,16 +132,23 @@ const CreateDispach = (args) => {
     let pageparmission = JSON.parse(localStorage.getItem("userData"));
     let userid = pageparmission?._id;
 
+    let userdata = JSON.parse(localStorage.getItem("userData"));
+    Get_RoleList()
+      .then((res) => {
+        let ShowList = res?.Role?.filter(
+          (item, i) => item?.position > userdata?.rolename?.position
+        );
+
+        setRoleList(ShowList);
+        console.log(ShowList);
+      })
+      .catch((err) => {
+        console.log(err);
+        swal("Roles List Not found");
+      });
     GoodDispatchxmlView()
       .then((res) => {
         const jsonData = xmlJs.xml2json(res.data, { compact: true, spaces: 2 });
-        // console.log(
-        //   JSON.parse(jsonData)?.GoodDispatch.MyDropdown.dropdown.label._text
-        // );
-        console.log(
-          JSON.parse(jsonData)?.GoodDispatch.MyDropdown.dropdown.label._text
-        );
-
         setCreatAccountView(JSON.parse(jsonData)?.GoodDispatch?.input);
         setdropdownValue(JSON.parse(jsonData)?.GoodDispatch);
       })
@@ -153,6 +162,7 @@ const CreateDispach = (args) => {
         console.log(value);
         if (value) {
           setDeliveryBoy(value);
+          setAllUsers(value);
         }
       })
       .catch((err) => {
@@ -637,6 +647,34 @@ const CreateDispach = (args) => {
                       );
                     }
                   })}
+                <Col lg="3" md="3">
+                  <div className="mt-1">
+                    <FormGroup>
+                      <Label>Role List</Label>
+                      <CustomInput
+                        required
+                        type="select"
+                        name="rolename"
+                        // value={formData["rolename"]}
+                        onChange={(e) => {
+                          let mySelected = AllUsers?.filter(
+                            (ele) => ele?.rolename == e.target.value
+                          );
+                          setDeliveryBoy(mySelected);
+                        }}>
+                        <option>--select Role--</option>
+                        {RoleList &&
+                          RoleList?.length &&
+                          RoleList?.map((ele, i) => {
+                            return (
+                              <option value={ele?._id}>{ele?.roleName}</option>
+                            );
+                          })}
+                      </CustomInput>
+                    </FormGroup>
+                  </div>
+                </Col>
+
                 <Col lg="3" md="3" sm="12">
                   <div className="mt-1">
                     <FormGroup>

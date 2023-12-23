@@ -162,11 +162,11 @@ class InvoiceGenerator extends React.Component {
               <div className="badge badge-pill bg-danger">
                 {params.data.status}
               </div>
-            ) : params.data?.status === "completed" ? (
+            ) : params.data?.status === "Completed" ? (
               <div className="badge badge-pill bg-success">Completed</div>
             ) : (
               <>
-                <div className="badge badge-pill bg-warning">Cancelled</div>
+                <div className="badge badge-pill bg-danger">Cancelled</div>
               </>
             );
           },
@@ -179,25 +179,6 @@ class InvoiceGenerator extends React.Component {
           cellRendererFramework: (params) => {
             return (
               <div className="actions cursor-pointer">
-                {this.state.InsiderPermissions &&
-                  this.state.InsiderPermissions?.Edit && (
-                    <CornerDownLeft
-                      className="mr-50"
-                      size="25px"
-                      color="green"
-                      onClick={() => {
-                        localStorage.setItem(
-                          "OrderList",
-                          JSON.stringify(params.data)
-                        );
-                        this.props.history.push({
-                          pathname: `/app/AJGroup/order/placeOrderReturn/${params.data?._id}`,
-                          state: params.data,
-                        });
-                      }}
-                    />
-                  )}
-
                 {this.state.InsiderPermissions &&
                   this.state.InsiderPermissions?.View && (
                     <Route
@@ -215,9 +196,30 @@ class InvoiceGenerator extends React.Component {
                       )}
                     />
                   )}
-                {/* {this.state.Deletepermisson && (
-              
-              )} */}
+                {this.state.InsiderPermissions &&
+                  this.state.InsiderPermissions?.Edit && (
+                    <>
+                      {params.data?.status
+                        .toLowerCase()
+                        .includes("completed") && (
+                        <CornerDownLeft
+                          className="mr-50"
+                          size="25px"
+                          color="green"
+                          onClick={() => {
+                            localStorage.setItem(
+                              "OrderList",
+                              JSON.stringify(params.data)
+                            );
+                            this.props.history.push({
+                              pathname: `/app/AJGroup/order/placeOrderReturn/${params.data?._id}`,
+                              state: params.data,
+                            });
+                          }}
+                        />
+                      )}
+                    </>
+                  )}
               </div>
             );
           },
@@ -591,7 +593,8 @@ class InvoiceGenerator extends React.Component {
     createOrderhistoryview(userid)
       .then(res => {
         // console.log(res?.orderHistory);
-        this.setState({ rowData: res?.orderHistory });
+        let pending=res?.orderHistory?.filter((ele)=>ele?.status=="pending")
+        this.setState({ rowData: pending });
         this.setState({ AllcolumnDefs: this.state.columnDefs });
 
         let userHeading = JSON.parse(localStorage.getItem("SalesOrderList"));

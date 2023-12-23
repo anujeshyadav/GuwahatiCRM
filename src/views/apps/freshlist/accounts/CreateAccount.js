@@ -126,12 +126,11 @@ const CreateAccount = () => {
     let userdata = JSON.parse(localStorage.getItem("userData"));
     Get_RoleList()
       .then((res) => {
-        // console.log(res?.Role);
+       
         let ShowList = res?.Role?.filter(
           (item, i) => item?.position > userdata?.rolename?.position
         );
-        // console.log(userdata?.rolename?.position);
-        // console.log(ShowList);
+      
         setdropdownValue(ShowList);
         console.log(ShowList);
       })
