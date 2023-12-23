@@ -125,7 +125,7 @@ class HouseProductList extends React.Component {
                         {params.data?.Product_image && (
                           <img
                             className="rounded-circle mr-50"
-                            src={`http://65.0.96.247:8000/Images/${params.data?.Product_image}`}
+                            src={`http://64.227.162.41:5000/Images/${params.data?.Product_image}`}
                             alt="user avatar"
                             height="40"
                             width="40"

@@ -103,24 +103,6 @@ class OrderList extends React.Component {
             return (
               <div className="actions cursor-pointer">
                 {this.state.InsiderPermissions &&
-                  this.state.InsiderPermissions?.Edit && (
-                    <CornerDownLeft
-                      className="mr-50"
-                      size="25px"
-                      color="green"
-                      onClick={() => {
-                        localStorage.setItem(
-                          "OrderList",
-                          JSON.stringify(params.data)
-                        );
-                        this.props.history.push({
-                          pathname: `/app/AJGroup/order/salesReturn/${params.data?._id}`,
-                          state: params.data,
-                        });
-                      }}
-                    />
-                  )}
-                {this.state.InsiderPermissions &&
                   this.state.InsiderPermissions?.View && (
                     <Eye
                       className="mr-50"
@@ -146,6 +128,31 @@ class OrderList extends React.Component {
                       }
                     />
                   )}
+                {this.state.InsiderPermissions &&
+                  this.state.InsiderPermissions?.Edit && (
+                    <>
+                      {params?.data?.status
+                        ?.toLowerCase()
+                        .includes("completed") && (
+                        <CornerDownLeft
+                        title="Return It"
+                          className="mr-50"
+                          size="25px"
+                          color="green"
+                          onClick={() => {
+                            localStorage.setItem(
+                              "OrderList",
+                              JSON.stringify(params.data)
+                            );
+                            this.props.history.push({
+                              pathname: `/app/AJGroup/order/salesReturn/${params.data?._id}`,
+                              state: params.data,
+                            });
+                          }}
+                        />
+                      )}
+                    </>
+                  )}
               </div>
             );
           },
@@ -156,17 +163,17 @@ class OrderList extends React.Component {
           filter: true,
           width: 150,
           cellRendererFramework: (params) => {
-            return params.value == "Completed" ? (
+            return params.data.status == "Completed" ? (
               <div className="badge badge-pill badge-success">
                 {params.data.status}
               </div>
-            ) : params.value == "InProcess" ? (
+            ) : params.data.status == "InProcess" ? (
               <div className="badge badge-pill badge-warning">
                 {params.data.status}
               </div>
-            ) : params.value == "pending" ? (
-              <div className="badge badge-pill badge-info">Pending</div>
-            ) : params.value == "Cancelled" ? (
+            ) : params.data.status == "pending" ? (
+              <div className="badge badge-pill badge-warning">Pending</div>
+            ) : params.data.status == "Cancelled" ? (
               <div className="badge badge-pill badge-danger">
                 {params.data.status}
               </div>

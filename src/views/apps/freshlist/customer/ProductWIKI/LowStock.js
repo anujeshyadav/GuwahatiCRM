@@ -52,6 +52,7 @@ import {
   ViewFactoryStock,
   ViewOneWarehouseStock,
   WarehouseOutwardStocklist,
+  _Get,
 } from "../../../../../ApiEndPoint/ApiCalling";
 import {
   BsCloudDownloadFill,
@@ -62,6 +63,8 @@ import * as XLSX from "xlsx";
 import UserContext from "../../../../../context/Context";
 import UpdateStockTrx from "../../accounts/UpdateStockTrx";
 import StockTrxInvoice from "../../subcategory/OutWardStockPO";
+import { Low_Stock_Alerts } from "../../../../../ApiEndPoint/Api";
+import { CheckPermission } from "../../house/CheckPermission";
 
 const SelectedColums = [];
 
@@ -74,7 +77,7 @@ class LowStock extends React.Component {
     this.state = {
       isOpen: false,
       ShowBill: false,
-
+      InsiderPermissions: {},
       Arrindex: "",
       rowData: [],
       setMySelectedarr: [],
@@ -83,7 +86,6 @@ class LowStock extends React.Component {
       paginationPageSize: 5,
       currenPageSize: "",
       getPageSize: "",
-
       columnDefs: [
         {
           headerName: "S.No",
@@ -92,165 +94,139 @@ class LowStock extends React.Component {
           width: 150,
           filter: true,
         },
-        {
-          headerName: "Actions",
-          field: "sortorder",
-          field: "transactions",
-          width: 150,
-          cellRendererFramework: params => {
-            return (
-              <div className="actions cursor-pointer">
-                <Eye
-                  className="mr-50"
-                  size="25px"
-                  color="green"
-                  // onClick={() =>
-                  //   history.push(
-                  //     `/app/freshlist/customer/viewCustomer/${params.data?._id}`
-                  //   )
-                  // }
-                  onClick={e => {
-                    this.togglemodal();
-                    this.setState({ ViewOneData: params?.data });
-                    this.setState({ ViewOneUserView: true });
-                    this.setState({ EditOneUserView: false });
+        // {
+        //   headerName: "Actions",
+        //   field: "sortorder",
+        //   field: "transactions",
+        //   width: 150,
+        //   cellRendererFramework: (params) => {
+        //     return (
+        //       <div className="actions cursor-pointer">
+        //         {this.state.InsiderPermissions &&
+        //           this.state.InsiderPermissions?.View && (
+        //             <Eye
+        //               className="mr-50"
+        //               size="25px"
+        //               color="green"
+        //               // onClick={() =>
+        //               //   history.push(
+        //               //     `/app/freshlist/customer/viewCustomer/${params.data?._id}`
+        //               //   )
+        //               // }
+        //               onClick={(e) => {
+        //                 this.togglemodal();
+        //                 this.setState({ ViewOneData: params?.data });
+        //                 this.setState({ ViewOneUserView: true });
+        //                 this.setState({ EditOneUserView: false });
 
-                    // console.log(params?.data);
-                  }}
-                />
-                <Edit
-                  className="mr-50"
-                  size="25px"
-                  color="blue"
-                  onClick={e => {
-                    this.togglemodal();
-                    this.setState({ ViewOneData: params?.data });
-                    this.setState({ EditOneUserView: true });
-                    this.setState({ ViewOneUserView: false });
+        //                 // console.log(params?.data);
+        //               }}
+        //             />
+        //           )}
+        //         {this.state.InsiderPermissions &&
+        //           this.state.InsiderPermissions?.Edit && (
+        //             <Edit
+        //               className="mr-50"
+        //               size="25px"
+        //               color="blue"
+        //               onClick={(e) => {
+        //                 this.togglemodal();
+        //                 this.setState({ ViewOneData: params?.data });
+        //                 this.setState({ EditOneUserView: true });
+        //                 this.setState({ ViewOneUserView: false });
 
-                    console.log(params?.data);
-                  }}
-                />
-                <Trash2
-                  className="mr-50"
-                  size="25px"
-                  color="red"
-                  onClick={() => {
-                    let selectedData = this.gridApi.getSelectedRows();
-                    this.runthisfunction(params.data._id);
-                    this.gridApi.updateRowData({ remove: selectedData });
-                  }}
-                />
-              </div>
-            );
-          },
-        },
+        //                 console.log(params?.data);
+        //               }}
+        //             />
+        //           )}
+        //         {this.state.InsiderPermissions &&
+        //           this.state.InsiderPermissions?.Delete && (
+        //             <Trash2
+        //               className="mr-50"
+        //               size="25px"
+        //               color="red"
+        //               onClick={() => {
+        //                 let selectedData = this.gridApi.getSelectedRows();
+        //                 this.runthisfunction(params.data._id);
+        //                 this.gridApi.updateRowData({ remove: selectedData });
+        //               }}
+        //             />
+        //           )}
+        //       </div>
+        //     );
+        //   },
+        // },
+        // {
+        //   headerName: "Status",
+        //   field: "status",
+        //   filter: true,
+        //   width: 150,
+        //   cellRendererFramework: (params) => {
+        //     return params.data?.transferStatus === "Completed" ? (
+        //       <div className="badge badge-pill badge-success">
+        //         {params.data?.transferStatus}
+        //       </div>
+        //     ) : params.data?.transferStatus === "InProcess" ? (
+        //       <div className="badge badge-pill badge-warning">
+        //         {params.data?.transferStatus}
+        //       </div>
+        //     ) : params.data?.transferStatus === "Hold" ? (
+        //       <div className="badge badge-pill badge-danger">
+        //         {params.data?.transferStatus}
+        //       </div>
+        //     ) : params.data?.transferStatus === "Pending" ? (
+        //       <div className="badge badge-pill badge-warning">
+        //         {params.data?.transferStatus}
+        //       </div>
+        //     ) : null;
+        //   },
+        // },
         {
-          headerName: "Status",
-          field: "status",
-          filter: true,
-          width: 150,
-          cellRendererFramework: params => {
-            return params.data?.transferStatus === "Completed" ? (
-              <div className="badge badge-pill badge-success">
-                {params.data?.transferStatus}
-              </div>
-            ) : params.data?.transferStatus === "InProcess" ? (
-              <div className="badge badge-pill badge-warning">
-                {params.data?.transferStatus}
-              </div>
-            ) : params.data?.transferStatus === "Hold" ? (
-              <div className="badge badge-pill badge-danger">
-                {params.data?.transferStatus}
-              </div>
-            ) : params.data?.transferStatus === "Pending" ? (
-              <div className="badge badge-pill badge-warning">
-                {params.data?.transferStatus}
-              </div>
-            ) : null;
-          },
-        },
-        {
-          headerName: "Trx Date",
-          field: "stockTransferDate",
+          headerName: "Product Name",
+          field: "Product_Title",
           filter: true,
           width: 200,
-          cellRendererFramework: params => {
+          cellRendererFramework: (params) => {
             return (
               <div>
-                <span>{params.data?.stockTransferDate}</span>
+                <span>{params.data?.Product_Title}</span>
               </div>
             );
           },
         },
         {
-          headerName: "Total Product",
-          field: "productItems",
+          headerName: "Product Desc",
+          field: "Product_Desc",
           filter: true,
           width: 200,
-          cellRendererFramework: params => {
+          cellRendererFramework: (params) => {
             return (
               <div>
-                <span>{params.data?.productItems?.length} Products</span>
+                <span>{params.data?.Product_Desc}</span>
               </div>
             );
           },
         },
         {
-          headerName: "Warehouse Name",
-          field: "warehouseToId",
+          headerName: "Availble QTY",
+          field: "Size",
           filter: true,
           width: 200,
-          cellRendererFramework: params => {
+          cellRendererFramework: (params) => {
             return (
-              <div>{<span>{params.data?.warehouseToId?.firstName}</span>}</div>
-            );
-          },
-        },
-
-        {
-          headerName: "Grand Total",
-          field: "grandTotal",
-          filter: true,
-          sortable: true,
-          cellRendererFramework: params => {
-            return (
-              <>
-                <div className="actions cursor-pointer">
-                  <span>{params?.data?.grandTotal}</span>
-                </div>
-              </>
+              <div>
+                <Badge color="danger">{params.data?.Size} </Badge>
+              </div>
             );
           },
         },
         {
-          headerName: "Created date",
-          field: "createdAt",
+          headerName: "Min Stock alert",
+          field: "MIN_stockalert",
           filter: true,
-          sortable: true,
-          cellRendererFramework: params => {
-            return (
-              <>
-                <div className="actions cursor-pointer">
-                  <span>{params?.data?.createdAt?.split("T")[0]}</span>
-                </div>
-              </>
-            );
-          },
-        },
-        {
-          headerName: "updatedAt",
-          field: "updatedAt",
-          filter: true,
-          sortable: true,
-          cellRendererFramework: params => {
-            return (
-              <>
-                <div className="actions cursor-pointer">
-                  <span>{params?.data?.updatedAt.split("T")[0]}</span>
-                </div>
-              </>
-            );
+          width: 200,
+          cellRendererFramework: (params) => {
+            return <div>{<span>{params.data?.MIN_stockalert}</span>}</div>;
           },
         },
       ],
@@ -265,48 +241,18 @@ class LowStock extends React.Component {
       },
     };
   }
-  UpdateStock = e => {
-    let payload = {
-      status: e.target.value,
-    };
-    let id = this.state.ViewOneData?._id;
 
-    // console.log(this.state.ViewOneData?._id);
-    swal("Warning", "Sure You Want to Update Status", {
-      buttons: {
-        cancel: "No",
-        catch: { text: "Yes", value: "Sure" },
-      },
-    }).then(value => {
-      switch (value) {
-        case "Sure":
-          Stockupdate(id, payload)
-            .then(res => {
-              // console.log(res);
-              swal("success", "Status Updated Successfully");
-              this.togglemodal();
-              this.ViewStockList();
-            })
-            .catch(err => {
-              console.log(err);
-            });
-
-          break;
-        default:
-      }
-    });
-  };
   LookupviewStart = () => {
-    this.setState(prevState => ({
+    this.setState((prevState) => ({
       modal: !prevState.modal,
     }));
   };
-  togglemodal = () => {
-    this.setState(prevState => ({
-      modalone: !prevState.modalone,
-    }));
-    this.setState({ ShowBill: false });
-  };
+  // togglemodal = () => {
+  //   this.setState((prevState) => ({
+  //     modalone: !prevState.modalone,
+  //   }));
+  //   this.setState({ ShowBill: false });
+  // };
   handleStockTrxInvoiceShow = () => {
     this.setState({ ShowBill: true });
   };
@@ -323,33 +269,21 @@ class LowStock extends React.Component {
 
   async componentDidMount() {
     const UserInformation = this.context?.UserInformatio;
+    const InsidePermissions = CheckPermission("Low Stock");
+    this.setState({ InsiderPermissions: InsidePermissions });
     let pageparmission = JSON.parse(localStorage.getItem("userData"));
     let userid = pageparmission?._id;
-    await this.ViewStockList();
 
-    // Stock_trxFactorytoWList(userid)
-    // .then((res) => {
-    //   console.log(res);
-    // })
-    // .catch((err) => {
-    //   console.log(err);
-    // });
-  }
-
-  ViewStockList = async () => {
-    let pageparmission = JSON.parse(localStorage.getItem("userData"));
-    let userid = pageparmission?._id;
-    // await ViewFactoryStock()
-    await WarehouseOutwardStocklist(userid)
-      .then(res => {
-        // console.log(res?.Warehouse);
-        let rowData = res?.Warehouse;
+    await _Get(Low_Stock_Alerts, userid)
+      .then((res) => {
+        // console.log(res?.alertProducts);
+        let rowData = res?.alertProducts;
 
         if (rowData) {
           this.setState({ rowData: rowData });
           this.setState({ AllcolumnDefs: this.state.columnDefs });
 
-          let userHeading = JSON.parse(localStorage.getItem("FactoryStock"));
+          let userHeading = JSON.parse(localStorage.getItem("LowStockAlert"));
           if (userHeading?.length) {
             this.setState({ columnDefs: userHeading });
             this.gridApi.setColumnDefs(userHeading);
@@ -361,33 +295,13 @@ class LowStock extends React.Component {
           this.setState({ SelectedCols: this.state.columnDefs });
         }
       })
-      .catch(err => {
+      .catch((err) => {
         console.log(err);
       });
-    // await ViewOneWarehouseStock(userid)
-    //   .then((res) => {
-    //     console.log(res?.Factory);
-    // this.setState({ rowData: res?.Factory });
-    // this.setState({ AllcolumnDefs: this.state.columnDefs });
-
-    // let userHeading = JSON.parse(localStorage.getItem("FactoryStock"));
-    // if (userHeading?.length) {
-    //   this.setState({ columnDefs: userHeading });
-    //   this.gridApi.setColumnDefs(userHeading);
-    //   this.setState({ SelectedcolumnDefs: userHeading });
-    // } else {
-    //   this.setState({ columnDefs: this.state.columnDefs });
-    //   this.setState({ SelectedcolumnDefs: this.state.columnDefs });
-    // }
-    // this.setState({ SelectedCols: this.state.columnDefs });
-    // })
-    // .catch((err) => {
-    //   console.log(err);
-    // });
-  };
+  }
 
   toggleDropdown = () => {
-    this.setState(prevState => ({ isOpen: !prevState.isOpen }));
+    this.setState((prevState) => ({ isOpen: !prevState.isOpen }));
   };
 
   runthisfunction(id) {
@@ -396,15 +310,15 @@ class LowStock extends React.Component {
         cancel: "cancel",
         catch: { text: "Delete ", value: "delete" },
       },
-    }).then(value => {
+    }).then((value) => {
       switch (value) {
         case "delete":
           DeleteAccount(id)
-            .then(res => {
+            .then((res) => {
               let selectedData = this.gridApi.getSelectedRows();
               this.gridApi.updateRowData({ remove: selectedData });
             })
-            .catch(err => {
+            .catch((err) => {
               console.log(err);
             });
           break;
@@ -413,7 +327,7 @@ class LowStock extends React.Component {
     });
   }
 
-  onGridReady = params => {
+  onGridReady = (params) => {
     this.gridApi = params.api;
     this.gridColumnApi = params.columnApi;
     this.gridRef.current = params.api;
@@ -425,11 +339,11 @@ class LowStock extends React.Component {
     });
   };
 
-  updateSearchQuery = val => {
+  updateSearchQuery = (val) => {
     this.gridApi.setQuickFilter(val);
   };
 
-  filterSize = val => {
+  filterSize = (val) => {
     if (this.gridApi) {
       this.gridApi.paginationSetPageSize(Number(val));
       this.setState({
@@ -444,7 +358,7 @@ class LowStock extends React.Component {
       SelectedColums?.push(value);
     } else {
       const delindex = SelectedColums?.findIndex(
-        ele => ele?.headerName === value?.headerName
+        (ele) => ele?.headerName === value?.headerName
       );
 
       SelectedColums?.splice(delindex, 1);
@@ -455,14 +369,14 @@ class LowStock extends React.Component {
       Papa.parse(csvData, {
         header: true,
         skipEmptyLines: true,
-        complete: result => {
+        complete: (result) => {
           if (result.data && result.data.length > 0) {
             resolve(result.data);
           } else {
             reject(new Error("No data found in the CSV"));
           }
         },
-        error: error => {
+        error: (error) => {
           reject(error);
         },
       });
@@ -471,10 +385,9 @@ class LowStock extends React.Component {
   generatePDF(parsedData) {
     let pdfsize = [Object.keys(parsedData[0])][0].length;
     let size = pdfsize > 15 ? "a1" : pdfsize < 14 > 10 ? "a3" : "a4";
-
     const doc = new jsPDF("landscape", "mm", size, false);
     doc.setTextColor(5, 87, 97);
-    const tableData = parsedData.map(row => Object.values(row));
+    const tableData = parsedData.map((row) => Object.values(row));
     doc.addImage(Logo, "JPEG", 10, 10, 50, 30);
     let date = new Date();
     doc.setCreationDate(date);
@@ -499,14 +412,14 @@ class LowStock extends React.Component {
       console.error("Error parsing CSV:", error);
     }
   };
-  processCell = params => {
+  processCell = (params) => {
     // console.log(params);
     // Customize cell content as needed
     return params.value;
   };
 
   convertCsvToExcel(csvData) {
-    return new Promise(resolve => {
+    return new Promise((resolve) => {
       Papa.parse(csvData, {
         header: true,
         dynamicTyping: true,
@@ -537,7 +450,7 @@ class LowStock extends React.Component {
     window.URL.revokeObjectURL(url);
   }
 
-  exportToExcel = async e => {
+  exportToExcel = async (e) => {
     const CsvData = this.gridApi.getDataAsCsv({
       processCellCallback: this.processCell,
     });
@@ -550,7 +463,7 @@ class LowStock extends React.Component {
       processCellCallback: this.processCell,
     });
     Papa.parse(CsvData, {
-      complete: result => {
+      complete: (result) => {
         const ws = XLSX.utils.json_to_sheet(result.data);
         const wb = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(wb, ws, "Sheet1");
@@ -586,13 +499,13 @@ class LowStock extends React.Component {
       processCellCallback: this.processCell,
     });
     Papa.parse(CsvData, {
-      complete: result => {
+      complete: (result) => {
         const rows = result.data;
 
         // Create XML
         let xmlString = "<root>\n";
 
-        rows.forEach(row => {
+        rows.forEach((row) => {
           xmlString += "  <row>\n";
           row.forEach((cell, index) => {
             xmlString += `    <field${index + 1}>${cell}</field${index + 1}>\n`;
@@ -614,14 +527,14 @@ class LowStock extends React.Component {
     });
   };
 
-  HandleSetVisibleField = e => {
+  HandleSetVisibleField = (e) => {
     e.preventDefault();
     this.gridApi.setColumnDefs(this.state.SelectedcolumnDefs);
     this.setState({ columnDefs: this.state.SelectedcolumnDefs });
     this.setState({ SelectedcolumnDefs: this.state.SelectedcolumnDefs });
     this.setState({ rowData: this.state.rowData });
     localStorage.setItem(
-      "FactoryStock",
+      "LowStockAlert",
       JSON.stringify(this.state.SelectedcolumnDefs)
     );
     this.LookupviewStart();
@@ -630,10 +543,10 @@ class LowStock extends React.Component {
   HeadingRightShift = () => {
     const updatedSelectedColumnDefs = [
       ...new Set([
-        ...this.state.SelectedcolumnDefs.map(item => JSON.stringify(item)),
-        ...SelectedColums.map(item => JSON.stringify(item)),
+        ...this.state.SelectedcolumnDefs.map((item) => JSON.stringify(item)),
+        ...SelectedColums.map((item) => JSON.stringify(item)),
       ]),
-    ].map(item => JSON.parse(item));
+    ].map((item) => JSON.parse(item));
     this.setState({
       SelectedcolumnDefs: [...new Set(updatedSelectedColumnDefs)], // Update the state with the combined array
     });
@@ -658,11 +571,11 @@ class LowStock extends React.Component {
       SelectedcolumnDefs,
       isOpen,
       SelectedCols,
+      InsiderPermissions,
       AllcolumnDefs,
     } = this.state;
     return (
       <>
-        {/* <ExcelReader /> */}
         <Row className="app-user-list">
           <Col sm="12">
             <Card>
@@ -670,77 +583,72 @@ class LowStock extends React.Component {
                 <Col>
                   <h1 className="float-left">Low Stock</h1>
                 </Col>
-                <Col>
-                  <span className="mx-1">
-                    <FaFilter
-                      style={{ cursor: "pointer" }}
-                      title="filter coloumn"
-                      size="35px"
-                      onClick={this.LookupviewStart}
-                      color="#39cccc"
-                      className="float-right"
-                    />
-                  </span>
-                  <span className="mx-1">
-                    <div className="dropdown-container float-right">
-                      <ImDownload
+                {InsiderPermissions && InsiderPermissions?.View && (
+                  <Col>
+                    <span className="mx-1">
+                      <FaFilter
                         style={{ cursor: "pointer" }}
-                        title="download file"
+                        title="filter coloumn"
                         size="35px"
-                        className="dropdown-button "
+                        onClick={this.LookupviewStart}
                         color="#39cccc"
-                        onClick={this.toggleDropdown}
+                        className="float-right"
                       />
-                      {isOpen && (
-                        <div
-                          style={{
-                            position: "absolute",
-                            zIndex: "1",
-                            border: "1px solid #39cccc",
-                            backgroundColor: "white",
-                          }}
-                          className="dropdown-content dropdownmy"
-                        >
-                          <h5
-                            onClick={() => this.exportToPDF()}
-                            style={{ cursor: "pointer" }}
-                            className=" mx-1 myactive mt-1"
-                          >
-                            .PDF
-                          </h5>
-                          <h5
-                            onClick={() => this.gridApi.exportDataAsCsv()}
-                            style={{ cursor: "pointer" }}
-                            className=" mx-1 myactive"
-                          >
-                            .CSV
-                          </h5>
-                          <h5
-                            onClick={this.convertCSVtoExcel}
-                            style={{ cursor: "pointer" }}
-                            className=" mx-1 myactive"
-                          >
-                            .XLS
-                          </h5>
-                          <h5
-                            onClick={this.exportToExcel}
-                            style={{ cursor: "pointer" }}
-                            className=" mx-1 myactive"
-                          >
-                            .XLSX
-                          </h5>
-                          <h5
-                            onClick={() => this.convertCsvToXml()}
-                            style={{ cursor: "pointer" }}
-                            className=" mx-1 myactive"
-                          >
-                            .XML
-                          </h5>
-                        </div>
-                      )}
-                    </div>
-                  </span>
-                  {/* <span>
+                    </span>
+                    <span className="mx-1">
+                      <div className="dropdown-container float-right">
+                        <ImDownload
+                          style={{ cursor: "pointer" }}
+                          title="download file"
+                          size="35px"
+                          className="dropdown-button "
+                          color="#39cccc"
+                          onClick={this.toggleDropdown}
+                        />
+                        {isOpen && (
+                          <div
+                            style={{
+                              position: "absolute",
+                              zIndex: "1",
+                              border: "1px solid #39cccc",
+                              backgroundColor: "white",
+                            }}
+                            className="dropdown-content dropdownmy">
+                            <h5
+                              onClick={() => this.exportToPDF()}
+                              style={{ cursor: "pointer" }}
+                              className=" mx-1 myactive mt-1">
+                              .PDF
+                            </h5>
+                            <h5
+                              onClick={() => this.gridApi.exportDataAsCsv()}
+                              style={{ cursor: "pointer" }}
+                              className=" mx-1 myactive">
+                              .CSV
+                            </h5>
+                            <h5
+                              onClick={this.convertCSVtoExcel}
+                              style={{ cursor: "pointer" }}
+                              className=" mx-1 myactive">
+                              .XLS
+                            </h5>
+                            <h5
+                              onClick={this.exportToExcel}
+                              style={{ cursor: "pointer" }}
+                              className=" mx-1 myactive">
+                              .XLSX
+                            </h5>
+                            <h5
+                              onClick={() => this.convertCsvToXml()}
+                              style={{ cursor: "pointer" }}
+                              className=" mx-1 myactive">
+                              .XML
+                            </h5>
+                          </div>
+                        )}
+                      </div>
+                    </span>
+                    {/* <span>
                     <Route
                       render={({ history }) => (
                         <Badge
@@ -757,7 +665,8 @@ class LowStock extends React.Component {
                       )}
                     />
                   </span> */}
-                </Col>
+                  </Col>
+                )}
               </Row>
               <CardBody style={{ marginTop: "-1.5rem" }}>
                 {this.state.rowData === null ? null : (
@@ -784,32 +693,27 @@ class LowStock extends React.Component {
                           <DropdownMenu right>
                             <DropdownItem
                               tag="div"
-                              onClick={() => this.filterSize(5)}
-                            >
+                              onClick={() => this.filterSize(5)}>
                               5
                             </DropdownItem>
                             <DropdownItem
                               tag="div"
-                              onClick={() => this.filterSize(20)}
-                            >
+                              onClick={() => this.filterSize(20)}>
                               20
                             </DropdownItem>
                             <DropdownItem
                               tag="div"
-                              onClick={() => this.filterSize(50)}
-                            >
+                              onClick={() => this.filterSize(50)}>
                               50
                             </DropdownItem>
                             <DropdownItem
                               tag="div"
-                              onClick={() => this.filterSize(100)}
-                            >
+                              onClick={() => this.filterSize(100)}>
                               100
                             </DropdownItem>
                             <DropdownItem
                               tag="div"
-                              onClick={() => this.filterSize(134)}
-                            >
+                              onClick={() => this.filterSize(134)}>
                               134
                             </DropdownItem>
                           </DropdownMenu>
@@ -819,7 +723,7 @@ class LowStock extends React.Component {
                         <div className="table-input mr-1">
                           <Input
                             placeholder="search Item here..."
-                            onChange={e =>
+                            onChange={(e) =>
                               this.updateSearchQuery(e.target.value)
                             }
                             value={this.state.value}
@@ -828,7 +732,7 @@ class LowStock extends React.Component {
                       </div>
                     </div>
                     <ContextLayout.Consumer className="ag-theme-alpine">
-                      {context => (
+                      {(context) => (
                         <AgGridReact
                           id="myAgGrid"
                           // gridOptions={{
@@ -879,8 +783,7 @@ class LowStock extends React.Component {
           isOpen={this.state.modal}
           toggle={this.LookupviewStart}
           className={this.props.className}
-          style={{ maxWidth: "1050px" }}
-        >
+          style={{ maxWidth: "1050px" }}>
           <ModalHeader toggle={this.LookupviewStart}>Change Fileds</ModalHeader>
           <ModalBody className="modalbodyhead">
             <Row>
@@ -893,15 +796,15 @@ class LowStock extends React.Component {
                         return (
                           <>
                             <div
-                              onClick={e => this.handleChangeHeader(e, ele, i)}
+                              onClick={(e) =>
+                                this.handleChangeHeader(e, ele, i)
+                              }
                               key={i}
-                              className="mycustomtag mt-1"
-                            >
+                              className="mycustomtag mt-1">
                               <span className="mt-1">
                                 <h5
                                   style={{ cursor: "pointer" }}
-                                  className="allfields"
-                                >
+                                  className="allfields">
                                   <input
                                     type="checkbox"
                                     // checked={check && check}
@@ -960,15 +863,14 @@ class LowStock extends React.Component {
                                             : ""
                                         }`,
                                       }}
-                                      className="allfields"
-                                    >
+                                      className="allfields">
                                       <IoMdRemoveCircleOutline
                                         onClick={() => {
                                           const SelectedCols =
                                             this.state.SelectedcolumnDefs.slice();
                                           const delindex =
                                             SelectedCols.findIndex(
-                                              element =>
+                                              (element) =>
                                                 element?.headerName ==
                                                 ele?.headerName
                                             );
@@ -1042,18 +944,16 @@ class LowStock extends React.Component {
             </Row>
           </ModalBody>
         </Modal>
-        <Modal
+        {/* <Modal
           isOpen={this.state.modalone}
           toggle={this.togglemodal}
           className={this.props.className}
-          style={{ maxWidth: "1050px" }}
-        >
+          style={{ maxWidth: "1050px" }}>
           <ModalHeader toggle={this.togglemodal}>
             {this.state.ShowBill ? "Bill Download" : "All Products"}
           </ModalHeader>
           <ModalBody
-            className={`${this.state.ShowBill ? "p-1" : "modalbodyhead"}`}
-          >
+            className={`${this.state.ShowBill ? "p-1" : "modalbodyhead"}`}>
             {this.state.ViewOneUserView ? (
               <>
                 {this.state.ShowBill ? (
@@ -1179,7 +1079,7 @@ class LowStock extends React.Component {
               </>
             )}
           </ModalBody>
-        </Modal>
+        </Modal> */}
       </>
     );
   }

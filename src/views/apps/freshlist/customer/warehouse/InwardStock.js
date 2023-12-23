@@ -94,14 +94,14 @@ class StockTransfer extends React.Component {
           field: "sortorder",
           field: "transactions",
           width: 150,
-          cellRendererFramework: params => {
+          cellRendererFramework: (params) => {
             return (
               <div className="actions cursor-pointer">
                 <Eye
                   className="mr-50"
                   size="25px"
                   color="green"
-                  onClick={e => {
+                  onClick={(e) => {
                     this.togglemodal();
                     this.setState({ ViewOneData: params?.data });
                     this.setState({ ViewOneUserView: true });
@@ -140,8 +140,7 @@ class StockTransfer extends React.Component {
           field: "transferStatus",
           filter: true,
           width: 150,
-          cellRendererFramework: params => {
-            console.log(params.data);
+          cellRendererFramework: (params) => {
             return params.data?.transferStatus === "Completed" ? (
               <div className="badge badge-pill badge-success">
                 {params.data?.transferStatus}
@@ -166,7 +165,7 @@ class StockTransfer extends React.Component {
           field: "stockTransferDate",
           filter: true,
           width: 200,
-          cellRendererFramework: params => {
+          cellRendererFramework: (params) => {
             console.log(params.data);
             return (
               <div>
@@ -180,8 +179,7 @@ class StockTransfer extends React.Component {
           field: "warehouseFromId",
           filter: true,
           width: 200,
-          cellRendererFramework: params => {
-            console.log(params.data);
+          cellRendererFramework: (params) => {
             return (
               <div>
                 <span>
@@ -201,7 +199,7 @@ class StockTransfer extends React.Component {
           field: "productItems",
           filter: true,
           width: 200,
-          cellRendererFramework: params => {
+          cellRendererFramework: (params) => {
             return (
               <div>
                 <span>{params.data?.productItems?.length} Products</span>
@@ -215,7 +213,7 @@ class StockTransfer extends React.Component {
           field: "grandTotal",
           filter: true,
           sortable: true,
-          cellRendererFramework: params => {
+          cellRendererFramework: (params) => {
             return (
               <>
                 <div className="actions cursor-pointer">
@@ -230,7 +228,7 @@ class StockTransfer extends React.Component {
           field: "createdAt",
           filter: true,
           sortable: true,
-          cellRendererFramework: params => {
+          cellRendererFramework: (params) => {
             return (
               <>
                 <div className="actions cursor-pointer">
@@ -245,7 +243,7 @@ class StockTransfer extends React.Component {
           field: "updatedAt",
           filter: true,
           sortable: true,
-          cellRendererFramework: params => {
+          cellRendererFramework: (params) => {
             return (
               <>
                 <div className="actions cursor-pointer">

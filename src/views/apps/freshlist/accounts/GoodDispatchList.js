@@ -182,9 +182,9 @@ class GoodDispatchList extends React.Component {
           filter: true,
           width: 140,
           cellRendererFramework: params => {
-            console.log(params.data);
-            return params.data?.status === "completed" ? (
-              <div className="badge badge-pill badge-success">Completed</div>
+         
+            return params.data?.status?.toLowerCase()?.includes("completed") ? (
+              <div className="badge badge-pill bg-success">Completed</div>
             ) : params.data?.status === "pending" ? (
               <div className="badge badge-pill badge-warning">
                 {params.data?.status}
@@ -274,11 +274,43 @@ class GoodDispatchList extends React.Component {
                   {this.state.InsiderPermissions &&
                     this.state.InsiderPermissions?.Create && (
                       <>
-                        {params.data?.status === "Inprocess" ? (
+                        {params.data?.status === "Inprocess" ||
+                        params.data?.status
+                          ?.toLowerCase()
+                          ?.includes("cancelled") ||
+                        params.data?.status
+                          ?.toLowerCase()
+                          ?.includes("completed") ? (
                           <>
-                            <div className="badge badge-pill bg-success">
-                              {params.data.status}
-                            </div>
+                            {params.data?.status
+                              ?.toLowerCase()
+                              ?.includes("completed") ? (
+                              <div className="badge badge-pill bg-success">
+                                Completed
+                              </div>
+                            ) : params.data?.status === "pending" ? (
+                              <div className="badge badge-pill badge-warning">
+                                {params.data?.status}
+                              </div>
+                            ) : params.data?.status === "return" ? (
+                              <div className="badge badge-pill bg-danger">
+                                Returned
+                              </div>
+                            ) : params.data?.status === "cancelled" ? (
+                              <div className="badge badge-pill bg-danger">
+                                {params.data.status}
+                              </div>
+                            ) : params.data?.status === "Inprocess" ? (
+                              <div className="badge badge-pill bg-success">
+                                {params.data.status}
+                              </div>
+                            ) : (
+                              <>
+                                <div className="badge badge-pill bg-warning">
+                                  {params.data.status}
+                                </div>
+                              </>
+                            )}
                           </>
                         ) : (
                           <>

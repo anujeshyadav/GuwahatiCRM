@@ -1,9 +1,7 @@
 import React, { useRef } from "react";
 import { ImDownload } from "react-icons/im";
-
 import {
-  
-  FaPlus,
+    FaPlus,
 } from "react-icons/fa";
 import {
   Card,
@@ -1620,11 +1618,11 @@ class Cashbook extends React.Component {
                     Rs/-
                   </h5>
                 </Col>
-                {this.state.InsiderPermissions &&
+                {/* {this.state.InsiderPermissions &&
                   this.state.InsiderPermissions?.Edit && (
                     <Col>
                       <Label>Change Payment Status :</Label>
-                      {/* <CustomInput
+                      <CustomInput
                         onChange={(e) => {
                           this.setState({
                             Delivery_Status: e.target.value,
@@ -1635,8 +1633,8 @@ class Cashbook extends React.Component {
                         <option>--select--</option>
                         <option value="Completed">Completed</option>
                         <option value="Cancelled">Cancelled</option>
-                      </CustomInput> */}
-                      {/* {this.state.Delivery_Status == "Completed" ? null : (
+                      </CustomInput>
+                      {this.state.Delivery_Status == "Completed" ? null : (
                         <>
                           {this.state.Delivery_Status == "Cancelled" && (
                             <Row>
@@ -1656,8 +1654,8 @@ class Cashbook extends React.Component {
                             </Row>
                           )}
                         </>
-                      )} */}
-                      {/* {this.state.Delivery_Status == "Cancelled" ||
+                      )}
+                      {this.state.Delivery_Status == "Cancelled" ||
                       this.state.Delivery_Status == "Completed" ? (
                         <Badge
                           onClick={this.HandleStatusChange}
@@ -1665,9 +1663,9 @@ class Cashbook extends React.Component {
                           color="primary">
                           Submit
                         </Badge>
-                      ) : null} */}
+                      ) : null}
                     </Col>
-                  )}
+                  )} */}
               </Row>
               <Row className="p-2">
                 <Col>

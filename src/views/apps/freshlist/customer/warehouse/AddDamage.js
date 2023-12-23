@@ -1407,7 +1407,8 @@ const CreateTarget = (args) => {
 
     let userdata = JSON.parse(localStorage.getItem("userData"));
     let payload = {
-      warehouse: userdata?._id,
+      typeStatus: "Damadged",
+      warehouse: WareHouseone[0]?._id,
       productId: product[0]?.productId,
       Size: product[0]?.Size,
       unitType: product[0]?.unitType,
@@ -1486,7 +1487,7 @@ const CreateTarget = (args) => {
   };
   const onSelectone = (selectedList, selectedItem, index) => {
     console.log(selectedList);
-    debugger;
+
     setWareHouseone(selectedList);
     // const list = [...product];
     let MySelectedwarehouseProduct = selectedList[0].productItems?.map(

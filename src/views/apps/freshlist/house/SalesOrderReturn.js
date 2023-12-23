@@ -135,22 +135,23 @@ class SalesOrderReturn extends React.Component {
         //     return null;
         //   },
         // },
-        {
-          headerName: "order Creation date",
-          field: "createdAt",
-          filter: true,
-          resizable: true,
-          width: 230,
-          cellRendererFramework: (params) => {
-            return (
-              <div className="d-flex align-items-center cursor-pointer">
-                <div>
-                  <span>{params.data?.createdAt?.split("T")[0]}</span>
-                </div>
-              </div>
-            );
-          },
-        },
+        // {
+        //   headerName: "order Creation date",
+        //   field: "createdAt",
+        //   filter: true,
+        //   resizable: true,
+        //   width: 230,
+        //   cellRendererFramework: (params) => {
+        //     console.log(params.data);
+        //     return (
+        //       <div className="d-flex align-items-center cursor-pointer">
+        //         <div>
+        //           <span>{params.data?.createdAt?.split("T")[0]}</span>
+        //         </div>
+        //       </div>
+        //     );
+        //   },
+        // },
         {
           headerName: "Product Name",
           field: "returnItems",
@@ -165,18 +166,18 @@ class SalesOrderReturn extends React.Component {
             return null;
           },
         },
+
         {
-          headerName: "Size",
-          field: "returnItems",
+          headerName: "Return Amount",
+          field: "Return_amount",
           filter: true,
           width: 220,
-          valueGetter: (params) => {
-            if (params.data.returnItems && params.data.returnItems.length > 0) {
-              return params?.data?.returnItems?.map((val) => {
-                return val?.productId.Size;
-              });
-            }
-            return null;
+          cellRendererFramework: (params) => {
+            return (
+              <div>
+                <span>{params.data?.Return_amount}</span>
+              </div>
+            );
           },
         },
         {
@@ -299,12 +300,14 @@ class SalesOrderReturn extends React.Component {
     this.setState({ InsiderPermissions: InsidePermissions });
     await SalesReturnProductList()
       .then(res => {
+        console.log(res)
+        
         this.setState({ rowData: res?.SalesReturn });
         // this.setState({ userName: UserInformation.firstName });
         this.setState({ AllcolumnDefs: this.state.columnDefs });
         this.setState({ SelectedCols: this.state.columnDefs });
 
-        let userHeading = JSON.parse(localStorage.getItem("TargetList"));
+        let userHeading = JSON.parse(localStorage.getItem("SalesOrderReturn"));
         if (userHeading?.length) {
           this.setState({ columnDefs: userHeading });
           this.gridApi.setColumnDefs(userHeading);
@@ -540,13 +543,13 @@ class SalesOrderReturn extends React.Component {
 
   HandleSetVisibleField = e => {
     e.preventDefault();
-    debugger;
+    
     this.gridApi.setColumnDefs(this.state.SelectedcolumnDefs);
     this.setState({ columnDefs: this.state.SelectedcolumnDefs });
     this.setState({ SelectedcolumnDefs: this.state.SelectedcolumnDefs });
     this.setState({ rowData: this.state.rowData });
     localStorage.setItem(
-      "TargetList",
+      "SalesOrderReturn",
       JSON.stringify(this.state.SelectedcolumnDefs)
     );
     this.LookupviewStart();
