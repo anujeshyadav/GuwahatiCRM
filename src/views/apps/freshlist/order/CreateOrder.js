@@ -191,6 +191,7 @@ const CreateOrder = args => {
     } else {
       SaveOrder(payload)
         .then(res => {
+          console.log(res);
           swal("Order Created Successfully");
           //  history.push("/app/softnumen/order/orderList")
         })

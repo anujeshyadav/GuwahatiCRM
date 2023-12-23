@@ -27,7 +27,7 @@ import swal from "sweetalert";
 
 
 import {
- 
+  createrowmaterial,
   CreateAccountSave,
   CreateAccountView,
   Get_RoleList,
@@ -151,7 +151,7 @@ const Inwordwarehousecreate = () => {
       .then((res) => {
         const jsonData = xmlJs.xml2json(res.data, { compact: true, spaces: 2 });
         setCreatAccountView(JSON.parse(jsonData)?.RowMaterialConfig?.input);
-        
+        console.log(jsonData);
         console.log(JSON.parse(jsonData)?.RowMaterialConfig?.MyDropdown);
         setdropdownValue(JSON.parse(jsonData)?.RowMaterialConfig?.MyDropdown);
         
@@ -168,25 +168,17 @@ const Inwordwarehousecreate = () => {
   const submitHandler = (e) => {
     e.preventDefault();
     console.log(formData);
-    if (formData?.rolename && formData?.email && formData?.firstName) {
-      if (error) {
-        swal("Error occured while Entering Details");
-      } else {
-        CreateAccountSave(formData)
-          .then((res) => {
-            setFormData({});
-            if (res.status) {
-              // window.location.reload();
-              swal("User Created Successfully");
-            }
-          })
-          .catch((err) => {
-            console.log(err);
-          });
+    createrowmaterial(formData)
+    .then((res) => {
+      setFormData({});
+      if (res.status) {
+        // window.location.reload();
+        swal("Created Successfully");
       }
-    } else {
-      swal("Enter User Name Email and Select Role");
-    }
+    })
+    .catch((err) => {
+      console.log(err);
+    });
   };
 
   return (
@@ -195,7 +187,7 @@ const Inwordwarehousecreate = () => {
         <Card>
           <Row className="m-2">
             <Col>
-              <h1 className="float-left">Inword Ware House Create</h1>
+              <h1 className="float-left">Inword Row Create</h1>
             </Col>
             <Col>
               <div className="float-right">
@@ -222,32 +214,7 @@ const Inwordwarehousecreate = () => {
           <div className="px-1 ">
             <Form className="m-1" onSubmit={submitHandler}>
               <Row className="mb-2">
-              <Col lg="4" md="4">
-                  <FormGroup>
-                    <Label>Unit</Label>
-                    <CustomInput
-                      required
-                      type="select"
-                      name="rolename"
-                      color="black"
-                      value={formData["rolename"]}
-                      onChange={(e) => {
-                        setFormData({
-                          ...formData,
-                          ["rolename"]: e.target.value,
-                        });
-                      }}>
-                      <option>--select Role--</option>
-                      {dropdownValue &&
-                        dropdownValue?.length &&
-                        dropdownValue?.map((ele ) => {
-                          return (
-                            <option value={ele?._attributes}>{ele?.value}</option>
-                          );
-                        })}
-                    </CustomInput>
-                  </FormGroup>
-                </Col>
+              
                 
               { CreatAccountView &&
                 CreatAccountView?.map((ele, i) => {
@@ -659,35 +626,9 @@ const Inwordwarehousecreate = () => {
                   </div>
                 </Col>
               </Row> */}
-              <Col lg="6" md="6" sm="6" className="mb-2 mt-1">
-                <Label className="mb-0">Status</Label>
-                <div
-                  className="form-label-group"
-                  onChange={(e) => {
-                    setFormData({
-                      ...formData,
-                      ["status"]: e.target.value,
-                    });
-                  }}>
-                  <input
-                    required
-                    style={{ marginRight: "3px"  }}
-                    type="radio"
-                    name="status"
-                    value="Active" 
-                  />
-                  <span style={{ marginRight: "20px"  }}>Active</span>
 
-                  <input
-                    required
-                    style={{ marginRight: "3px" }}
-                    type="radio"
-                    name="status"
-                    value="Deactive"
-                  />
-                  <span style={{ marginRight: "3px" }}>Deactive</span>
-                </div>
-              </Col>
+              
+              
               <Row>
                 <Button.Ripple
                   color="primary"

@@ -1,7 +1,8 @@
 import React, { useRef } from "react";
 import { Route } from "react-router-dom";
-import xmlJs from "xml-js";
+import { ImDownload } from "react-icons/im";
 import {
+  Label,
   Card,
   CardBody,
   Input,
@@ -16,36 +17,36 @@ import {
   ModalHeader,
   ModalBody,
   Badge,
+  Table,
+  CustomInput,
 } from "reactstrap";
-import { FaPencilAlt } from "react-icons/fa";
-
-import { ImDownload } from "react-icons/im";
-
 import { ContextLayout } from "../../../../utility/context/Layout";
 import { AgGridReact } from "ag-grid-react";
 import "ag-grid-community/dist/styles/ag-grid.css";
-import EditAccount from "../accounts/EditAccount";
-import ViewAccount from "../accounts/ViewAccount";
+// import ViewOrder from "../order/ViewAll";
 import jsPDF from "jspdf";
 import "jspdf-autotable";
 import Logo from "../../../../assets/img/profile/pages/logomain.png";
 import Papa from "papaparse";
-import { Eye, Trash2, ChevronDown, Edit } from "react-feather";
+import { Eye, Trash2, ChevronDown, Edit, CornerDownLeft } from "react-feather";
 import { IoMdRemoveCircleOutline } from "react-icons/io";
 import "../../../../assets/scss/plugins/tables/_agGridStyleOverride.scss";
 import "../../../../assets/scss/pages/users.scss";
-
+// import StockTrxInvoice from "../../subcategory/StockTrxInvoice";
+import StockTrxInvoice from "../subcategory/StockTrxInvoice";
 import {
   FaArrowAltCircleLeft,
   FaArrowAltCircleRight,
+  FaDownload,
   FaFilter,
   FaPlus,
 } from "react-icons/fa";
 import swal from "sweetalert";
 import {
-  CreateAccountList,
-  CreateAccountView,
-  DeleteAccount,
+  createOrderhistoryview,
+  CreateProductList,
+  Delete_targetINlist,
+  Deleteproductlist,
 } from "../../../../ApiEndPoint/ApiCalling";
 import {
   BsCloudDownloadFill,
@@ -54,7 +55,6 @@ import {
 } from "react-icons/bs";
 import * as XLSX from "xlsx";
 import UserContext from "../../../../context/Context";
-
 import { CheckPermission } from "../house/CheckPermission";
 
 const SelectedColums = [];
@@ -69,13 +69,16 @@ class Itemproduct extends React.Component {
       isOpen: false,
       Arrindex: "",
       rowData: [],
+      ShowBill: false,
+      modal: false,
+      modalone: false,
+      ViewData: {},
+      InsiderPermissions: {},
       setMySelectedarr: [],
       SelectedCols: [],
       paginationPageSize: 5,
-      InsiderPermissions: {},
       currenPageSize: "",
       getPageSize: "",
-      columnDefs: [],
       AllcolumnDefs: [],
       SelectedcolumnDefs: [],
       defaultColDef: {
@@ -85,18 +88,245 @@ class Itemproduct extends React.Component {
         resizable: true,
         suppressMenu: true,
       },
+      columnDefs: [
+        {
+          headerName: "UID",
+          valueGetter: "node.rowIndex + 1",
+          field: "node.rowIndex + 1",
+          width: 80,
+          filter: true,
+        },
+
+        {
+          headerName: "Actions",
+          field: "transactions",
+          width: 180,
+          cellRendererFramework: (params) => {
+            return (
+              <div className="actions cursor-pointer">
+                {this.state.InsiderPermissions &&
+                  this.state.InsiderPermissions?.Edit && (
+                    <Eye
+                      className="mr-50"
+                      size="25px"
+                      color="green"
+                      onClick={() => {
+                        this.togglemodal();
+                        this.handleChangeView(params.data, "readonly");
+                      }}
+                    />
+                  )}
+                {this.state.InsiderPermissions &&
+                  this.state.InsiderPermissions?.View && (
+                    <Edit
+                      className="mr-50"
+                      size="25px"
+                      color="blue"
+                      onClick={() =>
+                        this.props.history.push({
+                          pathname: `/app/freshlist/order/editOrder/${params.data?._id}`,
+                          state: params.data,
+                        })
+                      }
+                    />
+                  )}
+                {this.state.InsiderPermissions &&
+                  this.state.InsiderPermissions?.Edit && (
+                    <Trash2
+                              className=""
+                              size="20px"
+                              color="red"
+                              onClick={() => {
+                                this.runthisfunction(params);
+                              }}
+                            />
+                  )}
+              </div>
+            );
+          },
+        },
+        // {
+        //   headerName: "Status",
+        //   field: "status",
+        //   filter: true,
+        //   width: 150,
+        //   cellRendererFramework: (params) => {
+        //     return params.value == "Completed" ? (
+        //       <div className="badge badge-pill badge-success">
+        //         {params.data.status}
+        //       </div>
+        //     ) : params.value == "InProcess" ? (
+        //       <div className="badge badge-pill badge-warning">
+        //         {params.data.status}
+        //       </div>
+        //     ) : params.value == "pending" ? (
+        //       <div className="badge badge-pill badge-info">Pending</div>
+        //     ) : params.value == "Cancelled" ? (
+        //       <div className="badge badge-pill badge-danger">
+        //         {params.data.status}
+        //       </div>
+        //     ) : null;
+        //   },
+        // },
+        {
+          headerName: "Product Name",
+          field: "Product_Title",
+          filter: true,
+          width: 200,
+          cellRendererFramework: (params) => {
+            return (
+              <div>
+                <span>{params.data?.Product_Title}</span>
+              </div>
+            );
+          },
+        },
+        {
+          headerName: "Product MRP",
+          field: "Product_MRP",
+          filter: true,
+          width: 200,
+          cellRendererFramework: (params) => {
+            return (
+              <div>
+                <span>{params.data?.Product_MRP}</span>
+              </div>
+            );
+          },
+        },
+        {
+          headerName: "Size",
+          field: "Size",
+          filter: true,
+          width: 200,
+          cellRendererFramework: (params) => {
+            return (
+              <div>
+                <span>{params.data?.Size}</span>
+              </div>
+            );
+          },
+        },
+        {
+          headerName: "Discount",
+          field: "discount",
+          filter: true,
+          width: 200,
+          cellRendererFramework: (params) => {
+            return (
+              <div>
+                <span>{params.data?.discount}</span>
+              </div>
+            );
+          },
+        },
+        {
+          headerName: "Min Stock Alert",
+          field: "MIN_stockalert",
+          filter: true,
+          width: 200,
+          cellRendererFramework: (params) => {
+            return (
+              <div>
+                <span>{params.data?.MIN_stockalert}</span>
+              </div>
+            );
+          },
+        },
+        // {
+        //   headerName: "Min Stock Alert",
+        //   field: "MinStockAlert",
+        //   filter: true,
+        //   width: 180,
+        //   valueGetter: (params) => {
+        //     if (params.data.orderItems && params.data.orderItems.length > 0) {
+        //       return params.data.fullName;
+        //     }
+        //     return null;
+        //   },
+        // },
+
+        // {
+        //   headerName: "Product Name",
+        //   field: "orderItems",
+        //   filter: true,
+        //   width: 220,
+        //   valueGetter: (params) => {
+        //     if (params.data.orderItems && params.data.orderItems.length > 0) {
+        //       return params?.data?.orderItems?.map((val) => {
+        //         return val?.product?.Product_Title;
+        //       });
+        //     }
+        //     return null;
+        //   },
+        // },
+        // {
+        //   headerName: "Price",
+        //   field: "orderItems",
+        //   filter: true,
+        //   width: 150,
+        //   valueGetter: (params) => {
+        //     if (params.data.orderItems && params.data.orderItems.length > 0) {
+        //       return params.data.orderItems[0].price;
+        //     }
+        //     return null;
+        //   },
+        // },
+        // {
+        //   headerName: "Size",
+        //   field: "orderItems",
+        //   filter: true,
+        //   width: 150,
+        //   valueGetter: (params) => {
+        //     if (params.data.orderItems && params.data.orderItems.length > 0) {
+        //       return params.data.orderItems[0].qty; // Return the price
+        //     }
+        //     return null;
+        //   },
+        // },
+        // {
+        //   headerName: "GST Rate",
+        //   field: "orderItems",
+        //   filter: true,
+        //   width: 180,
+        //   valueGetter: (params) => {
+        //     if (params.data.orderItems && params.data.orderItems.length > 0) {
+        //       return params.data.orderItems[0].product["GST Rate"]; // Return the price
+        //     }
+        //     return null; // Or handle cases where there's no price
+        //   },
+        // },
+        // {
+        //   headerName: "HSN Code",
+        //   field: "orderItems",
+        //   filter: true,
+        //   width: 180,
+        //   valueGetter: (params) => {
+        //     if (params.data.orderItems && params.data.orderItems.length > 0) {
+        //       return params.data.orderItems[0].product.HSN_Code; // Return the price
+        //     }
+        //     return null;
+        //   },
+        // },
+      ],
     };
   }
-
+  toggleModal = () => {
+    this.setState(prevState => ({
+      modalone: !prevState.modalone,
+    }));
+  };
   LookupviewStart = () => {
     this.setState(prevState => ({
       modal: !prevState.modal,
     }));
   };
 
-  handleChangeEdit = (data, types) => {
+  handleChangeView = (data, types) => {
     let type = types;
     if (type == "readonly") {
+      console.log("ResponseData", data.orderItems);
+      console.log("Test", data);
       this.setState({ ViewOneUserView: true });
       this.setState({ ViewOneData: data });
     } else {
@@ -106,286 +336,42 @@ class Itemproduct extends React.Component {
   };
 
   async componentDidMount() {
+    const userId = JSON.parse(localStorage.getItem("userData"))._id;
     const UserInformation = this.context?.UserInformatio;
-    let pageparmission = JSON.parse(localStorage.getItem("userData"));
-    const InsidePermissions = CheckPermission("Create User");
-    console.log(InsidePermissions);
-    let userid = pageparmission?._id;
+    const InsidePermissions = CheckPermission("Sales Order");
+    // console.log(InsidePermissions);
     this.setState({ InsiderPermissions: InsidePermissions });
-    await CreateAccountList(userid)
-      .then((res) => {
-        let value = res?.adminDetails;
-        console.log(value);
-        if (value.length) {
-          this.setState({ rowData: value });
-        }
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-    await CreateAccountView()
-      .then((res) => {
-        var mydropdownArray = [];
-        var adddropdown = [];
-        const jsonData = xmlJs.xml2json(res.data, {
-          compact: true,
-          spaces: 2,
-        });
-        console.log(JSON.parse(jsonData)?.CreateUser);
-        const inputs = JSON.parse(jsonData)?.CreateUser?.input?.map((ele) => {
-          return {
-            headerName: ele?.label._text,
-            field: ele?.name._text,
-            filter: true,
-            sortable: true,
-            headerClass: "bold-header",
-          };
-        });
-        // let Radioinput =
-        //   JSON.parse(jsonData).CreateAccount?.Radiobutton?.input[0]?.name
-        //     ?._text;
-        // const addRadio = [
-        //   {
-        //     headerName: Radioinput,
-        //     field: Radioinput,
-        //     filter: true,
-        //     sortable: true,
-        //     cellRendererFramework: (params) => {
-        //       return params.data?.Status === "Active" ? (
-        //         <div className="badge badge-pill badge-success">
-        //           {params.data.Status}
-        //         </div>
-        //       ) : params.data?.Status === "Deactive" ? (
-        //         <div className="badge badge-pill badge-warning">
-        //           {params.data.Status}
-        //         </div>
-        //       ) : (
-        //         "NA"
-        //       );
-        //     },
-        //   },
-        // ];
+    await CreateProductList()
+      .then(res => {
+        console.log(res.Data);
+        this.setState({ rowData: res?.Data });
+        this.setState({ AllcolumnDefs: this.state.columnDefs });
+        this.setState({ SelectedCols: this.state.columnDefs });
 
-        // let dropdown = JSON.parse(jsonData).CreateAccount?.MyDropdown?.dropdown;
-        // if (dropdown.length) {
-        //   var mydropdownArray = dropdown?.map((ele) => {
-        //     return {
-        //       headerName: ele?.label,
-        //       field: ele?.name,
-        //       filter: true,
-        //       sortable: true,
-        //     };
-        //   });
-        // } else {
-        //   var adddropdown = [
-        //     {
-        //       headerName: dropdown?.label._text,
-        //       field: dropdown?.name._text,
-        //       filter: true,
-        //       sortable: true,
-        //     },
-        //   ];
-        // }
-
-        let myHeadings = [
-          // ...checkboxinput,
-          ...inputs,
-          // ...adddropdown,
-          // ...addRadio,
-          // ...mydropdownArray,
-        ];
-        // console.log(myHeadings);
-        // let Product = [
-        //   {
-        //     headerName: "Actions",
-        //     field: "sortorder",
-        //     field: "transactions",
-        //     width: 190,
-        //     cellRendererFramework: (params) => {
-        //       return (
-        //         <div className="actions cursor-pointer">
-        //           {this.state.InsiderPermissions &&
-        //             this.state.InsiderPermissions.View && (
-        //               <Route
-        //                 render={({ history }) => (
-        //                   <span
-        //                     style={{
-        //                       border: "1px solid white",
-        //                       padding: "10px",
-        //                       borderRadius: "30px",
-        //                       backgroundColor: "#39cccc",
-        //                     }}
-        //                   >
-        //                     <Eye
-        //                       className=""
-        //                       size="20px"
-        //                       color="white"
-        //                       onClick={() => {
-        //                         this.handleChangeEdit(params?.data, "readonly");
-        //                       }}
-        //                     />
-        //                   </span>
-        //                 )}
-        //               />
-        //             )}
-        //           {this.state.InsiderPermissions &&
-        //             this.state.InsiderPermissions.Edit && (
-        //               <Route
-        //                 render={({ history }) => (
-        //                   <span
-        //                     style={{
-        //                       border: "1px solid white",
-        //                       padding: "10px",
-        //                       borderRadius: "30px",
-        //                       backgroundColor: "rgb(212, 111, 16)",
-        //                       marginLeft: "3px",
-        //                     }}
-        //                   >
-        //                     <FaPencilAlt
-        //                       className=""
-        //                       size="20px"
-        //                       color="white"
-        //                       onClick={() => {
-        //                         this.handleChangeEdit(params?.data, "Editable");
-        //                       }}
-        //                     />
-        //                   </span>
-        //                 )}
-        //               />
-        //             )}
-        //           {this.state.InsiderPermissions &&
-        //             this.state.InsiderPermissions.Delete && (
-        //               <Route
-        //                 render={() => (
-        //                   <span
-        //                     style={{
-        //                       border: "1px solid white",
-        //                       padding: "10px",
-        //                       borderRadius: "30px",
-        //                       backgroundColor: "rgb(236, 24, 9)",
-        //                       marginLeft: "3px",
-        //                     }}
-        //                   >
-        //                     <Trash2
-        //                       className=""
-        //                       size="20px"
-        //                       color="white"
-        //                       onClick={() => {
-        //                         this.runthisfunction(params?.data?._id);
-        //                       }}
-        //                     />
-        //                   </span>
-        //                 )}
-        //               />
-        //             )}
-        //         </div>
-        //       );
-        //     },
-        //   },
-        //   {
-        //     headerName: "Status",
-        //     field: "status",
-        //     filter: true,
-        //     width: 150,
-        //     cellRendererFramework: (params) => {
-        //       return params.data?.status === "Active" ? (
-        //         <div className="badge badge-pill badge-success">
-        //           {params.data?.status}
-        //         </div>
-        //       ) : params.data?.status === "Deactive" ? (
-        //         <div className="badge badge-pill badge-warning">
-        //           {params.data?.status}
-        //         </div>
-        //       ) : null;
-        //     },
-        //   },
-
-        //   {
-        //     headerName: "Created by",
-        //     field: "created_by.firstName",
-        //     filter: true,
-        //     sortable: true,
-        //     cellRendererFramework: (params) => {
-        //       // console.log(params?.data);
-        //       return (
-        //         <>
-        //           <div className="actions cursor-pointer">
-        //             <span>{params?.data?.created_by?.firstName}</span>
-        //           </div>
-        //         </>
-        //       );
-        //     },
-        //   },
-        //   {
-        //     headerName: "Rolename",
-        //     field: "rolename.roleName",
-        //     filter: true,
-        //     sortable: true,
-        //     cellRendererFramework: (params) => {
-        //       // console.log(params.data);
-        //       return (
-        //         <>
-        //           <div className="actions cursor-pointer">
-        //             <span>{params?.data?.rolename?.roleName}</span>
-        //           </div>
-        //         </>
-        //       );
-        //     },
-        //   },
-        //   ...myHeadings,
-        //   {
-        //     headerName: "Created date",
-        //     field: "createdAt",
-        //     filter: true,
-        //     sortable: true,
-        //     cellRendererFramework: (params) => {
-        //       return (
-        //         <>
-        //           <div className="actions cursor-pointer">
-        //             <span>{params?.data?.createdAt}</span>
-        //           </div>
-        //         </>
-        //       );
-        //     },
-        //   },
-        //   {
-        //     headerName: "Updated date",
-        //     field: "updatedAt",
-        //     filter: true,
-        //     sortable: true,
-        //     cellRendererFramework: (params) => {
-        //       return (
-        //         <>
-        //           <div className="actions cursor-pointer">
-        //             <div className="actions cursor-pointer">
-        //               <span>{params?.data?.updatedAt}</span>
-        //             </div>
-        //           </div>
-        //         </>
-        //       );
-        //     },
-        //   },
-        // ];
-
-        this.setState({ AllcolumnDefs: Product });
-
-        let userHeading = JSON.parse(localStorage.getItem("AccountSearch"));
+        let userHeading = JSON.parse(localStorage.getItem("OrderListshow"));
         if (userHeading?.length) {
           this.setState({ columnDefs: userHeading });
           this.gridApi.setColumnDefs(userHeading);
           this.setState({ SelectedcolumnDefs: userHeading });
         } else {
-          this.setState({ columnDefs: Product });
-          this.setState({ SelectedcolumnDefs: Product });
+          this.setState({ columnDefs: this.state.columnDefs });
+          this.setState({ SelectedcolumnDefs: this.state.columnDefs });
         }
-        this.setState({ SelectedCols: Product });
       })
-      .catch((err) => {
+      .catch(err => {
         console.log(err);
-        swal("Error", "something went wrong try again");
       });
   }
 
+  togglemodal = () => {
+    this.setState(prevState => ({
+      modalone: !prevState.modalone,
+    }));
+    this.setState({ ShowBill: false });
+  };
+  handleStockTrxInvoiceShow = () => {
+    this.setState({ ShowBill: true });
+  };
   toggleDropdown = () => {
     this.setState(prevState => ({ isOpen: !prevState.isOpen }));
   };
@@ -399,7 +385,7 @@ class Itemproduct extends React.Component {
     }).then(value => {
       switch (value) {
         case "delete":
-          DeleteAccount(id)
+          Deleteproductlist(id)
             .then(res => {
               let selectedData = this.gridApi.getSelectedRows();
               this.gridApi.updateRowData({ remove: selectedData });
@@ -500,8 +486,6 @@ class Itemproduct extends React.Component {
     }
   };
   processCell = params => {
-    // console.log(params);
-    // Customize cell content as needed
     return params.value;
   };
 
@@ -601,10 +585,6 @@ class Itemproduct extends React.Component {
         });
 
         xmlString += "</root>";
-
-        // setXmlData(xmlString);
-
-        // Create a download link
         const blob = new Blob([xmlString], { type: "text/xml" });
         const link = document.createElement("a");
         link.href = URL.createObjectURL(blob);
@@ -616,12 +596,13 @@ class Itemproduct extends React.Component {
 
   HandleSetVisibleField = e => {
     e.preventDefault();
+    debugger;
     this.gridApi.setColumnDefs(this.state.SelectedcolumnDefs);
     this.setState({ columnDefs: this.state.SelectedcolumnDefs });
     this.setState({ SelectedcolumnDefs: this.state.SelectedcolumnDefs });
     this.setState({ rowData: this.state.rowData });
     localStorage.setItem(
-      "AccountSearch",
+      "OrderListshow",
       JSON.stringify(this.state.SelectedcolumnDefs)
     );
     this.LookupviewStart();
@@ -639,11 +620,11 @@ class Itemproduct extends React.Component {
     });
   };
   handleLeftShift = () => {
-    let SelectedCols = this.state.SelectedcolumnDefs.slice();
+    let SelectedCols = this.state.SelectedcolumnDefs?.slice();
     let delindex = this.state.Arrindex; /* Your delete index here */
 
     if (SelectedCols && delindex >= 0) {
-      const splicedElement = SelectedCols.splice(delindex, 1); // Remove the element
+      const splicedElement = SelectedCols?.splice(delindex, 1); // Remove the element
 
       this.setState({
         SelectedcolumnDefs: SelectedCols, // Update the state with the modified array
@@ -657,291 +638,208 @@ class Itemproduct extends React.Component {
       defaultColDef,
       SelectedcolumnDefs,
       isOpen,
-      SelectedCols,
       InsiderPermissions,
+      SelectedCols,
       AllcolumnDefs,
     } = this.state;
     return (
       <>
-        {/* <ExcelReader /> */}
-        <Row className="app-user-list">
-          {this.state.EditOneUserView && this.state.EditOneUserView ? (
-            <Row className="card">
-              <Col>
-                <div className="d-flex justify-content-end p-1">
-                  <Button
-                    onClick={e => {
-                      e.preventDefault();
-                      this.setState({ EditOneUserView: false });
-                      this.componentDidMount();
-                    }}
-                    color="danger"
-                  >
-                    Back
-                  </Button>
-                </div>
-              </Col>
-
-              <EditAccount EditOneData={this.state.EditOneData} />
-            </Row>
-          ) : (
-            <>
-              {this.state.ViewOneUserView && this.state.ViewOneUserView ? (
-                <>
-                  <Row className="card">
-                    <Col>
-                      <h1 className="float-left">View User</h1>
-                    </Col>
-                    <Col>
-                      <div className="d-flex justify-content-end p-1">
-                        <Button
-                          onClick={e => {
-                            e.preventDefault();
-                            this.setState({ ViewOneUserView: false });
-                          }}
-                          color="danger"
-                        >
-                          Back
-                        </Button>
-                      </div>
-                    </Col>
-                    <ViewAccount ViewOneData={this.state.ViewOneData} />
-                  </Row>
-                </>
-              ) : (
-                <>
-                  <Col sm="12">
-                    <Card>
-                      <Row className="mt-2 ml-2 mr-2 ">
-                        <Col>
-                          <h1
-                            className="float-left "
-                            style={{ fontWeight: "600" }}
+        <Col className="app-user-list">
+          <Col sm="12">
+            <Card>
+              <Row className="ml-2 mt-2 mr-2">
+                <Col>
+                  <h1 className="float-left " style={{ fontWeight: "600" }}>
+                    {" "}
+                    Product List
+                  </h1>
+                </Col>
+                {InsiderPermissions && InsiderPermissions?.View && (
+                  <Col>
+                    <span className="mx-1">
+                      <FaFilter
+                        style={{ cursor: "pointer" }}
+                        title="filter coloumn"
+                        size="35px"
+                        onClick={this.LookupviewStart}
+                        color="#39cccc"
+                        className="float-right"
+                      />
+                    </span>
+                    <span className="mx-1">
+                      <div className="dropdown-container float-right">
+                        <ImDownload
+                          style={{ cursor: "pointer" }}
+                          title="download file"
+                          size="35px"
+                          className="dropdown-button "
+                          color="#39cccc"
+                          onClick={this.toggleDropdown}
+                        />
+                        {isOpen && (
+                          <div
+                            style={{
+                              position: "absolute",
+                              zIndex: "1",
+                              border: "1px solid #39cccc",
+                              backgroundColor: "white",
+                            }}
+                            className="dropdown-content dropdownmy"
                           >
-                            Product Item
-                          </h1>
-                        </Col>
-                        {this.state.InsiderPermissions &&
-                          this.state.InsiderPermissions.View && (
-                            <Col>
-                              <span className="mx-1">
-                                <FaFilter
-                                  style={{ cursor: "pointer" }}
-                                  title="filter coloumn"
-                                  size="35px"
-                                  onClick={this.LookupviewStart}
-                                  color="#39cccc"
-                                  className="float-right"
-                                />
-                              </span>
-                              <span className="mx-1">
-                                <div className="dropdown-container float-right">
-                                  <ImDownload
-                                    style={{ cursor: "pointer" }}
-                                    title="download file"
-                                    size="35px"
-                                    className="dropdown-button "
-                                    color="#39cccc"
-                                    onClick={this.toggleDropdown}
-                                  />
-                                  {isOpen && (
-                                    <div
-                                      style={{
-                                        position: "absolute",
-                                        zIndex: "1",
-                                        border: "1px solid #39cccc",
-                                        backgroundColor: "white",
-                                      }}
-                                      className="dropdown-content dropdownmy"
-                                    >
-                                      <h5
-                                        onClick={() => this.exportToPDF()}
-                                        style={{ cursor: "pointer" }}
-                                        className=" mx-1 myactive mt-1"
-                                      >
-                                        .PDF
-                                      </h5>
-                                      <h5
-                                        onClick={() =>
-                                          this.gridApi.exportDataAsCsv()
-                                        }
-                                        style={{ cursor: "pointer" }}
-                                        className=" mx-1 myactive"
-                                      >
-                                        .CSV
-                                      </h5>
-                                      <h5
-                                        onClick={this.convertCSVtoExcel}
-                                        style={{ cursor: "pointer" }}
-                                        className=" mx-1 myactive"
-                                      >
-                                        .XLS
-                                      </h5>
-                                      <h5
-                                        onClick={this.exportToExcel}
-                                        style={{ cursor: "pointer" }}
-                                        className=" mx-1 myactive"
-                                      >
-                                        .XLSX
-                                      </h5>
-                                      <h5
-                                        onClick={() => this.convertCsvToXml()}
-                                        style={{ cursor: "pointer" }}
-                                        className=" mx-1 myactive"
-                                      >
-                                        .XML
-                                      </h5>
-                                    </div>
-                                  )}
-                                </div>
-                              </span>
-                              <span>
-                                <Route
-                                  render={({ history }) => (
-                                    <Button
-                                      style={{
-                                        cursor: "pointer",
-                                        backgroundColor: "#39cccc",
-                                        color: "white",
-                                        fontWeight: "600",
-                                      }}
-                                      className="float-right mr-1 "
-                                      color="#39cccc"
-                                      onClick={() =>
-                                        history.push(
-                                          "/views/apps/freshlist/Production/Createitemforproduction"
-                                        )
-                                      }
-                                    >
-                                      <FaPlus size={15} /> Create item
-                                    </Button>
-                                  )}
-                                />
-                              </span>
-                            </Col>
-                          )}
-                      </Row>
-                      <CardBody style={{ marginTop: "-1.5rem" }}>
-                        {this.state.rowData === null ? null : (
-                          <div className="ag-theme-material w-100 my-2 ag-grid-table">
-                            <div className="d-flex flex-wrap justify-content-between align-items-center">
-                              <div className="mb-1">
-                                <UncontrolledDropdown className="p-1 ag-dropdown">
-                                  <DropdownToggle tag="div">
-                                    {this.gridApi
-                                      ? this.state.currenPageSize
-                                      : "" * this.state.getPageSize -
-                                        (this.state.getPageSize - 1)}{" "}
-                                    -{" "}
-                                    {this.state.rowData.length -
-                                      this.state.currenPageSize *
-                                        this.state.getPageSize >
-                                    0
-                                      ? this.state.currenPageSize *
-                                        this.state.getPageSize
-                                      : this.state.rowData.length}{" "}
-                                    of {this.state.rowData.length}
-                                    <ChevronDown className="ml-50" size={15} />
-                                  </DropdownToggle>
-                                  <DropdownMenu right>
-                                    <DropdownItem
-                                      tag="div"
-                                      onClick={() => this.filterSize(5)}
-                                    >
-                                      5
-                                    </DropdownItem>
-                                    <DropdownItem
-                                      tag="div"
-                                      onClick={() => this.filterSize(20)}
-                                    >
-                                      20
-                                    </DropdownItem>
-                                    <DropdownItem
-                                      tag="div"
-                                      onClick={() => this.filterSize(50)}
-                                    >
-                                      50
-                                    </DropdownItem>
-                                    <DropdownItem
-                                      tag="div"
-                                      onClick={() => this.filterSize(100)}
-                                    >
-                                      100
-                                    </DropdownItem>
-                                    <DropdownItem
-                                      tag="div"
-                                      onClick={() => this.filterSize(134)}
-                                    >
-                                      134
-                                    </DropdownItem>
-                                  </DropdownMenu>
-                                </UncontrolledDropdown>
-                              </div>
-                              <div className="d-flex flex-wrap justify-content-end mb-1">
-                                <div className="table-input mr-1">
-                                  <Input
-                                    placeholder="search Item here..."
-                                    onChange={e =>
-                                      this.updateSearchQuery(e.target.value)
-                                    }
-                                    value={this.state.value}
-                                  />
-                                </div>
-                              </div>
-                            </div>
-                            <ContextLayout.Consumer className="ag-theme-alpine">
-                              {context => (
-                                <AgGridReact
-                                  id="myAgGrid"
-                                  // gridOptions={{
-                                  //   domLayout: "autoHeight",
-                                  //   // or other layout options
-                                  // }}
-                                  gridOptions={this.gridOptions}
-                                  rowSelection="multiple"
-                                  defaultColDef={defaultColDef}
-                                  columnDefs={columnDefs}
-                                  rowData={rowData}
-                                  // onGridReady={(params) => {
-                                  //   this.gridApi = params.api;
-                                  //   this.gridColumnApi = params.columnApi;
-                                  //   this.gridRef.current = params.api;
-
-                                  //   this.setState({
-                                  //     currenPageSize:
-                                  //       this.gridApi.paginationGetCurrentPage() +
-                                  //       1,
-                                  //     getPageSize:
-                                  //       this.gridApi.paginationGetPageSize(),
-                                  //     totalPages:
-                                  //       this.gridApi.paginationGetTotalPages(),
-                                  //   });
-                                  // }}
-                                  onGridReady={this.onGridReady}
-                                  colResizeDefault={"shift"}
-                                  animateRows={true}
-                                  floatingFilter={false}
-                                  pagination={true}
-                                  paginationPageSize={
-                                    this.state.paginationPageSize
-                                  }
-                                  pivotPanelShow="always"
-                                  enableRtl={context.state.direction === "rtl"}
-                                  ref={this.gridRef} // Attach the ref to the grid
-                                  domLayout="autoHeight" // Adjust layout as needed
-                                />
-                              )}
-                            </ContextLayout.Consumer>
+                            <h5
+                              onClick={() => this.exportToPDF()}
+                              style={{ cursor: "pointer" }}
+                              className=" mx-1 myactive mt-1"
+                            >
+                              .PDF
+                            </h5>
+                            <h5
+                              onClick={() => this.gridApi.exportDataAsCsv()}
+                              style={{ cursor: "pointer" }}
+                              className=" mx-1 myactive"
+                            >
+                              .CSV
+                            </h5>
+                            <h5
+                              onClick={this.convertCSVtoExcel}
+                              style={{ cursor: "pointer" }}
+                              className=" mx-1 myactive"
+                            >
+                              .XLS
+                            </h5>
+                            <h5
+                              onClick={this.exportToExcel}
+                              style={{ cursor: "pointer" }}
+                              className=" mx-1 myactive"
+                            >
+                              .XLSX
+                            </h5>
+                            <h5
+                              onClick={() => this.convertCsvToXml()}
+                              style={{ cursor: "pointer" }}
+                              className=" mx-1 myactive"
+                            >
+                              .XML
+                            </h5>
                           </div>
                         )}
-                      </CardBody>
-                    </Card>
+                      </div>
+                    </span>
+                    <span>
+                      <Route
+                        render={({ history }) => (
+                          <Button
+                            style={{ cursor: "pointer" }}
+                            className="float-right mr-1"
+                            color="primary"
+                            onClick={() =>
+                              history.push("/views/apps/freshlist/Production/Createitemforproduction")
+                            }
+                          >
+                            <FaPlus size={15} /> Create Item
+                          </Button>
+                        )}
+                      />
+                    </span>
                   </Col>
-                </>
-              )}
-            </>
-          )}
-        </Row>
+                )}
+              </Row>
+              <CardBody style={{ marginTop: "-1.5rem" }}>
+                {this.state.rowData === null ? null : (
+                  <div className="ag-theme-material w-100 my-2 ag-grid-table">
+                    <div className="d-flex flex-wrap justify-content-between align-items-center">
+                      <div className="mb-1">
+                        <UncontrolledDropdown className="p-1 ag-dropdown">
+                          <DropdownToggle tag="div">
+                            {this.gridApi
+                              ? this.state.currenPageSize
+                              : "" * this.state.getPageSize -
+                                (this.state.getPageSize - 1)}{" "}
+                            -{" "}
+                            {this.state.rowData.length -
+                              this.state.currenPageSize *
+                                this.state.getPageSize >
+                            0
+                              ? this.state.currenPageSize *
+                                this.state.getPageSize
+                              : this.state.rowData.length}{" "}
+                            of {this.state.rowData.length}
+                            <ChevronDown className="ml-50" size={15} />
+                          </DropdownToggle>
+                          <DropdownMenu right>
+                            <DropdownItem
+                              tag="div"
+                              onClick={() => this.filterSize(5)}
+                            >
+                              5
+                            </DropdownItem>
+                            <DropdownItem
+                              tag="div"
+                              onClick={() => this.filterSize(20)}
+                            >
+                              20
+                            </DropdownItem>
+                            <DropdownItem
+                              tag="div"
+                              onClick={() => this.filterSize(50)}
+                            >
+                              50
+                            </DropdownItem>
+                            <DropdownItem
+                              tag="div"
+                              onClick={() => this.filterSize(100)}
+                            >
+                              100
+                            </DropdownItem>
+                            <DropdownItem
+                              tag="div"
+                              onClick={() => this.filterSize(134)}
+                            >
+                              134
+                            </DropdownItem>
+                          </DropdownMenu>
+                        </UncontrolledDropdown>
+                      </div>
+                      <div className="d-flex flex-wrap justify-content-end mb-1">
+                        <div className="table-input mr-1">
+                          <Input
+                            placeholder="search Item here..."
+                            onChange={e =>
+                              this.updateSearchQuery(e.target.value)
+                            }
+                            value={this.state.value}
+                          />
+                        </div>
+                      </div>
+                    </div>
+                    <ContextLayout.Consumer className="ag-theme-alpine">
+                      {context => (
+                        <AgGridReact
+                          id="myAgGrid"
+                          gridOptions={this.gridOptions}
+                          rowSelection="multiple"
+                          defaultColDef={defaultColDef}
+                          columnDefs={columnDefs}
+                          rowData={rowData}
+                          onGridReady={this.onGridReady}
+                          colResizeDefault={"shift"}
+                          animateRows={true}
+                          floatingFilter={false}
+                          pagination={true}
+                          paginationPageSize={this.state.paginationPageSize}
+                          pivotPanelShow="always"
+                          enableRtl={context.state.direction === "rtl"}
+                          ref={this.gridRef} // Attach the ref to the grid
+                          domLayout="autoHeight" // Adjust layout as needed
+                        />
+                      )}
+                    </ContextLayout.Consumer>
+                  </div>
+                )}
+              </CardBody>
+            </Card>
+          </Col>
+        </Col>
 
         <Modal
           isOpen={this.state.modal}
@@ -953,7 +851,7 @@ class Itemproduct extends React.Component {
           <ModalBody className="modalbodyhead">
             <Row>
               <Col lg="4" md="4" sm="12" xl="4" xs="12">
-                <h4>Avilable Columns</h4>
+                <h4>Available Columns</h4>
                 <div className="mainshffling">
                   <div class="ex1">
                     {AllcolumnDefs &&
@@ -1033,9 +931,9 @@ class Itemproduct extends React.Component {
                                       <IoMdRemoveCircleOutline
                                         onClick={() => {
                                           const SelectedCols =
-                                            this.state.SelectedcolumnDefs.slice();
+                                            this.state.SelectedcolumnDefs?.slice();
                                           const delindex =
-                                            SelectedCols.findIndex(
+                                            SelectedCols?.findIndex(
                                               element =>
                                                 element?.headerName ==
                                                 ele?.headerName
@@ -1043,24 +941,13 @@ class Itemproduct extends React.Component {
 
                                           if (SelectedCols && delindex >= 0) {
                                             const splicedElement =
-                                              SelectedCols.splice(delindex, 1); // Remove the element
+                                              SelectedCols?.splice(delindex, 1); // Remove the element
                                             // splicedElement contains the removed element, if needed
 
                                             this.setState({
                                               SelectedcolumnDefs: SelectedCols, // Update the state with the modified array
                                             });
                                           }
-                                          // const delindex =
-                                          //   SelectedCols.findIndex(
-                                          //     (element) =>
-                                          //       element?.headerName ==
-                                          //       ele?.headerName
-                                          //   );
-
-                                          // SelectedCols?.splice(delindex, 1);
-                                          // this.setState({
-                                          //   SelectedcolumnDefs: SelectedCols,
-                                          // });
                                         }}
                                         style={{ cursor: "pointer" }}
                                         size="25px"
@@ -1102,12 +989,158 @@ class Itemproduct extends React.Component {
             <Row>
               <Col>
                 <div className="d-flex justify-content-center">
-                  <Button onClick={this.HandleSetVisibleField} color="primary">
+                  {/* <Button onClick={this.HandleSetVisibleField} color="primary">
                     Submit
-                  </Button>
+                  </Button> */}
+
+                  <Badge
+                    style={{ cursor: "pointer" }}
+                    className=""
+                    color="primary"
+                    onClick={this.HandleSetVisibleField}
+                  >
+                    Submit
+                  </Badge>
                 </div>
               </Col>
             </Row>
+          </ModalBody>
+        </Modal>
+        <Modal
+          isOpen={this.state.modalone}
+          toggle={this.togglemodal}
+          className={this.props.className}
+          style={{ maxWidth: "1050px" }}
+        >
+          <ModalHeader toggle={this.togglemodal}>
+            {this.state.ShowBill ? "Bill Download" : "All Products"}
+          </ModalHeader>
+          <ModalBody
+            className={`${this.state.ShowBill ? "p-1" : "modalbodyhead"}`}
+          >
+            {this.state.ShowBill ? (
+              <>
+                <StockTrxInvoice ViewOneData={this.state.ViewOneData} />
+              </>
+            ) : (
+              <>
+                {this.state.ViewOneUserView ? (
+                  <>
+                    <Row>
+                      <Col>
+                        <Label>UserName:</Label>
+                        <h5 className="">
+                          {this.state.ViewOneData &&
+                            this.state.ViewOneData?.fullName}
+                        </h5>
+                      </Col>
+                      {/* <Col>
+                        <Label>Stock trx date :</Label>
+                        <h5>
+                          {this.state.ViewOneData &&
+                            this.state.ViewOneData?.stockTransferDate}
+                        </h5>
+                      </Col> */}
+                      <Col>
+                        <Label>Grand Total :</Label>
+                        <h5>
+                          <strong>
+                            {this.state.ViewOneData &&
+                              this.state.ViewOneData?.grandTotal}
+                          </strong>
+                          Rs/-
+                        </h5>
+                      </Col>
+                      <Col>
+                        {this.state.ViewOneData?.status == "completed" ? (
+                          <>
+                            <div className="d-flex justify-content-center">
+                              <h5>
+                                Status:
+                                <Badge className="mx-2" color="primary">
+                                  {this.state.ViewOneData?.status}
+                                </Badge>
+                              </h5>
+                            </div>
+                          </>
+                        ) : (
+                          <>
+                            <h5>
+                              status:
+                              <Badge className="mx-2" color="primary">
+                                {this.state.ViewOneData?.status}
+                              </Badge>
+                            </h5>
+                          </>
+                        )}
+                      </Col>
+                      {/* <Col>
+                        <Label>Download Invoice :</Label>
+                        <div className="d-flex justify-content-center">
+                          <FaDownload
+                            onClick={this.handleStockTrxInvoiceShow}
+                            color="#00c0e"
+                            fill="#00c0e"
+                            style={{ cursor: "pointer" }}
+                            size={20}
+                          />
+                        </div>
+                      </Col> */}
+                    </Row>
+                    <Row className="p-2">
+                      <Col>
+                        <div className="d-flex justify-content-center">
+                          <h4>Product List</h4>
+                        </div>
+                      </Col>
+                    </Row>
+                    <Row>
+                      <Col>
+                        <Table style={{ cursor: "pointer" }} striped>
+                          <thead>
+                            <tr>
+                              <th>#</th>
+                              <th>Product Name</th>
+                              <th>Price</th>
+                              <th>Size</th>
+                              <th>Unit</th>
+                              <th>HSN CODE</th>
+                              <th>GST</th>
+                              <th>Quantity</th>
+                              <th>Total</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {this.state.ViewOneData?.orderItems &&
+                              this.state.ViewOneData?.orderItems?.map(
+                                (ele, i) => (
+                                  <>
+                                    <tr>
+                                      <th scope="row">{i + 1}</th>
+                                      <td>{ele?.product?.Product_Title}</td>
+                                      <td>{ele?.product?.Product_MRP}</td>
+                                      <td>{ele?.product?.Size}</td>
+                                      <td>{ele?.unitQty}</td>
+                                      <td>{ele?.product?.HSN_Code}</td>
+                                      <td>{ele?.product["GST Rate"]}</td>
+                                      <td>{ele?.qty}</td>
+                                      <td>
+                                        {ele?.product?.Product_MRP *
+                                          ele?.product?.Size *
+                                          ele?.qty}
+                                      </td>
+                                    </tr>
+                                  </>
+                                )
+                              )}
+                          </tbody>
+                        </Table>
+                      </Col>
+                    </Row>
+                  </>
+                ) : null}
+              </>
+            )}
           </ModalBody>
         </Modal>
       </>

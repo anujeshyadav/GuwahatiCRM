@@ -193,7 +193,15 @@ import {
   Order_ViewList,
   orders_ID,
   Create_order_by_cashbook,
-  CashbookList,Create_Ware_House
+  CashbookList,Create_Ware_House,
+  view_product_item,
+  delet_product_item,
+  Get_api_production,
+  Save_product_data,
+  create_row_material,
+  Create_Product_List,
+  Delete_Product_Item
+
 } from "./Api";
 import axiosConfig from "../axiosConfig";
 import dotenv from "dotenv";
@@ -227,6 +235,12 @@ export const Stock_trxFactorytoWList = async (id) => {
   return response;
 };
 // post api for create order by cashbook
+export const createrowmaterial = async (data) => {
+  let response = await axiosConfig
+    .post(`${create_row_material}`, data)
+    .then((res) => res.data);
+  return response;
+};
 export const Ordercashbook = async (data) => {
   let response = await axiosConfig
     .post(`${Create_order_by_cashbook}`, data)
@@ -323,6 +337,7 @@ export const CreateCategory = async (data) => {
     .then((res) => res.data);
   return response;
 };
+
 export const CreateProductXMLView = async () => {
   let response = await axiosConfig
     .get(Create_Product_XMLView)
@@ -397,6 +412,12 @@ export const SaveAddPrimary_Unit = async (data) => {
 export const BaseUnitListView = async () => {
   let response = await axiosConfig
     .get(`${BaseUnitList}`)
+    .then((res) => res.data);
+  return response;
+};
+export const CreateProductList = async () => {
+  let response = await axiosConfig
+    .get(`${Create_Product_List}`)
     .then((res) => res.data);
   return response;
 };
@@ -675,6 +696,15 @@ export const CreateAccountView = async () => {
     .then((res) => res.data);
   return response;
 };
+
+
+export const deletProductItem = async (id) => {
+  let response = await axiosConfig
+    .get(`${delet_product_item}` + id)
+    .then((res) => res.data);
+  return response;
+};
+
 export const CreateCustomerxmlView = async () => {
   let response = await axiosConfig
     .get(`${Create_Customer_xmlView}`)
@@ -750,12 +780,19 @@ export const DeleteAccount = async (id) => {
     .then((res) => res.data);
   return response;
 };
+export const Deleteproductlist = async (id) => {
+  let response = await axiosConfig
+    .get(`${Delete_Product_Item}` + id)
+    .then((res) => res.data);
+  return response;
+};
 export const DeleteCustomerList = async (id) => {
   let response = await axiosConfig
     .get(`${Delete_Customer_List}` + id)
     .then((res) => res.data);
   return response;
 };
+
 export const CreateAccountList = async (id) => {
   let response = await axiosConfig
     .get(`${Create_Account_List}` + id)

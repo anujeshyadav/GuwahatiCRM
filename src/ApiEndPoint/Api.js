@@ -47,6 +47,10 @@ export const Create_unit_List = "/unit/view-unit/";
 export const Delete_Unit_List = "/unit/delete-unit/";
 export const Unit_ViewOne = "/unit/update-unit/";
 export const Unit_Update = "/unit/update-unit/";
+export const create_row_material = "/raw-material/creat-rawMaterial"
+//productionapk
+
+export const delet_product_item = "/raw-material/delete-raw-material/"
 
 export const Delete_Category = "/categories/delete-category/"; //done
 export const Delete_Sub_Category = "/categories/delete-categories/";
@@ -98,6 +102,7 @@ export const Sales_Pending_StatusChange = "/order/update-create-order-status/";
 export const SavePurchase_Order = "/purchase-order/save-purchase-order";
 export const Purchase_Order_List =
   "/purchase-order/view-purchase-order-history/";
+export const Delete_Product_Item = "/raw-material/delete-raw-material/";
 export const Purchase_Return = "/purchase-return/save-purchase-return";
 export const Purchase_Return_List = "/purchase-return/view-purchase-return/";
 export const Purchase_Edit_Order = "/purchase-order/update-purchase-order/";
@@ -138,6 +143,7 @@ export const Create_Customer_save = "/customer/save-customer";
 export const Create_Customer_Update = "/customer/update-customer/";
 export const Create_Account_save = "/user/save-user";
 export const Create_Account_List = "/user/view-user-by-id/";
+export const Create_Product_List = "/raw-material/viewRawMaterial"
 export const Create_User_List = "/user/view-user/";
 export const Create_Customer_List = "/customer/view-customer/";
 export const Create_Account_Update = "/user/update-user/";

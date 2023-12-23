@@ -1,8 +1,7 @@
 import React, { useEffect, useState, useContext } from "react";
 import xmlJs from "xml-js";
-import { Route } from "react-router-dom";
-import { history } from "../../../../history";
-import {
+import Multiselect from "multiselect-react-dropdown";
+import { 
   Card,
   CardBody,
   Col,
@@ -11,382 +10,638 @@ import {
   Input,
   Label,
   Button,
+  FormGroup,
   CustomInput,
+  Badge,
 } from "reactstrap";
-import "react-phone-input-2/lib/style.css";
-import Multiselect from "multiselect-react-dropdown";
-import "../../../../assets/scss/pages/users.scss";
-import {
-  SaveOrder,
-  ProductListView,
-  CreatePartyList,
-  UnitListView,
-  BaseUnitListView,
-} from "../../../../ApiEndPoint/ApiCalling";
-import "../../../../assets/scss/pages/users.scss";
-let GrandTotal = [];
-let SelectedITems = [];
-let SelectedSize = [];
 
-const Createitemforproduction = () => { 
-    const [Index, setIndex] = useState("");
+
+import { history } from "../../../../history";
+import PhoneInput from "react-phone-input-2";
+import "react-phone-input-2/lib/style.css";
+import { Country, State, City } from "country-state-city";
+import Select from "react-select";
+import moment from "moment-timezone";
+import { Route } from "react-router-dom";
+
+import swal from "sweetalert";
+
+
+import {
+  createrowmaterial,
+  CreateAccountSave,
+  CreateAccountView,
+  Get_RoleList,
+  CreateWareHousegetXml,
+} from "../../../../ApiEndPoint/ApiCalling";
+import { BiEnvelope } from "react-icons/bi";
+import { FcPhoneAndroid } from "react-icons/fc";
+import { BsWhatsapp } from "react-icons/bs";
+
+import "../../../../assets/scss/pages/users.scss"
+
+
+ 
+import UserContext from "../../../../context/Context";
+import { CloudLightning } from "react-feather";
+import { FaPlus } from "react-icons/fa";
+
+
+
+
+const Createitemforproduction = () => {
+  const [CreatAccountView, setCreatAccountView] = useState([]);
+  const [viewdropdown,setViewdropdown] = useState([]);
+  const [Countries, setCountry] = useState({});
+  const [States, setState] = useState({});
+  const [Cities, setCities] = useState({});
+  const [formData, setFormData] = useState({});
+  const [dropdownValue, setdropdownValue] = useState([]);
   const [index, setindex] = useState("");
   const [error, setError] = useState("");
-  const [ProductList, setProductList] = useState([]);
-  const [PartyList, setPartyList] = useState([]);
-  const [PartyId, setPartyId] = useState("");
-  const [UnitList, setUnitList] = useState([]);
-  const [grandTotalAmt, setGrandTotalAmt] = useState(0);
-  const [priceTotal, setPriceTotal] = useState(0);
-  const [UserInfo, setUserInfo] = useState({});
-  const [dateofDelivery, setDateofDelivery] = useState("");
-  const [product, setProduct] = useState([
-    {
-      productId: "",
-      availableQty: "",
-      qty: 1,
-      price: "",
-      Size: "",
-      unitType: "",
-      totalprice: "",
-    },
-  ]);
+  const [permissions, setpermissions] = useState({});
 
-  const handleRequredQty = (e, index, avalaibleSize) => {
-    const { name, value } = e.target;
-    if (Number(value) <= avalaibleSize) {
-      if (Number(value != 0)) {
-        setIndex(index);
-        const list = [...product];
-        list[index][name] = Number(value);
+  const Context = useContext(UserContext);
 
-        let amt = 0;
-        if (list.length > 0) {
-          const x = list?.map(val => {
-            GrandTotal[index] = val.Size * val.qty * val.price;
-            list[index]["totalprice"] = val.Size * val.qty * val.price;
-            return val.Size * val.qty * val.price;
+  const handleInputChange = (e, type, i) => {
+    const { name, value, checked } = e.target;
+    setindex(i);
+    if (type == "checkbox") {
+      if (checked) {
+        setFormData({
+          ...formData,
+          [name]: checked,
+        });
+      } else {
+        setFormData({
+          ...formData,
+          [name]: checked,
+        });
+      }
+    } else {
+      if (type == "number") {
+        if (/^\d{0,10}$/.test(value)) {
+          setFormData({
+            ...formData,
+            [name]: value,
           });
-          amt = x.reduce((a, b) => a + b);
+          setError("");
+        } else {
+          setError(
+            "Please enter a valid number with a maximum length of 10 digits"
+          );
         }
-        setProduct(list);
-        setGrandTotalAmt(amt);
+      } else {
+        if (value.length <= 10) {
+          setFormData({
+            ...formData,
+            [name]: value,
+          });
+          // console.log(value);
+          setError("");
+        } else {
+          setFormData({
+            ...formData,
+            [name]: value,
+          });
+          // setError("Input length exceeds the maximum of 10 characters");
+        }
       }
     }
   };
-
-  const handleSelectionParty = (selectedList, selectedItem, index) => {
-    setPartyId(selectedItem._id);
-  };
-
-  const handleSelection = (selectedList, selectedItem, index) => {
-    SelectedITems.push(selectedItem);
-    setProduct(prevProductList => {
-      const updatedProductList = [...prevProductList];
-      const updatedProduct = { ...updatedProductList[index] }; // Create a copy of the product at the specified index
-      updatedProduct.price = selectedItem.Product_MRP; // Update the price of the copied product
-      updatedProduct.productId = selectedItem._id;
-      updatedProduct.availableQty = selectedItem.Size;
-      updatedProductList[index] = updatedProduct; // Replace the product at the specified index with the updated one
-      return updatedProductList; // Return the updated product list to set the state
-    });
-  };
-
-  const handleSelectionUnit = (selectedList, selectedItem, index) => {
-    SelectedSize.push(selectedItem);
-    setProduct(prevProductList => {
-      const updatedUnitList = [...prevProductList];
-      const updatedProduct = { ...updatedUnitList[index] }; // Create a copy of the product at the specified index
-      updatedProduct.Size = selectedItem.unitQty;
-      updatedProduct.unitType = selectedItem.primaryUnit;
-      updatedUnitList[index] = updatedProduct;
-      let myarr = prevProductList?.map((ele, i) => {
-        updatedUnitList[index]["totalprice"] =
-          ele?.qty * ele.price * SelectedSize[i]?.unitQty;
-        let indextotal = ele?.price * ele.qty * SelectedSize[i]?.unitQty;
-        GrandTotal[index] = indextotal;
-        return indextotal;
-      });
-      let amt = myarr.reduce((a, b) => a + b);
-      setGrandTotalAmt(amt);
-      return updatedUnitList; // Return the updated product list
-    });
-  };
-  let subtotal = product?.reduce((acc, product) => acc + product.totalprice, 0);
-  let taxRate = 0.1; // 10%
-  let tax = subtotal * taxRate;
-  let discountRate = 0.2;
-  let discountAmount = subtotal * discountRate;
-  let Grandtotals = subtotal + tax;
-
   useEffect(() => {
-    const userId = JSON.parse(localStorage.getItem("userData"))._id;
-    ProductListView(userId)
-      .then(res => {
-        setProductList(res?.Product);
-      })
-      .catch(err => {
-        console.log(err);
-      });
-    CreatePartyList(userId)
-      .then(res => {
-        setPartyList(res.Party);
-      })
-      .catch(err => {
-        console.log(err);
-      });
-    UnitListView(userId)
-      .then(res => {
-        setUnitList(res.Unit);
-      })
-      .catch(err => {
-        console.log(err);
-      });
-  }, []);
+    console.log(formData);
+  }, [formData]);
   useEffect(() => {
-    const userInfo = JSON.parse(localStorage.getItem("userData"));
-    setUserInfo(userInfo);
-  }, []);
+    const getLocation = () => {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          (position) => {
+            const { latitude, longitude } = position.coords;
 
-  let addMoreProduct = () => {
-    setProduct([
-      ...product,
-      {
-        productId: "",
-        availableQty: "",
-        qty: 1,
-        price: "",
-        totalprice: "",
-        unitQty: "",
-        unitType: "",
-      },
-    ]);
-  };
-  let removeMoreProduct = i => {
-    let newFormValues = [...product];
-    newFormValues.splice(i, 1);
-    GrandTotal.splice(i, 1);
-    let amt = GrandTotal.reduce((a, b) => a + b, 0);
-    setGrandTotalAmt(amt);
-    setProduct(newFormValues);
-  };
-  const submitHandler = e => {
-    e.preventDefault();
-    const fullname = UserInfo?.firstName + " " + UserInfo?.lastName;
-    const payload = {
-      userId: UserInfo?._id,
-      fullName: fullname,
-      address: UserInfo?.currentAddress,
-      grandTotal: grandTotalAmt,
-      MobileNo: UserInfo?.mobileNumber,
-      country: UserInfo?.Country,
-      state: UserInfo?.State,
-      city: UserInfo?.City,
-      orderItems: product,
-      DateofDelivery: dateofDelivery,
-      partyId: PartyId,
+            console.log(position.coords);
+          },
+          (error) => {
+            swal("error", error);
+          },
+          { enableHighAccuracy: true }
+        );
+      } else {
+        swal("Your Browser does not support Location");
+      }
     };
-    if (error) {
-      swal("Error occured while Entering Details");
-    } else {
-      SaveOrder(payload)
-        .then(res => {
-          swal("Order Created Successfully");
-          //  history.push("/app/softnumen/order/orderList")
-        })
-        .catch(err => {
-          console.log(err);
-        });
-    }
+
+    getLocation();
+  }, []);
+
+  useEffect(() => {
+    let userdata = JSON.parse(localStorage.getItem("userData"));
+    // Get_RoleList()
+    //   .then((res) => {
+        
+    //     let ShowList = res?.Role?.filter(
+    //       (item, i) => item?.position > userdata?.rolename?.position
+    //     );
+        
+    //     setdropdownValue(ShowList);
+    //     console.log(ShowList);
+    //   })
+    //   .catch((err) => {
+    //     console.log(err);
+    //     swal("Roles List Not found");
+    //   });
+      CreateWareHousegetXml()
+      .then((res) => {
+        const jsonData = xmlJs.xml2json(res.data, { compact: true, spaces: 2 });
+        setCreatAccountView(JSON.parse(jsonData)?.RowMaterialConfig?.input);
+        console.log(jsonData);
+        console.log(JSON.parse(jsonData)?.RowMaterialConfig?.MyDropdown);
+        setdropdownValue(JSON.parse(jsonData)?.RowMaterialConfig?.MyDropdown);
+        
+        
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+      
+      console.log(userdata?._id)
+      formData["created_by"]=userdata?._id
+  }, []);
+
+  const submitHandler = (e) => {
+    e.preventDefault();
+    console.log(formData);
+    createrowmaterial(formData)
+    .then((res) => {
+      setFormData({});
+      if (res.status) {
+        // window.location.reload();
+        swal("Created Successfully");
+      }
+    })
+    .catch((err) => {
+      console.log(err);
+    });
   };
 
-  const onRemove1 = (selectedList, removedItem, index) => {
-    console.log(selectedList);
-  };
   return (
     <div>
       <div>
         <Card>
           <Row className="m-2">
-            <Col className="">
-              <div>
-                <h1 className="">Create Item</h1>
-              </div>
+            <Col>
+              <h1 className="float-left">Inword Row Create</h1>
             </Col>
             <Col>
-              <Route
-                render={({ history }) => (
-                  <Button
-                    className="btn float-right"
-                    color="danger"
-                    size="sm"
-                    onClick={() =>
-                      history.push("/views/apps/freshlist/Production/Itemproduct")
-                    }
-                  >
-                    Back
-                  </Button>
-                )}
-              />
+              <div className="float-right">
+                <Route
+                  render={({ history }) => (
+                    <Button
+                      style={{ cursor: "pointer" }}
+                      className="float-right mr-1"
+                      color="primary"
+                      onClick={() =>
+                        history.push("/views/apps/freshlist/Production/Itemproduct")
+                      }>
+                      {" "}
+                      Back
+                      {/* <FaPlus size={15} /> Create User */}
+                    </Button>
+                  )}
+                />
+              </div>
             </Col>
           </Row>
+          {/* <hr /> */}
 
-          <CardBody>
+          <div className="px-1 ">
             <Form className="m-1" onSubmit={submitHandler}>
-              <Row>
+              <Row className="mb-2">
+              
                 
-                
-                <Col className="mb-1" lg="4" md="4" sm="12"></Col>
+              { CreatAccountView &&
+                CreatAccountView?.map((ele, i) => {
+                  {
+                    /* console.log(Context?.UserInformatio?.dateFormat); */
+                  }
+                  // console.log(Countries);
+                  // console.log(States);
+                  const convertedTime = moment("2022-08-05T12:00:00")
+                    .tz("America/New_York")
+                    .format("D MMM, YYYY HH:mm");
+
+                  if (!!ele?.phoneinput) {
+                    return (
+                      <>
+                        <Col key={i} lg="4" md="4" sm="12">
+                          <FormGroup>
+                            <Label>{ele?.label?._text}</Label>
+                            <PhoneInput
+                              inputClass="myphoneinput"
+                              country={"in"}
+                              onKeyDown={(e) => {
+                                if (
+                                  ele?.type?._attributes?.type == "number"
+                                ) {
+                                  ["e", "E", "+", "-"].includes(e.key) &&
+                                    e.preventDefault();
+                                }
+                              }}
+                              countryCodeEditable={false}
+                              name={ele?.name?._text}
+                              value={formData[ele?.name?._text]}
+                              onChange={(phone) => {
+                                setFormData({
+                                  ...formData,
+                                  [ele?.name?._text]: phone,
+                                });
+                              }}
+                            />
+                            {index === i ? (
+                              <>
+                                {error && (
+                                  <span style={{ color: "red" }}>
+                                    {error}
+                                  </span>
+                                )}
+                              </>
+                            ) : (
+                              <></>
+                            )}
+                          </FormGroup>
+                        </Col>
+                      </>
+                    );
+                  } else if (!!ele?.library) {
+                    if (ele?.label._text?.includes("ountry")) {
+                      return (
+                        <Col key={i} lg="4" md="4" sm="12">
+                          <FormGroup>
+                            <Label>{ele?.label?._text}</Label>
+                            <Select
+                              inputClass="countryclass"
+                              className="countryclassnw"
+                              options={Country.getAllCountries()}
+                              getOptionLabel={(options) => {
+                                return options["name"];
+                              }}
+                              getOptionValue={(options) => {
+                                return options["name"];
+                              }}
+                              value={Countries}
+                              onChange={(country) => {
+                                setCountry(country);
+                                setFormData({
+                                  ...formData,
+                                  ["Country"]: country?.name,
+                                });
+                              }}
+                            />
+                            {index === i ? (
+                              <>
+                                {error && (
+                                  <span style={{ color: "red" }}>
+                                    {error}
+                                  </span>
+                                )}
+                              </>
+                            ) : (
+                              <></>
+                            )}
+                          </FormGroup>
+                        </Col>
+                      );
+                    } else if (ele?.label._text?.includes("tate")) {
+                      return (
+                        <Col key={i} lg="4" md="4" sm="12">
+                          <FormGroup>
+                            <Label>{ele?.label?._text}</Label>
+                            <Select
+                              options={State?.getStatesOfCountry(
+                                Countries?.isoCode
+                              )}
+                              getOptionLabel={(options) => {
+                                return options["name"];
+                              }}
+                              getOptionValue={(options) => {
+                                return options["name"];
+                              }}
+                              value={States}
+                              onChange={(State) => {
+                                setState(State);
+                                setFormData({
+                                  ...formData,
+                                  ["State"]: State?.name,
+                                });
+                              }}
+                            />
+                            {index === i ? (
+                              <>
+                                {error && (
+                                  <span style={{ color: "red" }}>
+                                    {error}
+                                  </span>
+                                )}
+                              </>
+                            ) : (
+                              <></>
+                            )}
+                          </FormGroup>
+                        </Col>
+                      );
+                    } else if (ele?.label._text?.includes("ity")) {
+                      return (
+                        <Col key={i} lg="4" md="4" sm="12">
+                          <FormGroup>
+                            <Label>{ele?.label?._text}</Label>
+                            <Select
+                              options={City?.getCitiesOfState(
+                                States?.countryCode,
+                                States?.isoCode
+                              )}
+                              getOptionLabel={(options) => {
+                                return options["name"];
+                              }}
+                              getOptionValue={(options) => {
+                                return options["name"];
+                              }}
+                              value={Cities}
+                              onChange={(City) => {
+                                setCities(City);
+                                setFormData({
+                                  ...formData,
+                                  ["City"]: City?.name,
+                                });
+                              }}
+                            />
+                            {index === i ? (
+                              <>
+                                {error && (
+                                  <span style={{ color: "red" }}>
+                                    {error}
+                                  </span>
+                                )}
+                              </>
+                            ) : (
+                              <></>
+                            )}
+                          </FormGroup>
+                        </Col>
+                      );
+                    } else {
+                      return (
+                        <>
+                          {ele?.type?._attributes?.type == "date" ? (
+                            <>
+                              <Col key={i} lg="4" md="4" sm="12">
+                                <FormGroup key={i}>
+                                  <Label>{ele?.label?._text}</Label>
+
+                                  <Input
+                                    onKeyDown={(e) => {
+                                      if (
+                                        ele?.type?._attributes?.type ==
+                                        "number"
+                                      ) {
+                                        ["e", "E", "+", "-"].includes(
+                                          e.key
+                                        ) && e.preventDefault();
+                                      }
+                                    }}
+                                    type={ele?.type?._attributes?.type}
+                                    placeholder={ele?.placeholder?._text}
+                                    name={ele?.name?._text}
+                                    dateFormat={
+                                      Context?.UserInformatio?.dateFormat
+                                    }
+                                    value={
+                                      moment(formData[ele?.name?._text])
+                                        .tz(Context?.UserInformatio?.timeZone)
+                                        .format(
+                                          Context?.UserInformatio?.dateFormat
+                                        )
+                                      // formData[ele?.name?._text]
+                                    }
+                                    // value={formData[ele?.name?._text]}
+                                    onChange={(e) =>
+                                      handleInputChange(
+                                        e,
+                                        ele?.type?._attributes?.type,
+                                        i
+                                      )
+                                    }
+                                  />
+                                  {index === i ? (
+                                    <>
+                                      {error && (
+                                        <span style={{ color: "red" }}>
+                                          {error}
+                                        </span>
+                                      )}
+                                    </>
+                                  ) : (
+                                    <></>
+                                  )}
+                                </FormGroup>
+                              </Col>
+                            </>
+                          ) : (
+                            <>
+                              <Col key={i} lg="4" md="4" sm="12">
+                                <FormGroup key={i}>
+                                  <Label>{ele?.label?._text}</Label>
+
+                                  <Input
+                                    onKeyDown={(e) => {
+                                      if (
+                                        ele?.type?._attributes?.type ==
+                                        "number"
+                                      ) {
+                                        ["e", "E", "+", "-"].includes(
+                                          e.key
+                                        ) && e.preventDefault();
+                                      }
+                                    }}
+                                    type={ele?.type?._attributes?.type}
+                                    placeholder={ele?.placeholder?._text}
+                                    name={ele?.name?._text}
+                                    value={formData[ele?.name?._text]}
+                                    onChange={(e) =>
+                                      handleInputChange(
+                                        e,
+                                        ele?.type?._attributes?.type,
+                                        i
+                                      )
+                                    }
+                                  />
+                                  {index === i ? (
+                                    <>
+                                      {error && (
+                                        <span style={{ color: "red" }}>
+                                          {error}
+                                        </span>
+                                      )}
+                                    </>
+                                  ) : (
+                                    <></>
+                                  )}
+                                </FormGroup>
+                              </Col>
+                            </>
+                          )}
+                        </>
+                      );
+                    }
+                  } else {
+                    return (
+                      <>
+                        {!!ele?.number ? (
+                          <>
+                            <Col key={i} lg="4" md="4" sm="12">
+                              <FormGroup key={i}>
+                                <Label>{ele?.label?._text}</Label>
+
+                                <Input
+                                  onWheel={(e) => {
+                                    e.preventDefault(); // Prevent the mouse wheel scroll event
+                                  }}
+                                  onKeyDown={(e) => {
+                                    if (
+                                      ele?.type?._attributes?.type == "number"
+                                    ) {
+                                      ["e", "E", "+", "-"].includes(e.key) &&
+                                        e.preventDefault();
+                                    }
+                                  }}
+                                  type={ele?.type?._attributes?.type}
+                                  placeholder={ele?.placeholder?._text}
+                                  name={ele?.name?._text}
+                                  value={formData[ele?.name?._text]}
+                                  onChange={(e) =>
+                                    handleInputChange(
+                                      e,
+                                      ele?.type?._attributes?.type,
+                                      i
+                                    )
+                                  }
+                                />
+                                {index === i ? (
+                                  <>
+                                    {error && (
+                                      <span style={{ color: "red" }}>
+                                        {error}
+                                      </span>
+                                    )}
+                                  </>
+                                ) : (
+                                  <></>
+                                )}
+                              </FormGroup>
+                            </Col>
+                          </>
+                        ) : (
+                          <Col key={i} lg="4" md="4" sm="12">
+                            <FormGroup key={i}>
+                              <Label>{ele?.label?._text}</Label>
+
+                              <Input
+                                onKeyDown={(e) => {
+                                  if (
+                                    ele?.type?._attributes?.type == "number"
+                                  ) {
+                                    ["e", "E", "+", "-"].includes(e.key) &&
+                                      e.preventDefault();
+                                  }
+                                }}
+                                type={ele?.type?._attributes?.type}
+                                placeholder={ele?.placeholder?._text}
+                                name={ele?.name?._text}
+                                value={formData[ele?.name?._text]}
+                                onChange={(e) => {
+                                  // const value = e.target.value;
+                                  // // Use regular expression to allow only numbers
+                                  // const numericValue = value.replace(
+                                  //   /\D/g,
+                                  //   ""
+                                  // );
+                                  handleInputChange(
+                                    e,
+                                    ele?.type?._attributes?.type,
+                                    i
+                                  );
+                                }}
+                              />
+                              {index === i ? (
+                                <>
+                                  {error && (
+                                    <span style={{ color: "red" }}>
+                                      {error}
+                                    </span>
+                                  )}
+                                </>
+                              ) : (
+                                <></>
+                              )}
+                            </FormGroup>
+                          </Col>
+                        )}
+                      </>
+                    );
+                  }
+                })}
               </Row>
-              {product &&
-                product?.map((product, index) => (
-                  <Row className="" key={index}>
-                    <Col className="mb-1">
-                      <div className="">
-                        <Label>Product Name</Label>
-                        <Multiselect
-                          required
-                          selectionLimit={1}
-                          isObject="false"
-                          options={ProductList}
-                          onSelect={(selectedList, selectedItem) =>
-                            handleSelection(selectedList, selectedItem, index)
-                          }
-                          onRemove={(selectedList, selectedItem) => {
-                            onRemove1(selectedList, selectedItem, index);
-                          }}
-                          displayValue="Product_Title" // Property name to display in the dropdown options
-                        />
-                      </div>
-                    </Col>
-                    
-                    <Col className="mb-1">
-                      <div className="">
-                        <Label>Size</Label>
-                        <Input
-                          type="number"
-                          name="qty"
-                          min={0}
-                          placeholder="Req_Qty"
-                          required
-                          autocomplete="off"
-                          value={product?.qty}
-                          onChange={e =>
-                            handleRequredQty(e, index, product?.availableQty)
-                          }
-                        />
-                      </div>
-                    </Col>
 
-                    <Col className="mb-1">
-                      <div className="">
-                        <Label>Choose Unit</Label>
-                        <Multiselect
-                          required
-                          selectionLimit={1}
-                          isObject="false"
-                          options={UnitList}
-                          onSelect={(selectedList, selectedItem) =>
-                            handleSelectionUnit(
-                              selectedList,
-                              selectedItem,
-                              index
-                            )
-                          }
-                          onRemove={(selectedList, selectedItem) => {
-                            onRemove1(selectedList, selectedItem, index);
-                          }}
-                          displayValue="primaryUnit"
-                        />
-                      </div>
-                    </Col>
-
-                    <Col className="mb-1">
-                      <div className="">
-                        <Label>Price</Label>
-                        <Input
-                          type="number"
-                          name="price"
-                          disabled
-                          placeholder="Price"
-                          value={product.price}
-                        />
-                      </div>
-                    </Col>
-                    <Col className="mb-1">
-                      <div className="">
-                        <Label>Total Price</Label>
-                        <Input
-                          type="number"
-                          name="totalprice"
-                          disabled
-                          placeholder="TtlPrice"
-                          value={product.Size * product.price * product.qty}
-                        />
-                      </div>
-                    </Col>
-                    <Col className="d-flex mt-1 abb">
-                      <div className="btnStyle">
-                        {index ? (
-                          <Button
-                            type="button"
-                            color="danger"
-                            className="button remove "
-                            size="sm"
-                            onClick={() => removeMoreProduct(index)}
-                          >
-                            -
-                          </Button>
-                        ) : null}
-                      </div>
-
-                      <div className="btnStyle">
-                        <Button
-                          className="ml-1 mb-1"
-                          color="primary"
-                          type="button"
-                          size="sm"
-                          onClick={() => addMoreProduct()}
-                        >
-                          +
-                        </Button>
-                      </div>
-                    </Col>
-                  </Row>
-                ))}
-              <Row>
-                <Col className="mb-1" lg="12" md="12" sm="12">
-                  <div className=" d-flex justify-content-end">
-                    <ul className="subtotal">
-                      <li>
-                        <Label className="pr-5">
-                          Grand Total:
-                          <span className="p-2">
-                            {grandTotalAmt && grandTotalAmt == "NaN"
-                              ? 0
-                              : grandTotalAmt}
-                          </span>
-                        </Label>
-                      </li>
-                    </ul>
+              <hr />
+              {/* <Row className="mt-2 ">
+                <Col lg="6" md="6" sm="6" className="mb-2">
+                  <Label className="">
+                    <h4>Status</h4>
+                  </Label>
+                  <div className="form-label-group mx-1">
+                    {CreatAccountView &&
+                      CreatAccountView?.CreateAccount?.Radiobutton?.input?.map(
+                        (ele, i) => {
+                          return (
+                            <FormGroup key={i}>
+                              <Input
+                                key={i}
+                                style={{ marginRight: "3px" }}
+                                required
+                                type={ele?.type?._attributes?.type}
+                                name={ele?.name?._text}
+                                value={`${
+                                  ele?.label?._text == "Active"
+                                    ? "Active"
+                                    : "Deactive"
+                                }`}
+                                onChange={handleInputChange}
+                              />{" "}
+                              <span
+                                className="mx-1 mt-1"
+                                style={{ marginRight: "20px" }}
+                              >
+                                {ele?.label?._text}
+                              </span>
+                            </FormGroup>
+                          );
+                        }
+                      )}
                   </div>
                 </Col>
-              </Row>
+              </Row> */}
+
+              
+              
               <Row>
-                <Col>
-                  <div className="d-flex justify-content-center">
-                    <Button.Ripple
-                      color="primary"
-                      type="submit"
-                      className="mt-2"
-                    >
-                      Submit
-                    </Button.Ripple>
-                  </div>
-                </Col>
+                <Button.Ripple
+                  color="primary"
+                  type="submit"
+                  className="mr-1 mt-2 mx-2">
+                  Submit
+                </Button.Ripple>
               </Row>
             </Form>
-          </CardBody>
+          </div>
         </Card>
       </div>
     </div>
