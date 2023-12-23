@@ -17,6 +17,7 @@ import {
   ModalBody,
   Badge,
 } from "reactstrap";
+
 import { FaPencilAlt } from "react-icons/fa";
 
 import { ImDownload } from "react-icons/im";
@@ -45,7 +46,7 @@ import swal from "sweetalert";
 import {
   CreateAccountList,
   CreateAccountView,
-  DeleteAccount,
+  DeleteAccount,Deleteproductlist
 } from "../../../../ApiEndPoint/ApiCalling";
 import {
   BsCloudDownloadFill,
