@@ -131,29 +131,31 @@ const Addorderbycashbook = args => {
 
   useEffect(() => {
     const userId = JSON.parse(localStorage.getItem("userData"))._id;
-    ProductListView(userId)
-      .then(res => {
-        console.log(res?.Product);
-        setProductList(res?.Product);
-      })
-      .catch(err => {
-        console.log(err);
-      });
-    CreatePartyList(userId)
-      .then(res => {
-        setPartyList(res.Party);
-      })
-      .catch(err => {
-        console.log(err);
-      });
-    UnitListView(userId)
-      .then(res => {
-        console.log(res.Unit);
-        setUnitList(res.Unit);
-      })
-      .catch(err => {
-        console.log(err);
-      });
+        let userdata = JSON.parse(localStorage.getItem("userData"));
+
+        ProductListView(userdata?._id, userdata?.database)
+          .then((res) => {
+            console.log(res?.Product);
+            setProductList(res?.Product);
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+        CreatePartyList(userId)
+          .then((res) => {
+            setPartyList(res.Party);
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+        UnitListView(userdata?._id, userdata?.database)
+          .then((res) => {
+            console.log(res.Unit);
+            setUnitList(res.Unit);
+          })
+          .catch((err) => {
+            console.log(err);
+          });
   }, []);
   useEffect(() => {
     const userInfo = JSON.parse(localStorage.getItem("userData"));

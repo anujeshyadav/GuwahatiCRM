@@ -247,11 +247,11 @@ class UnitList extends React.Component {
   };
   myFunctionCall = async () => {
     let userData = JSON.parse(localStorage.getItem("userData"));
-    await UnitListView(userData?._id)
-      .then(res => {
+    await UnitListView(userData?._id, userData?.database)
+      .then((res) => {
         this.setState({ rowData: res?.Unit });
       })
-      .catch(err => {
+      .catch((err) => {
         console.log(err);
       });
   };

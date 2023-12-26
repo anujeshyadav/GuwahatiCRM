@@ -291,14 +291,15 @@ class StockTransferList extends React.Component {
         console.log(err);
         swal("Error", "something went wrong try again");
       });
-    await CreateAccountList()
-      .then((res) => {
-        let value = res?.User;
-        this.setState({ rowData: value });
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+   let userData = JSON.parse(localStorage.getItem("userData"));
+   await CreateAccountList(userData?._id, userData?.database)
+     .then((res) => {
+       let value = res?.User;
+       this.setState({ rowData: value });
+     })
+     .catch((err) => {
+       console.log(err);
+     });
   }
   toggleDropdown = () => {
     this.setState((prevState) => ({ isOpen: !prevState.isOpen }));

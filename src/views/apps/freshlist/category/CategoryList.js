@@ -236,14 +236,15 @@ class CategoryList extends React.Component {
     const data = new FormData();
 
     data.append("user_id", pageparmission?._id);
-    await AllCategoryList(pageparmission?._id)
-      .then(res => {
+    let userData = JSON.parse(localStorage.getItem("userData"));
+    await AllCategoryList(userData?._id, userData?.database)
+      .then((res) => {
         console.log(res?.Category);
         if (res?.Category) {
           this.setState({ rowData: res?.Category });
         }
       })
-      .catch(err => {
+      .catch((err) => {
         console.log(err);
       });
     // await axiosConfig.post("/getcategory", data).then((response) => {

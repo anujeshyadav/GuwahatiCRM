@@ -899,6 +899,9 @@ const HouseProductList = lazy(() =>
 const AddProduct = lazy(() =>
   import("./views/apps/freshlist/house/AddProduct")
 );
+const EditAddProduct = lazy(() =>
+  import("./views/apps/freshlist/house/EditAddProduct")
+);
 const ProductRegistration = lazy(() =>
   import(
     "./views/apps/freshlist/customer/ProductManagement/ProductRegistration"
@@ -966,9 +969,9 @@ const StockTransferList = lazy(() =>
 const PromotionalActivityList = lazy(() =>
   import("./views/apps/freshlist/house/PromotionalActivityList")
 );
-const Productionitem = lazy (()=>
-import("./views/apps/freshlist/Production/Itemproduct")
-)
+const Productionitem = lazy(() =>
+  import("./views/apps/freshlist/Production/Itemproduct")
+);
 const TargetCreationList = lazy(() =>
   import("./views/apps/freshlist/house/TargetCreation")
 );
@@ -2104,17 +2107,14 @@ class AppRouter extends React.Component {
             path="/app/softNumen/system/WareHouseListSoft"
             component={WareHouseListSoft}
           />
-        
-        
-
           <AppRoute
             path="/app/softNumen/warehouse/CreateWareHouse"
             component={CreateWareHouse}
           />
           <AppRoute
-          path="/app/softNumen/warehouse/Inwordwarehousecreate"
-          component={Inwordwarehousecreate}
-        />
+            path="/app/softNumen/warehouse/Inwordwarehousecreate"
+            component={Inwordwarehousecreate}
+          />
           <AppRoute
             path="/app/softNumen/warehouse/RawMaterialInward"
             component={RawMaterialInward}
@@ -2446,6 +2446,10 @@ class AppRouter extends React.Component {
             component={AddProduct}
           />
           <AppRoute
+            path="/app/freshlist/house/EditAddProduct/:id"
+            component={EditAddProduct}
+          />
+          <AppRoute
             path="/app/freshlist/house/editmyproduct/:id"
             component={EditMyProduct}
           />
@@ -2505,7 +2509,6 @@ class AppRouter extends React.Component {
             path="/app/SoftNumen/accounSearch"
             component={AccounSearch}
           />
-         
           <AppRoute
             path="/app/AjGroup/StockTransferList"
             component={StockTransferList}
@@ -2515,30 +2518,29 @@ class AppRouter extends React.Component {
             component={PromotionalActivityList}
           />
           <AppRoute
-          path="/views/apps/freshlist/Production/Itemproduct"
-          component={Productionitem}
-        />
-        <AppRoute
-        path="/views/apps/freshlist/Production/Createitemforproduction"
-        component={Createitemforproduction}
-      />
-      <AppRoute
-        path="/views/apps/freshlist/Production/pricecalculaterproduction"
-        component={pricecalculaterproduction}
-      />
-      <AppRoute
-        path="/views/apps/freshlist/Production/productionprocesspage"
-        component={productionprocesspage}
-      />
-      <AppRoute
-        path="/views/apps/freshlist/Production/wastagematerialproduction"
-        component={wastagematerialproduction}
-      />
-      <AppRoute
-      path="/views/apps/freshlist/Production/wastagestockreturnproduction"
-      component={wastagestockreturnproduction}
-    />
-
+            path="/views/apps/freshlist/Production/Itemproduct"
+            component={Productionitem}
+          />
+          <AppRoute
+            path="/views/apps/freshlist/Production/Createitemforproduction"
+            component={Createitemforproduction}
+          />
+          <AppRoute
+            path="/views/apps/freshlist/Production/pricecalculaterproduction"
+            component={pricecalculaterproduction}
+          />
+          <AppRoute
+            path="/views/apps/freshlist/Production/productionprocesspage"
+            component={productionprocesspage}
+          />
+          <AppRoute
+            path="/views/apps/freshlist/Production/wastagematerialproduction"
+            component={wastagematerialproduction}
+          />
+          <AppRoute
+            path="/views/apps/freshlist/Production/wastagestockreturnproduction"
+            component={wastagestockreturnproduction}
+          />
           <AppRoute
             path="/app/SoftNumen/TargetCreationList"
             component={TargetCreationList}

@@ -60,8 +60,13 @@ export const Update_Sub_Category = "/categories/update-categories/";
 export const Create_Category = "/categories/save-category";
 export const Category_List = "/categories/view-category/";
 export const Create_SubCategory = "/categories/save-subcategory";
+
 export const Create_Product_XMLView = "/product/get-xml";
 export const Save_Product = "/product/save-product";
+export const Delete_Product = "/product/delete-product/"; //delete
+export const Update_Product = "/product/update-product/"; //put
+export const ViewOne_Product = "/product/view-product-by-id/"; //get
+
 export const Get_Damaged_stock = "/stock-updation/get-damage-item/"; //get
 export const Save_Damaged_stock = "/stock-updation/save-damage-item"; //post
 export const Delete_Damaged_stock = "/stock-updation/delete-item/"; //delete

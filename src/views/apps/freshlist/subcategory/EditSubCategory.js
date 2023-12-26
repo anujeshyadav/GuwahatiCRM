@@ -388,30 +388,31 @@ export class EditSubCategory extends Component {
     let {cid,sid}=this.props.match.params
     let pageparmission = JSON.parse(localStorage.getItem("userData"));
 
-    await AllCategoryList(pageparmission?._id)
-      .then((res) => {
-        console.log(res);
-        if (res?.Category) {
-          this.setState({ CatList: res?.Category });
-          let Cat = res?.Category?.filter((ele, i) => ele?._id == cid);
-          console.log(Cat);
-          this.setState({ category: cid });
-          let subcat = Cat[0]?.subcategories?.filter(
-            (ele, i) => ele?._id == sid
-          );
-          console.log(subcat);
-          let mysubcat = subcat[0];
-          this.setState({
-            subcategory_name: mysubcat?.name,
-            Description: mysubcat?.description,
-            status: mysubcat?.status,
-            file: mysubcat?.image,
-          });
-        }
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+   let userData = JSON.parse(localStorage.getItem("userData"));
+   await AllCategoryList(userData?._id, userData?.database)
+     .then((res) => {
+       console.log(res);
+       if (res?.Category) {
+         this.setState({ CatList: res?.Category });
+         let Cat = res?.Category?.filter((ele, i) => ele?._id == cid);
+         console.log(Cat);
+         this.setState({ category: cid });
+         let subcat = Cat[0]?.subcategories?.filter(
+           (ele, i) => ele?._id == sid
+         );
+         console.log(subcat);
+         let mysubcat = subcat[0];
+         this.setState({
+           subcategory_name: mysubcat?.name,
+           Description: mysubcat?.description,
+           status: mysubcat?.status,
+           file: mysubcat?.image,
+         });
+       }
+     })
+     .catch((err) => {
+       console.log(err);
+     });
   }
 
   // Submit Sub-Category Api

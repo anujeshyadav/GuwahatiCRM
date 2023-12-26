@@ -363,9 +363,9 @@ export const SaveProduct = async (data) => {
   return response;
 };
 
-export const AllCategoryList = async (id) => {
+export const AllCategoryList = async (id, db) => {
   let response = await axiosConfig
-    .get(`${Category_List}` + id)
+    .get(`${Category_List + id}/${db}`)
     .then((res) => res.data);
   return response;
 };
@@ -389,9 +389,9 @@ export const Warehouse_Inwardlist = async (id) => {
     .then((res) => res.data);
   return response;
 };
-export const ProductListView = async (id) => {
+export const ProductListView = async (id, db) => {
   let response = await axiosConfig
-    .get(ProductList_View + id)
+    .get(`${ProductList_View + id}/${db}`)
     .then((res) => res.data);
 
   return response;
@@ -429,9 +429,9 @@ export const SaveUnit = async (data) => {
   return response;
 };
 
-export const UnitListView = async (id) => {
+export const UnitListView = async (id, db) => {
   let response = await axiosConfig
-    .get(`${Create_unit_List}` + id)
+    .get(`${Create_unit_List + id}/${db} `)
     .then((res) => res.data);
   return response;
 };
@@ -697,7 +697,6 @@ export const CreateAccountView = async () => {
   return response;
 };
 
-
 export const deletProductItem = async (id) => {
   let response = await axiosConfig
     .get(`${delet_product_item}` + id)
@@ -793,9 +792,10 @@ export const DeleteCustomerList = async (id) => {
   return response;
 };
 
-export const CreateAccountList = async (id) => {
+export const CreateAccountList = async (id, db) => {
   let response = await axiosConfig
-    .get(`${Create_Account_List}` + id)
+    // .get(`${Create_Account_List + id}`)
+    .get(`${Create_Account_List + id}/${db}`)
     .then((res) => res.data);
   return response;
 };
@@ -805,9 +805,9 @@ export const CreateUserList = async (id) => {
     .then((res) => res.data);
   return response;
 };
-export const CreateCustomerList = async (id) => {
+export const CreateCustomerList = async (id, db) => {
   let response = await axiosConfig
-    .get(`${Create_Customer_List}` + id)
+    .get(`${Create_Customer_List + id}/${db}`)
     .then((res) => res.data);
   return response;
 };

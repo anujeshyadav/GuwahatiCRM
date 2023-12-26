@@ -109,14 +109,14 @@ class CustomerSearch extends React.Component {
     let userData = JSON.parse(localStorage.getItem("userData"));
     const InsidePermissions = CheckPermission("Create Customer");
     this.setState({ InsiderPermissions: InsidePermissions });
-    await CreateCustomerList(userData?._id)
-      .then(res => {
+    await CreateCustomerList(userData?._id, userData?.database)
+      .then((res) => {
         let value = res?.Customer;
         if (value?.length) {
           this.setState({ rowData: value });
         }
       })
-      .catch(err => {
+      .catch((err) => {
         console.log(err);
       });
     await CreateCustomerxmlView()

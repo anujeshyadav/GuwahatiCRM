@@ -112,15 +112,15 @@ class AccounSearch extends React.Component {
     console.log(InsidePermissions);
     let userid = pageparmission?._id;
     this.setState({ InsiderPermissions: InsidePermissions });
-    await CreateAccountList(userid)
-      .then(res => {
+    await CreateAccountList(pageparmission?._id, pageparmission?.database)
+      .then((res) => {
         let value = res?.adminDetails;
         console.log(value);
         if (value.length) {
           this.setState({ rowData: value });
         }
       })
-      .catch(err => {
+      .catch((err) => {
         console.log(err);
       });
     await CreateAccountView()

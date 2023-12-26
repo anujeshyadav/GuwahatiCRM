@@ -246,14 +246,16 @@ const EditTarget = args => {
         setSalesPersonList(res?.SalesPerson);
       })
       .catch(err => console.log(err));
-    ProductListView()
-      .then(res => {
-        // console.log(res?.Product);
-        setProductList(res?.Product);
-      })
-      .catch(err => {
-        console.log(err);
-      });
+        let userdata = JSON.parse(localStorage.getItem("userData"));
+
+        ProductListView(userdata?._id, userdata?.database)
+          .then((res) => {
+            // console.log(res?.Product);
+            setProductList(res?.Product);
+          })
+          .catch((err) => {
+            console.log(err);
+          });
     CreatePartyList()
       .then(res => {
         // console.log(res.Party)

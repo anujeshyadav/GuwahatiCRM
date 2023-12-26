@@ -18,7 +18,7 @@ import "react-phone-input-2/lib/style.css";
 import { Country, State, City } from "country-state-city";
 import Select from "react-select";
 import moment from "moment-timezone";
-import { Route } from "react-router-dom";
+import { Route, useParams } from "react-router-dom";
 
 import swal from "sweetalert";
 import "../../../../../src/layouts/assets/scss/pages/users.scss";
@@ -29,11 +29,13 @@ import {
   SaveProduct,
   UnitListView,
   CreateWarehouseList,
+  _Get,
 } from "../../../../ApiEndPoint/ApiCalling";
 import "../../../../assets/scss/pages/users.scss";
 import UserContext from "../../../../context/Context";
+import { ViewOne_Product } from "../../../../ApiEndPoint/Api";
 
-const AddProduct = () => {
+const EditAddProduct = () => {
   const [CreatAccountView, setCreatAccountView] = useState([]);
   const [categoryList, setcategoryList] = useState([]);
   const [UnitList, setUnitList] = useState([]);
@@ -49,6 +51,7 @@ const AddProduct = () => {
   const [permissions, setpermissions] = useState({});
 
   const Context = useContext(UserContext);
+  const Params = useParams();
 
   const handleInputChange = (e, type, i) => {
     const { name, value, checked } = e.target;
@@ -126,9 +129,18 @@ const AddProduct = () => {
       ["ProductType"]: e.target.value,
     });
   };
-  // useEffect(() => {
-  //   console.log(formData);
-  // }, [formData]);
+  useEffect(() => {
+    let userData = JSON.parse(localStorage.getItem("userData"));
+    _Get(ViewOne_Product, Params?.id)
+      .then((res) => {
+        debugger;
+        console.log(res?.Product);
+        console.log(res?.Product?.addProductType);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }, []);
   useEffect(() => {
     CreateProductXMLView()
       .then((res) => {
@@ -197,7 +209,6 @@ const AddProduct = () => {
     });
 
     formdata.append("unitType", formData?.unitType);
-    formdata.append("addProductType", formData?.ProductType);
     CreatAccountView?.MyDropDown?.map((ele, i) => {
       formdata.append(
         `${ele?.dropdown?.name?._text}`,
@@ -242,7 +253,7 @@ const AddProduct = () => {
           <Row>
             <Col lg="8" md="8" sm="8" className="mb-1 mt-1">
               <div className="px-2">
-                <h3 className="mb-2 mx-2">Add Product Type</h3>
+                <h3 className="mb-2 mx-2">Edit Product Type</h3>
                 <div className="form-label-group" onChange={changeHandler2}>
                   <input
                     style={{ marginRight: "3px" }}
@@ -250,10 +261,10 @@ const AddProduct = () => {
                     // value={formData["status"]}
                     name="ProductType"
                     className="ml-1"
-                    value="Product"
+                    value="AddPruduct"
                   />
                   <span style={{ marginRight: "20px", fontSize: "18px" }}>
-                    <strong>Add Product</strong>
+                    <strong>Edit Product</strong>
                   </span>
 
                   <input
@@ -261,28 +272,12 @@ const AddProduct = () => {
                     type="radio"
                     name="ProductType"
                     className="ml-1"
-                    value="Item"
+                    value="AddItem"
                   />
                   <span style={{ marginRight: "20px", fontSize: "18px" }}>
-                    <strong>Add Item</strong>
+                    <strong>Edit Item</strong>
                   </span>
                 </div>
-              </div>
-            </Col>
-            <Col className="container p-2 mr-2">
-              <div className="float-right">
-                <Route
-                  render={({ history }) => (
-                    <Button
-                      className="btn  float-right"
-                      color="primary"
-                      onClick={() =>
-                        history.push("/app/freshlist/house/houseProductList")
-                      }>
-                      Go back
-                    </Button>
-                  )}
-                />
               </div>
             </Col>
           </Row>
@@ -378,7 +373,7 @@ const AddProduct = () => {
                     if (ele?.dropdown?.name?._text == "Unit") {
                       return (
                         <>
-                          {formData?.ProductType == "Item" ? (
+                          {formData?.ProductType == "AddItem" ? (
                             <>
                               <Col lg="4" md="4">
                                 <div className="">
@@ -1040,4 +1035,4 @@ const AddProduct = () => {
     </div>
   );
 };
-export default AddProduct;
+export default EditAddProduct;

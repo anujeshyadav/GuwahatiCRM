@@ -331,22 +331,23 @@ const CreateTarget = args => {
     //   .catch((err) => {
     //     console.log(err);
     //   });
-    UnitListView(userData?._id)
-      .then((res) => {
-        console.log(res?.Unit);
-        setUnitList(res?.Unit);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-    ProductListView(userData?._id)
-      .then((res) => {
-        console.log(res.Product);
-        setProductList(res?.Product);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+     UnitListView(userData?._id, userData?.database)
+       .then((res) => {
+         console.log(res?.Unit);
+         setUnitList(res?.Unit);
+       })
+       .catch((err) => {
+         console.log(err);
+       });
+
+     ProductListView(userData?._id, userData?.database)
+       .then((res) => {
+         console.log(res.Product);
+         setProductList(res?.Product);
+       })
+       .catch((err) => {
+         console.log(err);
+       });
   }, []);
   useEffect(() => {
     const userInfo = JSON.parse(localStorage.getItem("userData"));

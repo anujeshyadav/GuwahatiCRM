@@ -328,15 +328,16 @@ class StockTransfer extends React.Component {
     let userid = pageparmission?._id;
     await this.ViewStockList();
 
+    // let userData = JSON.parse(localStorage.getItem("userData"));
     let userData = JSON.parse(localStorage.getItem("userData"));
-    await CreateAccountList(userData._id)
-      .then(res => {
+    await CreateAccountList(userData?._id, userData?.database)
+      .then((res) => {
         console.log(res.adminDetails);
         if (res.adminDetails) {
           this.setState({ wareHouseViewOne: res?.adminDetails });
         }
       })
-      .catch(err => {
+      .catch((err) => {
         console.log(err);
       });
   }
