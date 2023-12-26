@@ -125,23 +125,25 @@ const CreateTarget = args => {
   useEffect(() => {
     const userInfo = JSON.parse(localStorage.getItem("userData"));
 
-    CreateAccountList(userInfo?._id)
-      .then(res => {
+    let userData = JSON.parse(localStorage.getItem("userData"));
+    CreateAccountList(userData?._id, userData?.database)
+      .then((res) => {
         setUserList(res?.adminDetails);
       })
-      .catch(err => console.log(err));
+      .catch((err) => console.log(err));
 
     Create_Sales_personList()
-      .then(res => {
+      .then((res) => {
         setSalesPersonList(res?.SalesPerson);
       })
-      .catch(err => console.log(err));
+      .catch((err) => console.log(err));
+    let userdata = JSON.parse(localStorage.getItem("userData"));
 
-    ProductListView(userInfo._id)
-      .then(res => {
+    ProductListView(userdata?._id, userdata?.database)
+      .then((res) => {
         setProductList(res?.Product);
       })
-      .catch(err => {
+      .catch((err) => {
         console.log(err);
       });
     CreatePartyList()

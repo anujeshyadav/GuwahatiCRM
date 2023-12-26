@@ -82,13 +82,15 @@ const SalesReturnView = args => {
         setSalesPersonList(res?.SalesPerson);
       })
       .catch(err => console.log(err));
-    ProductListView()
-      .then(res => {
-        setProductList(res?.Product);
-      })
-      .catch(err => {
-        console.log(err);
-      });
+      let userdata = JSON.parse(localStorage.getItem("userData"));
+
+      ProductListView(userdata?._id, userdata?.database)
+        .then((res) => {
+          setProductList(res?.Product);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
   }, []);
   useEffect(() => {
     const userInfo = JSON.parse(localStorage.getItem("userData"));

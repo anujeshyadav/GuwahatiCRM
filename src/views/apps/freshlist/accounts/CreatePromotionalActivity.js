@@ -208,7 +208,9 @@ const CreatePromotionalActivity = (args) => {
     //     setSalesPersonList(res?.SalesPerson);
     //   })
     //   .catch((err) => console.log(err));
-    ProductListView()
+    let userdata = JSON.parse(localStorage.getItem("userData"));
+
+    ProductListView(userdata?._id, userdata?.database)
       .then((res) => {
         console.log(res?.Product);
         setProductList(res?.Product);

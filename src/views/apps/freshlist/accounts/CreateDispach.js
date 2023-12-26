@@ -156,7 +156,8 @@ const CreateDispach = (args) => {
         console.log(err);
         swal("Something Went Wrong");
       });
-    CreateAccountList(userid)
+    let userData = JSON.parse(localStorage.getItem("userData"));
+    CreateAccountList(userData?._id, userData?.database)
       .then((res) => {
         let value = res?.adminDetails;
         console.log(value);

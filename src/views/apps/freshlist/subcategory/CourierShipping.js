@@ -248,7 +248,8 @@ class ProductType extends React.Component {
         console.log(err);
         swal("Error", "something went wrong try again");
       });
-    await CreateAccountList()
+    let userData = JSON.parse(localStorage.getItem("userData"));
+    await CreateAccountList(userData?._id, userData?.database)
       .then((res) => {
         let value = res?.CreateAccount;
         this.setState({ rowData: value });

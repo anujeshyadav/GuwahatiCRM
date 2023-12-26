@@ -209,16 +209,17 @@ class SubCategoryList extends React.Component {
       Deletepermisson: newparmisson?.permission.includes("Delete"),
     });
 
-    await AllCategoryList(pageparmission?._id)
-      .then(res => {
-        console.log(res);
-        if (res?.Category?.length) {
-          this.setState({ CatList: res?.Category });
-        }
-      })
-      .catch(err => {
-        console.log(err);
-      });
+   let userData = JSON.parse(localStorage.getItem("userData"));
+   await AllCategoryList(userData?._id, userData?.database)
+     .then((res) => {
+       console.log(res);
+       if (res?.Category?.length) {
+         this.setState({ CatList: res?.Category });
+       }
+     })
+     .catch((err) => {
+       console.log(err);
+     });
   }
   async runthisfunction(id) {
     console.log(id);

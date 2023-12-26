@@ -279,7 +279,7 @@ const UpdateStockTrx = ({ args, ViewOne }) => {
       .catch((err) => {
         console.log(err);
       });
-    UnitListView(userData?._id)
+    UnitListView(userData?._id, userData?.database)
       .then((res) => {
         console.log(res?.Unit);
         setUnitList(res?.Unit);
@@ -287,7 +287,9 @@ const UpdateStockTrx = ({ args, ViewOne }) => {
       .catch((err) => {
         console.log(err);
       });
-    ProductListView(userData?._id)
+    let userdata = JSON.parse(localStorage.getItem("userData"));
+
+    ProductListView(userdata?._id, userdata?.database)
       .then((res) => {
         console.log(res.Product);
         setProductList(res?.Product);

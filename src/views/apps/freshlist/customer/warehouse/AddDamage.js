@@ -1317,7 +1317,7 @@ const CreateTarget = (args) => {
         console.log(err);
       });
 
-    UnitListView(userData?._id)
+    UnitListView(userData?._id, userData?.database)
       .then((res) => {
         console.log(res);
         setUnitList(res?.Unit);

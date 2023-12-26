@@ -120,26 +120,31 @@ const CreateOrder = args => {
   let Grandtotals = subtotal + tax;
 
   useEffect(() => {
+   
+  
     const userId = JSON.parse(localStorage.getItem("userData"))._id;
-    ProductListView(userId)
-      .then(res => {
+
+    let userdata = JSON.parse(localStorage.getItem("userData"));
+
+    ProductListView(userdata?._id, userdata?.database)
+      .then((res) => {
         setProductList(res?.Product);
       })
-      .catch(err => {
+      .catch((err) => {
         console.log(err);
       });
     CreatePartyList(userId)
-      .then(res => {
+      .then((res) => {
         setPartyList(res.Party);
       })
-      .catch(err => {
+      .catch((err) => {
         console.log(err);
       });
-    UnitListView(userId)
-      .then(res => {
+    UnitListView(userdata?._id, userdata?.database)
+      .then((res) => {
         setUnitList(res.Unit);
       })
-      .catch(err => {
+      .catch((err) => {
         console.log(err);
       });
   }, []);
