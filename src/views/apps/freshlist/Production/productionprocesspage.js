@@ -11,42 +11,23 @@ import {
   Button,
   FormGroup,
   CustomInput,
-  ModalBody,
-  ModalHeader,
-  Modal,
   InputGroup,
   Badge,
 } from "reactstrap";
-import PhoneInput from "react-phone-input-2";
-import "react-phone-input-2/lib/style.css";
-import { BiEnvelope } from "react-icons/bi";
-import { BsFillChatDotsFill, BsWhatsapp } from "react-icons/bs";
-import { FaHistory } from "react-icons/fa";
-import { FcPhoneAndroid } from "react-icons/fc";
-import { AiOutlineSearch } from "react-icons/ai";
-import Flatpickr from "react-flatpickr";
+import { Modal, ModalHeader, ModalBody, ModalFooter } from "reactstrap";
 
 import Multiselect from "multiselect-react-dropdown";
-
-import { FiSend } from "react-icons/fi";
 
 import "../../../../assets/scss/pages/users.scss";
 import {
   ProductListView,
-  CreatePartyList,
-  Create_Sales_personList,
-  Create_Targetsave,
-  CreateWarehouseList,
   UnitListView,
-  StocktrxFtoW,
   WarehousetoWareHouseTrx,
   Warehouse_Temporarlylist,
   _Post,
   _PostSave,
 } from "../../../../ApiEndPoint/ApiCalling";
 import "../../../../assets/scss/pages/users.scss";
-import Timepickers from "../../../forms/form-elements/datepicker/Timepicker";
-import Pickers from "../../../forms/form-elements/datepicker/Pickers";
 import { Route } from "react-router-dom";
 import { Save_Producton_Process } from "../../../../ApiEndPoint/Api";
 import swal from "sweetalert";
@@ -62,10 +43,13 @@ const ProductionProcess = (args) => {
     Other_charges: 50,
     discount: 10,
   });
+  const [modalOne, setModalOne] = useState(false);
+
   const [Index, setIndex] = useState("");
   const [StockTrxdate, setStockTrxDate] = useState("");
   const [targetEndDate, settargetEndDate] = useState("");
   const [index, setindex] = useState("");
+  const [AddExtraCharges, setAddExtraCharges] = useState(false);
   const [error, setError] = useState("");
   const [ProductList, setProductList] = useState([]);
   const [ProductWTWList, setProductWTWList] = useState([]);
@@ -81,14 +65,12 @@ const ProductionProcess = (args) => {
   const [items, setItems] = useState("");
   const [audit, setAudit] = useState(false);
   const [WareHouselist, setWarehouseList] = useState([]);
+  const toggleOne = () => setModal(!modalOne);
   const toggle = (item) => {
     setItems(item);
     setModal(!modal);
   };
-  const audittoggle = () => {
-    setAudit(!audit);
-    // setModal(!modal);
-  };
+
   const handleopentoggle = (iteam) => {
     toggle(iteam);
   };
@@ -100,9 +82,7 @@ const ProductionProcess = (args) => {
     });
     // let AllTotal = grandTotalAmt;
   };
-  const handleHistory = () => {
-    audittoggle();
-  };
+
   const [product, setProduct] = useState([
     {
       product: "",
@@ -506,8 +486,13 @@ const ProductionProcess = (args) => {
         swal("Something Went Wrong");
       });
   };
+  const handleAddCharges = (e) => {
+    e.preventDefault();
+    toggleOne();
+  };
   const submitHandler = (e) => {
     e.preventDefault();
+    setAddExtraCharges(true);
     let userdata = JSON.parse(localStorage.getItem("userData"));
 
     let Allproduct = product?.map((ele, i) => {
@@ -613,7 +598,7 @@ const ProductionProcess = (args) => {
           </Col>
         </Row>
         <CardBody>
-          <Form className="m-1" onSubmit={submitHandler}>
+          <Form className="m-1" onSubmit={handleAddCharges}>
             <Row>
               <Col className="mb-1" lg="2" md="2" sm="12">
                 <div className="">
@@ -630,67 +615,6 @@ const ProductionProcess = (args) => {
                     onRemove={onRemove1} // Function will trigger on remove event
                     displayValue="Product_Title" // Property name to display in the dropdown options
                   />
-                </div>
-              </Col>
-              <Col className="mb-1" lg="2" md="2" sm="12">
-                <div className="">
-                  <Label>Miscellaneous Expennses </Label>
-
-                  <input
-                    className="form-control"
-                    name="Other_Expenses"
-                    value={ExtraCharges?.Other_Expenses}
-                    onChange={handleExtraCharge}
-                    type="number"
-                  />
-                </div>
-              </Col>
-              <Col className="mb-1" lg="2" md="2" sm="12">
-                <div className="">
-                  <Label>GST Applied </Label>
-
-                  <CustomInput
-                    className="form-control"
-                    name="GSTApplied"
-                    value={ExtraCharges?.GSTApplied}
-                    onChange={handleExtraCharge}
-                    type="select">
-                    <option>--select--</option>
-                    <option value={18}>18</option>
-                    <option value={9}>9</option>
-                  </CustomInput>
-                </div>
-              </Col>
-              <Col className="mb-1" lg="2" md="2" sm="12">
-                <div className="">
-                  <Label>Other Charges </Label>
-
-                  <input
-                    className="form-control"
-                    name="Other_charges"
-                    value={ExtraCharges?.Other_charges}
-                    onChange={handleExtraCharge}
-                    type="number"
-                  />
-                </div>
-              </Col>
-              <Col className="mb-1" lg="2" md="2" sm="12">
-                <div className="">
-                  <Label>Discount </Label>
-                  <input
-                    className="form-control"
-                    value={ExtraCharges?.discount}
-                    name="discount"
-                    onChange={handleExtraCharge}
-                    type="number"
-                  />
-                </div>
-              </Col>
-              <Col className="mb-1" lg="2" md="2" sm="12">
-                <div className=" mt-2">
-                  <Button color="primary" onClick={handleSubmitCharges}>
-                    Add Charges
-                  </Button>
                 </div>
               </Col>
             </Row>
@@ -916,6 +840,86 @@ const ProductionProcess = (args) => {
           </Form>
         </CardBody>
       </Card>
+      <Modal isOpen={modalOne} toggle={toggleOne} {...args}>
+        <ModalHeader toggle={toggleOne}>Add Charges</ModalHeader>
+        <ModalBody>
+          <Form className="m-1" onSubmit={submitHandler}>
+            <Row>
+              <Col className="mb-1" lg="2" md="2" sm="12">
+                <div className="">
+                  <Label>Miscellaneous Expenses </Label>
+
+                  <input
+                    className="form-control"
+                    name="Other_Expenses"
+                    value={ExtraCharges?.Other_Expenses}
+                    onChange={handleExtraCharge}
+                    type="number"
+                  />
+                </div>
+              </Col>
+              <Col className="mb-1" lg="2" md="2" sm="12">
+                <div className="">
+                  <Label>GST Applied </Label>
+
+                  <CustomInput
+                    className="form-control"
+                    name="GSTApplied"
+                    value={ExtraCharges?.GSTApplied}
+                    onChange={handleExtraCharge}
+                    type="select">
+                    <option>--select--</option>
+                    <option value={18}>18</option>
+                    <option value={9}>9</option>
+                  </CustomInput>
+                </div>
+              </Col>
+              <Col className="mb-1" lg="2" md="2" sm="12">
+                <div className="">
+                  <Label>Other Charges </Label>
+
+                  <input
+                    className="form-control"
+                    name="Other_charges"
+                    value={ExtraCharges?.Other_charges}
+                    onChange={handleExtraCharge}
+                    type="number"
+                  />
+                </div>
+              </Col>
+              <Col className="mb-1" lg="2" md="2" sm="12">
+                <div className="">
+                  <Label>Discount </Label>
+                  <input
+                    className="form-control"
+                    value={ExtraCharges?.discount}
+                    name="discount"
+                    onChange={handleExtraCharge}
+                    type="number"
+                  />
+                </div>
+              </Col>
+              <Col className="mb-1" lg="2" md="2" sm="12">
+                <div className=" mt-2">
+                  <Button color="primary" onClick={handleSubmitCharges}>
+                    Add Charges
+                  </Button>
+                </div>
+              </Col>
+            </Row>
+            <Row>
+              <Col>
+                <div className="d-flex justify-content-center">
+                  <Button color="primary" type="submit">
+                    Submit
+                  </Button>{" "}
+                </div>
+              </Col>
+            </Row>
+          </Form>
+        </ModalBody>
+        <ModalFooter></ModalFooter>
+      </Modal>
     </div>
   );
 };
