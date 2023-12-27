@@ -706,7 +706,7 @@ const POInvoiceone = ({
                 </View>
                 <View
                   style={{
-                    width: "12%",
+                    width: "10%",
                     marginRight: "2px",
                     padding: "5px 2px",
                     borderRight: "1px solid black",
@@ -718,7 +718,7 @@ const POInvoiceone = ({
                       fontWeight: "1000",
                       marginLeft: "5px",
                     }}>
-                    GST Applied
+                    GST
                   </Text>
                 </View>
                 <View
@@ -902,7 +902,7 @@ const POInvoiceone = ({
                         fontWeight: "1000",
                         marginLeft: "5px",
                       }}>
-                      {ele?.unitQty}
+                      {ele?.unitType.split("(")[0]}
                     </Text>
                   </View>
                   <View
@@ -917,7 +917,7 @@ const POInvoiceone = ({
                         fontWeight: "1000",
                         marginLeft: "5px",
                       }}>
-                      {ele?.product?.Size}
+                      {ele?.Size}
                     </Text>
                   </View>
                   <View
@@ -933,7 +933,7 @@ const POInvoiceone = ({
                         fontWeight: "1000",
                         marginLeft: "5px",
                       }}>
-                      {ele?.product?.Product_MRP}
+                      {ele?.price}
                     </Text>
                   </View>
                   <View
@@ -949,9 +949,7 @@ const POInvoiceone = ({
                         fontWeight: "1000",
                         marginLeft: "5px",
                       }}>
-                      {ele?.qty *
-                        ele?.product?.Size *
-                        ele?.product?.Product_MRP}
+                      {ele?.qty * ele?.Size * ele?.price}
                     </Text>
                   </View>
                 </View>

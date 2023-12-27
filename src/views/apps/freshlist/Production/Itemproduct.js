@@ -43,6 +43,7 @@ import {
 } from "react-icons/fa";
 import swal from "sweetalert";
 import {
+  _Get,
   createOrderhistoryview,
   CreateProductList,
   Delete_targetINlist,
@@ -56,6 +57,7 @@ import {
 import * as XLSX from "xlsx";
 import UserContext from "../../../../context/Context";
 import { CheckPermission } from "../house/CheckPermission";
+import { Get_Producton_ProcessList } from "../../../../ApiEndPoint/Api";
 
 const SelectedColums = [];
 
@@ -133,13 +135,13 @@ class Itemproduct extends React.Component {
                 {this.state.InsiderPermissions &&
                   this.state.InsiderPermissions?.Edit && (
                     <Trash2
-                              className=""
-                              size="20px"
-                              color="red"
-                              onClick={() => {
-                                this.runthisfunction(params);
-                              }}
-                            />
+                      className=""
+                      size="20px"
+                      color="red"
+                      onClick={() => {
+                        this.runthisfunction(params);
+                      }}
+                    />
                   )}
               </div>
             );
@@ -170,39 +172,81 @@ class Itemproduct extends React.Component {
         // },
         {
           headerName: "Product Name",
-          field: "Product_Title",
+          field: "product_name.Product_Title",
           filter: true,
           width: 200,
           cellRendererFramework: (params) => {
             return (
               <div>
-                <span>{params.data?.Product_Title}</span>
+                <span>
+                  {params.data?.product_name?.Product_Title &&
+                    params.data?.product_name?.Product_Title}
+                </span>
               </div>
             );
           },
         },
         {
-          headerName: "Product MRP",
-          field: "Product_MRP",
+          headerName: "Product Req",
+          field: "productItems.length",
           filter: true,
           width: 200,
           cellRendererFramework: (params) => {
             return (
               <div>
-                <span>{params.data?.Product_MRP}</span>
+                <span>{params.data?.productItems?.length} Products</span>
               </div>
             );
           },
         },
         {
-          headerName: "Size",
-          field: "Size",
+          headerName: "Product Total",
+          field: "grandTotal",
           filter: true,
           width: 200,
           cellRendererFramework: (params) => {
             return (
               <div>
-                <span>{params.data?.Size}</span>
+                <span>{params.data?.grandTotal}</span>
+              </div>
+            );
+          },
+        },
+        {
+          headerName: "GST",
+          field: "gstApplied",
+          filter: true,
+          width: 200,
+          cellRendererFramework: (params) => {
+            return (
+              <div>
+                <span>{params.data?.gstApplied}</span>
+              </div>
+            );
+          },
+        },
+        {
+          headerName: "MiscellaneousExpennses",
+          field: "miscellaneousExpennses",
+          filter: true,
+          width: 200,
+          cellRendererFramework: (params) => {
+            return (
+              <div>
+                <span>{params.data?.miscellaneousExpennses}</span>
+              </div>
+            );
+          },
+        },
+        {
+          headerName: "Other Charges",
+          field: "otherCharges",
+          filter: true,
+          width: 200,
+          cellRendererFramework: (params) => {
+            return (
+              <div>
+                <span>{params.data?.otherCharges}</span>
               </div>
             );
           },
@@ -221,18 +265,19 @@ class Itemproduct extends React.Component {
           },
         },
         {
-          headerName: "Min Stock Alert",
-          field: "MIN_stockalert",
+          headerName: "grandTotal",
+          field: "grandTotal",
           filter: true,
           width: 200,
           cellRendererFramework: (params) => {
             return (
               <div>
-                <span>{params.data?.MIN_stockalert}</span>
+                <span>{params.data?.grandTotal}</span>
               </div>
             );
           },
         },
+
         // {
         //   headerName: "Min Stock Alert",
         //   field: "MinStockAlert",
@@ -312,12 +357,12 @@ class Itemproduct extends React.Component {
     };
   }
   toggleModal = () => {
-    this.setState(prevState => ({
+    this.setState((prevState) => ({
       modalone: !prevState.modalone,
     }));
   };
   LookupviewStart = () => {
-    this.setState(prevState => ({
+    this.setState((prevState) => ({
       modal: !prevState.modal,
     }));
   };
@@ -325,6 +370,7 @@ class Itemproduct extends React.Component {
   handleChangeView = (data, types) => {
     let type = types;
     if (type == "readonly") {
+      debugger;
       console.log("ResponseData", data.orderItems);
       console.log("Test", data);
       this.setState({ ViewOneUserView: true });
@@ -336,35 +382,62 @@ class Itemproduct extends React.Component {
   };
 
   async componentDidMount() {
-    const userId = JSON.parse(localStorage.getItem("userData"))._id;
+    const userId = JSON.parse(localStorage.getItem("userData"));
     const UserInformation = this.context?.UserInformatio;
     const InsidePermissions = CheckPermission("Sales Order");
     // console.log(InsidePermissions);
     this.setState({ InsiderPermissions: InsidePermissions });
-    await CreateProductList()
-      .then(res => {
-        console.log(res.Data);
-        this.setState({ rowData: res?.Data });
-        this.setState({ AllcolumnDefs: this.state.columnDefs });
-        this.setState({ SelectedCols: this.state.columnDefs });
+    let url = `${Get_Producton_ProcessList}/${userId?._id}/`;
 
-        let userHeading = JSON.parse(localStorage.getItem("OrderListshow"));
-        if (userHeading?.length) {
-          this.setState({ columnDefs: userHeading });
-          this.gridApi.setColumnDefs(userHeading);
-          this.setState({ SelectedcolumnDefs: userHeading });
-        } else {
-          this.setState({ columnDefs: this.state.columnDefs });
-          this.setState({ SelectedcolumnDefs: this.state.columnDefs });
+    await _Get(url, userId?.database)
+      .then((res) => {
+        console.log(res?.Production);
+        if (res?.Production) {
+          this.setState({ rowData: res?.Production });
+          this.setState({ AllcolumnDefs: this.state.columnDefs });
+          this.setState({ SelectedCols: this.state.columnDefs });
+
+          let userHeading = JSON.parse(
+            localStorage.getItem("ProductionProcessList")
+          );
+          if (userHeading?.length) {
+            this.setState({ columnDefs: userHeading });
+            this.gridApi.setColumnDefs(userHeading);
+            this.setState({ SelectedcolumnDefs: userHeading });
+          } else {
+            this.setState({ columnDefs: this.state.columnDefs });
+            this.setState({ SelectedcolumnDefs: this.state.columnDefs });
+          }
         }
       })
-      .catch(err => {
+      .catch((err) => {
+        console.log(err);
+      });
+    // Get_Producton_ProcessList
+    await CreateProductList()
+      .then((res) => {
+        console.log(res.Data);
+        // this.setState({ rowData: res?.Data });
+        // this.setState({ AllcolumnDefs: this.state.columnDefs });
+        // this.setState({ SelectedCols: this.state.columnDefs });
+
+        // let userHeading = JSON.parse(localStorage.getItem("ProductionProcessList"));
+        // if (userHeading?.length) {
+        //   this.setState({ columnDefs: userHeading });
+        //   this.gridApi.setColumnDefs(userHeading);
+        //   this.setState({ SelectedcolumnDefs: userHeading });
+        // } else {
+        //   this.setState({ columnDefs: this.state.columnDefs });
+        //   this.setState({ SelectedcolumnDefs: this.state.columnDefs });
+        // }
+      })
+      .catch((err) => {
         console.log(err);
       });
   }
 
   togglemodal = () => {
-    this.setState(prevState => ({
+    this.setState((prevState) => ({
       modalone: !prevState.modalone,
     }));
     this.setState({ ShowBill: false });
@@ -373,7 +446,7 @@ class Itemproduct extends React.Component {
     this.setState({ ShowBill: true });
   };
   toggleDropdown = () => {
-    this.setState(prevState => ({ isOpen: !prevState.isOpen }));
+    this.setState((prevState) => ({ isOpen: !prevState.isOpen }));
   };
 
   runthisfunction(id) {
@@ -382,15 +455,15 @@ class Itemproduct extends React.Component {
         cancel: "cancel",
         catch: { text: "Delete ", value: "delete" },
       },
-    }).then(value => {
+    }).then((value) => {
       switch (value) {
         case "delete":
           Deleteproductlist(id)
-            .then(res => {
+            .then((res) => {
               let selectedData = this.gridApi.getSelectedRows();
               this.gridApi.updateRowData({ remove: selectedData });
             })
-            .catch(err => {
+            .catch((err) => {
               console.log(err);
             });
           break;
@@ -399,7 +472,7 @@ class Itemproduct extends React.Component {
     });
   }
 
-  onGridReady = params => {
+  onGridReady = (params) => {
     this.gridApi = params.api;
     this.gridColumnApi = params.columnApi;
     this.gridRef.current = params.api;
@@ -411,11 +484,11 @@ class Itemproduct extends React.Component {
     });
   };
 
-  updateSearchQuery = val => {
+  updateSearchQuery = (val) => {
     this.gridApi.setQuickFilter(val);
   };
 
-  filterSize = val => {
+  filterSize = (val) => {
     if (this.gridApi) {
       this.gridApi.paginationSetPageSize(Number(val));
       this.setState({
@@ -430,7 +503,7 @@ class Itemproduct extends React.Component {
       SelectedColums?.push(value);
     } else {
       const delindex = SelectedColums?.findIndex(
-        ele => ele?.headerName === value?.headerName
+        (ele) => ele?.headerName === value?.headerName
       );
 
       SelectedColums?.splice(delindex, 1);
@@ -441,14 +514,14 @@ class Itemproduct extends React.Component {
       Papa.parse(csvData, {
         header: true,
         skipEmptyLines: true,
-        complete: result => {
+        complete: (result) => {
           if (result.data && result.data.length > 0) {
             resolve(result.data);
           } else {
             reject(new Error("No data found in the CSV"));
           }
         },
-        error: error => {
+        error: (error) => {
           reject(error);
         },
       });
@@ -460,7 +533,7 @@ class Itemproduct extends React.Component {
 
     const doc = new jsPDF("landscape", "mm", size, false);
     doc.setTextColor(5, 87, 97);
-    const tableData = parsedData.map(row => Object.values(row));
+    const tableData = parsedData.map((row) => Object.values(row));
     doc.addImage(Logo, "JPEG", 10, 10, 50, 30);
     let date = new Date();
     doc.setCreationDate(date);
@@ -485,12 +558,12 @@ class Itemproduct extends React.Component {
       console.error("Error parsing CSV:", error);
     }
   };
-  processCell = params => {
+  processCell = (params) => {
     return params.value;
   };
 
   convertCsvToExcel(csvData) {
-    return new Promise(resolve => {
+    return new Promise((resolve) => {
       Papa.parse(csvData, {
         header: true,
         dynamicTyping: true,
@@ -521,7 +594,7 @@ class Itemproduct extends React.Component {
     window.URL.revokeObjectURL(url);
   }
 
-  exportToExcel = async e => {
+  exportToExcel = async (e) => {
     const CsvData = this.gridApi.getDataAsCsv({
       processCellCallback: this.processCell,
     });
@@ -534,7 +607,7 @@ class Itemproduct extends React.Component {
       processCellCallback: this.processCell,
     });
     Papa.parse(CsvData, {
-      complete: result => {
+      complete: (result) => {
         const ws = XLSX.utils.json_to_sheet(result.data);
         const wb = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(wb, ws, "Sheet1");
@@ -570,13 +643,13 @@ class Itemproduct extends React.Component {
       processCellCallback: this.processCell,
     });
     Papa.parse(CsvData, {
-      complete: result => {
+      complete: (result) => {
         const rows = result.data;
 
         // Create XML
         let xmlString = "<root>\n";
 
-        rows.forEach(row => {
+        rows.forEach((row) => {
           xmlString += "  <row>\n";
           row.forEach((cell, index) => {
             xmlString += `    <field${index + 1}>${cell}</field${index + 1}>\n`;
@@ -594,7 +667,7 @@ class Itemproduct extends React.Component {
     });
   };
 
-  HandleSetVisibleField = e => {
+  HandleSetVisibleField = (e) => {
     e.preventDefault();
     debugger;
     this.gridApi.setColumnDefs(this.state.SelectedcolumnDefs);
@@ -602,7 +675,7 @@ class Itemproduct extends React.Component {
     this.setState({ SelectedcolumnDefs: this.state.SelectedcolumnDefs });
     this.setState({ rowData: this.state.rowData });
     localStorage.setItem(
-      "OrderListshow",
+      "ProductionProcessList",
       JSON.stringify(this.state.SelectedcolumnDefs)
     );
     this.LookupviewStart();
@@ -611,10 +684,10 @@ class Itemproduct extends React.Component {
   HeadingRightShift = () => {
     const updatedSelectedColumnDefs = [
       ...new Set([
-        ...this.state.SelectedcolumnDefs.map(item => JSON.stringify(item)),
-        ...SelectedColums.map(item => JSON.stringify(item)),
+        ...this.state.SelectedcolumnDefs.map((item) => JSON.stringify(item)),
+        ...SelectedColums.map((item) => JSON.stringify(item)),
       ]),
-    ].map(item => JSON.parse(item));
+    ].map((item) => JSON.parse(item));
     this.setState({
       SelectedcolumnDefs: [...new Set(updatedSelectedColumnDefs)], // Update the state with the combined array
     });
@@ -684,41 +757,35 @@ class Itemproduct extends React.Component {
                               border: "1px solid #39cccc",
                               backgroundColor: "white",
                             }}
-                            className="dropdown-content dropdownmy"
-                          >
+                            className="dropdown-content dropdownmy">
                             <h5
                               onClick={() => this.exportToPDF()}
                               style={{ cursor: "pointer" }}
-                              className=" mx-1 myactive mt-1"
-                            >
+                              className=" mx-1 myactive mt-1">
                               .PDF
                             </h5>
                             <h5
                               onClick={() => this.gridApi.exportDataAsCsv()}
                               style={{ cursor: "pointer" }}
-                              className=" mx-1 myactive"
-                            >
+                              className=" mx-1 myactive">
                               .CSV
                             </h5>
                             <h5
                               onClick={this.convertCSVtoExcel}
                               style={{ cursor: "pointer" }}
-                              className=" mx-1 myactive"
-                            >
+                              className=" mx-1 myactive">
                               .XLS
                             </h5>
                             <h5
                               onClick={this.exportToExcel}
                               style={{ cursor: "pointer" }}
-                              className=" mx-1 myactive"
-                            >
+                              className=" mx-1 myactive">
                               .XLSX
                             </h5>
                             <h5
                               onClick={() => this.convertCsvToXml()}
                               style={{ cursor: "pointer" }}
-                              className=" mx-1 myactive"
-                            >
+                              className=" mx-1 myactive">
                               .XML
                             </h5>
                           </div>
@@ -733,10 +800,11 @@ class Itemproduct extends React.Component {
                             className="float-right mr-1"
                             color="primary"
                             onClick={() =>
-                              history.push("/views/apps/freshlist/Production/Createitemforproduction")
-                            }
-                          >
-                            <FaPlus size={15} /> Create Item
+                              history.push(
+                                "/views/apps/freshlist/Production/productionprocesspage"
+                              )
+                            }>
+                            <FaPlus size={15} /> Production
                           </Button>
                         )}
                       />
@@ -769,32 +837,27 @@ class Itemproduct extends React.Component {
                           <DropdownMenu right>
                             <DropdownItem
                               tag="div"
-                              onClick={() => this.filterSize(5)}
-                            >
+                              onClick={() => this.filterSize(5)}>
                               5
                             </DropdownItem>
                             <DropdownItem
                               tag="div"
-                              onClick={() => this.filterSize(20)}
-                            >
+                              onClick={() => this.filterSize(20)}>
                               20
                             </DropdownItem>
                             <DropdownItem
                               tag="div"
-                              onClick={() => this.filterSize(50)}
-                            >
+                              onClick={() => this.filterSize(50)}>
                               50
                             </DropdownItem>
                             <DropdownItem
                               tag="div"
-                              onClick={() => this.filterSize(100)}
-                            >
+                              onClick={() => this.filterSize(100)}>
                               100
                             </DropdownItem>
                             <DropdownItem
                               tag="div"
-                              onClick={() => this.filterSize(134)}
-                            >
+                              onClick={() => this.filterSize(134)}>
                               134
                             </DropdownItem>
                           </DropdownMenu>
@@ -804,7 +867,7 @@ class Itemproduct extends React.Component {
                         <div className="table-input mr-1">
                           <Input
                             placeholder="search Item here..."
-                            onChange={e =>
+                            onChange={(e) =>
                               this.updateSearchQuery(e.target.value)
                             }
                             value={this.state.value}
@@ -813,7 +876,7 @@ class Itemproduct extends React.Component {
                       </div>
                     </div>
                     <ContextLayout.Consumer className="ag-theme-alpine">
-                      {context => (
+                      {(context) => (
                         <AgGridReact
                           id="myAgGrid"
                           gridOptions={this.gridOptions}
@@ -845,8 +908,7 @@ class Itemproduct extends React.Component {
           isOpen={this.state.modal}
           toggle={this.LookupviewStart}
           className={this.props.className}
-          style={{ maxWidth: "1050px" }}
-        >
+          style={{ maxWidth: "1050px" }}>
           <ModalHeader toggle={this.LookupviewStart}>Change Fileds</ModalHeader>
           <ModalBody className="modalbodyhead">
             <Row>
@@ -859,15 +921,15 @@ class Itemproduct extends React.Component {
                         return (
                           <>
                             <div
-                              onClick={e => this.handleChangeHeader(e, ele, i)}
+                              onClick={(e) =>
+                                this.handleChangeHeader(e, ele, i)
+                              }
                               key={i}
-                              className="mycustomtag mt-1"
-                            >
+                              className="mycustomtag mt-1">
                               <span className="mt-1">
                                 <h5
                                   style={{ cursor: "pointer" }}
-                                  className="allfields"
-                                >
+                                  className="allfields">
                                   <input
                                     type="checkbox"
                                     // checked={check && check}
@@ -926,15 +988,14 @@ class Itemproduct extends React.Component {
                                             : ""
                                         }`,
                                       }}
-                                      className="allfields"
-                                    >
+                                      className="allfields">
                                       <IoMdRemoveCircleOutline
                                         onClick={() => {
                                           const SelectedCols =
                                             this.state.SelectedcolumnDefs?.slice();
                                           const delindex =
                                             SelectedCols?.findIndex(
-                                              element =>
+                                              (element) =>
                                                 element?.headerName ==
                                                 ele?.headerName
                                             );
@@ -997,8 +1058,7 @@ class Itemproduct extends React.Component {
                     style={{ cursor: "pointer" }}
                     className=""
                     color="primary"
-                    onClick={this.HandleSetVisibleField}
-                  >
+                    onClick={this.HandleSetVisibleField}>
                     Submit
                   </Badge>
                 </div>
@@ -1010,14 +1070,12 @@ class Itemproduct extends React.Component {
           isOpen={this.state.modalone}
           toggle={this.togglemodal}
           className={this.props.className}
-          style={{ maxWidth: "1050px" }}
-        >
+          style={{ maxWidth: "1050px" }}>
           <ModalHeader toggle={this.togglemodal}>
             {this.state.ShowBill ? "Bill Download" : "All Products"}
           </ModalHeader>
           <ModalBody
-            className={`${this.state.ShowBill ? "p-1" : "modalbodyhead"}`}
-          >
+            className={`${this.state.ShowBill ? "p-1" : "modalbodyhead"}`}>
             {this.state.ShowBill ? (
               <>
                 <StockTrxInvoice ViewOneData={this.state.ViewOneData} />
@@ -1028,10 +1086,10 @@ class Itemproduct extends React.Component {
                   <>
                     <Row>
                       <Col>
-                        <Label>UserName:</Label>
+                        <Label>Product Name:</Label>
                         <h5 className="">
                           {this.state.ViewOneData &&
-                            this.state.ViewOneData?.fullName}
+                            this.state.ViewOneData?.product_name?.Product_Title}
                         </h5>
                       </Col>
                       {/* <Col>
@@ -1052,28 +1110,36 @@ class Itemproduct extends React.Component {
                         </h5>
                       </Col>
                       <Col>
-                        {this.state.ViewOneData?.status == "completed" ? (
-                          <>
-                            <div className="d-flex justify-content-center">
-                              <h5>
-                                Status:
-                                <Badge className="mx-2" color="primary">
-                                  {this.state.ViewOneData?.status}
-                                </Badge>
-                              </h5>
-                            </div>
-                          </>
-                        ) : (
-                          <>
-                            <h5>
-                              status:
-                              <Badge className="mx-2" color="primary">
-                                {this.state.ViewOneData?.status}
-                              </Badge>
-                            </h5>
-                          </>
-                        )}
+                        <Label>GST Applied :</Label>
+                        <h5>
+                          <strong>
+                            {this.state.ViewOneData &&
+                              this.state.ViewOneData?.gstApplied}
+                          </strong>
+                          Rs/-
+                        </h5>
                       </Col>
+                      <Col>
+                        <Label>Miscellaneous Expennses :</Label>
+                        <h5>
+                          <strong>
+                            {this.state.ViewOneData &&
+                              this.state.ViewOneData?.miscellaneousExpennses}
+                          </strong>
+                          Rs/-
+                        </h5>
+                      </Col>
+                      <Col>
+                        <Label>otherCharges :</Label>
+                        <h5>
+                          <strong>
+                            {this.state.ViewOneData &&
+                              this.state.ViewOneData?.otherCharges}
+                          </strong>
+                          Rs/-
+                        </h5>
+                      </Col>
+
                       {/* <Col>
                         <Label>Download Invoice :</Label>
                         <div className="d-flex justify-content-center">
@@ -1102,33 +1168,25 @@ class Itemproduct extends React.Component {
                               <th>#</th>
                               <th>Product Name</th>
                               <th>Price</th>
-                              <th>Size</th>
                               <th>Unit</th>
-                              <th>HSN CODE</th>
-                              <th>GST</th>
+                              {/* <th>HSN CODE</th> */}
+                              {/* <th>GST</th> */}
                               <th>Quantity</th>
                               <th>Total</th>
                             </tr>
                           </thead>
                           <tbody>
-                            {this.state.ViewOneData?.orderItems &&
-                              this.state.ViewOneData?.orderItems?.map(
+                            {this.state.ViewOneData?.productItems &&
+                              this.state.ViewOneData?.productItems?.map(
                                 (ele, i) => (
                                   <>
                                     <tr>
                                       <th scope="row">{i + 1}</th>
                                       <td>{ele?.product?.Product_Title}</td>
-                                      <td>{ele?.product?.Product_MRP}</td>
-                                      <td>{ele?.product?.Size}</td>
-                                      <td>{ele?.unitQty}</td>
-                                      <td>{ele?.product?.HSN_Code}</td>
-                                      <td>{ele?.product["GST Rate"]}</td>
+                                      <td>{ele?.price}</td>
+                                      <td>{ele?.unitType}</td>
                                       <td>{ele?.qty}</td>
-                                      <td>
-                                        {ele?.product?.Product_MRP *
-                                          ele?.product?.Size *
-                                          ele?.qty}
-                                      </td>
+                                      <td>{ele?.price * ele?.qty}</td>
                                     </tr>
                                   </>
                                 )

@@ -106,9 +106,10 @@ class CustomerSearch extends React.Component {
 
   async componentDidMount() {
     const UserInformation = this.context?.UserInformatio;
-    let userData = JSON.parse(localStorage.getItem("userData"));
     const InsidePermissions = CheckPermission("Create Customer");
     this.setState({ InsiderPermissions: InsidePermissions });
+
+    let userData = JSON.parse(localStorage.getItem("userData"));
     await CreateCustomerList(userData?._id, userData?.database)
       .then((res) => {
         let value = res?.Customer;

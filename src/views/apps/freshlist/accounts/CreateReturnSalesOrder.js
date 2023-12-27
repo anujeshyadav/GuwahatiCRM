@@ -33,12 +33,12 @@ import "../../../../assets/scss/pages/users.scss";
 import {
   SaveOrder,
   ProductListView,
-  CreatePartyList,
+  // CreatePartyList,
 } from "../../../../ApiEndPoint/ApiCalling";
 import "../../../../assets/scss/pages/users.scss";
 let GrandTotal = [];
 let SelectedITems = [];
-const SalesReturn = args => {
+const SalesReturn = (args) => {
   const [formData, setFormData] = useState({});
   const [Index, setIndex] = useState("");
   const [index, setindex] = useState("");
@@ -76,7 +76,7 @@ const SalesReturn = args => {
 
     let amt = 0;
     if (list.length > 0) {
-      const x = list?.map(val => {
+      const x = list?.map((val) => {
         console.log(val.qty * val.price);
         list[index]["totalprice"] = val.qty * val.price;
         return val.qty * val.price;
@@ -101,7 +101,7 @@ const SalesReturn = args => {
   // };
   const handleSelection = (selectedList, selectedItem, index) => {
     SelectedITems.push(selectedItem);
-    setProduct(prevProductList => {
+    setProduct((prevProductList) => {
       const updatedProductList = [...prevProductList];
       const updatedProduct = { ...updatedProductList[index] }; // Create a copy of the product at the specified index
       updatedProduct.price = selectedItem.Product_MRP; // Update the price of the copied product
@@ -125,24 +125,16 @@ const SalesReturn = args => {
   }, [product, GrandTotal]);
 
   useEffect(() => {
-        let userdata = JSON.parse(localStorage.getItem("userData"));
+    let userdata = JSON.parse(localStorage.getItem("userData"));
 
-        ProductListView(userdata?._id, userdata?.database)
-          .then((res) => {
-            console.log(res.Product);
-            setProductList(res?.Product);
-          })
-          .catch((err) => {
-            console.log(err);
-          });
-    // CreatePartyList()
-    //   .then(res => {
-    //     console.log(res.Party);
-    //     setPartyList(res.Party);
-    //   })
-    //   .catch(err => {
-    //     console.log(err);
-    //   });
+    ProductListView(userdata?._id, userdata?.database)
+      .then((res) => {
+        console.log(res.Product);
+        setProductList(res?.Product);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   }, []);
   useEffect(() => {
     const userInfo = JSON.parse(localStorage.getItem("userData"));
@@ -172,7 +164,7 @@ const SalesReturn = args => {
       },
     ]);
   };
-  let removeMoreProduct = i => {
+  let removeMoreProduct = (i) => {
     let newFormValues = [...product];
     newFormValues.splice(i, 1);
     GrandTotal.splice(i, 1);
@@ -181,7 +173,7 @@ const SalesReturn = args => {
     setProduct(newFormValues);
   };
 
-  const submitHandler = e => {
+  const submitHandler = (e) => {
     debugger;
     e.preventDefault();
     console.log("Final ", product);
@@ -206,7 +198,7 @@ const SalesReturn = args => {
       swal("Error occured while Entering Details");
     } else {
       SaveOrder(ObjOrder)
-        .then(res => {
+        .then((res) => {
           console.log(res);
           // if (res.status) {
           //   setFormData({});
@@ -214,7 +206,7 @@ const SalesReturn = args => {
           swal("Order Created Successfully");
           // }
         })
-        .catch(err => {
+        .catch((err) => {
           console.log(err);
         });
     }
@@ -299,7 +291,7 @@ const SalesReturn = args => {
                           name="Qty_Purchased"
                           placeholder="Req_Qty"
                           value={product?.Qty_Purchased}
-                          onChange={e => handleProductChangeProduct(e, index)}
+                          onChange={(e) => handleProductChangeProduct(e, index)}
                         />
                       </div>
                     </Col>
@@ -311,7 +303,7 @@ const SalesReturn = args => {
                           name="qty"
                           placeholder="Req_Qty"
                           value={product?.qty}
-                          onChange={e => handleProductChangeProduct(e, index)}
+                          onChange={(e) => handleProductChangeProduct(e, index)}
                         />
                       </div>
                     </Col>
@@ -347,8 +339,7 @@ const SalesReturn = args => {
                             color="danger"
                             className="button remove "
                             size="sm"
-                            onClick={() => removeMoreProduct(index)}
-                          >
+                            onClick={() => removeMoreProduct(index)}>
                             -
                           </Button>
                         ) : null}
@@ -360,8 +351,7 @@ const SalesReturn = args => {
                           color="primary"
                           type="button"
                           size="sm"
-                          onClick={() => addMoreProduct()}
-                        >
+                          onClick={() => addMoreProduct()}>
                           +
                         </Button>
                       </div>
@@ -409,8 +399,7 @@ const SalesReturn = args => {
                     <Button.Ripple
                       color="primary"
                       type="submit"
-                      className="mt-2"
-                    >
+                      className="mt-2">
                       Submit
                     </Button.Ripple>
                   </div>

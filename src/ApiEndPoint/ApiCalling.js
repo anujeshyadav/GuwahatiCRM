@@ -1523,6 +1523,10 @@ export const _Post = async (URL, id, data) => {
     .then((res) => res.data);
   return response;
 };
+export const _PostSave = async (URL, data) => {
+  let response = await axiosConfig.post(`${URL}`, data).then((res) => res.data);
+  return response;
+};
 
 export const _Get = async (URL, id, data) => {
   let response = await axiosConfig
