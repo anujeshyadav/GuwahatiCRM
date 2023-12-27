@@ -50,6 +50,12 @@ export const Unit_Update = "/unit/update-unit/";
 export const create_row_material = "/raw-material/creat-rawMaterial"
 //productionapk
 
+// productionProcess
+
+export const Save_Producton_Process = "/production/save-production";
+export const Get_Producton_ProcessList = "/production/view-production";
+
+
 export const delet_product_item = "/raw-material/delete-raw-material/"
 
 export const Delete_Category = "/categories/delete-category/"; //done

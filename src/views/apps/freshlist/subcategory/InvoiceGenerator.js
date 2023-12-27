@@ -485,24 +485,30 @@ class InvoiceGenerator extends React.Component {
   };
 
   MergeBillNow = async data => {
+    
     let billnum = localStorage.getItem("billnumber");
     console.log("Bill", data);
     // console.log("grandTotal", data.grandTotal);
     // console.log(billnum);
     if (billnum) {
+      await Sales_OrderToDispatchList(data?._id)
+      .then(res => {
+        console.log(res?.status);
+       
+      if (res?.status){
       this.setState({ ShowBill: false });
       this.setState({ PrintData: data });
-      await Sales_OrderToDispatchList(data?._id)
-        .then(res => {
-          console.log(res);
-        })
-        .catch(err => {
-          console.log(err);
-        });
       const toWords = new ToWords();
       let words = toWords.convert(Number(data?.grandTotal), { currency: true });
       this.setState({ wordsNumber: words });
       this.toggleModalOne();
+
+     }
+        })
+        .catch(err => {
+         
+          swal( "Error",`${err?.response?.data?.message}`);
+        });
     } else {
       swal("Select Bill Template");
       this.setState({ ShowBill: true });
@@ -937,13 +943,12 @@ class InvoiceGenerator extends React.Component {
               <Col>
                 <div className="d-flex justify-content-end p-1">
                   <Button
-                    onClick={e => {
+                    onClick={(e) => {
                       e.preventDefault();
                       this.setState({ EditOneUserView: false });
                       this.componentDidMount();
                     }}
-                    color="danger"
-                  >
+                    color="danger">
                     Back
                   </Button>
                 </div>
@@ -962,12 +967,11 @@ class InvoiceGenerator extends React.Component {
                     <Col>
                       <div className="d-flex justify-content-end p-1">
                         <Button
-                          onClick={e => {
+                          onClick={(e) => {
                             e.preventDefault();
                             this.setState({ ViewOneUserView: false });
                           }}
-                          color="danger"
-                        >
+                          color="danger">
                           Back
                         </Button>
                       </div>
@@ -983,8 +987,7 @@ class InvoiceGenerator extends React.Component {
                         <Col lg="9" sm="8" xs="8">
                           <h1
                             className="float-left"
-                            style={{ fontWeight: "600" }}
-                          >
+                            style={{ fontWeight: "600" }}>
                             Sales Order List
                           </h1>
                         </Col>
@@ -1001,7 +1004,7 @@ class InvoiceGenerator extends React.Component {
                                   color: "white",
                                   fontWeight: "600",
                                 }}
-                                onClick={e => {
+                                onClick={(e) => {
                                   let billnumber =
                                     localStorage.getItem("billnumber");
                                   if (billnumber) {
@@ -1012,8 +1015,7 @@ class InvoiceGenerator extends React.Component {
                                     this.setState({ ShowBill: true });
                                     this.toggleModalOne();
                                   }
-                                }}
-                              >
+                                }}>
                                 Invoice Template
                               </Button>
                             </Col>
@@ -1049,13 +1051,11 @@ class InvoiceGenerator extends React.Component {
                                         border: "1px solid #39cccc",
                                         backgroundColor: "white",
                                       }}
-                                      className="dropdown-content dropdownmy"
-                                    >
+                                      className="dropdown-content dropdownmy">
                                       <h5
                                         onClick={() => this.exportToPDF()}
                                         style={{ cursor: "pointer" }}
-                                        className=" mx-1 myactive mt-1"
-                                      >
+                                        className=" mx-1 myactive mt-1">
                                         .PDF
                                       </h5>
                                       <h5
@@ -1063,29 +1063,25 @@ class InvoiceGenerator extends React.Component {
                                           this.gridApi.exportDataAsCsv()
                                         }
                                         style={{ cursor: "pointer" }}
-                                        className=" mx-1 myactive"
-                                      >
+                                        className=" mx-1 myactive">
                                         .CSV
                                       </h5>
                                       <h5
                                         onClick={this.convertCSVtoExcel}
                                         style={{ cursor: "pointer" }}
-                                        className=" mx-1 myactive"
-                                      >
+                                        className=" mx-1 myactive">
                                         .XLS
                                       </h5>
                                       <h5
                                         onClick={this.exportToExcel}
                                         style={{ cursor: "pointer" }}
-                                        className=" mx-1 myactive"
-                                      >
+                                        className=" mx-1 myactive">
                                         .XLSX
                                       </h5>
                                       <h5
                                         onClick={() => this.convertCsvToXml()}
                                         style={{ cursor: "pointer" }}
-                                        className=" mx-1 myactive"
-                                      >
+                                        className=" mx-1 myactive">
                                         .XML
                                       </h5>
                                     </div>
@@ -1121,32 +1117,27 @@ class InvoiceGenerator extends React.Component {
                                   <DropdownMenu right>
                                     <DropdownItem
                                       tag="div"
-                                      onClick={() => this.filterSize(5)}
-                                    >
+                                      onClick={() => this.filterSize(5)}>
                                       5
                                     </DropdownItem>
                                     <DropdownItem
                                       tag="div"
-                                      onClick={() => this.filterSize(20)}
-                                    >
+                                      onClick={() => this.filterSize(20)}>
                                       20
                                     </DropdownItem>
                                     <DropdownItem
                                       tag="div"
-                                      onClick={() => this.filterSize(50)}
-                                    >
+                                      onClick={() => this.filterSize(50)}>
                                       50
                                     </DropdownItem>
                                     <DropdownItem
                                       tag="div"
-                                      onClick={() => this.filterSize(100)}
-                                    >
+                                      onClick={() => this.filterSize(100)}>
                                       100
                                     </DropdownItem>
                                     <DropdownItem
                                       tag="div"
-                                      onClick={() => this.filterSize(134)}
-                                    >
+                                      onClick={() => this.filterSize(134)}>
                                       134
                                     </DropdownItem>
                                   </DropdownMenu>
@@ -1156,7 +1147,7 @@ class InvoiceGenerator extends React.Component {
                                 <div className="table-input mr-1">
                                   <Input
                                     placeholder="search Item here..."
-                                    onChange={e =>
+                                    onChange={(e) =>
                                       this.updateSearchQuery(e.target.value)
                                     }
                                     value={this.state.value}
@@ -1165,7 +1156,7 @@ class InvoiceGenerator extends React.Component {
                               </div>
                             </div>
                             <ContextLayout.Consumer className="ag-theme-alpine">
-                              {context => (
+                              {(context) => (
                                 <AgGridReact
                                   id="myAgGrid"
                                   // gridOptions={{
@@ -1222,8 +1213,7 @@ class InvoiceGenerator extends React.Component {
           isOpen={this.state.modal}
           toggle={this.LookupviewStart}
           className={this.props.className}
-          style={{ maxWidth: "1050px" }}
-        >
+          style={{ maxWidth: "1050px" }}>
           <ModalHeader toggle={this.LookupviewStart}>Change Fileds</ModalHeader>
           <ModalBody className="modalbodyhead">
             <Row>
@@ -1236,15 +1226,15 @@ class InvoiceGenerator extends React.Component {
                         return (
                           <>
                             <div
-                              onClick={e => this.handleChangeHeader(e, ele, i)}
+                              onClick={(e) =>
+                                this.handleChangeHeader(e, ele, i)
+                              }
                               key={i}
-                              className="mycustomtag mt-1"
-                            >
+                              className="mycustomtag mt-1">
                               <span className="mt-1">
                                 <h5
                                   style={{ cursor: "pointer" }}
-                                  className="allfields"
-                                >
+                                  className="allfields">
                                   <input
                                     type="checkbox"
                                     // checked={check && check}
@@ -1303,15 +1293,14 @@ class InvoiceGenerator extends React.Component {
                                             : ""
                                         }`,
                                       }}
-                                      className="allfields"
-                                    >
+                                      className="allfields">
                                       <IoMdRemoveCircleOutline
                                         onClick={() => {
                                           const SelectedCols =
                                             this.state.SelectedcolumnDefs.slice();
                                           const delindex =
                                             SelectedCols.findIndex(
-                                              element =>
+                                              (element) =>
                                                 element?.headerName ==
                                                 ele?.headerName
                                             );
@@ -1389,8 +1378,7 @@ class InvoiceGenerator extends React.Component {
           isOpen={this.state.modalOne}
           toggle={this.toggleModalOne}
           className={this.props.className}
-          style={{ maxWidth: "1050px" }}
-        >
+          style={{ maxWidth: "1050px" }}>
           <ModalHeader toggle={this.toggleModalclose}>
             {this.state.ShowBill ? "Select Bill Format" : "Download BIll"}
           </ModalHeader>
@@ -1404,7 +1392,7 @@ class InvoiceGenerator extends React.Component {
                   <Col lg="3" md="3" s="3">
                     <div className="imagebackground p-1">
                       <img
-                        onClick={e => this.handleBillSet(1)}
+                        onClick={(e) => this.handleBillSet(1)}
                         style={{ cursor: "pointer" }}
                         width={130}
                         height={150}
@@ -1416,7 +1404,7 @@ class InvoiceGenerator extends React.Component {
                   <Col lg="3" md="3" s="3">
                     <div className="imagebackground p-1">
                       <img
-                        onClick={e => this.handleBillSet(2)}
+                        onClick={(e) => this.handleBillSet(2)}
                         className="imagebackground"
                         style={{ cursor: "pointer" }}
                         width={130}
@@ -1429,7 +1417,7 @@ class InvoiceGenerator extends React.Component {
                   <Col lg="3" md="3" s="3">
                     <div className="imagebackground p-1">
                       <img
-                        onClick={e => this.handleBillSet(3)}
+                        onClick={(e) => this.handleBillSet(3)}
                         className="imagebackground"
                         style={{ cursor: "pointer" }}
                         width={130}
@@ -1442,7 +1430,7 @@ class InvoiceGenerator extends React.Component {
                   <Col lg="3" md="3" s="3">
                     <div className="imagebackground p-1">
                       <img
-                        onClick={e => this.handleBillSet(4)}
+                        onClick={(e) => this.handleBillSet(4)}
                         className="imagebackground"
                         style={{ cursor: "pointer" }}
                         width={130}
@@ -1480,7 +1468,7 @@ class InvoiceGenerator extends React.Component {
                     ) : (
                       <>
                         <div style={{ width: "100%" }} className="">
-                          <Form onSubmit={e => this.handleSubmit(e)}>
+                          <Form onSubmit={(e) => this.handleSubmit(e)}>
                             <Row className="main div heading px-3 py-3">
                               <Col lg="6" className="mb-2">
                                 <Label>SGST</Label>
@@ -1489,8 +1477,7 @@ class InvoiceGenerator extends React.Component {
                                   className="form-control"
                                   value={this.state.sgst}
                                   onChange={this.changeHandler}
-                                  name="sgst"
-                                >
+                                  name="sgst">
                                   <option value="not selected">
                                     --Select--
                                   </option>
@@ -1507,8 +1494,7 @@ class InvoiceGenerator extends React.Component {
                                   name="cgst"
                                   placeholder="Enter CGST"
                                   value={this.state.cgst}
-                                  onChange={this.changeHandler}
-                                >
+                                  onChange={this.changeHandler}>
                                   <option value="not selected">
                                     --Select--
                                   </option>
@@ -1524,8 +1510,7 @@ class InvoiceGenerator extends React.Component {
                                   name="otherCharges"
                                   placeholder="Enter Other Charges"
                                   value={this.state.otherCharges}
-                                  onChange={this.changeHandler}
-                                ></Input>
+                                  onChange={this.changeHandler}></Input>
                               </Col>
                               <Col lg="6">
                                 <Label className="mt-2">Delivery Charges</Label>
@@ -1534,8 +1519,7 @@ class InvoiceGenerator extends React.Component {
                                   name="deliveryCharges"
                                   placeholder="Enter Delivery Charges"
                                   value={this.state.deliveryCharges}
-                                  onChange={this.changeHandler}
-                                ></Input>
+                                  onChange={this.changeHandler}></Input>
                               </Col>
                               <Col lg="6">
                                 <Label className="mt-2">Discount </Label>
@@ -1544,8 +1528,7 @@ class InvoiceGenerator extends React.Component {
                                   name="discount"
                                   placeholder="Enter discount value"
                                   value={this.state.discount}
-                                  onChange={this.changeHandler}
-                                ></Input>
+                                  onChange={this.changeHandler}></Input>
                               </Col>
                             </Row>
                             <Row>
@@ -1558,8 +1541,7 @@ class InvoiceGenerator extends React.Component {
                                         : false
                                     }
                                     color="primary"
-                                    type="submit"
-                                  >
+                                    type="submit">
                                     {this.state.ButtonText}
                                   </Button>
                                 </div>
@@ -1581,8 +1563,7 @@ class InvoiceGenerator extends React.Component {
                             placeholder="Select Type"
                             name="logoposition"
                             value={this.state.logoposition}
-                            onChange={this.changeHandler}
-                          >
+                            onChange={this.changeHandler}>
                             <option>---Select---</option>
                             <option value="Left">Left</option>
                             <option value="right">Right</option>
@@ -1595,8 +1576,7 @@ class InvoiceGenerator extends React.Component {
                             placeholder="Select Type"
                             name="shipto"
                             value={this.state.shipto}
-                            onChange={this.changeHandler}
-                          >
+                            onChange={this.changeHandler}>
                             <option>---Select---</option>
                             <option value="Left">Left</option>
                             <option value="right">Right</option>
@@ -1617,8 +1597,7 @@ class InvoiceGenerator extends React.Component {
                             placeholder="Select Type"
                             name="Billtoposition"
                             value={this.state.Billtoposition}
-                            onChange={this.changeHandler}
-                          >
+                            onChange={this.changeHandler}>
                             <option>---Select---</option>
                             <option value="Left">Left</option>
                             <option value="right">Right</option>
@@ -1639,8 +1618,7 @@ class InvoiceGenerator extends React.Component {
                             <Button.Ripple
                               color="primary"
                               type="submit"
-                              className="mr-1 mb-1"
-                            >
+                              className="mr-1 mb-1">
                               Submit
                             </Button.Ripple>
                           </div>
@@ -1658,8 +1636,7 @@ class InvoiceGenerator extends React.Component {
           isOpen={this.state.modalTwo}
           toggle={this.toggleModalTwo}
           className={this.props.className}
-          style={{ maxWidth: "1050px" }}
-        >
+          style={{ maxWidth: "1050px" }}>
           <ModalHeader toggle={this.toggleModalcloseTwo}>
             View Order
           </ModalHeader>
@@ -1742,15 +1719,11 @@ class InvoiceGenerator extends React.Component {
                             <tr>
                               <th scope="row">{i + 1}</th>
                               <td>{ele?.product?.Product_Title}</td>
-                              <td>{ele?.product?.Product_MRP}</td>
-                              <td>{ele?.product?.Size}</td>
-                              <td>{ele?.unitQty}</td>
+                              <td>{ele?.price}</td>
+                              <td>{ele?.Size}</td>
+                              <td>{ele?.unitType}</td>
                               <td>{ele?.qty}</td>
-                              <td>
-                                {ele?.product?.Product_MRP *
-                                  ele?.product?.Size *
-                                  ele?.qty}
-                              </td>
+                              <td>{ele?.price * ele?.Size * ele?.qty}</td>
                             </tr>
                           </>
                         ))}

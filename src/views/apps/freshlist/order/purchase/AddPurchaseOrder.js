@@ -21,12 +21,13 @@ import {
   CreatePartyList,
   UnitListView,
   ProductListView,
+  CreateCustomerList,
 } from "../../../../../ApiEndPoint/ApiCalling";
 import "../../../../../assets/scss/pages/users.scss";
 let GrandTotal = [];
 let SelectedITems = [];
 let SelectedSize = [];
-const AddPurchaseOrder = args => {
+const AddPurchaseOrder = (args) => {
   const [Index, setIndex] = useState("");
   const [index, setindex] = useState("");
   const [error, setError] = useState("");
@@ -48,14 +49,14 @@ const AddPurchaseOrder = args => {
       unitType: "",
       Size: "",
       totalprice: "",
-      // partyId: "",
+      partyId: "",
       // DateofDelivery: "",
     },
   ]);
   const handleSelection = (selectedList, selectedItem, index) => {
     SelectedITems.push(selectedItem);
     console.log(selectedItem);
-    setProduct(prevProductList => {
+    setProduct((prevProductList) => {
       const updatedProductList = [...prevProductList];
       const updatedProduct = { ...updatedProductList[index] }; // Create a copy of the product at the specified index
       updatedProduct.price = selectedItem.Product_MRP; // Update the price of the copied product
@@ -109,7 +110,7 @@ const AddPurchaseOrder = args => {
 
         let amt = 0;
         if (list.length > 0) {
-          const x = list?.map(val => {
+          const x = list?.map((val) => {
             console.log(val.qty * val.price);
             GrandTotal[index] = val.Size * val.qty * val.price;
 
@@ -126,7 +127,7 @@ const AddPurchaseOrder = args => {
   };
   const handleSelectionUnit = (selectedList, selectedItem, index) => {
     SelectedSize.push(selectedItem);
-    setProduct(prevProductList => {
+    setProduct((prevProductList) => {
       // debugger;
       const updatedUnitList = [...prevProductList];
       const updatedProduct = { ...updatedUnitList[index] }; // Create a copy of the product at the specified index
@@ -147,7 +148,8 @@ const AddPurchaseOrder = args => {
     });
   };
   const handleSelectionParty = (selectedList, selectedItem, index) => {
-    setProduct(prevProductList => {
+    setPartyId(selectedItem?._id);
+    setProduct((prevProductList) => {
       const updatedProductList = [...prevProductList];
       const updatedProduct = { ...updatedProductList[index] };
       updatedProduct.partyId = selectedItem?._id;
@@ -163,33 +165,36 @@ const AddPurchaseOrder = args => {
 
   useEffect(() => {
     const userId = JSON.parse(localStorage.getItem("userData"))._id;
-   
-       let userdata = JSON.parse(localStorage.getItem("userData"));
 
-       ProductListView(userdata?._id, userdata?.database)
-         .then((res) => {
-           console.log(res.Product);
-           setProductList(res?.Product);
-         })
-         .catch((err) => {
-           console.log(err);
-         });
-       CreatePartyList()
-         .then((res) => {
-           console.log(res.Party);
-           setPartyList(res.Party);
-         })
-         .catch((err) => {
-           console.log(err);
-         });
-       UnitListView(userdata?._id, userdata?.database)
-         .then((res) => {
-           console.log(res.Unit);
-           setUnitList(res.Unit);
-         })
-         .catch((err) => {
-           console.log(err);
-         });
+    let userdata = JSON.parse(localStorage.getItem("userData"));
+
+    ProductListView(userdata?._id, userdata?.database)
+      .then((res) => {
+        console.log(res.Product);
+        setProductList(res?.Product);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+    CreateCustomerList(userdata?._id, userdata?.database)
+      .then((res) => {
+        let value = res?.Customer;
+        if (value?.length) {
+          setPartyList(value);
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+
+    UnitListView(userdata?._id, userdata?.database)
+      .then((res) => {
+        console.log(res.Unit);
+        setUnitList(res.Unit);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   }, []);
   useEffect(() => {
     const userInfo = JSON.parse(localStorage.getItem("userData"));
@@ -208,13 +213,13 @@ const AddPurchaseOrder = args => {
         price: "",
         totalprice: "",
         // DateofDelivery: "",
-        // partyId: "",
+        partyId: "",
         unitQty: "",
         unitType: "",
       },
     ]);
   };
-  let removeMoreProduct = i => {
+  let removeMoreProduct = (i) => {
     let newFormValues = [...product];
     newFormValues.splice(i, 1);
     GrandTotal.splice(i, 1);
@@ -223,7 +228,7 @@ const AddPurchaseOrder = args => {
     setProduct(newFormValues);
   };
 
-  const submitHandler = e => {
+  const submitHandler = (e) => {
     e.preventDefault();
     let fullname = UserInfo.firstName + " " + UserInfo?.lastName;
     console.log(UserInfo?.UserName);
@@ -245,14 +250,14 @@ const AddPurchaseOrder = args => {
       swal("Error occured while Entering Details");
     } else {
       SavePurchaseOrder(ObjOrder)
-        .then(res => {
+        .then((res) => {
           console.log(res);
           swal(" Add Purchase Order  Successfully");
           history.push("/app/AJgroup/order/purchaseOrderList");
 
           // }
         })
-        .catch(err => {
+        .catch((err) => {
           console.log(err);
         });
     }
@@ -281,8 +286,7 @@ const AddPurchaseOrder = args => {
                     size="sm"
                     onClick={() =>
                       history.push("/app/AJgroup/order/purchaseOrderList")
-                    }
-                  >
+                    }>
                     Back
                   </Button>
                 )}
@@ -306,7 +310,7 @@ const AddPurchaseOrder = args => {
                         handleSelectionParty(selectedList, selectedItem, index)
                       }
                       onRemove={onRemove1} // Function will trigger on remove event
-                      displayValue="firstName" // Property name to display in the dropdown options
+                      displayValue="OwnerName" // Property name to display in the dropdown options
                     />
                   </div>
                 </Col>
@@ -318,7 +322,7 @@ const AddPurchaseOrder = args => {
                       type="date"
                       name="DateofDelivery"
                       value={dateofDelivery}
-                      onChange={e => setDateofDelivery(e.target.value)}
+                      onChange={(e) => setDateofDelivery(e.target.value)}
                     />
                   </div>
                 </Col>
@@ -365,7 +369,7 @@ const AddPurchaseOrder = args => {
                           placeholder="Req_Qty"
                           autocomplete="off"
                           value={product?.qty}
-                          onChange={e =>
+                          onChange={(e) =>
                             handleRequredQty(e, index, product?.availableQty)
                           }
                         />
@@ -425,8 +429,7 @@ const AddPurchaseOrder = args => {
                             color="danger"
                             className="button remove "
                             size="sm"
-                            onClick={() => removeMoreProduct(index)}
-                          >
+                            onClick={() => removeMoreProduct(index)}>
                             -
                           </Button>
                         ) : null}
@@ -438,8 +441,7 @@ const AddPurchaseOrder = args => {
                           color="primary"
                           type="button"
                           size="sm"
-                          onClick={() => addMoreProduct()}
-                        >
+                          onClick={() => addMoreProduct()}>
                           +
                         </Button>
                       </div>
@@ -487,8 +489,7 @@ const AddPurchaseOrder = args => {
                     <Button.Ripple
                       color="primary"
                       type="submit"
-                      className="mt-2"
-                    >
+                      className="mt-2">
                       Submit
                     </Button.Ripple>
                   </div>

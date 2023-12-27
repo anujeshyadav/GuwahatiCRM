@@ -33,16 +33,10 @@ import { FiSend } from "react-icons/fi";
 
 import "../../../../assets/scss/pages/users.scss";
 import {
-  CreateOrder_ViewData,
-  CommentOrder,
-  CreateOrder_ID,
-  CommentProductWiki,
-  SaveOrder,
   ProductListView,
   CreatePartyList,
-  Create_Sales_personList,
-  Create_Targetsave,
   SavePromotionsActivity,
+  CreateCustomerList,
 } from "../../../../ApiEndPoint/ApiCalling";
 import "../../../../assets/scss/pages/users.scss";
 import Timepickers from "../../../forms/form-elements/datepicker/Timepicker";
@@ -218,14 +212,16 @@ const CreatePromotionalActivity = (args) => {
       .catch((err) => {
         console.log(err);
       });
-    CreatePartyList()
-      .then((res) => {
-        // console.log(res.Party)
-        setPartyList(res.Party);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+    // CreateCustomerList(userdata?._id, userdata?.database)
+    //   .then((res) => {
+    //     let value = res?.Customer;
+    //     if (value?.length) {
+    //       setPartyList(value);
+    //     }
+    //   })
+    //   .catch((err) => {
+    //     console.log(err);
+    //   });
   }, []);
   useEffect(() => {
     const userInfo = JSON.parse(localStorage.getItem("userData"));

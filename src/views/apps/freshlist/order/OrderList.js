@@ -135,7 +135,7 @@ class OrderList extends React.Component {
                         ?.toLowerCase()
                         .includes("completed") && (
                         <CornerDownLeft
-                        title="Return It"
+                          title="Return It"
                           className="mr-50"
                           size="25px"
                           color="green"
@@ -163,19 +163,19 @@ class OrderList extends React.Component {
           filter: true,
           width: 150,
           cellRendererFramework: (params) => {
-            return params.data.status == "Completed" ? (
+            return params.data?.status == "Completed" ? (
               <div className="badge badge-pill badge-success">
-                {params.data.status}
+                {params.data?.status}
               </div>
             ) : params.data.status == "InProcess" ? (
-              <div className="badge badge-pill badge-warning">
-                {params.data.status}
+              <div className="badge badge-pill badge-info">
+                {params.data?.status}
               </div>
-            ) : params.data.status == "pending" ? (
+            ) : params.data?.status == "pending" ? (
               <div className="badge badge-pill badge-warning">Pending</div>
-            ) : params.data.status == "Cancelled" ? (
+            ) : params.data?.status == "Cancelled" ? (
               <div className="badge badge-pill badge-danger">
-                {params.data.status}
+                {params.data?.status}
               </div>
             ) : null;
           },
@@ -187,6 +187,7 @@ class OrderList extends React.Component {
           resizable: true,
           width: 230,
           cellRendererFramework: (params) => {
+            console.log(params?.data);
             return (
               <div className="d-flex align-items-center cursor-pointer">
                 <div>
@@ -197,78 +198,79 @@ class OrderList extends React.Component {
           },
         },
         {
-          headerName: "Full Name",
-          field: "orderItems",
+          headerName: "Party Name",
+          field: "partyId.OwnerName",
           filter: true,
           width: 180,
-          valueGetter: (params) => {
-            if (params.data.orderItems && params.data.orderItems.length > 0) {
-              return params.data.fullName;
-            }
-            return null;
+          cellRendererFramework: (params) => {
+            return (
+              <div className="d-flex align-items-center cursor-pointer">
+                <div>
+                  <span>{params.data?.partyId?.OwnerName}</span>
+                </div>
+              </div>
+            );
+          },
+        },
+        {
+          headerName: "Party limit",
+          field: "partyId.limit",
+          filter: true,
+          width: 180,
+          cellRendererFramework: (params) => {
+            return (
+              <div className="d-flex align-items-center cursor-pointer">
+                <div>
+                  <span>{params.data?.partyId?.limit}</span>
+                </div>
+              </div>
+            );
+          },
+        },
+        {
+          headerName: "Transposrter detail",
+          field: "partyId.transposrter_detail",
+          filter: true,
+          width: 180,
+          cellRendererFramework: (params) => {
+            return (
+              <div className="d-flex align-items-center cursor-pointer">
+                <div>
+                  <span>{params.data?.partyId?.transposrter_detail}</span>
+                </div>
+              </div>
+            );
           },
         },
 
         {
-          headerName: "Product Name",
-          field: "orderItems",
-          filter: true,
-          width: 220,
-          valueGetter: (params) => {
-            if (params.data.orderItems && params.data.orderItems.length > 0) {
-              return params?.data?.orderItems?.map((val) => {
-                return val?.product?.Product_Title;
-              });
-            }
-            return null;
-          },
-        },
-        {
-          headerName: "Price",
-          field: "orderItems",
+          headerName: "Grand Total",
+          field: "grandTotal",
           filter: true,
           width: 150,
-          valueGetter: (params) => {
-            if (params.data.orderItems && params.data.orderItems.length > 0) {
-              return params.data.orderItems[0].price;
-            }
-            return null;
+          cellRendererFramework: (params) => {
+            return (
+              <div className="d-flex align-items-center cursor-pointer">
+                <div>
+                  <span>{params.data?.grandTotal}</span>
+                </div>
+              </div>
+            );
           },
         },
         {
-          headerName: "Size",
-          field: "orderItems",
+          headerName: "taxAmount",
+          field: "taxAmount",
           filter: true,
           width: 150,
-          valueGetter: (params) => {
-            if (params.data.orderItems && params.data.orderItems.length > 0) {
-              return params.data.orderItems[0].qty; // Return the price
-            }
-            return null;
-          },
-        },
-        {
-          headerName: "GST Rate",
-          field: "orderItems",
-          filter: true,
-          width: 180,
-          valueGetter: (params) => {
-            if (params.data.orderItems && params.data.orderItems.length > 0) {
-              return params.data.orderItems[0].product["GST Rate"]; // Return the price
-            }
-            return null; // Or handle cases where there's no price
-          },
-        },
-        {
-          headerName: "HSN Code",
-          field: "orderItems",
-          filter: true,
-          width: 180,
-          valueGetter: (params) => {
-            if (params.data.orderItems && params.data.orderItems.length > 0) {
-              return params.data.orderItems[0].product.HSN_Code; // Return the price
-            }
-            return null;
+          cellRendererFramework: (params) => {
+            return (
+              <div className="d-flex align-items-center cursor-pointer">
+                <div>
+                  <span>{params.data?.taxAmount}</span>
+                </div>
+              </div>
+            );
           },
         },
       ],
@@ -287,6 +289,7 @@ class OrderList extends React.Component {
 
   handleChangeView = (data, types) => {
     let type = types;
+   
     if (type == "readonly") {
       console.log("ResponseData", data.orderItems);
       console.log("Test", data);
@@ -306,7 +309,10 @@ class OrderList extends React.Component {
     this.setState({ InsiderPermissions: InsidePermissions });
     await createOrderhistoryview(userId)
       .then(res => {
-        this.setState({ rowData: res?.orderHistory });
+        
+        if (res?.orderHistory) {
+          this.setState({ rowData: res?.orderHistory });
+        } 
         this.setState({ AllcolumnDefs: this.state.columnDefs });
         this.setState({ SelectedCols: this.state.columnDefs });
 
@@ -646,41 +652,35 @@ class OrderList extends React.Component {
                               border: "1px solid #39cccc",
                               backgroundColor: "white",
                             }}
-                            className="dropdown-content dropdownmy"
-                          >
+                            className="dropdown-content dropdownmy">
                             <h5
                               onClick={() => this.exportToPDF()}
                               style={{ cursor: "pointer" }}
-                              className=" mx-1 myactive mt-1"
-                            >
+                              className=" mx-1 myactive mt-1">
                               .PDF
                             </h5>
                             <h5
                               onClick={() => this.gridApi.exportDataAsCsv()}
                               style={{ cursor: "pointer" }}
-                              className=" mx-1 myactive"
-                            >
+                              className=" mx-1 myactive">
                               .CSV
                             </h5>
                             <h5
                               onClick={this.convertCSVtoExcel}
                               style={{ cursor: "pointer" }}
-                              className=" mx-1 myactive"
-                            >
+                              className=" mx-1 myactive">
                               .XLS
                             </h5>
                             <h5
                               onClick={this.exportToExcel}
                               style={{ cursor: "pointer" }}
-                              className=" mx-1 myactive"
-                            >
+                              className=" mx-1 myactive">
                               .XLSX
                             </h5>
                             <h5
                               onClick={() => this.convertCsvToXml()}
                               style={{ cursor: "pointer" }}
-                              className=" mx-1 myactive"
-                            >
+                              className=" mx-1 myactive">
                               .XML
                             </h5>
                           </div>
@@ -696,8 +696,7 @@ class OrderList extends React.Component {
                             color="primary"
                             onClick={() =>
                               history.push("/app/softnumen/order/createorder")
-                            }
-                          >
+                            }>
                             <FaPlus size={15} /> Create Order
                           </Button>
                         )}
@@ -731,32 +730,27 @@ class OrderList extends React.Component {
                           <DropdownMenu right>
                             <DropdownItem
                               tag="div"
-                              onClick={() => this.filterSize(5)}
-                            >
+                              onClick={() => this.filterSize(5)}>
                               5
                             </DropdownItem>
                             <DropdownItem
                               tag="div"
-                              onClick={() => this.filterSize(20)}
-                            >
+                              onClick={() => this.filterSize(20)}>
                               20
                             </DropdownItem>
                             <DropdownItem
                               tag="div"
-                              onClick={() => this.filterSize(50)}
-                            >
+                              onClick={() => this.filterSize(50)}>
                               50
                             </DropdownItem>
                             <DropdownItem
                               tag="div"
-                              onClick={() => this.filterSize(100)}
-                            >
+                              onClick={() => this.filterSize(100)}>
                               100
                             </DropdownItem>
                             <DropdownItem
                               tag="div"
-                              onClick={() => this.filterSize(134)}
-                            >
+                              onClick={() => this.filterSize(134)}>
                               134
                             </DropdownItem>
                           </DropdownMenu>
@@ -766,7 +760,7 @@ class OrderList extends React.Component {
                         <div className="table-input mr-1">
                           <Input
                             placeholder="search Item here..."
-                            onChange={e =>
+                            onChange={(e) =>
                               this.updateSearchQuery(e.target.value)
                             }
                             value={this.state.value}
@@ -775,7 +769,7 @@ class OrderList extends React.Component {
                       </div>
                     </div>
                     <ContextLayout.Consumer className="ag-theme-alpine">
-                      {context => (
+                      {(context) => (
                         <AgGridReact
                           id="myAgGrid"
                           gridOptions={this.gridOptions}
@@ -807,8 +801,7 @@ class OrderList extends React.Component {
           isOpen={this.state.modal}
           toggle={this.LookupviewStart}
           className={this.props.className}
-          style={{ maxWidth: "1050px" }}
-        >
+          style={{ maxWidth: "1050px" }}>
           <ModalHeader toggle={this.LookupviewStart}>Change Fileds</ModalHeader>
           <ModalBody className="modalbodyhead">
             <Row>
@@ -821,15 +814,15 @@ class OrderList extends React.Component {
                         return (
                           <>
                             <div
-                              onClick={e => this.handleChangeHeader(e, ele, i)}
+                              onClick={(e) =>
+                                this.handleChangeHeader(e, ele, i)
+                              }
                               key={i}
-                              className="mycustomtag mt-1"
-                            >
+                              className="mycustomtag mt-1">
                               <span className="mt-1">
                                 <h5
                                   style={{ cursor: "pointer" }}
-                                  className="allfields"
-                                >
+                                  className="allfields">
                                   <input
                                     type="checkbox"
                                     // checked={check && check}
@@ -888,15 +881,14 @@ class OrderList extends React.Component {
                                             : ""
                                         }`,
                                       }}
-                                      className="allfields"
-                                    >
+                                      className="allfields">
                                       <IoMdRemoveCircleOutline
                                         onClick={() => {
                                           const SelectedCols =
                                             this.state.SelectedcolumnDefs?.slice();
                                           const delindex =
                                             SelectedCols?.findIndex(
-                                              element =>
+                                              (element) =>
                                                 element?.headerName ==
                                                 ele?.headerName
                                             );
@@ -959,8 +951,7 @@ class OrderList extends React.Component {
                     style={{ cursor: "pointer" }}
                     className=""
                     color="primary"
-                    onClick={this.HandleSetVisibleField}
-                  >
+                    onClick={this.HandleSetVisibleField}>
                     Submit
                   </Badge>
                 </div>
@@ -972,14 +963,12 @@ class OrderList extends React.Component {
           isOpen={this.state.modalone}
           toggle={this.togglemodal}
           className={this.props.className}
-          style={{ maxWidth: "1050px" }}
-        >
+          style={{ maxWidth: "1050px" }}>
           <ModalHeader toggle={this.togglemodal}>
             {this.state.ShowBill ? "Bill Download" : "All Products"}
           </ModalHeader>
           <ModalBody
-            className={`${this.state.ShowBill ? "p-1" : "modalbodyhead"}`}
-          >
+            className={`${this.state.ShowBill ? "p-1" : "modalbodyhead"}`}>
             {this.state.ShowBill ? (
               <>
                 <StockTrxInvoice ViewOneData={this.state.ViewOneData} />
@@ -1065,10 +1054,9 @@ class OrderList extends React.Component {
                               <th>Product Name</th>
                               <th>Price</th>
                               <th>Size</th>
+                              <th>Quantity</th>
                               <th>Unit</th>
                               <th>HSN CODE</th>
-                              <th>GST</th>
-                              <th>Quantity</th>
                               <th>Total</th>
                             </tr>
                           </thead>
@@ -1081,15 +1069,12 @@ class OrderList extends React.Component {
                                       <th scope="row">{i + 1}</th>
                                       <td>{ele?.product?.Product_Title}</td>
                                       <td>{ele?.product?.Product_MRP}</td>
-                                      <td>{ele?.product?.Size}</td>
-                                      <td>{ele?.unitQty}</td>
-                                      <td>{ele?.product?.HSN_Code}</td>
-                                      <td>{ele?.product["GST Rate"]}</td>
+                                      <td>{ele?.Size}</td>
                                       <td>{ele?.qty}</td>
+                                      <td>{ele?.unitType}</td>
+                                      <td>{ele?.product?.HSN_Code}</td>
                                       <td>
-                                        {ele?.product?.Product_MRP *
-                                          ele?.product?.Size *
-                                          ele?.qty}
+                                        {ele?.price * ele?.Size * ele?.qty}
                                       </td>
                                     </tr>
                                   </>

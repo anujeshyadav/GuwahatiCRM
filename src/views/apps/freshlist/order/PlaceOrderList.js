@@ -209,6 +209,7 @@ class PlaceOrderList extends React.Component {
           resizable: true,
           width: 230,
           cellRendererFramework: (params) => {
+            console.log(params.data);
             return (
               <div className="d-flex align-items-center cursor-pointer">
                 <div>
@@ -219,15 +220,19 @@ class PlaceOrderList extends React.Component {
           },
         },
         {
-          headerName: "Full Name",
-          field: "orderItems",
+          headerName: " Party Full Name",
+          field: ".partyId.OwnerName",
           filter: true,
           width: 180,
-          valueGetter: (params) => {
-            if (params.data.orderItems && params.data.orderItems.length > 0) {
-              return params.data.fullName;
-            }
-            return null;
+          cellRendererFramework: (params) => {
+            console.log(params.data);
+            return (
+              <div className="d-flex align-items-center cursor-pointer">
+                <div>
+                  <span>{params.data?.partyId?.OwnerName}</span>
+                </div>
+              </div>
+            );
           },
         },
 
@@ -245,52 +250,20 @@ class PlaceOrderList extends React.Component {
             return null;
           },
         },
+
         {
-          headerName: "Price",
-          field: "orderItems",
-          filter: true,
-          width: 150,
-          valueGetter: (params) => {
-            if (params.data.orderItems && params.data.orderItems.length > 0) {
-              return params.data.orderItems[0].price;
-            }
-            return null;
-          },
-        },
-        {
-          headerName: "Size",
-          field: "orderItems",
-          filter: true,
-          width: 150,
-          valueGetter: (params) => {
-            if (params.data.orderItems && params.data.orderItems.length > 0) {
-              return params.data.orderItems[0].qty; // Return the price
-            }
-            return null;
-          },
-        },
-        {
-          headerName: "GST Rate",
-          field: "orderItems",
+          headerName: "Grand Total",
+          field: "grandTotal",
           filter: true,
           width: 180,
-          valueGetter: (params) => {
-            if (params.data.orderItems && params.data.orderItems.length > 0) {
-              return params.data.orderItems[0].product["GST Rate"]; // Return the price
-            }
-            return null; // Or handle cases where there's no price
-          },
-        },
-        {
-          headerName: "HSN Code",
-          field: "orderItems",
-          filter: true,
-          width: 180,
-          valueGetter: (params) => {
-            if (params.data.orderItems && params.data.orderItems.length > 0) {
-              return params.data.orderItems[0].product.HSN_Code; // Return the price
-            }
-            return null;
+          cellRendererFramework: (params) => {
+            return (
+              <div className="d-flex align-items-center cursor-pointer">
+                <div>
+                  <span>{params.data?.grandTotal}</span>
+                </div>
+              </div>
+            );
           },
         },
       ],
@@ -309,6 +282,7 @@ class PlaceOrderList extends React.Component {
   };
 
   handleChangeView = (data, types) => {
+    debugger
     let type = types;
     if (type == "readonly") {
       this.setState({ ViewOneUserView: true });
@@ -323,10 +297,11 @@ class PlaceOrderList extends React.Component {
     const UserInformation = this.context?.UserInformatio;
     const InsidePermissions = CheckPermission("Place Order");
     this.setState({ InsiderPermissions: InsidePermissions });
-    let userId = JSON.parse(localStorage.getItem("userData"))._id;
+    let userId = JSON.parse(localStorage.getItem("userData"))?._id;
     await PlaceOrderViewList(userId)
-      .then(res => {
-        console.log(res);
+      .then((res) => {
+        
+        console.log(res?.orderHistory);
         this.setState({ rowData: res?.orderHistory });
         this.setState({ AllcolumnDefs: this.state.columnDefs });
         this.setState({ SelectedCols: this.state.columnDefs });
@@ -341,7 +316,7 @@ class PlaceOrderList extends React.Component {
           this.setState({ SelectedcolumnDefs: this.state.columnDefs });
         }
       })
-      .catch(err => {
+      .catch((err) => {
         console.log(err);
       });
   }
@@ -657,41 +632,35 @@ class PlaceOrderList extends React.Component {
                               border: "1px solid #39cccc",
                               backgroundColor: "white",
                             }}
-                            className="dropdown-content dropdownmy"
-                          >
+                            className="dropdown-content dropdownmy">
                             <h5
                               onClick={() => this.exportToPDF()}
                               style={{ cursor: "pointer" }}
-                              className=" mx-1 myactive mt-1"
-                            >
+                              className=" mx-1 myactive mt-1">
                               .PDF
                             </h5>
                             <h5
                               onClick={() => this.gridApi.exportDataAsCsv()}
                               style={{ cursor: "pointer" }}
-                              className=" mx-1 myactive"
-                            >
+                              className=" mx-1 myactive">
                               .CSV
                             </h5>
                             <h5
                               onClick={this.convertCSVtoExcel}
                               style={{ cursor: "pointer" }}
-                              className=" mx-1 myactive"
-                            >
+                              className=" mx-1 myactive">
                               .XLS
                             </h5>
                             <h5
                               onClick={this.exportToExcel}
                               style={{ cursor: "pointer" }}
-                              className=" mx-1 myactive"
-                            >
+                              className=" mx-1 myactive">
                               .XLSX
                             </h5>
                             <h5
                               onClick={() => this.convertCsvToXml()}
                               style={{ cursor: "pointer" }}
-                              className=" mx-1 myactive"
-                            >
+                              className=" mx-1 myactive">
                               .XML
                             </h5>
                           </div>
@@ -712,8 +681,7 @@ class PlaceOrderList extends React.Component {
                             color="#39cccc"
                             onClick={() =>
                               history.push("/app/softNumen/order/addplaceOrder")
-                            }
-                          >
+                            }>
                             <FaPlus size={15} className="mr-1" />
                             Place Order
                           </Button>
@@ -748,32 +716,27 @@ class PlaceOrderList extends React.Component {
                           <DropdownMenu right>
                             <DropdownItem
                               tag="div"
-                              onClick={() => this.filterSize(5)}
-                            >
+                              onClick={() => this.filterSize(5)}>
                               5
                             </DropdownItem>
                             <DropdownItem
                               tag="div"
-                              onClick={() => this.filterSize(20)}
-                            >
+                              onClick={() => this.filterSize(20)}>
                               20
                             </DropdownItem>
                             <DropdownItem
                               tag="div"
-                              onClick={() => this.filterSize(50)}
-                            >
+                              onClick={() => this.filterSize(50)}>
                               50
                             </DropdownItem>
                             <DropdownItem
                               tag="div"
-                              onClick={() => this.filterSize(100)}
-                            >
+                              onClick={() => this.filterSize(100)}>
                               100
                             </DropdownItem>
                             <DropdownItem
                               tag="div"
-                              onClick={() => this.filterSize(134)}
-                            >
+                              onClick={() => this.filterSize(134)}>
                               134
                             </DropdownItem>
                           </DropdownMenu>
@@ -783,7 +746,7 @@ class PlaceOrderList extends React.Component {
                         <div className="table-input mr-1">
                           <Input
                             placeholder="search Item here..."
-                            onChange={e =>
+                            onChange={(e) =>
                               this.updateSearchQuery(e.target.value)
                             }
                             value={this.state.value}
@@ -792,7 +755,7 @@ class PlaceOrderList extends React.Component {
                       </div>
                     </div>
                     <ContextLayout.Consumer className="ag-theme-alpine">
-                      {context => (
+                      {(context) => (
                         <AgGridReact
                           id="myAgGrid"
                           gridOptions={this.gridOptions}
@@ -824,8 +787,7 @@ class PlaceOrderList extends React.Component {
           isOpen={this.state.modal}
           toggle={this.LookupviewStart}
           className={this.props.className}
-          style={{ maxWidth: "1050px" }}
-        >
+          style={{ maxWidth: "1050px" }}>
           <ModalHeader toggle={this.LookupviewStart}>Change Fileds</ModalHeader>
           <ModalBody className="modalbodyhead">
             <Row>
@@ -838,15 +800,15 @@ class PlaceOrderList extends React.Component {
                         return (
                           <>
                             <div
-                              onClick={e => this.handleChangeHeader(e, ele, i)}
+                              onClick={(e) =>
+                                this.handleChangeHeader(e, ele, i)
+                              }
                               key={i}
-                              className="mycustomtag mt-1"
-                            >
+                              className="mycustomtag mt-1">
                               <span className="mt-1">
                                 <h5
                                   style={{ cursor: "pointer" }}
-                                  className="allfields"
-                                >
+                                  className="allfields">
                                   <input
                                     type="checkbox"
                                     // checked={check && check}
@@ -905,15 +867,14 @@ class PlaceOrderList extends React.Component {
                                             : ""
                                         }`,
                                       }}
-                                      className="allfields"
-                                    >
+                                      className="allfields">
                                       <IoMdRemoveCircleOutline
                                         onClick={() => {
                                           const SelectedCols =
                                             this.state.SelectedcolumnDefs?.slice();
                                           const delindex =
                                             SelectedCols?.findIndex(
-                                              element =>
+                                              (element) =>
                                                 element?.headerName ==
                                                 ele?.headerName
                                             );
@@ -972,8 +933,7 @@ class PlaceOrderList extends React.Component {
                     style={{ cursor: "pointer" }}
                     className=""
                     color="primary"
-                    onClick={this.HandleSetVisibleField}
-                  >
+                    onClick={this.HandleSetVisibleField}>
                     Submit
                   </Badge>
                 </div>
@@ -985,14 +945,12 @@ class PlaceOrderList extends React.Component {
           isOpen={this.state.modalone}
           toggle={this.togglemodal}
           className={this.props.className}
-          style={{ maxWidth: "1050px" }}
-        >
+          style={{ maxWidth: "1050px" }}>
           <ModalHeader toggle={this.togglemodal}>
             {this.state.ShowBill ? "Bill Download" : "Purchase View"}
           </ModalHeader>
           <ModalBody
-            className={`${this.state.ShowBill ? "p-1" : "modalbodyhead"}`}
-          >
+            className={`${this.state.ShowBill ? "p-1" : "modalbodyhead"}`}>
             {this.state.ShowBill ? (
               <>
                 <StockTrxInvoice ViewOneData={this.state.ViewOneData} />
@@ -1093,16 +1051,14 @@ class PlaceOrderList extends React.Component {
                                     <tr>
                                       <th scope="row">{i + 1}</th>
                                       <td>{ele?.product?.Product_Title}</td>
-                                      <td>{ele?.product?.Product_MRP}</td>
-                                      <td>{ele?.product?.Size}</td>
-                                      <td>{ele?.unitQty}</td>
+                                      <td>{ele?.price}</td>
+                                      <td>{ele?.Size}</td>
+                                      <td>{ele?.unitType}</td>
                                       <td>{ele?.product?.HSN_Code}</td>
                                       <td>{ele?.product["GST Rate"]}</td>
                                       <td>{ele?.qty}</td>
                                       <td>
-                                        {ele?.product?.Product_MRP *
-                                          ele?.product?.Size *
-                                          ele?.qty}
+                                        {ele?.price * ele?.Size * ele?.qty}
                                       </td>
                                     </tr>
                                   </>

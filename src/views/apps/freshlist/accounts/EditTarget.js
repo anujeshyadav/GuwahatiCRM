@@ -241,29 +241,22 @@ const EditTarget = args => {
 
   useEffect(() => {
     Create_Sales_personList()
-      .then(res => {
+      .then((res) => {
         console.log(res?.SalesPerson);
         setSalesPersonList(res?.SalesPerson);
       })
-      .catch(err => console.log(err));
-        let userdata = JSON.parse(localStorage.getItem("userData"));
+      .catch((err) => console.log(err));
+    let userdata = JSON.parse(localStorage.getItem("userData"));
 
-        ProductListView(userdata?._id, userdata?.database)
-          .then((res) => {
-            // console.log(res?.Product);
-            setProductList(res?.Product);
-          })
-          .catch((err) => {
-            console.log(err);
-          });
-    CreatePartyList()
-      .then(res => {
-        // console.log(res.Party)
-        setPartyList(res.Party);
+    ProductListView(userdata?._id, userdata?.database)
+      .then((res) => {
+        // console.log(res?.Product);
+        setProductList(res?.Product);
       })
-      .catch(err => {
+      .catch((err) => {
         console.log(err);
       });
+    
   }, []);
   useEffect(() => {
     const userInfo = JSON.parse(localStorage.getItem("userData"));

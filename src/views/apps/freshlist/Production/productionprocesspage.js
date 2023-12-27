@@ -41,17 +41,27 @@ import {
   StocktrxFtoW,
   WarehousetoWareHouseTrx,
   Warehouse_Temporarlylist,
+  _Post,
+  _PostSave,
 } from "../../../../ApiEndPoint/ApiCalling";
 import "../../../../assets/scss/pages/users.scss";
 import Timepickers from "../../../forms/form-elements/datepicker/Timepicker";
 import Pickers from "../../../forms/form-elements/datepicker/Pickers";
 import { Route } from "react-router-dom";
+import { Save_Producton_Process } from "../../../../ApiEndPoint/Api";
+import swal from "sweetalert";
 
 let GrandTotal = [];
 let SelectedITems = [];
 let SelectedSize = [];
 const ProductionProcess = (args) => {
   const [formData, setFormData] = useState({});
+  const [ExtraCharges, setExtraCharges] = useState({
+    Other_Expenses: 100,
+    GSTApplied: 18,
+    Other_charges: 50,
+    discount: 10,
+  });
   const [Index, setIndex] = useState("");
   const [StockTrxdate, setStockTrxDate] = useState("");
   const [targetEndDate, settargetEndDate] = useState("");
@@ -82,6 +92,14 @@ const ProductionProcess = (args) => {
   const handleopentoggle = (iteam) => {
     toggle(iteam);
   };
+  const handleExtraCharge = (e) => {
+    let { name, value } = e.target;
+    setExtraCharges({
+      ...ExtraCharges,
+      [name]: value,
+    });
+    // let AllTotal = grandTotalAmt;
+  };
   const handleHistory = () => {
     audittoggle();
   };
@@ -90,7 +108,6 @@ const ProductionProcess = (args) => {
       product: "",
       productId: "",
       selecetedUnit: "",
-
       AvailaleQty: null,
       availableQty: "",
       transferQty: 1,
@@ -149,47 +166,61 @@ const ProductionProcess = (args) => {
   };
   const handleProductChangeProductTwo = (e, index) => {
     setIndex(index);
+
     const { name, value } = e.target;
     const list = [...product];
     list[index][name] = value;
     setProduct(list);
   };
-  console.log(product);
+  const handleSubmitCharges = (e) => {
+    e.preventDefault();
+    debugger;
+    const list = [...product];
+    let amt = 0;
+    if (list.length > 0) {
+      const x = list?.map((val) => {
+        return val?.price * val?.RequiredQty;
+      });
+      amt = x.reduce((a, b) => a + b);
+    }
+    debugger;
+
+    let Totalamount =
+      amt +
+      ExtraCharges?.Other_Expenses +
+      (amt * ExtraCharges?.GSTApplied) / 100 +
+      ExtraCharges?.Other_charges -
+      ExtraCharges?.discount;
+
+    setGrandTotalAmt(Totalamount.toFixed(2));
+  };
   const handleProductChangeProductone = (e, index) => {
     setIndex(index);
-    console.log(product);
     const { name, value } = e.target;
     const list = [...product];
 
     list[index][name] = Number(value);
 
-    console.log(GrandTotal);
-    debugger;
-
     let amt = 0;
     if (list.length > 0) {
       const x = list?.map((val) => {
-        debugger;
-        GrandTotal[index] = (val.price - val?.discount) * val.RequiredQty;
-        list[index]["totalprice"] =
-          (val.price - val?.discount) * val.RequiredQty;
-        return (val?.price - val?.discount) * val?.RequiredQty;
+        GrandTotal[index] = val.price * val.RequiredQty;
+        list[index]["totalprice"] = val.price * val.RequiredQty;
+        return val?.price * val?.RequiredQty;
       });
       amt = x.reduce((a, b) => a + b);
       console.log("GrandTotal", amt);
     }
-    // console.log(list)
     setProduct(list);
-    setGrandTotalAmt(amt);
+    setGrandTotalAmt(amt.toFixed(2));
   };
-
+  console.log(ExtraCharges);
   const handleRemoveSelected = (selectedList, selectedItem, index) => {
     // console.log(selectedList);
     // console.log(selectedItem); // removed item
     // console.log(product);
     // console.log(index);
     // console.log(SelectedITems);
-    debugger;
     SelectedITems.splice(index, 1);
     let myarr = product?.map((ele, i) => {
       console.log(ele?.qty * selectedItem[i]?.Product_MRP);
@@ -199,6 +230,7 @@ const ProductionProcess = (args) => {
     });
 
     let amt = myarr.reduce((a, b) => a + b);
+
     setGrandTotalAmt(amt);
   };
   const handleRemoveSelectedone = (selectedList, selectedItem, index) => {
@@ -230,7 +262,6 @@ const ProductionProcess = (args) => {
   const handleSelectionProduct = (selectedList, selectedItem, index) => {
     SelectedITems.push(selectedItem);
     setProduct((prevProductList) => {
-      debugger;
       const updatedProductList = [...prevProductList]; // Create a copy of the productList array
       const updatedProduct = { ...updatedProductList[index] }; // Create a copy of the product at the specified index
       updatedProduct.price = selectedItem?.Product_MRP; // Update the price of the copied product
@@ -478,55 +509,43 @@ const ProductionProcess = (args) => {
   const submitHandler = (e) => {
     e.preventDefault();
     let userdata = JSON.parse(localStorage.getItem("userData"));
-    // console.log(product);
-    // console.log(GrandTotal);
-    // console.log(Salesperson[0]?._id);
-    // console.log(targetStartDate);
-    // console.log(targetEndDate);
-    // console.log(grandTotalAmt);
 
     let Allproduct = product?.map((ele, i) => {
       console.log(ele);
+
       return {
         productId: ele?.productId,
-        unitType: ele?.unitType,
+        unit: ele?.unitType,
         price: ele?.price,
-        Size: ele?.Size,
-        transferQty: ele?.transferQty,
-        totalPrice: ele?.totalprice,
-        currentStock: ele?.transferQty * ele?.Size,
+        qty: ele?.RequiredQty,
+        unitType: ele?.unitType,
+        totalPrice: ele?.price * ele?.RequiredQty,
       };
     });
-    let payload = {
-      productItems: Allproduct,
-      warehouseToId: ProductinProduct[0]?._id,
-      stockTransferDate: StockTrxdate,
-      grandTotal: grandTotalAmt,
-      transferStatus: "InProcess",
-      created_by: userdata?._id,
-    };
 
-    if (error) {
-      swal("Error occured while Entering Details");
-    } else {
-      StocktrxFtoW(payload)
-        .then((res) => {
-          // if (res.status) {
-          //   setFormData({});
-          //   window.location.reload();
-          swal("Stock Assigned to WareHouse");
-          // }
-          console.log(res);
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    }
+    let payload = {
+      created_by: userdata?._id,
+      product_name: ProductinProduct?._id,
+      productItems: Allproduct,
+      miscellaneousExpennses: ExtraCharges?.Other_Expenses,
+      gstApplied: ExtraCharges?.GSTApplied,
+      otherCharges: ExtraCharges?.Other_charges,
+      discount: ExtraCharges?.discount,
+      grandTotal: grandTotalAmt,
+    };
+    debugger;
+    _PostSave(Save_Producton_Process, payload)
+      .then((res) => {
+        console.log(res);
+        swal("Production Process is Created");
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   };
   const onSelect1 = (selectedList, selectedItem, index) => {
     console.log(selectedList[0]);
     setProductionProduct(selectedList[0]);
-    debugger;
     // setProductList(selectedList[0].productItems);
   };
   const onSelectone = (selectedList, selectedItem, index) => {
@@ -596,7 +615,7 @@ const ProductionProcess = (args) => {
         <CardBody>
           <Form className="m-1" onSubmit={submitHandler}>
             <Row>
-              <Col className="mb-1" lg="3" md="3" sm="12">
+              <Col className="mb-1" lg="2" md="2" sm="12">
                 <div className="">
                   <Label>Choose Production Product </Label>
 
@@ -611,6 +630,67 @@ const ProductionProcess = (args) => {
                     onRemove={onRemove1} // Function will trigger on remove event
                     displayValue="Product_Title" // Property name to display in the dropdown options
                   />
+                </div>
+              </Col>
+              <Col className="mb-1" lg="2" md="2" sm="12">
+                <div className="">
+                  <Label>Miscellaneous Expennses </Label>
+
+                  <input
+                    className="form-control"
+                    name="Other_Expenses"
+                    value={ExtraCharges?.Other_Expenses}
+                    onChange={handleExtraCharge}
+                    type="number"
+                  />
+                </div>
+              </Col>
+              <Col className="mb-1" lg="2" md="2" sm="12">
+                <div className="">
+                  <Label>GST Applied </Label>
+
+                  <CustomInput
+                    className="form-control"
+                    name="GSTApplied"
+                    value={ExtraCharges?.GSTApplied}
+                    onChange={handleExtraCharge}
+                    type="select">
+                    <option>--select--</option>
+                    <option value={18}>18</option>
+                    <option value={9}>9</option>
+                  </CustomInput>
+                </div>
+              </Col>
+              <Col className="mb-1" lg="2" md="2" sm="12">
+                <div className="">
+                  <Label>Other Charges </Label>
+
+                  <input
+                    className="form-control"
+                    name="Other_charges"
+                    value={ExtraCharges?.Other_charges}
+                    onChange={handleExtraCharge}
+                    type="number"
+                  />
+                </div>
+              </Col>
+              <Col className="mb-1" lg="2" md="2" sm="12">
+                <div className="">
+                  <Label>Discount </Label>
+                  <input
+                    className="form-control"
+                    value={ExtraCharges?.discount}
+                    name="discount"
+                    onChange={handleExtraCharge}
+                    type="number"
+                  />
+                </div>
+              </Col>
+              <Col className="mb-1" lg="2" md="2" sm="12">
+                <div className=" mt-2">
+                  <Button color="primary" onClick={handleSubmitCharges}>
+                    Add Charges
+                  </Button>
                 </div>
               </Col>
             </Row>
@@ -649,6 +729,7 @@ const ProductionProcess = (args) => {
                     <div className="">
                       <label for="unit">Select Unit</label>
                       <select
+                        required
                         className="form-control"
                         name="selecetedUnit"
                         placeholder="selecetedUnit"
@@ -706,10 +787,11 @@ const ProductionProcess = (args) => {
                   </Col>
                   <Col className="mb-1" lg="1" md="1" sm="12">
                     <div className="">
-                      <Label>Quantity</Label>
+                      <Label>Req_Qty</Label>
                       <Input
                         type="number"
                         min={0}
+                        step="any"
                         name="RequiredQty"
                         placeholder="Req_Qty"
                         value={product?.RequiredQty}
@@ -740,10 +822,7 @@ const ProductionProcess = (args) => {
                         name="totalprice"
                         readOnly
                         placeholder="TtlPrice"
-                        value={
-                          (product?.price - product?.discount) *
-                          product?.RequiredQty
-                        }
+                        value={product?.price * product?.RequiredQty}
                       />
                     </div>
                   </Col>

@@ -146,14 +146,6 @@ const CreateTarget = args => {
       .catch((err) => {
         console.log(err);
       });
-    CreatePartyList()
-      .then(res => {
-        // console.log(res.Party)
-        setPartyList(res.Party);
-      })
-      .catch(err => {
-        console.log(err);
-      });
   }, []);
   useEffect(() => {
     const userInfo = JSON.parse(localStorage.getItem("userData"));
