@@ -591,8 +591,7 @@ class purchasereportamount extends React.Component {
                       type="submit"
                       className="mt-1"
                       color="primary"
-                      onClick={this.handleSubmitDate}
-                    >
+                      onClick={this.handleSubmitDate}>
                       Submit
                     </Button>
                   </Col>
@@ -625,41 +624,35 @@ class purchasereportamount extends React.Component {
                               border: "1px solid #39cccc",
                               backgroundColor: "white",
                             }}
-                            className="dropdown-content dropdownmy"
-                          >
+                            className="dropdown-content dropdownmy">
                             <h5
                               onClick={() => this.exportToPDF()}
                               style={{ cursor: "pointer" }}
-                              className=" mx-1 myactive mt-1"
-                            >
+                              className=" mx-1 myactive mt-1">
                               .PDF
                             </h5>
                             <h5
                               onClick={() => this.gridApi.exportDataAsCsv()}
                               style={{ cursor: "pointer" }}
-                              className=" mx-1 myactive"
-                            >
+                              className=" mx-1 myactive">
                               .CSV
                             </h5>
                             <h5
                               onClick={this.convertCSVtoExcel}
                               style={{ cursor: "pointer" }}
-                              className=" mx-1 myactive"
-                            >
+                              className=" mx-1 myactive">
                               .XLS
                             </h5>
                             <h5
                               onClick={this.exportToExcel}
                               style={{ cursor: "pointer" }}
-                              className=" mx-1 myactive"
-                            >
+                              className=" mx-1 myactive">
                               .XLSX
                             </h5>
                             <h5
                               onClick={() => this.convertCsvToXml()}
                               style={{ cursor: "pointer" }}
-                              className=" mx-1 myactive"
-                            >
+                              className=" mx-1 myactive">
                               .XML
                             </h5>
                           </div>
@@ -693,32 +686,27 @@ class purchasereportamount extends React.Component {
                             <DropdownMenu right>
                               <DropdownItem
                                 tag="div"
-                                onClick={() => this.filterSize(5)}
-                              >
+                                onClick={() => this.filterSize(5)}>
                                 5
                               </DropdownItem>
                               <DropdownItem
                                 tag="div"
-                                onClick={() => this.filterSize(20)}
-                              >
+                                onClick={() => this.filterSize(20)}>
                                 20
                               </DropdownItem>
                               <DropdownItem
                                 tag="div"
-                                onClick={() => this.filterSize(50)}
-                              >
+                                onClick={() => this.filterSize(50)}>
                                 50
                               </DropdownItem>
                               <DropdownItem
                                 tag="div"
-                                onClick={() => this.filterSize(100)}
-                              >
+                                onClick={() => this.filterSize(100)}>
                                 100
                               </DropdownItem>
                               <DropdownItem
                                 tag="div"
-                                onClick={() => this.filterSize(134)}
-                              >
+                                onClick={() => this.filterSize(134)}>
                                 134
                               </DropdownItem>
                             </DropdownMenu>
@@ -728,7 +716,7 @@ class purchasereportamount extends React.Component {
                           <div className="table-input mr-1">
                             <Input
                               placeholder="search Item here..."
-                              onChange={e =>
+                              onChange={(e) =>
                                 this.updateSearchQuery(e.target.value)
                               }
                               value={this.state.value}
@@ -737,7 +725,7 @@ class purchasereportamount extends React.Component {
                         </div>
                       </div>
                       <ContextLayout.Consumer className="ag-theme-alpine">
-                        {context => (
+                        {(context) => (
                           <AgGridReact
                             id="myAgGrid"
                             gridOptions={this.gridOptions}
@@ -770,8 +758,7 @@ class purchasereportamount extends React.Component {
           isOpen={this.state.modal}
           toggle={this.LookupviewStart}
           className={this.props.className}
-          style={{ maxWidth: "1050px" }}
-        >
+          style={{ maxWidth: "1050px" }}>
           <ModalHeader toggle={this.LookupviewStart}>Change Fileds</ModalHeader>
           <ModalBody className="modalbodyhead">
             <Row>
@@ -784,15 +771,15 @@ class purchasereportamount extends React.Component {
                         return (
                           <>
                             <div
-                              onClick={e => this.handleChangeHeader(e, ele, i)}
+                              onClick={(e) =>
+                                this.handleChangeHeader(e, ele, i)
+                              }
                               key={i}
-                              className="mycustomtag mt-1"
-                            >
+                              className="mycustomtag mt-1">
                               <span className="mt-1">
                                 <h5
                                   style={{ cursor: "pointer" }}
-                                  className="allfields"
-                                >
+                                  className="allfields">
                                   <input
                                     type="checkbox"
                                     // checked={check && check}
@@ -851,15 +838,14 @@ class purchasereportamount extends React.Component {
                                             : ""
                                         }`,
                                       }}
-                                      className="allfields"
-                                    >
+                                      className="allfields">
                                       <IoMdRemoveCircleOutline
                                         onClick={() => {
                                           const SelectedCols =
                                             this.state.SelectedcolumnDefs?.slice();
                                           const delindex =
                                             SelectedCols?.findIndex(
-                                              element =>
+                                              (element) =>
                                                 element?.headerName ==
                                                 ele?.headerName
                                             );
@@ -922,8 +908,7 @@ class purchasereportamount extends React.Component {
                     style={{ cursor: "pointer" }}
                     className=""
                     color="primary"
-                    onClick={this.HandleSetVisibleField}
-                  >
+                    onClick={this.HandleSetVisibleField}>
                     Submit
                   </Badge>
                 </div>
@@ -935,14 +920,12 @@ class purchasereportamount extends React.Component {
           isOpen={this.state.modalone}
           toggle={this.togglemodal}
           className={this.props.className}
-          style={{ maxWidth: "1050px" }}
-        >
+          style={{ maxWidth: "1050px" }}>
           <ModalHeader toggle={this.togglemodal}>
             {this.state.ShowBill ? "Bill Download" : "All Products"}
           </ModalHeader>
           <ModalBody
-            className={`${this.state.ShowBill ? "p-1" : "modalbodyhead"}`}
-          >
+            className={`${this.state.ShowBill ? "p-1" : "modalbodyhead"}`}>
             <Row className="p-2">
               <Col>
                 <div className="d-flex justify-content-center">
@@ -1043,16 +1026,16 @@ class purchasereportamount extends React.Component {
                                   <>
                                     <tr>
                                       <th scope="row">{i + 1}</th>
-                                      <td>{ele?.product?.Product_Title}</td>
-                                      <td>{ele?.product?.Product_MRP}</td>
-                                      <td>{ele?.product?.Size}</td>
-                                      <td>{ele?.unitQty}</td>
-                                      <td>{ele?.product?.HSN_Code}</td>
-                                      <td>{ele?.product["GST Rate"]}</td>
+                                      <td>{ele?.productId?.Product_Title}</td>
+                                      <td>{ele?.price}</td>
+                                      <td>{ele?.Size}</td>
+                                      <td>{ele?.unitType}</td>
+                                      <td>{ele?.productId?.HSN_Code}</td>
+                                      <td>{ele?.productId["GST Rate"]}</td>
                                       <td>{ele?.qty}</td>
                                       <td>
-                                        {ele?.product?.Product_MRP *
-                                          ele?.product?.Size *
+                                        {ele?.price *
+                                          ele?.Size *
                                           ele?.qty}
                                       </td>
                                     </tr>

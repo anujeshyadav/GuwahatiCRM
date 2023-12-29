@@ -541,9 +541,9 @@ export const PurchaseReturn = async (data) => {
     .then((res) => res.data);
   return response;
 };
-export const Purchase_ReturnList = async () => {
+export const Purchase_ReturnList = async (id, db) => {
   let response = await axiosConfig
-    .get(Purchase_Return_List)
+    .get(`${Purchase_Return_List}${id}/${db}`)
     .then((res) => res.data);
   return response;
 };

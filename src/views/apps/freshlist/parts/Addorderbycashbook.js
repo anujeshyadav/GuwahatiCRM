@@ -50,7 +50,8 @@ const Addorderbycashbook = (args) => {
       totalprice: "", //no
       Size: "",
       unitQty: "",
-      // partyId: "", //no
+      unitType: "",
+      partyId: "",
       // DateofDelivery: "", //no
     },
   ]);
@@ -80,17 +81,19 @@ const Addorderbycashbook = (args) => {
   };
 
   const handleSelectionParty = (selectedList, selectedItem, index) => {
-    setPartyId(selectedItem._id);
+    setPartyId(selectedItem?._id);
   };
 
   const handleSelection = (selectedList, selectedItem, index) => {
     SelectedITems.push(selectedItem);
     setProduct((prevProductList) => {
+      debugger;
       const updatedProductList = [...prevProductList];
       const updatedProduct = { ...updatedProductList[index] }; // Create a copy of the product at the specified index
-      updatedProduct.price = selectedItem.Product_MRP; // Update the price of the copied product
-      updatedProduct.productId = selectedItem._id;
-      updatedProduct.availableQty = selectedItem.Size;
+      updatedProduct.price = selectedItem?.Product_MRP; // Update the price of the copied product
+      updatedProduct.productId = selectedItem?._id;
+      updatedProduct.unitType = selectedItem?.unitType;
+      updatedProduct.availableQty = selectedItem?.Size;
       updatedProductList[index] = updatedProduct; // Replace the product at the specified index with the updated one
       return updatedProductList; // Return the updated product list to set the state
     });
@@ -102,7 +105,7 @@ const Addorderbycashbook = (args) => {
       // debugger;
       const updatedUnitList = [...prevProductList];
       const updatedProduct = { ...updatedUnitList[index] }; // Create a copy of the product at the specified index
-      updatedProduct.Size = selectedItem.unitQty;
+      updatedProduct.Size = selectedItem?.unitQty;
       updatedProduct.unitQty = selectedItem.primaryUnit;
       updatedUnitList[index] = updatedProduct;
       let myarr = prevProductList?.map((ele, i) => {

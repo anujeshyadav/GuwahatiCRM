@@ -209,7 +209,6 @@ class PlaceOrderList extends React.Component {
           resizable: true,
           width: 230,
           cellRendererFramework: (params) => {
-            console.log(params.data);
             return (
               <div className="d-flex align-items-center cursor-pointer">
                 <div>
@@ -220,12 +219,11 @@ class PlaceOrderList extends React.Component {
           },
         },
         {
-          headerName: " Party Full Name",
-          field: ".partyId.OwnerName",
+          headerName: "Full Name",
+          field: "partyId.OwnerName",
           filter: true,
           width: 180,
           cellRendererFramework: (params) => {
-            console.log(params.data);
             return (
               <div className="d-flex align-items-center cursor-pointer">
                 <div>
@@ -235,19 +233,65 @@ class PlaceOrderList extends React.Component {
             );
           },
         },
+        {
+          headerName: "Mobile Number",
+          field: "partyId?.Owner_Mobile_numer",
+          filter: true,
+          width: 180,
+          cellRendererFramework: (params) => {
+            return (
+              <div className="d-flex align-items-center cursor-pointer">
+                <div>
+                  <span>{params.data?.partyId?.Owner_Mobile_numer}</span>
+                </div>
+              </div>
+            );
+          },
+        },
+        {
+          headerName: "email",
+          field: "partyId.email",
+          filter: true,
+          width: 180,
+          cellRendererFramework: (params) => {
+            return (
+              <div className="d-flex align-items-center cursor-pointer">
+                <div>
+                  <span>{params.data?.partyId?.email}</span>
+                </div>
+              </div>
+            );
+          },
+        },
+        {
+          headerName: "address",
+          field: "partyId.OwnerAddress",
+          filter: true,
+          width: 180,
+          cellRendererFramework: (params) => {
+            return (
+              <div className="d-flex align-items-center cursor-pointer">
+                <div>
+                  <span>{params.data?.partyId?.OwnerAddress}</span>
+                </div>
+              </div>
+            );
+          },
+        },
 
         {
-          headerName: "Product Name",
+          headerName: "Products",
           field: "orderItems",
           filter: true,
           width: 220,
-          valueGetter: (params) => {
-            if (params.data.orderItems && params.data.orderItems.length > 0) {
-              return params?.data?.orderItems?.map((val) => {
-                return val?.product?.Product_Title;
-              });
-            }
-            return null;
+          cellRendererFramework: (params) => {
+            return (
+              <div className="d-flex align-items-center cursor-pointer">
+                <div>
+                  <span>{params.data?.orderItems?.length} Product</span>
+                </div>
+              </div>
+            );
           },
         },
 
@@ -282,7 +326,6 @@ class PlaceOrderList extends React.Component {
   };
 
   handleChangeView = (data, types) => {
-    debugger
     let type = types;
     if (type == "readonly") {
       this.setState({ ViewOneUserView: true });
@@ -301,7 +344,7 @@ class PlaceOrderList extends React.Component {
     await PlaceOrderViewList(userId)
       .then((res) => {
         
-        console.log(res?.orderHistory);
+        // console.log(res?.orderHistory);
         this.setState({ rowData: res?.orderHistory });
         this.setState({ AllcolumnDefs: this.state.columnDefs });
         this.setState({ SelectedCols: this.state.columnDefs });
@@ -325,7 +368,6 @@ class PlaceOrderList extends React.Component {
   };
 
   runthisfunction(id) {
-    debugger;
     swal("Warning", "Sure You Want to Delete it", {
       buttons: {
         cancel: "cancel",
@@ -1050,12 +1092,12 @@ class PlaceOrderList extends React.Component {
                                   <>
                                     <tr>
                                       <th scope="row">{i + 1}</th>
-                                      <td>{ele?.product?.Product_Title}</td>
+                                      <td>{ele?.productId?.Product_Title}</td>
                                       <td>{ele?.price}</td>
                                       <td>{ele?.Size}</td>
                                       <td>{ele?.unitType}</td>
-                                      <td>{ele?.product?.HSN_Code}</td>
-                                      <td>{ele?.product["GST Rate"]}</td>
+                                      <td>{ele?.productId?.HSN_Code}</td>
+                                      <td>{ele?.productId["GST Rate"]}</td>
                                       <td>{ele?.qty}</td>
                                       <td>
                                         {ele?.price * ele?.Size * ele?.qty}

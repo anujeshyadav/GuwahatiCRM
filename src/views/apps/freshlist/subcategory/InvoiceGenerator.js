@@ -188,6 +188,7 @@ class InvoiceGenerator extends React.Component {
                           size="25px"
                           color="green"
                           onClick={() => {
+                           
                             this.setState({ ViewOneData: params?.data });
                             this.toggleModalTwo();
                             console.log(params?.data);
@@ -598,7 +599,7 @@ class InvoiceGenerator extends React.Component {
     this.setState({ InsiderPermissions: InsidePermissions });
     createOrderhistoryview(userid)
       .then(res => {
-        // console.log(res?.orderHistory);
+        console.log(res?.orderHistory);
         let pending=res?.orderHistory?.filter((ele)=>ele?.status=="pending")
         this.setState({ rowData: pending });
         this.setState({ AllcolumnDefs: this.state.columnDefs });
@@ -1718,7 +1719,7 @@ class InvoiceGenerator extends React.Component {
                           <>
                             <tr>
                               <th scope="row">{i + 1}</th>
-                              <td>{ele?.product?.Product_Title}</td>
+                              <td>{ele?.productId?.Product_Title}</td>
                               <td>{ele?.price}</td>
                               <td>{ele?.Size}</td>
                               <td>{ele?.unitType}</td>

@@ -136,6 +136,10 @@ const EditAddProduct = () => {
         debugger;
         console.log(res?.Product);
         console.log(res?.Product?.addProductType);
+        setFormData({
+          ...formData,
+          ["ProductType"]: res?.Product?.addProductType,
+        });
       })
       .catch((err) => {
         console.log(err);
@@ -255,28 +259,36 @@ const EditAddProduct = () => {
               <div className="px-2">
                 <h3 className="mb-2 mx-2">Edit Product Type</h3>
                 <div className="form-label-group" onChange={changeHandler2}>
-                  <input
-                    style={{ marginRight: "3px" }}
-                    type="radio"
-                    // value={formData["status"]}
-                    name="ProductType"
-                    className="ml-1"
-                    value="AddPruduct"
-                  />
-                  <span style={{ marginRight: "20px", fontSize: "18px" }}>
-                    <strong>Edit Product</strong>
-                  </span>
+                  {formData?.ProductType == "Product" && (
+                    <>
+                      <input
+                        style={{ marginRight: "3px" }}
+                        type="radio"
+                        // value={formData["status"]}
+                        name="ProductType"
+                        className="ml-1"
+                        value="Product"
+                      />
+                      <span style={{ marginRight: "20px", fontSize: "18px" }}>
+                        <strong>Edit Product</strong>
+                      </span>
+                    </>
+                  )}
 
-                  <input
-                    style={{ marginRight: "3px" }}
-                    type="radio"
-                    name="ProductType"
-                    className="ml-1"
-                    value="AddItem"
-                  />
-                  <span style={{ marginRight: "20px", fontSize: "18px" }}>
-                    <strong>Edit Item</strong>
-                  </span>
+                  {formData?.ProductType == "Item" && (
+                    <>
+                      <input
+                        style={{ marginRight: "3px" }}
+                        type="radio"
+                        name="ProductType"
+                        className="ml-1"
+                        value="Item"
+                      />
+                      <span style={{ marginRight: "20px", fontSize: "18px" }}>
+                        <strong>Edit Item</strong>
+                      </span>
+                    </>
+                  )}
                 </div>
               </div>
             </Col>

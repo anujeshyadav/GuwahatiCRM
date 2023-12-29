@@ -233,6 +233,9 @@ const ViewOneReceivedOrder = lazy(() =>
 
 const AddOrder = lazy(() => import("./views/apps/freshlist/order/AddOrder"));
 const EditOrder = lazy(() => import("./views/apps/freshlist/order/EditOrder"));
+const EditProductionProcess = lazy(() =>
+  import("./views/apps/freshlist/order/EditProductionProcess")
+);
 const ViewAll = lazy(() => import("./views/apps/freshlist/order/ViewAll"));
 const ViewPending = lazy(() =>
   import("./views/apps/freshlist/order/ViewPending")
@@ -747,22 +750,21 @@ const UpdateExistingRole = lazy(() =>
 const CreateAccount = lazy(() =>
   import("./views/apps/freshlist/accounts/CreateAccount")
 );
-const Createitemforproduction = lazy(()=>
-import("./views/apps/freshlist/Production/Createitemforproduction")
-)
-const pricecalculaterproduction =lazy(()=>
-import("./views/apps/freshlist/Production/pricecalculaterproduction")
-
-)
-const productionprocesspage =lazy(()=>
-import("./views/apps/freshlist/Production/productionprocesspage")
-)
-const wastagematerialproduction =lazy(()=>
-import("./views/apps/freshlist/Production/wastagematerialproduction")
-)
-const wastagestockreturnproduction =lazy(()=>
-import("./views/apps/freshlist/Production/wastagestockreturnproduction")
-)
+const Createitemforproduction = lazy(() =>
+  import("./views/apps/freshlist/Production/Createitemforproduction")
+);
+const pricecalculaterproduction = lazy(() =>
+  import("./views/apps/freshlist/Production/pricecalculaterproduction")
+);
+const productionprocesspage = lazy(() =>
+  import("./views/apps/freshlist/Production/productionprocesspage")
+);
+const wastagematerialproduction = lazy(() =>
+  import("./views/apps/freshlist/Production/wastagematerialproduction")
+);
+const wastagestockreturnproduction = lazy(() =>
+  import("./views/apps/freshlist/Production/wastagestockreturnproduction")
+);
 
 const CreateStockTrx = lazy(() =>
   import("./views/apps/freshlist/accounts/CreateStockTrx")
@@ -1670,6 +1672,10 @@ class AppRouter extends React.Component {
           <AppRoute
             path="/app/freshlist/order/editOrder/:id"
             component={EditOrder}
+          />
+          <AppRoute
+            path="/app/freshlist/order/EditProductionProcess/:id"
+            component={EditProductionProcess}
           />
           <AppRoute
             path="/app/freshlist/order/viewAll/:id"

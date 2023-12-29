@@ -181,6 +181,21 @@ class Cashbook extends React.Component {
           },
         },
         {
+          headerName: "Size",
+          field: "unitType",
+          filter: true,
+          width: 220,
+          cellRendererFramework: (params) => {
+            return (
+              <>
+                <div className="actions cursor-pointer">
+                  <span>{params.data.unitType && params.data.unitType}</span>
+                </div>
+              </>
+            );
+          },
+        },
+        {
           headerName: "Total",
           field: "grandTotal",
           filter: true,
@@ -243,599 +258,599 @@ class Cashbook extends React.Component {
       ],
     };
   }
-  // toggleModal = () => {
-  //   this.setState(prevState => ({
-  //     modalone: !prevState.modalone,
-  //   }));
-  // };
+  toggleModal = () => {
+    this.setState((prevState) => ({
+      modalone: !prevState.modalone,
+    }));
+  };
 
-  // LookupviewStart = () => {
-  //   this.setState(prevState => ({
-  //     modal: !prevState.modal,
-  //   }));
-  // };
+  LookupviewStart = () => {
+    this.setState((prevState) => ({
+      modal: !prevState.modal,
+    }));
+  };
 
-  // handleChangeEdit = (data, types) => {
-  //   let type = types;
-  //   if (type == "readonly") {
-  //     this.setState({ ViewOneUserView: true });
-  //     this.setState({ ViewOneData: data });
-  //   } else {
-  //     this.setState({ EditOneUserView: true });
-  //     this.setState({ EditOneData: data });
-  //   }
-  // };
+  handleChangeEdit = (data, types) => {
+    let type = types;
+    if (type == "readonly") {
+      this.setState({ ViewOneUserView: true });
+      this.setState({ ViewOneData: data });
+    } else {
+      this.setState({ EditOneUserView: true });
+      this.setState({ EditOneData: data });
+    }
+  };
 
-  // async componentDidMount() {
-  //   let headings;
-  //   // let inputs;
-  //   let maxKeys = 0;
-  //   let elementWithMaxKeys = null;
-  //   const UserInformation = this.context?.UserInformatio;
-  //   await SparesPartsView()
-  //     .then(res => {
-  //       console.log(res?.SparePart);
-  //       this.setState({ rowData: res?.SparePart });
-  //       for (const element of res?.SparePart) {
-  //         const numKeys = Object.keys(element).length;
-  //         if (numKeys > maxKeys) {
-  //           maxKeys = numKeys;
-  //           elementWithMaxKeys = element;
-  //         }
-  //       }
-  //       console.log(maxKeys);
-  //       let findheading = Object.keys(elementWithMaxKeys);
-  //       let index = findheading.indexOf("_id");
-  //       if (index > -1) {
-  //         findheading.splice(index, 1);
-  //       }
-  //       let index1 = findheading.indexOf("__v");
-  //       if (index1 > -1) {
-  //         findheading.splice(index1, 1);
-  //       }
-  //       headings = findheading?.map(ele => {
-  //         return {
-  //           headerName: ele,
-  //           field: ele,
-  //           filter: true,
-  //           sortable: true,
-  //         };
-  //       });
-  // var adddropdown = [];
-  // const inputs = res?.SparePart?.map(ele => {
-  //   console.log(ele);
-  //   Object.keys(ele).map(key => ({
-  //     headerName: key,
-  //     field: key,
-  //     filter: true,
-  //     sortable: true,
-  //   }));
-  // });
+  async componentDidMount() {
+    let headings;
+    // let inputs;
+    let maxKeys = 0;
+    let elementWithMaxKeys = null;
+    const UserInformation = this.context?.UserInformatio;
+    await SparesPartsView()
+      .then((res) => {
+        console.log(res?.SparePart);
+        this.setState({ rowData: res?.SparePart });
+        for (const element of res?.SparePart) {
+          const numKeys = Object.keys(element).length;
+          if (numKeys > maxKeys) {
+            maxKeys = numKeys;
+            elementWithMaxKeys = element;
+          }
+        }
+        console.log(maxKeys);
+        let findheading = Object.keys(elementWithMaxKeys);
+        let index = findheading.indexOf("_id");
+        if (index > -1) {
+          findheading.splice(index, 1);
+        }
+        let index1 = findheading.indexOf("__v");
+        if (index1 > -1) {
+          findheading.splice(index1, 1);
+        }
+        headings = findheading?.map((ele) => {
+          return {
+            headerName: ele,
+            field: ele,
+            filter: true,
+            sortable: true,
+          };
+        });
+        var adddropdown = [];
+        const inputs = res?.SparePart?.map((ele) => {
+          console.log(ele);
+          Object.keys(ele).map((key) => ({
+            headerName: key,
+            field: key,
+            filter: true,
+            sortable: true,
+          }));
+        });
 
-  // let Radioinput =
-  //   JSON.parse(jsonData).CreateAccount?.Radiobutton?.input[0]?.name
-  //     ?._text;
-  // const addRadio = [
-  //   {
-  //     headerName: Radioinput,
-  //     field: Radioinput,
-  //     filter: true,
-  //     sortable: true,
-  //     cellRendererFramework: params => {
-  //       return params.data?.Status === "Active" ? (
-  //         <div className="badge badge-pill badge-success">
-  //           {params.data.Status}
-  //         </div>
-  //       ) : params.data?.Status === "Deactive" ? (
-  //         <div className="badge badge-pill badge-warning">
-  //           {params.data.Status}
-  //         </div>
-  //       ) : (
-  //         "NA"
-  //       );
-  //     },
-  //   },
-  // ];
+        let Radioinput =
+          JSON.parse(jsonData).CreateAccount?.Radiobutton?.input[0]?.name
+            ?._text;
+        const addRadio = [
+          {
+            headerName: Radioinput,
+            field: Radioinput,
+            filter: true,
+            sortable: true,
+            cellRendererFramework: (params) => {
+              return params.data?.Status === "Active" ? (
+                <div className="badge badge-pill badge-success">
+                  {params.data.Status}
+                </div>
+              ) : params.data?.Status === "Deactive" ? (
+                <div className="badge badge-pill badge-warning">
+                  {params.data.Status}
+                </div>
+              ) : (
+                "NA"
+              );
+            },
+          },
+        ];
 
-  // let dropdown = JSON.parse(jsonData).CreateAccount?.MyDropdown?.dropdown;
-  // if (dropdown?.length) {
-  //   var mydropdownArray = dropdown?.map(ele => {
-  //     return {
-  //       headerName: ele?.label,
-  //       field: ele?.name,
-  //       filter: true,
-  //       sortable: true,
-  //     };
-  //   });
-  // } else {
-  //   var adddropdown = [
-  //     {
-  //       headerName: dropdown?.label._text,
-  //       field: dropdown?.name._text,
-  //       filter: true,
-  //       sortable: true,
-  //     },
-  //   ];
-  // }
+        let dropdown = JSON.parse(jsonData).CreateAccount?.MyDropdown?.dropdown;
+        if (dropdown?.length) {
+          var mydropdownArray = dropdown?.map((ele) => {
+            return {
+              headerName: ele?.label,
+              field: ele?.name,
+              filter: true,
+              sortable: true,
+            };
+          });
+        } else {
+          var adddropdown = [
+            {
+              headerName: dropdown?.label._text,
+              field: dropdown?.name._text,
+              filter: true,
+              sortable: true,
+            },
+          ];
+        }
 
-  // let myHeadings = [
-  // ...checkboxinput,
-  // ...headings,
-  // ...adddropdown,
-  // ...addRadio,
-  // ...mydropdownArray,
-  // ];
-  // let Product = [
-  // {
-  //   headerName: "Actions",
-  //   field: "sortorder",
-  //   field: "transactions",
-  //   width: 190,
-  //   cellRendererFramework: params => {
-  //     return (
-  //       <div className="actions cursor-pointer">
-  //         <Route
-  //           render={({ history }) => (
-  //             <Eye
-  //               className="mr-50"
-  //               size="25px"
-  //               color="green"
-  //               onClick={() => {
-  //                 this.handleChangeEdit(params.data, "readonly");
-  //               }}
-  //             />
-  //           )}
-  //         />
-  //         <Route
-  //           render={({ history }) => (
-  //             <Edit
-  //               className="mr-50"
-  //               size="25px"
-  //               color="blue"
-  //               onClick={() => {
-  //                 this.handleChangeEdit(params.data, "Editable");
-  //               }}
-  //             />
-  //           )}
-  //         />
-  //         <Route
-  //           render={() => (
-  //             <Trash2
-  //               className="mr-50"
-  //               size="25px"
-  //               color="red"
-  //               onClick={() => {
-  //                 this.runthisfunction(params?.data?._id);
-  //               }}
-  //             />
-  //           )}
-  //         />
-  //       </div>
-  //     );
-  //   },
-  // },
-  // {
-  //   headerName: "Whatsapp",
-  //   field: "whatsapp",
-  //   filter: true,
-  //   sortable: true,
-  //   cellRendererFramework: params => {
-  //     console.log(params?.data?.whatsapp);
-  //     return params.data?.whatsapp === true || "undefined" ? (
-  //       <div className="badge badge-pill badge-success">YES</div>
-  //     ) : params.data?.whatsapp === false ? (
-  //       <div className="badge badge-pill badge-warning">NO</div>
-  //     ) : (
-  //       "NA"
-  //     );
-  //   },
-  // },
-  // {
-  //   headerName: "SMS",
-  //   field: "sms",
-  //   filter: true,
-  //   sortable: true,
-  //   cellRendererFramework: params => {
-  //     console.log(params?.data?.sms);
-  //     return params.data?.sms === true ? (
-  //       <div className="badge badge-pill badge-success">YES</div>
-  //     ) : params.data?.sms === false ? (
-  //       <div className="badge badge-pill badge-warning">No</div>
-  //     ) : (
-  //       "NA"
-  //     );
-  //   },
-  // },
-  // {
-  //   headerName: "Gmail",
-  //   field: "gmail",
-  //   filter: true,
-  //   sortable: true,
-  //   cellRendererFramework: params => {
-  //     console.log(params?.data?.gmail);
-  //     return params.data?.gmail === true ? (
-  //       <div className="badge badge-pill badge-success">YES</div>
-  //     ) : params.data?.gmail === false ? (
-  //       <div className="badge badge-pill badge-warning">NO</div>
-  //     ) : (
-  //       "NA"
-  //     );
-  //   },
-  // },
-  // ...myHeadings,
-  // {
-  //   headerName: "Created date",
-  //   field: "createdAt",
-  //   filter: true,
-  //   sortable: true,
-  //   cellRendererFramework: params => {
-  //     let convertedTime = "NA";
-  //     if (params?.data?.createdAt == undefined) {
-  //       convertedTime = "NA";
-  //     }
-  //     if (params?.data?.createdAt) {
-  //       convertedTime = params?.data?.createdAt;
-  //     }
-  //     if (
-  //       UserInformation?.timeZone !== undefined &&
-  //       params?.data?.createdAt !== undefined
-  //     ) {
-  //       if (params?.data?.createdAt != undefined) {
-  //         convertedTime = moment(params?.data?.createdAt?.split(".")[0])
-  //           .tz(UserInformation?.timeZone.split("-")[0])
-  //           .format(UserInformation?.dateTimeFormat);
-  //       }
-  //     }
+        let myHeadings = [
+          ...checkboxinput,
+          ...headings,
+          ...adddropdown,
+          ...addRadio,
+          ...mydropdownArray,
+        ];
+        let Product = [
+          {
+            headerName: "Actions",
+            field: "sortorder",
+            field: "transactions",
+            width: 190,
+            cellRendererFramework: (params) => {
+              return (
+                <div className="actions cursor-pointer">
+                  <Route
+                    render={({ history }) => (
+                      <Eye
+                        className="mr-50"
+                        size="25px"
+                        color="green"
+                        onClick={() => {
+                          this.handleChangeEdit(params.data, "readonly");
+                        }}
+                      />
+                    )}
+                  />
+                  <Route
+                    render={({ history }) => (
+                      <Edit
+                        className="mr-50"
+                        size="25px"
+                        color="blue"
+                        onClick={() => {
+                          this.handleChangeEdit(params.data, "Editable");
+                        }}
+                      />
+                    )}
+                  />
+                  <Route
+                    render={() => (
+                      <Trash2
+                        className="mr-50"
+                        size="25px"
+                        color="red"
+                        onClick={() => {
+                          this.runthisfunction(params?.data?._id);
+                        }}
+                      />
+                    )}
+                  />
+                </div>
+              );
+            },
+          },
+          {
+            headerName: "Whatsapp",
+            field: "whatsapp",
+            filter: true,
+            sortable: true,
+            cellRendererFramework: (params) => {
+              console.log(params?.data?.whatsapp);
+              return params.data?.whatsapp === true || "undefined" ? (
+                <div className="badge badge-pill badge-success">YES</div>
+              ) : params.data?.whatsapp === false ? (
+                <div className="badge badge-pill badge-warning">NO</div>
+              ) : (
+                "NA"
+              );
+            },
+          },
+          {
+            headerName: "SMS",
+            field: "sms",
+            filter: true,
+            sortable: true,
+            cellRendererFramework: (params) => {
+              console.log(params?.data?.sms);
+              return params.data?.sms === true ? (
+                <div className="badge badge-pill badge-success">YES</div>
+              ) : params.data?.sms === false ? (
+                <div className="badge badge-pill badge-warning">No</div>
+              ) : (
+                "NA"
+              );
+            },
+          },
+          {
+            headerName: "Gmail",
+            field: "gmail",
+            filter: true,
+            sortable: true,
+            cellRendererFramework: (params) => {
+              console.log(params?.data?.gmail);
+              return params.data?.gmail === true ? (
+                <div className="badge badge-pill badge-success">YES</div>
+              ) : params.data?.gmail === false ? (
+                <div className="badge badge-pill badge-warning">NO</div>
+              ) : (
+                "NA"
+              );
+            },
+          },
+          ...myHeadings,
+          {
+            headerName: "Created date",
+            field: "createdAt",
+            filter: true,
+            sortable: true,
+            cellRendererFramework: (params) => {
+              let convertedTime = "NA";
+              if (params?.data?.createdAt == undefined) {
+                convertedTime = "NA";
+              }
+              if (params?.data?.createdAt) {
+                convertedTime = params?.data?.createdAt;
+              }
+              if (
+                UserInformation?.timeZone !== undefined &&
+                params?.data?.createdAt !== undefined
+              ) {
+                if (params?.data?.createdAt != undefined) {
+                  convertedTime = moment(params?.data?.createdAt?.split(".")[0])
+                    .tz(UserInformation?.timeZone.split("-")[0])
+                    .format(UserInformation?.dateTimeFormat);
+                }
+              }
 
-  //     return (
-  //       <>
-  //         <div className="actions cursor-pointer">
-  //           {convertedTime == "NA" ? (
-  //             "NA"
-  //           ) : (
-  //             <span>
-  //               {convertedTime} &nbsp;
-  //               {UserInformation?.timeZone &&
-  //                 UserInformation?.timeZone.split("-")[1]}
-  //             </span>
-  //           )}
-  //         </div>
-  //       </>
-  //     );
-  //   },
-  // },
-  // {
-  //   headerName: "Updated date",
-  //   field: "updatedAt",
-  //   filter: true,
-  //   sortable: true,
-  //   cellRendererFramework: params => {
-  //     let convertedTime = "NA";
-  //     if (params?.data?.updatedAt == undefined) {
-  //       convertedTime = "NA";
-  //     }
-  //     if (params?.data?.updatedAt) {
-  //       convertedTime = params?.data?.updatedAt;
-  //     }
-  //     if (
-  //       UserInformation?.timeZone !== undefined &&
-  //       params?.data?.updatedAt !== undefined
-  //     ) {
-  //       if (params?.data?.updatedAt != undefined) {
-  //         convertedTime = moment(params?.data?.updatedAt?.split(".")[0])
-  //           .tz(UserInformation?.timeZone.split("-")[0])
-  //           .format(UserInformation?.dateTimeFormat);
-  //       }
-  //     }
+              return (
+                <>
+                  <div className="actions cursor-pointer">
+                    {convertedTime == "NA" ? (
+                      "NA"
+                    ) : (
+                      <span>
+                        {convertedTime} &nbsp;
+                        {UserInformation?.timeZone &&
+                          UserInformation?.timeZone.split("-")[1]}
+                      </span>
+                    )}
+                  </div>
+                </>
+              );
+            },
+          },
+          {
+            headerName: "Updated date",
+            field: "updatedAt",
+            filter: true,
+            sortable: true,
+            cellRendererFramework: (params) => {
+              let convertedTime = "NA";
+              if (params?.data?.updatedAt == undefined) {
+                convertedTime = "NA";
+              }
+              if (params?.data?.updatedAt) {
+                convertedTime = params?.data?.updatedAt;
+              }
+              if (
+                UserInformation?.timeZone !== undefined &&
+                params?.data?.updatedAt !== undefined
+              ) {
+                if (params?.data?.updatedAt != undefined) {
+                  convertedTime = moment(params?.data?.updatedAt?.split(".")[0])
+                    .tz(UserInformation?.timeZone.split("-")[0])
+                    .format(UserInformation?.dateTimeFormat);
+                }
+              }
 
-  //     return (
-  //       <>
-  //         <div className="actions cursor-pointer">
-  //           {convertedTime == "NA" ? (
-  //             "NA"
-  //           ) : (
-  //             <span>
-  //               {convertedTime} &nbsp;
-  //               {UserInformation?.timeZone &&
-  //                 UserInformation?.timeZone.split("-")[1]}
-  //             </span>
-  //           )}
-  //         </div>
-  //       </>
-  //     );
-  //   },
-  // },
-  //   ];
-  //   this.setState({ AllcolumnDefs: Product });
+              return (
+                <>
+                  <div className="actions cursor-pointer">
+                    {convertedTime == "NA" ? (
+                      "NA"
+                    ) : (
+                      <span>
+                        {convertedTime} &nbsp;
+                        {UserInformation?.timeZone &&
+                          UserInformation?.timeZone.split("-")[1]}
+                      </span>
+                    )}
+                  </div>
+                </>
+              );
+            },
+          },
+        ];
+        this.setState({ AllcolumnDefs: Product });
 
-  //   let userHeading = JSON.parse(
-  //     localStorage.getItem("UserSearchParSearch")
-  //   );
-  //   if (userHeading?.length) {
-  //     this.setState({ columnDefs: userHeading });
-  //     this.gridApi.setColumnDefs(userHeading);
-  //     this.setState({ SelectedcolumnDefs: userHeading });
-  //   } else {
-  //     this.setState({ columnDefs: Product });
-  //     this.setState({ SelectedcolumnDefs: Product });
-  //   }
-  //   this.setState({ SelectedCols: Product });
-  // })
-  // .catch(err => {
-  //   console.log(err);
-  // swal("Error", "something went wrong try again");
-  // });
-  // await SparePart_List()
-  //   .then(res => {
-  //     console.log(res.Parts);
-  //     // this.setState({ rowData: res?.Parts });
-  //   })
-  //   .catch(err => {
-  //     console.log(err);
-  //   });
-  // }
-  // toggleDropdown = () => {
-  //   this.setState(prevState => ({ isOpen: !prevState.isOpen }));
-  // };
+        let userHeading = JSON.parse(
+          localStorage.getItem("UserSearchParSearch")
+        );
+        if (userHeading?.length) {
+          this.setState({ columnDefs: userHeading });
+          this.gridApi.setColumnDefs(userHeading);
+          this.setState({ SelectedcolumnDefs: userHeading });
+        } else {
+          this.setState({ columnDefs: Product });
+          this.setState({ SelectedcolumnDefs: Product });
+        }
+        this.setState({ SelectedCols: Product });
+      })
+      .catch((err) => {
+        console.log(err);
+        swal("Error", "something went wrong try again");
+      });
+    await SparePart_List()
+      .then((res) => {
+        console.log(res.Parts);
+        // this.setState({ rowData: res?.Parts });
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }
+  toggleDropdown = () => {
+    this.setState((prevState) => ({ isOpen: !prevState.isOpen }));
+  };
 
-  // runthisfunction(id) {
-  //   swal("Warning", "Sure You Want to Delete it", {
-  //     buttons: {
-  //       cancel: "cancel",
-  //       catch: { text: "Delete ", value: "delete" },
-  //     },
-  //   }).then(value => {
-  //     switch (value) {
-  //       case "delete":
-  //         DeleteAccount(id)
-  //           .then(res => {
-  //             let selectedData = this.gridApi.getSelectedRows();
-  //             this.gridApi.updateRowData({ remove: selectedData });
-  //           })
-  //           .catch(err => {
-  //             console.log(err);
-  //           });
-  //         break;
-  //       default:
-  //     }
-  //   });
-  // }
+  runthisfunction(id) {
+    swal("Warning", "Sure You Want to Delete it", {
+      buttons: {
+        cancel: "cancel",
+        catch: { text: "Delete ", value: "delete" },
+      },
+    }).then((value) => {
+      switch (value) {
+        case "delete":
+          DeleteAccount(id)
+            .then((res) => {
+              let selectedData = this.gridApi.getSelectedRows();
+              this.gridApi.updateRowData({ remove: selectedData });
+            })
+            .catch((err) => {
+              console.log(err);
+            });
+          break;
+        default:
+      }
+    });
+  }
 
-  // onGridReady = params => {
-  //   this.gridApi = params.api;
-  //   this.gridColumnApi = params.columnApi;
-  //   this.gridRef.current = params.api;
+  onGridReady = (params) => {
+    this.gridApi = params.api;
+    this.gridColumnApi = params.columnApi;
+    this.gridRef.current = params.api;
 
-  //   this.setState({
-  //     currenPageSize: this.gridApi.paginationGetCurrentPage() + 1,
-  //     getPageSize: this.gridApi.paginationGetPageSize(),
-  //     totalPages: this.gridApi.paginationGetTotalPages(),
-  //   });
-  // };
+    this.setState({
+      currenPageSize: this.gridApi.paginationGetCurrentPage() + 1,
+      getPageSize: this.gridApi.paginationGetPageSize(),
+      totalPages: this.gridApi.paginationGetTotalPages(),
+    });
+  };
 
-  // updateSearchQuery = val => {
-  //   this.gridApi.setQuickFilter(val);
-  // };
+  updateSearchQuery = (val) => {
+    this.gridApi.setQuickFilter(val);
+  };
 
-  // filterSize = val => {
-  //   if (this.gridApi) {
-  //     this.gridApi.paginationSetPageSize(Number(val));
-  //     this.setState({
-  //       currenPageSize: val,
-  //       getPageSize: val,
-  //     });
-  //   }
-  // };
-  // handleChangeHeader = (e, value, index) => {
-  //   let check = e.target.checked;
-  //   if (check) {
-  //     SelectedColums?.push(value);
-  //   } else {
-  //     const delindex = SelectedColums?.findIndex(
-  //       ele => ele?.headerName === value?.headerName
-  //     );
+  filterSize = (val) => {
+    if (this.gridApi) {
+      this.gridApi.paginationSetPageSize(Number(val));
+      this.setState({
+        currenPageSize: val,
+        getPageSize: val,
+      });
+    }
+  };
+  handleChangeHeader = (e, value, index) => {
+    let check = e.target.checked;
+    if (check) {
+      SelectedColums?.push(value);
+    } else {
+      const delindex = SelectedColums?.findIndex(
+        (ele) => ele?.headerName === value?.headerName
+      );
 
-  //     SelectedColums?.splice(delindex, 1);
-  //   }
-  // };
-  // parseCsv(csvData) {
-  //   return new Promise((resolve, reject) => {
-  //     Papa.parse(csvData, {
-  //       header: true,
-  //       skipEmptyLines: true,
-  //       complete: result => {
-  //         if (result.data && result.data.length > 0) {
-  //           resolve(result.data);
-  //         } else {
-  //           reject(new Error("No data found in the CSV"));
-  //         }
-  //       },
-  //       error: error => {
-  //         reject(error);
-  //       },
-  //     });
-  //   });
-  // }
-  // generatePDF(parsedData) {
-  //   let pdfsize = [Object.keys(parsedData[0])][0].length;
-  //   let size = pdfsize > 15 ? "a1" : pdfsize < 14 > 10 ? "a3" : "a4";
+      SelectedColums?.splice(delindex, 1);
+    }
+  };
+  parseCsv(csvData) {
+    return new Promise((resolve, reject) => {
+      Papa.parse(csvData, {
+        header: true,
+        skipEmptyLines: true,
+        complete: (result) => {
+          if (result.data && result.data.length > 0) {
+            resolve(result.data);
+          } else {
+            reject(new Error("No data found in the CSV"));
+          }
+        },
+        error: (error) => {
+          reject(error);
+        },
+      });
+    });
+  }
+  generatePDF(parsedData) {
+    let pdfsize = [Object.keys(parsedData[0])][0].length;
+    let size = pdfsize > 15 ? "a1" : pdfsize < 14 > 10 ? "a3" : "a4";
 
-  //   const doc = new jsPDF("landscape", "mm", size, false);
-  //   doc.setTextColor(5, 87, 97);
-  //   const tableData = parsedData.map(row => Object.values(row));
-  //   doc.addImage(Logo, "JPEG", 10, 10, 50, 30);
-  //   let date = new Date();
-  //   doc.setCreationDate(date);
-  //   doc.text("UserAccount", 14, 51);
-  //   doc.autoTable({
-  //     head: [Object.keys(parsedData[0])],
-  //     body: tableData,
-  //     startY: 60,
-  //   });
+    const doc = new jsPDF("landscape", "mm", size, false);
+    doc.setTextColor(5, 87, 97);
+    const tableData = parsedData.map((row) => Object.values(row));
+    doc.addImage(Logo, "JPEG", 10, 10, 50, 30);
+    let date = new Date();
+    doc.setCreationDate(date);
+    doc.text("UserAccount", 14, 51);
+    doc.autoTable({
+      head: [Object.keys(parsedData[0])],
+      body: tableData,
+      startY: 60,
+    });
 
-  //   doc.save("UserList.pdf");
-  // }
+    doc.save("UserList.pdf");
+  }
 
-  // exportToPDF = async () => {
-  //   const csvData = this.gridApi.getDataAsCsv({
-  //     processCellCallback: this.processCell,
-  //   });
-  //   try {
-  //     const parsedData = await this.parseCsv(csvData);
-  //     this.generatePDF(parsedData);
-  //   } catch (error) {
-  //     console.error("Error parsing CSV:", error);
-  //   }
-  // };
-  // processCell = params => {
-  //   console.log(params);
-  //   Customize cell content as needed
-  //   return params.value;
-  // };
+  exportToPDF = async () => {
+    const csvData = this.gridApi.getDataAsCsv({
+      processCellCallback: this.processCell,
+    });
+    try {
+      const parsedData = await this.parseCsv(csvData);
+      this.generatePDF(parsedData);
+    } catch (error) {
+      console.error("Error parsing CSV:", error);
+    }
+  };
+  processCell = (params) => {
+    console.log(params);
+    // Customize cell content as needed
+    return params.value;
+  };
 
-  // convertCsvToExcel(csvData) {
-  //   return new Promise(resolve => {
-  //     Papa.parse(csvData, {
-  //       header: true,
-  //       dynamicTyping: true,
-  //       skipEmptyLines: true,
-  //       complete: function (result) {
-  //         const worksheet = XLSX.utils.json_to_sheet(result.data);
-  //         const workbook = XLSX.utils.book_new();
-  //         XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
-  //         const excelBuffer = XLSX.write(workbook, {
-  //           bookType: "xlsx",
-  //           type: "array",
-  //         });
-  //         const blob = new Blob([excelBuffer], {
-  //           type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-  //         });
-  //         resolve(blob);
-  //       },
-  //     });
-  //   });
-  // }
-  // downloadExcelFile(blob) {
-  //   const url = window.URL.createObjectURL(blob);
-  //   const a = document.createElement("a");
-  //   a.href = url;
-  //   a.download = "Userlist.xlsx";
-  //   document.body.appendChild(a);
-  //   a.click();
-  //   window.URL.revokeObjectURL(url);
-  // }
+  convertCsvToExcel(csvData) {
+    return new Promise((resolve) => {
+      Papa.parse(csvData, {
+        header: true,
+        dynamicTyping: true,
+        skipEmptyLines: true,
+        complete: function (result) {
+          const worksheet = XLSX.utils.json_to_sheet(result.data);
+          const workbook = XLSX.utils.book_new();
+          XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
+          const excelBuffer = XLSX.write(workbook, {
+            bookType: "xlsx",
+            type: "array",
+          });
+          const blob = new Blob([excelBuffer], {
+            type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+          });
+          resolve(blob);
+        },
+      });
+    });
+  }
+  downloadExcelFile(blob) {
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "Userlist.xlsx";
+    document.body.appendChild(a);
+    a.click();
+    window.URL.revokeObjectURL(url);
+  }
 
-  // exportToExcel = async e => {
-  //   const CsvData = this.gridApi.getDataAsCsv({
-  //     processCellCallback: this.processCell,
-  //   });
-  //   const blob = await this.convertCsvToExcel(CsvData);
-  //   this.downloadExcelFile(blob);
-  // };
+  exportToExcel = async (e) => {
+    const CsvData = this.gridApi.getDataAsCsv({
+      processCellCallback: this.processCell,
+    });
+    const blob = await this.convertCsvToExcel(CsvData);
+    this.downloadExcelFile(blob);
+  };
 
-  // convertCSVtoExcel = () => {
-  //   const CsvData = this.gridApi.getDataAsCsv({
-  //     processCellCallback: this.processCell,
-  //   });
-  //   Papa.parse(CsvData, {
-  //     complete: result => {
-  //       const ws = XLSX.utils.json_to_sheet(result.data);
-  //       const wb = XLSX.utils.book_new();
-  //       XLSX.utils.book_append_sheet(wb, ws, "Sheet1");
-  //       const excelType = "xls";
-  //       XLSX.writeFile(wb, `UserList.${excelType}`);
-  //     },
-  //   });
-  // };
+  convertCSVtoExcel = () => {
+    const CsvData = this.gridApi.getDataAsCsv({
+      processCellCallback: this.processCell,
+    });
+    Papa.parse(CsvData, {
+      complete: (result) => {
+        const ws = XLSX.utils.json_to_sheet(result.data);
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, "Sheet1");
+        const excelType = "xls";
+        XLSX.writeFile(wb, `UserList.${excelType}`);
+      },
+    });
+  };
 
-  // shiftElementUp = () => {
-  //   let currentIndex = this.state.Arrindex;
-  //   if (currentIndex > 0) {
-  //     const myArrayCopy = [...this.state.SelectedcolumnDefs];
-  //     const elementToMove = myArrayCopy.splice(currentIndex, 1)[0];
-  //     this.setState({ Arrindex: currentIndex - 1 });
-  //     myArrayCopy.splice(currentIndex - 1, 0, elementToMove);
-  //     this.setState({ SelectedcolumnDefs: myArrayCopy });
-  //   }
-  // };
+  shiftElementUp = () => {
+    let currentIndex = this.state.Arrindex;
+    if (currentIndex > 0) {
+      const myArrayCopy = [...this.state.SelectedcolumnDefs];
+      const elementToMove = myArrayCopy.splice(currentIndex, 1)[0];
+      this.setState({ Arrindex: currentIndex - 1 });
+      myArrayCopy.splice(currentIndex - 1, 0, elementToMove);
+      this.setState({ SelectedcolumnDefs: myArrayCopy });
+    }
+  };
 
-  // shiftElementDown = () => {
-  //   let currentIndex = this.state.Arrindex;
-  //   if (currentIndex < this.state.SelectedcolumnDefs.length - 1) {
-  //     const myArrayCopy = [...this.state.SelectedcolumnDefs];
-  //     const elementToMove = myArrayCopy.splice(currentIndex, 1)[0];
-  //     this.setState({ Arrindex: currentIndex + 1 });
-  //     myArrayCopy.splice(currentIndex + 1, 0, elementToMove);
-  //     this.setState({ SelectedcolumnDefs: myArrayCopy });
-  //   }
-  // };
-  // convertCsvToXml = () => {
-  //   const CsvData = this.gridApi.getDataAsCsv({
-  //     processCellCallback: this.processCell,
-  //   });
-  //   Papa.parse(CsvData, {
-  //     complete: result => {
-  //       const rows = result.data;
+  shiftElementDown = () => {
+    let currentIndex = this.state.Arrindex;
+    if (currentIndex < this.state.SelectedcolumnDefs.length - 1) {
+      const myArrayCopy = [...this.state.SelectedcolumnDefs];
+      const elementToMove = myArrayCopy.splice(currentIndex, 1)[0];
+      this.setState({ Arrindex: currentIndex + 1 });
+      myArrayCopy.splice(currentIndex + 1, 0, elementToMove);
+      this.setState({ SelectedcolumnDefs: myArrayCopy });
+    }
+  };
+  convertCsvToXml = () => {
+    const CsvData = this.gridApi.getDataAsCsv({
+      processCellCallback: this.processCell,
+    });
+    Papa.parse(CsvData, {
+      complete: (result) => {
+        const rows = result.data;
 
-  //       let xmlString = "<root>\n";
+        let xmlString = "<root>\n";
 
-  //       rows.forEach(row => {
-  //         xmlString += "  <row>\n";
-  //         row.forEach((cell, index) => {
-  //           xmlString += `    <field${index + 1}>${cell}</field${index + 1}>\n`;
-  //         });
-  //         xmlString += "  </row>\n";
-  //       });
+        rows.forEach((row) => {
+          xmlString += "  <row>\n";
+          row.forEach((cell, index) => {
+            xmlString += `    <field${index + 1}>${cell}</field${index + 1}>\n`;
+          });
+          xmlString += "  </row>\n";
+        });
 
-  //       xmlString += "</root>";
+        xmlString += "</root>";
 
-  // setXmlData(xmlString);
+        setXmlData(xmlString);
 
-  // Create a download link
-  //       const blob = new Blob([xmlString], { type: "text/xml" });
-  //       const link = document.createElement("a");
-  //       link.href = URL.createObjectURL(blob);
-  //       link.download = "output.xml";
-  //       link.click();
-  //     },
-  //   });
-  // };
+        // Create a download link
+        const blob = new Blob([xmlString], { type: "text/xml" });
+        const link = document.createElement("a");
+        link.href = URL.createObjectURL(blob);
+        link.download = "output.xml";
+        link.click();
+      },
+    });
+  };
 
-  // HandleSetVisibleField = e => {
-  //   e.preventDefault();
-  //   this.gridApi.setColumnDefs(this.state.SelectedcolumnDefs);
-  //   this.setState({ columnDefs: this.state.SelectedcolumnDefs });
-  //   this.setState({ SelectedcolumnDefs: this.state.SelectedcolumnDefs });
-  //   this.setState({ rowData: this.state.rowData });
-  //   localStorage.setItem(
-  //     "UserSearchParSearch",
-  //     JSON.stringify(this.state.SelectedcolumnDefs)
-  //   );
-  //   this.LookupviewStart();
-  // };
+  HandleSetVisibleField = (e) => {
+    e.preventDefault();
+    this.gridApi.setColumnDefs(this.state.SelectedcolumnDefs);
+    this.setState({ columnDefs: this.state.SelectedcolumnDefs });
+    this.setState({ SelectedcolumnDefs: this.state.SelectedcolumnDefs });
+    this.setState({ rowData: this.state.rowData });
+    localStorage.setItem(
+      "UserSearchParSearch",
+      JSON.stringify(this.state.SelectedcolumnDefs)
+    );
+    this.LookupviewStart();
+  };
 
-  // HeadingRightShift = () => {
-  //   const updatedSelectedColumnDefs = [
-  //     ...new Set([
-  //       ...this.state.SelectedcolumnDefs.map(item => JSON.stringify(item)),
-  //       ...SelectedColums.map(item => JSON.stringify(item)),
-  //     ]),
-  //   ].map(item => JSON.parse(item));
-  //   this.setState({
-  //     SelectedcolumnDefs: [...new Set(updatedSelectedColumnDefs)], // Update the state with the combined array
-  //   });
-  // };
-  // handleLeftShift = () => {
-  //   let SelectedCols = this.state.SelectedcolumnDefs.slice();
-  //   let delindex = this.state.Arrindex; /* Your delete index here */
+  HeadingRightShift = () => {
+    const updatedSelectedColumnDefs = [
+      ...new Set([
+        ...this.state.SelectedcolumnDefs.map((item) => JSON.stringify(item)),
+        ...SelectedColums.map((item) => JSON.stringify(item)),
+      ]),
+    ].map((item) => JSON.parse(item));
+    this.setState({
+      SelectedcolumnDefs: [...new Set(updatedSelectedColumnDefs)], // Update the state with the combined array
+    });
+  };
+  handleLeftShift = () => {
+    let SelectedCols = this.state.SelectedcolumnDefs.slice();
+    let delindex = this.state.Arrindex; /* Your delete index here */
 
-  //   if (SelectedCols && delindex >= 0) {
-  //     SelectedCols.splice(delindex, 1); // Remove the element
-  //     this.setState({
-  //       SelectedcolumnDefs: SelectedCols, // Update the state with the modified array
-  //     });
-  //   }
-  // };
+    if (SelectedCols && delindex >= 0) {
+      SelectedCols.splice(delindex, 1); // Remove the element
+      this.setState({
+        SelectedcolumnDefs: SelectedCols, // Update the state with the modified array
+      });
+    }
+  };
   toggleModal = () => {
     this.setState((prevState) => ({
       modalone: !prevState.modalone,
@@ -864,29 +879,32 @@ class Cashbook extends React.Component {
     const InsidePermissions = CheckPermission("Cashbook");
     console.log(InsidePermissions);
     this.setState({ InsiderPermissions: InsidePermissions });
+     this.setState({ AllcolumnDefs: this.state.columnDefs });
+     this.setState({ SelectedCols: this.state.columnDefs });
+
+     let userHeading = JSON.parse(localStorage.getItem("CashbookListView"));
+     if (userHeading?.length) {
+       this.setState({ columnDefs: userHeading });
+       this.gridApi.setColumnDefs(userHeading);
+       this.setState({ SelectedcolumnDefs: userHeading });
+     } else {
+       this.setState({ columnDefs: this.state.columnDefs });
+       this.setState({ SelectedcolumnDefs: this.state.columnDefs });
+     }
     await Cashbook_List(userId)
       .then((res) => {
+        console.log(res?.Orders);
+      
         let myarr = res?.Orders?.filter(
           (ele, i) =>
             ele?.cashBookType == "CashOrder" || ele?.paymentMode == "Cash"
         );
-        debugger;
-        console.log(myarr);
+       
+        // console.log(myarr);
         if (myarr?.length) {
           this.setState({ rowData: myarr });
         }
-        this.setState({ AllcolumnDefs: this.state.columnDefs });
-        this.setState({ SelectedCols: this.state.columnDefs });
-
-        let userHeading = JSON.parse(localStorage.getItem("OrderListshow"));
-        if (userHeading?.length) {
-          this.setState({ columnDefs: userHeading });
-          this.gridApi.setColumnDefs(userHeading);
-          this.setState({ SelectedcolumnDefs: userHeading });
-        } else {
-          this.setState({ columnDefs: this.state.columnDefs });
-          this.setState({ SelectedcolumnDefs: this.state.columnDefs });
-        }
+       
       })
       .catch((err) => {
         console.log(err);
@@ -1132,7 +1150,7 @@ class Cashbook extends React.Component {
     this.setState({ SelectedcolumnDefs: this.state.SelectedcolumnDefs });
     this.setState({ rowData: this.state.rowData });
     localStorage.setItem(
-      "OrderListshow",
+      "CashbookListView",
       JSON.stringify(this.state.SelectedcolumnDefs)
     );
     this.LookupviewStart();
@@ -1697,16 +1715,12 @@ class Cashbook extends React.Component {
                           <>
                             <tr>
                               <th scope="row">{i + 1}</th>
-                              <td>{ele?.product?.Product_Title}</td>
-                              <td>{ele?.product?.Product_MRP}</td>
-                              <td>{ele?.product?.Size}</td>
-                              <td>{ele?.unitQty}</td>
+                              <td>{ele?.productId?.Product_Title}</td>
+                              <td>{ele?.price}</td>
+                              <td>{ele?.Size}</td>
+                              <td>{ele?.unitType}</td>
                               <td>{ele?.qty}</td>
-                              <td>
-                                {ele?.product?.Product_MRP *
-                                  ele?.product?.Size *
-                                  ele?.qty}
-                              </td>
+                              <td>{ele?.price * ele?.Size * ele?.qty}</td>
                             </tr>
                           </>
                         ))}

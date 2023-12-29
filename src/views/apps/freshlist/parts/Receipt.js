@@ -1769,16 +1769,12 @@ class Receipt extends React.Component {
                           <>
                             <tr>
                               <th scope="row">{i + 1}</th>
-                              <td>{ele?.product?.Product_Title}</td>
-                              <td>{ele?.product?.Product_MRP}</td>
-                              <td>{ele?.product?.Size}</td>
-                              <td>{ele?.unitQty}</td>
+                              <td>{ele?.productId?.Product_Title}</td>
+                              <td>{ele?.price}</td>
+                              <td>{ele?.Size}</td>
+                              <td>{ele?.unitType}</td>
                               <td>{ele?.qty}</td>
-                              <td>
-                                {ele?.product?.Product_MRP *
-                                  ele?.product?.Size *
-                                  ele?.qty}
-                              </td>
+                              <td>{ele?.price * ele?.Size * ele?.qty}</td>
                             </tr>
                           </>
                         ))}

@@ -15,7 +15,7 @@ import {
   Badge,
 } from "reactstrap";
 import { Modal, ModalHeader, ModalBody, ModalFooter } from "reactstrap";
-
+import { Routes, Route, useParams } from "react-router-dom";
 import Multiselect from "multiselect-react-dropdown";
 
 import "../../../../assets/scss/pages/users.scss";
@@ -26,16 +26,19 @@ import {
   Warehouse_Temporarlylist,
   _Post,
   _PostSave,
+  _Get,
 } from "../../../../ApiEndPoint/ApiCalling";
 import "../../../../assets/scss/pages/users.scss";
-import { Route } from "react-router-dom";
-import { Save_Producton_Process } from "../../../../ApiEndPoint/Api";
+import {
+  Save_Producton_Process,
+  ViewOne_Production,
+} from "../../../../ApiEndPoint/Api";
 import swal from "sweetalert";
 
 let GrandTotal = [];
 let SelectedITems = [];
 let SelectedSize = [];
-const ProductionProcess = (args) => {
+const EditProductionProcess = (args) => {
   const [formData, setFormData] = useState({});
   const [ExtraCharges, setExtraCharges] = useState({
     Other_Expenses: 100,
@@ -45,36 +48,20 @@ const ProductionProcess = (args) => {
   });
 
   const [Index, setIndex] = useState("");
-  const [StockTrxdate, setStockTrxDate] = useState("");
-  const [targetEndDate, settargetEndDate] = useState("");
   const [index, setindex] = useState("");
-  const [AddExtraCharges, setAddExtraCharges] = useState(false);
-  const [error, setError] = useState("");
+  const [Loader, setLoader] = useState(false);
   const [ProductList, setProductList] = useState([]);
   const [ProductWTWList, setProductWTWList] = useState([]);
-  const [PartyList, setPartyList] = useState([]);
-  const [Salesperson, setSalesperson] = useState("");
   const [ProductinProduct, setProductionProduct] = useState({});
   const [WareHousetwo, setWareHousetwo] = useState([]);
-  const [TypeOfTrx, setTypeOfTrx] = useState("");
   const [grandTotalAmt, setGrandTotalAmt] = useState(0);
-  const [UnitList, setUnitList] = useState([]);
   const [UserInfo, setUserInfo] = useState({});
-  const [modal, setModal] = useState(false);
-  const [items, setItems] = useState("");
-  const [audit, setAudit] = useState(false);
-  const [WareHouselist, setWarehouseList] = useState([]);
+  const [MainProduct, setMainProduct] = useState({});
 
   const [modalOne, setModalOne] = useState(false);
   const toggleOne = () => setModalOne(!modalOne);
-  // const toggle = (item) => {
-  //   setItems(item);
-  //   setModal(!modal);
-  // };
+  let { id } = useParams();
 
-  // const handleopentoggle = (iteam) => {
-  //   // toggle(iteam);
-  // };
   const handleExtraCharge = (e) => {
     let { name, value } = e.target;
     setExtraCharges({
@@ -193,7 +180,6 @@ const ProductionProcess = (args) => {
     setProduct(list);
     setGrandTotalAmt(amt.toFixed(2));
   };
-  console.log(ExtraCharges);
   const handleRemoveSelected = (selectedList, selectedItem, index) => {
     // console.log(selectedList);
     // console.log(selectedItem); // removed item
@@ -225,7 +211,6 @@ const ProductionProcess = (args) => {
     setGrandTotalAmt(amt);
   };
   const handleSelection = (selectedList, selectedItem, index) => {
-    // product[index]["AvailaleQty"] = myproduct?.Size;
     SelectedITems.push(selectedItem);
     setProduct((prevProductList) => {
       const updatedProductList = [...prevProductList]; // Create a copy of the productList array
@@ -234,7 +219,6 @@ const ProductionProcess = (args) => {
       updatedProduct.productId = selectedItem?.productId?._id;
       updatedProduct.AvailaleQty = selectedItem?.Size;
       updatedProductList[index] = updatedProduct; // Replace the product at the specified index with the updated one
-
       return updatedProductList; // Return the updated product list to set the state
     });
   };
@@ -277,101 +261,59 @@ const ProductionProcess = (args) => {
     });
     // onSelect1(selectedList, selectedItem, index);
   };
-  const handleInputChange = (e, type, i) => {
-    const { name, value, checked } = e.target;
-    setindex(i);
-    if (type == "checkbox") {
-      if (checked) {
-        setFormData({
-          ...formData,
-          [name]: checked,
-        });
-      } else {
-        setFormData({
-          ...formData,
-          [name]: checked,
-        });
-      }
-    } else {
-      if (type == "number") {
-        if (/^\d{0,10}$/.test(value)) {
-          setFormData({
-            ...formData,
-            [name]: value,
-          });
-          setError("");
-        } else {
-          setError(
-            "Please enter a valid number with a maximum length of 10 digits"
-          );
-        }
-      } else {
-        if (value.length <= 10) {
-          setFormData({
-            ...formData,
-            [name]: value,
-          });
-          setError("");
-        } else {
-          setFormData({
-            ...formData,
-            [name]: value,
-          });
-        }
-      }
-    }
-  };
-  // handleInputChange;
-  // useEffect(() => {
-  //   console.log(window);
-  //   console.log(product);
-  //   console.log(GrandTotal);
-  //   console.log(Salesperson);
-  //   console.log(StockTrxdate);
-  //   console.log(targetEndDate);
-  // }, [product, targetEndDate]);
 
   useEffect(() => {
-    let userData = JSON.parse(localStorage.getItem("userData"));
-    Warehouse_Temporarlylist(userData?._id)
-      .then((res) => {
-        console.log(res?.adminDetails);
-        // let myWarehouse = res?.adminDetails?.filter((ele, i) =>
-        //   ele?.rolename?.roleName
-        //     ?.split(" ")
-        //     .join("")
-        //     .toLowerCase()
-        //     .includes("warehouse")
-        // );
-
-        setWarehouseList(res?.adminDetails);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-
-    // CreateWarehouseList(userData._id)
-    //   .then((res) => {
-    //     console.log(res?.Warehouse);
-    //     setWarehouseList(res?.Warehouse);
-    //   })
-    //   .catch((err) => {
-    //     console.log(err);
-    //   });
-    UnitListView(userData?._id, userData?.database)
-      .then((res) => {
-        console.log(res?.Unit);
-        setUnitList(res?.Unit);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
     let userdata = JSON.parse(localStorage.getItem("userData"));
-
-    ProductListView(userdata?._id, userdata?.database)
+    let URl = ViewOne_Production;
+    setLoader(true);
+    _Get(URl, id)
       .then((res) => {
-        console.log(res.Product);
-        setProductList(res?.Product);
+        ProductListView(userdata?._id, userdata?.database)
+          .then((Response) => {
+            console.log(Response?.Product);
+            setProductList(Response?.Product);
+            let MainProduct_id = res?.Production?.product_name?._id;
+            let SeletedMainProduct = Response?.Product?.filter(
+              (ele) => ele?._id == MainProduct_id
+            );
+            let selectRawProduct = res.Production?.productItems?.map(
+              (ele, i) => {
+                return {
+                  productId: ele?.productId?._id,
+                  selecetedUnit: ele?.unitType,
+                  AvailaleQty: null,
+                  //   transferQty: 1,
+                  RequiredQty: ele?.qty,
+                  price: ele?.price,
+                  unitType: ele?.unitType,
+                  discount: ele?.productId?.discount,
+                };
+              }
+            );
+            let amt = 0;
+            if (res.Production?.productItems.length > 0) {
+              const x = res.Production?.productItems?.map((val) => {
+                GrandTotal[index] = val.price * val.qty;
+                return val?.price * val?.qty;
+              });
+              amt = x.reduce((a, b) => a + b);
+              console.log("GrandTotal", amt);
+            }
+            setGrandTotalAmt(amt.toFixed(2));
+            setProduct(selectRawProduct);
+            setMainProduct(SeletedMainProduct);
+            setLoader(false);
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+
+        setExtraCharges({
+          Other_Expenses: res?.Production?.miscellaneousExpennses,
+          GSTApplied: res?.Production?.gstApplied,
+          Other_charges: res?.Production?.otherCharges,
+          discount: res?.Production?.discount,
+        });
       })
       .catch((err) => {
         console.log(err);
@@ -379,7 +321,7 @@ const ProductionProcess = (args) => {
   }, []);
   useEffect(() => {
     const userInfo = JSON.parse(localStorage.getItem("userData"));
-    console.log(userInfo);
+    // console.log(userInfo);
     setUserInfo(userInfo);
   }, []);
 
@@ -548,13 +490,32 @@ const ProductionProcess = (args) => {
     console.log(selectedList);
     console.log(index);
   };
+  if (Loader) {
+    return (
+      <>
+        <Card>
+          <CardBody>
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                height: window?.innerHeight,
+              }}>
+              <h3>Loading...</h3>
+            </div>
+          </CardBody>
+        </Card>
+      </>
+    );
+  }
   return (
     <div>
       <Card>
         <Row className="m-2">
           <Col lg="8" md="8" sm="8" className="mb-2 mt-1">
             <div>
-              <h1 className="">Start Production Process</h1>
+              <h1 className="">Edit Production Process</h1>
             </div>
           </Col>
           <Col>
@@ -584,176 +545,187 @@ const ProductionProcess = (args) => {
 
                   <Multiselect
                     required
+                    disablePreSelectedValues
                     selectionLimit={1}
                     // showCheckbox="true"
                     isObject="false"
-                    options={ProductList} // Options to display in the dropdown
-                    // selectedValues={selectedValue}   // Preselected value to persist in dropdown
-                    onSelect={onSelect1} // Function will trigger on select event
-                    onRemove={onRemove1} // Function will trigger on remove event
+                    // options={ProductList} // Options to display in the dropdown
+                    selectedValues={MainProduct} // Preselected value to persist in dropdown
+                    // onSelect={onSelect1} // Function will trigger on select event
+                    // onRemove={onRemove1} // Function will trigger on remove event
                     displayValue="Product_Title" // Property name to display in the dropdown options
                   />
                 </div>
               </Col>
             </Row>
             {product &&
-              product?.map((product, index) => (
-                <Row className="" key={index}>
-                  <Col className="mb-1" lg="2" md="2" sm="12">
-                    <div className="">
-                      <Label>Choose item *</Label>
-                      <Multiselect
-                        required
-                        selectionLimit={1}
-                        // showCheckbox="true"
-                        isObject="false"
-                        options={ProductList}
-                        // selectedValues={selectedValue}   // Preselected value to persist in dropdown
-                        onSelect={(selectedList, selectedItem) =>
-                          handleSelectionProduct(
-                            selectedList,
-                            selectedItem,
-                            index
-                          )
-                        }
-                        onRemove={(selectedList, selectedItem) => {
-                          handleRemoveSelected(
-                            selectedList,
-                            selectedItem,
-                            index
-                          );
-                        }}
-                        displayValue="Product_Title" // Property name to display in the dropdown options
-                      />
-                    </div>
-                  </Col>
-                  <Col className="mb-1" lg="1" md="1" sm="12">
-                    <div className="">
-                      <label for="unit">Select Unit</label>
-                      <select
-                        required
-                        className="form-control"
-                        name="selecetedUnit"
-                        placeholder="selecetedUnit"
-                        value={product?.selecetedUnit}
-                        onChange={(e) =>
-                          handleProductChangeProductTwo(e, index)
-                        }
-                        id="unit">
-                        <option value="">--select Unit--</option>
-                        <option value="kg">Kilogram (kg)</option>
-                        <option value="Pcs">Pieces (Pcs)</option>
-                        <option value="g">Gram (g)</option>
-                        <option value="tonne">Metric Ton (tonne)</option>
-                        <option value="m">Meter (m)</option>
-                        <option value="cm">Centimeter (cm)</option>
-                        <option value="mm">Millimeter (mm)</option>
-                        <option value="in">Inch (in)</option>
-                        <option value="ft">Foot (ft)</option>
-                        <option value="m3">Cubic Meter (m³)</option>
-                        <option value="L">Liter (L)</option>
-                        <option value="ml">Milliliter (ml)</option>
-                        <option value="s">Second (s)</option>
-                        <option value="min">Minute (min)</option>
-                        <option value="hr">Hour (hr)</option>
-                        <option value="°C">Celsius (°C)</option>
-                        <option value="°F">Fahrenheit (°F)</option>
-                        <option value="Pa">Pascal (Pa)</option>
-                        <option value="bar">Bar (bar)</option>
-                        <option value="m/s">Meters per Second (m/s)</option>
-                        <option value="km/h">Kilometers per Hour (km/h)</option>
-                        <option value="A">Ampere (A)</option>
-                        <option value="V">Volt (V)</option>
-                        <option value="W">Watt (W)</option>
-                        <option value="kW">Kilowatt (kW)</option>
-                      </select>
-                    </div>
-                  </Col>
-                  <Col className="mb-1" lg="1" md="1" sm="12">
-                    <div className="">
-                      <Label>
-                        Price{product?.unitType && product?.unitType}
-                      </Label>
-                      <Input
-                        type="number"
-                        name="price"
-                        readOnly
-                        aria-readonly
-                        onChange={(e) =>
-                          handleProductChangeProductone(e, index)
-                        }
-                        placeholder="Price"
-                        value={product.price}
-                      />
-                    </div>
-                  </Col>
-                  <Col className="mb-1" lg="1" md="1" sm="12">
-                    <div className="">
-                      <Label>Req_Qty</Label>
-                      <Input
-                        type="number"
-                        min={0}
-                        step="any"
-                        name="RequiredQty"
-                        placeholder="Req_Qty"
-                        value={product?.RequiredQty}
-                        onChange={(e) =>
-                          handleProductChangeProductone(e, index)
-                        }
-                      />
-                    </div>
-                  </Col>
+              product?.map((product, index) => {
+                let SeletedMainProduct = ProductList?.filter(
+                  (ele) => ele?._id == product?.productId
+                );
 
-                  <Col className="mb-1" lg="1" md="1" sm="12">
-                    <div className="">
-                      <Label>Discount</Label>
-                      <Input
-                        type="number"
-                        name="discount"
-                        readOnly
-                        placeholder="Discount"
-                        value={product.discount}
-                      />
-                    </div>
-                  </Col>
-                  <Col className="mb-1" lg="2" md="2" sm="12">
-                    <div className="">
-                      <Label>Total Price</Label>
-                      <Input
-                        type="number"
-                        name="totalprice"
-                        readOnly
-                        placeholder="TtlPrice"
-                        value={product?.price * product?.RequiredQty}
-                      />
-                    </div>
-                  </Col>
+                return (
+                  <>
+                    <Row className="" key={index}>
+                      <Col className="mb-1" lg="2" md="2" sm="12">
+                        <div className="">
+                          <Label>Choose item *</Label>
+                          <Multiselect
+                            required
+                            selectionLimit={1}
+                            // showCheckbox="true"
+                            isObject="false"
+                            options={ProductList}
+                            selectedValues={SeletedMainProduct} // Preselected value to persist in dropdown
+                            onSelect={(selectedList, selectedItem) =>
+                              handleSelectionProduct(
+                                selectedList,
+                                selectedItem,
+                                index
+                              )
+                            }
+                            onRemove={(selectedList, selectedItem) => {
+                              handleRemoveSelected(
+                                selectedList,
+                                selectedItem,
+                                index
+                              );
+                            }}
+                            displayValue="Product_Title" // Property name to display in the dropdown options
+                          />
+                        </div>
+                      </Col>
+                      <Col className="mb-1" lg="1" md="1" sm="12">
+                        <div className="">
+                          <label for="unit">Select Unit</label>
+                          <select
+                            required
+                            className="form-control"
+                            name="selecetedUnit"
+                            placeholder="selecetedUnit"
+                            value={product?.selecetedUnit}
+                            onChange={(e) =>
+                              handleProductChangeProductTwo(e, index)
+                            }
+                            id="unit">
+                            <option value="">--select Unit--</option>
+                            <option value="kg">Kilogram (kg)</option>
+                            <option value="Pcs">Pieces (Pcs)</option>
+                            <option value="g">Gram (g)</option>
+                            <option value="tonne">Metric Ton (tonne)</option>
+                            <option value="m">Meter (m)</option>
+                            <option value="cm">Centimeter (cm)</option>
+                            <option value="mm">Millimeter (mm)</option>
+                            <option value="in">Inch (in)</option>
+                            <option value="ft">Foot (ft)</option>
+                            <option value="m3">Cubic Meter (m³)</option>
+                            <option value="L">Liter (L)</option>
+                            <option value="ml">Milliliter (ml)</option>
+                            <option value="s">Second (s)</option>
+                            <option value="min">Minute (min)</option>
+                            <option value="hr">Hour (hr)</option>
+                            <option value="°C">Celsius (°C)</option>
+                            <option value="°F">Fahrenheit (°F)</option>
+                            <option value="Pa">Pascal (Pa)</option>
+                            <option value="bar">Bar (bar)</option>
+                            <option value="m/s">Meters per Second (m/s)</option>
+                            <option value="km/h">
+                              Kilometers per Hour (km/h)
+                            </option>
+                            <option value="A">Ampere (A)</option>
+                            <option value="V">Volt (V)</option>
+                            <option value="W">Watt (W)</option>
+                            <option value="kW">Kilowatt (kW)</option>
+                          </select>
+                        </div>
+                      </Col>
+                      <Col className="mb-1" lg="1" md="1" sm="12">
+                        <div className="">
+                          <Label>
+                            Price{product?.unitType && product?.unitType}
+                          </Label>
+                          <Input
+                            type="number"
+                            name="price"
+                            readOnly
+                            aria-readonly
+                            onChange={(e) =>
+                              handleProductChangeProductone(e, index)
+                            }
+                            placeholder="Price"
+                            value={product.price}
+                          />
+                        </div>
+                      </Col>
+                      <Col className="mb-1" lg="1" md="1" sm="12">
+                        <div className="">
+                          <Label>Req_Qty</Label>
+                          <Input
+                            type="number"
+                            min={0}
+                            step="any"
+                            name="RequiredQty"
+                            placeholder="Req_Qty"
+                            value={product?.RequiredQty}
+                            onChange={(e) =>
+                              handleProductChangeProductone(e, index)
+                            }
+                          />
+                        </div>
+                      </Col>
 
-                  <Col className="d-flex mt-1 abb" lg="3" md="3" sm="12">
-                    <div className="btnStyle">
-                      {index ? (
-                        <Button
-                          type="button"
-                          color="danger"
-                          className="button remove "
-                          onClick={() => removeMoreProduct(index)}>
-                          - Remove
-                        </Button>
-                      ) : null}
-                    </div>
+                      <Col className="mb-1" lg="1" md="1" sm="12">
+                        <div className="">
+                          <Label>Discount</Label>
+                          <Input
+                            type="number"
+                            name="discount"
+                            readOnly
+                            placeholder="Discount"
+                            value={product.discount}
+                          />
+                        </div>
+                      </Col>
+                      <Col className="mb-1" lg="2" md="2" sm="12">
+                        <div className="">
+                          <Label>Total Price</Label>
+                          <Input
+                            type="number"
+                            name="totalprice"
+                            readOnly
+                            placeholder="TtlPrice"
+                            value={product?.price * product?.RequiredQty}
+                          />
+                        </div>
+                      </Col>
 
-                    <div className="btnStyle">
-                      <Button
-                        className="ml-1 mb-1"
-                        color="primary"
-                        type="button"
-                        onClick={() => addMoreProduct()}>
-                        + Add
-                      </Button>
-                    </div>
-                  </Col>
-                </Row>
-              ))}
+                      <Col className="d-flex mt-1 abb" lg="3" md="3" sm="12">
+                        <div className="btnStyle">
+                          {index ? (
+                            <Button
+                              type="button"
+                              color="danger"
+                              className="button remove "
+                              onClick={() => removeMoreProduct(index)}>
+                              - Remove
+                            </Button>
+                          ) : null}
+                        </div>
+
+                        <div className="btnStyle">
+                          <Button
+                            className="ml-1 mb-1"
+                            color="primary"
+                            type="button"
+                            onClick={() => addMoreProduct()}>
+                            + Add
+                          </Button>
+                        </div>
+                      </Col>
+                    </Row>
+                  </>
+                );
+              })}
             <Row>
               {/* <Col className="mb-1" lg="2" md="2" sm="12">
                       <div className="">
@@ -940,4 +912,4 @@ const ProductionProcess = (args) => {
     </div>
   );
 };
-export default ProductionProcess;
+export default EditProductionProcess;

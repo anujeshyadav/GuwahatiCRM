@@ -58,8 +58,8 @@ const PlaceOrderReturn = args => {
     if (location?.state) {
       setOrderedListData(location?.state.orderItems);
       console.log("test", location?.state.orderItems);
-      let grandTotal = location?.state.orderItems.reduce(
-        (a, b) => a + b.product.Product_MRP,
+      let grandTotal = location?.state.orderItems?.reduce(
+        (a, b) => a + b.productId?.Product_MRP,
         0
       );
       setGrandTotalAmt(grandTotal);
@@ -68,8 +68,8 @@ const PlaceOrderReturn = args => {
     } else {
       // let mydata = localStorage.getItem("EditoneProduct");
       setOrderedListData(getFromLocalData);
-      let grandTotal = location?.state.orderItems.reduce(
-        (a, b) => a + b.product.Product_MRP,
+      let grandTotal = location?.state.orderItems?.reduce(
+        (a, b) => a + b.productId?.Product_MRP,
         0
       );
       setGrandTotalAmt(grandTotal);
@@ -98,7 +98,7 @@ const PlaceOrderReturn = args => {
     setUserInfo(userInfo);
   }, []);
 
-  const submitHandler = e => {
+  const submitHandler = (e) => {
     e.preventDefault();
     console.log(OrderedListData);
     let userData = JSON.parse(localStorage.getItem("userData"));
@@ -106,7 +106,7 @@ const PlaceOrderReturn = args => {
 
     let myarr = OrderedListData?.map((ele, i) => {
       return {
-        productId: ele?.product?._id,
+        productId: ele?.productId?._id,
         Qty_Sales: ele?.qty,
         Qty_Return: Number(ele?.returnQty),
         Product_Price: ele?.price,
@@ -126,10 +126,10 @@ const PlaceOrderReturn = args => {
       swal("Error occured while Entering Details");
     } else {
       PlaceOrderReturn_Product(payload)
-        .then(res => {
+        .then((res) => {
           swal(" PlaceOrder Returned Successfully");
         })
-        .catch(err => {
+        .catch((err) => {
           console.log(err);
         });
     }
@@ -154,8 +154,7 @@ const PlaceOrderReturn = args => {
                       className="float-right mr-1"
                       color="danger"
                       size="sm"
-                      onClick={() => history.goBack()}
-                    >
+                      onClick={() => history.goBack()}>
                       Back
                     </Button>
                   )}
@@ -179,7 +178,7 @@ const PlaceOrderReturn = args => {
                             name="Product_Title"
                             readOnly
                             placeholder="Product Name"
-                            value={item?.product?.Product_Title}
+                            value={item?.productId?.Product_Title}
                           />
                         </div>
                       </Col>
@@ -191,7 +190,7 @@ const PlaceOrderReturn = args => {
                             name="price"
                             readOnly
                             placeholder="Price"
-                            value={item?.product?.Product_MRP}
+                            value={item?.productId?.Product_MRP}
                           />
                         </div>
                       </Col>
@@ -204,7 +203,9 @@ const PlaceOrderReturn = args => {
                             name="qty"
                             placeholder="Req_Qty"
                             value={item?.qty}
-                            onChange={e => handleProductChangeProduct(e, index)}
+                            onChange={(e) =>
+                              handleProductChangeProduct(e, index)
+                            }
                           />
                         </div>
                       </Col>
@@ -216,7 +217,9 @@ const PlaceOrderReturn = args => {
                             name="returnQty"
                             placeholder="Return Quantity"
                             value={OrderedListData.returnQty}
-                            onChange={e => handleProductChangeProduct(e, index)}
+                            onChange={(e) =>
+                              handleProductChangeProduct(e, index)
+                            }
                           />
                         </div>
                       </Col>
@@ -227,7 +230,8 @@ const PlaceOrderReturn = args => {
                 <Col className="mb-1" lg="12" md="12" sm="12">
                   <div className=" d-flex justify-content-end">
                     <Label className="pr-5">
-                      Grand Total : <stron>{grandTotalAmt}</stron>
+                      Grand Total :{" "}
+                      <stron>{grandTotalAmt && grandTotalAmt}</stron>
                     </Label>
                   </div>
                 </Col>
@@ -238,8 +242,7 @@ const PlaceOrderReturn = args => {
                     <Button.Ripple
                       color="primary"
                       type="submit"
-                      className="mt-2"
-                    >
+                      className="mt-2">
                       Submit
                     </Button.Ripple>
                   </div>
