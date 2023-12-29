@@ -96,7 +96,6 @@ class SalesOrderReturn extends React.Component {
           headerName: "UID",
           valueGetter: "node.rowIndex + 1",
           field: "node.rowIndex + 1",
-          // checkboxSelection: true,
           width: 80,
           filter: true,
         },
@@ -105,7 +104,7 @@ class SalesOrderReturn extends React.Component {
           headerName: "Actions",
           field: "transactions",
           width: 180,
-          cellRendererFramework: (params) => {
+          cellRendererFramework: params => {
             return (
               <div className="actions cursor-pointer">
                 {this.state.InsiderPermissions &&
@@ -157,9 +156,9 @@ class SalesOrderReturn extends React.Component {
           field: "returnItems",
           filter: true,
           width: 220,
-          valueGetter: (params) => {
+          valueGetter: params => {
             if (params.data.returnItems && params.data.returnItems.length > 0) {
-              return params?.data?.returnItems?.map((val) => {
+              return params?.data?.returnItems?.map(val => {
                 return val?.productId.Product_Title;
               });
             }
@@ -172,7 +171,7 @@ class SalesOrderReturn extends React.Component {
           field: "Return_amount",
           filter: true,
           width: 220,
-          cellRendererFramework: (params) => {
+          cellRendererFramework: params => {
             return (
               <div>
                 <span>{params.data?.Return_amount}</span>
@@ -185,9 +184,9 @@ class SalesOrderReturn extends React.Component {
           field: "returnItems",
           filter: true,
           width: 220,
-          valueGetter: (params) => {
+          valueGetter: params => {
             if (params.data.returnItems && params.data.returnItems.length > 0) {
-              return params?.data?.returnItems?.map((val) => {
+              return params?.data?.returnItems?.map(val => {
                 return val?.productId.HSN_Code;
               });
             }
@@ -225,7 +224,7 @@ class SalesOrderReturn extends React.Component {
           field: "email",
           filter: true,
           width: 200,
-          cellRendererFramework: (params) => {
+          cellRendererFramework: params => {
             return (
               <div>
                 <span>{params.data?.email}</span>
@@ -239,7 +238,7 @@ class SalesOrderReturn extends React.Component {
           field: "mobileNumber",
           filter: true,
           width: 150,
-          cellRendererFramework: (params) => {
+          cellRendererFramework: params => {
             return (
               <div>
                 <span>{params.data?.mobileNumber}</span>
@@ -247,28 +246,6 @@ class SalesOrderReturn extends React.Component {
             );
           },
         },
-
-        // {
-        //   headerName: "Status",
-        //   field: "status",
-        //   filter: true,
-        //   width: 150,
-        //   cellRendererFramework: params => {
-        //     return params.value === "completed" ? (
-        //       <div className="badge badge-pill badge-success">
-        //         {params.data.status}
-        //       </div>
-        //     ) : params.value === "pending" ? (
-        //       <div className="badge badge-pill badge-warning">
-        //         {params.data.status}
-        //       </div>
-        //     ) : (
-        //       <div className="badge badge-pill badge-success">
-        //         {params.data.status}
-        //       </div>
-        //     );
-        //   },
-        // },
       ],
     };
   }
@@ -300,8 +277,8 @@ class SalesOrderReturn extends React.Component {
     this.setState({ InsiderPermissions: InsidePermissions });
     await SalesReturnProductList()
       .then(res => {
-        console.log(res)
-        
+        console.log(res);
+
         this.setState({ rowData: res?.SalesReturn });
         // this.setState({ userName: UserInformation.firstName });
         this.setState({ AllcolumnDefs: this.state.columnDefs });
@@ -543,7 +520,7 @@ class SalesOrderReturn extends React.Component {
 
   HandleSetVisibleField = e => {
     e.preventDefault();
-    
+
     this.gridApi.setColumnDefs(this.state.SelectedcolumnDefs);
     this.setState({ columnDefs: this.state.SelectedcolumnDefs });
     this.setState({ SelectedcolumnDefs: this.state.SelectedcolumnDefs });
