@@ -38,14 +38,11 @@ const CreateUnit = () => {
   const [Countries, setCountry] = useState({});
   const [States, setState] = useState({});
   const [Cities, setCities] = useState({});
-  //   const [StateList, setCityList] = useState([]);
   const [selectedValue, setSelectedValue] = useState([]);
   const [formData, setFormData] = useState({});
   const [index, setindex] = useState("");
   const [error, setError] = useState("");
   const [permissions, setpermissions] = useState({});
-  //   const formRef = useRef(null);
-  // const createUserXmlView = useContext(UserContext);
 
   const handleInputChange = (e, type, i) => {
     const { name, value } = e.target;

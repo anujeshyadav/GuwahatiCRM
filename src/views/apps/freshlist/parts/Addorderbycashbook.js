@@ -29,7 +29,7 @@ import "../../../../assets/scss/pages/users.scss";
 let GrandTotal = [];
 let SelectedITems = [];
 let SelectedSize = [];
-const Addorderbycashbook = (args) => {
+const Addorderbycashbook = args => {
   const [Index, setIndex] = useState("");
   const [index, setindex] = useState("");
   const [error, setError] = useState("");
@@ -66,7 +66,7 @@ const Addorderbycashbook = (args) => {
 
     let amt = 0;
     if (list.length > 0) {
-      const x = list?.map((val) => {
+      const x = list?.map(val => {
         console.log(val.qty * val.price);
         GrandTotal[index] = val.Size * val.qty * val.price;
 
@@ -86,7 +86,7 @@ const Addorderbycashbook = (args) => {
 
   const handleSelection = (selectedList, selectedItem, index) => {
     SelectedITems.push(selectedItem);
-    setProduct((prevProductList) => {
+    setProduct(prevProductList => {
       debugger;
       const updatedProductList = [...prevProductList];
       const updatedProduct = { ...updatedProductList[index] }; // Create a copy of the product at the specified index
@@ -101,7 +101,7 @@ const Addorderbycashbook = (args) => {
 
   const handleSelectionUnit = (selectedList, selectedItem, index) => {
     SelectedSize.push(selectedItem);
-    setProduct((prevProductList) => {
+    setProduct(prevProductList => {
       // debugger;
       const updatedUnitList = [...prevProductList];
       const updatedProduct = { ...updatedUnitList[index] }; // Create a copy of the product at the specified index
@@ -138,29 +138,29 @@ const Addorderbycashbook = (args) => {
     let userdata = JSON.parse(localStorage.getItem("userData"));
 
     ProductListView(userdata?._id, userdata?.database)
-      .then((res) => {
+      .then(res => {
         console.log(res?.Product);
         setProductList(res?.Product);
       })
-      .catch((err) => {
+      .catch(err => {
         console.log(err);
       });
     CreateCustomerList(userdata?._id, userdata?.database)
-      .then((res) => {
+      .then(res => {
         let value = res?.Customer;
         if (value?.length) {
           setPartyList(value);
         }
       })
-      .catch((err) => {
+      .catch(err => {
         console.log(err);
       });
     UnitListView(userdata?._id, userdata?.database)
-      .then((res) => {
+      .then(res => {
         console.log(res.Unit);
         setUnitList(res.Unit);
       })
-      .catch((err) => {
+      .catch(err => {
         console.log(err);
       });
   }, []);
@@ -183,7 +183,7 @@ const Addorderbycashbook = (args) => {
       },
     ]);
   };
-  let removeMoreProduct = (i) => {
+  let removeMoreProduct = i => {
     let newFormValues = [...product];
     newFormValues.splice(i, 1);
     GrandTotal.splice(i, 1);
@@ -191,7 +191,7 @@ const Addorderbycashbook = (args) => {
     setGrandTotalAmt(amt);
     setProduct(newFormValues);
   };
-  const submitHandler = (e) => {
+  const submitHandler = e => {
     e.preventDefault();
     const fullname = UserInfo?.firstName + " " + UserInfo?.lastName;
     const payload = {
@@ -214,11 +214,11 @@ const Addorderbycashbook = (args) => {
       swal("Error occured while Entering Details");
     } else {
       Ordercashbook(payload)
-        .then((res) => {
+        .then(res => {
           swal("Order Created Successfully");
           //  history.push("/app/softnumen/order/orderList")
         })
-        .catch((err) => {
+        .catch(err => {
           console.log(err);
         });
     }
@@ -247,7 +247,8 @@ const Addorderbycashbook = (args) => {
                     size="sm"
                     onClick={() =>
                       history.push("/app/SoftNumen/parts/Cashbook")
-                    }>
+                    }
+                  >
                     Back
                   </Button>
                 )}
@@ -283,7 +284,7 @@ const Addorderbycashbook = (args) => {
                       type="date"
                       name="DateofDelivery"
                       value={dateofDelivery}
-                      onChange={(e) => setDateofDelivery(e.target.value)}
+                      onChange={e => setDateofDelivery(e.target.value)}
                     />
                   </div>
                 </Col>
@@ -335,7 +336,7 @@ const Addorderbycashbook = (args) => {
                           required
                           autocomplete="off"
                           value={product?.qty}
-                          onChange={(e) =>
+                          onChange={e =>
                             handleRequredQty(e, index, product?.availableQty)
                           }
                         />
@@ -397,7 +398,8 @@ const Addorderbycashbook = (args) => {
                             color="danger"
                             className="button remove "
                             size="sm"
-                            onClick={() => removeMoreProduct(index)}>
+                            onClick={() => removeMoreProduct(index)}
+                          >
                             -
                           </Button>
                         ) : null}
@@ -409,7 +411,8 @@ const Addorderbycashbook = (args) => {
                           color="primary"
                           type="button"
                           size="sm"
-                          onClick={() => addMoreProduct()}>
+                          onClick={() => addMoreProduct()}
+                        >
                           +
                         </Button>
                       </div>
@@ -461,7 +464,8 @@ const Addorderbycashbook = (args) => {
                     <Button.Ripple
                       color="primary"
                       type="submit"
-                      className="mt-2">
+                      className="mt-2"
+                    >
                       Submit
                     </Button.Ripple>
                   </div>

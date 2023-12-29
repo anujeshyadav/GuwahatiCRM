@@ -36,18 +36,18 @@ export const Create_transporter_xmlView = "/transporter/get-xml";
 export const Create_transporter_save = "/transporter/save-transporter";
 export const Create_Transporter_List = "/transporter/view-transporter";
 export const Delete_Transporter_List = "/transporter/delete-transporter/";
-export const Create_Ware_House = '/raw-material/get-xml'
+export const Create_Ware_House = "/raw-material/get-xml";
 export const Create_unit_xmlView = "/unit/get-xml";
 
 export const AddPrimaryUnit = "/primary-unit/save-primary-unit/";
 export const BaseUnitList = "/primary-unit/view-primary-unit/";
-export const Create_unit_save = "/unit/save-unit/";
+export const Create_unit_save = "/unit/save-unit";
 
 export const Create_unit_List = "/unit/view-unit/";
 export const Delete_Unit_List = "/unit/delete-unit/";
 export const Unit_ViewOne = "/unit/update-unit/";
 export const Unit_Update = "/unit/update-unit/";
-export const create_row_material = "/raw-material/creat-rawMaterial"
+export const create_row_material = "/raw-material/creat-rawMaterial";
 //productionapk
 
 // productionProcess
@@ -57,11 +57,9 @@ export const Get_Producton_ProcessList = "/production/view-production";
 export const ViewOne_Production = "/production/view-production-by-id/";
 export const UpdateOne_Production = "/production/update-production-items/";
 
-
 // production process end
 
-
-export const delet_product_item = "/raw-material/delete-raw-material/"
+export const delet_product_item = "/raw-material/delete-raw-material/";
 
 export const Delete_Category = "/categories/delete-category/"; //done
 export const Delete_Sub_Category = "/categories/delete-categories/";
@@ -159,7 +157,7 @@ export const Create_Customer_save = "/customer/save-customer";
 export const Create_Customer_Update = "/customer/update-customer/";
 export const Create_Account_save = "/user/save-user";
 export const Create_Account_List = "/user/view-user-by-id/";
-export const Create_Product_List = "/raw-material/viewRawMaterial"
+export const Create_Product_List = "/raw-material/viewRawMaterial";
 export const Create_User_List = "/user/view-user/";
 export const Create_Customer_List = "/customer/view-customer/";
 export const Create_Account_Update = "/user/update-user/";

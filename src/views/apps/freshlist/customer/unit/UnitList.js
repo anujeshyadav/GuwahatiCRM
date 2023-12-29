@@ -76,6 +76,7 @@ class UnitList extends React.Component {
       baseUnit: "",
       unitId: "",
       primaryUnit: "",
+      secondaryNumber: null,
       secondaryUnit: "",
       unitQty: 0,
       isDisable: false,
@@ -100,9 +101,6 @@ class UnitList extends React.Component {
     };
   }
 
-  componentDidMount() {
-    console.log(this.state.baseUnit, this.state.secondaryUnit);
-  }
   LookupviewStart = () => {
     this.setState(prevState => ({
       modal: !prevState.modal,
@@ -123,7 +121,6 @@ class UnitList extends React.Component {
   };
 
   handleChangeEdit = (data, types) => {
-    // console.log(data);
     this.setState(prevState => ({
       unitModal: !prevState.unitModal,
     }));
@@ -175,6 +172,7 @@ class UnitList extends React.Component {
   };
   handleSave = e => {
     e.preventDefault();
+    debugger;
     let userData = JSON.parse(localStorage.getItem("userData"));
     if (this.state.baseUnit != "" && this.state.secondaryUnit != "") {
       if (this.state.baseUnit != this.state.secondaryUnit) {
@@ -182,17 +180,16 @@ class UnitList extends React.Component {
           const payload = {
             primaryUnit: this.state.baseUnit,
             secondaryUnit: this.state.secondaryUnit,
-            unitQty: Number(this.state.unitQty),
+            unitQty:
+              Number(this.state.unitQty) * Number(this.state.secondaryNumber),
             created_by: userData?._id,
           };
 
           if (this.state.isUpdate) {
-            debugger;
             console.log(this.state.unitId);
             UnitUpdate(payload, this.state.unitId)
               .then(res => {
                 if (res.status) {
-                  console.log("Edit", res);
                   swal(`${res.message}`);
                   this.setState(prevState => ({
                     unitModal: !prevState.unitModal,
@@ -248,23 +245,31 @@ class UnitList extends React.Component {
   myFunctionCall = async () => {
     let userData = JSON.parse(localStorage.getItem("userData"));
     await UnitListView(userData?._id, userData?.database)
-      .then((res) => {
-        this.setState({ rowData: res?.Unit });
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  };
-  async componentDidMount() {
-    const UserInformation = this.context?.UserInformatio;
-    this.myFunctionCall();
-    await BaseUnitListView()
       .then(res => {
-        this.setState({ baseubitListView: res.PrimaryUnit });
+        console.log(res?.Unit);
+        this.setState({ baseubitListView: res?.Unit });
+        this.setState({ rowData: res?.Unit });
       })
       .catch(err => {
         console.log(err);
       });
+  };
+  // async componentDidMount() {
+  //   let userData = JSON.parse(localStorage.getItem("userData"));
+  //   // database;
+  //   this.myFunctionCall();
+  //   await BaseUnitListView()
+  //     .then(res => {
+  //       console.log("AllUnit", res.PrimaryUnit);
+  //       this.setState({ baseubitListView: res.PrimaryUnit });
+  //     })
+  //     .catch(err => {
+  //       console.log(err);
+  //     });
+  // }
+  async componentDidMount() {
+    const UserInformation = this.context?.UserInformatio;
+    this.myFunctionCall();
     let Product = [
       {
         headerName: "Actions",
@@ -316,8 +321,6 @@ class UnitList extends React.Component {
         },
       },
 
-      // ...myHeadings,
-
       {
         headerName: "PrimaryUnit",
         field: "primaryUnit",
@@ -342,12 +345,17 @@ class UnitList extends React.Component {
           return (
             <>
               <div className="actions cursor-pointer">
-                <span>{params?.data?.unitQty}</span>
+                <span>
+                  {`${
+                    params?.data?.unitQty
+                  }  ${params?.data?.secondaryUnit.replace(/\d+/g, "")}`}
+                </span>
               </div>
             </>
           );
         },
       },
+
       {
         headerName: "SecondaryUnit",
         field: "secondaryUnit",
@@ -357,7 +365,7 @@ class UnitList extends React.Component {
           return (
             <>
               <div className="actions cursor-pointer">
-                <span>{params?.data?.secondaryUnit}</span>
+                <span>{params?.data?.secondaryUnit.replace(/\d+/g, "")}</span>
               </div>
             </>
           );
@@ -406,7 +414,21 @@ class UnitList extends React.Component {
       }
     });
   }
+  handleSecondUnitType = e => {
+    // debugger;
+    const selectedValue = e.target.value;
+    const [name] = selectedValue.split(":");
 
+    this.setState({
+      secondaryUnit: name,
+    });
+    this.setState({
+      secondaryNumber: e.target.value.split(" ")[1],
+    });
+    const selectedName =
+      e.target.options[e.target.selectedIndex].getAttribute("data-name");
+    console.log(selectedName);
+  };
   onGridReady = params => {
     this.gridApi = params.api;
     this.gridColumnApi = params.columnApi;
@@ -593,8 +615,6 @@ class UnitList extends React.Component {
         });
 
         xmlString += "</root>";
-
-        // setXmlData(xmlString);
 
         // Create a download link
         const blob = new Blob([xmlString], { type: "text/xml" });
@@ -1011,17 +1031,6 @@ class UnitList extends React.Component {
                                               SelectedcolumnDefs: SelectedCols, // Update the state with the modified array
                                             });
                                           }
-                                          // const delindex =
-                                          //   SelectedCols.findIndex(
-                                          //     (element) =>
-                                          //       element?.headerName ==
-                                          //       ele?.headerName
-                                          //   );
-
-                                          // SelectedCols?.splice(delindex, 1);
-                                          // this.setState({
-                                          //   SelectedcolumnDefs: SelectedCols,
-                                          // });
                                         }}
                                         style={{ cursor: "pointer" }}
                                         size="25px"
@@ -1091,24 +1100,31 @@ class UnitList extends React.Component {
                     name="baseUnit"
                     value={this.state.baseUnit}
                     defaultValue="None"
-                    //  onChange={e => {
-                    //                       console.log(e.target.value);
-                    //                       this.setState({ baseUnit: e.target.value });
-                    //                     }}
-                    //                   >
                     onChange={e => {
                       this.setState({ baseUnit: e.target.value });
                       this.changeHandler(e);
                     }}
                   >
                     <option value="None">None</option>
-                    {this.state.baseubitListView?.map(val => {
-                      return (
-                        <option value={val.primaryUnit}>
-                          {val.primaryUnit}
-                        </option>
-                      );
-                    })}
+                    <option value="BAGS(Bag)">BAGS(Bag)</option>
+                    <option value="BOTTLES(Btl)">BOTTLES(Btl)</option>
+                    <option value="BOX(Box)">BOX(Box)</option>
+                    <option value="BUNDLES(Bdl)">BUNDLES(Bdl)</option>
+                    <option value="CANS(Can)">CANS(Can)</option>
+                    <option value="CARTONS(Ctn)">CARTONS(Ctn)</option>
+                    <option value="DOZENS(Dzn)">DOZENS(Dzn)</option>
+                    <option value="GRAMMES(Gm)">GRAMMES(Gm)</option>
+                    <option value="KILOGRAMS(Kg)">KILOGRAMS(Kg)</option>
+                    <option value="LITRE(Ltr)">LITRE(Ltr)</option>
+                    <option value="METERS(Mtr)">METERS(Mtr)</option>
+                    <option value="MILILITRE(Ml)">MILILITRE(Ml)</option>
+                    <option value="NUMBERS(Nos)">NUMBERS(Nos)</option>
+                    <option value="PACKS(Pac)">PACKS(Pac)</option>
+                    <option value="PAIRS(Prs)">PAIRS(Prs)</option>
+                    <option value="PIECES(Pcs)">PIECES(Pcs)</option>
+                    <option value="QUINTAL(Qtl)">QUINTAL(Qtl)</option>
+                    <option value="ROLLS(Rol)">ROLLS(Rol)</option>
+                    <option value="SQUARE FEET(Sqf)">SQUARE FEET(Sqf)</option>
                   </CustomInput>
                 </Col>
 
@@ -1122,15 +1138,16 @@ class UnitList extends React.Component {
                     name="secondaryUnit"
                     value={this.state.secondaryUnit}
                     defaultValue="None"
-                    onChange={e => {
-                      console.log(e.target.value);
-                      this.setState({ secondaryUnit: e.target.value });
-                    }}
+                    onChange={this.handleSecondUnitType}
                   >
                     <option value="None">None</option>
+                    <option value="PIECES(Pcs) 1">PIECES(Pcs)</option>
                     {this.state.baseubitListView?.map(val => {
                       return (
-                        <option value={val.primaryUnit}>
+                        <option
+                          value={`${val.primaryUnit} ${val.unitQty}`}
+                          data-name={val.primaryUnit}
+                        >
                           {val.primaryUnit}
                         </option>
                       );
@@ -1175,8 +1192,11 @@ class UnitList extends React.Component {
                                 }
                               />
                             </div>
+                            {/* this.state.baseUnit.split("")[1] */}
                             <div>
-                              <span>{this.state.secondaryUnit}</span>
+                              <span>
+                                {this.state.secondaryUnit.replace(/\d+/g, "")}
+                              </span>
                             </div>
                           </div>
                         </Col>
@@ -1225,7 +1245,6 @@ class UnitList extends React.Component {
           isOpen={this.state.AddunitModal}
           toggle={this.LookAddUnit}
           className={this.props.className}
-          //   style={{ maxWidth: "1050px" }}
         >
           <ModalHeader toggle={this.LookAddUnit}>Add New Unit</ModalHeader>
           <ModalBody className="modalbodyheadunit">
@@ -1237,7 +1256,6 @@ class UnitList extends React.Component {
                   className=""
                   name="unitName"
                   placeholder="Unit Name"
-                  // style={{ width: "80px", height: "2px" }}
                   value={this.state.unitName}
                   onChange={e => {
                     console.log(e.target.value);
