@@ -54,6 +54,11 @@ export const create_row_material = "/raw-material/creat-rawMaterial"
 
 export const Save_Producton_Process = "/production/save-production";
 export const Get_Producton_ProcessList = "/production/view-production";
+export const ViewOne_Production = "/production/view-production-by-id/";
+export const UpdateOne_Production = "/production/update-production-items/";
+
+
+// production process end
 
 
 export const delet_product_item = "/raw-material/delete-raw-material/"

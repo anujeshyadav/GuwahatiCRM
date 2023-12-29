@@ -651,7 +651,7 @@ const CreateDispach = (args) => {
                 <Col lg="3" md="3">
                   <div className="mt-1">
                     <FormGroup>
-                      <Label>Role List</Label>
+                      <Label>Select Delivery Role *</Label>
                       <CustomInput
                         required
                         type="select"
@@ -663,7 +663,7 @@ const CreateDispach = (args) => {
                           );
                           setDeliveryBoy(mySelected);
                         }}>
-                        <option>--select Role--</option>
+                        <option>--select--</option>
                         {RoleList &&
                           RoleList?.length &&
                           RoleList?.map((ele, i) => {
@@ -829,12 +829,12 @@ const CreateDispach = (args) => {
                               <th scope="row">{i + 1}</th>
                               <td>{ele?.productId?.Product_Title}</td>
                               <td>{ele?.productId?.Product_MRP}</td>
-                              <td>{ele?.productId?.Size}</td>
-                              <td>{ele?.unitQty}</td>
+                              <td>{ele?.Size}</td>
+                              <td>{ele?.unitType}</td>
                               <td>{ele?.qty}</td>
                               <td>
                                 {ele?.productId?.Product_MRP *
-                                  ele?.productId?.Size *
+                                  ele?.Size *
                                   ele?.qty}
                               </td>
                             </tr>

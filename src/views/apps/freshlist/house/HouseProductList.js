@@ -22,8 +22,8 @@ import {
 import { ContextLayout } from "../../../../utility/context/Layout";
 import { AgGridReact } from "ag-grid-react";
 import "ag-grid-community/dist/styles/ag-grid.css";
-import EditAccount from "../accounts/EditAccount";
-import ViewAccount from "../accounts/ViewAccount";
+// import EditAccount from "../accounts/EditAccount";
+// import ViewAccount from "../accounts/ViewAccount";
 import jsPDF from "jspdf";
 import "jspdf-autotable";
 import Logo from "../../../../assets/img/profile/pages/logomain.png";
@@ -171,10 +171,17 @@ class HouseProductList extends React.Component {
             },
           ];
         }
+          // var Unit = {
+          //   headerName: "UnitType",
+          //   field: "unitType",
+          //   filter: true,
+          //   sortable: true,
+          // };
 
         let myHeadings = [
           // ...checkboxinput,
           ...inputs,
+          // ...Unit,
           // ...adddropdown,
           // ...addRadio,
           ...mydropdownArray,

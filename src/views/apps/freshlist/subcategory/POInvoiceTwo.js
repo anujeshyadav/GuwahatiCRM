@@ -743,7 +743,7 @@ const POInvoiceone = ({
                         fontWeight: "1000",
                         marginLeft: "5px",
                       }}>
-                      {ele?.product["GST Rate"]}
+                      {ele?.productId["GST Rate"]}
                     </Text>
                   </View>
                   <View

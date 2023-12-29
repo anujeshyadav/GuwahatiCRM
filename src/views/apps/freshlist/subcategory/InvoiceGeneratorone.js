@@ -46,8 +46,9 @@ const InvoiceGenerator = props => {
 
       const subTotalAmt = props.PrintData.orderItems.reduce(
         (accumulator, currentValue) => {
-          const { qty, product } = currentValue;
-          const itemTotal = qty * product.Product_MRP * product.Size;
+          
+          const { qty, Size, productId } = currentValue;
+          const itemTotal = qty * productId?.Product_MRP * Size;
           return accumulator + itemTotal;
         },
         0

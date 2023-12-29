@@ -116,17 +116,25 @@ class OrderList extends React.Component {
                   )}
                 {this.state.InsiderPermissions &&
                   this.state.InsiderPermissions?.Edit && (
-                    <Edit
-                      className="mr-50"
-                      size="25px"
-                      color="blue"
-                      onClick={() =>
-                        this.props.history.push({
-                          pathname: `/app/freshlist/order/editOrder/${params.data?._id}`,
-                          state: params.data,
-                        })
-                      }
-                    />
+                    <>
+                      {params.data?.status
+                        ?.toLowerCase()
+                        ?.includes("completed") ? null : (
+                        <>
+                          <Edit
+                            className="mr-50"
+                            size="25px"
+                            color="blue"
+                            onClick={() =>
+                              this.props.history.push({
+                                pathname: `/app/freshlist/order/editOrder/${params.data?._id}`,
+                                state: params.data,
+                              })
+                            }
+                          />
+                        </>
+                      )}
+                    </>
                   )}
                 {this.state.InsiderPermissions &&
                   this.state.InsiderPermissions?.Edit && (
@@ -163,7 +171,7 @@ class OrderList extends React.Component {
           filter: true,
           width: 150,
           cellRendererFramework: (params) => {
-            return params.data?.status == "Completed" ? (
+            return params.data?.status?.toLowerCase()?.includes("completed") ? (
               <div className="badge badge-pill badge-success">
                 {params.data?.status}
               </div>
@@ -1067,12 +1075,12 @@ class OrderList extends React.Component {
                                   <>
                                     <tr>
                                       <th scope="row">{i + 1}</th>
-                                      <td>{ele?.product?.Product_Title}</td>
-                                      <td>{ele?.product?.Product_MRP}</td>
+                                      <td>{ele?.productId?.Product_Title}</td>
+                                      <td>{ele?.productId?.Product_MRP}</td>
                                       <td>{ele?.Size}</td>
                                       <td>{ele?.qty}</td>
                                       <td>{ele?.unitType}</td>
-                                      <td>{ele?.product?.HSN_Code}</td>
+                                      <td>{ele?.productId?.HSN_Code}</td>
                                       <td>
                                         {ele?.price * ele?.Size * ele?.qty}
                                       </td>

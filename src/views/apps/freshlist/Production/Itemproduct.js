@@ -126,7 +126,7 @@ class Itemproduct extends React.Component {
                       color="blue"
                       onClick={() =>
                         this.props.history.push({
-                          pathname: `/app/freshlist/order/editOrder/${params.data?._id}`,
+                          pathname: `/app/freshlist/order/EditProductionProcess/${params.data?._id}`,
                           state: params.data,
                         })
                       }
@@ -370,11 +370,18 @@ class Itemproduct extends React.Component {
   handleChangeView = (data, types) => {
     let type = types;
     if (type == "readonly") {
-      debugger;
-      console.log("ResponseData", data.orderItems);
-      console.log("Test", data);
+      // console.log("ResponseData", data.orderItems);
+      // console.log("Test", data);
       this.setState({ ViewOneUserView: true });
       this.setState({ ViewOneData: data });
+      let amt = 0;
+      if (data?.productItems?.length > 0) {
+        const x = data?.productItems?.map((val) => {
+          return val?.price * val?.qty;
+        });
+        amt = x.reduce((a, b) => a + b);
+      }
+      this.setState({ Gst: amt });
     } else {
       this.setState({ EditOneUserView: true });
       this.setState({ EditOneData: data });
@@ -1110,14 +1117,22 @@ class Itemproduct extends React.Component {
                         </h5>
                       </Col>
                       <Col>
-                        <Label>GST Applied :</Label>
-                        <h5>
-                          <strong>
-                            {this.state.ViewOneData &&
-                              this.state.ViewOneData?.gstApplied}
-                          </strong>
-                          Rs/-
-                        </h5>
+                        <Label>
+                          GST{" "}
+                          {this.state.ViewOneData &&
+                            this.state.ViewOneData?.gstApplied}
+                          % :
+                        </Label>
+                        <div className="d-flex justify-content-center">
+                          <h5>
+                            <strong>
+                              {this.state.Gst &&
+                                (Number(this.state.Gst) *
+                                  Number(this.state.ViewOneData?.gstApplied)) /
+                                  100}
+                            </strong>
+                          </h5>
+                        </div>
                       </Col>
                       <Col>
                         <Label>Miscellaneous Expennses :</Label>
@@ -1130,11 +1145,21 @@ class Itemproduct extends React.Component {
                         </h5>
                       </Col>
                       <Col>
-                        <Label>otherCharges :</Label>
+                        <Label>Other Charges :</Label>
                         <h5>
                           <strong>
                             {this.state.ViewOneData &&
                               this.state.ViewOneData?.otherCharges}
+                          </strong>
+                          Rs/-
+                        </h5>
+                      </Col>
+                      <Col>
+                        <Label>Discount :</Label>
+                        <h5>
+                          <strong>
+                            {this.state.ViewOneData &&
+                              this.state.ViewOneData?.discount}
                           </strong>
                           Rs/-
                         </h5>
@@ -1178,18 +1203,20 @@ class Itemproduct extends React.Component {
                           <tbody>
                             {this.state.ViewOneData?.productItems &&
                               this.state.ViewOneData?.productItems?.map(
-                                (ele, i) => (
-                                  <>
-                                    <tr>
-                                      <th scope="row">{i + 1}</th>
-                                      <td>{ele?.product?.Product_Title}</td>
-                                      <td>{ele?.price}</td>
-                                      <td>{ele?.unitType}</td>
-                                      <td>{ele?.qty}</td>
-                                      <td>{ele?.price * ele?.qty}</td>
-                                    </tr>
-                                  </>
-                                )
+                                (ele, i) => {
+                                  return (
+                                    <>
+                                      <tr>
+                                        <th scope="row">{i + 1}</th>
+                                        <td>{ele?.productId?.Product_Title}</td>
+                                        <td>{ele?.price}</td>
+                                        <td>{ele?.unitType}</td>
+                                        <td>{ele?.qty}</td>
+                                        <td>{ele?.price * ele?.qty}</td>
+                                      </tr>
+                                    </>
+                                  );
+                                }
                               )}
                           </tbody>
                         </Table>
