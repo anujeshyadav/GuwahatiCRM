@@ -372,12 +372,12 @@ class DamagedStock extends React.Component {
         
         console.log(res?.damageItems);
         
-        let Data = res?.damageItem?.filter(
+        let Data = res?.damageItems?.filter(
           (ele) => ele?.warehouse?.typeStatus == "Damadged"
         );
         let rowData = res?.damageItems;
 
-        if (Data.length) {
+        if (Data?.length) {
           this.setState({ rowData: Data });
           this.setState({ AllcolumnDefs: this.state.columnDefs });
 

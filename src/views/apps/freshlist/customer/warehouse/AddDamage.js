@@ -1040,6 +1040,7 @@ import {
   WarehousetoWareHouseTrx,
   Warehouse_Temporarlylist,
   Save_Damagedstock,
+  CreateAccountList,
 } from "../../../../../ApiEndPoint/ApiCalling";
 import "../../../../../assets/scss/pages/users.scss";
 import Timepickers from "../../../../forms/form-elements/datepicker/Timepicker";
@@ -1307,11 +1308,14 @@ const CreateTarget = (args) => {
 
   useEffect(() => {
     let userData = JSON.parse(localStorage.getItem("userData"));
-    Warehouse_Temporarlylist(userData?._id)
-      .then((res) => {
-        console.log(res?.adminDetails);
 
-        setWarehouseList(res?.adminDetails);
+    CreateAccountList(userData?._id, userData?.database)
+      .then((res) => {
+        let value = res?.adminDetails;
+        console.log(value);
+        if (value.length) {
+          setWarehouseList(value);
+        }
       })
       .catch((err) => {
         console.log(err);
