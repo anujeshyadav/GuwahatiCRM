@@ -79,7 +79,8 @@ export const ViewOne_Product = "/product/view-product-by-id/"; //get
 export const Get_Damaged_stock = "/stock-updation/get-damage-item/"; //get
 export const Save_Damaged_stock = "/stock-updation/save-damage-item"; //post
 export const Delete_Damaged_stock = "/stock-updation/delete-item/"; //delete
-export const Update_Damaged_stock = "/stock-updation/update-status/"; //put
+export const Update_Damaged_stock =
+  "/stock-updation/update-damageItem/"; //put
 export const Stock_trx_FtoW = "/factory/stock-transfer-FTW";
 export const Stock_trx_WarehousetoWareHouse =
   "/stock-updation/stock-transfer-warehouse";

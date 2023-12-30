@@ -41,6 +41,7 @@ import {
   StocktrxFtoW,
   WarehousetoWareHouseTrx,
   Warehouse_Temporarlylist,
+  CreateAccountList,
 } from "../../../../ApiEndPoint/ApiCalling";
 import "../../../../assets/scss/pages/users.scss";
 import Timepickers from "../../../forms/form-elements/datepicker/Timepicker";
@@ -50,7 +51,7 @@ import { Route } from "react-router-dom";
 let GrandTotal = [];
 let SelectedITems = [];
 let SelectedSize = [];
-const CreateTarget = args => {
+const CreateTarget = (args) => {
   const [formData, setFormData] = useState({});
   const [Index, setIndex] = useState("");
   const [StockTrxdate, setStockTrxDate] = useState("");
@@ -71,7 +72,7 @@ const CreateTarget = args => {
   const [items, setItems] = useState("");
   const [audit, setAudit] = useState(false);
   const [WareHouselist, setWarehouseList] = useState([]);
-  const toggle = item => {
+  const toggle = (item) => {
     setItems(item);
     setModal(!modal);
   };
@@ -79,7 +80,7 @@ const CreateTarget = args => {
     setAudit(!audit);
     // setModal(!modal);
   };
-  const handleopentoggle = iteam => {
+  const handleopentoggle = (iteam) => {
     toggle(iteam);
   };
   const handleHistory = () => {
@@ -129,7 +130,7 @@ const CreateTarget = args => {
 
       let amt = 0;
       if (list.length > 0) {
-        const x = list?.map(val => {
+        const x = list?.map((val) => {
           GrandTotal[index] = val.Size * val.price * val.transferQty;
           list[index]["totalprice"] = val.Size * val.price * val.transferQty;
           return val.Size * val.price * val.transferQty;
@@ -159,7 +160,7 @@ const CreateTarget = args => {
 
     let amt = 0;
     if (list.length > 0) {
-      const x = list?.map(val => {
+      const x = list?.map((val) => {
         GrandTotal[index] = val.Size * val.price * val.transferQty;
         list[index]["totalprice"] = val.Size * val.price * val.transferQty;
         return val.Size * val.price * val.transferQty;
@@ -204,7 +205,7 @@ const CreateTarget = args => {
   const handleSelection = (selectedList, selectedItem, index) => {
     // product[index]["AvailaleQty"] = myproduct?.Size;
     SelectedITems.push(selectedItem);
-    setProduct(prevProductList => {
+    setProduct((prevProductList) => {
       const updatedProductList = [...prevProductList]; // Create a copy of the productList array
       const updatedProduct = { ...updatedProductList[index] }; // Create a copy of the product at the specified index
       updatedProduct.price = selectedItem?.Product_MRP; // Update the price of the copied product
@@ -231,7 +232,7 @@ const CreateTarget = args => {
   const handleSelectionone = (selectedList, selectedItem, index) => {
     SelectedSize.push(selectedItem);
 
-    setProduct(prevProductList => {
+    setProduct((prevProductList) => {
       const updatedProductList = [...prevProductList]; // Create a copy of the productList array
       const updatedProduct = { ...updatedProductList[index] }; // Create a copy of the product at the specified index
       updatedProduct.Size = selectedItem?.unitQty; // Update the price of the copied product
@@ -306,8 +307,14 @@ const CreateTarget = args => {
 
   useEffect(() => {
     let userData = JSON.parse(localStorage.getItem("userData"));
-    Warehouse_Temporarlylist(userData?._id)
+    CreateAccountList(userData?._id, userData?.database)
       .then((res) => {
+        debugger;
+        let value = res?.adminDetails;
+        console.log(value);
+        if (value.length) {
+          setWarehouseList(value);
+        }
         console.log(res?.adminDetails);
         // let myWarehouse = res?.adminDetails?.filter((ele, i) =>
         //   ele?.rolename?.roleName
@@ -316,8 +323,6 @@ const CreateTarget = args => {
         //     .toLowerCase()
         //     .includes("warehouse")
         // );
-
-        setWarehouseList(res?.adminDetails);
       })
       .catch((err) => {
         console.log(err);
@@ -331,23 +336,23 @@ const CreateTarget = args => {
     //   .catch((err) => {
     //     console.log(err);
     //   });
-     UnitListView(userData?._id, userData?.database)
-       .then((res) => {
-         console.log(res?.Unit);
-         setUnitList(res?.Unit);
-       })
-       .catch((err) => {
-         console.log(err);
-       });
+    UnitListView(userData?._id, userData?.database)
+      .then((res) => {
+        console.log(res?.Unit);
+        setUnitList(res?.Unit);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
 
-     ProductListView(userData?._id, userData?.database)
-       .then((res) => {
-         console.log(res.Product);
-         setProductList(res?.Product);
-       })
-       .catch((err) => {
-         console.log(err);
-       });
+    ProductListView(userData?._id, userData?.database)
+      .then((res) => {
+        console.log(res.Product);
+        setProductList(res?.Product);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   }, []);
   useEffect(() => {
     const userInfo = JSON.parse(localStorage.getItem("userData"));
@@ -458,12 +463,6 @@ const CreateTarget = args => {
   const submitHandler = (e) => {
     e.preventDefault();
     let userdata = JSON.parse(localStorage.getItem("userData"));
-    // console.log(product);
-    // console.log(GrandTotal);
-    // console.log(Salesperson[0]?._id);
-    // console.log(targetStartDate);
-    // console.log(targetEndDate);
-    // console.log(grandTotalAmt);
 
     let Allproduct = product?.map((ele, i) => {
       console.log(ele);
@@ -556,7 +555,7 @@ const CreateTarget = args => {
                 <h4 className="mb-1">Choose Type of Stock trx</h4>
                 <div
                   className="form-label-group"
-                  onChange={e => setTypeOfTrx(e.target.value)}
+                  onChange={(e) => setTypeOfTrx(e.target.value)}
                   // onChange={(e) => {
                   //   setFormData({
                   //     ...formData,
@@ -597,8 +596,7 @@ const CreateTarget = args => {
                     style={{ cursor: "pointer" }}
                     className="float-right mr-1"
                     color="primary"
-                    onClick={() => history.goBack()}
-                  >
+                    onClick={() => history.goBack()}>
                     {" "}
                     Back
                     {/* <FaPlus size={15} /> Create User */}
@@ -654,7 +652,7 @@ const CreateTarget = args => {
                       name="targetEndDate"
                       placeholder="Date of Delivery"
                       value={StockTrxdate}
-                      onChange={e => setStockTrxDate(e.target.value)}
+                      onChange={(e) => setStockTrxDate(e.target.value)}
                     />
                   </div>
                 </Col>
@@ -737,7 +735,7 @@ const CreateTarget = args => {
                           name="transferQty"
                           placeholder="Req_Qty"
                           value={product?.transferQty}
-                          onChange={e =>
+                          onChange={(e) =>
                             handleProductChangeProduct(
                               e,
                               index,
@@ -795,8 +793,7 @@ const CreateTarget = args => {
                             type="button"
                             color="danger"
                             className="button remove "
-                            onClick={() => removeMoreProduct(index)}
-                          >
+                            onClick={() => removeMoreProduct(index)}>
                             - Remove
                           </Badge>
                         ) : null}
@@ -807,8 +804,7 @@ const CreateTarget = args => {
                           className="ml-1 mb-1"
                           color="primary"
                           type="button"
-                          onClick={() => addMoreProduct()}
-                        >
+                          onClick={() => addMoreProduct()}>
                           + Add
                         </Badge>
                       </div>
@@ -836,8 +832,7 @@ const CreateTarget = args => {
                     <Button.Ripple
                       color="primary"
                       type="submit"
-                      className="mt-2"
-                    >
+                      className="mt-2">
                       Submit
                     </Button.Ripple>
                   </div>
@@ -875,7 +870,7 @@ const CreateTarget = args => {
                       name="targetEndDate"
                       placeholder="Date of Delivery"
                       value={StockTrxdate}
-                      onChange={e => setStockTrxDate(e.target.value)}
+                      onChange={(e) => setStockTrxDate(e.target.value)}
                     />
                   </div>
                 </Col>
@@ -948,7 +943,7 @@ const CreateTarget = args => {
                           name="transferQty"
                           placeholder="Req_Qty"
                           value={product?.transferQty}
-                          onChange={e =>
+                          onChange={(e) =>
                             handleProductChangeProductone(e, index)
                           }
                         />
@@ -988,8 +983,7 @@ const CreateTarget = args => {
                             type="button"
                             color="danger"
                             className="button remove "
-                            onClick={() => removeMoreProduct(index)}
-                          >
+                            onClick={() => removeMoreProduct(index)}>
                             - Remove
                           </Button>
                         ) : null}
@@ -1000,8 +994,7 @@ const CreateTarget = args => {
                           className="ml-1 mb-1"
                           color="primary"
                           type="button"
-                          onClick={() => addMoreProduct()}
-                        >
+                          onClick={() => addMoreProduct()}>
                           + Add
                         </Button>
                       </div>
@@ -1066,8 +1059,7 @@ const CreateTarget = args => {
                     <Button.Ripple
                       color="primary"
                       type="submit"
-                      className="mt-2"
-                    >
+                      className="mt-2">
                       Submit
                     </Button.Ripple>
                   </div>

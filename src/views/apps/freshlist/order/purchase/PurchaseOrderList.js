@@ -50,6 +50,7 @@ import {
 } from "react-icons/bs";
 import * as XLSX from "xlsx";
 import UserContext from "../../../../../context/Context";
+import { CheckPermission } from "../../house/CheckPermission";
 
 const SelectedColums = [];
 
@@ -66,6 +67,7 @@ class PurchaseOrderViewList extends React.Component {
       modal: false,
       modalone: false,
       ViewData: {},
+      InsiderPermissions: {},
 
       setMySelectedarr: [],
       SelectedCols: [],
@@ -95,45 +97,58 @@ class PurchaseOrderViewList extends React.Component {
           headerName: "Actions",
           field: "transactions",
           width: 180,
-          cellRendererFramework: params => {
+          cellRendererFramework: (params) => {
             return (
               <div className="actions cursor-pointer">
-                <CornerDownLeft
-                  className="mr-50"
-                  size="25px"
-                  color="green"
-                  onClick={() => {
-                    localStorage.setItem(
-                      "OrderList",
-                      JSON.stringify(params.data)
-                    );
-                    this.props.history.push({
-                      pathname: `/app/AJGroup/order/purchaseReturn/${params.data?._id}`,
-                      state: params.data,
-                    });
-                  }}
-                />
+                {this.state.InsiderPermissions &&
+                  this.state.InsiderPermissions.Edit && (
+                    <CornerDownLeft
+                      className="mr-50"
+                      size="25px"
+                      color="green"
+                      onClick={() => {
+                        localStorage.setItem(
+                          "OrderList",
+                          JSON.stringify(params.data)
+                        );
+                        this.props.history.push({
+                          pathname: `/app/AJGroup/order/purchaseReturn/${params.data?._id}`,
+                          state: params.data,
+                        });
+                      }}
+                    />
+                  )}
+                {this.state.InsiderPermissions &&
+                  this.state.InsiderPermissions.View && (
+                    <Eye
+                      className="mr-50"
+                      size="25px"
+                      color="green"
+                      onClick={() => {
+                        this.togglemodal();
+                        this.handleChangeView(params.data, "readonly");
+                      }}
+                    />
+                  )}
 
-                <Eye
-                  className="mr-50"
-                  size="25px"
-                  color="green"
-                  onClick={() => {
-                    this.togglemodal();
-                    this.handleChangeView(params.data, "readonly");
-                  }}
-                />
-                <Edit
-                  className="mr-50"
-                  size="25px"
-                  color="blue"
-                  onClick={() =>
-                    this.props.history.push({
-                      pathname: `/app/AJgroup/order/editPurchase/${params.data?._id}`,
-                      state: params.data,
-                    })
-                  }
-                />
+                {params.data?.status == "pending" ? (
+                  <>
+                    {this.state.InsiderPermissions &&
+                      this.state.InsiderPermissions.Edit && (
+                        <Edit
+                          className="mr-50"
+                          size="25px"
+                          color="blue"
+                          onClick={() =>
+                            this.props.history.push({
+                              pathname: `/app/AJgroup/order/editPurchase/${params.data?._id}`,
+                              state: params.data,
+                            })
+                          }
+                        />
+                      )}
+                  </>
+                ) : null}
               </div>
             );
           },
@@ -144,7 +159,8 @@ class PurchaseOrderViewList extends React.Component {
           field: "status",
           filter: true,
           width: 150,
-          cellRendererFramework: params => {
+          cellRendererFramework: (params) => {
+            console.log(params.data);
             return params.value == "comleted" ? (
               <div className="badge badge-pill badge-success">
                 {params.data.status}
@@ -161,91 +177,91 @@ class PurchaseOrderViewList extends React.Component {
           },
         },
         {
-          headerName: "Full Name",
-          field: "orderItems",
+          headerName: "Purchase Date",
+          field: "DateofDelivery",
           filter: true,
-          width: 180,
-          valueGetter: params => {
-            if (params.data.orderItems && params.data.orderItems.length > 0) {
-              return params.data.fullName;
-            }
-            return null;
-          },
-        },
-
-        {
-          headerName: "Product Name",
-          field: "orderItems",
-          filter: true,
-          width: 220,
-          valueGetter: params => {
-            if (params.data.orderItems && params.data.orderItems.length > 0) {
-              return params?.data?.orderItems?.map(val => {
-                return val?.product?.Product_Title;
-              });
-            }
-            return null;
+          width: 200,
+          cellRendererFramework: (params) => {
+            return (
+              <div className="d-flex align-items-center cursor-pointer">
+                <div>
+                  <span>{params.data?.DateofDelivery}</span>
+                </div>
+              </div>
+            );
           },
         },
         {
-          headerName: "Price",
-          field: "orderItems",
+          headerName: "MobileNo",
+          field: "MobileNo",
           filter: true,
-          width: 150,
-          valueGetter: params => {
-            if (params.data.orderItems && params.data.orderItems.length > 0) {
-              return params.data.orderItems[0].price;
-            }
-            return null;
+          width: 200,
+          cellRendererFramework: (params) => {
+            return (
+              <div className="d-flex align-items-center cursor-pointer">
+                <div>
+                  <span>{params.data?.MobileNo}</span>
+                </div>
+              </div>
+            );
           },
         },
         {
-          headerName: "Size",
-          field: "orderItems",
+          headerName: "fullName",
+          field: "fullName",
           filter: true,
-          width: 150,
-          valueGetter: params => {
-            if (params.data.orderItems && params.data.orderItems.length > 0) {
-              return params.data.orderItems[0].qty; // Return the price
-            }
-            return null;
+          width: 200,
+          cellRendererFramework: (params) => {
+            return (
+              <div className="d-flex align-items-center cursor-pointer">
+                <div>
+                  <span>{params.data?.fullName}</span>
+                </div>
+              </div>
+            );
           },
         },
         {
-          headerName: "GST Rate",
-          field: "orderItems",
+          headerName: "GrandTotal",
+          field: "grandTotal",
           filter: true,
-          width: 180,
-          valueGetter: params => {
-            if (params.data.orderItems && params.data.orderItems.length > 0) {
-              return params.data.orderItems[0].product["GST Rate"]; // Return the price
-            }
-            return null; // Or handle cases where there's no price
+          width: 200,
+          cellRendererFramework: (params) => {
+            return (
+              <div className="d-flex align-items-center cursor-pointer">
+                <div>
+                  <Badge color="primary">{params.data?.grandTotal}</Badge>
+                </div>
+              </div>
+            );
           },
         },
         {
-          headerName: "HSN Code",
-          field: "orderItems",
+          headerName: "state",
+          field: "state",
           filter: true,
-          width: 180,
-          valueGetter: params => {
-            if (params.data.orderItems && params.data.orderItems.length > 0) {
-              return params.data.orderItems[0].product.HSN_Code; // Return the price
-            }
-            return null;
+          width: 200,
+          cellRendererFramework: (params) => {
+            return (
+              <div className="d-flex align-items-center cursor-pointer">
+                <div>
+                  <span>{params.data?.state}</span>
+                </div>
+              </div>
+            );
           },
         },
       ],
     };
   }
   togglemodal = () => {
-    this.setState(prevState => ({
+    this.setState((prevState) => ({
       modalone: !prevState.modalone,
     }));
     this.setState({ ShowBill: false });
   };
   LookupviewStart = () => {
-    this.setState(prevState => ({
+    this.setState((prevState) => ({
       modal: !prevState.modal,
     }));
   };
@@ -262,10 +278,15 @@ class PurchaseOrderViewList extends React.Component {
   };
 
   async componentDidMount() {
-    let userId = JSON.parse(localStorage.getItem("userData"))._id;
-    await PurchaseOrderList(userId)
-      .then(res => {
-        this.setState({ rowData: res?.orderHistory });
+    const InsidePermissions = CheckPermission("Purchase Order");
+    this.setState({ InsiderPermissions: InsidePermissions });
+
+    let userId = JSON.parse(localStorage.getItem("userData"));
+    await PurchaseOrderList(userId?._id, userId?.database)
+      .then((res) => {
+        if (res?.orderHistory) {
+          this.setState({ rowData: res?.orderHistory });
+        }
         this.setState({ AllcolumnDefs: this.state.columnDefs });
         this.setState({ SelectedCols: this.state.columnDefs });
 
@@ -279,13 +300,13 @@ class PurchaseOrderViewList extends React.Component {
           this.setState({ SelectedcolumnDefs: this.state.columnDefs });
         }
       })
-      .catch(err => {
+      .catch((err) => {
         console.log(err);
       });
   }
 
   toggleDropdown = () => {
-    this.setState(prevState => ({ isOpen: !prevState.isOpen }));
+    this.setState((prevState) => ({ isOpen: !prevState.isOpen }));
   };
 
   runthisfunction(id) {
@@ -294,15 +315,15 @@ class PurchaseOrderViewList extends React.Component {
         cancel: "cancel",
         catch: { text: "Delete ", value: "delete" },
       },
-    }).then(value => {
+    }).then((value) => {
       switch (value) {
         case "delete":
           Delete_targetINlist(id)
-            .then(res => {
+            .then((res) => {
               let selectedData = this.gridApi.getSelectedRows();
               this.gridApi.updateRowData({ remove: selectedData });
             })
-            .catch(err => {
+            .catch((err) => {
               console.log(err);
             });
           break;
@@ -311,7 +332,7 @@ class PurchaseOrderViewList extends React.Component {
     });
   }
 
-  onGridReady = params => {
+  onGridReady = (params) => {
     this.gridApi = params.api;
     this.gridColumnApi = params.columnApi;
     this.gridRef.current = params.api;
@@ -323,11 +344,11 @@ class PurchaseOrderViewList extends React.Component {
     });
   };
 
-  updateSearchQuery = val => {
+  updateSearchQuery = (val) => {
     this.gridApi.setQuickFilter(val);
   };
 
-  filterSize = val => {
+  filterSize = (val) => {
     if (this.gridApi) {
       this.gridApi.paginationSetPageSize(Number(val));
       this.setState({
@@ -342,7 +363,7 @@ class PurchaseOrderViewList extends React.Component {
       SelectedColums?.push(value);
     } else {
       const delindex = SelectedColums?.findIndex(
-        ele => ele?.headerName === value?.headerName
+        (ele) => ele?.headerName === value?.headerName
       );
 
       SelectedColums?.splice(delindex, 1);
@@ -353,14 +374,14 @@ class PurchaseOrderViewList extends React.Component {
       Papa.parse(csvData, {
         header: true,
         skipEmptyLines: true,
-        complete: result => {
+        complete: (result) => {
           if (result.data && result.data.length > 0) {
             resolve(result.data);
           } else {
             reject(new Error("No data found in the CSV"));
           }
         },
-        error: error => {
+        error: (error) => {
           reject(error);
         },
       });
@@ -372,7 +393,7 @@ class PurchaseOrderViewList extends React.Component {
 
     const doc = new jsPDF("landscape", "mm", size, false);
     doc.setTextColor(5, 87, 97);
-    const tableData = parsedData.map(row => Object.values(row));
+    const tableData = parsedData.map((row) => Object.values(row));
     doc.addImage(Logo, "JPEG", 10, 10, 50, 30);
     let date = new Date();
     doc.setCreationDate(date);
@@ -397,12 +418,12 @@ class PurchaseOrderViewList extends React.Component {
       console.error("Error parsing CSV:", error);
     }
   };
-  processCell = params => {
+  processCell = (params) => {
     return params.value;
   };
 
   convertCsvToExcel(csvData) {
-    return new Promise(resolve => {
+    return new Promise((resolve) => {
       Papa.parse(csvData, {
         header: true,
         dynamicTyping: true,
@@ -433,7 +454,7 @@ class PurchaseOrderViewList extends React.Component {
     window.URL.revokeObjectURL(url);
   }
 
-  exportToExcel = async e => {
+  exportToExcel = async (e) => {
     const CsvData = this.gridApi.getDataAsCsv({
       processCellCallback: this.processCell,
     });
@@ -446,7 +467,7 @@ class PurchaseOrderViewList extends React.Component {
       processCellCallback: this.processCell,
     });
     Papa.parse(CsvData, {
-      complete: result => {
+      complete: (result) => {
         const ws = XLSX.utils.json_to_sheet(result.data);
         const wb = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(wb, ws, "Sheet1");
@@ -482,13 +503,13 @@ class PurchaseOrderViewList extends React.Component {
       processCellCallback: this.processCell,
     });
     Papa.parse(CsvData, {
-      complete: result => {
+      complete: (result) => {
         const rows = result.data;
 
         // Create XML
         let xmlString = "<root>\n";
 
-        rows.forEach(row => {
+        rows.forEach((row) => {
           xmlString += "  <row>\n";
           row.forEach((cell, index) => {
             xmlString += `    <field${index + 1}>${cell}</field${index + 1}>\n`;
@@ -506,7 +527,7 @@ class PurchaseOrderViewList extends React.Component {
     });
   };
 
-  HandleSetVisibleField = e => {
+  HandleSetVisibleField = (e) => {
     e.preventDefault();
     debugger;
     this.gridApi.setColumnDefs(this.state.SelectedcolumnDefs);
@@ -523,10 +544,10 @@ class PurchaseOrderViewList extends React.Component {
   HeadingRightShift = () => {
     const updatedSelectedColumnDefs = [
       ...new Set([
-        ...this.state.SelectedcolumnDefs.map(item => JSON.stringify(item)),
-        ...SelectedColums.map(item => JSON.stringify(item)),
+        ...this.state.SelectedcolumnDefs.map((item) => JSON.stringify(item)),
+        ...SelectedColums.map((item) => JSON.stringify(item)),
       ]),
-    ].map(item => JSON.parse(item));
+    ].map((item) => JSON.parse(item));
     this.setState({
       SelectedcolumnDefs: [...new Set(updatedSelectedColumnDefs)], // Update the state with the combined array
     });
@@ -550,6 +571,7 @@ class PurchaseOrderViewList extends React.Component {
       defaultColDef,
       SelectedcolumnDefs,
       isOpen,
+      InsiderPermissions,
       SelectedCols,
       AllcolumnDefs,
     } = this.state;
@@ -564,91 +586,98 @@ class PurchaseOrderViewList extends React.Component {
                     Purchased List
                   </h1>
                 </Col>
-                <Col>
-                  <span className="mx-1">
-                    <FaFilter
-                      style={{ cursor: "pointer" }}
-                      title="filter coloumn"
-                      size="35px"
-                      onClick={this.LookupviewStart}
-                      color="#39cccc"
-                      className="float-right"
-                    />
-                  </span>
-                  <span className="mx-1">
-                    <div className="dropdown-container float-right">
-                      <ImDownload
+                {InsiderPermissions && InsiderPermissions.View && (
+                  <Col>
+                    <span className="mx-1">
+                      <FaFilter
                         style={{ cursor: "pointer" }}
-                        title="download file"
+                        title="filter coloumn"
                         size="35px"
-                        className="dropdown-button "
+                        onClick={this.LookupviewStart}
                         color="#39cccc"
-                        onClick={this.toggleDropdown}
+                        className="float-right"
                       />
-                      {isOpen && (
-                        <div
-                          style={{
-                            position: "absolute",
-                            zIndex: "1",
-                            border: "1px solid #39cccc",
-                            backgroundColor: "white",
-                          }}
-                          className="dropdown-content dropdownmy">
-                          <h5
-                            onClick={() => this.exportToPDF()}
-                            style={{ cursor: "pointer" }}
-                            className=" mx-1 myactive mt-1">
-                            .PDF
-                          </h5>
-                          <h5
-                            onClick={() => this.gridApi.exportDataAsCsv()}
-                            style={{ cursor: "pointer" }}
-                            className=" mx-1 myactive">
-                            .CSV
-                          </h5>
-                          <h5
-                            onClick={this.convertCSVtoExcel}
-                            style={{ cursor: "pointer" }}
-                            className=" mx-1 myactive">
-                            .XLS
-                          </h5>
-                          <h5
-                            onClick={this.exportToExcel}
-                            style={{ cursor: "pointer" }}
-                            className=" mx-1 myactive">
-                            .XLSX
-                          </h5>
-                          <h5
-                            onClick={() => this.convertCsvToXml()}
-                            style={{ cursor: "pointer" }}
-                            className=" mx-1 myactive">
-                            .XML
-                          </h5>
-                        </div>
-                      )}
-                    </div>
-                  </span>
-                  <span>
-                    <Route
-                      render={({ history }) => (
-                        <Button
-                          style={{
-                            cursor: "pointer",
-                            backgroundColor: "#39cccc",
-                            color: "white",
-                            fontWeight: "600",
-                          }}
-                          className="float-right mr-1"
+                    </span>
+
+                    <span className="mx-1">
+                      <div className="dropdown-container float-right">
+                        <ImDownload
+                          style={{ cursor: "pointer" }}
+                          title="download file"
+                          size="35px"
+                          className="dropdown-button "
                           color="#39cccc"
-                          onClick={() =>
-                            history.push("/app/AJgroup/order/AddPurchaseOrder")
-                          }>
-                          <FaPlus size={15} /> Add Purchase Order
-                        </Button>
-                      )}
-                    />
-                  </span>
-                </Col>
+                          onClick={this.toggleDropdown}
+                        />
+                        {isOpen && (
+                          <div
+                            style={{
+                              position: "absolute",
+                              zIndex: "1",
+                              border: "1px solid #39cccc",
+                              backgroundColor: "white",
+                            }}
+                            className="dropdown-content dropdownmy">
+                            <h5
+                              onClick={() => this.exportToPDF()}
+                              style={{ cursor: "pointer" }}
+                              className=" mx-1 myactive mt-1">
+                              .PDF
+                            </h5>
+                            <h5
+                              onClick={() => this.gridApi.exportDataAsCsv()}
+                              style={{ cursor: "pointer" }}
+                              className=" mx-1 myactive">
+                              .CSV
+                            </h5>
+                            <h5
+                              onClick={this.convertCSVtoExcel}
+                              style={{ cursor: "pointer" }}
+                              className=" mx-1 myactive">
+                              .XLS
+                            </h5>
+                            <h5
+                              onClick={this.exportToExcel}
+                              style={{ cursor: "pointer" }}
+                              className=" mx-1 myactive">
+                              .XLSX
+                            </h5>
+                            <h5
+                              onClick={() => this.convertCsvToXml()}
+                              style={{ cursor: "pointer" }}
+                              className=" mx-1 myactive">
+                              .XML
+                            </h5>
+                          </div>
+                        )}
+                      </div>
+                    </span>
+                    {InsiderPermissions && InsiderPermissions.Create && (
+                      <span>
+                        <Route
+                          render={({ history }) => (
+                            <Button
+                              style={{
+                                cursor: "pointer",
+                                backgroundColor: "#39cccc",
+                                color: "white",
+                                fontWeight: "600",
+                              }}
+                              className="float-right mr-1"
+                              color="#39cccc"
+                              onClick={() =>
+                                history.push(
+                                  "/app/AJgroup/order/AddPurchaseOrder"
+                                )
+                              }>
+                              <FaPlus size={15} /> Add Purchase Order
+                            </Button>
+                          )}
+                        />
+                      </span>
+                    )}
+                  </Col>
+                )}
               </Row>
               <CardBody style={{ marginTop: "-1.5rem" }}>
                 {this.state.rowData === null ? null : (

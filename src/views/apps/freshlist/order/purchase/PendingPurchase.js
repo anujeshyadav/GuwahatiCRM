@@ -1,6 +1,5 @@
 import React, { useRef } from "react";
 import { Route } from "react-router-dom";
-import xmlJs from "xml-js";
 import { ImDownload } from "react-icons/im";
 import {
   Card,
@@ -17,17 +16,19 @@ import {
   ModalHeader,
   ModalBody,
   Badge,
+  Table,
+  Label,
 } from "reactstrap";
 
 import { ContextLayout } from "../../../../../utility/context/Layout";
 import { AgGridReact } from "ag-grid-react";
 import "ag-grid-community/dist/styles/ag-grid.css";
-import PendingView from "../../order/Pending";
+import ViewOrder from "../../order/ViewAll";
 import jsPDF from "jspdf";
 import "jspdf-autotable";
 import Logo from "../../../../../assets/img/profile/pages/logomain.png";
 import Papa from "papaparse";
-import { Eye, ChevronDown, Edit } from "react-feather";
+import { Eye, ChevronDown, Edit, CornerDownLeft } from "react-feather";
 import { IoMdRemoveCircleOutline } from "react-icons/io";
 import "../../../../../assets/scss/plugins/tables/_agGridStyleOverride.scss";
 import "../../../../../assets/scss/pages/users.scss";
@@ -36,6 +37,7 @@ import {
   FaArrowAltCircleLeft,
   FaArrowAltCircleRight,
   FaFilter,
+  FaPlus,
 } from "react-icons/fa";
 import swal from "sweetalert";
 import {
@@ -43,12 +45,12 @@ import {
   Delete_targetINlist,
 } from "../../../../../ApiEndPoint/ApiCalling";
 import {
-  BsCloudDownloadFill,
   BsFillArrowDownSquareFill,
   BsFillArrowUpSquareFill,
 } from "react-icons/bs";
 import * as XLSX from "xlsx";
 import UserContext from "../../../../../context/Context";
+import { CheckPermission } from "../../house/CheckPermission";
 
 const SelectedColums = [];
 
@@ -65,12 +67,14 @@ class PendingPurchase extends React.Component {
       modal: false,
       modalone: false,
       ViewData: {},
+      InsiderPermissions: {},
 
       setMySelectedarr: [],
       SelectedCols: [],
       paginationPageSize: 5,
       currenPageSize: "",
       getPageSize: "",
+      // columnDefs: [],
       AllcolumnDefs: [],
       SelectedcolumnDefs: [],
       defaultColDef: {
@@ -85,180 +89,99 @@ class PendingPurchase extends React.Component {
           headerName: "UID",
           valueGetter: "node.rowIndex + 1",
           field: "node.rowIndex + 1",
-          // checkboxSelection: true,
           width: 80,
           filter: true,
         },
+
         {
           headerName: "Actions",
           field: "transactions",
           width: 180,
-          cellRendererFramework: params => {
+          cellRendererFramework: (params) => {
             return (
               <div className="actions cursor-pointer">
-                {/* {this.state.Viewpermisson && ( */}
-                <Eye
-                  className="mr-50"
-                  size="25px"
-                  color="green"
-                  onClick={() => {
-                    this.handleChangeView(params.data, "readonly");
-                  }}
-                />
-                {/* )} */}
-                {/* {this.state.Editpermisson && ( */}
-                <Edit
-                  className="mr-50"
-                  size="25px"
-                  color="blue"
-                  onClick={() =>
-                    this.props.history.push({
-                      pathname: `/app/AJGroup/order/editPurchase/${params.data?._id}`,
-                      state: params.data,
-                    })
-                  }
-                />
+                {this.state.InsiderPermissions &&
+                  this.state.InsiderPermissions.Edit && (
+                    <CornerDownLeft
+                      className="mr-50"
+                      size="25px"
+                      color="green"
+                      onClick={() => {
+                        localStorage.setItem(
+                          "OrderList",
+                          JSON.stringify(params.data)
+                        );
+                        this.props.history.push({
+                          pathname: `/app/AJGroup/order/purchaseReturn/${params.data?._id}`,
+                          state: params.data,
+                        });
+                      }}
+                    />
+                  )}
+                {this.state.InsiderPermissions &&
+                  this.state.InsiderPermissions.View && (
+                    <Eye
+                      className="mr-50"
+                      size="25px"
+                      color="green"
+                      onClick={() => {
+                        this.togglemodal();
+                        this.handleChangeView(params.data, "readonly");
+                      }}
+                    />
+                  )}
+                {this.state.InsiderPermissions &&
+                  this.state.InsiderPermissions.Edit && (
+                    <Edit
+                      className="mr-50"
+                      size="25px"
+                      color="blue"
+                      onClick={() =>
+                        this.props.history.push({
+                          pathname: `/app/AJgroup/order/editPurchase/${params.data?._id}`,
+                          state: params.data,
+                        })
+                      }
+                    />
+                  )}
               </div>
             );
           },
         },
+
         {
           headerName: "Status",
           field: "status",
           filter: true,
           width: 150,
-          cellRendererFramework: params => {
-            return params.value === "pending" ? (
+          cellRendererFramework: (params) => {
+            console.log(params.data);
+            return params.value == "comleted" ? (
+              <div className="badge badge-pill badge-success">
+                {params.data.status}
+              </div>
+            ) : params.value == "pending" ? (
               <div className="badge badge-pill badge-warning">
                 {params.data.status}
               </div>
-            ) : params.value === "cancelled" ? (
-              <div className="badge badge-pill badge bg-danger">
+            ) : (
+              <div className="badge badge-pill badge-success">
                 {params.data.status}
               </div>
-            ) : null;
-          },
-        },
-        {
-          headerName: "Product_Title",
-          field: "orderItems",
-          filter: true,
-          width: 180,
-          valueGetter: params => {
-            if (params.data.orderItems && params.data.orderItems.length > 0) {
-              return params.data.orderItems[0].product.Product_Title;
-            }
-            return null;
-          },
-        },
-        // {
-        //   headerName: "Category",
-        //   field: "orderItems",
-        //   filter: true,
-        //   width: 180,
-        //   valueGetter: params => {
-        //     if (params.data.orderItems && params.data.orderItems.length > 0) {
-        //       return params.data.orderItems[0].product.category;
-        //     }
-        //     return null;
-        //   },
-        // },
-        // {
-        //   headerName: "SubCategory",
-        //   field: "orderItems",
-        //   filter: true,
-        //   width: 180,
-        //   valueGetter: params => {
-        //     if (params.data.orderItems && params.data.orderItems.length > 0) {
-        //       return params.data.orderItems[0].product.SubCategory;
-        //     }
-        //     return null;
-        //   },
-        // },
-        {
-          headerName: "Price",
-          field: "orderItems",
-          filter: true,
-          width: 150,
-          valueGetter: params => {
-            if (params.data.orderItems && params.data.orderItems.length > 0) {
-              return params.data.orderItems[0].price;
-            }
-            return null;
-          },
-        },
-        {
-          headerName: "Size",
-          field: "orderItems",
-          filter: true,
-          width: 150,
-          valueGetter: params => {
-            if (params.data.orderItems && params.data.orderItems.length > 0) {
-              return params.data.orderItems[0].qty; // Return the price
-            }
-            return null;
-          },
-        },
-        {
-          headerName: "GST Rate",
-          field: "orderItems",
-          filter: true,
-          width: 180,
-          valueGetter: params => {
-            if (params.data.orderItems && params.data.orderItems.length > 0) {
-              return params.data.orderItems[0].product["GST Rate"]; // Return the price
-            }
-            return null; // Or handle cases where there's no price
-          },
-        },
-        {
-          headerName: "HSN Code",
-          field: "orderItems",
-          filter: true,
-          width: 180,
-          valueGetter: params => {
-            if (params.data.orderItems && params.data.orderItems.length > 0) {
-              return params.data.orderItems[0].product.HSN_Code; // Return the price
-            }
-            return null;
-          },
-        },
-
-        {
-          headerName: "Country",
-          field: "country",
-          filter: true,
-          width: 200,
-          cellRendererFramework: params => {
-            return (
-              <div>
-                <span>{params.data?.country}</span>
-              </div>
             );
           },
         },
         {
-          headerName: "State",
-          field: "state",
+          headerName: "Purchase Date",
+          field: "DateofDelivery",
           filter: true,
           width: 200,
-          cellRendererFramework: params => {
+          cellRendererFramework: (params) => {
             return (
-              <div>
-                <span>{params.data?.state}</span>
-              </div>
-            );
-          },
-        },
-        {
-          headerName: "City",
-          field: "city",
-          filter: true,
-          width: 200,
-          cellRendererFramework: params => {
-            return (
-              <div>
-                <span>{params.data?.city}</span>
+              <div className="d-flex align-items-center cursor-pointer">
+                <div>
+                  <span>{params.data?.DateofDelivery}</span>
+                </div>
               </div>
             );
           },
@@ -267,24 +190,28 @@ class PendingPurchase extends React.Component {
           headerName: "MobileNo",
           field: "MobileNo",
           filter: true,
-          width: 150,
-          cellRendererFramework: params => {
+          width: 200,
+          cellRendererFramework: (params) => {
             return (
-              <div>
-                <span>{params.data?.MobileNo}</span>
+              <div className="d-flex align-items-center cursor-pointer">
+                <div>
+                  <span>{params.data?.MobileNo}</span>
+                </div>
               </div>
             );
           },
         },
         {
-          headerName: "Discount",
-          field: "discount",
+          headerName: "fullName",
+          field: "fullName",
           filter: true,
           width: 200,
-          cellRendererFramework: params => {
+          cellRendererFramework: (params) => {
             return (
-              <div>
-                <span>{params.data?.discount}</span>
+              <div className="d-flex align-items-center cursor-pointer">
+                <div>
+                  <span>{params.data?.fullName}</span>
+                </div>
               </div>
             );
           },
@@ -294,10 +221,29 @@ class PendingPurchase extends React.Component {
           field: "grandTotal",
           filter: true,
           width: 200,
-          cellRendererFramework: params => {
+          cellRendererFramework: (params) => {
             return (
-              <div>
-                <span>{params.data?.grandTotal}</span>
+              <div className="d-flex align-items-center cursor-pointer">
+                <div>
+                  <Badge color="primary">
+                    <strong>{params.data?.grandTotal}</strong>
+                  </Badge>
+                </div>
+              </div>
+            );
+          },
+        },
+        {
+          headerName: "state",
+          field: "state",
+          filter: true,
+          width: 200,
+          cellRendererFramework: (params) => {
+            return (
+              <div className="d-flex align-items-center cursor-pointer">
+                <div>
+                  <span>{params.data?.state}</span>
+                </div>
               </div>
             );
           },
@@ -305,13 +251,14 @@ class PendingPurchase extends React.Component {
       ],
     };
   }
-  toggleModal = () => {
-    this.setState(prevState => ({
+  togglemodal = () => {
+    this.setState((prevState) => ({
       modalone: !prevState.modalone,
     }));
+    this.setState({ ShowBill: false });
   };
   LookupviewStart = () => {
-    this.setState(prevState => ({
+    this.setState((prevState) => ({
       modal: !prevState.modal,
     }));
   };
@@ -326,27 +273,19 @@ class PendingPurchase extends React.Component {
       this.setState({ EditOneData: data });
     }
   };
-  // handleChangeEdit = (data, types) => {
-  //   let type = types;
-  //   if (type == "readonly") {
-  //     this.setState({ ViewOneUserView: true });
-  //     this.setState({ ViewOneData: data });
-  //   } else {
-  //     this.setState({ EditOneUserView: true });
-  //     this.setState({ EditOneData: data });
-  //   }
-  // };
 
   async componentDidMount() {
-    const UserInformation = this.context?.UserInformatio;
-    let userId = JSON.parse(localStorage.getItem("userData"))._id;
-    await PurchaseOrderList(userId)
-      .then(res => {
-        console.log(res?.orderHistory);
-        const pendingStatus = res?.orderHistory?.filter(ele =>
+        const InsidePermissions = CheckPermission("Purchase Pending");
+        this.setState({ InsiderPermissions: InsidePermissions });
+    let userId = JSON.parse(localStorage.getItem("userData"));
+    await PurchaseOrderList(userId?._id, userId?.database)
+      .then((res) => {
+        const pendingStatus = res?.orderHistory?.filter((ele) =>
           ele.status == "pending" ? ele.status : null
         );
-        this.setState({ rowData: pendingStatus });
+        if (pendingStatus) {
+          this.setState({ rowData: pendingStatus });
+        }
         this.setState({ AllcolumnDefs: this.state.columnDefs });
         this.setState({ SelectedCols: this.state.columnDefs });
 
@@ -360,38 +299,30 @@ class PendingPurchase extends React.Component {
           this.setState({ SelectedcolumnDefs: this.state.columnDefs });
         }
       })
-      .catch(err => {
+      .catch((err) => {
         console.log(err);
       });
-    // await CreateAccountList()
-    //   .then((res) => {
-    //     let value = res?.User;
-    //     this.setState({ rowData: value });
-    //   })
-    //   .catch((err) => {
-    //     console.log(err);
-    //   });
   }
+
   toggleDropdown = () => {
-    this.setState(prevState => ({ isOpen: !prevState.isOpen }));
+    this.setState((prevState) => ({ isOpen: !prevState.isOpen }));
   };
 
   runthisfunction(id) {
-    debugger;
     swal("Warning", "Sure You Want to Delete it", {
       buttons: {
         cancel: "cancel",
         catch: { text: "Delete ", value: "delete" },
       },
-    }).then(value => {
+    }).then((value) => {
       switch (value) {
         case "delete":
           Delete_targetINlist(id)
-            .then(res => {
+            .then((res) => {
               let selectedData = this.gridApi.getSelectedRows();
               this.gridApi.updateRowData({ remove: selectedData });
             })
-            .catch(err => {
+            .catch((err) => {
               console.log(err);
             });
           break;
@@ -400,7 +331,7 @@ class PendingPurchase extends React.Component {
     });
   }
 
-  onGridReady = params => {
+  onGridReady = (params) => {
     this.gridApi = params.api;
     this.gridColumnApi = params.columnApi;
     this.gridRef.current = params.api;
@@ -412,11 +343,11 @@ class PendingPurchase extends React.Component {
     });
   };
 
-  updateSearchQuery = val => {
+  updateSearchQuery = (val) => {
     this.gridApi.setQuickFilter(val);
   };
 
-  filterSize = val => {
+  filterSize = (val) => {
     if (this.gridApi) {
       this.gridApi.paginationSetPageSize(Number(val));
       this.setState({
@@ -431,7 +362,7 @@ class PendingPurchase extends React.Component {
       SelectedColums?.push(value);
     } else {
       const delindex = SelectedColums?.findIndex(
-        ele => ele?.headerName === value?.headerName
+        (ele) => ele?.headerName === value?.headerName
       );
 
       SelectedColums?.splice(delindex, 1);
@@ -442,14 +373,14 @@ class PendingPurchase extends React.Component {
       Papa.parse(csvData, {
         header: true,
         skipEmptyLines: true,
-        complete: result => {
+        complete: (result) => {
           if (result.data && result.data.length > 0) {
             resolve(result.data);
           } else {
             reject(new Error("No data found in the CSV"));
           }
         },
-        error: error => {
+        error: (error) => {
           reject(error);
         },
       });
@@ -461,7 +392,7 @@ class PendingPurchase extends React.Component {
 
     const doc = new jsPDF("landscape", "mm", size, false);
     doc.setTextColor(5, 87, 97);
-    const tableData = parsedData.map(row => Object.values(row));
+    const tableData = parsedData.map((row) => Object.values(row));
     doc.addImage(Logo, "JPEG", 10, 10, 50, 30);
     let date = new Date();
     doc.setCreationDate(date);
@@ -486,14 +417,12 @@ class PendingPurchase extends React.Component {
       console.error("Error parsing CSV:", error);
     }
   };
-  processCell = params => {
-    // console.log(params);
-    // Customize cell content as needed
+  processCell = (params) => {
     return params.value;
   };
 
   convertCsvToExcel(csvData) {
-    return new Promise(resolve => {
+    return new Promise((resolve) => {
       Papa.parse(csvData, {
         header: true,
         dynamicTyping: true,
@@ -524,7 +453,7 @@ class PendingPurchase extends React.Component {
     window.URL.revokeObjectURL(url);
   }
 
-  exportToExcel = async e => {
+  exportToExcel = async (e) => {
     const CsvData = this.gridApi.getDataAsCsv({
       processCellCallback: this.processCell,
     });
@@ -537,7 +466,7 @@ class PendingPurchase extends React.Component {
       processCellCallback: this.processCell,
     });
     Papa.parse(CsvData, {
-      complete: result => {
+      complete: (result) => {
         const ws = XLSX.utils.json_to_sheet(result.data);
         const wb = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(wb, ws, "Sheet1");
@@ -573,13 +502,13 @@ class PendingPurchase extends React.Component {
       processCellCallback: this.processCell,
     });
     Papa.parse(CsvData, {
-      complete: result => {
+      complete: (result) => {
         const rows = result.data;
 
         // Create XML
         let xmlString = "<root>\n";
 
-        rows.forEach(row => {
+        rows.forEach((row) => {
           xmlString += "  <row>\n";
           row.forEach((cell, index) => {
             xmlString += `    <field${index + 1}>${cell}</field${index + 1}>\n`;
@@ -588,10 +517,6 @@ class PendingPurchase extends React.Component {
         });
 
         xmlString += "</root>";
-
-        // setXmlData(xmlString);
-
-        // Create a download link
         const blob = new Blob([xmlString], { type: "text/xml" });
         const link = document.createElement("a");
         link.href = URL.createObjectURL(blob);
@@ -601,7 +526,7 @@ class PendingPurchase extends React.Component {
     });
   };
 
-  HandleSetVisibleField = e => {
+  HandleSetVisibleField = (e) => {
     e.preventDefault();
     debugger;
     this.gridApi.setColumnDefs(this.state.SelectedcolumnDefs);
@@ -618,10 +543,10 @@ class PendingPurchase extends React.Component {
   HeadingRightShift = () => {
     const updatedSelectedColumnDefs = [
       ...new Set([
-        ...this.state.SelectedcolumnDefs.map(item => JSON.stringify(item)),
-        ...SelectedColums.map(item => JSON.stringify(item)),
+        ...this.state.SelectedcolumnDefs.map((item) => JSON.stringify(item)),
+        ...SelectedColums.map((item) => JSON.stringify(item)),
       ]),
-    ].map(item => JSON.parse(item));
+    ].map((item) => JSON.parse(item));
     this.setState({
       SelectedcolumnDefs: [...new Set(updatedSelectedColumnDefs)], // Update the state with the combined array
     });
@@ -646,270 +571,212 @@ class PendingPurchase extends React.Component {
       SelectedcolumnDefs,
       isOpen,
       SelectedCols,
+      InsiderPermissions,
+
       AllcolumnDefs,
     } = this.state;
     return (
       <>
-        <Col className="app-user-list">
-          {this.state.EditOneUserView && this.state.EditOneUserView ? (
-            <Row className="card">
-              <Col>
-                <div className="d-flex justify-content-end p-1">
-                  <Button
-                    onClick={e => {
-                      e.preventDefault();
-                      this.setState({ EditOneUserView: false });
-                    }}
-                    color="danger"
-                  >
-                    Back
-                  </Button>
-                </div>
-              </Col>
-
-              {/* <EditAccount EditOneData={this.state.EditOneData} /> */}
-            </Row>
-          ) : (
-            <>
-              {this.state.ViewOneUserView && this.state.ViewOneUserView ? (
-                <>
-                  <Row className="card">
-                    <Row className="m-2">
-                      <Col>
-                        <h2>Pending Purchase Order</h2>
-                      </Col>
-                      <Col className="" style={{ display: "contents" }}>
-                        {/* <div className="d-flex justify-content-end p-1"> */}
-                        <Button
-                          onClick={e => {
-                            e.preventDefault();
-                            this.setState({ ViewOneUserView: false });
+        <>
+          <Col sm="12">
+            <Card>
+              <Row className="ml-2 mr-2 mt-2">
+                <Col>
+                  <h1 className="float-left" style={{ fontWeight: "600" }}>
+                    Pending Purchased List
+                  </h1>
+                </Col>
+                {InsiderPermissions && InsiderPermissions.View && (
+                <Col>
+                  <span className="mx-1">
+                    <FaFilter
+                      style={{ cursor: "pointer" }}
+                      title="filter coloumn"
+                      size="35px"
+                      onClick={this.LookupviewStart}
+                      color="#39cccc"
+                      className="float-right"
+                    />
+                  </span>
+                  <span className="mx-1">
+                    <div className="dropdown-container float-right">
+                      <ImDownload
+                        style={{ cursor: "pointer" }}
+                        title="download file"
+                        size="35px"
+                        className="dropdown-button "
+                        color="#39cccc"
+                        onClick={this.toggleDropdown}
+                      />
+                      {isOpen && (
+                        <div
+                          style={{
+                            position: "absolute",
+                            zIndex: "1",
+                            border: "1px solid #39cccc",
+                            backgroundColor: "white",
                           }}
-                          color="danger"
-                        >
-                          Back
-                        </Button>
-                        {/* </div> */}
-                      </Col>
-                    </Row>
-                    <PendingView ViewOneData={this.state.ViewOneData} />
-                  </Row>
-                </>
-              ) : (
-                <>
-                  <Col sm="12">
-                    <Card>
-                      <Row className="mt-2 ml-2 mr-2">
-                        <Col>
-                          <h1
-                            className="float-left"
-                            style={{ fontWeight: "600" }}
-                          >
-                            Purchase Pending List
-                          </h1>
-                        </Col>
-                        <Col>
-                          <span className="mx-1">
-                            <FaFilter
-                              style={{ cursor: "pointer" }}
-                              title="filter coloumn"
-                              size="35px"
-                              onClick={this.LookupviewStart}
-                              color="#39cccc"
-                              className="float-right"
-                            />
-                          </span>
-                          <span className="mx-1">
-                            <div className="dropdown-container float-right">
-                              <ImDownload
-                                style={{ cursor: "pointer" }}
-                                title="download file"
-                                size="35px"
-                                className="dropdown-button "
-                                color="#39cccc"
-                                onClick={this.toggleDropdown}
-                              />
-                              {isOpen && (
-                                <div
-                                  style={{
-                                    position: "absolute",
-                                    zIndex: "1",
-                                    border: "1px solid #39cccc",
-                                    backgroundColor: "white",
-                                  }}
-                                  className="dropdown-content dropdownmy"
-                                >
-                                  <h5
-                                    onClick={() => this.exportToPDF()}
-                                    style={{ cursor: "pointer" }}
-                                    className=" mx-1 myactive mt-1"
-                                  >
-                                    .PDF
-                                  </h5>
-                                  <h5
-                                    onClick={() =>
-                                      this.gridApi.exportDataAsCsv()
-                                    }
-                                    style={{ cursor: "pointer" }}
-                                    className=" mx-1 myactive"
-                                  >
-                                    .CSV
-                                  </h5>
-                                  <h5
-                                    onClick={this.convertCSVtoExcel}
-                                    style={{ cursor: "pointer" }}
-                                    className=" mx-1 myactive"
-                                  >
-                                    .XLS
-                                  </h5>
-                                  <h5
-                                    onClick={this.exportToExcel}
-                                    style={{ cursor: "pointer" }}
-                                    className=" mx-1 myactive"
-                                  >
-                                    .XLSX
-                                  </h5>
-                                  <h5
-                                    onClick={() => this.convertCsvToXml()}
-                                    style={{ cursor: "pointer" }}
-                                    className=" mx-1 myactive"
-                                  >
-                                    .XML
-                                  </h5>
-                                </div>
-                              )}
-                            </div>
-                          </span>
-                        </Col>
-                      </Row>
-                      <CardBody style={{ marginTop: "-1.5rem" }}>
-                        {this.state.rowData === null ? null : (
-                          <div className="ag-theme-material w-100 my-2 ag-grid-table">
-                            <div className="d-flex flex-wrap justify-content-between align-items-center">
-                              <div className="mb-1">
-                                <UncontrolledDropdown className="p-1 ag-dropdown">
-                                  <DropdownToggle tag="div">
-                                    {this.gridApi
-                                      ? this.state.currenPageSize
-                                      : "" * this.state.getPageSize -
-                                        (this.state.getPageSize - 1)}{" "}
-                                    -{" "}
-                                    {this.state.rowData.length -
-                                      this.state.currenPageSize *
-                                        this.state.getPageSize >
-                                    0
-                                      ? this.state.currenPageSize *
-                                        this.state.getPageSize
-                                      : this.state.rowData.length}{" "}
-                                    of {this.state.rowData.length}
-                                    <ChevronDown className="ml-50" size={15} />
-                                  </DropdownToggle>
-                                  <DropdownMenu right>
-                                    <DropdownItem
-                                      tag="div"
-                                      onClick={() => this.filterSize(5)}
-                                    >
-                                      5
-                                    </DropdownItem>
-                                    <DropdownItem
-                                      tag="div"
-                                      onClick={() => this.filterSize(20)}
-                                    >
-                                      20
-                                    </DropdownItem>
-                                    <DropdownItem
-                                      tag="div"
-                                      onClick={() => this.filterSize(50)}
-                                    >
-                                      50
-                                    </DropdownItem>
-                                    <DropdownItem
-                                      tag="div"
-                                      onClick={() => this.filterSize(100)}
-                                    >
-                                      100
-                                    </DropdownItem>
-                                    <DropdownItem
-                                      tag="div"
-                                      onClick={() => this.filterSize(134)}
-                                    >
-                                      134
-                                    </DropdownItem>
-                                  </DropdownMenu>
-                                </UncontrolledDropdown>
-                              </div>
-                              <div className="d-flex flex-wrap justify-content-end mb-1">
-                                <div className="table-input mr-1">
-                                  <Input
-                                    placeholder="search Item here..."
-                                    onChange={e =>
-                                      this.updateSearchQuery(e.target.value)
-                                    }
-                                    value={this.state.value}
-                                  />
-                                </div>
-                              </div>
-                            </div>
-                            <ContextLayout.Consumer className="ag-theme-alpine">
-                              {context => (
-                                <AgGridReact
-                                  id="myAgGrid"
-                                  // gridOptions={{
-                                  //   domLayout: "autoHeight",
-                                  //   // or other layout options
-                                  // }}
-                                  gridOptions={this.gridOptions}
-                                  rowSelection="multiple"
-                                  defaultColDef={defaultColDef}
-                                  columnDefs={columnDefs}
-                                  rowData={rowData}
-                                  // onGridReady={(params) => {
-                                  //   this.gridApi = params.api;
-                                  //   this.gridColumnApi = params.columnApi;
-                                  //   this.gridRef.current = params.api;
+                          className="dropdown-content dropdownmy">
+                          <h5
+                            onClick={() => this.exportToPDF()}
+                            style={{ cursor: "pointer" }}
+                            className=" mx-1 myactive mt-1">
+                            .PDF
+                          </h5>
+                          <h5
+                            onClick={() => this.gridApi.exportDataAsCsv()}
+                            style={{ cursor: "pointer" }}
+                            className=" mx-1 myactive">
+                            .CSV
+                          </h5>
+                          <h5
+                            onClick={this.convertCSVtoExcel}
+                            style={{ cursor: "pointer" }}
+                            className=" mx-1 myactive">
+                            .XLS
+                          </h5>
+                          <h5
+                            onClick={this.exportToExcel}
+                            style={{ cursor: "pointer" }}
+                            className=" mx-1 myactive">
+                            .XLSX
+                          </h5>
+                          <h5
+                            onClick={() => this.convertCsvToXml()}
+                            style={{ cursor: "pointer" }}
+                            className=" mx-1 myactive">
+                            .XML
+                          </h5>
+                        </div>
+                      )}
+                    </div>
+                  </span>
+                {InsiderPermissions && InsiderPermissions.Create && (
 
-                                  //   this.setState({
-                                  //     currenPageSize:
-                                  //       this.gridApi.paginationGetCurrentPage() +
-                                  //       1,
-                                  //     getPageSize:
-                                  //       this.gridApi.paginationGetPageSize(),
-                                  //     totalPages:
-                                  //       this.gridApi.paginationGetTotalPages(),
-                                  //   });
-                                  // }}
-                                  onGridReady={this.onGridReady}
-                                  colResizeDefault={"shift"}
-                                  animateRows={true}
-                                  floatingFilter={false}
-                                  pagination={true}
-                                  paginationPageSize={
-                                    this.state.paginationPageSize
-                                  }
-                                  pivotPanelShow="always"
-                                  enableRtl={context.state.direction === "rtl"}
-                                  ref={this.gridRef} // Attach the ref to the grid
-                                  domLayout="autoHeight" // Adjust layout as needed
-                                />
-                              )}
-                            </ContextLayout.Consumer>
-                          </div>
-                        )}
-                      </CardBody>
-                    </Card>
-                  </Col>
-                </>
-              )}
-            </>
-          )}
-        </Col>
+                  <span>
+                    <Route
+                      render={({ history }) => (
+                        <Button
+                          style={{
+                            cursor: "pointer",
+                            backgroundColor: "#39cccc",
+                            color: "white",
+                            fontWeight: "600",
+                          }}
+                          className="float-right mr-1"
+                          color="#39cccc"
+                          onClick={() =>
+                            history.push("/app/AJgroup/order/AddPurchaseOrder")
+                          }>
+                          <FaPlus size={15} /> Add Purchase Order
+                        </Button>
+                      )}
+                    />
+                  </span>
+                )}
+                  
+                </Col>
+
+                )}
+
+              </Row>
+              <CardBody style={{ marginTop: "-1.5rem" }}>
+                {this.state.rowData === null ? null : (
+                  <div className="ag-theme-material w-100 my-2 ag-grid-table">
+                    <div className="d-flex flex-wrap justify-content-between align-items-center">
+                      <div className="mb-1">
+                        <UncontrolledDropdown className="p-1 ag-dropdown">
+                          <DropdownToggle tag="div">
+                            {this.gridApi
+                              ? this.state.currenPageSize
+                              : "" * this.state.getPageSize -
+                                (this.state.getPageSize - 1)}{" "}
+                            -{" "}
+                            {this.state.rowData.length -
+                              this.state.currenPageSize *
+                                this.state.getPageSize >
+                            0
+                              ? this.state.currenPageSize *
+                                this.state.getPageSize
+                              : this.state.rowData.length}{" "}
+                            of {this.state.rowData.length}
+                            <ChevronDown className="ml-50" size={15} />
+                          </DropdownToggle>
+                          <DropdownMenu right>
+                            <DropdownItem
+                              tag="div"
+                              onClick={() => this.filterSize(5)}>
+                              5
+                            </DropdownItem>
+                            <DropdownItem
+                              tag="div"
+                              onClick={() => this.filterSize(20)}>
+                              20
+                            </DropdownItem>
+                            <DropdownItem
+                              tag="div"
+                              onClick={() => this.filterSize(50)}>
+                              50
+                            </DropdownItem>
+                            <DropdownItem
+                              tag="div"
+                              onClick={() => this.filterSize(100)}>
+                              100
+                            </DropdownItem>
+                            <DropdownItem
+                              tag="div"
+                              onClick={() => this.filterSize(134)}>
+                              134
+                            </DropdownItem>
+                          </DropdownMenu>
+                        </UncontrolledDropdown>
+                      </div>
+                      <div className="d-flex flex-wrap justify-content-end mb-1">
+                        <div className="table-input mr-1">
+                          <Input
+                            placeholder="search Item here..."
+                            onChange={(e) =>
+                              this.updateSearchQuery(e.target.value)
+                            }
+                            value={this.state.value}
+                          />
+                        </div>
+                      </div>
+                    </div>
+                    <ContextLayout.Consumer className="ag-theme-alpine">
+                      {(context) => (
+                        <AgGridReact
+                          id="myAgGrid"
+                          gridOptions={this.gridOptions}
+                          rowSelection="multiple"
+                          defaultColDef={defaultColDef}
+                          columnDefs={columnDefs}
+                          rowData={rowData}
+                          onGridReady={this.onGridReady}
+                          colResizeDefault={"shift"}
+                          animateRows={true}
+                          floatingFilter={false}
+                          pagination={true}
+                          paginationPageSize={this.state.paginationPageSize}
+                          pivotPanelShow="always"
+                          enableRtl={context.state.direction === "rtl"}
+                          ref={this.gridRef} // Attach the ref to the grid
+                          domLayout="autoHeight" // Adjust layout as needed
+                        />
+                      )}
+                    </ContextLayout.Consumer>
+                  </div>
+                )}
+              </CardBody>
+            </Card>
+          </Col>
+        </>
 
         <Modal
           isOpen={this.state.modal}
           toggle={this.LookupviewStart}
           className={this.props.className}
-          style={{ maxWidth: "1050px" }}
-        >
+          style={{ maxWidth: "1050px" }}>
           <ModalHeader toggle={this.LookupviewStart}>Change Fileds</ModalHeader>
           <ModalBody className="modalbodyhead">
             <Row>
@@ -922,15 +789,15 @@ class PendingPurchase extends React.Component {
                         return (
                           <>
                             <div
-                              onClick={e => this.handleChangeHeader(e, ele, i)}
+                              onClick={(e) =>
+                                this.handleChangeHeader(e, ele, i)
+                              }
                               key={i}
-                              className="mycustomtag mt-1"
-                            >
+                              className="mycustomtag mt-1">
                               <span className="mt-1">
                                 <h5
                                   style={{ cursor: "pointer" }}
-                                  className="allfields"
-                                >
+                                  className="allfields">
                                   <input
                                     type="checkbox"
                                     // checked={check && check}
@@ -989,15 +856,14 @@ class PendingPurchase extends React.Component {
                                             : ""
                                         }`,
                                       }}
-                                      className="allfields"
-                                    >
+                                      className="allfields">
                                       <IoMdRemoveCircleOutline
                                         onClick={() => {
                                           const SelectedCols =
                                             this.state.SelectedcolumnDefs?.slice();
                                           const delindex =
                                             SelectedCols?.findIndex(
-                                              element =>
+                                              (element) =>
                                                 element?.headerName ==
                                                 ele?.headerName
                                             );
@@ -1011,17 +877,6 @@ class PendingPurchase extends React.Component {
                                               SelectedcolumnDefs: SelectedCols, // Update the state with the modified array
                                             });
                                           }
-                                          // const delindex =
-                                          //   SelectedCols.findIndex(
-                                          //     (element) =>
-                                          //       element?.headerName ==
-                                          //       ele?.headerName
-                                          //   );
-
-                                          // SelectedCols?.splice(delindex, 1);
-                                          // this.setState({
-                                          //   SelectedcolumnDefs: SelectedCols,
-                                          // });
                                         }}
                                         style={{ cursor: "pointer" }}
                                         size="25px"
@@ -1063,9 +918,17 @@ class PendingPurchase extends React.Component {
             <Row>
               <Col>
                 <div className="d-flex justify-content-center">
-                  <Button onClick={this.HandleSetVisibleField} color="primary">
+                  {/* <Button onClick={this.HandleSetVisibleField} color="primary">
                     Submit
-                  </Button>
+                  </Button> */}
+
+                  <Badge
+                    style={{ cursor: "pointer" }}
+                    className=""
+                    color="primary"
+                    onClick={this.HandleSetVisibleField}>
+                    Submit
+                  </Badge>
                 </div>
               </Col>
             </Row>
@@ -1073,17 +936,135 @@ class PendingPurchase extends React.Component {
         </Modal>
         <Modal
           isOpen={this.state.modalone}
-          toggle={this.toggleModal}
-          className="modal-dialog modal-xl"
-          size="lg"
-          backdrop={true}
-          fullscreen={true}
-        >
-          <ModalHeader toggle={this.toggleModal}>View Details</ModalHeader>
-          <ModalBody className="myproducttable">
-            {/* <div className="container"> */}
-            {/* <TargetAssignedOne ViewData={this.state.ViewData} /> */}
-            {/* </div> */}
+          toggle={this.togglemodal}
+          className={this.props.className}
+          style={{ maxWidth: "1050px" }}>
+          <ModalHeader toggle={this.togglemodal}>
+            {this.state.ShowBill ? "Bill Download" : "Purchase View"}
+          </ModalHeader>
+          <ModalBody
+            className={`${this.state.ShowBill ? "p-1" : "modalbodyhead"}`}>
+            {this.state.ShowBill ? (
+              <>
+                <StockTrxInvoice ViewOneData={this.state.ViewOneData} />
+              </>
+            ) : (
+              <>
+                {this.state.ViewOneUserView ? (
+                  <>
+                    <Row>
+                      <Col>
+                        <Label>UserName:</Label>
+                        <h5 className="">
+                          {this.state.ViewOneData &&
+                            this.state.ViewOneData?.fullName}
+                        </h5>
+                      </Col>
+                      {/* <Col>
+                        <Label>Stock trx date :</Label>
+                        <h5>
+                          {this.state.ViewOneData &&
+                            this.state.ViewOneData?.stockTransferDate}
+                        </h5>
+                      </Col> */}
+                      <Col>
+                        <Label>Grand Total :</Label>
+                        <h5>
+                          <strong>
+                            {this.state.ViewOneData &&
+                              this.state.ViewOneData?.grandTotal}
+                          </strong>
+                          Rs/-
+                        </h5>
+                      </Col>
+                      <Col>
+                        {this.state.ViewOneData?.status == "completed" ? (
+                          <>
+                            <div className="d-flex justify-content-center">
+                              <h5>
+                                Status:
+                                <Badge className="mx-2" color="primary">
+                                  {this.state.ViewOneData?.status}
+                                </Badge>
+                              </h5>
+                            </div>
+                          </>
+                        ) : (
+                          <>
+                            <h5>
+                              status:
+                              <Badge className="mx-2 btn btn-warning">
+                                {this.state.ViewOneData?.status}
+                              </Badge>
+                            </h5>
+                          </>
+                        )}
+                      </Col>
+                      {/* <Col>
+                        <Label>Download Invoice :</Label>
+                        <div className="d-flex justify-content-center">
+                          <FaDownload
+                            onClick={this.handleStockTrxInvoiceShow}
+                            color="#00c0e"
+                            fill="#00c0e"
+                            style={{ cursor: "pointer" }}
+                            size={20}
+                          />
+                        </div>
+                      </Col> */}
+                    </Row>
+                    <Row className="p-2">
+                      <Col>
+                        <div className="d-flex justify-content-center">
+                          <h4>Sales Order List</h4>
+                        </div>
+                      </Col>
+                    </Row>
+                    <Row>
+                      <Col>
+                        <Table style={{ cursor: "pointer" }} striped>
+                          <thead>
+                            <tr>
+                              <th>#</th>
+                              <th>Product Name</th>
+                              <th>Price</th>
+                              <th>Size</th>
+                              <th>Unit</th>
+                              <th>HSN CODE</th>
+                              <th>GST</th>
+                              <th>Quantity</th>
+                              <th>Total</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {this.state.ViewOneData?.orderItems &&
+                              this.state.ViewOneData?.orderItems?.map(
+                                (ele, i) => (
+                                  <>
+                                    <tr>
+                                      <th scope="row">{i + 1}</th>
+                                      <td>{ele?.productId?.Product_Title}</td>
+                                      <td>{ele?.product?.Product_MRP}</td>
+                                      <td>{ele?.Size}</td>
+                                      <td>{ele?.unitType}</td>
+                                      <td>{ele?.productId?.HSN_Code}</td>
+                                      <td>{ele?.productId["GST Rate"]}</td>
+                                      <td>{ele?.qty}</td>
+                                      <td>
+                                        {ele?.price * ele?.Size * ele?.qty}
+                                      </td>
+                                    </tr>
+                                  </>
+                                )
+                              )}
+                          </tbody>
+                        </Table>
+                      </Col>
+                    </Row>
+                  </>
+                ) : null}
+              </>
+            )}
           </ModalBody>
         </Modal>
       </>

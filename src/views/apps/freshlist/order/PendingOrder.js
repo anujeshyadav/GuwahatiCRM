@@ -301,6 +301,7 @@ class PendingOrder extends React.Component {
           filter: true,
           width: 200,
           cellRendererFramework: (params) => {
+            console.log(params?.data);
             return (
               <div>
                 <span>{params.data?.grandTotal}</span>

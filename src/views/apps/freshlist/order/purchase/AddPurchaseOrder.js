@@ -244,7 +244,7 @@ const AddPurchaseOrder = (args) => {
       orderItems: product,
       DateofDelivery: dateofDelivery,
       partyId: PartyId,
-      // created_by: UserInfo?._id,
+      created_by: UserInfo?._id,
     };
     if (error) {
       swal("Error occured while Entering Details");

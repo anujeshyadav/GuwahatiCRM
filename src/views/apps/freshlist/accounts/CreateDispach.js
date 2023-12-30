@@ -178,8 +178,10 @@ const CreateDispach = (args) => {
 
     let formdata = new FormData();
 
+    formdata.append(`created_by`, DispatchData?.userId);
     formdata.append(`userId`, DispatchData?.userId);
     formdata.append(`orderId`, DispatchData?.orderId);
+    formdata.append(`grandTotal`, DispatchData?.grandTotal);
     formdata.append(`status`, "InProcess");
     formdata.append(`orderItems`, JSON.stringify(DispatchData?.orderItems));
 
