@@ -1323,20 +1323,20 @@ const CreateTarget = (args) => {
 
     UnitListView(userData?._id, userData?.database)
       .then((res) => {
-        console.log(res);
-        setUnitList(res?.Unit);
+        console.log(res?.Unit);
+        let customADD = {
+          primaryUnit: "PIECES(Pcs)",
+          secondaryUnit: "PIECES(Pcs) 1",
+          unitQty: 1,
+        };
+        debugger;
+        let AllUnit = [...res?.Unit, customADD];
+        setUnitList(AllUnit);
       })
       .catch((err) => {
         console.log(err);
       });
-    // ProductListView(userData?._id)
-    //   .then((res) => {
-    //     console.log(res.Product);
-    //     setProductList(res?.Product);
-    //   })
-    //   .catch((err) => {
-    //     console.log(err);
-    //   });
+ 
   }, []);
   useEffect(() => {
     const userInfo = JSON.parse(localStorage.getItem("userData"));

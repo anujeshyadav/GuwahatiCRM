@@ -369,9 +369,6 @@ class DamagedStock extends React.Component {
     this.setState({ InsiderPermissions: InsidePermissions });
     await Get_Damagedstock(userid)
       .then((res) => {
-        
-        console.log(res?.damageItems);
-        
         let Data = res?.damageItems?.filter(
           (ele) => ele?.warehouse?.typeStatus == "Damadged"
         );
@@ -404,9 +401,6 @@ class DamagedStock extends React.Component {
 
   runthisfunction(data) {
 
-    // console.log(data);
-    // console.log(data?.warehouse?._id);
-    // console.log(data?.damageItem?.productId._id);
     let pageparmission = JSON.parse(localStorage.getItem("userData"));
     let userid = pageparmission?._id;
     swal("Warning", "Sure You Want to Delete it", {
