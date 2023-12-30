@@ -21,6 +21,7 @@ import {
   Label,
   Table,
   CustomInput,
+  Form,
 } from "reactstrap";
 
 import { ContextLayout } from "../../../../../utility/context/Layout";
@@ -79,6 +80,9 @@ class DamagedStock extends React.Component {
       isOpen: false,
       ShowBill: false,
       Arrindex: "",
+      Wastage_status: "",
+      Dam_Percentage: "",
+      Reason: "",
       rowData: [],
       setMySelectedarr: [],
       ViewOneData: {},
@@ -160,25 +164,25 @@ class DamagedStock extends React.Component {
         // },
         {
           headerName: "Status",
-          field: "warehouse.typeStatus",
+          field: "damageItem.typeStatus",
           filter: true,
           width: 150,
           cellRendererFramework: (params) => {
-            return params.data?.warehouse?.typeStatus === "Working" ? (
+            return params.data?.damageItem?.typeStatus === "Working" ? (
               <div className="badge badge-pill badge-success">
-                {params.data?.warehouse?.typeStatus}
+                {params.data?.damageItem?.typeStatus}
               </div>
-            ) : params.data?.warehouse?.typeStatus === "damage" ? (
+            ) : params.data?.damageItem?.typeStatus === "Damaged" ? (
               <div className="badge badge-pill badge-warning">
-                {params.data?.warehouse?.typeStatus}
+                {params.data?.damageItem?.typeStatus}
               </div>
-            ) : params.data?.warehouse?.typeStatus === "Wastage" ? (
+            ) : params.data?.damageItem?.typeStatus === "Wastage" ? (
               <div className="badge badge-pill badge-danger">
-                {params.data?.warehouse?.typeStatus}
+                {params.data?.damageItem?.typeStatus}
               </div>
-            ) : params.data?.warehouse?.typeStatus === "Pending" ? (
+            ) : params.data?.damageItem?.typeStatus === "Pending" ? (
               <div className="badge badge-pill badge-warning">
-                {params.data?.warehouse?.typeStatus}
+                {params.data?.damageItem?.typeStatus}
               </div>
             ) : null;
           },
@@ -189,6 +193,7 @@ class DamagedStock extends React.Component {
           filter: true,
           width: 200,
           cellRendererFramework: (params) => {
+            console.log(params?.data);
             return (
               <div>
                 <span>
@@ -266,28 +271,38 @@ class DamagedStock extends React.Component {
               <div className="d-flex justiy-content-center">
                 {this.state.InsiderPermissions &&
                   this.state.InsiderPermissions?.Edit && (
-                    <CustomInput
-                      onChange={(e) => {
-                        console.log(e.target.value);
-                        let userId = JSON.parse(
-                          localStorage.getItem("userData")
-                        )?._id;
-                        let payload = {
-                          typeStatus: e.target.value,
-                        };
-                        Update_Damagedstock(userId, payload)
-                          .then((res) => {
-                            console.log(res);
-                            this.componentDidMount();
-                          })
-                          .catch((err) => {
-                            console.log(err);
+                    <>
+                      <Eye
+                        className="mr-50"
+                        size="25px"
+                        color="green"
+                        // onClick={() =>
+                        //   history.push(
+                        //     `/app/freshlist/customer/viewCustomer/${params.data?._id}`
+                        //   )
+                        // }
+                        onClick={(e) => {
+                          this.togglemodal();
+                          debugger;
+                          this.setState({
+                            ViewOneData: params?.data,
                           });
-                      }}
-                      type="select">
-                      <option>--select--</option>
-                      <option value="Wastage">Wastage</option>
-                    </CustomInput>
+                          this.setState({
+                            Wastage_status:
+                              params?.data?.damageItem?.typeStatus,
+                          });
+                          this.setState({
+                            Dam_Percentage:
+                              params?.data?.damageItem.demagePercentage,
+                          });
+                          this.setState({
+                            Reason: params?.data?.damageItem.reason,
+                          });
+
+                          // console.log(params?.data);
+                        }}
+                      />
+                    </>
                   )}
               </div>
             );
@@ -305,6 +320,26 @@ class DamagedStock extends React.Component {
       },
     };
   }
+  HandleMarkWastage = (e) => {
+    e.preventDefault();
+    let userId = JSON.parse(localStorage.getItem("userData"))?._id;
+    let id = this.state.ViewOneData?.damageItem?._id;
+
+    let payload = {
+      typeStatus: this.state.Wastage_status,
+      demagePercentage: this.state.Dam_Percentage,
+      reason: this.state.Reason,
+    };
+    Update_Damagedstock(userId, id, payload)
+      .then((res) => {
+        console.log(res);
+        this.togglemodal();
+        this.componentDidMount();
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
   UpdateStock = (e) => {
     let payload = {
       status: e.target.value,
@@ -369,8 +404,9 @@ class DamagedStock extends React.Component {
     this.setState({ InsiderPermissions: InsidePermissions });
     await Get_Damagedstock(userid)
       .then((res) => {
+        debugger;
         let Data = res?.damageItems?.filter(
-          (ele) => ele?.warehouse?.typeStatus == "Damadged"
+          (ele) => ele?.damageItem?.typeStatus == "Damaged"
         );
         let rowData = res?.damageItems;
 
@@ -400,7 +436,6 @@ class DamagedStock extends React.Component {
   };
 
   runthisfunction(data) {
-
     let pageparmission = JSON.parse(localStorage.getItem("userData"));
     let userid = pageparmission?._id;
     swal("Warning", "Sure You Want to Delete it", {
@@ -1050,135 +1085,56 @@ class DamagedStock extends React.Component {
           toggle={this.togglemodal}
           className={this.props.className}
           style={{ maxWidth: "1050px" }}>
-          <ModalHeader toggle={this.togglemodal}>
-            {this.state.ShowBill ? "Bill Download" : "All Products"}
-          </ModalHeader>
-          <ModalBody
-            className={`${this.state.ShowBill ? "p-1" : "modalbodyhead"}`}>
-            {this.state.ViewOneUserView ? (
-              <>
-                {this.state.ShowBill ? (
-                  <>
-                    <StockTrxInvoice ViewOneData={this.state.ViewOneData} />
-                  </>
-                ) : (
-                  <>
-                    <Row>
-                      <Col>
-                        <Label>WareHouse To :</Label>
-                        <Badge color="primary" className="">
-                          {this.state.ViewOneData &&
-                            this.state.ViewOneData?.warehouseToId?.firstName}
-                        </Badge>
-                      </Col>
-                      <Col>
-                        <Label>Stock trx date :</Label>
-                        <h5>
-                          {this.state.ViewOneData &&
-                            this.state.ViewOneData?.stockTransferDate}
-                        </h5>
-                      </Col>
-                      <Col>
-                        <Label>Grand Total :</Label>
-                        <h5>
-                          <strong>
-                            {this.state.ViewOneData &&
-                              this.state.ViewOneData?.grandTotal}{" "}
-                          </strong>
-                          Rs/-
-                        </h5>
-                      </Col>
+          <ModalHeader toggle={this.togglemodal}>Mark Wastage</ModalHeader>
+          <ModalBody className="modalbodyhead">
+            <Form onSubmit={this.HandleMarkWastage}>
+              <Row>
+                <Col lg="4" md="4" sm="4">
+                  <Label>Change Status -{this.state.Wastage_status}</Label>
+                  <CustomInput
+                    required
+                    value={this.state.Wastage_status}
+                    onChange={(e) =>
+                      this.setState({ Wastage_status: e.target.value })
+                    }
+                    type="select">
+                    <option>--select--</option>
+                    <option value="Wastage">Wastage</option>
+                  </CustomInput>
+                </Col>
+                <Col lg="4" md="4" sm="4">
+                  <Label>Damadge Percetage</Label>
 
-                      {this.state.ViewOneData?.transferStatus == "Completed" ? (
-                        <>
-                          <Col className="">
-                            <Label>status:</Label>
-                            <div>
-                              <Badge color="primary">
-                                {this.state.ViewOneData?.transferStatus}
-                              </Badge>
-                            </div>
-                          </Col>
-                        </>
-                      ) : (
-                        <>
-                          <Col className="">
-                            <Label>status:</Label>
-                            <div>
-                              <Badge color="primary">
-                                {this.state.ViewOneData?.transferStatus}
-                              </Badge>
-                            </div>
-                          </Col>
-                        </>
-                      )}
+                  <Input
+                    required
+                    type="number"
+                    value={this.state.Dam_Percentage}
+                    onChange={(e) =>
+                      this.setState({ Dam_Percentage: e.target.value })
+                    }
+                  />
+                </Col>
+                <Col lg="4" md="4" sm="4">
+                  <Label>Reason</Label>
 
-                      <Col>
-                        <Label>Download Invoice :</Label>
-                        <div className="d-flex justify-content-center">
-                          <FaDownload
-                            onClick={this.handleStockTrxInvoiceShow}
-                            color="#00c0e"
-                            style={{ cursor: "pointer" }}
-                            size={20}
-                          />
-                        </div>
-                      </Col>
-                    </Row>
-                    <Row className="p-2">
-                      <Col>
-                        <div className="d-flex justify-content-center">
-                          <h4>Product Details</h4>
-                        </div>
-                      </Col>
-                    </Row>
-                    <Row>
-                      <Col>
-                        <Table style={{ cursor: "pointer" }} striped>
-                          <thead>
-                            <tr>
-                              <th>#</th>
-                              <th>Product Name</th>
-                              <th>Price</th>
-                              <th>Size</th>
-                              <th>Unit</th>
-                              <th>Quantity</th>
-                              <th>Total</th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            {this.state.ViewOneData?.productItems &&
-                              this.state.ViewOneData?.productItems?.map(
-                                (ele, i) => (
-                                  <>
-                                    <tr>
-                                      <th scope="row">{i + 1}</th>
-                                      <td>{ele?.product?.Product_Title}</td>
-                                      <td>{ele?.price}</td>
-                                      <td>{ele?.Size}</td>
-                                      <td>{ele?.unitType}</td>
-                                      <td>{ele?.transferQty}</td>
-                                      <td>
-                                        {ele?.price *
-                                          ele?.Size *
-                                          ele?.transferQty}
-                                      </td>
-                                    </tr>
-                                  </>
-                                )
-                              )}
-                          </tbody>
-                        </Table>
-                      </Col>
-                    </Row>
-                  </>
-                )}
-              </>
-            ) : (
-              <>
-                <UpdateStockTrx ViewOne={this.state.ViewOneData} />
-              </>
-            )}
+                  <Input
+                    required
+                    type="text"
+                    value={this.state.Reason}
+                    onChange={(e) => this.setState({ Reason: e.target.value })}
+                  />
+                </Col>
+              </Row>
+              <Row>
+                <Col className="container mt-2">
+                  <div className="d-flex justify-content-center">
+                    <Button color="primary" type="submit">
+                      Sumbit
+                    </Button>
+                  </div>
+                </Col>
+              </Row>
+            </Form>
           </ModalBody>
         </Modal>
       </>

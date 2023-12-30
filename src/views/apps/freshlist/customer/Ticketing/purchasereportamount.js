@@ -263,9 +263,9 @@ class purchasereportamount extends React.Component {
 
   async componentDidMount() {
     let userId = JSON.parse(localStorage.getItem("userData"))._id;
-    await PurchaseOrderList(userId)
-      .then(res => {
-        const completedStatus = res?.orderHistory?.filter(ele =>
+    await PurchaseOrderList(userId?._id, userId?.database)
+      .then((res) => {
+        const completedStatus = res?.orderHistory?.filter((ele) =>
           ele.status == "completed" ? ele.status : null
         );
         this.setState({ rowData: completedStatus });
@@ -282,7 +282,7 @@ class purchasereportamount extends React.Component {
           this.setState({ SelectedcolumnDefs: this.state.columnDefs });
         }
       })
-      .catch(err => {
+      .catch((err) => {
         console.log(err);
       });
   }

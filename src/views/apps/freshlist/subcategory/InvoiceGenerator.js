@@ -272,7 +272,6 @@ class InvoiceGenerator extends React.Component {
                     {this.state.InsiderPermissions &&
                       this.state.InsiderPermissions?.View && (
                         <AiOutlineDownload
-                          // onClick={() => this.handleBillDownload(params.data)}
                           onClick={() => this.MergeBillNow(params.data)}
                           fill="green"
                           size="30px"
@@ -486,29 +485,34 @@ class InvoiceGenerator extends React.Component {
   };
 
   MergeBillNow = async data => {
-    
     let billnum = localStorage.getItem("billnumber");
-    console.log("Bill", data);
-    // console.log("grandTotal", data.grandTotal);
-    // console.log(billnum);
+    // console.log("Bill", data);
+    // // console.log("grandTotal", data.grandTotal);
+    // console.log(this.state.CompanyDetails);
+    // this.setState({ ShowBill: false });
+    // this.setState({ PrintData: data });
+    // const toWords = new ToWords();
+    // let words = toWords.convert(Number(data?.grandTotal), { currency: true });
+    // this.setState({ wordsNumber: words });
+    // this.toggleModalOne();
     if (billnum) {
       await Sales_OrderToDispatchList(data?._id)
-      .then(res => {
-        console.log(res?.status);
-       
-      if (res?.status){
-      this.setState({ ShowBill: false });
-      this.setState({ PrintData: data });
-      const toWords = new ToWords();
-      let words = toWords.convert(Number(data?.grandTotal), { currency: true });
-      this.setState({ wordsNumber: words });
-      this.toggleModalOne();
+        .then((res) => {
+          console.log(res?.status);
 
-     }
+          if (res?.status) {
+            this.setState({ ShowBill: false });
+            this.setState({ PrintData: data });
+            const toWords = new ToWords();
+            let words = toWords.convert(Number(data?.grandTotal), {
+              currency: true,
+            });
+            this.setState({ wordsNumber: words });
+            this.toggleModalOne();
+          }
         })
-        .catch(err => {
-         
-          swal( "Error",`${err?.response?.data?.message}`);
+        .catch((err) => {
+          swal("Error", `${err?.response?.data?.message}`);
         });
     } else {
       swal("Select Bill Template");
@@ -993,8 +997,8 @@ class InvoiceGenerator extends React.Component {
                           </h1>
                         </Col>
 
-                        {this.state.InsiderPermissions &&
-                          this.state.InsiderPermissions?.Create && (
+                        {InsiderPermissions &&
+                          InsiderPermissions?.Create && (
                             <Col lg="2" sm="2" xs="2">
                               <Button
                                 className="float-right  "

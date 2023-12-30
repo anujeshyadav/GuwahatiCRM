@@ -53,11 +53,11 @@ const SalesReturnView = args => {
   useEffect(() => {
     let getFromLocalData = JSON.parse(
       localStorage.getItem("OrderList")
-    ).orderItems;
+    )?.orderItems;
     if (location?.state) {
       setOrderedListData(location?.state.orderItems);
-      let grandTotal = location?.state.orderItems.reduce(
-        (a, b) => a + b.product.Product_MRP,
+      let grandTotal = location?.state?.orderItems?.reduce(
+        (a, b) => a + b?.productId?.Product_MRP,
         0
       );
 
@@ -66,8 +66,8 @@ const SalesReturnView = args => {
       setEditdata(location?.state);
     } else {
       setOrderedListData(getFromLocalData);
-      let grandTotal = location?.state.orderItems.reduce(
-        (a, b) => a + b.product.Product_MRP,
+      let grandTotal = location?.state?.orderItems?.reduce(
+        (a, b) => a + b?.productId?.Product_MRP,
         0
       );
       console.log(grandTotal);
@@ -78,19 +78,19 @@ const SalesReturnView = args => {
 
   useEffect(() => {
     Create_Sales_personList()
-      .then(res => {
+      .then((res) => {
         setSalesPersonList(res?.SalesPerson);
       })
-      .catch(err => console.log(err));
-      let userdata = JSON.parse(localStorage.getItem("userData"));
+      .catch((err) => console.log(err));
+    let userdata = JSON.parse(localStorage.getItem("userData"));
 
-      ProductListView(userdata?._id, userdata?.database)
-        .then((res) => {
-          setProductList(res?.Product);
-        })
-        .catch((err) => {
-          console.log(err);
-        });
+    ProductListView(userdata?._id, userdata?.database)
+      .then((res) => {
+        setProductList(res?.Product);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   }, []);
   useEffect(() => {
     const userInfo = JSON.parse(localStorage.getItem("userData"));
@@ -98,7 +98,7 @@ const SalesReturnView = args => {
     setUserInfo(userInfo);
   }, []);
 
-  const submitHandler = e => {
+  const submitHandler = (e) => {
     e.preventDefault();
     console.log(OrderedListData);
     let userData = JSON.parse(localStorage.getItem("userData"));
@@ -106,7 +106,7 @@ const SalesReturnView = args => {
 
     let myarr = OrderedListData?.map((ele, i) => {
       return {
-        productId: ele?.product?._id,
+        productId: ele?.productId?._id,
         Qty_Sales: ele?.qty,
         Qty_Return: Number(ele?.returnQty),
         Product_Price: ele?.price,
@@ -127,12 +127,12 @@ const SalesReturnView = args => {
       swal("Error occured while Entering Details");
     } else {
       SalesReturnProduct(payload)
-        .then(res => {
+        .then((res) => {
           swal("Sales Returned Successfully");
 
           console.log(res);
         })
-        .catch(err => {
+        .catch((err) => {
           console.log(err);
         });
     }
@@ -157,8 +157,7 @@ const SalesReturnView = args => {
                       className="float-right mr-1"
                       color="danger"
                       size="sm"
-                      onClick={() => history.goBack()}
-                    >
+                      onClick={() => history.goBack()}>
                       Back
                     </Button>
                   )}
@@ -182,7 +181,7 @@ const SalesReturnView = args => {
                             name="Product_Title"
                             readOnly
                             placeholder="Product Name"
-                            value={item?.product?.Product_Title}
+                            value={item?.productId?.Product_Title}
                           />
                         </div>
                       </Col>
@@ -194,7 +193,7 @@ const SalesReturnView = args => {
                             name="price"
                             readOnly
                             placeholder="Price"
-                            value={item?.product?.Product_MRP}
+                            value={item?.productId?.Product_MRP}
                           />
                         </div>
                       </Col>
@@ -207,7 +206,9 @@ const SalesReturnView = args => {
                             name="qty"
                             placeholder="Req_Qty"
                             value={item?.qty}
-                            onChange={e => handleProductChangeProduct(e, index)}
+                            onChange={(e) =>
+                              handleProductChangeProduct(e, index)
+                            }
                           />
                         </div>
                       </Col>
@@ -218,8 +219,10 @@ const SalesReturnView = args => {
                             type="number"
                             name="returnQty"
                             placeholder="Return Quantity"
-                            value={OrderedListData.returnQty}
-                            onChange={e => handleProductChangeProduct(e, index)}
+                            value={OrderedListData?.returnQty}
+                            onChange={(e) =>
+                              handleProductChangeProduct(e, index)
+                            }
                           />
                         </div>
                       </Col>
@@ -246,8 +249,7 @@ const SalesReturnView = args => {
                     <Button.Ripple
                       color="primary"
                       type="submit"
-                      className="mt-2"
-                    >
+                      className="mt-2">
                       Submit
                     </Button.Ripple>
                   </div>

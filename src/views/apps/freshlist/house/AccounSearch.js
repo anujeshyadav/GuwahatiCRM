@@ -115,7 +115,6 @@ class AccounSearch extends React.Component {
     await CreateAccountList(pageparmission?._id, pageparmission?.database)
       .then((res) => {
         let value = res?.adminDetails;
-        console.log(value);
         if (value.length) {
           this.setState({ rowData: value });
         }
@@ -132,7 +131,7 @@ class AccounSearch extends React.Component {
           spaces: 2,
         });
         console.log(JSON.parse(jsonData)?.CreateUser);
-        const inputs = JSON.parse(jsonData)?.CreateUser?.input?.map(ele => {
+        const inputs = JSON.parse(jsonData)?.CreateUser?.input?.map((ele) => {
           return {
             headerName: ele?.label._text,
             field: ele?.name._text,
@@ -141,60 +140,8 @@ class AccounSearch extends React.Component {
             headerClass: "bold-header",
           };
         });
-        // let Radioinput =
-        //   JSON.parse(jsonData).CreateAccount?.Radiobutton?.input[0]?.name
-        //     ?._text;
-        // const addRadio = [
-        //   {
-        //     headerName: Radioinput,
-        //     field: Radioinput,
-        //     filter: true,
-        //     sortable: true,
-        //     cellRendererFramework: (params) => {
-        //       return params.data?.Status === "Active" ? (
-        //         <div className="badge badge-pill badge-success">
-        //           {params.data.Status}
-        //         </div>
-        //       ) : params.data?.Status === "Deactive" ? (
-        //         <div className="badge badge-pill badge-warning">
-        //           {params.data.Status}
-        //         </div>
-        //       ) : (
-        //         "NA"
-        //       );
-        //     },
-        //   },
-        // ];
 
-        // let dropdown = JSON.parse(jsonData).CreateAccount?.MyDropdown?.dropdown;
-        // if (dropdown.length) {
-        //   var mydropdownArray = dropdown?.map((ele) => {
-        //     return {
-        //       headerName: ele?.label,
-        //       field: ele?.name,
-        //       filter: true,
-        //       sortable: true,
-        //     };
-        //   });
-        // } else {
-        //   var adddropdown = [
-        //     {
-        //       headerName: dropdown?.label._text,
-        //       field: dropdown?.name._text,
-        //       filter: true,
-        //       sortable: true,
-        //     },
-        //   ];
-        // }
-
-        let myHeadings = [
-          // ...checkboxinput,
-          ...inputs,
-          // ...adddropdown,
-          // ...addRadio,
-          // ...mydropdownArray,
-        ];
-        // console.log(myHeadings);
+        let myHeadings = [...inputs];
         let Product = [
           {
             headerName: "Actions",
@@ -670,13 +617,12 @@ class AccounSearch extends React.Component {
               <Col>
                 <div className="d-flex justify-content-end p-1">
                   <Button
-                    onClick={e => {
+                    onClick={(e) => {
                       e.preventDefault();
                       this.setState({ EditOneUserView: false });
                       this.componentDidMount();
                     }}
-                    color="danger"
-                  >
+                    color="danger">
                     Back
                   </Button>
                 </div>
@@ -695,12 +641,11 @@ class AccounSearch extends React.Component {
                     <Col>
                       <div className="d-flex justify-content-end p-1">
                         <Button
-                          onClick={e => {
+                          onClick={(e) => {
                             e.preventDefault();
                             this.setState({ ViewOneUserView: false });
                           }}
-                          color="danger"
-                        >
+                          color="danger">
                           Back
                         </Button>
                       </div>
@@ -716,110 +661,101 @@ class AccounSearch extends React.Component {
                         <Col>
                           <h1
                             className="float-left "
-                            style={{ fontWeight: "600" }}
-                          >
+                            style={{ fontWeight: "600" }}>
                             User list
                           </h1>
                         </Col>
-                        {this.state.InsiderPermissions &&
-                          this.state.InsiderPermissions.View && (
-                            <Col>
-                              <span className="mx-1">
-                                <FaFilter
+                        {InsiderPermissions && InsiderPermissions.View && (
+                          <Col>
+                            <span className="mx-1">
+                              <FaFilter
+                                style={{ cursor: "pointer" }}
+                                title="filter coloumn"
+                                size="35px"
+                                onClick={this.LookupviewStart}
+                                color="#39cccc"
+                                className="float-right"
+                              />
+                            </span>
+                            <span className="mx-1">
+                              <div className="dropdown-container float-right">
+                                <ImDownload
                                   style={{ cursor: "pointer" }}
-                                  title="filter coloumn"
+                                  title="download file"
                                   size="35px"
-                                  onClick={this.LookupviewStart}
+                                  className="dropdown-button "
                                   color="#39cccc"
-                                  className="float-right"
+                                  onClick={this.toggleDropdown}
                                 />
-                              </span>
-                              <span className="mx-1">
-                                <div className="dropdown-container float-right">
-                                  <ImDownload
-                                    style={{ cursor: "pointer" }}
-                                    title="download file"
-                                    size="35px"
-                                    className="dropdown-button "
-                                    color="#39cccc"
-                                    onClick={this.toggleDropdown}
-                                  />
-                                  {isOpen && (
-                                    <div
-                                      style={{
-                                        position: "absolute",
-                                        zIndex: "1",
-                                        border: "1px solid #39cccc",
-                                        backgroundColor: "white",
-                                      }}
-                                      className="dropdown-content dropdownmy"
-                                    >
-                                      <h5
-                                        onClick={() => this.exportToPDF()}
-                                        style={{ cursor: "pointer" }}
-                                        className=" mx-1 myactive mt-1"
-                                      >
-                                        .PDF
-                                      </h5>
-                                      <h5
-                                        onClick={() =>
-                                          this.gridApi.exportDataAsCsv()
-                                        }
-                                        style={{ cursor: "pointer" }}
-                                        className=" mx-1 myactive"
-                                      >
-                                        .CSV
-                                      </h5>
-                                      <h5
-                                        onClick={this.convertCSVtoExcel}
-                                        style={{ cursor: "pointer" }}
-                                        className=" mx-1 myactive"
-                                      >
-                                        .XLS
-                                      </h5>
-                                      <h5
-                                        onClick={this.exportToExcel}
-                                        style={{ cursor: "pointer" }}
-                                        className=" mx-1 myactive"
-                                      >
-                                        .XLSX
-                                      </h5>
-                                      <h5
-                                        onClick={() => this.convertCsvToXml()}
-                                        style={{ cursor: "pointer" }}
-                                        className=" mx-1 myactive"
-                                      >
-                                        .XML
-                                      </h5>
-                                    </div>
-                                  )}
-                                </div>
-                              </span>
-                              <span>
-                                <Route
-                                  render={({ history }) => (
-                                    <Button
-                                      style={{
-                                        cursor: "pointer",
-                                        backgroundColor: "#39cccc",
-                                        color: "white",
-                                        fontWeight: "600",
-                                      }}
-                                      className="float-right mr-1 "
-                                      color="#39cccc"
+                                {isOpen && (
+                                  <div
+                                    style={{
+                                      position: "absolute",
+                                      zIndex: "1",
+                                      border: "1px solid #39cccc",
+                                      backgroundColor: "white",
+                                    }}
+                                    className="dropdown-content dropdownmy">
+                                    <h5
+                                      onClick={() => this.exportToPDF()}
+                                      style={{ cursor: "pointer" }}
+                                      className=" mx-1 myactive mt-1">
+                                      .PDF
+                                    </h5>
+                                    <h5
                                       onClick={() =>
-                                        history.push(
-                                          "/app/SoftNumen/account/CreateAccount"
-                                        )
+                                        this.gridApi.exportDataAsCsv()
                                       }
-                                    >
-                                      <FaPlus size={15} /> Create User
-                                    </Button>
-                                  )}
-                                />
-                              </span>
-                            </Col>
-                          )}
+                                      style={{ cursor: "pointer" }}
+                                      className=" mx-1 myactive">
+                                      .CSV
+                                    </h5>
+                                    <h5
+                                      onClick={this.convertCSVtoExcel}
+                                      style={{ cursor: "pointer" }}
+                                      className=" mx-1 myactive">
+                                      .XLS
+                                    </h5>
+                                    <h5
+                                      onClick={this.exportToExcel}
+                                      style={{ cursor: "pointer" }}
+                                      className=" mx-1 myactive">
+                                      .XLSX
+                                    </h5>
+                                    <h5
+                                      onClick={() => this.convertCsvToXml()}
+                                      style={{ cursor: "pointer" }}
+                                      className=" mx-1 myactive">
+                                      .XML
+                                    </h5>
+                                  </div>
+                                )}
+                              </div>
+                            </span>
+                            <span>
+                              <Route
+                                render={({ history }) => (
+                                  <Button
+                                    style={{
+                                      cursor: "pointer",
+                                      backgroundColor: "#39cccc",
+                                      color: "white",
+                                      fontWeight: "600",
+                                    }}
+                                    className="float-right mr-1 "
+                                    color="#39cccc"
+                                    onClick={() =>
+                                      history.push(
+                                        "/app/SoftNumen/account/CreateAccount"
+                                      )
+                                    }>
+                                    <FaPlus size={15} /> Create User
+                                  </Button>
+                                )}
+                              />
+                            </span>
+                          </Col>
+                        )}
                       </Row>
                       <CardBody style={{ marginTop: "-1.5rem" }}>
                         {this.state.rowData === null ? null : (
@@ -846,32 +782,27 @@ class AccounSearch extends React.Component {
                                   <DropdownMenu right>
                                     <DropdownItem
                                       tag="div"
-                                      onClick={() => this.filterSize(5)}
-                                    >
+                                      onClick={() => this.filterSize(5)}>
                                       5
                                     </DropdownItem>
                                     <DropdownItem
                                       tag="div"
-                                      onClick={() => this.filterSize(20)}
-                                    >
+                                      onClick={() => this.filterSize(20)}>
                                       20
                                     </DropdownItem>
                                     <DropdownItem
                                       tag="div"
-                                      onClick={() => this.filterSize(50)}
-                                    >
+                                      onClick={() => this.filterSize(50)}>
                                       50
                                     </DropdownItem>
                                     <DropdownItem
                                       tag="div"
-                                      onClick={() => this.filterSize(100)}
-                                    >
+                                      onClick={() => this.filterSize(100)}>
                                       100
                                     </DropdownItem>
                                     <DropdownItem
                                       tag="div"
-                                      onClick={() => this.filterSize(134)}
-                                    >
+                                      onClick={() => this.filterSize(134)}>
                                       134
                                     </DropdownItem>
                                   </DropdownMenu>
@@ -881,7 +812,7 @@ class AccounSearch extends React.Component {
                                 <div className="table-input mr-1">
                                   <Input
                                     placeholder="search Item here..."
-                                    onChange={e =>
+                                    onChange={(e) =>
                                       this.updateSearchQuery(e.target.value)
                                     }
                                     value={this.state.value}
@@ -890,7 +821,7 @@ class AccounSearch extends React.Component {
                               </div>
                             </div>
                             <ContextLayout.Consumer className="ag-theme-alpine">
-                              {context => (
+                              {(context) => (
                                 <AgGridReact
                                   id="myAgGrid"
                                   // gridOptions={{
@@ -947,8 +878,7 @@ class AccounSearch extends React.Component {
           isOpen={this.state.modal}
           toggle={this.LookupviewStart}
           className={this.props.className}
-          style={{ maxWidth: "1050px" }}
-        >
+          style={{ maxWidth: "1050px" }}>
           <ModalHeader toggle={this.LookupviewStart}>Change Fileds</ModalHeader>
           <ModalBody className="modalbodyhead">
             <Row>
@@ -961,15 +891,15 @@ class AccounSearch extends React.Component {
                         return (
                           <>
                             <div
-                              onClick={e => this.handleChangeHeader(e, ele, i)}
+                              onClick={(e) =>
+                                this.handleChangeHeader(e, ele, i)
+                              }
                               key={i}
-                              className="mycustomtag mt-1"
-                            >
+                              className="mycustomtag mt-1">
                               <span className="mt-1">
                                 <h5
                                   style={{ cursor: "pointer" }}
-                                  className="allfields"
-                                >
+                                  className="allfields">
                                   <input
                                     type="checkbox"
                                     // checked={check && check}
@@ -1028,15 +958,14 @@ class AccounSearch extends React.Component {
                                             : ""
                                         }`,
                                       }}
-                                      className="allfields"
-                                    >
+                                      className="allfields">
                                       <IoMdRemoveCircleOutline
                                         onClick={() => {
                                           const SelectedCols =
                                             this.state.SelectedcolumnDefs.slice();
                                           const delindex =
                                             SelectedCols.findIndex(
-                                              element =>
+                                              (element) =>
                                                 element?.headerName ==
                                                 ele?.headerName
                                             );

@@ -340,10 +340,10 @@ const PoinvoiceThree = ({
                           fontSize: "9px",
                           fontWeight: "bold",
                         }}>
-                        Receipt No
+                        InvoiceId
                       </Text>{" "}
                       <Text style={{ fontSize: "9px", fontWeight: "bold" }}>
-                        : {invoiceData?._id}
+                        : {invoiceData?.invoiceId}
                       </Text>
                     </View>
                     <View
@@ -401,24 +401,30 @@ const PoinvoiceThree = ({
                     <View style={{ flexDirection: "", paddingBottom: "3px" }}>
                       <Text
                         style={{
-                          fontSize: "10px",
+                          fontSize: "13px",
                           fontWeight: "bold",
                         }}>
-                        {/* {invoiceData?.company_name} */}
-                        {`${invoiceData?.adminDetail?.firstName} ${invoiceData?.adminDetail?.lastName} `}
-                      </Text>{" "}
+                        {BilData?.CompanyDetails?.name &&
+                          BilData?.CompanyDetails?.name}
+                      </Text>
                       <Text
                         style={{
-                          fontSize: "10px",
-                          width: "45%",
-                          fontWeight: "bold",
+                          fontSize: "8px",
+                          marginTop: "5px",
+                          marginBottom: "2px",
                         }}>
-                        {/* {invoiceData?.billing_street},
-                      {invoiceData?.billing_city_name}
-                      {invoiceData?.billing_state_name} ,
-                      {invoiceData?.billing_pincode} */}
-                        {`${invoiceData?.adminDetail?.currentAddress} `}
-                        {`${invoiceData?.adminDetail?.State} `}
+                        {BilData?.CompanyDetails?.address &&
+                          BilData?.CompanyDetails?.address}
+                      </Text>
+                      <Text style={styles.header}>
+                        Email :
+                        {BilData?.CompanyDetails?.email &&
+                          BilData?.CompanyDetails?.email}
+                      </Text>
+                      <Text style={styles.header}>
+                        MobileNo :
+                        {BilData?.CompanyDetails?.mobileNo &&
+                          BilData?.CompanyDetails?.mobileNo}
                       </Text>
                     </View>
                   )}
@@ -459,19 +465,28 @@ const PoinvoiceThree = ({
                           fontSize: "13px",
                           fontWeight: "bold",
                         }}>
-                        {`${invoiceData?.fullName} `}
-                        {/* {invoiceData?.company_name} */}
-                      </Text>{" "}
+                        {BilData?.CompanyDetails?.name &&
+                          BilData?.CompanyDetails?.name}
+                      </Text>
                       <Text
                         style={{
-                          fontSize: "10px",
-                          width: "45%",
-                          fontWeight: "bold",
+                          fontSize: "8px",
+                          marginTop: "5px",
+                          marginBottom: "2px",
                         }}>
-                        {`${invoiceData?.address} `}
-                        {`${invoiceData?.landMark} `}
-                        Mobile No: {`${invoiceData?.MobileNo} `}
-                      </Text>{" "}
+                        {BilData?.CompanyDetails?.address &&
+                          BilData?.CompanyDetails?.address}
+                      </Text>
+                      <Text style={styles.header}>
+                        Email :
+                        {BilData?.CompanyDetails?.email &&
+                          BilData?.CompanyDetails?.email}
+                      </Text>
+                      <Text style={styles.header}>
+                        MobileNo :
+                        {BilData?.CompanyDetails?.mobileNo &&
+                          BilData?.CompanyDetails?.mobileNo}
+                      </Text>
                     </View>
                   )}
                   {UserChoice?.shipto == "right" && (
@@ -842,11 +857,11 @@ const PoinvoiceThree = ({
                     }}>
                     <Text
                       style={{
-                        fontSize: "10px",
+                        fontSize: "8px",
                         fontWeight: "1000",
                         marginLeft: "5px",
                       }}>
-                      {ele?.product?.Product_Title}
+                      {ele?.productId?.Product_Title}
                     </Text>
                   </View>
                   <View
@@ -856,12 +871,12 @@ const PoinvoiceThree = ({
                     }}>
                     <Text
                       style={{
-                        fontSize: "10px",
+                        fontSize: "8px",
 
                         fontWeight: "1000",
                         marginLeft: "5px",
                       }}>
-                      {ele?.product?.HSN_Code}
+                      {ele?.productId?.HSN_Code}
                     </Text>
                   </View>
                   <View

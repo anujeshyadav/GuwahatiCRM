@@ -257,16 +257,27 @@ const POInvoiceone = ({
                               fontSize: "13px",
                               fontWeight: "bold",
                             }}>
-                            {`${invoiceData?.adminDetail?.firstName} ${invoiceData?.adminDetail?.lastName} `}
+                            {BilData?.CompanyDetails?.name &&
+                              BilData?.CompanyDetails?.name}
                           </Text>
                           <Text
                             style={{
-                              fontSize: "10px",
-                              width: "45%",
-                              fontWeight: "bold",
+                              fontSize: "8px",
+                              marginTop: "5px",
+                              marginBottom: "2px",
                             }}>
-                            {`${invoiceData?.adminDetail?.currentAddress} `}
-                            {`${invoiceData?.adminDetail?.State} `}
+                            {BilData?.CompanyDetails?.address &&
+                              BilData?.CompanyDetails?.address}
+                          </Text>
+                          <Text style={styles.header}>
+                            Email :
+                            {BilData?.CompanyDetails?.email &&
+                              BilData?.CompanyDetails?.email}
+                          </Text>
+                          <Text style={styles.header}>
+                            MobileNo :
+                            {BilData?.CompanyDetails?.mobileNo &&
+                              BilData?.CompanyDetails?.mobileNo}
                           </Text>
                         </View>
                       )}
@@ -338,16 +349,27 @@ const POInvoiceone = ({
                               fontSize: "13px",
                               fontWeight: "bold",
                             }}>
-                            {`${invoiceData?.adminDetail?.firstName} ${invoiceData?.adminDetail?.lastName} `}
+                            {BilData?.CompanyDetails?.name &&
+                              BilData?.CompanyDetails?.name}
                           </Text>
                           <Text
                             style={{
-                              fontSize: "10px",
-                              width: "45%",
-                              fontWeight: "bold",
+                              fontSize: "8px",
+                              marginTop: "5px",
+                              marginBottom: "2px",
                             }}>
-                            {`${invoiceData?.adminDetail?.currentAddress} `}
-                            {`${invoiceData?.adminDetail?.State} `}
+                            {BilData?.CompanyDetails?.address &&
+                              BilData?.CompanyDetails?.address}
+                          </Text>
+                          <Text style={styles.header}>
+                            Email :
+                            {BilData?.CompanyDetails?.email &&
+                              BilData?.CompanyDetails?.email}
+                          </Text>
+                          <Text style={styles.header}>
+                            MobileNo :
+                            {BilData?.CompanyDetails?.mobileNo &&
+                              BilData?.CompanyDetails?.mobileNo}
                           </Text>
                         </View>
                       )}
@@ -410,10 +432,10 @@ const POInvoiceone = ({
                             fontSize: "9px",
                             fontWeight: "bold",
                           }}>
-                          Receipt No
+                          InvoiceId
                         </Text>{" "}
                         <Text style={{ fontSize: "9px", fontWeight: "bold" }}>
-                          : {invoiceData?._id}
+                          : {invoiceData?.invoiceId}
                         </Text>
                       </View>
                       <View
@@ -660,7 +682,7 @@ const POInvoiceone = ({
                     }}>
                     <Text
                       style={{
-                        fontSize: "10px",
+                        fontSize: "8px",
                         fontWeight: "1000",
                         marginLeft: "5px",
                       }}>
@@ -675,11 +697,11 @@ const POInvoiceone = ({
                     }}>
                     <Text
                       style={{
-                        fontSize: "10px",
+                        fontSize: "8px",
                         fontWeight: "1000",
                         marginLeft: "5px",
                       }}>
-                      {ele?.product?.Product_Title}
+                      {ele?.productId?.Product_Title}
                     </Text>
                   </View>
                   <View
@@ -692,9 +714,9 @@ const POInvoiceone = ({
                         fontSize: "10px",
 
                         fontWeight: "1000",
-                        marginLeft: "5px",
+                        marginLeft: "3px",
                       }}>
-                      {ele?.product?.HSN_Code}
+                      {ele?.productId?.HSN_Code}
                     </Text>
                   </View>
                   <View

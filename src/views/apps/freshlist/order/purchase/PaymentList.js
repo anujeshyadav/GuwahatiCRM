@@ -342,7 +342,7 @@ class PaymentList extends React.Component {
   async componentDidMount() {
     const UserInformation = this.context?.UserInformatio;
     let userId = JSON.parse(localStorage.getItem("userData"))._id;
-    await PurchaseOrderList(userId)
+    await PurchaseOrderList(userId?._id, userId?.database)
       .then((res) => {
         console.log(res?.orderHistory);
         const completedStatus = res?.orderHistory?.filter((ele) =>

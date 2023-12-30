@@ -1089,6 +1089,8 @@ const CreateTarget = (args) => {
     {
       product: "",
       productId: "",
+      Reason: "",
+      Damaged_Percent: null,
       AvailaleQty: null,
       availableQty: "",
       transferQty: 1,
@@ -1106,12 +1108,15 @@ const CreateTarget = (args) => {
   ]);
 
   const handleProductChangeProduct = (e, index, avalaibleSize) => {
+    const { name, value } = e.target;
+
+    const list = [...product];
+    if (name.includes("Damaged_Percent") || name.includes("Reason")) {
+      list[index][name] = value;
+    }
     if (avalaibleSize >= Number(e.target.value)) {
       setIndex(index);
       console.log(product);
-
-      const { name, value } = e.target;
-      const list = [...product];
       if (name.includes("transferQty")) {
         // list[index]["Size"] = Number(value);
         let available = Number(list[index]["AvailaleQty"]);
@@ -1138,16 +1143,13 @@ const CreateTarget = (args) => {
         console.log("GrandTotal", amt);
       }
       // console.log(list)
-      setProduct(list);
       setGrandTotalAmt(amt);
-    } else {
-      return null;
     }
+    setProduct(list);
   };
   const handleProductChangeProductone = (e, index) => {
     setIndex(index);
     console.log(product);
-    debugger;
     const { name, value } = e.target;
     const list = [...product];
     if (name.includes("transferQty")) {
@@ -1217,7 +1219,6 @@ const CreateTarget = (args) => {
   };
   const handleSelectionProduct = (selectedList, selectedItem, index) => {
     // product[index]["AvailaleQty"] = myproduct?.Size;
-    debugger;
     SelectedITems.push(selectedItem);
     setProduct((prevProductList) => {
       const updatedProductList = [...prevProductList]; // Create a copy of the productList array
@@ -1329,14 +1330,12 @@ const CreateTarget = (args) => {
           secondaryUnit: "PIECES(Pcs) 1",
           unitQty: 1,
         };
-        debugger;
         let AllUnit = [...res?.Unit, customADD];
         setUnitList(AllUnit);
       })
       .catch((err) => {
         console.log(err);
       });
- 
   }, []);
   useEffect(() => {
     const userInfo = JSON.parse(localStorage.getItem("userData"));
@@ -1372,13 +1371,15 @@ const CreateTarget = (args) => {
     setProduct([
       ...product,
       {
-        product: "", //
+        product: "",
         productId: "",
+        Reason: "",
+        Damaged_Percent: null,
         AvailaleQty: null,
         availableQty: "",
-        transferQty: 1, //
-        price: "", //
-        totalprice: "", //
+        transferQty: 1,
+        price: "",
+        totalprice: "",
         Size: "",
         unitType: "",
         stockTrxDate: "",
@@ -1411,9 +1412,11 @@ const CreateTarget = (args) => {
 
     let userdata = JSON.parse(localStorage.getItem("userData"));
     let payload = {
-      typeStatus: "Damadged",
+      typeStatus: "Damaged",
       warehouse: WareHouseone[0]?._id,
       productId: product[0]?.productId,
+      demagePercentage: product[0]?.Damaged_Percent,
+      reason: product[0]?.Reason,
       Size: product[0]?.Size,
       unitType: product[0]?.unitType,
       transferQty: product[0]?.transferQty,
@@ -1422,7 +1425,7 @@ const CreateTarget = (args) => {
         product[0]?.transferQty * product[0]?.Size * product[0]?.price,
       currentStock: product[0]?.transferQty * product[0]?.Size,
     };
-
+    debugger;
     await Save_Damagedstock(payload)
       .then((res) => {
         //   window.location.reload();
@@ -1670,13 +1673,49 @@ const CreateTarget = (args) => {
                   </Col>
                   <Col className="mb-1" lg="2" md="2" sm="12">
                     <div className="">
-                      <Label>Damadged Quantity</Label>
+                      <Label>Damadge %</Label>
+                      <Input
+                        type="number"
+                        name="Damaged_Percent"
+                        placeholder="Damage %"
+                        value={product?.Damaged_Percent}
+                        onChange={(e) =>
+                          handleProductChangeProduct(
+                            e,
+                            index,
+                            product?.AvailaleQty
+                          )
+                        }
+                      />
+                    </div>
+                  </Col>
+                  <Col className="mb-1" lg="2" md="2" sm="12">
+                    <div className="">
+                      <Label>Damadge Qty</Label>
                       <Input
                         type="number"
                         min={0}
                         name="transferQty"
                         placeholder="Req_Qty"
                         value={product?.transferQty}
+                        onChange={(e) =>
+                          handleProductChangeProduct(
+                            e,
+                            index,
+                            product?.AvailaleQty
+                          )
+                        }
+                      />
+                    </div>
+                  </Col>
+                  <Col className="mb-1" lg="2" md="2" sm="12">
+                    <div className="">
+                      <Label>Reason</Label>
+                      <Input
+                        type="text"
+                        name="Reason"
+                        placeholder="Reason"
+                        value={product?.Reason}
                         onChange={(e) =>
                           handleProductChangeProduct(
                             e,

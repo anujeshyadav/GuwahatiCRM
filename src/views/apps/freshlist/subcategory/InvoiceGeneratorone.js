@@ -43,16 +43,14 @@ const InvoiceGenerator = props => {
       console.log(props?.PrintData);
       console.log(props?.PrintData.orderItems);
       setPrintview(props?.PrintData);
-
-      const subTotalAmt = props.PrintData.orderItems.reduce(
-        (accumulator, currentValue) => {
-          
-          const { qty, Size, productId } = currentValue;
-          const itemTotal = qty * productId?.Product_MRP * Size;
-          return accumulator + itemTotal;
-        },
-        0
-      );
+const subTotalAmt = props.PrintData?.orderItems.reduce(
+  (accumulator, currentValue) => {
+    const { qty, Size, productId } = currentValue;
+    const itemTotal = qty * productId?.Product_MRP * Size;
+    return accumulator + itemTotal;
+  },
+  0
+);
       const gst = (subTotalAmt * 18) / 100;
       const GrandTotal = gst + subTotalAmt;
 

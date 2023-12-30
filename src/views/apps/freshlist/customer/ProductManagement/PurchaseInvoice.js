@@ -151,7 +151,7 @@ class PurchaseInvoice extends React.Component {
           field: "sortorder",
           field: "transactions",
           width: 120,
-          cellRendererFramework: params => {
+          cellRendererFramework: (params) => {
             return (
               <div className="actions cursor-pointer">
                 {this.state.InsiderPermissions &&
@@ -201,7 +201,7 @@ class PurchaseInvoice extends React.Component {
           field: "order_status",
           filter: true,
           width: 140,
-          cellRendererFramework: params => {
+          cellRendererFramework: (params) => {
             // console.log(params.data);
             return params.data?.status === "completed" ? (
               <div className="badge badge-pill badge-success">Completed</div>
@@ -230,8 +230,8 @@ class PurchaseInvoice extends React.Component {
           filter: true,
           resizable: true,
           width: 180,
-          cellRendererFramework: params => {
-            // console.log(params.data?.order_id);
+          cellRendererFramework: (params) => {
+            console.log(params.data);
 
             return (
               <div className="d-flex align-items-center cursor-pointer">
@@ -281,7 +281,7 @@ class PurchaseInvoice extends React.Component {
           filter: true,
           resizable: true,
           width: 140,
-          cellRendererFramework: params => {
+          cellRendererFramework: (params) => {
             // console.log(params?.data?.status);
 
             return (
@@ -314,7 +314,7 @@ class PurchaseInvoice extends React.Component {
           filter: true,
           resizable: true,
           width: 150,
-          cellRendererFramework: params => {
+          cellRendererFramework: (params) => {
             return (
               <div className="d-flex align-items-center justify-content-center cursor-pointer">
                 <div>
@@ -330,7 +330,7 @@ class PurchaseInvoice extends React.Component {
           filter: true,
           resizable: true,
           width: 160,
-          cellRendererFramework: params => {
+          cellRendererFramework: (params) => {
             return (
               <div className="d-flex align-items-center justify-content-center cursor-pointer">
                 <div>
@@ -340,29 +340,29 @@ class PurchaseInvoice extends React.Component {
             );
           },
         },
-        {
-          headerName: "Address",
-          field: "address",
-          filter: true,
-          resizable: true,
-          width: 200,
-          cellRendererFramework: params => {
-            return (
-              <div className="d-flex align-items-center justify-content-center cursor-pointer">
-                <div>
-                  <span>{params?.data?.address}</span>
-                </div>
-              </div>
-            );
-          },
-        },
+        // {
+        //   headerName: "Address",
+        //   field: "address",
+        //   filter: true,
+        //   resizable: true,
+        //   width: 200,
+        //   cellRendererFramework: params => {
+        //     return (
+        //       <div className="d-flex align-items-center justify-content-center cursor-pointer">
+        //         <div>
+        //           <span>{params?.data?.address}</span>
+        //         </div>
+        //       </div>
+        //     );
+        //   },
+        // },
         {
           headerName: "GrandTotal",
           field: "grandTotal",
           filter: true,
           resizable: true,
           width: 150,
-          cellRendererFramework: params => {
+          cellRendererFramework: (params) => {
             return (
               <div className="d-flex align-items-center justify-content-center cursor-pointer">
                 <div>
@@ -378,7 +378,7 @@ class PurchaseInvoice extends React.Component {
           filter: true,
           resizable: true,
           width: 150,
-          cellRendererFramework: params => {
+          cellRendererFramework: (params) => {
             return (
               <div className="d-flex align-items-center justify-content-center cursor-pointer">
                 <div>
@@ -388,22 +388,22 @@ class PurchaseInvoice extends React.Component {
             );
           },
         },
-        {
-          headerName: "Party Name",
-          field: "partyId.firstName",
-          filter: true,
-          resizable: true,
-          width: 210,
-          cellRendererFramework: params => {
-            return (
-              <div className="d-flex align-items-center cursor-pointer">
-                <div>
-                  <span>{params.data?.partyId?.firstName}</span>
-                </div>
-              </div>
-            );
-          },
-        },
+        // {
+        //   headerName: "Party Name",
+        //   field: "partyId.firstName",
+        //   filter: true,
+        //   resizable: true,
+        //   width: 210,
+        //   cellRendererFramework: params => {
+        //     return (
+        //       <div className="d-flex align-items-center cursor-pointer">
+        //         <div>
+        //           <span>{params.data?.partyId?.firstName}</span>
+        //         </div>
+        //       </div>
+        //     );
+        //   },
+        // },
 
         {
           headerName: "Total Product",
@@ -411,7 +411,7 @@ class PurchaseInvoice extends React.Component {
           filter: true,
           resizable: true,
           width: 180,
-          cellRendererFramework: params => {
+          cellRendererFramework: (params) => {
             // console.log(params.data);
             return (
               <div className="d-flex cursor-pointer">
@@ -421,22 +421,22 @@ class PurchaseInvoice extends React.Component {
           },
         },
 
-        {
-          headerName: "order Creation date",
-          field: "order_date",
-          filter: true,
-          resizable: true,
-          width: 230,
-          cellRendererFramework: params => {
-            return (
-              <div className="d-flex align-items-center cursor-pointer">
-                <div>
-                  <span>{params.data?.order_date}</span>
-                </div>
-              </div>
-            );
-          },
-        },
+        // {
+        //   headerName: "order Creation date",
+        //   field: "order_date",
+        //   filter: true,
+        //   resizable: true,
+        //   width: 230,
+        //   cellRendererFramework: params => {
+        //     return (
+        //       <div className="d-flex align-items-center cursor-pointer">
+        //         <div>
+        //           <span>{params.data?.order_date}</span>
+        //         </div>
+        //       </div>
+        //     );
+        //   },
+        // },
       ],
       setMySelectedarr: [],
       SelectedCols: [],
@@ -551,10 +551,7 @@ class PurchaseInvoice extends React.Component {
 
   async componentDidMount() {
     const UserInformation = this.context;
-    // console.log(UserInformation?.CompanyDetails);
-    // if (UserInformation?.CompanyDetails) {
-    //   this.setState({ CompanyDetails: UserInformation?.CompanyDetails });
-    // }
+
 
     let pageparmission = JSON.parse(localStorage.getItem("userData"));
     let userid = pageparmission?._id;
@@ -573,29 +570,29 @@ class PurchaseInvoice extends React.Component {
       this.setState({ BillNumber: billnumner });
     }
 
-    const InsidePermissions = CheckPermission("Sales Invoice");
+    const InsidePermissions = CheckPermission("Purchase Invoice");
     console.log(InsidePermissions);
     this.setState({ InsiderPermissions: InsidePermissions });
-    PurchaseOrderList(userid)
-      .then(res => {
-        console.log(res?.orderHistory);
-        this.setState({ rowData: res?.orderHistory });
-        this.setState({ AllcolumnDefs: this.state.columnDefs });
+     PurchaseOrderList(pageparmission?._id, pageparmission?.database)
+       .then((res) => {
+         console.log(res?.orderHistory);
+         this.setState({ rowData: res?.orderHistory });
+         this.setState({ AllcolumnDefs: this.state.columnDefs });
 
-        let userHeading = JSON.parse(localStorage.getItem("SalesOrderList"));
-        if (userHeading?.length) {
-          this.setState({ columnDefs: userHeading });
-          this.gridApi.setColumnDefs(userHeading);
-          this.setState({ SelectedcolumnDefs: userHeading });
-        } else {
-          this.setState({ columnDefs: this.state.columnDefs });
-          this.setState({ SelectedcolumnDefs: this.state.columnDefs });
-        }
-        this.setState({ SelectedCols: this.state.columnDefs });
-      })
-      .catch(err => {
-        console.log(err);
-      });
+         let userHeading = JSON.parse(localStorage.getItem("SalesOrderList"));
+         if (userHeading?.length) {
+           this.setState({ columnDefs: userHeading });
+           this.gridApi.setColumnDefs(userHeading);
+           this.setState({ SelectedcolumnDefs: userHeading });
+         } else {
+           this.setState({ columnDefs: this.state.columnDefs });
+           this.setState({ SelectedcolumnDefs: this.state.columnDefs });
+         }
+         this.setState({ SelectedCols: this.state.columnDefs });
+       })
+       .catch((err) => {
+         console.log(err);
+       });
     // console.log(pageparmission.role);
     let userchoice = JSON.parse(localStorage.getItem("billUI"));
     console.log(userchoice);
@@ -604,20 +601,7 @@ class PurchaseInvoice extends React.Component {
       this.setState({ Billtoposition: userchoice?.billTo });
       this.setState({ shipto: userchoice?.shipto });
     }
-    let newparmisson = pageparmission?.role?.find(
-      value => value?.pageName === "invoice Generator"
-    );
-    // console.log(newparmisson);
-    this.setState({ Viewpermisson: newparmisson?.permission.includes("View") });
-    this.setState({
-      Createpermisson: newparmisson?.permission.includes("Create"),
-    });
-    this.setState({
-      Editpermisson: newparmisson?.permission.includes("Edit"),
-    });
-    this.setState({
-      Deletepermisson: newparmisson?.permission.includes("Delete"),
-    });
+ 
   }
 
   submitHandler = e => {
@@ -912,6 +896,7 @@ class PurchaseInvoice extends React.Component {
       SelectedcolumnDefs,
       isOpen,
       SelectedCols,
+      InsiderPermissions,
       AllcolumnDefs,
     } = this.state;
     return (

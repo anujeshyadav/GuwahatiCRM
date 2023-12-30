@@ -255,7 +255,7 @@ class PurchaseReturn extends React.Component {
 
   async componentDidMount() {
     const UserInformation = this.context?.UserInformatio;
-    const InsidePermissions = CheckPermission("Sales Return");
+    const InsidePermissions = CheckPermission("Purchase Return");
     this.setState({ InsiderPermissions: InsidePermissions });
     let userData = JSON.parse(localStorage.getItem("userData"));
     await Purchase_ReturnList(userData?._id, userData?.database)
