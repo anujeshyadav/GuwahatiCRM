@@ -641,8 +641,7 @@ class Receipt extends React.Component {
       this.setState({ ShowBill: false });
       this.setState({ BillNumber: billnumner });
     }
-    const InsidePermissions = CheckPermission("Sales Invoice");
-    console.log(InsidePermissions);
+    const InsidePermissions = CheckPermission("Receipt");
     this.setState({ InsiderPermissions: InsidePermissions });
     createOrderhistoryview(userid)
       .then((res) => {

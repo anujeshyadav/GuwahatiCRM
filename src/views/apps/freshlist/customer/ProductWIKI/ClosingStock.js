@@ -52,6 +52,7 @@ import {
   ViewFactoryStock,
   ViewOneWarehouseStock,
   WarehouseOutwardStocklist,
+  _Get,
 } from "../../../../../ApiEndPoint/ApiCalling";
 import {
   BsCloudDownloadFill,
@@ -62,6 +63,8 @@ import * as XLSX from "xlsx";
 import UserContext from "../../../../../context/Context";
 import UpdateStockTrx from "../../accounts/UpdateStockTrx";
 import StockTrxInvoice from "../../subcategory/OutWardStockPO";
+import { CheckPermission } from "../../house/CheckPermission";
+import { WareHouse_Closing_Stock } from "../../../../../ApiEndPoint/Api";
 
 const SelectedColums = [];
 
@@ -74,6 +77,7 @@ class ClosingStock extends React.Component {
     this.state = {
       isOpen: false,
       ShowBill: false,
+      InsiderPermissions: {},
 
       Arrindex: "",
       rowData: [],
@@ -97,50 +101,44 @@ class ClosingStock extends React.Component {
           field: "sortorder",
           field: "transactions",
           width: 150,
-          cellRendererFramework: params => {
+          cellRendererFramework: (params) => {
             return (
               <div className="actions cursor-pointer">
-                <Eye
-                  className="mr-50"
-                  size="25px"
-                  color="green"
-                  // onClick={() =>
-                  //   history.push(
-                  //     `/app/freshlist/customer/viewCustomer/${params.data?._id}`
-                  //   )
-                  // }
-                  onClick={e => {
-                    this.togglemodal();
-                    this.setState({ ViewOneData: params?.data });
-                    this.setState({ ViewOneUserView: true });
-                    this.setState({ EditOneUserView: false });
+                {this.state.InsiderPermissions &&
+                  this.state.InsiderPermissions?.View && (
+                    <Eye
+                      className="mr-50"
+                      size="25px"
+                      color="green"
+                      // onClick={() =>
+                      //   history.push(
+                      //     `/app/freshlist/customer/viewCustomer/${params.data?._id}`
+                      //   )
+                      // }
+                      onClick={(e) => {
+                        this.togglemodal();
+                        this.setState({ ViewOneData: params?.data });
+                        this.setState({ ViewOneUserView: true });
+                        this.setState({ EditOneUserView: false });
 
-                    // console.log(params?.data);
-                  }}
-                />
-                <Edit
-                  className="mr-50"
-                  size="25px"
-                  color="blue"
-                  onClick={e => {
-                    this.togglemodal();
-                    this.setState({ ViewOneData: params?.data });
-                    this.setState({ EditOneUserView: true });
-                    this.setState({ ViewOneUserView: false });
+                        // console.log(params?.data);
+                      }}
+                    />
+                  )}
 
-                    console.log(params?.data);
-                  }}
-                />
-                <Trash2
-                  className="mr-50"
-                  size="25px"
-                  color="red"
-                  onClick={() => {
-                    let selectedData = this.gridApi.getSelectedRows();
-                    this.runthisfunction(params.data._id);
-                    this.gridApi.updateRowData({ remove: selectedData });
-                  }}
-                />
+                {/* {this.state.InsiderPermissions &&
+                  this.state.InsiderPermissions?.Delete && (
+                    <Trash2
+                      className="mr-50"
+                      size="25px"
+                      color="red"
+                      onClick={() => {
+                        let selectedData = this.gridApi.getSelectedRows();
+                        this.runthisfunction(params.data._id);
+                        this.gridApi.updateRowData({ remove: selectedData });
+                      }}
+                    />
+                  )} */}
               </div>
             );
           },
@@ -150,89 +148,99 @@ class ClosingStock extends React.Component {
           field: "status",
           filter: true,
           width: 150,
-          cellRendererFramework: params => {
-            return params.data?.transferStatus === "Completed" ? (
+          cellRendererFramework: (params) => {
+            return params.data?.status === "closing" ? (
               <div className="badge badge-pill badge-success">
-                {params.data?.transferStatus}
+                {params.data?.status}
               </div>
-            ) : params.data?.transferStatus === "InProcess" ? (
+            ) : params.data?.status === "InProcess" ? (
               <div className="badge badge-pill badge-warning">
-                {params.data?.transferStatus}
+                {params.data?.status}
               </div>
-            ) : params.data?.transferStatus === "Hold" ? (
+            ) : params.data?.status === "Hold" ? (
               <div className="badge badge-pill badge-danger">
-                {params.data?.transferStatus}
+                {params.data?.status}
               </div>
-            ) : params.data?.transferStatus === "Pending" ? (
+            ) : params.data?.status === "opening" ? (
               <div className="badge badge-pill badge-warning">
-                {params.data?.transferStatus}
+                {params.data?.status}
               </div>
             ) : null;
           },
         },
         {
-          headerName: "Trx Date",
-          field: "stockTransferDate",
+          headerName: "Date",
+          field: "date",
           filter: true,
           width: 200,
-          cellRendererFramework: params => {
+          cellRendererFramework: (params) => {
             return (
               <div>
-                <span>{params.data?.stockTransferDate}</span>
+                <span>{params.data?.date}</span>
               </div>
             );
           },
         },
         {
-          headerName: "Total Product",
-          field: "productItems",
+          headerName: "email",
+          field: "email",
           filter: true,
           width: 200,
-          cellRendererFramework: params => {
+          cellRendererFramework: (params) => {
             return (
               <div>
-                <span>{params.data?.productItems?.length} Products</span>
+                <span>{params.data?.email} Products</span>
               </div>
             );
           },
         },
         {
           headerName: "Warehouse Name",
-          field: "warehouseToId",
+          field: "firstName",
           filter: true,
           width: 200,
-          cellRendererFramework: params => {
-            return (
-              <div>{<span>{params.data?.warehouseToId?.firstName}</span>}</div>
-            );
+          cellRendererFramework: (params) => {
+            return <div>{<span>{params.data?.firstName}</span>}</div>;
+          },
+        },
+        {
+          headerName: "Mobile Number",
+          field: "mobileNumber",
+          filter: true,
+          width: 200,
+          cellRendererFramework: (params) => {
+            return <div>{<span>{params.data?.mobileNumber}</span>}</div>;
+          },
+        },
+        {
+          headerName: "City",
+          field: "City",
+          filter: true,
+          width: 200,
+          cellRendererFramework: (params) => {
+            return <div>{<span>{params.data?.City}</span>}</div>;
+          },
+        },
+        {
+          headerName: "State",
+          field: "State",
+          filter: true,
+          width: 200,
+          cellRendererFramework: (params) => {
+            return <div>{<span>{params.data?.State}</span>}</div>;
           },
         },
 
         {
-          headerName: "Grand Total",
-          field: "grandTotal",
-          filter: true,
-          sortable: true,
-          cellRendererFramework: params => {
-            return (
-              <>
-                <div className="actions cursor-pointer">
-                  <span>{params?.data?.grandTotal}</span>
-                </div>
-              </>
-            );
-          },
-        },
-        {
           headerName: "Created date",
-          field: "createdAt",
+          field: "Closingdate",
           filter: true,
           sortable: true,
-          cellRendererFramework: params => {
+          cellRendererFramework: (params) => {
             return (
               <>
                 <div className="actions cursor-pointer">
-                  <span>{params?.data?.createdAt?.split("T")[0]}</span>
+                  <span>{params?.data?.Closingdate?.split("T")[0]}</span>
                 </div>
               </>
             );
@@ -243,11 +251,11 @@ class ClosingStock extends React.Component {
           field: "updatedAt",
           filter: true,
           sortable: true,
-          cellRendererFramework: params => {
+          cellRendererFramework: (params) => {
             return (
               <>
                 <div className="actions cursor-pointer">
-                  <span>{params?.data?.updatedAt.split("T")[0]}</span>
+                  <span>{params?.data?.updatedAt?.split("T")[0]}</span>
                 </div>
               </>
             );
@@ -265,7 +273,7 @@ class ClosingStock extends React.Component {
       },
     };
   }
-  UpdateStock = e => {
+  UpdateStock = (e) => {
     let payload = {
       status: e.target.value,
     };
@@ -277,17 +285,17 @@ class ClosingStock extends React.Component {
         cancel: "No",
         catch: { text: "Yes", value: "Sure" },
       },
-    }).then(value => {
+    }).then((value) => {
       switch (value) {
         case "Sure":
           Stockupdate(id, payload)
-            .then(res => {
+            .then((res) => {
               // console.log(res);
               swal("success", "Status Updated Successfully");
               this.togglemodal();
               this.ViewStockList();
             })
-            .catch(err => {
+            .catch((err) => {
               console.log(err);
             });
 
@@ -297,12 +305,12 @@ class ClosingStock extends React.Component {
     });
   };
   LookupviewStart = () => {
-    this.setState(prevState => ({
+    this.setState((prevState) => ({
       modal: !prevState.modal,
     }));
   };
   togglemodal = () => {
-    this.setState(prevState => ({
+    this.setState((prevState) => ({
       modalone: !prevState.modalone,
     }));
     this.setState({ ShowBill: false });
@@ -323,33 +331,20 @@ class ClosingStock extends React.Component {
 
   async componentDidMount() {
     const UserInformation = this.context?.UserInformatio;
+    const InsidePermissions = CheckPermission("Closing Stock");
+    this.setState({ InsiderPermissions: InsidePermissions });
     let pageparmission = JSON.parse(localStorage.getItem("userData"));
-    let userid = pageparmission?._id;
-    await this.ViewStockList();
-
-    // Stock_trxFactorytoWList(userid)
-    // .then((res) => {
-    //   console.log(res);
-    // })
-    // .catch((err) => {
-    //   console.log(err);
-    // });
-  }
-
-  ViewStockList = async () => {
-    let pageparmission = JSON.parse(localStorage.getItem("userData"));
-    let userid = pageparmission?._id;
-    // await ViewFactoryStock()
-    await WarehouseOutwardStocklist(userid)
-      .then(res => {
-        // console.log(res?.Warehouse);
+    // WareHouse_Closing_Stock
+    await _Get(WareHouse_Closing_Stock, pageparmission?._id)
+      .then((res) => {
         let rowData = res?.Warehouse;
+        // let rowData = res?.Warehouse?.filter((ele) => ele?.status == "closing");
 
         if (rowData) {
           this.setState({ rowData: rowData });
           this.setState({ AllcolumnDefs: this.state.columnDefs });
 
-          let userHeading = JSON.parse(localStorage.getItem("FactoryStock"));
+          let userHeading = JSON.parse(localStorage.getItem("ClosingStock"));
           if (userHeading?.length) {
             this.setState({ columnDefs: userHeading });
             this.gridApi.setColumnDefs(userHeading);
@@ -361,33 +356,13 @@ class ClosingStock extends React.Component {
           this.setState({ SelectedCols: this.state.columnDefs });
         }
       })
-      .catch(err => {
+      .catch((err) => {
         console.log(err);
       });
-    // await ViewOneWarehouseStock(userid)
-    //   .then((res) => {
-    //     console.log(res?.Factory);
-    // this.setState({ rowData: res?.Factory });
-    // this.setState({ AllcolumnDefs: this.state.columnDefs });
-
-    // let userHeading = JSON.parse(localStorage.getItem("FactoryStock"));
-    // if (userHeading?.length) {
-    //   this.setState({ columnDefs: userHeading });
-    //   this.gridApi.setColumnDefs(userHeading);
-    //   this.setState({ SelectedcolumnDefs: userHeading });
-    // } else {
-    //   this.setState({ columnDefs: this.state.columnDefs });
-    //   this.setState({ SelectedcolumnDefs: this.state.columnDefs });
-    // }
-    // this.setState({ SelectedCols: this.state.columnDefs });
-    // })
-    // .catch((err) => {
-    //   console.log(err);
-    // });
-  };
+  }
 
   toggleDropdown = () => {
-    this.setState(prevState => ({ isOpen: !prevState.isOpen }));
+    this.setState((prevState) => ({ isOpen: !prevState.isOpen }));
   };
 
   runthisfunction(id) {
@@ -396,15 +371,15 @@ class ClosingStock extends React.Component {
         cancel: "cancel",
         catch: { text: "Delete ", value: "delete" },
       },
-    }).then(value => {
+    }).then((value) => {
       switch (value) {
         case "delete":
           DeleteAccount(id)
-            .then(res => {
+            .then((res) => {
               let selectedData = this.gridApi.getSelectedRows();
               this.gridApi.updateRowData({ remove: selectedData });
             })
-            .catch(err => {
+            .catch((err) => {
               console.log(err);
             });
           break;
@@ -413,7 +388,7 @@ class ClosingStock extends React.Component {
     });
   }
 
-  onGridReady = params => {
+  onGridReady = (params) => {
     this.gridApi = params.api;
     this.gridColumnApi = params.columnApi;
     this.gridRef.current = params.api;
@@ -425,11 +400,11 @@ class ClosingStock extends React.Component {
     });
   };
 
-  updateSearchQuery = val => {
+  updateSearchQuery = (val) => {
     this.gridApi.setQuickFilter(val);
   };
 
-  filterSize = val => {
+  filterSize = (val) => {
     if (this.gridApi) {
       this.gridApi.paginationSetPageSize(Number(val));
       this.setState({
@@ -444,7 +419,7 @@ class ClosingStock extends React.Component {
       SelectedColums?.push(value);
     } else {
       const delindex = SelectedColums?.findIndex(
-        ele => ele?.headerName === value?.headerName
+        (ele) => ele?.headerName === value?.headerName
       );
 
       SelectedColums?.splice(delindex, 1);
@@ -455,14 +430,14 @@ class ClosingStock extends React.Component {
       Papa.parse(csvData, {
         header: true,
         skipEmptyLines: true,
-        complete: result => {
+        complete: (result) => {
           if (result.data && result.data.length > 0) {
             resolve(result.data);
           } else {
             reject(new Error("No data found in the CSV"));
           }
         },
-        error: error => {
+        error: (error) => {
           reject(error);
         },
       });
@@ -474,7 +449,7 @@ class ClosingStock extends React.Component {
 
     const doc = new jsPDF("landscape", "mm", size, false);
     doc.setTextColor(5, 87, 97);
-    const tableData = parsedData.map(row => Object.values(row));
+    const tableData = parsedData.map((row) => Object.values(row));
     doc.addImage(Logo, "JPEG", 10, 10, 50, 30);
     let date = new Date();
     doc.setCreationDate(date);
@@ -499,14 +474,14 @@ class ClosingStock extends React.Component {
       console.error("Error parsing CSV:", error);
     }
   };
-  processCell = params => {
+  processCell = (params) => {
     // console.log(params);
     // Customize cell content as needed
     return params.value;
   };
 
   convertCsvToExcel(csvData) {
-    return new Promise(resolve => {
+    return new Promise((resolve) => {
       Papa.parse(csvData, {
         header: true,
         dynamicTyping: true,
@@ -537,7 +512,7 @@ class ClosingStock extends React.Component {
     window.URL.revokeObjectURL(url);
   }
 
-  exportToExcel = async e => {
+  exportToExcel = async (e) => {
     const CsvData = this.gridApi.getDataAsCsv({
       processCellCallback: this.processCell,
     });
@@ -550,7 +525,7 @@ class ClosingStock extends React.Component {
       processCellCallback: this.processCell,
     });
     Papa.parse(CsvData, {
-      complete: result => {
+      complete: (result) => {
         const ws = XLSX.utils.json_to_sheet(result.data);
         const wb = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(wb, ws, "Sheet1");
@@ -586,13 +561,13 @@ class ClosingStock extends React.Component {
       processCellCallback: this.processCell,
     });
     Papa.parse(CsvData, {
-      complete: result => {
+      complete: (result) => {
         const rows = result.data;
 
         // Create XML
         let xmlString = "<root>\n";
 
-        rows.forEach(row => {
+        rows.forEach((row) => {
           xmlString += "  <row>\n";
           row.forEach((cell, index) => {
             xmlString += `    <field${index + 1}>${cell}</field${index + 1}>\n`;
@@ -614,14 +589,14 @@ class ClosingStock extends React.Component {
     });
   };
 
-  HandleSetVisibleField = e => {
+  HandleSetVisibleField = (e) => {
     e.preventDefault();
     this.gridApi.setColumnDefs(this.state.SelectedcolumnDefs);
     this.setState({ columnDefs: this.state.SelectedcolumnDefs });
     this.setState({ SelectedcolumnDefs: this.state.SelectedcolumnDefs });
     this.setState({ rowData: this.state.rowData });
     localStorage.setItem(
-      "FactoryStock",
+      "ClosingStock",
       JSON.stringify(this.state.SelectedcolumnDefs)
     );
     this.LookupviewStart();
@@ -630,10 +605,10 @@ class ClosingStock extends React.Component {
   HeadingRightShift = () => {
     const updatedSelectedColumnDefs = [
       ...new Set([
-        ...this.state.SelectedcolumnDefs.map(item => JSON.stringify(item)),
-        ...SelectedColums.map(item => JSON.stringify(item)),
+        ...this.state.SelectedcolumnDefs.map((item) => JSON.stringify(item)),
+        ...SelectedColums.map((item) => JSON.stringify(item)),
       ]),
-    ].map(item => JSON.parse(item));
+    ].map((item) => JSON.parse(item));
     this.setState({
       SelectedcolumnDefs: [...new Set(updatedSelectedColumnDefs)], // Update the state with the combined array
     });
@@ -659,6 +634,7 @@ class ClosingStock extends React.Component {
       isOpen,
       SelectedCols,
       AllcolumnDefs,
+      InsiderPermissions,
     } = this.state;
     return (
       <>
@@ -670,77 +646,72 @@ class ClosingStock extends React.Component {
                 <Col>
                   <h1 className="float-left">Closing Stock</h1>
                 </Col>
-                <Col>
-                  <span className="mx-1">
-                    <FaFilter
-                      style={{ cursor: "pointer" }}
-                      title="filter coloumn"
-                      size="35px"
-                      onClick={this.LookupviewStart}
-                      color="#39cccc"
-                      className="float-right"
-                    />
-                  </span>
-                  <span className="mx-1">
-                    <div className="dropdown-container float-right">
-                      <ImDownload
+                {InsiderPermissions && InsiderPermissions?.View && (
+                  <Col>
+                    <span className="mx-1">
+                      <FaFilter
                         style={{ cursor: "pointer" }}
-                        title="download file"
+                        title="filter coloumn"
                         size="35px"
-                        className="dropdown-button "
+                        onClick={this.LookupviewStart}
                         color="#39cccc"
-                        onClick={this.toggleDropdown}
+                        className="float-right"
                       />
-                      {isOpen && (
-                        <div
-                          style={{
-                            position: "absolute",
-                            zIndex: "1",
-                            border: "1px solid #39cccc",
-                            backgroundColor: "white",
-                          }}
-                          className="dropdown-content dropdownmy"
-                        >
-                          <h5
-                            onClick={() => this.exportToPDF()}
-                            style={{ cursor: "pointer" }}
-                            className=" mx-1 myactive mt-1"
-                          >
-                            .PDF
-                          </h5>
-                          <h5
-                            onClick={() => this.gridApi.exportDataAsCsv()}
-                            style={{ cursor: "pointer" }}
-                            className=" mx-1 myactive"
-                          >
-                            .CSV
-                          </h5>
-                          <h5
-                            onClick={this.convertCSVtoExcel}
-                            style={{ cursor: "pointer" }}
-                            className=" mx-1 myactive"
-                          >
-                            .XLS
-                          </h5>
-                          <h5
-                            onClick={this.exportToExcel}
-                            style={{ cursor: "pointer" }}
-                            className=" mx-1 myactive"
-                          >
-                            .XLSX
-                          </h5>
-                          <h5
-                            onClick={() => this.convertCsvToXml()}
-                            style={{ cursor: "pointer" }}
-                            className=" mx-1 myactive"
-                          >
-                            .XML
-                          </h5>
-                        </div>
-                      )}
-                    </div>
-                  </span>
-                  {/* <span>
+                    </span>
+                    <span className="mx-1">
+                      <div className="dropdown-container float-right">
+                        <ImDownload
+                          style={{ cursor: "pointer" }}
+                          title="download file"
+                          size="35px"
+                          className="dropdown-button "
+                          color="#39cccc"
+                          onClick={this.toggleDropdown}
+                        />
+                        {isOpen && (
+                          <div
+                            style={{
+                              position: "absolute",
+                              zIndex: "1",
+                              border: "1px solid #39cccc",
+                              backgroundColor: "white",
+                            }}
+                            className="dropdown-content dropdownmy">
+                            <h5
+                              onClick={() => this.exportToPDF()}
+                              style={{ cursor: "pointer" }}
+                              className=" mx-1 myactive mt-1">
+                              .PDF
+                            </h5>
+                            <h5
+                              onClick={() => this.gridApi.exportDataAsCsv()}
+                              style={{ cursor: "pointer" }}
+                              className=" mx-1 myactive">
+                              .CSV
+                            </h5>
+                            <h5
+                              onClick={this.convertCSVtoExcel}
+                              style={{ cursor: "pointer" }}
+                              className=" mx-1 myactive">
+                              .XLS
+                            </h5>
+                            <h5
+                              onClick={this.exportToExcel}
+                              style={{ cursor: "pointer" }}
+                              className=" mx-1 myactive">
+                              .XLSX
+                            </h5>
+                            <h5
+                              onClick={() => this.convertCsvToXml()}
+                              style={{ cursor: "pointer" }}
+                              className=" mx-1 myactive">
+                              .XML
+                            </h5>
+                          </div>
+                        )}
+                      </div>
+                    </span>
+                    {/* <span>
                     <Route
                       render={({ history }) => (
                         <Badge
@@ -757,7 +728,8 @@ class ClosingStock extends React.Component {
                       )}
                     />
                   </span> */}
-                </Col>
+                  </Col>
+                )}
               </Row>
               <CardBody style={{ marginTop: "-1.5rem" }}>
                 {this.state.rowData === null ? null : (
@@ -784,32 +756,27 @@ class ClosingStock extends React.Component {
                           <DropdownMenu right>
                             <DropdownItem
                               tag="div"
-                              onClick={() => this.filterSize(5)}
-                            >
+                              onClick={() => this.filterSize(5)}>
                               5
                             </DropdownItem>
                             <DropdownItem
                               tag="div"
-                              onClick={() => this.filterSize(20)}
-                            >
+                              onClick={() => this.filterSize(20)}>
                               20
                             </DropdownItem>
                             <DropdownItem
                               tag="div"
-                              onClick={() => this.filterSize(50)}
-                            >
+                              onClick={() => this.filterSize(50)}>
                               50
                             </DropdownItem>
                             <DropdownItem
                               tag="div"
-                              onClick={() => this.filterSize(100)}
-                            >
+                              onClick={() => this.filterSize(100)}>
                               100
                             </DropdownItem>
                             <DropdownItem
                               tag="div"
-                              onClick={() => this.filterSize(134)}
-                            >
+                              onClick={() => this.filterSize(134)}>
                               134
                             </DropdownItem>
                           </DropdownMenu>
@@ -819,7 +786,7 @@ class ClosingStock extends React.Component {
                         <div className="table-input mr-1">
                           <Input
                             placeholder="search Item here..."
-                            onChange={e =>
+                            onChange={(e) =>
                               this.updateSearchQuery(e.target.value)
                             }
                             value={this.state.value}
@@ -828,7 +795,7 @@ class ClosingStock extends React.Component {
                       </div>
                     </div>
                     <ContextLayout.Consumer className="ag-theme-alpine">
-                      {context => (
+                      {(context) => (
                         <AgGridReact
                           id="myAgGrid"
                           // gridOptions={{
@@ -879,8 +846,7 @@ class ClosingStock extends React.Component {
           isOpen={this.state.modal}
           toggle={this.LookupviewStart}
           className={this.props.className}
-          style={{ maxWidth: "1050px" }}
-        >
+          style={{ maxWidth: "1050px" }}>
           <ModalHeader toggle={this.LookupviewStart}>Change Fileds</ModalHeader>
           <ModalBody className="modalbodyhead">
             <Row>
@@ -893,15 +859,15 @@ class ClosingStock extends React.Component {
                         return (
                           <>
                             <div
-                              onClick={e => this.handleChangeHeader(e, ele, i)}
+                              onClick={(e) =>
+                                this.handleChangeHeader(e, ele, i)
+                              }
                               key={i}
-                              className="mycustomtag mt-1"
-                            >
+                              className="mycustomtag mt-1">
                               <span className="mt-1">
                                 <h5
                                   style={{ cursor: "pointer" }}
-                                  className="allfields"
-                                >
+                                  className="allfields">
                                   <input
                                     type="checkbox"
                                     // checked={check && check}
@@ -960,15 +926,14 @@ class ClosingStock extends React.Component {
                                             : ""
                                         }`,
                                       }}
-                                      className="allfields"
-                                    >
+                                      className="allfields">
                                       <IoMdRemoveCircleOutline
                                         onClick={() => {
                                           const SelectedCols =
                                             this.state.SelectedcolumnDefs.slice();
                                           const delindex =
                                             SelectedCols.findIndex(
-                                              element =>
+                                              (element) =>
                                                 element?.headerName ==
                                                 ele?.headerName
                                             );
@@ -1046,14 +1011,12 @@ class ClosingStock extends React.Component {
           isOpen={this.state.modalone}
           toggle={this.togglemodal}
           className={this.props.className}
-          style={{ maxWidth: "1050px" }}
-        >
+          style={{ maxWidth: "1050px" }}>
           <ModalHeader toggle={this.togglemodal}>
             {this.state.ShowBill ? "Bill Download" : "All Products"}
           </ModalHeader>
           <ModalBody
-            className={`${this.state.ShowBill ? "p-1" : "modalbodyhead"}`}
-          >
+            className={`${this.state.ShowBill ? "p-1" : "modalbodyhead"}`}>
             {this.state.ViewOneUserView ? (
               <>
                 {this.state.ShowBill ? (
@@ -1064,37 +1027,24 @@ class ClosingStock extends React.Component {
                   <>
                     <Row>
                       <Col>
-                        <Label>WareHouse To :</Label>
-                        <Badge color="primary" className="">
-                          {this.state.ViewOneData &&
-                            this.state.ViewOneData?.warehouseToId?.firstName}
-                        </Badge>
-                      </Col>
-                      <Col>
-                        <Label>Stock trx date :</Label>
-                        <h5>
-                          {this.state.ViewOneData &&
-                            this.state.ViewOneData?.stockTransferDate}
-                        </h5>
-                      </Col>
-                      <Col>
-                        <Label>Grand Total :</Label>
-                        <h5>
-                          <strong>
-                            {this.state.ViewOneData &&
-                              this.state.ViewOneData?.grandTotal}{" "}
-                          </strong>
-                          Rs/-
-                        </h5>
+                        <Label>WareHouse Name :</Label>
+                        <div>
+                          <Badge color="primary" className="">
+                            <strong>
+                              {this.state.ViewOneData &&
+                                this.state.ViewOneData?.firstName}
+                            </strong>
+                          </Badge>
+                        </div>
                       </Col>
 
-                      {this.state.ViewOneData?.transferStatus == "Completed" ? (
+                      {this.state.ViewOneData?.status == "closing" ? (
                         <>
                           <Col className="">
                             <Label>status:</Label>
                             <div>
                               <Badge color="primary">
-                                {this.state.ViewOneData?.transferStatus}
+                                {this.state.ViewOneData?.status}
                               </Badge>
                             </div>
                           </Col>
@@ -1105,14 +1055,14 @@ class ClosingStock extends React.Component {
                             <Label>status:</Label>
                             <div>
                               <Badge color="primary">
-                                {this.state.ViewOneData?.transferStatus}
+                                {this.state.ViewOneData?.status}
                               </Badge>
                             </div>
                           </Col>
                         </>
                       )}
 
-                      <Col>
+                      {/* <Col>
                         <Label>Download Invoice :</Label>
                         <div className="d-flex justify-content-center">
                           <FaDownload
@@ -1122,7 +1072,7 @@ class ClosingStock extends React.Component {
                             size={20}
                           />
                         </div>
-                      </Col>
+                      </Col> */}
                     </Row>
                     <Row className="p-2">
                       <Col>
@@ -1152,7 +1102,7 @@ class ClosingStock extends React.Component {
                                   <>
                                     <tr>
                                       <th scope="row">{i + 1}</th>
-                                      <td>{ele?.product?.Product_Title}</td>
+                                      <td>{ele?.productId?.Product_Title}</td>
                                       <td>{ele?.price}</td>
                                       <td>{ele?.Size}</td>
                                       <td>{ele?.unitType}</td>

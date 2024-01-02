@@ -29,6 +29,7 @@ import {
   SaveProduct,
   UnitListView,
   CreateWarehouseList,
+  CreateAccountList,
 } from "../../../../ApiEndPoint/ApiCalling";
 import "../../../../assets/scss/pages/users.scss";
 import UserContext from "../../../../context/Context";
@@ -114,6 +115,7 @@ const AddProduct = () => {
       }
     }
   };
+  console.log(formData);
   const changeHandler1 = (e) => {
     setFormData({
       ...formData,
@@ -162,10 +164,12 @@ const AddProduct = () => {
       .catch((err) => {
         console.log(err);
       });
-    CreateWarehouseList(userData?._id)
+    CreateAccountList(userData?._id, userData?.database)
       .then((res) => {
-        console.log(res?.Warehouse);
-        setWareHouseList(res?.Warehouse);
+        let value = res?.adminDetails;
+        if (value) {
+          setWareHouseList(value);
+        }
       })
       .catch((err) => {
         console.log(err);
@@ -185,7 +189,7 @@ const AddProduct = () => {
 
     let formdata = new FormData();
     let userData = JSON.parse(localStorage.getItem("userData"));
-    formdata.append("created_by", userData._id);
+    formdata.append("created_by", userData?._id);
     CreatAccountView?.input?.map((ele, i) => {
       if (ele?.type?._attributes?.type == "text") {
         formdata.append(`${ele?.name._text}`, formData[ele?.name?._text]);
@@ -207,19 +211,23 @@ const AddProduct = () => {
     if (error) {
       swal("Error occured while Entering Details");
     } else {
-      SaveProduct(formdata)
-        .then((res) => {
-          console.log(res);
-          setFormData({});
-          if (res.status) {
-            // window.location.reload();
-            swal("Product Created Successfully");
-          }
-        })
-        .catch((err) => {
-          console.log(err);
-          swal("Enter All Details");
-        });
+      if (formData?.ProductType) {
+        SaveProduct(formdata)
+          .then((res) => {
+            console.log(res);
+            setFormData({});
+            if (res.status) {
+              // window.location.reload();
+              swal("Product Created Successfully");
+            }
+          })
+          .catch((err) => {
+            console.log(err);
+            swal("Enter All Details");
+          });
+      } else {
+        swal("error", "Choose Product Type");
+      }
     }
   };
   const handlechangeSubcat = (e) => {
@@ -347,12 +355,16 @@ const AddProduct = () => {
                         </>
                       );
                     }
-                    if (ele?.dropdown?.name?._text?.includes("arehouse")) {
+                    if (
+                      ele?.dropdown?.name?._text
+                        ?.toLowerCase()
+                        ?.includes("arehouse")
+                    ) {
                       return (
                         <>
                           <Col key={i} lg="4" md="4">
                             <Label className="mb-1 mt-1">
-                              {ele?.dropdown?.label?._text}
+                              {ele?.dropdown?.label?._text} *
                             </Label>
                             <CustomInput
                               required
@@ -363,13 +375,12 @@ const AddProduct = () => {
                               onChange={handleInputChange}>
                               <option value="NA">--Select WareHouse--</option>
 
-                              {wareHouseList?.map((whList) => (
-                                <option
-                                  value={whList?.WarehouseName}
-                                  key={whList?._id}>
-                                  {whList?.WarehouseName}
-                                </option>
-                              ))}
+                              {wareHouseList &&
+                                wareHouseList?.map((whList) => (
+                                  <option value={whList?._id} key={whList?._id}>
+                                    {whList?.firstName}
+                                  </option>
+                                ))}
                             </CustomInput>
                           </Col>
                         </>
@@ -393,6 +404,15 @@ const AddProduct = () => {
                                     // value={product?.selecetedUnit}
                                     onChange={handleInputChange}>
                                     <option value="">--select Unit--</option>
+                                    {UnitList &&
+                                      UnitList?.map((cat) => (
+                                        <option
+                                          value={cat?.primaryUnit}
+                                          key={cat?._id}>
+                                          {cat?.primaryUnit}
+                                        </option>
+                                      ))}
+
                                     <option value="kg">Kilogram (kg)</option>
                                     <option value="Pcs">Pieces (Pcs)</option>
                                     <option value="g">Gram (g)</option>

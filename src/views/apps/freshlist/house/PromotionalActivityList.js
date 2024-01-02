@@ -116,24 +116,25 @@ class PromotionalActivityList extends React.Component {
     this.setState({ InsiderPermissions: InsidePermissions });
     const UserInformation = this.context?.UserInformatio;
     let pageparmission = JSON.parse(localStorage.getItem("userData"));
-    View_PromotionList(pageparmission?._id)
-      .then(res => {
-        console.log(res?.Promotion);
-        let keys = Object.keys(res?.Promotion[0]);
-        let myarr = keys.filter(
-          item =>
-            item !== "_id" &&
-            item !== "__v" &&
-            item !== "created_by" &&
-            item !== "status"
-        );
-        let unique = [...new Set(myarr)];
-        this.setState({ Dropdown: unique });
-        this.setState({ AllData: res?.Promotion });
-      })
-      .catch(err => {
-        console.log(err);
-      });
+   await View_PromotionList(pageparmission?._id, pageparmission?.database)
+     .then((res) => {
+       console.log(res?.Promotion);
+       debugger;
+       let keys = Object.keys(res?.Promotion[0]);
+       let myarr = keys.filter(
+         (item) =>
+           item !== "_id" &&
+           item !== "__v" &&
+           item !== "created_by" &&
+           item !== "status"
+       );
+       let unique = [...new Set(myarr)];
+       this.setState({ Dropdown: unique });
+       this.setState({ AllData: res?.Promotion });
+     })
+     .catch((err) => {
+       console.log(err);
+     });
   }
   toggleDropdown = () => {
     this.setState(prevState => ({ isOpen: !prevState.isOpen }));

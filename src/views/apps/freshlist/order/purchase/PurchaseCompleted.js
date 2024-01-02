@@ -577,96 +577,95 @@ class PurchaseCompleted extends React.Component {
                   </h1>
                 </Col>
                 {InsiderPermissions && InsiderPermissions.View && (
-                
-                <Col>
-                  <span className="mx-1">
-                    <FaFilter
-                      style={{ cursor: "pointer" }}
-                      title="filter coloumn"
-                      size="35px"
-                      onClick={this.LookupviewStart}
-                      color="#39cccc"
-                      className="float-right"
-                    />
-                  </span>
-                  <span className="mx-1">
-                    <div className="dropdown-container float-right">
-                      <ImDownload
+                  <Col>
+                    <span className="mx-1">
+                      <FaFilter
                         style={{ cursor: "pointer" }}
-                        title="download file"
+                        title="filter coloumn"
                         size="35px"
-                        className="dropdown-button "
+                        onClick={this.LookupviewStart}
                         color="#39cccc"
-                        onClick={this.toggleDropdown}
+                        className="float-right"
                       />
-                      {isOpen && (
-                        <div
-                          style={{
-                            position: "absolute",
-                            zIndex: "1",
-                            border: "1px solid #39cccc",
-                            backgroundColor: "white",
-                          }}
-                          className="dropdown-content dropdownmy">
-                          <h5
-                            onClick={() => this.exportToPDF()}
-                            style={{ cursor: "pointer" }}
-                            className=" mx-1 myactive mt-1">
-                            .PDF
-                          </h5>
-                          <h5
-                            onClick={() => this.gridApi.exportDataAsCsv()}
-                            style={{ cursor: "pointer" }}
-                            className=" mx-1 myactive">
-                            .CSV
-                          </h5>
-                          <h5
-                            onClick={this.convertCSVtoExcel}
-                            style={{ cursor: "pointer" }}
-                            className=" mx-1 myactive">
-                            .XLS
-                          </h5>
-                          <h5
-                            onClick={this.exportToExcel}
-                            style={{ cursor: "pointer" }}
-                            className=" mx-1 myactive">
-                            .XLSX
-                          </h5>
-                          <h5
-                            onClick={() => this.convertCsvToXml()}
-                            style={{ cursor: "pointer" }}
-                            className=" mx-1 myactive">
-                            .XML
-                          </h5>
-                        </div>
-                      )}
-                    </div>
-                  </span>
-                {InsiderPermissions && InsiderPermissions.Create && (
-                  <span>
-                    <Route
-                      render={({ history }) => (
-                        <Button
-                          style={{
-                            cursor: "pointer",
-                            backgroundColor: "#39cccc",
-                            color: "white",
-                            fontWeight: "600",
-                          }}
-                          className="float-right mr-1"
+                    </span>
+                    <span className="mx-1">
+                      <div className="dropdown-container float-right">
+                        <ImDownload
+                          style={{ cursor: "pointer" }}
+                          title="download file"
+                          size="35px"
+                          className="dropdown-button "
                           color="#39cccc"
-                          onClick={() =>
-                            history.push("/app/AJgroup/order/AddPurchaseOrder")
-                          }>
-                          <FaPlus size={15} /> Add Purchase Order
-                        </Button>
-                      )}
-                    />
-                  </span>
-
-                )}
-                  
-                </Col>
+                          onClick={this.toggleDropdown}
+                        />
+                        {isOpen && (
+                          <div
+                            style={{
+                              position: "absolute",
+                              zIndex: "1",
+                              border: "1px solid #39cccc",
+                              backgroundColor: "white",
+                            }}
+                            className="dropdown-content dropdownmy">
+                            <h5
+                              onClick={() => this.exportToPDF()}
+                              style={{ cursor: "pointer" }}
+                              className=" mx-1 myactive mt-1">
+                              .PDF
+                            </h5>
+                            <h5
+                              onClick={() => this.gridApi.exportDataAsCsv()}
+                              style={{ cursor: "pointer" }}
+                              className=" mx-1 myactive">
+                              .CSV
+                            </h5>
+                            <h5
+                              onClick={this.convertCSVtoExcel}
+                              style={{ cursor: "pointer" }}
+                              className=" mx-1 myactive">
+                              .XLS
+                            </h5>
+                            <h5
+                              onClick={this.exportToExcel}
+                              style={{ cursor: "pointer" }}
+                              className=" mx-1 myactive">
+                              .XLSX
+                            </h5>
+                            <h5
+                              onClick={() => this.convertCsvToXml()}
+                              style={{ cursor: "pointer" }}
+                              className=" mx-1 myactive">
+                              .XML
+                            </h5>
+                          </div>
+                        )}
+                      </div>
+                    </span>
+                    {InsiderPermissions && InsiderPermissions.Create && (
+                      <span>
+                        <Route
+                          render={({ history }) => (
+                            <Button
+                              style={{
+                                cursor: "pointer",
+                                backgroundColor: "#39cccc",
+                                color: "white",
+                                fontWeight: "600",
+                              }}
+                              className="float-right mr-1"
+                              color="#39cccc"
+                              onClick={() =>
+                                history.push(
+                                  "/app/AJgroup/order/AddPurchaseOrder"
+                                )
+                              }>
+                              <FaPlus size={15} /> Add Purchase Order
+                            </Button>
+                          )}
+                        />
+                      </span>
+                    )}
+                  </Col>
                 )}
               </Row>
               <CardBody style={{ marginTop: "-1.5rem" }}>
@@ -1033,7 +1032,7 @@ class PurchaseCompleted extends React.Component {
                                     <tr>
                                       <th scope="row">{i + 1}</th>
                                       <td>{ele?.productId?.Product_Title}</td>
-                                      <td>{ele?.product?.Product_MRP}</td>
+                                      <td>{ele?.price}</td>
                                       <td>{ele?.Size}</td>
                                       <td>{ele?.unitType}</td>
                                       <td>{ele?.productId?.HSN_Code}</td>

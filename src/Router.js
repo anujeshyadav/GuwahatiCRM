@@ -460,6 +460,12 @@ const Campaignlist = lazy(() =>
 const ClosingStock = lazy(() =>
   import("./views/apps/freshlist/customer/ProductWIKI/ClosingStock")
 );
+const OverDueStockReport = lazy(() =>
+  import("./views/apps/freshlist/customer/ProductWIKI/OverDueStockReport")
+);
+const OpeningStock = lazy(() =>
+  import("./views/apps/freshlist/customer/ProductWIKI/OpeningStock")
+);
 const LowStock = lazy(() =>
   import("./views/apps/freshlist/customer/ProductWIKI/LowStock")
 );
@@ -487,6 +493,9 @@ const StockReport = lazy(() =>
 
 const StockTransfer = lazy(() =>
   import("./views/apps/freshlist/customer/StockManagement/StockTransfer")
+);
+const DeadParty = lazy(() =>
+  import("./views/apps/freshlist/customer/StockManagement/DeadParty")
 );
 const SupplierWarranty = lazy(() =>
   import("./views/apps/freshlist/customer/WarrantyCLaims/SupplierWarranty")
@@ -798,6 +807,9 @@ const CreateDispach = lazy(() =>
 );
 const GoodDispatchList = lazy(() =>
   import("./views/apps/freshlist/accounts/GoodDispatchList")
+);
+const WarehouseDispatchlist = lazy(() =>
+  import("./views/apps/freshlist/accounts/WarehouseDispatchlist")
 );
 const CreditNoteList = lazy(() =>
   import("./views/apps/freshlist/customer/notes/CreditNoteList")
@@ -2034,6 +2046,10 @@ class AppRouter extends React.Component {
             component={StockTransfer}
           />
           <AppRoute
+            path="/app/softNumen/report/DeadParty"
+            component={DeadParty}
+          />
+          <AppRoute
             path="/app/softNumen/warranty/SupplierWarranty"
             component={SupplierWarranty}
           />
@@ -2056,6 +2072,14 @@ class AppRouter extends React.Component {
           <AppRoute
             path="/app/softNumen/warranty/ClosingStock"
             component={ClosingStock}
+          />
+          <AppRoute
+            path="/app/Ajgroup/Stock/OverDueStockReport"
+            component={OverDueStockReport}
+          />
+          <AppRoute
+            path="/app/softNumen/warranty/openingStock"
+            component={OpeningStock}
           />
           <AppRoute
             path="/app/softNumen/warranty/LowStock"
@@ -2397,6 +2421,10 @@ class AppRouter extends React.Component {
           <AppRoute
             path="/app/AjGroup/dispatch/goodDispatchList"
             component={GoodDispatchList}
+          />
+          <AppRoute
+            path="/app/AjGroup/dispatch/WarehouseDispatchlist"
+            component={WarehouseDispatchlist}
           />
           <AppRoute
             path="/app/AjGroup/note/CreditNoteList"

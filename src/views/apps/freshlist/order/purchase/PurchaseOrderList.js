@@ -1043,7 +1043,7 @@ class PurchaseOrderViewList extends React.Component {
                                     <tr>
                                       <th scope="row">{i + 1}</th>
                                       <td>{ele?.productId?.Product_Title}</td>
-                                      <td>{ele?.product?.Product_MRP}</td>
+                                      <td>{ele?.price}</td>
                                       <td>{ele?.Size}</td>
                                       <td>{ele?.unitType}</td>
                                       <td>{ele?.productId?.HSN_Code}</td>

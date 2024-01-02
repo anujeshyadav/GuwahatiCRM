@@ -83,6 +83,8 @@ class DamagedStock extends React.Component {
       Wastage_status: "",
       Dam_Percentage: "",
       Reason: "",
+      InsiderPermissions: {},
+
       rowData: [],
       setMySelectedarr: [],
       ViewOneData: {},

@@ -62,6 +62,8 @@ class PaymentList extends React.Component {
       modal: false,
       modalone: false,
       ViewData: {},
+      InsiderPermissions: {},
+
       setMySelectedarr: [],
       SelectedCols: [],
       paginationPageSize: 5,
@@ -92,6 +94,9 @@ class PaymentList extends React.Component {
             return (
               <div className="actions cursor-pointer">
                 {/* {this.state.Viewpermisson && ( */}
+                {this.state.InsiderPermissions &&
+                  this.state.InsiderPermissions?.View && (
+
                 <Eye
                   className="mr-50"
                   size="25px"
@@ -100,6 +105,7 @@ class PaymentList extends React.Component {
                     this.handleChangeView(params.data, "readonly");
                   }}
                 />
+                  )}
                 {/* )} */}
                 {/* {this.state.Editpermisson && ( */}
                 {/* <Edit
@@ -707,6 +713,9 @@ class PaymentList extends React.Component {
                             Purchase Complte List
                           </h1>
                         </Col>
+                        {this.state.InsiderPermissions &&
+                  this.state.InsiderPermissions?.View && (
+
                         <Col>
                           <span className="mx-1">
                             <FaFilter
@@ -774,6 +783,7 @@ class PaymentList extends React.Component {
                             </div>
                           </span>
                         </Col>
+                  )}
                       </Row>
                       <CardBody style={{ marginTop: "-1.5rem" }}>
                         {this.state.rowData === null ? null : (
