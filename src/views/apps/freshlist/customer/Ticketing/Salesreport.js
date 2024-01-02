@@ -152,65 +152,94 @@ class Salesreport extends React.Component {
         },
 
         {
-          headerName: "Product Name",
-          field: "orderItems",
-          filter: true,
-          width: 220,
-          valueGetter: params => {
-            if (params.data.orderItems && params.data.orderItems.length > 0) {
-              return params?.data?.orderItems?.map(val => {
-                return val?.product?.Product_Title;
-              });
-            }
-            return null;
-          },
-        },
-        {
-          headerName: "Price",
-          field: "orderItems",
+          headerName: "MobileNo",
+          field: "MobileNo",
           filter: true,
           width: 150,
-          valueGetter: params => {
-            if (params.data.orderItems && params.data.orderItems.length > 0) {
-              return params.data.orderItems[0].price;
-            }
-            return null;
+          cellRendererFramework: params => {
+            return (
+              <div>
+                <span>{params?.data?.MobileNo}</span>
+              </div>
+            );
           },
         },
         {
-          headerName: "Size",
-          field: "orderItems",
+          headerName: "country",
+          field: "country",
           filter: true,
           width: 150,
-          valueGetter: params => {
-            if (params.data.orderItems && params.data.orderItems.length > 0) {
-              return params.data.orderItems[0].qty; // Return the price
-            }
-            return null;
+          cellRendererFramework: params => {
+            return (
+              <div>
+                <span>{params?.data?.country}</span>
+              </div>
+            );
           },
         },
         {
-          headerName: "GST Rate",
-          field: "orderItems",
+          headerName: "State",
+          field: "state",
           filter: true,
-          width: 180,
-          valueGetter: params => {
-            if (params.data.orderItems && params.data.orderItems.length > 0) {
-              return params.data.orderItems[0].product["GST Rate"]; // Return the price
-            }
-            return null; // Or handle cases where there's no price
+          width: 200,
+          cellRendererFramework: params => {
+            return (
+              <div>
+                <span>{params?.data?.state}</span>
+              </div>
+            );
           },
         },
         {
-          headerName: "HSN Code",
-          field: "orderItems",
+          headerName: "city",
+          field: "city",
           filter: true,
-          width: 180,
-          valueGetter: params => {
-            if (params.data.orderItems && params.data.orderItems.length > 0) {
-              return params.data.orderItems[0].product.HSN_Code; // Return the price
-            }
-            return null;
+          width: 150,
+          cellRendererFramework: params => {
+            return (
+              <div>
+                <span>{params?.data?.city}</span>
+              </div>
+            );
+          },
+        },
+        {
+          headerName: "GrandTotal",
+          field: "grandTotal",
+          filter: true,
+          width: 150,
+          cellRendererFramework: params => {
+            return (
+              <div>
+                <span>{params?.data?.grandTotal}</span>
+              </div>
+            );
+          },
+        },
+        {
+          headerName: "PaymentMode",
+          field: "paymentMode",
+          filter: true,
+          width: 200,
+          cellRendererFramework: params => {
+            return (
+              <div>
+                <span>{params?.data?.paymentMode}</span>
+              </div>
+            );
+          },
+        },
+        {
+          headerName: "address",
+          field: "Address",
+          filter: true,
+          width: 150,
+          cellRendererFramework: params => {
+            return (
+              <div>
+                <span>{params?.data?.address}</span>
+              </div>
+            );
           },
         },
         {
@@ -219,8 +248,8 @@ class Salesreport extends React.Component {
           filter: true,
           width: 180,
           valueGetter: params => {
-            const dateList = new Date(params.data.updatedAt);
-            const onlyDate = dateList.toISOString().split("T")[0];
+            const dateList = new Date(params?.data?.updatedAt);
+            const onlyDate = dateList?.toISOString()?.split("T")[0];
             return onlyDate;
           },
         },
@@ -263,7 +292,6 @@ class Salesreport extends React.Component {
         const ComplteStatus = res?.orderHistory?.filter(
           ele => ele.status == "completed" || ele.status == "Completed"
         );
-        console.log(ComplteStatus);
         this.setState({ rowData: ComplteStatus });
         this.setState({ AllcolumnDefs: this.state.columnDefs });
         this.setState({ SelectedCols: this.state.columnDefs });
@@ -608,7 +636,8 @@ class Salesreport extends React.Component {
                     type="submit"
                     className="mt-1"
                     color="primary"
-                    onClick={this.handleSubmitDate}>
+                    onClick={this.handleSubmitDate}
+                  >
                     Submit
                   </Button>
                 </Col>
@@ -640,35 +669,41 @@ class Salesreport extends React.Component {
                               position: "absolute",
                               zIndex: "1",
                             }}
-                            className="dropdown-content dropdownmy">
+                            className="dropdown-content dropdownmy"
+                          >
                             <h5
                               onClick={() => this.exportToPDF()}
                               style={{ cursor: "pointer" }}
-                              className=" mx-1 myactive mt-1">
+                              className=" mx-1 myactive mt-1"
+                            >
                               .PDF
                             </h5>
                             <h5
                               onClick={() => this.gridApi.exportDataAsCsv()}
                               style={{ cursor: "pointer" }}
-                              className=" mx-1 myactive">
+                              className=" mx-1 myactive"
+                            >
                               .CSV
                             </h5>
                             <h5
                               onClick={this.convertCSVtoExcel}
                               style={{ cursor: "pointer" }}
-                              className=" mx-1 myactive">
+                              className=" mx-1 myactive"
+                            >
                               .XLS
                             </h5>
                             <h5
                               onClick={this.exportToExcel}
                               style={{ cursor: "pointer" }}
-                              className=" mx-1 myactive">
+                              className=" mx-1 myactive"
+                            >
                               .XLSX
                             </h5>
                             <h5
                               onClick={() => this.convertCsvToXml()}
                               style={{ cursor: "pointer" }}
-                              className=" mx-1 myactive">
+                              className=" mx-1 myactive"
+                            >
                               .XML
                             </h5>
                           </div>
@@ -703,27 +738,32 @@ class Salesreport extends React.Component {
                           <DropdownMenu right>
                             <DropdownItem
                               tag="div"
-                              onClick={() => this.filterSize(5)}>
+                              onClick={() => this.filterSize(5)}
+                            >
                               5
                             </DropdownItem>
                             <DropdownItem
                               tag="div"
-                              onClick={() => this.filterSize(20)}>
+                              onClick={() => this.filterSize(20)}
+                            >
                               20
                             </DropdownItem>
                             <DropdownItem
                               tag="div"
-                              onClick={() => this.filterSize(50)}>
+                              onClick={() => this.filterSize(50)}
+                            >
                               50
                             </DropdownItem>
                             <DropdownItem
                               tag="div"
-                              onClick={() => this.filterSize(100)}>
+                              onClick={() => this.filterSize(100)}
+                            >
                               100
                             </DropdownItem>
                             <DropdownItem
                               tag="div"
-                              onClick={() => this.filterSize(134)}>
+                              onClick={() => this.filterSize(134)}
+                            >
                               134
                             </DropdownItem>
                           </DropdownMenu>
@@ -733,7 +773,7 @@ class Salesreport extends React.Component {
                         <div className="table-input mr-1">
                           <Input
                             placeholder="search Item here..."
-                            onChange={(e) =>
+                            onChange={e =>
                               this.updateSearchQuery(e.target.value)
                             }
                             value={this.state.value}
@@ -742,7 +782,7 @@ class Salesreport extends React.Component {
                       </div>
                     </div>
                     <ContextLayout.Consumer className="ag-theme-alpine">
-                      {(context) => (
+                      {context => (
                         <AgGridReact
                           id="myAgGrid"
                           gridOptions={this.gridOptions}
@@ -774,7 +814,8 @@ class Salesreport extends React.Component {
           isOpen={this.state.modal}
           toggle={this.LookupviewStart}
           className={this.props.className}
-          style={{ maxWidth: "1050px" }}>
+          style={{ maxWidth: "1050px" }}
+        >
           <ModalHeader toggle={this.LookupviewStart}>Change Fileds</ModalHeader>
           <ModalBody className="modalbodyhead">
             <Row>
@@ -787,15 +828,15 @@ class Salesreport extends React.Component {
                         return (
                           <>
                             <div
-                              onClick={(e) =>
-                                this.handleChangeHeader(e, ele, i)
-                              }
+                              onClick={e => this.handleChangeHeader(e, ele, i)}
                               key={i}
-                              className="mycustomtag mt-1">
+                              className="mycustomtag mt-1"
+                            >
                               <span className="mt-1">
                                 <h5
                                   style={{ cursor: "pointer" }}
-                                  className="allfields">
+                                  className="allfields"
+                                >
                                   <input type="checkbox" className="mx-1" />
 
                                   {ele?.headerName}
@@ -850,14 +891,15 @@ class Salesreport extends React.Component {
                                             : ""
                                         }`,
                                       }}
-                                      className="allfields">
+                                      className="allfields"
+                                    >
                                       <IoMdRemoveCircleOutline
                                         onClick={() => {
                                           const SelectedCols =
                                             this.state.SelectedcolumnDefs?.slice();
                                           const delindex =
                                             SelectedCols?.findIndex(
-                                              (element) =>
+                                              element =>
                                                 element?.headerName ==
                                                 ele?.headerName
                                             );
@@ -919,7 +961,8 @@ class Salesreport extends React.Component {
                     style={{ cursor: "pointer" }}
                     className=""
                     color="primary"
-                    onClick={this.HandleSetVisibleField}>
+                    onClick={this.HandleSetVisibleField}
+                  >
                     Submit
                   </Badge>
                 </div>
@@ -931,12 +974,14 @@ class Salesreport extends React.Component {
           isOpen={this.state.modalone}
           toggle={this.togglemodal}
           className={this.props.className}
-          style={{ maxWidth: "1050px" }}>
+          style={{ maxWidth: "1050px" }}
+        >
           <ModalHeader toggle={this.togglemodal}>
             {this.state.ShowBill ? "Bill Download" : "All Products"}
           </ModalHeader>
           <ModalBody
-            className={`${this.state.ShowBill ? "p-1" : "modalbodyhead"}`}>
+            className={`${this.state.ShowBill ? "p-1" : "modalbodyhead"}`}
+          >
             <Row className="p-2">
               <Col>
                 <div className="d-flex justify-content-center">
