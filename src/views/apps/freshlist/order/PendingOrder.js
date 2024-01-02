@@ -124,7 +124,7 @@ class PendingOrder extends React.Component {
                         color="white"
                         onClick={() => {
                           console.log(params?.data);
-
+                          debugger
                           this.setState({ ViewOneData: params?.data });
                           this.toggleModal();
                         }}
@@ -327,8 +327,8 @@ class PendingOrder extends React.Component {
   HandleStatusChange = async (e) => {
     e.preventDefault();
     console.log(this.state.Delivery_Status);
-
-    await Goods_DeliveryOTP(this.state.ViewOneData?.userId?._id)
+debugger
+    await Goods_DeliveryOTP(this.state.ViewOneData?.partyId)
       .then((res) => {
         debugger;
         console.log(res);
@@ -374,17 +374,16 @@ class PendingOrder extends React.Component {
   };
   handleSubmitOTP = async (e) => {
     e.preventDefault();
-
-    let payload = {
-      userId: this.state.ViewOneData?.userId?._id,
-      orderId: this.state.ViewOneData?.orderId,
-      status: this.state.Delivery_Status,
-      otp: Number(this.state.emailotp),
-      paymentMode: `${this.state.PayMode ? this.state.PayMode : "Cancelled"}`,
-      reason: `${
-        this.state.CancelReason ? this.state.CancelReason : "Delivered"
-      }`,
-    };
+debugger;
+let payload = {
+  userId: this.state.ViewOneData?.userId?._id,
+  orderId: this.state.ViewOneData?.orderId,
+  partyId: this.state.ViewOneData?.partyId,
+  status: this.state.Delivery_Status,
+  otp: Number(this.state.emailotp),
+  paymentMode: `${this.state.PayMode ? this.state.PayMode : "Cancelled"}`,
+  reason: `${this.state.CancelReason ? this.state.CancelReason : "Delivered"}`,
+};
     await Goods_DeliveryOTP_Auth(this.state.ViewOneData?._id, payload)
       .then((res) => {
         console.log(res);

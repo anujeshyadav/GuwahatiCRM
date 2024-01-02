@@ -180,6 +180,7 @@ const CreateDispach = (args) => {
 
     formdata.append(`created_by`, DispatchData?.userId);
     formdata.append(`userId`, DispatchData?.userId);
+    formdata.append(`partyId`, DispatchData?.partyId);
     formdata.append(`orderId`, DispatchData?.orderId);
     formdata.append(`grandTotal`, DispatchData?.grandTotal);
     formdata.append(`status`, "InProcess");

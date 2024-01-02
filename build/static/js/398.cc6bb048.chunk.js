@@ -1,0 +1,2 @@
+(this["webpackJsonpvuexy-react-admin-dashboard"]=this["webpackJsonpvuexy-react-admin-dashboard"]||[]).push([[398],{3088:function(a,e,t){"use strict";t.r(e);var n=t(1),r=t.n(n);e.default=function(){return r.a.createElement("div",null,"pricecalculaterproduction")}}}]);
+//# sourceMappingURL=398.cc6bb048.chunk.js.map

@@ -147,6 +147,7 @@ class PlaceOrderList extends React.Component {
                         size="20px"
                         color="white"
                         onClick={() => {
+                          debugger;
                           this.togglemodal();
                           this.handleChangeView(params.data, "readonly");
                         }}
