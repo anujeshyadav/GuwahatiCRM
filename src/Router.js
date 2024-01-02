@@ -890,6 +890,9 @@ const DeadParty = lazy(() =>
 const OpeningStock = lazy(() =>
   import("./views/apps/freshlist/customer/ProductWIKI/OpeningStock")
 );
+const WarehouseDispatchlist = lazy(() =>
+  import("./views/apps/freshlist/accounts/WarehouseDispatchlist")
+);
 const OverDueStockReport = lazy(() =>
   import("./views/apps/freshlist/customer/ProductWIKI/OverDueStockReport")
 );
@@ -1941,6 +1944,10 @@ class AppRouter extends React.Component {
           <AppRoute
             path="/app/softNumen/warranty/openingStock"
             component={OpeningStock}
+          />
+          <AppRoute
+            path="/app/AjGroup/dispatch/WarehouseDispatchlist"
+            component={WarehouseDispatchlist}
           />
           <AppRoute
             path="/app/Ajgroup/Stock/OverDueStockReport"
