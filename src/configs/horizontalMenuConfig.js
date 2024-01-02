@@ -374,7 +374,7 @@ const horizontalMenuConfig = [
       },
     ],
   },
-  
+
   // {
   //   id: "Team",
   //   title: "Team",
@@ -724,6 +724,14 @@ const horizontalMenuConfig = [
         navLink: "/app/softNumen/warranty/ClosingStock",
       },
       {
+        id: "Opening Stock",
+        title: "Opening Stock",
+        type: "item",
+        icon: <BsFillCartXFill size={22} />,
+        permissions: ["admin", "editor"],
+        navLink: "/app/softNumen/warranty/openingStock",
+      },
+      {
         id: "Low Stock",
         title: "Low Stock",
         type: "item",
@@ -745,7 +753,7 @@ const horizontalMenuConfig = [
         type: "item",
         icon: <AiOutlineStock size={22} />,
         permissions: ["admin", "editor"],
-        navLink: "/app/softNumen/report/stockReport",
+        navLink: "/app/Ajgroup/Stock/OverDueStockReport",
       },
 
       {
@@ -754,7 +762,8 @@ const horizontalMenuConfig = [
         type: "item",
         icon: <FaBookDead size={22} />,
         permissions: ["admin", "editor"],
-        navLink: "/app/softNumen/report/StockTransfer",
+        navLink: "/app/softNumen/report/DeadParty",
+        // navLink: "/app/softNumen/report/StockTransfer",
       },
     ],
   },
@@ -936,7 +945,8 @@ const horizontalMenuConfig = [
             type: "item",
             icon: <FaTruck size={22} />,
             permissions: ["admin", "editor"],
-            navLink: "/app/softNumen/warehouse/DispatchDetail",
+            navLink: "/app/AjGroup/dispatch/WarehouseDispatchlist",
+            // navLink: "/app/softNumen/warehouse/DispatchDetail",
           },
         ],
       },
@@ -968,7 +978,8 @@ const horizontalMenuConfig = [
             type: "item",
             icon: <FaList size={12} />,
             permissions: ["admin", "editor"],
-            navLink: "/views/apps/freshlist/Production/wastagematerialproduction",
+            navLink:
+              "/views/apps/freshlist/Production/wastagematerialproduction",
           },
           {
             id: "wastagestockreturn",
@@ -976,7 +987,8 @@ const horizontalMenuConfig = [
             type: "item",
             icon: <FaList size={12} />,
             permissions: ["admin", "editor"],
-            navLink: "/views/apps/freshlist/Production/wastagestockreturnproduction",
+            navLink:
+              "/views/apps/freshlist/Production/wastagestockreturnproduction",
           },
           {
             id: "pricecalculater",
@@ -984,9 +996,9 @@ const horizontalMenuConfig = [
             type: "item",
             icon: <FaList size={12} />,
             permissions: ["admin", "editor"],
-            navLink: "/views/apps/freshlist/Production/pricecalculaterproduction",
+            navLink:
+              "/views/apps/freshlist/Production/pricecalculaterproduction",
           },
-          
         ],
       },
 

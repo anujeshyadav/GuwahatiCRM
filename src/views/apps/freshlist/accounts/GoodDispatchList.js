@@ -563,9 +563,9 @@ class GoodDispatchList extends React.Component {
     const UserInformation = this.context?.UserInformatio;
     const InsidePermissions = CheckPermission("Dispatch details");
     this.setState({ InsiderPermissions: InsidePermissions });
-    const userId = JSON.parse(localStorage.getItem("userData"))._id;
-    await OrderDisPatchList()
-      .then(res => {
+    const userId = JSON.parse(localStorage.getItem("userData"));
+    await OrderDisPatchList(userId?._id, userId?.database)
+      .then((res) => {
         console.log(res?.Invoice);
         this.setState({ rowData: res?.Invoice });
         this.setState({ AllcolumnDefs: this.state.columnDefs });
@@ -583,7 +583,7 @@ class GoodDispatchList extends React.Component {
         }
         this.setState({ SelectedCols: this.state.columnDefs });
       })
-      .catch(err => {
+      .catch((err) => {
         console.log(err);
       });
   }

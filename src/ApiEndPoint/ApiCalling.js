@@ -306,91 +306,93 @@ export const SavePromotionsActivity = async data => {
     .then(res => res.data);
   return response;
 };
-export const View_PromotionList = async id => {
+export const View_PromotionList = async (id, db) => {
   let response = await axiosConfig
-    .get(`${View_Promotion_List}` + id)
-    .then(res => res.data);
+    .get(`${View_Promotion_List + id}/${db}`)
+    .then((res) => res.data);
   return response;
 };
-export const CreatePartysave = async data => {
+export const CreatePartysave = async (data) => {
   let response = await axiosConfig
     .post(`${Create_Party_save}`, data)
-    .then(res => res.data);
+    .then((res) => res.data);
   return response;
 };
 export const CreateTransporterList = async () => {
   let response = await axiosConfig
     .get(`${Create_Transporter_List}`)
-    .then(res => res.data);
+    .then((res) => res.data);
   return response;
 };
-export const DeleteTransporterList = async id => {
+export const DeleteTransporterList = async (id) => {
   let response = await axiosConfig
     .delete(`${Delete_Transporter_List}` + id)
 
-    .then(res => res.data);
+    .then((res) => res.data);
   return response;
 };
-export const CreateCategory = async data => {
+export const CreateCategory = async (data) => {
   let response = await axiosConfig
     .post(Create_Category, data)
-    .then(res => res.data);
+    .then((res) => res.data);
   return response;
 };
 
 export const CreateProductXMLView = async () => {
   let response = await axiosConfig
     .get(Create_Product_XMLView)
-    .then(res => res.data);
+    .then((res) => res.data);
   return response;
 };
 export const CreatePartyList = async () => {
-  let response = await axiosConfig.get(Create_Party_List).then(res => res.data);
+  let response = await axiosConfig
+    .get(Create_Party_List)
+    .then((res) => res.data);
   return response;
 };
-export const CreateSubCategory = async data => {
+export const CreateSubCategory = async (data) => {
   let response = await axiosConfig
     .post(Create_SubCategory, data)
-    .then(res => res.data);
+    .then((res) => res.data);
   return response;
 };
-export const SaveProduct = async data => {
+export const SaveProduct = async (data) => {
   let response = await axiosConfig
     .post(Save_Product, data)
-    .then(res => res.data);
+    .then((res) => res.data);
   return response;
 };
 
 export const AllCategoryList = async (id, db) => {
   let response = await axiosConfig
     .get(`${Category_List + id}/${db}`)
-    .then(res => res.data);
+    .then((res) => res.data);
   return response;
 };
-export const ViewFactoryStock = async id => {
+export const ViewFactoryStock = async (id) => {
   let response = await axiosConfig
     .get(`${Factory_Stock}`)
     // .get(`${Factory_Stock}` + id)
-    .then(res => res.data);
+    .then((res) => res.data);
   return response;
 };
 
-export const ViewOneWarehouseStock = async id => {
+export const ViewOneWarehouseStock = async (id) => {
   let response = await axiosConfig
     .get(`${Warehouse_Stock}` + id)
-    .then(res => res.data);
+    .then((res) => res.data);
   return response;
 };
-export const Warehouse_Inwardlist = async id => {
+export const Warehouse_Inwardlist = async (id) => {
   let response = await axiosConfig
     .get(`${Warehouse_Inward_list}` + id)
-    .then(res => res.data);
+    .then((res) => res.data);
   return response;
 };
 export const ProductListView = async (id, db) => {
   let response = await axiosConfig
     .get(`${ProductList_View + id}/${db}`)
-    .then(res => res.data);
+    .then((res) => res.data);
 
   return response;
 };
@@ -398,129 +400,131 @@ export const ProductListView = async (id, db) => {
 export const CreateunitxmlView = async () => {
   let response = await axiosConfig
     .get(`${Create_unit_xmlView}`)
-    .then(res => res.data);
+    .then((res) => res.data);
   return response;
 };
-export const SaveAddPrimary_Unit = async data => {
+export const SaveAddPrimary_Unit = async (data) => {
   let response = await axiosConfig
     .post(AddPrimaryUnit, data)
-    .then(res => res.data);
+    .then((res) => res.data);
   return response;
 };
-export const BaseUnitListView = async id => {
+export const BaseUnitListView = async (id) => {
   let response = await axiosConfig
     .get(`${BaseUnitList}/${id}`)
-    .then(res => res.data);
+    .then((res) => res.data);
   return response;
 };
 export const CreateProductList = async () => {
   let response = await axiosConfig
     .get(`${Create_Product_List}`)
-    .then(res => res.data);
+    .then((res) => res.data);
   return response;
 };
 
-export const SaveUnit = async data => {
+export const SaveUnit = async (data) => {
   let response = await axiosConfig
     .post(Create_unit_save, data)
-    .then(res => res.data);
+    .then((res) => res.data);
   return response;
 };
 
 export const UnitListView = async (id, db) => {
   let response = await axiosConfig
     .get(`${Create_unit_List + id}/${db} `)
-    .then(res => res.data);
+    .then((res) => res.data);
   return response;
 };
 
-export const DeleteUnitList = async id => {
+export const DeleteUnitList = async (id) => {
   let response = await axiosConfig
     .delete(`${Delete_Unit_List}` + id)
-    .then(res => res.data);
+    .then((res) => res.data);
   return response;
 };
-export const DeleteSalesperson = async id => {
+export const DeleteSalesperson = async (id) => {
   let response = await axiosConfig
     .delete(`${Delete_Sales_person}` + id)
-    .then(res => res.data);
+    .then((res) => res.data);
   return response;
 };
-export const UnitViewOne = async id => {
+export const UnitViewOne = async (id) => {
   let response = await axiosConfig
     .put(`${Unit_ViewOne}` + id)
-    .then(res => res.data);
+    .then((res) => res.data);
   return response;
 };
 export const UnitUpdate = async (payload, id) => {
   let response = await axiosConfig
     .put(`${Unit_Update}` + id, payload)
-    .then(res => res.data);
+    .then((res) => res.data);
   return response;
 };
 // by own
-export const SaveOrder = async data => {
-  let response = await axiosConfig.post(Save_Order, data).then(res => res.data);
+export const SaveOrder = async (data) => {
+  let response = await axiosConfig
+    .post(Save_Order, data)
+    .then((res) => res.data);
   return response;
 };
-export const createOrderhistoryview = async id => {
+export const createOrderhistoryview = async (id) => {
   let response = await axiosConfig
     .get(`${view_create_order_history}` + id)
-    .then(res => res.data);
+    .then((res) => res.data);
   return response;
 };
 
-export const view_Sales_orderList = async id => {
+export const view_Sales_orderList = async (id) => {
   let response = await axiosConfig
     .get(`${view_Sales_order_List}` + id)
-    .then(res => res.data);
+    .then((res) => res.data);
   return response;
 };
 export const SalesReturnProductList = async () => {
   let response = await axiosConfig
     .get(`${Sales_Return_ProductList}`)
-    .then(res => res.data);
+    .then((res) => res.data);
   return response;
 };
 export const SalesPendingStatusChange = async (payload, id) => {
   let response = await axiosConfig
     .put(`${Sales_Pending_StatusChange}` + id, payload)
-    .then(res => res.data);
+    .then((res) => res.data);
   return response;
 };
 
-export const SalesReturnProduct = async data => {
+export const SalesReturnProduct = async (data) => {
   let response = await axiosConfig
     .post(Sales_Return_Product, data)
-    .then(res => res.data);
+    .then((res) => res.data);
   return response;
 };
 export const SalesEditOrder = async (payload, id) => {
   let response = await axiosConfig
     .put(`${Sales_Edit_Order}` + id, payload)
-    .then(res => res.data);
+    .then((res) => res.data);
   return response;
 };
 
 // by others (place order)
 
-export const SavePlaceOrder = async data => {
+export const SavePlaceOrder = async (data) => {
   let response = await axiosConfig
     .post(Save_Place_Order, data)
-    .then(res => res.data);
+    .then((res) => res.data);
   return response;
 };
-export const PlaceOrderViewList = async id => {
+export const PlaceOrderViewList = async (id) => {
   let response = await axiosConfig
     .get(`${Place_Order_List}` + id)
-    .then(res => res.data);
+    .then((res) => res.data);
   return response;
 };
 // purchase api
-export const SavePurchaseOrder = async data => {
+export const SavePurchaseOrder = async (data) => {
   let response = await axiosConfig
     .post(SavePurchase_Order, data)
-    .then(res => res.data);
+    .then((res) => res.data);
   return response;
 };
 
@@ -1398,9 +1402,9 @@ export const Sales_OrderToDispatchList = async (id) => {
     .then((res) => res.data);
   return response;
 };
-export const OrderDisPatchList = async (id) => {
+export const OrderDisPatchList = async (id, db) => {
   let response = await axiosConfig
-    .get(Order_DisPatchList)
+    .get(`${Order_DisPatchList + id}/${db}`)
     .then((res) => res.data);
   return response;
 };
@@ -1527,6 +1531,12 @@ export const _PostSave = async (URL, data) => {
 export const _Get = async (URL, id, data) => {
   let response = await axiosConfig
     .get(`${URL}` + id, data)
+    .then(res => res.data);
+  return response;
+};
+export const _GetList = async (URL, id, data) => {
+  let response = await axiosConfig
+    .get(`${URL}`, data)
     .then(res => res.data);
   return response;
 };

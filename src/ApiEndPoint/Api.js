@@ -56,6 +56,8 @@ export const Save_Producton_Process = "/production/save-production";
 export const Get_Producton_ProcessList = "/production/view-production";
 export const ViewOne_Production = "/production/view-production-by-id/";
 export const UpdateOne_Production = "/production/update-production-items/";
+export const WareHouse_Closing_Stock = "/stock-updation/view-closing-stock/";
+export const WareHouse_OverDue_Stock = "/stock-updation/view-over-due-stock/";
 
 // production process end
 
@@ -79,8 +81,7 @@ export const ViewOne_Product = "/product/view-product-by-id/"; //get
 export const Get_Damaged_stock = "/stock-updation/get-damage-item/"; //get
 export const Save_Damaged_stock = "/stock-updation/save-damage-item"; //post
 export const Delete_Damaged_stock = "/stock-updation/delete-item/"; //delete
-export const Update_Damaged_stock =
-  "/stock-updation/update-damageItem/"; //put
+export const Update_Damaged_stock = "/stock-updation/update-damageItem/"; //put
 export const Stock_trx_FtoW = "/factory/stock-transfer-FTW";
 export const Stock_trx_WarehousetoWareHouse =
   "/stock-updation/stock-transfer-warehouse";
@@ -125,7 +126,7 @@ export const Purchase_Status_Order =
   "/purchase-order/update-purchase-order-status/";
 
 export const Sales_OrderTo_DispatchList = "/invoice/save-invoice/";
-export const Order_DisPatchList = "/invoice/view-invoice";
+export const Order_DisPatchList = "/invoice/view-invoice/";
 export const Goods_Delivery_OTP = "/good-dispatch/send-otp/";
 export const Goods_Delivery_OTP_Auth = "good-dispatch/verify-authentication/";
 export const Edit_Status_DispatchList = "/invoice/update-status/";
@@ -212,6 +213,7 @@ export const SerViceCenter_View = "/service-centers/view-service-center";
 export const Part_CatalogueView = "/part-catalogue/view-parts"; //done
 export const Sevice_Card_List = "/service-rate/view-service-rate"; //done
 export const Sevice_Card_DeleteOne = "/service-rate/delete-service-rate/"; //done
+export const Dead_party_List = "/stock-updation/view-dead-party"; //done
 //end Uploads list
 
 // warranty

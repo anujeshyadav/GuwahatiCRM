@@ -37,7 +37,7 @@ export const Roles = [
       // },
     ],
   },
- 
+
   {
     title: "Sales",
     TabName: [
@@ -339,6 +339,10 @@ export const Roles = [
         permission: ["View", "Create", "Edit", "Delete"],
       },
       {
+        title: "Opening Stock",
+        permission: ["View", "Create", "Edit", "Delete"],
+      },
+      {
         title: "Low Stock",
         permission: ["View", "Create", "Edit", "Delete"],
       },
@@ -434,9 +438,6 @@ export const Roles = [
         title: "Price Calculater",
         permission: ["View", "Create", "Edit", "Delete"],
       },
-      
-      
-     
     ],
   },
 

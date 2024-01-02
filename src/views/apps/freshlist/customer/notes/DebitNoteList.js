@@ -284,13 +284,14 @@ class DebitNoteList extends React.Component {
   };
 
   async componentDidMount() {
-    const InsidePermissions = CheckPermission("Purchase Order");
+    const InsidePermissions = CheckPermission("Debit Notes");
     this.setState({ InsiderPermissions: InsidePermissions });
 
     const UserInformation = this.context?.UserInformatio;
     const userInfo = JSON.parse(localStorage.getItem("userData"))?._id;
     await DebitnoteOrderList(userInfo)
       .then((res) => {
+        debugger;
         this.setState({ rowData: res?.DebitNote });
         this.setState({ AllcolumnDefs: this.state.columnDefs });
         this.setState({ SelectedCols: this.state.columnDefs });

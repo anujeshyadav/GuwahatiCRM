@@ -37,6 +37,7 @@ import swal from "sweetalert";
 import {
   Sales_OrderToDispatchList,
   createOrderhistoryview,
+  view_Sales_orderList,
 } from "../../../../ApiEndPoint/ApiCalling";
 
 import { ContextLayout } from "../../../../utility/context/Layout";
@@ -188,7 +189,6 @@ class InvoiceGenerator extends React.Component {
                           size="25px"
                           color="green"
                           onClick={() => {
-                           
                             this.setState({ ViewOneData: params?.data });
                             this.toggleModalTwo();
                             console.log(params?.data);
@@ -477,14 +477,16 @@ class InvoiceGenerator extends React.Component {
         role: pageparmission?.Userinfo?.role,
       });
     } else {
-      let index = AddedBill.findIndex(ele => ele?.order_id === data?.order_id);
+      let index = AddedBill.findIndex(
+        (ele) => ele?.order_id === data?.order_id
+      );
       AddedBill.splice(index, 1);
     }
     // console.log(AddedBill);
     this.setState({ Mergebilllength: AddedBill?.length });
   };
 
-  MergeBillNow = async data => {
+  MergeBillNow = async (data) => {
     let billnum = localStorage.getItem("billnumber");
     // console.log("Bill", data);
     // // console.log("grandTotal", data.grandTotal);
@@ -522,7 +524,7 @@ class InvoiceGenerator extends React.Component {
     console.log(data);
   };
 
-  handleBillDownload = data => {
+  handleBillDownload = (data) => {
     this.setState({ PrintData: data });
     const toWords = new ToWords();
     let words = toWords.convert(Number(data.sub_total), { currency: true });
@@ -530,21 +532,21 @@ class InvoiceGenerator extends React.Component {
     this.toggleModal();
   };
   toggleModal = () => {
-    this.setState(prevState => ({
+    this.setState((prevState) => ({
       modal: !prevState.modal,
     }));
   };
   toggleModalOne = () => {
-    this.setState(prevState => ({
+    this.setState((prevState) => ({
       modalOne: !prevState.modalOne,
     }));
   };
   toggleModalTwo = () => {
-    this.setState(prevState => ({
+    this.setState((prevState) => ({
       modalTwo: !prevState.modalTwo,
     }));
   };
-  changeHandler = e => {
+  changeHandler = (e) => {
     this.setState({ [e.target.name]: e.target.value });
   };
   toggleModalclose = () => {
@@ -570,7 +572,7 @@ class InvoiceGenerator extends React.Component {
     }
   };
   LookupviewStart = () => {
-    this.setState(prevState => ({
+    this.setState((prevState) => ({
       modal: !prevState.modal,
     }));
   };
@@ -601,10 +603,13 @@ class InvoiceGenerator extends React.Component {
     const InsidePermissions = CheckPermission("Sales Invoice");
     console.log(InsidePermissions);
     this.setState({ InsiderPermissions: InsidePermissions });
-    createOrderhistoryview(userid)
-      .then(res => {
-        console.log(res?.orderHistory);
-        let pending=res?.orderHistory?.filter((ele)=>ele?.status=="pending")
+
+    // createOrderhistoryview(userid)
+    await view_Sales_orderList(userid)
+      .then((res) => {
+        let pending = res?.orderHistory?.filter(
+          (ele) => ele?.status == "pending"
+        );
         this.setState({ rowData: pending });
         this.setState({ AllcolumnDefs: this.state.columnDefs });
 
@@ -619,7 +624,7 @@ class InvoiceGenerator extends React.Component {
         }
         this.setState({ SelectedCols: this.state.columnDefs });
       })
-      .catch(err => {
+      .catch((err) => {
         console.log(err);
       });
     let userchoice = JSON.parse(localStorage.getItem("billUI"));
@@ -630,7 +635,7 @@ class InvoiceGenerator extends React.Component {
       this.setState({ shipto: userchoice?.shipto });
     }
     let newparmisson = pageparmission?.role?.find(
-      value => value?.pageName === "invoice Generator"
+      (value) => value?.pageName === "invoice Generator"
     );
     this.setState({ Viewpermisson: newparmisson?.permission.includes("View") });
     this.setState({
@@ -644,7 +649,7 @@ class InvoiceGenerator extends React.Component {
     });
   }
 
-  submitHandler = e => {
+  submitHandler = (e) => {
     e.preventDefault();
     let mychoice = {
       imagePosition: this.state.logoposition,
@@ -660,7 +665,7 @@ class InvoiceGenerator extends React.Component {
     }
   };
   toggleDropdown = () => {
-    this.setState(prevState => ({ isOpen: !prevState.isOpen }));
+    this.setState((prevState) => ({ isOpen: !prevState.isOpen }));
   };
 
   runthisfunction(id) {
@@ -669,15 +674,15 @@ class InvoiceGenerator extends React.Component {
         cancel: "cancel",
         catch: { text: "Delete ", value: "delete" },
       },
-    }).then(value => {
+    }).then((value) => {
       switch (value) {
         case "delete":
           DeleteAccount(id)
-            .then(res => {
+            .then((res) => {
               let selectedData = this.gridApi.getSelectedRows();
               this.gridApi.updateRowData({ remove: selectedData });
             })
-            .catch(err => {
+            .catch((err) => {
               console.log(err);
             });
           break;
@@ -685,13 +690,13 @@ class InvoiceGenerator extends React.Component {
       }
     });
   }
-  handleBillSet = i => {
+  handleBillSet = (i) => {
     this.setState({ BillNumber: i });
     localStorage.setItem("billnumber", i);
     this.toggleModalOne();
     // this.setState({ ShowBill: false });
   };
-  onGridReady = params => {
+  onGridReady = (params) => {
     this.gridApi = params.api;
     this.gridColumnApi = params.columnApi;
     this.gridRef.current = params.api;
@@ -703,11 +708,11 @@ class InvoiceGenerator extends React.Component {
     });
   };
 
-  updateSearchQuery = val => {
+  updateSearchQuery = (val) => {
     this.gridApi.setQuickFilter(val);
   };
 
-  filterSize = val => {
+  filterSize = (val) => {
     if (this.gridApi) {
       this.gridApi.paginationSetPageSize(Number(val));
       this.setState({
@@ -722,7 +727,7 @@ class InvoiceGenerator extends React.Component {
       SelectedColums?.push(value);
     } else {
       const delindex = SelectedColums?.findIndex(
-        ele => ele?.headerName === value?.headerName
+        (ele) => ele?.headerName === value?.headerName
       );
 
       SelectedColums?.splice(delindex, 1);
@@ -733,14 +738,14 @@ class InvoiceGenerator extends React.Component {
       Papa.parse(csvData, {
         header: true,
         skipEmptyLines: true,
-        complete: result => {
+        complete: (result) => {
           if (result.data && result.data.length > 0) {
             resolve(result.data);
           } else {
             reject(new Error("No data found in the CSV"));
           }
         },
-        error: error => {
+        error: (error) => {
           reject(error);
         },
       });
@@ -752,7 +757,7 @@ class InvoiceGenerator extends React.Component {
 
     const doc = new jsPDF("landscape", "mm", size, false);
     doc.setTextColor(5, 87, 97);
-    const tableData = parsedData.map(row => Object.values(row));
+    const tableData = parsedData.map((row) => Object.values(row));
     doc.addImage(Logo, "JPEG", 10, 10, 50, 30);
     let date = new Date();
     doc.setCreationDate(date);
@@ -777,14 +782,14 @@ class InvoiceGenerator extends React.Component {
       console.error("Error parsing CSV:", error);
     }
   };
-  processCell = params => {
+  processCell = (params) => {
     // console.log(params);
     // Customize cell content as needed
     return params.value;
   };
 
   convertCsvToExcel(csvData) {
-    return new Promise(resolve => {
+    return new Promise((resolve) => {
       Papa.parse(csvData, {
         header: true,
         dynamicTyping: true,
@@ -815,7 +820,7 @@ class InvoiceGenerator extends React.Component {
     window.URL.revokeObjectURL(url);
   }
 
-  exportToExcel = async e => {
+  exportToExcel = async (e) => {
     const CsvData = this.gridApi.getDataAsCsv({
       processCellCallback: this.processCell,
     });
@@ -828,7 +833,7 @@ class InvoiceGenerator extends React.Component {
       processCellCallback: this.processCell,
     });
     Papa.parse(CsvData, {
-      complete: result => {
+      complete: (result) => {
         const ws = XLSX.utils.json_to_sheet(result.data);
         const wb = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(wb, ws, "Sheet1");
@@ -864,13 +869,13 @@ class InvoiceGenerator extends React.Component {
       processCellCallback: this.processCell,
     });
     Papa.parse(CsvData, {
-      complete: result => {
+      complete: (result) => {
         const rows = result.data;
 
         // Create XML
         let xmlString = "<root>\n";
 
-        rows.forEach(row => {
+        rows.forEach((row) => {
           xmlString += "  <row>\n";
           row.forEach((cell, index) => {
             xmlString += `    <field${index + 1}>${cell}</field${index + 1}>\n`;
@@ -892,7 +897,7 @@ class InvoiceGenerator extends React.Component {
     });
   };
 
-  HandleSetVisibleField = e => {
+  HandleSetVisibleField = (e) => {
     e.preventDefault();
     this.gridApi.setColumnDefs(this.state.SelectedcolumnDefs);
     this.setState({ columnDefs: this.state.SelectedcolumnDefs });
@@ -908,10 +913,10 @@ class InvoiceGenerator extends React.Component {
   HeadingRightShift = () => {
     const updatedSelectedColumnDefs = [
       ...new Set([
-        ...this.state.SelectedcolumnDefs.map(item => JSON.stringify(item)),
-        ...SelectedColums.map(item => JSON.stringify(item)),
+        ...this.state.SelectedcolumnDefs.map((item) => JSON.stringify(item)),
+        ...SelectedColums.map((item) => JSON.stringify(item)),
       ]),
-    ].map(item => JSON.parse(item));
+    ].map((item) => JSON.parse(item));
     this.setState({
       SelectedcolumnDefs: [...new Set(updatedSelectedColumnDefs)], // Update the state with the combined array
     });
@@ -997,34 +1002,33 @@ class InvoiceGenerator extends React.Component {
                           </h1>
                         </Col>
 
-                        {InsiderPermissions &&
-                          InsiderPermissions?.Create && (
-                            <Col lg="2" sm="2" xs="2">
-                              <Button
-                                className="float-right  "
-                                color="#39cccc"
-                                style={{
-                                  cursor: "pointer",
-                                  backgroundColor: "#39cccc",
-                                  color: "white",
-                                  fontWeight: "600",
-                                }}
-                                onClick={(e) => {
-                                  let billnumber =
-                                    localStorage.getItem("billnumber");
-                                  if (billnumber) {
-                                    // swal("You already Selected Bill Type");
-                                    this.setState({ ShowBill: true });
-                                    this.toggleModalOne();
-                                  } else {
-                                    this.setState({ ShowBill: true });
-                                    this.toggleModalOne();
-                                  }
-                                }}>
-                                Invoice Template
-                              </Button>
-                            </Col>
-                          )}
+                        {InsiderPermissions && InsiderPermissions?.Create && (
+                          <Col lg="2" sm="2" xs="2">
+                            <Button
+                              className="float-right  "
+                              color="#39cccc"
+                              style={{
+                                cursor: "pointer",
+                                backgroundColor: "#39cccc",
+                                color: "white",
+                                fontWeight: "600",
+                              }}
+                              onClick={(e) => {
+                                let billnumber =
+                                  localStorage.getItem("billnumber");
+                                if (billnumber) {
+                                  // swal("You already Selected Bill Type");
+                                  this.setState({ ShowBill: true });
+                                  this.toggleModalOne();
+                                } else {
+                                  this.setState({ ShowBill: true });
+                                  this.toggleModalOne();
+                                }
+                              }}>
+                              Invoice Template
+                            </Button>
+                          </Col>
+                        )}
                         <Col>
                           {InsiderPermissions && InsiderPermissions?.View && (
                             <>
