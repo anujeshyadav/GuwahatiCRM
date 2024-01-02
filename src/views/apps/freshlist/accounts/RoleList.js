@@ -159,33 +159,21 @@ class RoleList extends React.Component {
     ],
   };
   async componentDidMount() {
-    Get_RoleList()
-      .then(res => {
+    let pageparmission = JSON.parse(localStorage.getItem("userData"));
+    await Get_RoleList(pageparmission?._id, pageparmission?.database)
+      .then((res) => {
         console.log(res?.Role);
         this.setState({ rowData: res?.Role });
       })
-      .catch(err => {
+      .catch((err) => {
         console.log(err);
       });
 
     const InsidePermissions = CheckPermission("Create User");
     console.log(InsidePermissions);
     this.setState({ InsiderPermissions: InsidePermissions });
-    let pageparmission = JSON.parse(localStorage.getItem("userData"));
 
-    const formdata = new FormData();
-    formdata.append("user_id", pageparmission?.Userinfo?.id);
-    formdata.append("role", pageparmission?.Userinfo?.role);
-    await axiosConfig
-      .post("/getrolelist", formdata)
-      .then(response => {
-        const propertyNames = Object.values(response.data?.data);
-
-        this.setState({ rowData: propertyNames });
-      })
-      .catch(error => {
-        // console.log(error);
-      });
+   
   }
 
   runthisfunction(id) {

@@ -124,7 +124,7 @@ class PendingOrder extends React.Component {
                         color="white"
                         onClick={() => {
                           console.log(params?.data);
-                          debugger
+                          debugger;
                           this.setState({ ViewOneData: params?.data });
                           this.toggleModal();
                         }}
@@ -301,7 +301,6 @@ class PendingOrder extends React.Component {
           filter: true,
           width: 200,
           cellRendererFramework: (params) => {
-            console.log(params?.data);
             return (
               <div>
                 <span>{params.data?.grandTotal}</span>
@@ -374,7 +373,7 @@ debugger
   };
   handleSubmitOTP = async (e) => {
     e.preventDefault();
-debugger;
+
 let payload = {
   userId: this.state.ViewOneData?.userId?._id,
   orderId: this.state.ViewOneData?.orderId,

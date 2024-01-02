@@ -304,11 +304,11 @@ class TargetCreation extends React.Component {
   };
 
   async componentDidMount() {
-    let userId = JSON.parse(localStorage.getItem("userData"))._id;
+    let userId = JSON.parse(localStorage.getItem("userData"));
     const InsidePermissions = CheckPermission("Target Creation");
     this.setState({ InsiderPermissions: InsidePermissions });
-    await Create_TargetList(userId)
-      .then(res => {
+    await Create_TargetList(userId?._id, userId?.database)
+      .then((res) => {
         console.log(res.TargetCreation);
         this.setState({ rowData: res?.TargetCreation });
         this.setState({ AllcolumnDefs: this.state.columnDefs });
@@ -324,7 +324,7 @@ class TargetCreation extends React.Component {
           this.setState({ SelectedcolumnDefs: this.state.columnDefs });
         }
       })
-      .catch(err => {
+      .catch((err) => {
         console.log(err);
       });
     // await CreateAccountList()
@@ -740,6 +740,9 @@ class TargetCreation extends React.Component {
                                   )}
                                 </div>
                               </span>
+                                {this.state.InsiderPermissions &&
+                          this.state.InsiderPermissions?.Create && (
+
                               <span>
                                 <Route
                                   render={({ history }) => (
@@ -758,6 +761,7 @@ class TargetCreation extends React.Component {
                                   )}
                                 />
                               </span>
+                          )}
                             </Col>
                           )}
                       </Row>

@@ -102,14 +102,15 @@ const EditAccount = ({ ViewOneData }) => {
   useEffect(() => {
     setFormData(ViewOneData);
     console.log(ViewOneData);
-    Get_RoleList()
-      .then(res => {
-        setdropdownValue(res?.Role);
-      })
-      .catch(err => {
-        console.log(err);
-        swal("Roles List Not found");
-      });
+   let pageparmission = JSON.parse(localStorage.getItem("userData"));
+   Get_RoleList(pageparmission?._id, pageparmission?.database)
+     .then((res) => {
+       setdropdownValue(res?.Role);
+     })
+     .catch((err) => {
+       console.log(err);
+       swal("Roles List Not found");
+     });
     if (ViewOneData?.Country) {
       let countryselected = Country?.getAllCountries()?.filter(
         (ele, i) => ele?.name == ViewOneData?.Country
