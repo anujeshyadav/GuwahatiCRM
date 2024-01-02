@@ -83,22 +83,22 @@ const PlaceOrderReturn = args => {
         setSalesPersonList(res?.SalesPerson);
       })
       .catch(err => console.log(err));
-       let userdata = JSON.parse(localStorage.getItem("userData"));
+    let userdata = JSON.parse(localStorage.getItem("userData"));
 
-       ProductListView(userdata?._id, userdata?.database)
-         .then((res) => {
-           setProductList(res?.Product);
-         })
-         .catch((err) => {
-           console.log(err);
-         });
+    ProductListView(userdata?._id, userdata?.database)
+      .then(res => {
+        setProductList(res?.Product);
+      })
+      .catch(err => {
+        console.log(err);
+      });
   }, []);
   useEffect(() => {
     const userInfo = JSON.parse(localStorage.getItem("userData"));
     setUserInfo(userInfo);
   }, []);
 
-  const submitHandler = (e) => {
+  const submitHandler = e => {
     e.preventDefault();
     console.log(OrderedListData);
     let userData = JSON.parse(localStorage.getItem("userData"));
@@ -120,16 +120,17 @@ const PlaceOrderReturn = args => {
       email: userData.email,
       Return_amount: grandTotalAmt,
       orderId: location?.state?._id,
+      // created_by: userData?._id,
     };
 
     if (error) {
       swal("Error occured while Entering Details");
     } else {
       PlaceOrderReturn_Product(payload)
-        .then((res) => {
+        .then(res => {
           swal(" PlaceOrder Returned Successfully");
         })
-        .catch((err) => {
+        .catch(err => {
           console.log(err);
         });
     }
@@ -154,7 +155,8 @@ const PlaceOrderReturn = args => {
                       className="float-right mr-1"
                       color="danger"
                       size="sm"
-                      onClick={() => history.goBack()}>
+                      onClick={() => history.goBack()}
+                    >
                       Back
                     </Button>
                   )}
@@ -203,9 +205,7 @@ const PlaceOrderReturn = args => {
                             name="qty"
                             placeholder="Req_Qty"
                             value={item?.qty}
-                            onChange={(e) =>
-                              handleProductChangeProduct(e, index)
-                            }
+                            onChange={e => handleProductChangeProduct(e, index)}
                           />
                         </div>
                       </Col>
@@ -217,9 +217,7 @@ const PlaceOrderReturn = args => {
                             name="returnQty"
                             placeholder="Return Quantity"
                             value={OrderedListData.returnQty}
-                            onChange={(e) =>
-                              handleProductChangeProduct(e, index)
-                            }
+                            onChange={e => handleProductChangeProduct(e, index)}
                           />
                         </div>
                       </Col>
@@ -242,7 +240,8 @@ const PlaceOrderReturn = args => {
                     <Button.Ripple
                       color="primary"
                       type="submit"
-                      className="mt-2">
+                      className="mt-2"
+                    >
                       Submit
                     </Button.Ripple>
                   </div>

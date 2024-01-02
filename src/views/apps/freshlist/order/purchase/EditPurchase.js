@@ -14,9 +14,12 @@ import {
 } from "reactstrap";
 import "react-phone-input-2/lib/style.css";
 
-import { useParams, useLocation } from "react-router-dom";
+import { useParams, useLocation, useHistory } from "react-router-dom";
 import "../../../../../assets/scss/pages/users.scss";
-import { PurchaseStatusOrder } from "../../../../../ApiEndPoint/ApiCalling";
+import {
+  PurchaseStatusOrder,
+  PurchaseOrderView,
+} from "../../../../../ApiEndPoint/ApiCalling";
 import "../../../../../assets/scss/pages/users.scss";
 import { Route } from "react-router-dom";
 
@@ -26,11 +29,19 @@ const EditPurchase = args => {
   const [orderData, setOrderData] = useState("");
   const Params = useParams();
   const location = useLocation();
+  const history = useHistory();
 
   useEffect(() => {
-    console.log(location.state);
-    setstatus(location.state.status);
-    setOrderData(location.state);
+    // console.log(location?.state?._id);
+    PurchaseOrderView(Params?.id)
+      .then(resp => {
+        setOrderData(resp.orderHistory);
+        setstatus(resp.orderHistory.status);
+        console.log(resp.orderHistory);
+      })
+      .catch(err => {
+        console.log(err);
+      });
   }, []);
 
   const handleChange = e => {
@@ -39,7 +50,6 @@ const EditPurchase = args => {
   };
   const submitHandler = e => {
     e.preventDefault();
-
     let payload = {
       status: status,
     };
@@ -50,6 +60,7 @@ const EditPurchase = args => {
         .then(res => {
           console.log(res);
           swal("Status changed Successfully");
+          history.push("/app/AJgroup/order/purchaseOrderList");
         })
         .catch(err => {
           console.log(err);
@@ -76,7 +87,8 @@ const EditPurchase = args => {
                       className="float-right mr-1"
                       color="primary"
                       size="sm"
-                      onClick={() => history.goBack()}>
+                      onClick={() => history.goBack()}
+                    >
                       Back
                     </Button>
                   )}
@@ -96,8 +108,8 @@ const EditPurchase = args => {
                     placeholder="status"
                     name="status"
                     value={status}
-                    onChange={handleChange}>
-                    <option value="">--Select--</option>
+                    onChange={handleChange}
+                  >
                     <option value="pending">pending</option>
                     <option value="cancelled">cancelled</option>
                     <option value="completed">completed</option>
@@ -108,7 +120,8 @@ const EditPurchase = args => {
                     <Button.Ripple
                       color="primary"
                       type="submit"
-                      className="mt-2">
+                      className="mt-2"
+                    >
                       Submit
                     </Button.Ripple>
                   </div>

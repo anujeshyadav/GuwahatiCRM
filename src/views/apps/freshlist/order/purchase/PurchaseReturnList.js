@@ -1,5 +1,6 @@
 import React, { useRef } from "react";
 import { Route } from "react-router-dom";
+import xmlJs from "xml-js";
 import {
   Card,
   CardBody,
@@ -11,13 +12,13 @@ import {
   DropdownMenu,
   DropdownItem,
   DropdownToggle,
+  Button,
   ModalHeader,
   ModalBody,
   Badge,
-  Table,
-  Label,
-  Button,
+  CustomInput,
 } from "reactstrap";
+
 import { ContextLayout } from "../../../../../utility/context/Layout";
 import { AgGridReact } from "ag-grid-react";
 import "ag-grid-community/dist/styles/ag-grid.css";
@@ -29,17 +30,16 @@ import { Eye, Trash2, ChevronDown, Edit, CornerDownLeft } from "react-feather";
 import { IoMdRemoveCircleOutline } from "react-icons/io";
 import "../../../../../assets/scss/plugins/tables/_agGridStyleOverride.scss";
 import "../../../../../assets/scss/pages/users.scss";
-import StockTrxInvoice from "../../subcategory/StockTrxInvoice";
+import { ImDownload } from "react-icons/im";
 import {
   FaArrowAltCircleLeft,
   FaArrowAltCircleRight,
-  FaDownload,
   FaFilter,
   FaPlus,
 } from "react-icons/fa";
 import swal from "sweetalert";
 import {
-  createOrderhistoryview,
+  Purchase_ReturnList,
   Delete_targetINlist,
 } from "../../../../../ApiEndPoint/ApiCalling";
 import {
@@ -49,11 +49,12 @@ import {
 } from "react-icons/bs";
 import * as XLSX from "xlsx";
 import UserContext from "../../../../../context/Context";
+import SalesReturnView from ".././SalesReturnView";
 import { CheckPermission } from "../../house/CheckPermission";
 
 const SelectedColums = [];
 
-class Salesreport extends React.Component {
+class PurchaseReturn extends React.Component {
   static contextType = UserContext;
   constructor(props) {
     super(props);
@@ -63,13 +64,11 @@ class Salesreport extends React.Component {
       isOpen: false,
       Arrindex: "",
       rowData: [],
-      startDate: "",
-      EndDate: "",
-      ShowBill: false,
+      userName: "",
       modal: false,
+      InsiderPermissions: {},
       modalone: false,
       ViewData: {},
-      InsiderPermissions: {},
       setMySelectedarr: [],
       SelectedCols: [],
       paginationPageSize: 5,
@@ -89,6 +88,7 @@ class Salesreport extends React.Component {
           headerName: "UID",
           valueGetter: "node.rowIndex + 1",
           field: "node.rowIndex + 1",
+          // checkboxSelection: true,
           width: 80,
           filter: true,
         },
@@ -116,143 +116,116 @@ class Salesreport extends React.Component {
             );
           },
         },
+        // {
+        //   headerName: "Full Name",
+        //   field: "orderItems",
+        //   filter: true,
+        //   width: 180,
+        //   valueGetter: params => {
+        //     if (params.data.orderItems && params.data.orderItems.length > 0) {
+        //       return params.data.fullName;
+        //     }
+        //     return null;
+        //   },
+        // },
+
         {
-          headerName: "Status",
-          field: "status",
+          headerName: "Product Name",
+          field: "returnItems",
           filter: true,
-          width: 150,
-          cellRendererFramework: params => {
-            return params.value == "completed" ||
-              params.value == "Completed" ? (
-              <div className="badge badge-pill badge-success">
-                {params.data.status}
-              </div>
-            ) : params.value == "pending" ? (
-              <div className="badge badge-pill badge-warning">
-                {params.data.status}
-              </div>
-            ) : params.value == "return" ? (
-              <div className="badge badge-pill badge-danger">
-                {params.data.status}
-              </div>
-            ) : null;
+          width: 220,
+          valueGetter: params => {
+            if (
+              params.data.returnItems &&
+              params.data.returnItems?.length > 0
+            ) {
+              return params?.data?.returnItems?.map(val => {
+                return val?.productId?.Product_Title;
+              });
+            }
+            return null;
           },
         },
         {
-          headerName: "Full Name",
-          field: "orderItems",
+          headerName: "Size",
+          field: "returnItems",
           filter: true,
-          width: 180,
+          width: 220,
           valueGetter: params => {
-            if (params.data.orderItems && params.data.orderItems.length > 0) {
-              return params.data.fullName;
+            if (
+              params.data?.returnItems &&
+              params.data?.returnItems?.length > 0
+            ) {
+              return params?.data?.returnItems?.map(val => {
+                return val?.productId?.Size;
+              });
             }
             return null;
+          },
+        },
+        {
+          headerName: "HSN_Code",
+          field: "returnItems",
+          filter: true,
+          width: 220,
+          valueGetter: params => {
+            if (params.data.returnItems && params.data.returnItems.length > 0) {
+              return params?.data?.returnItems?.map(val => {
+                return val?.productId?.HSN_Code;
+              });
+            }
+            return null;
+          },
+        },
+        {
+          headerName: "Email",
+          field: "email",
+          filter: true,
+          width: 200,
+          cellRendererFramework: params => {
+            return (
+              <div>
+                <span>{params.data?.email}</span>
+              </div>
+            );
           },
         },
 
         {
           headerName: "MobileNo",
-          field: "MobileNo",
+          field: "mobileNumber",
           filter: true,
           width: 150,
           cellRendererFramework: params => {
             return (
               <div>
-                <span>{params?.data?.MobileNo}</span>
+                <span>{params.data?.mobileNumber}</span>
               </div>
             );
           },
         },
-        {
-          headerName: "country",
-          field: "country",
-          filter: true,
-          width: 150,
-          cellRendererFramework: params => {
-            return (
-              <div>
-                <span>{params?.data?.country}</span>
-              </div>
-            );
-          },
-        },
-        {
-          headerName: "State",
-          field: "state",
-          filter: true,
-          width: 200,
-          cellRendererFramework: params => {
-            return (
-              <div>
-                <span>{params?.data?.state}</span>
-              </div>
-            );
-          },
-        },
-        {
-          headerName: "city",
-          field: "city",
-          filter: true,
-          width: 150,
-          cellRendererFramework: params => {
-            return (
-              <div>
-                <span>{params?.data?.city}</span>
-              </div>
-            );
-          },
-        },
-        {
-          headerName: "GrandTotal",
-          field: "grandTotal",
-          filter: true,
-          width: 150,
-          cellRendererFramework: params => {
-            return (
-              <div>
-                <span>{params?.data?.grandTotal}</span>
-              </div>
-            );
-          },
-        },
-        {
-          headerName: "PaymentMode",
-          field: "paymentMode",
-          filter: true,
-          width: 200,
-          cellRendererFramework: params => {
-            return (
-              <div>
-                <span>{params?.data?.paymentMode}</span>
-              </div>
-            );
-          },
-        },
-        {
-          headerName: "address",
-          field: "Address",
-          filter: true,
-          width: 150,
-          cellRendererFramework: params => {
-            return (
-              <div>
-                <span>{params?.data?.address}</span>
-              </div>
-            );
-          },
-        },
-        {
-          headerName: "Create Date",
-          field: "orderItems",
-          filter: true,
-          width: 180,
-          valueGetter: params => {
-            const dateList = new Date(params?.data?.updatedAt);
-            const onlyDate = dateList?.toISOString()?.split("T")[0];
-            return onlyDate;
-          },
-        },
+
+        // {
+        //   headerName: "Status",
+        //   field: "status",
+        //   filter: true,
+        //   width: 150,
+        //   cellRendererFramework: params => {
+        //     return params.value === "completed" ? (
+        //       <div className="badge badge-pill badge-success">
+        //         {params.data.status}
+        //       </div>
+        //     ) : params.value === "pending" ? (
+        //       <div className="badge badge-pill badge-warning">
+        //         {params.data.status}
+        //       </div>
+        //     ) : (
+        //       <div className="badge badge-pill badge-success">
+        //         {params.data.status}
+        //       </div>
+        //     );
+        //   },
+        // },
       ],
     };
   }
@@ -271,7 +244,6 @@ class Salesreport extends React.Component {
     let type = types;
     if (type == "readonly") {
       console.log("ResponseData", data.orderItems);
-      console.log("Test", data);
       this.setState({ ViewOneUserView: true });
       this.setState({ ViewOneData: data });
     } else {
@@ -281,22 +253,18 @@ class Salesreport extends React.Component {
   };
 
   async componentDidMount() {
-    const userId = JSON.parse(localStorage.getItem("userData"))._id;
     const UserInformation = this.context?.UserInformatio;
-    const InsidePermissions = CheckPermission("Sales Order");
-    console.log(InsidePermissions);
+    const InsidePermissions = CheckPermission("Purchase Return");
     this.setState({ InsiderPermissions: InsidePermissions });
-    await createOrderhistoryview(userId)
+    let userData = JSON.parse(localStorage.getItem("userData"));
+    await Purchase_ReturnList(userData?._id)
       .then(res => {
-        console.log(res?.orderHistory);
-        const ComplteStatus = res?.orderHistory?.filter(
-          ele => ele.status == "completed" || ele.status == "Completed"
-        );
-        this.setState({ rowData: ComplteStatus });
+        console.log(res);
+        this.setState({ rowData: res?.PurchaseReturn });
         this.setState({ AllcolumnDefs: this.state.columnDefs });
         this.setState({ SelectedCols: this.state.columnDefs });
 
-        let userHeading = JSON.parse(localStorage.getItem("OrderListshow"));
+        let userHeading = JSON.parse(localStorage.getItem("TargetList"));
         if (userHeading?.length) {
           this.setState({ columnDefs: userHeading });
           this.gridApi.setColumnDefs(userHeading);
@@ -311,32 +279,6 @@ class Salesreport extends React.Component {
       });
   }
 
-  togglemodal = () => {
-    this.setState(prevState => ({
-      modalone: !prevState.modalone,
-    }));
-    this.setState({ ShowBill: false });
-  };
-  handleStockTrxInvoiceShow = () => {
-    this.setState({ ShowBill: true });
-  };
-  toggleDropdown = () => {
-    this.setState(prevState => ({ isOpen: !prevState.isOpen }));
-  };
-  handleDate = e => {
-    const { name, value } = e.target;
-    this.setState({ [name]: value });
-  };
-
-  handleSubmitDate = () => {
-    console.log(this.state.rowData);
-    const filteredItems = this.state.rowData.filter(item => {
-      const dateList = new Date(item.updatedAt);
-      const onlyDate = dateList.toISOString().split("T")[0];
-      return onlyDate >= this.state.startDate && onlyDate <= this.state.EndDate;
-    });
-    this.setState({ rowData: filteredItems });
-  };
   runthisfunction(id) {
     swal("Warning", "Sure You Want to Delete it", {
       buttons: {
@@ -431,6 +373,7 @@ class Salesreport extends React.Component {
       body: tableData,
       startY: 60,
     });
+
     doc.save("UserList.pdf");
   }
 
@@ -562,12 +505,14 @@ class Salesreport extends React.Component {
     this.setState({ SelectedcolumnDefs: this.state.SelectedcolumnDefs });
     this.setState({ rowData: this.state.rowData });
     localStorage.setItem(
-      "OrderListshow",
+      "TargetList",
       JSON.stringify(this.state.SelectedcolumnDefs)
     );
     this.LookupviewStart();
   };
-
+  toggleDropdown = () => {
+    this.setState(prevState => ({ isOpen: !prevState.isOpen }));
+  };
   HeadingRightShift = () => {
     const updatedSelectedColumnDefs = [
       ...new Set([
@@ -598,216 +543,261 @@ class Salesreport extends React.Component {
       defaultColDef,
       SelectedcolumnDefs,
       isOpen,
-      InsiderPermissions,
       SelectedCols,
+      InsiderPermissions,
       AllcolumnDefs,
     } = this.state;
     return (
       <>
         <Col className="app-user-list">
-          <Col sm="12">
-            <Card>
-              <Row className="ml-2 mt-2 mr-2">
-                <Col>
-                  <h2 className="float-left " style={{ fontWeight: "600" }}>
-                    Sales Order Report
-                  </h2>
-                </Col>
-                <Col>
-                  <Label>Start Date</Label>
-                  <Input
-                    type="date"
-                    name="startDate"
-                    value={this.state.startDate}
-                    onChange={this.handleDate}
-                  />
-                </Col>
-                <Col>
-                  <Label>End Date</Label>
-                  <Input
-                    type="date"
-                    name="EndDate"
-                    value={this.state.EndDate}
-                    onChange={this.handleDate}
-                  />
-                </Col>
-                <Col>
+          {this.state.EditOneUserView && this.state.EditOneUserView ? (
+            <Row className="card">
+              <Col>
+                <div className="d-flex justify-content-end p-1">
                   <Button
-                    type="submit"
-                    className="mt-1"
-                    color="primary"
-                    onClick={this.handleSubmitDate}
+                    onClick={e => {
+                      e.preventDefault();
+                      this.setState({ EditOneUserView: false });
+                    }}
+                    color="danger"
                   >
-                    Submit
+                    Back
                   </Button>
-                </Col>
-                {InsiderPermissions && InsiderPermissions?.View && (
-                  <Col>
-                    <span className="mx-1">
-                      <FaFilter
-                        style={{ cursor: "pointer" }}
-                        title="filter coloumn"
-                        size="25px"
-                        onClick={this.LookupviewStart}
-                        color="#39cccc"
-                        className="float-right"
-                      />
-                    </span>
-                    <span className="mx-1">
-                      <div className="dropdown-container float-right">
-                        <BsCloudDownloadFill
-                          style={{ cursor: "pointer" }}
-                          title="download file"
-                          size="25px"
-                          className="dropdown-button "
-                          color="#39cccc"
-                          onClick={this.toggleDropdown}
-                        />
-                        {isOpen && (
-                          <div
-                            style={{
-                              position: "absolute",
-                              zIndex: "1",
-                            }}
-                            className="dropdown-content dropdownmy"
+                </div>
+              </Col>
+
+              {/* <EditAccount EditOneData={this.state.EditOneData} /> */}
+            </Row>
+          ) : (
+            <>
+              {this.state.ViewOneUserView && this.state.ViewOneUserView ? (
+                <>
+                  <Row className="card">
+                    <Col>
+                      <div className="d-flex justify-content-end p-1">
+                        <Button
+                          onClick={e => {
+                            e.preventDefault();
+                            this.setState({ ViewOneUserView: false });
+                          }}
+                          color="danger"
+                        >
+                          Back
+                        </Button>
+                      </div>
+                    </Col>
+                    <SalesReturnView ViewOneData={this.state.ViewOneData} />
+                  </Row>
+                </>
+              ) : (
+                <>
+                  <Col sm="12">
+                    <Card>
+                      <Row className="mt-2 ml-2 mr-2">
+                        <Col>
+                          <h1
+                            className="float-left"
+                            style={{ fontWeight: "600" }}
                           >
-                            <h5
-                              onClick={() => this.exportToPDF()}
-                              style={{ cursor: "pointer" }}
-                              className=" mx-1 myactive mt-1"
-                            >
-                              .PDF
-                            </h5>
-                            <h5
-                              onClick={() => this.gridApi.exportDataAsCsv()}
-                              style={{ cursor: "pointer" }}
-                              className=" mx-1 myactive"
-                            >
-                              .CSV
-                            </h5>
-                            <h5
-                              onClick={this.convertCSVtoExcel}
-                              style={{ cursor: "pointer" }}
-                              className=" mx-1 myactive"
-                            >
-                              .XLS
-                            </h5>
-                            <h5
-                              onClick={this.exportToExcel}
-                              style={{ cursor: "pointer" }}
-                              className=" mx-1 myactive"
-                            >
-                              .XLSX
-                            </h5>
-                            <h5
-                              onClick={() => this.convertCsvToXml()}
-                              style={{ cursor: "pointer" }}
-                              className=" mx-1 myactive"
-                            >
-                              .XML
-                            </h5>
+                            Purchase Return List
+                          </h1>
+                        </Col>
+
+                        {InsiderPermissions && InsiderPermissions?.View && (
+                          <Col>
+                            <span className="mx-1">
+                              <FaFilter
+                                style={{ cursor: "pointer" }}
+                                title="filter coloumn"
+                                size="35px"
+                                onClick={this.LookupviewStart}
+                                color="#39cccc"
+                                className="float-right"
+                              />
+                            </span>
+                            <span className="mx-1">
+                              <div className="dropdown-container float-right">
+                                <ImDownload
+                                  style={{ cursor: "pointer" }}
+                                  title="download file"
+                                  size="35px"
+                                  className="dropdown-button "
+                                  color="#39cccc"
+                                  onClick={this.toggleDropdown}
+                                />
+                                {isOpen && (
+                                  <div
+                                    style={{
+                                      position: "absolute",
+                                      zIndex: "1",
+                                      border: "1px solid #39cccc",
+                                      backgroundColor: "white",
+                                    }}
+                                    className="dropdown-content dropdownmy"
+                                  >
+                                    <h5
+                                      onClick={() => this.exportToPDF()}
+                                      style={{ cursor: "pointer" }}
+                                      className=" mx-1 myactive mt-1"
+                                    >
+                                      .PDF
+                                    </h5>
+                                    <h5
+                                      onClick={() =>
+                                        this.gridApi.exportDataAsCsv()
+                                      }
+                                      style={{ cursor: "pointer" }}
+                                      className=" mx-1 myactive"
+                                    >
+                                      .CSV
+                                    </h5>
+                                    <h5
+                                      onClick={this.convertCSVtoExcel}
+                                      style={{ cursor: "pointer" }}
+                                      className=" mx-1 myactive"
+                                    >
+                                      .XLS
+                                    </h5>
+                                    <h5
+                                      onClick={this.exportToExcel}
+                                      style={{ cursor: "pointer" }}
+                                      className=" mx-1 myactive"
+                                    >
+                                      .XLSX
+                                    </h5>
+                                    <h5
+                                      onClick={() => this.convertCsvToXml()}
+                                      style={{ cursor: "pointer" }}
+                                      className=" mx-1 myactive"
+                                    >
+                                      .XML
+                                    </h5>
+                                  </div>
+                                )}
+                              </div>
+                            </span>
+                            {/* <span>
+                            <Route
+                              render={({ history }) => (
+                                <Badge
+                                  style={{ cursor: "pointer" }}
+                                  className="float-right mr-1"
+                                  color="primary"
+                                  onClick={() =>
+                                    history.push(
+                                      "/app/softnumen/order/createorder"
+                                    )
+                                  }
+                                >
+                                  <FaPlus size={15} /> Create Order
+                                </Badge>
+                              )}
+                            />
+                          </span> */}
+                          </Col>
+                        )}
+                      </Row>
+                      <CardBody style={{ marginTop: "-1.5rem" }}>
+                        {this.state.rowData === null ? null : (
+                          <div className="ag-theme-material w-100 my-2 ag-grid-table">
+                            <div className="d-flex flex-wrap justify-content-between align-items-center">
+                              <div className="mb-1">
+                                <UncontrolledDropdown className="p-1 ag-dropdown">
+                                  <DropdownToggle tag="div">
+                                    {this.gridApi
+                                      ? this.state.currenPageSize
+                                      : "" * this.state.getPageSize -
+                                        (this.state.getPageSize - 1)}{" "}
+                                    -{" "}
+                                    {this.state.rowData.length -
+                                      this.state.currenPageSize *
+                                        this.state.getPageSize >
+                                    0
+                                      ? this.state.currenPageSize *
+                                        this.state.getPageSize
+                                      : this.state.rowData.length}{" "}
+                                    of {this.state.rowData.length}
+                                    <ChevronDown className="ml-50" size={15} />
+                                  </DropdownToggle>
+                                  <DropdownMenu right>
+                                    <DropdownItem
+                                      tag="div"
+                                      onClick={() => this.filterSize(5)}
+                                    >
+                                      5
+                                    </DropdownItem>
+                                    <DropdownItem
+                                      tag="div"
+                                      onClick={() => this.filterSize(20)}
+                                    >
+                                      20
+                                    </DropdownItem>
+                                    <DropdownItem
+                                      tag="div"
+                                      onClick={() => this.filterSize(50)}
+                                    >
+                                      50
+                                    </DropdownItem>
+                                    <DropdownItem
+                                      tag="div"
+                                      onClick={() => this.filterSize(100)}
+                                    >
+                                      100
+                                    </DropdownItem>
+                                    <DropdownItem
+                                      tag="div"
+                                      onClick={() => this.filterSize(134)}
+                                    >
+                                      134
+                                    </DropdownItem>
+                                  </DropdownMenu>
+                                </UncontrolledDropdown>
+                              </div>
+                              <div className="d-flex flex-wrap justify-content-end mb-1">
+                                <div className="table-input mr-1">
+                                  <Input
+                                    placeholder="search Item here..."
+                                    onChange={e =>
+                                      this.updateSearchQuery(e.target.value)
+                                    }
+                                    value={this.state.value}
+                                  />
+                                </div>
+                              </div>
+                            </div>
+                            <ContextLayout.Consumer className="ag-theme-alpine">
+                              {context => (
+                                <AgGridReact
+                                  id="myAgGrid"
+                                  gridOptions={this.gridOptions}
+                                  rowSelection="multiple"
+                                  defaultColDef={defaultColDef}
+                                  columnDefs={columnDefs}
+                                  rowData={rowData}
+                                  onGridReady={this.onGridReady}
+                                  colResizeDefault={"shift"}
+                                  animateRows={true}
+                                  floatingFilter={false}
+                                  pagination={true}
+                                  paginationPageSize={
+                                    this.state.paginationPageSize
+                                  }
+                                  pivotPanelShow="always"
+                                  enableRtl={context.state.direction === "rtl"}
+                                  ref={this.gridRef} // Attach the ref to the grid
+                                  domLayout="autoHeight" // Adjust layout as needed
+                                />
+                              )}
+                            </ContextLayout.Consumer>
                           </div>
                         )}
-                      </div>
-                    </span>
+                      </CardBody>
+                    </Card>
                   </Col>
-                )}
-              </Row>
-              <CardBody style={{ marginTop: "-1.5rem" }}>
-                {this.state.rowData === null ? null : (
-                  <div className="ag-theme-material w-100 my-2 ag-grid-table">
-                    <div className="d-flex flex-wrap justify-content-between align-items-center">
-                      <div className="mb-1">
-                        <UncontrolledDropdown className="p-1 ag-dropdown">
-                          <DropdownToggle tag="div">
-                            {this.gridApi
-                              ? this.state.currenPageSize
-                              : "" * this.state.getPageSize -
-                                (this.state.getPageSize - 1)}{" "}
-                            -{" "}
-                            {this.state.rowData.length -
-                              this.state.currenPageSize *
-                                this.state.getPageSize >
-                            0
-                              ? this.state.currenPageSize *
-                                this.state.getPageSize
-                              : this.state.rowData.length}{" "}
-                            of {this.state.rowData.length}
-                            <ChevronDown className="ml-50" size={15} />
-                          </DropdownToggle>
-                          <DropdownMenu right>
-                            <DropdownItem
-                              tag="div"
-                              onClick={() => this.filterSize(5)}
-                            >
-                              5
-                            </DropdownItem>
-                            <DropdownItem
-                              tag="div"
-                              onClick={() => this.filterSize(20)}
-                            >
-                              20
-                            </DropdownItem>
-                            <DropdownItem
-                              tag="div"
-                              onClick={() => this.filterSize(50)}
-                            >
-                              50
-                            </DropdownItem>
-                            <DropdownItem
-                              tag="div"
-                              onClick={() => this.filterSize(100)}
-                            >
-                              100
-                            </DropdownItem>
-                            <DropdownItem
-                              tag="div"
-                              onClick={() => this.filterSize(134)}
-                            >
-                              134
-                            </DropdownItem>
-                          </DropdownMenu>
-                        </UncontrolledDropdown>
-                      </div>
-                      <div className="d-flex flex-wrap justify-content-end mb-1">
-                        <div className="table-input mr-1">
-                          <Input
-                            placeholder="search Item here..."
-                            onChange={e =>
-                              this.updateSearchQuery(e.target.value)
-                            }
-                            value={this.state.value}
-                          />
-                        </div>
-                      </div>
-                    </div>
-                    <ContextLayout.Consumer className="ag-theme-alpine">
-                      {context => (
-                        <AgGridReact
-                          id="myAgGrid"
-                          gridOptions={this.gridOptions}
-                          rowSelection="multiple"
-                          defaultColDef={defaultColDef}
-                          columnDefs={columnDefs}
-                          rowData={rowData}
-                          onGridReady={this.onGridReady}
-                          colResizeDefault={"shift"}
-                          animateRows={true}
-                          floatingFilter={false}
-                          pagination={true}
-                          paginationPageSize={this.state.paginationPageSize}
-                          pivotPanelShow="always"
-                          enableRtl={context.state.direction === "rtl"}
-                          ref={this.gridRef} // Attach the ref to the grid
-                          domLayout="autoHeight" // Adjust layout as needed
-                        />
-                      )}
-                    </ContextLayout.Consumer>
-                  </div>
-                )}
-              </CardBody>
-            </Card>
-          </Col>
+                </>
+              )}
+            </>
+          )}
         </Col>
 
         <Modal
@@ -837,7 +827,11 @@ class Salesreport extends React.Component {
                                   style={{ cursor: "pointer" }}
                                   className="allfields"
                                 >
-                                  <input type="checkbox" className="mx-1" />
+                                  <input
+                                    type="checkbox"
+                                    // checked={check && check}
+                                    className="mx-1"
+                                  />
 
                                   {ele?.headerName}
                                 </h5>
@@ -907,9 +901,10 @@ class Salesreport extends React.Component {
                                           if (SelectedCols && delindex >= 0) {
                                             const splicedElement =
                                               SelectedCols?.splice(delindex, 1); // Remove the element
+                                            // splicedElement contains the removed element, if needed
 
                                             this.setState({
-                                              SelectedcolumnDefs: SelectedCols, // Update the state with the
+                                              SelectedcolumnDefs: SelectedCols, // Update the state with the modified array
                                             });
                                           }
                                         }}
@@ -972,142 +967,17 @@ class Salesreport extends React.Component {
         </Modal>
         <Modal
           isOpen={this.state.modalone}
-          toggle={this.togglemodal}
-          className={this.props.className}
-          style={{ maxWidth: "1050px" }}
+          toggle={this.toggleModal}
+          className="modal-dialog modal-xl"
+          size="lg"
+          backdrop={true}
+          fullscreen={true}
         >
-          <ModalHeader toggle={this.togglemodal}>
-            {this.state.ShowBill ? "Bill Download" : "All Products"}
-          </ModalHeader>
-          <ModalBody
-            className={`${this.state.ShowBill ? "p-1" : "modalbodyhead"}`}
-          >
-            <Row className="p-2">
-              <Col>
-                <div className="d-flex justify-content-center">
-                  <h4>Sales Order List</h4>
-                </div>
-              </Col>
-            </Row>
-            {this.state.ShowBill ? (
-              <>
-                <StockTrxInvoice ViewOneData={this.state.ViewOneData} />
-              </>
-            ) : (
-              <>
-                {this.state.ViewOneUserView ? (
-                  <>
-                    <Row>
-                      <Col className="d-flex">
-                        <div>
-                          <span>UserName:</span>
-                        </div>
-                        <div>
-                          <h5 className="">
-                            {this.state.ViewOneData &&
-                              this.state.ViewOneData?.fullName}
-                          </h5>
-                        </div>
-                      </Col>
-
-                      <Col className="d-flex">
-                        <div>
-                          <span>Grand Total :</span>
-                        </div>
-                        <div>
-                          <strong>
-                            {this.state.ViewOneData &&
-                              this.state.ViewOneData?.grandTotal}
-                          </strong>
-                          Rs/-
-                        </div>
-                      </Col>
-                      <Col>
-                        {this.state.ViewOneData?.status == "completed" ? (
-                          <>
-                            <div className="d-flex justify-content-center">
-                              <h5>
-                                Status:
-                                <Badge className="mx-2" color="primary">
-                                  {this.state.ViewOneData?.status}
-                                </Badge>
-                              </h5>
-                            </div>
-                          </>
-                        ) : (
-                          <>
-                            <h5>
-                              status:
-                              <Badge className="mx-2" color="primary">
-                                {this.state.ViewOneData?.status}
-                              </Badge>
-                            </h5>
-                          </>
-                        )}
-                      </Col>
-                      {/* <Col>
-                        <Label>Download Invoice :</Label>
-                        <div className="d-flex justify-content-center">
-                          <FaDownload
-                            onClick={this.handleStockTrxInvoiceShow}
-                            color="#00c0e"
-                            fill="#00c0e"
-                            style={{ cursor: "pointer" }}
-                            size={20}
-                          />
-                        </div>
-                      </Col> */}
-                    </Row>
-
-                    <Row>
-                      <Col>
-                        <Table style={{ cursor: "pointer" }} striped>
-                          <thead>
-                            <tr>
-                              <th>#</th>
-                              <th>Product Name</th>
-                              <th>Price</th>
-                              <th>Size</th>
-                              <th>Unit</th>
-                              <th>HSN CODE</th>
-                              <th>GST</th>
-                              <th>Quantity</th>
-                              <th>Total</th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            {this.state.ViewOneData?.orderItems &&
-                              this.state.ViewOneData?.orderItems?.map(
-                                (ele, i) => (
-                                  <>
-                                    <tr>
-                                      <th scope="row">{i + 1}</th>
-                                      <td>{ele?.productId?.Product_Title}</td>
-                                      <td>{ele?.price}</td>
-                                      <td>{ele?.Size}</td>
-                                      <td>{ele?.unitType}</td>
-                                      <td>{ele?.productId?.HSN_Code}</td>
-                                      <td>{ele?.productId["GST Rate"]}</td>
-                                      <td>{ele?.qty}</td>
-                                      <td>
-                                        {ele?.price * ele?.Size * ele?.qty}
-                                      </td>
-                                    </tr>
-                                  </>
-                                )
-                              )}
-                          </tbody>
-                        </Table>
-                      </Col>
-                    </Row>
-                  </>
-                ) : null}
-              </>
-            )}
-          </ModalBody>
+          <ModalHeader toggle={this.toggleModal}>View Details</ModalHeader>
+          <ModalBody className="myproducttable"></ModalBody>
         </Modal>
       </>
     );
   }
 }
-export default Salesreport;
+export default PurchaseReturn;
