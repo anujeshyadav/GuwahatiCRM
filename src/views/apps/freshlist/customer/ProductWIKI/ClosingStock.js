@@ -143,31 +143,31 @@ class ClosingStock extends React.Component {
             );
           },
         },
-        {
-          headerName: "Status",
-          field: "status",
-          filter: true,
-          width: 150,
-          cellRendererFramework: (params) => {
-            return params.data?.status === "closing" ? (
-              <div className="badge badge-pill badge-success">
-                {params.data?.status}
-              </div>
-            ) : params.data?.status === "InProcess" ? (
-              <div className="badge badge-pill badge-warning">
-                {params.data?.status}
-              </div>
-            ) : params.data?.status === "Hold" ? (
-              <div className="badge badge-pill badge-danger">
-                {params.data?.status}
-              </div>
-            ) : params.data?.status === "opening" ? (
-              <div className="badge badge-pill badge-warning">
-                {params.data?.status}
-              </div>
-            ) : null;
-          },
-        },
+        // {
+        //   headerName: "Status",
+        //   field: "status",
+        //   filter: true,
+        //   width: 150,
+        //   cellRendererFramework: (params) => {
+        //     return params.data?.status === "closing" ? (
+        //       <div className="badge badge-pill badge-success">
+        //         {params.data?.status}
+        //       </div>
+        //     ) : params.data?.status === "InProcess" ? (
+        //       <div className="badge badge-pill badge-warning">
+        //         {params.data?.status}
+        //       </div>
+        //     ) : params.data?.status === "Hold" ? (
+        //       <div className="badge badge-pill badge-danger">
+        //         {params.data?.status}
+        //       </div>
+        //     ) : params.data?.status === "opening" ? (
+        //       <div className="badge badge-pill badge-warning">
+        //         {params.data?.status}
+        //       </div>
+        //     ) : null;
+        //   },
+        // },
         {
           headerName: "Date",
           field: "date",

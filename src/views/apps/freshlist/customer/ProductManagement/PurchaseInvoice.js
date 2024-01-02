@@ -551,16 +551,14 @@ class PurchaseInvoice extends React.Component {
 
   async componentDidMount() {
     const UserInformation = this.context;
-
-
     let pageparmission = JSON.parse(localStorage.getItem("userData"));
     let userid = pageparmission?._id;
-    await ViewCompanyDetails(userid)
-      .then(res => {
+    await ViewCompanyDetails(userid, userid?.database)
+      .then((res) => {
         console.log(res?.CompanyDetail);
         this.setState({ CompanyDetails: res?.CompanyDetail });
       })
-      .catch(err => {
+      .catch((err) => {
         console.log(err);
       });
 
