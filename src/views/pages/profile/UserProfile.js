@@ -95,7 +95,7 @@ class UserProfile extends React.Component {
       email: pageparmission?.email,
       cnfmPassword: pageparmission?.Userinfo?.password,
     });
-    await ViewCompanyDetails(pageparmission?._id)
+    await ViewCompanyDetails(pageparmission?._id, pageparmission?.database)
       .then((res) => {
         this.setState({ CompanyDetails: res?.CompanyDetail });
       })

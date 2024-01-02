@@ -766,9 +766,9 @@ export const Create_CompanyDetails = async (data) => {
   return response;
 };
 
-export const ViewCompanyDetails = async (id) => {
+export const ViewCompanyDetails = async (id, db) => {
   let response = await axiosConfig
-    .get(`${View_Company_Details}` + id)
+    .get(`${View_Company_Details + id}/` + db)
     .then((res) => res.data);
   return response;
 };
