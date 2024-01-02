@@ -332,8 +332,8 @@ class StockTransfer extends React.Component {
   ViewStockList = async () => {
     let pageparmission = JSON.parse(localStorage.getItem("userData"));
     let userid = pageparmission?._id;
-    await ViewFactoryStock()
-      .then(res => {
+    await ViewFactoryStock(userid, pageparmission?.database)
+      .then((res) => {
         console.log(res?.Factory);
         this.setState({ rowData: res?.Factory });
         this.setState({ AllcolumnDefs: this.state.columnDefs });
@@ -349,7 +349,7 @@ class StockTransfer extends React.Component {
         }
         this.setState({ SelectedCols: this.state.columnDefs });
       })
-      .catch(err => {
+      .catch((err) => {
         console.log(err);
       });
   };

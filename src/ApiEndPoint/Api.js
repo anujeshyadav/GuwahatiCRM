@@ -87,7 +87,7 @@ export const Stock_trx_WarehousetoWareHouse =
   "/stock-updation/stock-transfer-warehouse";
 export const Stock_trx_FtoW_List = "/stock-updation/view-warehouse-stock/";
 export const ProductList_View = "/product/view-product/";
-export const Factory_Stock = "factory/view-factory-stock";
+export const Factory_Stock = "factory/view-factory-stock/";
 export const Warehouse_Stock = "/warehouse/view-warehouse-stock/";
 export const Low_Stock_Alerts = "/product/view-stock-alert/";
 export const Warehouse_Inward_list = "/stock-updation/view-in-ward-stock/";

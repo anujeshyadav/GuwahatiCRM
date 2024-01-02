@@ -37,7 +37,7 @@ const State = (props) => {
     console.log(UserInformatio);
     const fetchData = async () => {
       try {
-        await ViewCompanyDetails(user?._id)
+        await ViewCompanyDetails(user?._id, user?.database)
           .then((res) => {
             console.log(res?.CompanyDetail);
             localStorage.setItem(

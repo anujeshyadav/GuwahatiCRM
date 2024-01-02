@@ -170,13 +170,13 @@ class OpeningStock extends React.Component {
         },
         {
           headerName: "Date",
-          field: "date",
+          field: "Openingdate",
           filter: true,
           width: 200,
           cellRendererFramework: (params) => {
             return (
               <div>
-                <span>{params.data?.date}</span>
+                <span>{params.data?.Openingdate?.split("T")[0]}</span>
               </div>
             );
           },

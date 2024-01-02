@@ -119,7 +119,7 @@ class PromotionalActivityList extends React.Component {
    await View_PromotionList(pageparmission?._id, pageparmission?.database)
      .then((res) => {
        console.log(res?.Promotion);
-       debugger;
+
        let keys = Object.keys(res?.Promotion[0]);
        let myarr = keys.filter(
          (item) =>
@@ -478,6 +478,7 @@ class PromotionalActivityList extends React.Component {
           field: "transactions",
           width: 190,
           cellRendererFramework: params => {
+            console.log(params?.data);
             return (
               <div className="actions cursor-pointer">
                 {this.state.InsiderPermissions &&
