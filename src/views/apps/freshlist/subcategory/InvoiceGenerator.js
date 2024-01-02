@@ -605,7 +605,7 @@ class InvoiceGenerator extends React.Component {
     this.setState({ InsiderPermissions: InsidePermissions });
 
     // createOrderhistoryview(userid)
-    await view_Sales_orderList(userid)
+    await view_Sales_orderList(userid, pageparmission?.database)
       .then((res) => {
         let pending = res?.orderHistory?.filter(
           (ele) => ele?.status == "pending"

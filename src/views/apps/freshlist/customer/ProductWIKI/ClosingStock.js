@@ -170,13 +170,13 @@ class ClosingStock extends React.Component {
         // },
         {
           headerName: "Date",
-          field: "date",
+          field: "Closingdate",
           filter: true,
           width: 200,
           cellRendererFramework: (params) => {
             return (
               <div>
-                <span>{params.data?.date}</span>
+                <span>{params.data?.Closingdate?.split("T")[0]}</span>
               </div>
             );
           },
@@ -1038,29 +1038,7 @@ class ClosingStock extends React.Component {
                         </div>
                       </Col>
 
-                      {this.state.ViewOneData?.status == "closing" ? (
-                        <>
-                          <Col className="">
-                            <Label>status:</Label>
-                            <div>
-                              <Badge color="primary">
-                                {this.state.ViewOneData?.status}
-                              </Badge>
-                            </div>
-                          </Col>
-                        </>
-                      ) : (
-                        <>
-                          <Col className="">
-                            <Label>status:</Label>
-                            <div>
-                              <Badge color="primary">
-                                {this.state.ViewOneData?.status}
-                              </Badge>
-                            </div>
-                          </Col>
-                        </>
-                      )}
+                     
 
                       {/* <Col>
                         <Label>Download Invoice :</Label>
