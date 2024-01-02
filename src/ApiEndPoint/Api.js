@@ -116,6 +116,8 @@ export const Sales_Pending_StatusChange = "/order/update-create-order-status/";
 
 // purchase order
 export const SavePurchase_Order = "/purchase-order/save-purchase-order";
+export const Purchase_OrderViewOne =
+  "/purchase-order/view-purchase-order-history-by-id/";
 export const Purchase_Order_List =
   "/purchase-order/view-purchase-order-history/";
 export const Delete_Product_Item = "/raw-material/delete-raw-material/";

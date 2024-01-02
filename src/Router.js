@@ -460,12 +460,6 @@ const Campaignlist = lazy(() =>
 const ClosingStock = lazy(() =>
   import("./views/apps/freshlist/customer/ProductWIKI/ClosingStock")
 );
-const OverDueStockReport = lazy(() =>
-  import("./views/apps/freshlist/customer/ProductWIKI/OverDueStockReport")
-);
-const OpeningStock = lazy(() =>
-  import("./views/apps/freshlist/customer/ProductWIKI/OpeningStock")
-);
 const LowStock = lazy(() =>
   import("./views/apps/freshlist/customer/ProductWIKI/LowStock")
 );
@@ -494,9 +488,6 @@ const StockReport = lazy(() =>
 const StockTransfer = lazy(() =>
   import("./views/apps/freshlist/customer/StockManagement/StockTransfer")
 );
-const DeadParty = lazy(() =>
-  import("./views/apps/freshlist/customer/StockManagement/DeadParty")
-);
 const SupplierWarranty = lazy(() =>
   import("./views/apps/freshlist/customer/WarrantyCLaims/SupplierWarranty")
 );
@@ -517,6 +508,9 @@ const EditPending = lazy(() =>
 
 const PurchaseOrderList = lazy(() =>
   import("./views/apps/freshlist/order/purchase/PurchaseOrderList")
+);
+const PurchaseReturnList = lazy(() =>
+  import("./views/apps/freshlist/order/purchase/PurchaseReturnList")
 );
 const PendingPurchase = lazy(() =>
   import("./views/apps/freshlist/order/purchase/PendingPurchase")
@@ -807,9 +801,6 @@ const CreateDispach = lazy(() =>
 );
 const GoodDispatchList = lazy(() =>
   import("./views/apps/freshlist/accounts/GoodDispatchList")
-);
-const WarehouseDispatchlist = lazy(() =>
-  import("./views/apps/freshlist/accounts/WarehouseDispatchlist")
 );
 const CreditNoteList = lazy(() =>
   import("./views/apps/freshlist/customer/notes/CreditNoteList")
@@ -1304,10 +1295,10 @@ const accessControl = lazy(() =>
 const RouteConfig = ({ component: Component, fullLayout, ...rest }) => (
   <Route
     {...rest}
-    render={(props) => {
+    render={props => {
       return (
         <ContextLayout.Consumer>
-          {(context) => {
+          {context => {
             let LayoutTag =
               fullLayout === true
                 ? context.fullLayout
@@ -1327,7 +1318,7 @@ const RouteConfig = ({ component: Component, fullLayout, ...rest }) => (
     }}
   />
 );
-const mapStateToProps = (state) => {
+const mapStateToProps = state => {
   return {
     user: state.auth.login.userRole,
   };
@@ -1604,6 +1595,10 @@ class AppRouter extends React.Component {
             component={PurchaseOrderList}
           />
           <AppRoute
+            path="/app/AJgroup/order/PurchaseReturnList"
+            component={PurchaseReturnList}
+          />
+          <AppRoute
             path="/app/AJgroup/purchase/pendingPurchase"
             component={PendingPurchase}
           />
@@ -1628,7 +1623,7 @@ class AppRouter extends React.Component {
             component={SalesReturnView}
           />
           <AppRoute
-            path="/app/AJGroup/order/purchaseReturn"
+            path="/app/AJGroup/order/purchaseReturn/:id"
             component={PurchaseReturn}
           />
           <AppRoute
@@ -2046,10 +2041,6 @@ class AppRouter extends React.Component {
             component={StockTransfer}
           />
           <AppRoute
-            path="/app/softNumen/report/DeadParty"
-            component={DeadParty}
-          />
-          <AppRoute
             path="/app/softNumen/warranty/SupplierWarranty"
             component={SupplierWarranty}
           />
@@ -2072,14 +2063,6 @@ class AppRouter extends React.Component {
           <AppRoute
             path="/app/softNumen/warranty/ClosingStock"
             component={ClosingStock}
-          />
-          <AppRoute
-            path="/app/Ajgroup/Stock/OverDueStockReport"
-            component={OverDueStockReport}
-          />
-          <AppRoute
-            path="/app/softNumen/warranty/openingStock"
-            component={OpeningStock}
           />
           <AppRoute
             path="/app/softNumen/warranty/LowStock"
@@ -2421,10 +2404,6 @@ class AppRouter extends React.Component {
           <AppRoute
             path="/app/AjGroup/dispatch/goodDispatchList"
             component={GoodDispatchList}
-          />
-          <AppRoute
-            path="/app/AjGroup/dispatch/WarehouseDispatchlist"
-            component={WarehouseDispatchlist}
           />
           <AppRoute
             path="/app/AjGroup/note/CreditNoteList"

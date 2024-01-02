@@ -314,7 +314,7 @@ const horizontalMenuConfig = [
         type: "item",
         icon: <MdAssignmentReturn size={22} />,
         permissions: ["admin", "editor"],
-        navLink: "/app/AJGroup/order/purchaseReturn",
+        navLink: "/app/AJgroup/order/PurchaseReturnList",
       },
       {
         id: "DebitNotes",
