@@ -369,17 +369,16 @@ export const AllCategoryList = async (id, db) => {
     .then((res) => res.data);
   return response;
 };
-export const ViewFactoryStock = async (id) => {
+export const ViewFactoryStock = async (id, db) => {
   let response = await axiosConfig
-    .get(`${Factory_Stock}`)
-    // .get(`${Factory_Stock}` + id)
+    .get(`${Factory_Stock}${db}`)
     .then((res) => res.data);
   return response;
 };
 
-export const ViewOneWarehouseStock = async (id) => {
+export const ViewOneWarehouseStock = async (id, db) => {
   let response = await axiosConfig
-    .get(`${Warehouse_Stock}` + id)
+    .get(`${Warehouse_Stock + id}/${db}`)
     .then((res) => res.data);
   return response;
 };
@@ -474,9 +473,9 @@ export const createOrderhistoryview = async (id) => {
   return response;
 };
 
-export const view_Sales_orderList = async (id) => {
+export const view_Sales_orderList = async (id, db) => {
   let response = await axiosConfig
-    .get(`${view_Sales_order_List}` + id)
+    .get(`${view_Sales_order_List + id}/` + db)
     .then((res) => res.data);
   return response;
 };

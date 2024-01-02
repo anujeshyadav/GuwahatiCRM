@@ -375,7 +375,7 @@ class StockTransfer extends React.Component {
       .catch((err) => {
         console.log(err);
       });
-    await ViewOneWarehouseStock(userid)
+    await ViewOneWarehouseStock(userid, pageparmission?.database)
       .then((res) => {
         console.log(res?.Factory);
       })
