@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Col, CustomInput, Row } from "reactstrap";
+import { Button, Col, CustomInput, Row } from "reactstrap";
 
 const SuperAdminUI = () => {
   const [SuperAdminList, setSuperAdminList] = useState([]);
@@ -16,7 +16,9 @@ const SuperAdminUI = () => {
             <option>ffaaf</option>
           </CustomInput>
         </Col>
-        <Col></Col>
+        <Col>
+          <Button color="primary">Submit</Button>
+        </Col>
       </Row>
     </div>
   );
