@@ -83,7 +83,20 @@ const CreatePromotionalActivity = (args) => {
 
   useEffect(() => {
     debugger;
-    console.log(location?.state);
+    if (location?.state.key == "percentageWise") {
+      setDiscountType("Percentage Wise");
+      setFreeSelectedProduct(false);
+      setAddAnotherProduct(false);
+      setTotalAmount(location?.state?.data?.totalAmount);
+    } else if (location?.state.key == "amountWise") {
+      setDiscountType("Amount Wise");
+      setFreeSelectedProduct(false);
+      setAddAnotherProduct(false);
+    } else if (location?.state.key == "productWise") {
+      setDiscountType("Product Wise");
+    } else {
+      toggle();
+    }
     localStorage.setItem("Promotionedit", JSON.stringify(location?.state));
   }, []);
 
@@ -554,6 +567,7 @@ const CreatePromotionalActivity = (args) => {
             <Col lg="6" md="6" sm="6" className="mb-2 mt-1">
               <div className="form-label-group">
                 <input
+                  checked={DiscountType && DiscountType == "Percentage Wise"}
                   style={{ marginRight: "3px" }}
                   type="radio"
                   name="Product Quantity"
@@ -567,6 +581,7 @@ const CreatePromotionalActivity = (args) => {
                 <span style={{ marginRight: "60px" }}>Percentage Wise</span>
 
                 <input
+                  checked={DiscountType && DiscountType == "Amount Wise"}
                   style={{ marginRight: "3px" }}
                   type="radio"
                   name="Product Quantity"
@@ -579,6 +594,7 @@ const CreatePromotionalActivity = (args) => {
                 />
                 <span style={{ marginRight: "60px" }}>Amount Wise</span>
                 <input
+                  checked={DiscountType && DiscountType == "Product Wise"}
                   style={{ marginRight: "3px" }}
                   type="radio"
                   name="Product Quantity"
