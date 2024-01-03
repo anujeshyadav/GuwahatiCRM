@@ -257,11 +257,11 @@ class TargetReport extends React.Component {
   };
 
   async componentDidMount() {
-    let userId = JSON.parse(localStorage.getItem("userData"))._id;
+    let userId = JSON.parse(localStorage.getItem("userData"));
     const InsidePermissions = CheckPermission("Target Creation");
     this.setState({ InsiderPermissions: InsidePermissions });
-    await Create_TargetList(userId)
-      .then(res => {
+    await Create_TargetList(userId?._id, userId?.database)
+      .then((res) => {
         console.log(res.TargetCreation);
         this.setState({ rowData: res?.TargetCreation });
         this.setState({ AllcolumnDefs: this.state.columnDefs });
@@ -277,7 +277,7 @@ class TargetReport extends React.Component {
           this.setState({ SelectedcolumnDefs: this.state.columnDefs });
         }
       })
-      .catch(err => {
+      .catch((err) => {
         console.log(err);
       });
   }

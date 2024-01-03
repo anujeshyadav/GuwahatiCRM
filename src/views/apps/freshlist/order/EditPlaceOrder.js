@@ -52,87 +52,89 @@ const EditPlaceOrder = args => {
     setUserName(e.target.value);
   };
 
-  const handleProductChangeProduct = (e, index) => {
-    // debugger;
-    setIndex(index);
-    const { name, value } = e.target;
-    let orderitem = product?.orderItems;
+console.log(product);
 
-    const list = [...orderitem];
-    list[index][name] = value;
-    let amt = 0;
-    if (list.length > 0) {
-      const x = list?.map((val) => {
-        GrandTotal[index] = val.Size * val.qty * val.price;
-        list[index]["totalprice"] = val.Size * val.qty * val.price;
-        return val.Size * val.qty * val.price;
-      });
-      amt = x?.reduce((a, b) => a + b);
-    }
-    setProduct(list);
-    setGrandTotalAmt(amt);
-  };
+const handleProductChangeProduct = (e, index) => {
+  // debugger;
+  setIndex(index);
+  const { name, value } = e.target;
+  let orderitem = product?.orderItems;
 
-  useEffect(() => {
-    setProduct(location?.state);
-    console.log(location?.state);
-    setUserName(location?.state.fullName);
-    setEditdata(location?.state);
-
-    if (location?.state) {
-      let grandTotal = location?.state?.orderItems?.reduce(
-        (a, b) => a + b.productId?.Product_MRP,
-        0
-      );
-      setGrandTotalAmt(grandTotal);
-    } else {
-      let grandTotal = location?.state?.orderItems.reduce(
-        (a, b) => a + b.productId?.Product_MRP,
-        0
-      );
-      setGrandTotalAmt(grandTotal);
-    }
-  }, []);
-
-  useEffect(() => {
-    setProduct(location.state);
-    setEditdata(location?.state);
-  }, [product]);
-
-  useEffect(() => {
-    const userInfo = JSON.parse(localStorage.getItem("userData"));
-    setUserInfo(userInfo);
-  }, []);
-
-  const submitHandler = (e) => {
-    e.preventDefault();
-    debugger;
-    console.log(product, product.orderItems);
-    let editedproduct = product.orderItems?.map((ele) => {
-      return {
-        productId: ele?.productId?._id,
-        qty: Number(ele?.qty),
-      };
+  const list = [...orderitem];
+  list[index][name] = value;
+  let amt = 0;
+  if (list.length > 0) {
+    const x = list?.map((val) => {
+      GrandTotal[index] = val.Size * val.qty * val.price;
+      list[index]["totalprice"] = val.Size * val.qty * val.price;
+      return val.Size * val.qty * val.price;
     });
-    let payload = {
-      fullName: userName,
-      orderItems: editedproduct,
-      grandTotal: grandTotalAmt,
+    amt = x?.reduce((a, b) => a + b);
+  }
+  setProduct(list);
+  setGrandTotalAmt(amt);
+};
+
+useEffect(() => {
+  setProduct(location?.state);
+  console.log(location?.state);
+  setUserName(location?.state.fullName);
+  setEditdata(location?.state);
+
+  if (location?.state) {
+    let grandTotal = location?.state?.orderItems?.reduce(
+      (a, b) => a + b.productId?.Product_MRP,
+      0
+    );
+    setGrandTotalAmt(grandTotal);
+  } else {
+    let grandTotal = location?.state?.orderItems.reduce(
+      (a, b) => a + b.productId?.Product_MRP,
+      0
+    );
+    setGrandTotalAmt(grandTotal);
+  }
+}, []);
+
+useEffect(() => {
+  setProduct(location.state);
+  setEditdata(location?.state);
+}, [product]);
+
+useEffect(() => {
+  const userInfo = JSON.parse(localStorage.getItem("userData"));
+  setUserInfo(userInfo);
+}, []);
+
+const submitHandler = (e) => {
+  e.preventDefault();
+  debugger;
+  console.log(product, product.orderItems);
+  let editedproduct = product?.orderItems?.map((ele) => {
+    return {
+      productId: ele?.productId?._id,
+      qty: Number(ele?.qty),
     };
-    console.log(payload);
-    if (error) {
-      swal("Error occured while Entering Details");
-    } else {
-      PlaceOrder_Edit(payload, product._id)
-        .then((res) => {
-          console.log(res);
-          swal("PlaceOrder  Edit Successfully");
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    }
+  });
+  let payload = {
+    fullName: userName,
+    orderItems: editedproduct,
+    grandTotal: grandTotalAmt,
   };
+  console.log(payload);
+  if (error) {
+    swal("Error occured while Entering Details");
+  } else {
+    PlaceOrder_Edit(payload, product._id)
+      .then((res) => {
+        console.log(res);
+        swal("PlaceOrder  Edit Successfully");
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }
+};
 
   return (
     <div>

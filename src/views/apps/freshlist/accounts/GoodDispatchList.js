@@ -215,7 +215,7 @@ class GoodDispatchList extends React.Component {
           resizable: true,
           width: 210,
           cellRendererFramework: params => {
-            // console.log(params.data?.order_id);
+            console.log(params.data);
 
             return (
               <div className="d-flex align-items-center cursor-pointer">

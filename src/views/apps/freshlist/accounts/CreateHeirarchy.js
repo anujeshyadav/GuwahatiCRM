@@ -47,7 +47,8 @@ const CreateHeirarchy = ({ EditOneData }) => {
   }, [Parent, Child]);
 
   useEffect(() => {
-    Get_RoleList()
+    let userdata = JSON.parse(localStorage.getItem("userData"));
+    Get_RoleList(userdata?._id, userdata?.database)
       .then((res) => {
         setdropdownValue(res?.Role);
         setdropdownValueSecond(res?.Role);
