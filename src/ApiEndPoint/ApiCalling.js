@@ -618,7 +618,7 @@ export const EditGoodDispatch = async (payload, id) => {
 // guwahati api calling close
 export const Get_RoleList = async (id, db) => {
   let response = await axiosConfig
-    .get(`${Get_Role}/${id}/${db}`)
+    .get(`${Get_Role}/${db}`)
     .then((res) => res.data);
   return response;
 };

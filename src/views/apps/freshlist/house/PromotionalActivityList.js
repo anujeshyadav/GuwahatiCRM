@@ -121,14 +121,15 @@ class PromotionalActivityList extends React.Component {
      .then((res) => {
        console.log(res?.Promotion);
 
-       let keys = Object.keys(res?.Promotion[0]);
-       let myarr = keys.filter(
-         (item) =>
-           item !== "_id" &&
-           item !== "__v" &&
-           item !== "created_by" &&
-           item !== "status"
-       );
+let keys = Object.keys(res?.Promotion[0]);
+let myarr = keys.filter(
+  (item) =>
+    item !== "_id" &&
+    item !== "__v" &&
+    item !== "created_by" &&
+    item !== "status" &&
+    item !== "database"
+);
        let unique = [...new Set(myarr)];
        this.setState({ Dropdown: unique });
        this.setState({ AllData: res?.Promotion });
@@ -472,82 +473,81 @@ class PromotionalActivityList extends React.Component {
       });
       let myHeadings = [...headings];
 
-      console.log(headings);
       let Product = [
-        {
-          headerName: "Actions",
-          field: "sortorder",
-          field: "transactions",
-          width: 190,
-          cellRendererFramework: (params) => {
-            console.log(params?.data);
-            return (
-              <div className="actions cursor-pointer">
-                {this.state.InsiderPermissions &&
-                  this.state.InsiderPermissions?.View && (
-                    <Route
-                      render={({ history }) => (
-                        <Eye
-                          className="mr-50"
-                          size="25px"
-                          color="green"
-                          onClick={() => {
-                            history.push({
-                              pathname: `/app/ajgroup/account/EditPromotionalActivity/${params?.data?._id}`,
-                              state: {
-                                data: params?.data,
-                                key: this.state.PromotionName,
-                                type: "View",
-                              },
-                            });
-                          }}
-                        />
-                      )}
-                    />
-                  )}
+        // {
+        //   headerName: "Actions",
+        //   field: "sortorder",
+        //   field: "transactions",
+        //   width: 190,
+        //   cellRendererFramework: (params) => {
+        //     console.log(params?.data);
+        //     return (
+        //       <div className="actions cursor-pointer">
+        //         {this.state.InsiderPermissions &&
+        //           this.state.InsiderPermissions?.View && (
+        //             <Route
+        //               render={({ history }) => (
+        //                 <Eye
+        //                   className="mr-50"
+        //                   size="25px"
+        //                   color="green"
+        //                   onClick={() => {
+        //                     history.push({
+        //                       pathname: `/app/ajgroup/account/EditPromotionalActivity/${params?.data?._id}`,
+        //                       state: {
+        //                         data: params?.data,
+        //                         key: this.state.PromotionName,
+        //                         type: "View",
+        //                       },
+        //                     });
+        //                   }}
+        //                 />
+        //               )}
+        //             />
+        //           )}
 
-                {this.state.InsiderPermissions &&
-                  this.state.InsiderPermissions?.Edit && (
-                    <Route
-                      render={({ history }) => (
-                        <Edit
-                          className="mr-50"
-                          size="25px"
-                          color="green"
-                          onClick={() => {
-                            history.push({
-                              pathname: `/app/ajgroup/account/EditPromotionalActivity/${params?.data?._id}`,
-                              state: {
-                                data: params?.data,
-                                key: this.state.PromotionName,
-                                type: "Edit",
-                              },
-                            });
-                          }}
-                        />
-                      )}
-                    />
-                  )}
+        //         {this.state.InsiderPermissions &&
+        //           this.state.InsiderPermissions?.Edit && (
+        //             <Route
+        //               render={({ history }) => (
+        //                 <Edit
+        //                   className="mr-50"
+        //                   size="25px"
+        //                   color="green"
+        //                   onClick={() => {
+        //                     history.push({
+        //                       pathname: `/app/ajgroup/account/EditPromotionalActivity/${params?.data?._id}`,
+        //                       state: {
+        //                         data: params?.data,
+        //                         key: this.state.PromotionName,
+        //                         type: "Edit",
+        //                       },
+        //                     });
+        //                   }}
+        //                 />
+        //               )}
+        //             />
+        //           )}
 
-                {this.state.InsiderPermissions &&
-                  this.state.InsiderPermissions?.Delete && (
-                    <Route
-                      render={() => (
-                        <Trash2
-                          className="mr-50"
-                          size="25px"
-                          color="red"
-                          onClick={() => {
-                            this.runthisfunction(params?.data?._id);
-                          }}
-                        />
-                      )}
-                    />
-                  )}
-              </div>
-            );
-          },
-        },
+        //         {this.state.InsiderPermissions &&
+        //           this.state.InsiderPermissions?.Delete && (
+        //             <Route
+        //               render={() => (
+        //                 <Trash2
+        //                   className="mr-50"
+        //                   size="25px"
+        //                   color="red"
+        //                   onClick={() => {
+        //                     this.runthisfunction(params?.data?._id);
+        //                   }}
+        //                 />
+        //               )}
+        //             />
+        //           )}
+        //       </div>
+        //     );
+        //   },
+        // },
 
         ...myHeadings,
         {
