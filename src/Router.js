@@ -884,6 +884,18 @@ const TeamandtargerReport = lazy(() =>
 const Salesreport = lazy(() =>
   import("./views/apps/freshlist/customer/Ticketing/Salesreport")
 );
+const DeadParty = lazy(() =>
+  import("./views/apps/freshlist/customer/StockManagement/DeadParty")
+);
+const OpeningStock = lazy(() =>
+  import("./views/apps/freshlist/customer/ProductWIKI/OpeningStock")
+);
+const WarehouseDispatchlist = lazy(() =>
+  import("./views/apps/freshlist/accounts/WarehouseDispatchlist")
+);
+const OverDueStockReport = lazy(() =>
+  import("./views/apps/freshlist/customer/ProductWIKI/OverDueStockReport")
+);
 const Orderreport = lazy(() =>
   import("./views/apps/freshlist/customer/Ticketing/Orderreport")
 );
@@ -1924,6 +1936,22 @@ class AppRouter extends React.Component {
           <AppRoute
             path="/app/softNumen/report/CustomerReports"
             component={CustomerReports}
+          />
+          <AppRoute
+            path="/app/softNumen/report/DeadParty"
+            component={DeadParty}
+          />
+          <AppRoute
+            path="/app/softNumen/warranty/openingStock"
+            component={OpeningStock}
+          />
+          <AppRoute
+            path="/app/AjGroup/dispatch/WarehouseDispatchlist"
+            component={WarehouseDispatchlist}
+          />
+          <AppRoute
+            path="/app/Ajgroup/Stock/OverDueStockReport"
+            component={OverDueStockReport}
           />
           <AppRoute
             path="/app/softNumen/report/EarningReport"
