@@ -70,6 +70,7 @@ class PromotionalActivityList extends React.Component {
       Table: false,
       InsiderPermissions: {},
       TableFilterValue: "",
+      PromotionName: "",
       SelectedFilter: "",
       Arrindex: "",
       rowData: [],
@@ -402,11 +403,12 @@ class PromotionalActivityList extends React.Component {
     }
   };
   handleFilter = e => {
+    this.setState({ PromotionName: e.target.value });
     let headings;
     let maxKeys = 0;
     let elementWithMaxKeys = null;
     let AllMainData = [];
-    console.log(this.state.AllData);
+    // console.log(this.state.AllData);
     if (e.target.value !== "NA") {
       let myarr = this.state.AllData?.filter(
         (ele, i) => ele[e.target.value]?.length
@@ -441,14 +443,14 @@ class PromotionalActivityList extends React.Component {
         findheading.splice(index2, 1);
       }
       // }
-      headings = findheading?.map(ele => {
+      headings = findheading?.map((ele) => {
         if (ele == "freeOtherProducts") {
           return {
             headerName: "freeOtherProducts",
             field: "freeOtherProducts",
             filter: true,
             width: 180,
-            cellRendererFramework: params => {
+            cellRendererFramework: (params) => {
               return (
                 <>
                   <div className="d-flex justify-content-center">
@@ -477,7 +479,7 @@ class PromotionalActivityList extends React.Component {
           field: "sortorder",
           field: "transactions",
           width: 190,
-          cellRendererFramework: params => {
+          cellRendererFramework: (params) => {
             console.log(params?.data);
             return (
               <div className="actions cursor-pointer">
@@ -490,7 +492,14 @@ class PromotionalActivityList extends React.Component {
                           size="25px"
                           color="green"
                           onClick={() => {
-                            //   this.handleChangeEdit(params.data, "readonly");
+                            history.push({
+                              pathname: `/app/ajgroup/account/EditPromotionalActivity/${params?.data?._id}`,
+                              state: {
+                                data: params?.data,
+                                key: this.state.PromotionName,
+                                type: "View",
+                              },
+                            });
                           }}
                         />
                       )}
@@ -504,9 +513,16 @@ class PromotionalActivityList extends React.Component {
                         <Edit
                           className="mr-50"
                           size="25px"
-                          color="blue"
+                          color="green"
                           onClick={() => {
-                            //   this.handleChangeEdit(params.data, "Editable");
+                            history.push({
+                              pathname: `/app/ajgroup/account/EditPromotionalActivity/${params?.data?._id}`,
+                              state: {
+                                data: params?.data,
+                                key: this.state.PromotionName,
+                                type: "Edit",
+                              },
+                            });
                           }}
                         />
                       )}
@@ -539,7 +555,7 @@ class PromotionalActivityList extends React.Component {
           field: "status",
           filter: true,
           width: 150,
-          cellRendererFramework: params => {
+          cellRendererFramework: (params) => {
             return params.data?.status === "Active" ? (
               <div className="badge badge-pill badge-success">
                 {params.data?.status}
