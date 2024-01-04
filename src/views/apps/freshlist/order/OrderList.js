@@ -19,6 +19,7 @@ import {
   Badge,
   Table,
   CustomInput,
+  Spinner,
 } from "reactstrap";
 import { ContextLayout } from "../../../../utility/context/Layout";
 import { AgGridReact } from "ag-grid-react";
@@ -54,6 +55,7 @@ import {
 import * as XLSX from "xlsx";
 import UserContext from "../../../../context/Context";
 import { CheckPermission } from "../house/CheckPermission";
+import SuperAdminUI from "../../../SuperAdminUi/SuperAdminUI";
 
 const SelectedColums = [];
 
@@ -67,6 +69,8 @@ class OrderList extends React.Component {
       isOpen: false,
       Arrindex: "",
       rowData: [],
+      MasterShow: false,
+
       ShowBill: false,
       modal: false,
       modalone: false,
@@ -285,19 +289,19 @@ class OrderList extends React.Component {
     };
   }
   toggleModal = () => {
-    this.setState(prevState => ({
+    this.setState((prevState) => ({
       modalone: !prevState.modalone,
     }));
   };
   LookupviewStart = () => {
-    this.setState(prevState => ({
+    this.setState((prevState) => ({
       modal: !prevState.modal,
     }));
   };
 
   handleChangeView = (data, types) => {
     let type = types;
-   
+
     if (type == "readonly") {
       console.log("ResponseData", data.orderItems);
       console.log("Test", data);
@@ -309,18 +313,16 @@ class OrderList extends React.Component {
     }
   };
 
-  async componentDidMount() {
-    const userId = JSON.parse(localStorage.getItem("userData"))._id;
-    const UserInformation = this.context?.UserInformatio;
-    const InsidePermissions = CheckPermission("Sales Order");
-    // console.log(InsidePermissions);
-    this.setState({ InsiderPermissions: InsidePermissions });
-    await createOrderhistoryview(userId)
-      .then(res => {
-        
+  async Apicalling(id, db) {
+    this.setState({ Loading: true });
+
+    await createOrderhistoryview(id)
+      .then((res) => {
         if (res?.orderHistory) {
+          this.setState({ Loading: false });
+
           this.setState({ rowData: res?.orderHistory });
-        } 
+        }
         this.setState({ AllcolumnDefs: this.state.columnDefs });
         this.setState({ SelectedCols: this.state.columnDefs });
 
@@ -334,13 +336,30 @@ class OrderList extends React.Component {
           this.setState({ SelectedcolumnDefs: this.state.columnDefs });
         }
       })
-      .catch(err => {
-        console.log(err);
+      .catch((err) => {
+        this.setState({ rowData: [] });
+        this.setState({ Loading: false });
+        swal("Error", `${err.response?.data?.message}`);
+        console.log(err.response?.data);
       });
+  }
+  async componentDidMount() {
+    const userId = JSON.parse(localStorage.getItem("userData"))._id;
+    const UserInformation = this.context?.UserInformatio;
+    const InsidePermissions = CheckPermission("Sales Order");
+    // console.log(InsidePermissions);
+    this.setState({ InsiderPermissions: InsidePermissions });
+    let pageparmission = JSON.parse(localStorage.getItem("userData"));
+
+    if (pageparmission?.rolename.rank === 0) {
+      this.setState({ MasterShow: true });
+    }
+
+    await this.Apicalling(pageparmission?._id, pageparmission?.database);
   }
 
   togglemodal = () => {
-    this.setState(prevState => ({
+    this.setState((prevState) => ({
       modalone: !prevState.modalone,
     }));
     this.setState({ ShowBill: false });
@@ -349,7 +368,7 @@ class OrderList extends React.Component {
     this.setState({ ShowBill: true });
   };
   toggleDropdown = () => {
-    this.setState(prevState => ({ isOpen: !prevState.isOpen }));
+    this.setState((prevState) => ({ isOpen: !prevState.isOpen }));
   };
 
   runthisfunction(id) {
@@ -358,15 +377,15 @@ class OrderList extends React.Component {
         cancel: "cancel",
         catch: { text: "Delete ", value: "delete" },
       },
-    }).then(value => {
+    }).then((value) => {
       switch (value) {
         case "delete":
           Delete_targetINlist(id)
-            .then(res => {
+            .then((res) => {
               let selectedData = this.gridApi.getSelectedRows();
               this.gridApi.updateRowData({ remove: selectedData });
             })
-            .catch(err => {
+            .catch((err) => {
               console.log(err);
             });
           break;
@@ -375,7 +394,7 @@ class OrderList extends React.Component {
     });
   }
 
-  onGridReady = params => {
+  onGridReady = (params) => {
     this.gridApi = params.api;
     this.gridColumnApi = params.columnApi;
     this.gridRef.current = params.api;
@@ -387,11 +406,11 @@ class OrderList extends React.Component {
     });
   };
 
-  updateSearchQuery = val => {
+  updateSearchQuery = (val) => {
     this.gridApi.setQuickFilter(val);
   };
 
-  filterSize = val => {
+  filterSize = (val) => {
     if (this.gridApi) {
       this.gridApi.paginationSetPageSize(Number(val));
       this.setState({
@@ -406,7 +425,7 @@ class OrderList extends React.Component {
       SelectedColums?.push(value);
     } else {
       const delindex = SelectedColums?.findIndex(
-        ele => ele?.headerName === value?.headerName
+        (ele) => ele?.headerName === value?.headerName
       );
 
       SelectedColums?.splice(delindex, 1);
@@ -417,14 +436,14 @@ class OrderList extends React.Component {
       Papa.parse(csvData, {
         header: true,
         skipEmptyLines: true,
-        complete: result => {
+        complete: (result) => {
           if (result.data && result.data.length > 0) {
             resolve(result.data);
           } else {
             reject(new Error("No data found in the CSV"));
           }
         },
-        error: error => {
+        error: (error) => {
           reject(error);
         },
       });
@@ -436,7 +455,7 @@ class OrderList extends React.Component {
 
     const doc = new jsPDF("landscape", "mm", size, false);
     doc.setTextColor(5, 87, 97);
-    const tableData = parsedData.map(row => Object.values(row));
+    const tableData = parsedData.map((row) => Object.values(row));
     doc.addImage(Logo, "JPEG", 10, 10, 50, 30);
     let date = new Date();
     doc.setCreationDate(date);
@@ -461,12 +480,12 @@ class OrderList extends React.Component {
       console.error("Error parsing CSV:", error);
     }
   };
-  processCell = params => {
+  processCell = (params) => {
     return params.value;
   };
 
   convertCsvToExcel(csvData) {
-    return new Promise(resolve => {
+    return new Promise((resolve) => {
       Papa.parse(csvData, {
         header: true,
         dynamicTyping: true,
@@ -497,7 +516,7 @@ class OrderList extends React.Component {
     window.URL.revokeObjectURL(url);
   }
 
-  exportToExcel = async e => {
+  exportToExcel = async (e) => {
     const CsvData = this.gridApi.getDataAsCsv({
       processCellCallback: this.processCell,
     });
@@ -510,7 +529,7 @@ class OrderList extends React.Component {
       processCellCallback: this.processCell,
     });
     Papa.parse(CsvData, {
-      complete: result => {
+      complete: (result) => {
         const ws = XLSX.utils.json_to_sheet(result.data);
         const wb = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(wb, ws, "Sheet1");
@@ -546,13 +565,13 @@ class OrderList extends React.Component {
       processCellCallback: this.processCell,
     });
     Papa.parse(CsvData, {
-      complete: result => {
+      complete: (result) => {
         const rows = result.data;
 
         // Create XML
         let xmlString = "<root>\n";
 
-        rows.forEach(row => {
+        rows.forEach((row) => {
           xmlString += "  <row>\n";
           row.forEach((cell, index) => {
             xmlString += `    <field${index + 1}>${cell}</field${index + 1}>\n`;
@@ -570,7 +589,7 @@ class OrderList extends React.Component {
     });
   };
 
-  HandleSetVisibleField = e => {
+  HandleSetVisibleField = (e) => {
     e.preventDefault();
     debugger;
     this.gridApi.setColumnDefs(this.state.SelectedcolumnDefs);
@@ -587,10 +606,10 @@ class OrderList extends React.Component {
   HeadingRightShift = () => {
     const updatedSelectedColumnDefs = [
       ...new Set([
-        ...this.state.SelectedcolumnDefs.map(item => JSON.stringify(item)),
-        ...SelectedColums.map(item => JSON.stringify(item)),
+        ...this.state.SelectedcolumnDefs.map((item) => JSON.stringify(item)),
+        ...SelectedColums.map((item) => JSON.stringify(item)),
       ]),
-    ].map(item => JSON.parse(item));
+    ].map((item) => JSON.parse(item));
     this.setState({
       SelectedcolumnDefs: [...new Set(updatedSelectedColumnDefs)], // Update the state with the combined array
     });
@@ -607,7 +626,36 @@ class OrderList extends React.Component {
       });
     }
   };
+  handleParentSubmit = (e) => {
+    e.preventDefault();
+    let SuperAdmin = JSON.parse(localStorage.getItem("SuperadminIdByMaster"));
+    let id = SuperAdmin.split(" ")[0];
+    let db = SuperAdmin.split(" ")[1];
+    this.Apicalling(id, db);
+  };
+  handleDropdownChange = (selectedValue) => {
+    localStorage.setItem("SuperadminIdByMaster", JSON.stringify(selectedValue));
+  };
   render() {
+    if (this.state.Loading) {
+      return (
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            marginTop: "20rem",
+          }}>
+          <Spinner
+            style={{
+              height: "4rem",
+              width: "4rem",
+            }}
+            color="primary">
+            Loading...
+          </Spinner>
+        </div>
+      );
+    }
     const {
       rowData,
       columnDefs,
@@ -630,6 +678,14 @@ class OrderList extends React.Component {
                     Sales Order List
                   </h1>
                 </Col>
+                {this.state.MasterShow && (
+                  <Col>
+                    <SuperAdminUI
+                      onDropdownChange={this.handleDropdownChange}
+                      onSubmit={this.handleParentSubmit}
+                    />
+                  </Col>
+                )}
                 {InsiderPermissions && InsiderPermissions?.View && (
                   <Col>
                     <span className="mx-1">

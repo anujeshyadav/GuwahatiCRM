@@ -1,6 +1,9 @@
 // Guwahati open api EndPoints
+export const Super_Admin_List = "/master/all-super-admin-list";
 export const Get_Role = "/role/get-role";
+export const Role_list_by_Master = "/master/get-super-admin-role/";
 export const Create_Role = "/role/create-role";
+export const Create_Role_by_Master = "/master/create-super-admin-role";
 export const Get_Role_by_id = "/role/get-role-by-id/";
 export const Create_Company_Details = "/company-detail/save-company-details";
 export const View_Company_Details = "/company-detail/view-company-details/";

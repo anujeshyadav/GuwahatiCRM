@@ -19,6 +19,7 @@ import {
   CustomInput,
   Table,
   Label,
+  Spinner,
 } from "reactstrap";
 import { ImDownload } from "react-icons/im";
 
@@ -56,6 +57,7 @@ import {
 import * as XLSX from "xlsx";
 import UserContext from "../../../../context/Context";
 import { CheckPermission } from "../house/CheckPermission";
+import SuperAdminUI from "../../../SuperAdminUi/SuperAdminUI";
 // import TargetAssignedOne from "./TargetAssignedOne";
 
 const SelectedColums = [];
@@ -68,6 +70,8 @@ class PlaceOrderList extends React.Component {
     this.gridApi = null;
     this.state = {
       isOpen: false,
+      MasterShow: false,
+
       Arrindex: "",
       InsiderPermissions: {},
       rowData: [],
@@ -315,13 +319,13 @@ class PlaceOrderList extends React.Component {
     };
   }
   togglemodal = () => {
-    this.setState(prevState => ({
+    this.setState((prevState) => ({
       modalone: !prevState.modalone,
     }));
     this.setState({ ShowBill: false });
   };
   LookupviewStart = () => {
-    this.setState(prevState => ({
+    this.setState((prevState) => ({
       modal: !prevState.modal,
     }));
   };
@@ -336,16 +340,13 @@ class PlaceOrderList extends React.Component {
       this.setState({ EditOneData: data });
     }
   };
-
-  async componentDidMount() {
-    const UserInformation = this.context?.UserInformatio;
-    const InsidePermissions = CheckPermission("Place Order");
-    this.setState({ InsiderPermissions: InsidePermissions });
-    let userId = JSON.parse(localStorage.getItem("userData"))?._id;
-    await PlaceOrderViewList(userId)
+  async Apicalling(id, db) {
+    this.setState({ Loading: true });
+    await PlaceOrderViewList(id)
       .then((res) => {
-        
         // console.log(res?.orderHistory);
+        this.setState({ Loading: false });
+
         this.setState({ rowData: res?.orderHistory });
         this.setState({ AllcolumnDefs: this.state.columnDefs });
         this.setState({ SelectedCols: this.state.columnDefs });
@@ -361,11 +362,24 @@ class PlaceOrderList extends React.Component {
         }
       })
       .catch((err) => {
+        this.setState({ Loading: false });
+
         console.log(err);
       });
   }
+
+  async componentDidMount() {
+    const UserInformation = this.context?.UserInformatio;
+    const InsidePermissions = CheckPermission("Place Order");
+    this.setState({ InsiderPermissions: InsidePermissions });
+    let userId = JSON.parse(localStorage.getItem("userData"));
+    await this.Apicalling(userId?._id, userId?.database);
+    if (userId?.rolename?.rank === 0) {
+      this.setState({ MasterShow: true });
+    }
+  }
   toggleDropdown = () => {
-    this.setState(prevState => ({ isOpen: !prevState.isOpen }));
+    this.setState((prevState) => ({ isOpen: !prevState.isOpen }));
   };
 
   runthisfunction(id) {
@@ -374,15 +388,15 @@ class PlaceOrderList extends React.Component {
         cancel: "cancel",
         catch: { text: "Delete ", value: "delete" },
       },
-    }).then(value => {
+    }).then((value) => {
       switch (value) {
         case "delete":
           Delete_targetINlist(id)
-            .then(res => {
+            .then((res) => {
               let selectedData = this.gridApi.getSelectedRows();
               this.gridApi.updateRowData({ remove: selectedData });
             })
-            .catch(err => {
+            .catch((err) => {
               console.log(err);
             });
           break;
@@ -391,7 +405,7 @@ class PlaceOrderList extends React.Component {
     });
   }
 
-  onGridReady = params => {
+  onGridReady = (params) => {
     this.gridApi = params.api;
     this.gridColumnApi = params.columnApi;
     this.gridRef.current = params.api;
@@ -403,11 +417,11 @@ class PlaceOrderList extends React.Component {
     });
   };
 
-  updateSearchQuery = val => {
+  updateSearchQuery = (val) => {
     this.gridApi.setQuickFilter(val);
   };
 
-  filterSize = val => {
+  filterSize = (val) => {
     if (this.gridApi) {
       this.gridApi.paginationSetPageSize(Number(val));
       this.setState({
@@ -422,7 +436,7 @@ class PlaceOrderList extends React.Component {
       SelectedColums?.push(value);
     } else {
       const delindex = SelectedColums?.findIndex(
-        ele => ele?.headerName === value?.headerName
+        (ele) => ele?.headerName === value?.headerName
       );
 
       SelectedColums?.splice(delindex, 1);
@@ -433,14 +447,14 @@ class PlaceOrderList extends React.Component {
       Papa.parse(csvData, {
         header: true,
         skipEmptyLines: true,
-        complete: result => {
+        complete: (result) => {
           if (result.data && result.data.length > 0) {
             resolve(result.data);
           } else {
             reject(new Error("No data found in the CSV"));
           }
         },
-        error: error => {
+        error: (error) => {
           reject(error);
         },
       });
@@ -452,7 +466,7 @@ class PlaceOrderList extends React.Component {
 
     const doc = new jsPDF("landscape", "mm", size, false);
     doc.setTextColor(5, 87, 97);
-    const tableData = parsedData.map(row => Object.values(row));
+    const tableData = parsedData.map((row) => Object.values(row));
     doc.addImage(Logo, "JPEG", 10, 10, 50, 30);
     let date = new Date();
     doc.setCreationDate(date);
@@ -477,12 +491,12 @@ class PlaceOrderList extends React.Component {
       console.error("Error parsing CSV:", error);
     }
   };
-  processCell = params => {
+  processCell = (params) => {
     return params.value;
   };
 
   convertCsvToExcel(csvData) {
-    return new Promise(resolve => {
+    return new Promise((resolve) => {
       Papa.parse(csvData, {
         header: true,
         dynamicTyping: true,
@@ -513,7 +527,7 @@ class PlaceOrderList extends React.Component {
     window.URL.revokeObjectURL(url);
   }
 
-  exportToExcel = async e => {
+  exportToExcel = async (e) => {
     const CsvData = this.gridApi.getDataAsCsv({
       processCellCallback: this.processCell,
     });
@@ -526,7 +540,7 @@ class PlaceOrderList extends React.Component {
       processCellCallback: this.processCell,
     });
     Papa.parse(CsvData, {
-      complete: result => {
+      complete: (result) => {
         const ws = XLSX.utils.json_to_sheet(result.data);
         const wb = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(wb, ws, "Sheet1");
@@ -562,13 +576,13 @@ class PlaceOrderList extends React.Component {
       processCellCallback: this.processCell,
     });
     Papa.parse(CsvData, {
-      complete: result => {
+      complete: (result) => {
         const rows = result.data;
 
         // Create XML
         let xmlString = "<root>\n";
 
-        rows.forEach(row => {
+        rows.forEach((row) => {
           xmlString += "  <row>\n";
           row.forEach((cell, index) => {
             xmlString += `    <field${index + 1}>${cell}</field${index + 1}>\n`;
@@ -586,7 +600,7 @@ class PlaceOrderList extends React.Component {
     });
   };
 
-  HandleSetVisibleField = e => {
+  HandleSetVisibleField = (e) => {
     e.preventDefault();
     this.gridApi.setColumnDefs(this.state.SelectedcolumnDefs);
     this.setState({ columnDefs: this.state.SelectedcolumnDefs });
@@ -603,10 +617,10 @@ class PlaceOrderList extends React.Component {
   HeadingRightShift = () => {
     const updatedSelectedColumnDefs = [
       ...new Set([
-        ...this.state.SelectedcolumnDefs.map(item => JSON.stringify(item)),
-        ...SelectedColums.map(item => JSON.stringify(item)),
+        ...this.state.SelectedcolumnDefs.map((item) => JSON.stringify(item)),
+        ...SelectedColums.map((item) => JSON.stringify(item)),
       ]),
-    ].map(item => JSON.parse(item));
+    ].map((item) => JSON.parse(item));
     this.setState({
       SelectedcolumnDefs: [...new Set(updatedSelectedColumnDefs)], // Update the state with the combined array
     });
@@ -623,7 +637,36 @@ class PlaceOrderList extends React.Component {
       });
     }
   };
+  handleParentSubmit = (e) => {
+    e.preventDefault();
+    let SuperAdmin = JSON.parse(localStorage.getItem("SuperadminIdByMaster"));
+    let id = SuperAdmin.split(" ")[0];
+    let db = SuperAdmin.split(" ")[1];
+    this.Apicalling(id, db);
+  };
+  handleDropdownChange = (selectedValue) => {
+    localStorage.setItem("SuperadminIdByMaster", JSON.stringify(selectedValue));
+  };
   render() {
+    if (this.state.Loading) {
+      return (
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            marginTop: "20rem",
+          }}>
+          <Spinner
+            style={{
+              height: "4rem",
+              width: "4rem",
+            }}
+            color="primary">
+            Loading...
+          </Spinner>
+        </div>
+      );
+    }
     const {
       rowData,
       columnDefs,
@@ -645,6 +688,14 @@ class PlaceOrderList extends React.Component {
                     Place Order List
                   </h1>
                 </Col>
+                {this.state.MasterShow && (
+                  <Col>
+                    <SuperAdminUI
+                      onDropdownChange={this.handleDropdownChange}
+                      onSubmit={this.handleParentSubmit}
+                    />
+                  </Col>
+                )}
                 {InsiderPermissions && InsiderPermissions?.View && (
                   <Col>
                     <span className="mx-1">

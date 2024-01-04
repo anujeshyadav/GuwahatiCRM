@@ -227,41 +227,53 @@ const AddPurchaseOrder = (args) => {
     setGrandTotalAmt(amt);
     setProduct(newFormValues);
   };
-
-  const submitHandler = (e) => {
-    e.preventDefault();
-    let fullname = UserInfo.firstName + " " + UserInfo?.lastName;
-    console.log(UserInfo?.UserName);
-    const ObjOrder = {
-      userId: UserInfo?._id,
-      fullName: fullname,
-      address: UserInfo?.Address,
-      grandTotal: grandTotalAmt,
-      MobileNo: UserInfo?.mobileNumber,
-      country: UserInfo?.Country,
-      state: UserInfo?.State,
-      city: UserInfo?.City,
-      orderItems: product,
-      DateofDelivery: dateofDelivery,
-      partyId: PartyId,
-      created_by: UserInfo?._id,
+console.log(product);
+const submitHandler = (e) => {
+  let SelectedPoduct = product?.map((ele, i) => {
+    return {
+      productId: ele?.productId,
+      Size: ele?.Size,
+      qty: ele?.qty,
+      price: ele?.price,
+      unitType: ele?.unitType,
+      // status: "ordered",
     };
-    if (error) {
-      swal("Error occured while Entering Details");
-    } else {
-      SavePurchaseOrder(ObjOrder)
-        .then((res) => {
-          console.log(res);
-          swal(" Add Purchase Order  Successfully");
-          history.push("/app/AJgroup/order/purchaseOrderList");
+  });
 
-          // }
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    }
+  e.preventDefault();
+  let fullname = UserInfo.firstName + " " + UserInfo?.lastName;
+  console.log(UserInfo?.UserName);
+  const ObjOrder = {
+    userId: UserInfo?._id,
+    fullName: fullname,
+    address: UserInfo?.Address,
+    grandTotal: grandTotalAmt,
+    MobileNo: UserInfo?.mobileNumber,
+    country: UserInfo?.Country,
+    state: UserInfo?.State,
+    city: UserInfo?.City,
+    orderItems: SelectedPoduct,
+    DateofDelivery: dateofDelivery,
+    partyId: PartyId,
+    created_by: UserInfo?._id,
   };
+  debugger;
+  if (error) {
+    swal("Error occured while Entering Details");
+  } else {
+    SavePurchaseOrder(ObjOrder)
+      .then((res) => {
+        console.log(res);
+        swal(" Add Purchase Order  Successfully");
+        history.push("/app/AJgroup/order/purchaseOrderList");
+
+        // }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }
+};
 
   const onRemove1 = (selectedList, removedItem, index) => {
     console.log(selectedList);

@@ -129,9 +129,8 @@ const CreateAccount = () => {
         let ShowList = res?.Role?.filter(
           (item, i) => item?.position > userdata?.rolename?.position
         );
-
         setdropdownValue(ShowList);
-        console.log(ShowList);
+        // console.log(ShowList);
       })
       .catch((err) => {
         console.log(err);
