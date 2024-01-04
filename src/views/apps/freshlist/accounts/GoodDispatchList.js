@@ -18,6 +18,7 @@ import {
   Badge,
   Label,
   Table,
+  Spinner,
 } from "reactstrap";
 import { ImDownload } from "react-icons/im";
 import { ContextLayout } from "../../../../utility/context/Layout";
@@ -57,6 +58,7 @@ import * as XLSX from "xlsx";
 import UserContext from "../../../../context/Context";
 import { CheckPermission } from "../house/CheckPermission";
 import { AiOutlineDownload } from "react-icons/ai";
+import SuperAdminUI from "../../../SuperAdminUi/SuperAdminUI";
 const SelectedColums = [];
 
 class GoodDispatchList extends React.Component {
@@ -67,6 +69,8 @@ class GoodDispatchList extends React.Component {
     this.gridApi = null;
     this.state = {
       isOpen: false,
+      MasterShow: false,
+
       Arrindex: "",
       rowData: [],
       setMySelectedarr: [],
@@ -121,7 +125,7 @@ class GoodDispatchList extends React.Component {
           field: "sortorder",
           field: "transactions",
           width: 190,
-          cellRendererFramework: params => {
+          cellRendererFramework: (params) => {
             return (
               <div className="actions cursor-pointer">
                 {this.state.InsiderPermissions &&
@@ -181,8 +185,7 @@ class GoodDispatchList extends React.Component {
           field: "order_status",
           filter: true,
           width: 140,
-          cellRendererFramework: params => {
-         
+          cellRendererFramework: (params) => {
             return params.data?.status?.toLowerCase()?.includes("completed") ? (
               <div className="badge badge-pill bg-success">Completed</div>
             ) : params.data?.status === "pending" ? (
@@ -214,7 +217,7 @@ class GoodDispatchList extends React.Component {
           filter: true,
           resizable: true,
           width: 210,
-          cellRendererFramework: params => {
+          cellRendererFramework: (params) => {
             console.log(params.data);
 
             return (
@@ -265,7 +268,7 @@ class GoodDispatchList extends React.Component {
           filter: true,
           resizable: true,
           width: 140,
-          cellRendererFramework: params => {
+          cellRendererFramework: (params) => {
             // console.log(params?.data?.status);
 
             return (
@@ -353,7 +356,7 @@ class GoodDispatchList extends React.Component {
           filter: true,
           resizable: true,
           width: 150,
-          cellRendererFramework: params => {
+          cellRendererFramework: (params) => {
             return (
               <div className="d-flex align-items-center justify-content-center cursor-pointer">
                 <div>
@@ -369,7 +372,7 @@ class GoodDispatchList extends React.Component {
           filter: true,
           resizable: true,
           width: 160,
-          cellRendererFramework: params => {
+          cellRendererFramework: (params) => {
             return (
               <div className="d-flex align-items-center justify-content-center cursor-pointer">
                 <div>
@@ -385,7 +388,7 @@ class GoodDispatchList extends React.Component {
           filter: true,
           resizable: true,
           width: 200,
-          cellRendererFramework: params => {
+          cellRendererFramework: (params) => {
             return (
               <div className="d-flex align-items-center justify-content-center cursor-pointer">
                 <div>
@@ -401,7 +404,7 @@ class GoodDispatchList extends React.Component {
           filter: true,
           resizable: true,
           width: 150,
-          cellRendererFramework: params => {
+          cellRendererFramework: (params) => {
             return (
               <div className="d-flex align-items-center justify-content-center cursor-pointer">
                 <div>
@@ -417,7 +420,7 @@ class GoodDispatchList extends React.Component {
           filter: true,
           resizable: true,
           width: 150,
-          cellRendererFramework: params => {
+          cellRendererFramework: (params) => {
             return (
               <div className="d-flex align-items-center justify-content-center cursor-pointer">
                 <div>
@@ -433,7 +436,7 @@ class GoodDispatchList extends React.Component {
           filter: true,
           resizable: true,
           width: 210,
-          cellRendererFramework: params => {
+          cellRendererFramework: (params) => {
             return (
               <div className="d-flex align-items-center cursor-pointer">
                 <div>
@@ -450,7 +453,7 @@ class GoodDispatchList extends React.Component {
           filter: true,
           resizable: true,
           width: 180,
-          cellRendererFramework: params => {
+          cellRendererFramework: (params) => {
             // console.log(params.data);
             return (
               <div className="d-flex cursor-pointer">
@@ -538,12 +541,12 @@ class GoodDispatchList extends React.Component {
   }
 
   toggleModal = () => {
-    this.setState(prevState => ({
+    this.setState((prevState) => ({
       modalOne: !prevState.modalOne,
     }));
   };
   LookupviewStart = () => {
-    this.setState(prevState => ({
+    this.setState((prevState) => ({
       modal: !prevState.modal,
     }));
   };
@@ -558,15 +561,12 @@ class GoodDispatchList extends React.Component {
   //     this.setState({ EditOneData: data });
   //   }
   // };
-
-  async componentDidMount() {
-    const UserInformation = this.context?.UserInformatio;
-    const InsidePermissions = CheckPermission("Dispatch details");
-    this.setState({ InsiderPermissions: InsidePermissions });
-    const userId = JSON.parse(localStorage.getItem("userData"));
-    await OrderDisPatchList(userId?._id, userId?.database)
+  async Apicalling(id, db) {
+    this.setState({ Loading: true });
+    await OrderDisPatchList(id, db)
       .then((res) => {
-        console.log(res?.Invoice);
+        this.setState({ Loading: false });
+
         this.setState({ rowData: res?.Invoice });
         this.setState({ AllcolumnDefs: this.state.columnDefs });
 
@@ -584,11 +584,24 @@ class GoodDispatchList extends React.Component {
         this.setState({ SelectedCols: this.state.columnDefs });
       })
       .catch((err) => {
+        this.setState({ Loading: false });
+
         console.log(err);
       });
   }
+  async componentDidMount() {
+    const UserInformation = this.context?.UserInformatio;
+    const InsidePermissions = CheckPermission("Dispatch details");
+    this.setState({ InsiderPermissions: InsidePermissions });
+    const userId = JSON.parse(localStorage.getItem("userData"));
+
+    if (userId?.rolename.rank === 0) {
+      this.setState({ MasterShow: true });
+    }
+    await this.Apicalling(userId?._id, userId?.database);
+  }
   toggleDropdown = () => {
-    this.setState(prevState => ({ isOpen: !prevState.isOpen }));
+    this.setState((prevState) => ({ isOpen: !prevState.isOpen }));
   };
 
   runthisfunction(id) {
@@ -597,15 +610,15 @@ class GoodDispatchList extends React.Component {
         cancel: "cancel",
         catch: { text: "Delete ", value: "delete" },
       },
-    }).then(value => {
+    }).then((value) => {
       switch (value) {
         case "delete":
           DeleteAccount(id)
-            .then(res => {
+            .then((res) => {
               let selectedData = this.gridApi.getSelectedRows();
               this.gridApi.updateRowData({ remove: selectedData });
             })
-            .catch(err => {
+            .catch((err) => {
               console.log(err);
             });
           break;
@@ -614,7 +627,7 @@ class GoodDispatchList extends React.Component {
     });
   }
 
-  onGridReady = params => {
+  onGridReady = (params) => {
     this.gridApi = params.api;
     this.gridColumnApi = params.columnApi;
     this.gridRef.current = params.api;
@@ -626,11 +639,11 @@ class GoodDispatchList extends React.Component {
     });
   };
 
-  updateSearchQuery = val => {
+  updateSearchQuery = (val) => {
     this.gridApi.setQuickFilter(val);
   };
 
-  filterSize = val => {
+  filterSize = (val) => {
     if (this.gridApi) {
       this.gridApi.paginationSetPageSize(Number(val));
       this.setState({
@@ -645,7 +658,7 @@ class GoodDispatchList extends React.Component {
       SelectedColums?.push(value);
     } else {
       const delindex = SelectedColums?.findIndex(
-        ele => ele?.headerName === value?.headerName
+        (ele) => ele?.headerName === value?.headerName
       );
 
       SelectedColums?.splice(delindex, 1);
@@ -656,14 +669,14 @@ class GoodDispatchList extends React.Component {
       Papa.parse(csvData, {
         header: true,
         skipEmptyLines: true,
-        complete: result => {
+        complete: (result) => {
           if (result.data && result.data.length > 0) {
             resolve(result.data);
           } else {
             reject(new Error("No data found in the CSV"));
           }
         },
-        error: error => {
+        error: (error) => {
           reject(error);
         },
       });
@@ -675,7 +688,7 @@ class GoodDispatchList extends React.Component {
 
     const doc = new jsPDF("landscape", "mm", size, false);
     doc.setTextColor(5, 87, 97);
-    const tableData = parsedData.map(row => Object.values(row));
+    const tableData = parsedData.map((row) => Object.values(row));
     doc.addImage(Logo, "JPEG", 10, 10, 50, 30);
     let date = new Date();
     doc.setCreationDate(date);
@@ -700,12 +713,12 @@ class GoodDispatchList extends React.Component {
       console.error("Error parsing CSV:", error);
     }
   };
-  processCell = params => {
+  processCell = (params) => {
     return params.value;
   };
 
   convertCsvToExcel(csvData) {
-    return new Promise(resolve => {
+    return new Promise((resolve) => {
       Papa.parse(csvData, {
         header: true,
         dynamicTyping: true,
@@ -736,7 +749,7 @@ class GoodDispatchList extends React.Component {
     window.URL.revokeObjectURL(url);
   }
 
-  exportToExcel = async e => {
+  exportToExcel = async (e) => {
     const CsvData = this.gridApi.getDataAsCsv({
       processCellCallback: this.processCell,
     });
@@ -749,7 +762,7 @@ class GoodDispatchList extends React.Component {
       processCellCallback: this.processCell,
     });
     Papa.parse(CsvData, {
-      complete: result => {
+      complete: (result) => {
         const ws = XLSX.utils.json_to_sheet(result.data);
         const wb = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(wb, ws, "Sheet1");
@@ -785,13 +798,13 @@ class GoodDispatchList extends React.Component {
       processCellCallback: this.processCell,
     });
     Papa.parse(CsvData, {
-      complete: result => {
+      complete: (result) => {
         const rows = result.data;
 
         // Create XML
         let xmlString = "<root>\n";
 
-        rows.forEach(row => {
+        rows.forEach((row) => {
           xmlString += "  <row>\n";
           row.forEach((cell, index) => {
             xmlString += `    <field${index + 1}>${cell}</field${index + 1}>\n`;
@@ -813,7 +826,7 @@ class GoodDispatchList extends React.Component {
     });
   };
 
-  HandleSetVisibleField = e => {
+  HandleSetVisibleField = (e) => {
     e.preventDefault();
     this.gridApi.setColumnDefs(this.state.SelectedcolumnDefs);
     this.setState({ columnDefs: this.state.SelectedcolumnDefs });
@@ -829,10 +842,10 @@ class GoodDispatchList extends React.Component {
   HeadingRightShift = () => {
     const updatedSelectedColumnDefs = [
       ...new Set([
-        ...this.state.SelectedcolumnDefs.map(item => JSON.stringify(item)),
-        ...SelectedColums.map(item => JSON.stringify(item)),
+        ...this.state.SelectedcolumnDefs.map((item) => JSON.stringify(item)),
+        ...SelectedColums.map((item) => JSON.stringify(item)),
       ]),
-    ].map(item => JSON.parse(item));
+    ].map((item) => JSON.parse(item));
     this.setState({
       SelectedcolumnDefs: [...new Set(updatedSelectedColumnDefs)], // Update the state with the combined array
     });
@@ -849,7 +862,36 @@ class GoodDispatchList extends React.Component {
       });
     }
   };
+  handleParentSubmit = (e) => {
+    e.preventDefault();
+    let SuperAdmin = JSON.parse(localStorage.getItem("SuperadminIdByMaster"));
+    let id = SuperAdmin.split(" ")[0];
+    let db = SuperAdmin.split(" ")[1];
+    this.Apicalling(id, db);
+  };
+  handleDropdownChange = (selectedValue) => {
+    localStorage.setItem("SuperadminIdByMaster", JSON.stringify(selectedValue));
+  };
   render() {
+    if (this.state.Loading) {
+      return (
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            marginTop: "20rem",
+          }}>
+          <Spinner
+            style={{
+              height: "4rem",
+              width: "4rem",
+            }}
+            color="primary">
+            Loading...
+          </Spinner>
+        </div>
+      );
+    }
     const {
       rowData,
       columnDefs,
@@ -912,6 +954,14 @@ class GoodDispatchList extends React.Component {
                             Good Dispatch List
                           </h1>
                         </Col>
+                        {this.state.MasterShow && (
+                          <Col>
+                            <SuperAdminUI
+                              onDropdownChange={this.handleDropdownChange}
+                              onSubmit={this.handleParentSubmit}
+                            />
+                          </Col>
+                        )}
 
                         {InsiderPermissions && InsiderPermissions?.View && (
                           <Col>

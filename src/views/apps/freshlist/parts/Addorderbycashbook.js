@@ -101,12 +101,13 @@ const Addorderbycashbook = args => {
 
   const handleSelectionUnit = (selectedList, selectedItem, index) => {
     SelectedSize.push(selectedItem);
-    setProduct(prevProductList => {
-      // debugger;
+    setProduct((prevProductList) => {
+      debugger;
       const updatedUnitList = [...prevProductList];
       const updatedProduct = { ...updatedUnitList[index] }; // Create a copy of the product at the specified index
       updatedProduct.Size = selectedItem?.unitQty;
-      updatedProduct.unitQty = selectedItem.primaryUnit;
+      // updatedProduct.unitQty = selectedItem.primaryUnit;
+      updatedProduct.unitType = selectedItem.primaryUnit;
       updatedUnitList[index] = updatedProduct;
       let myarr = prevProductList?.map((ele, i) => {
         // console.log(ele?.qty * ele.price * SelectedSize[i]?.unitQty);
@@ -138,29 +139,29 @@ const Addorderbycashbook = args => {
     let userdata = JSON.parse(localStorage.getItem("userData"));
 
     ProductListView(userdata?._id, userdata?.database)
-      .then(res => {
+      .then((res) => {
         console.log(res?.Product);
         setProductList(res?.Product);
       })
-      .catch(err => {
+      .catch((err) => {
         console.log(err);
       });
     CreateCustomerList(userdata?._id, userdata?.database)
-      .then(res => {
+      .then((res) => {
         let value = res?.Customer;
         if (value?.length) {
           setPartyList(value);
         }
       })
-      .catch(err => {
+      .catch((err) => {
         console.log(err);
       });
     UnitListView(userdata?._id, userdata?.database)
-      .then(res => {
+      .then((res) => {
         console.log(res.Unit);
         setUnitList(res.Unit);
       })
-      .catch(err => {
+      .catch((err) => {
         console.log(err);
       });
   }, []);
@@ -183,7 +184,7 @@ const Addorderbycashbook = args => {
       },
     ]);
   };
-  let removeMoreProduct = i => {
+  let removeMoreProduct = (i) => {
     let newFormValues = [...product];
     newFormValues.splice(i, 1);
     GrandTotal.splice(i, 1);
@@ -191,9 +192,21 @@ const Addorderbycashbook = args => {
     setGrandTotalAmt(amt);
     setProduct(newFormValues);
   };
-  const submitHandler = e => {
+  const submitHandler = (e) => {
     e.preventDefault();
     const fullname = UserInfo?.firstName + " " + UserInfo?.lastName;
+    let SelectedPoduct = product?.map((ele, i) => {
+      return {
+        productId: ele?.productId,
+        Size: ele?.Size,
+        qty: ele?.qty,
+        price: ele?.price,
+        unitType: ele?.unitType,
+        status: "ordered",
+      };
+    });
+
+    debugger;
     const payload = {
       userId: UserInfo?._id,
       fullName: fullname,
@@ -204,7 +217,7 @@ const Addorderbycashbook = args => {
       country: UserInfo?.Country,
       state: UserInfo?.State,
       city: UserInfo?.City,
-      orderItems: product,
+      orderItems: SelectedPoduct,
       DateofDelivery: dateofDelivery,
       partyId: PartyId,
     };
@@ -214,11 +227,11 @@ const Addorderbycashbook = args => {
       swal("Error occured while Entering Details");
     } else {
       Ordercashbook(payload)
-        .then(res => {
+        .then((res) => {
           swal("Order Created Successfully");
           //  history.push("/app/softnumen/order/orderList")
         })
-        .catch(err => {
+        .catch((err) => {
           console.log(err);
         });
     }

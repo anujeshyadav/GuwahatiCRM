@@ -122,7 +122,7 @@ class Cashbook extends React.Component {
           filter: true,
           width: 150,
           cellRendererFramework: (params) => {
-            return params.data?.status?.toLowerCase()?.includes("completed")  ? (
+            return params.data?.status?.toLowerCase()?.includes("completed") ? (
               <div className="badge badge-pill badge-success">
                 {params.data.status}
               </div>
@@ -153,6 +153,7 @@ class Cashbook extends React.Component {
           filter: true,
           width: 180,
           cellRendererFramework: (params) => {
+            console.log(params?.data);
             return (
               <>
                 <div className="actions cursor-pointer">
@@ -173,28 +174,14 @@ class Cashbook extends React.Component {
               <>
                 <div className="actions cursor-pointer">
                   <span>
-                    {params.data.orderItems && params.data.orderItems.length}
+                    {params.data.orderItems && params.data.orderItems?.length}
                   </span>
                 </div>
               </>
             );
           },
         },
-        {
-          headerName: "Size",
-          field: "unitType",
-          filter: true,
-          width: 220,
-          cellRendererFramework: (params) => {
-            return (
-              <>
-                <div className="actions cursor-pointer">
-                  <span>{params.data.unitType && params.data.unitType}</span>
-                </div>
-              </>
-            );
-          },
-        },
+
         {
           headerName: "Total",
           field: "grandTotal",
@@ -204,52 +191,7 @@ class Cashbook extends React.Component {
             return (
               <>
                 <div className="actions cursor-pointer">
-                  <span>{params?.data?.grandTotal}</span>
-                </div>
-              </>
-            );
-          },
-        },
-        {
-          headerName: "Size",
-          field: "orderItems",
-          filter: true,
-          width: 150,
-          cellRendererFramework: (params) => {
-            return (
-              <>
-                <div className="actions cursor-pointer">
-                  <span>{params?.data?.fullName}</span>
-                </div>
-              </>
-            );
-          },
-        },
-        {
-          headerName: "GST Rate",
-          field: "orderItems",
-          filter: true,
-          width: 180,
-          cellRendererFramework: (params) => {
-            return (
-              <>
-                <div className="actions cursor-pointer">
-                  <span>{params?.data?.fullName}</span>
-                </div>
-              </>
-            );
-          },
-        },
-        {
-          headerName: "HSN Code",
-          field: "orderItems",
-          filter: true,
-          width: 180,
-          cellRendererFramework: (params) => {
-            return (
-              <>
-                <div className="actions cursor-pointer">
-                  <span>{params?.data?.fullName}</span>
+                  <Badge color="primary">{params?.data?.grandTotal}</Badge>
                 </div>
               </>
             );

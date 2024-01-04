@@ -25,6 +25,7 @@ import { AiOutlineSearch } from "react-icons/ai";
 import {
   CreateAccountView,
   CreateRole,
+  CreateRoleByMaster,
 } from "../../../../ApiEndPoint/ApiCalling";
 import xmlJs from "xml-js";
 import { CloudLightning } from "react-feather";
@@ -34,7 +35,9 @@ export default function AddRoleNew(args) {
   const [Role, setRole] = useState("");
   const [Selected, setSelected] = useState([]);
   const [SelectedIndex, setIndex] = useState("");
+  const [Database, setDatabase] = useState("");
   const [show, setShow] = useState(false);
+  const [ShowDataBase, setShowDataBase] = useState(false);
   const [modal, setModal] = useState(false);
   const [CreatAccountView, setCreatAccountView] = useState({});
   const [dropdownValue, setdropdownValue] = useState({});
@@ -91,9 +94,15 @@ export default function AddRoleNew(args) {
   // console.log(Selected);
   useEffect(() => {
     console.log(Selected);
+    let userdata = JSON.parse(localStorage.getItem("userData"));
+
+    console.log(userdata?.rolename?.position == 0);
+    if (userdata?.rolename?.position == 0) {
+      setShowDataBase(true);
+    }
   }, [Selected]);
 
-  const handleSumit = (e) => {
+  const handleSumit = async (e) => {
     e.preventDefault();
     let userdata = JSON.parse(localStorage.getItem("userData"));
 
@@ -105,20 +114,50 @@ export default function AddRoleNew(args) {
       // rank: 7,
       rolePermission: Selected,
     };
-    CreateRole(payload)
-      .then((res) => {
-        console.log(res);
-        var checkboxes = document.getElementsByName("check");
-        for (var checkbox of checkboxes) {
-          checkbox.checked = false;
-        }
-        setSelected("");
-        setDesc("");
-        setRole("");
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+
+    if (userdata?.rolename?.position == 0) {
+      let load = {
+        createdBy: userdata?._id,
+        roleName: Role,
+        position: 1,
+        database: Database,
+        desc: Desc,
+        rank: 1,
+        rolePermission: Selected,
+      };
+      await CreateRoleByMaster(load)
+        .then((res) => {
+          console.log(res);
+          swal("Created Successfully");
+          var checkboxes = document.getElementsByName("check");
+          for (var checkbox of checkboxes) {
+            checkbox.checked = false;
+          }
+          setSelected("");
+          setDesc("");
+          setRole("");
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    } else {
+      await CreateRole(payload)
+        .then((res) => {
+          console.log(res);
+          swal("Created Successfully");
+
+          var checkboxes = document.getElementsByName("check");
+          for (var checkbox of checkboxes) {
+            checkbox.checked = false;
+          }
+          setSelected("");
+          setDesc("");
+          setRole("");
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }
 
     // let formdata = new FormData();
 
@@ -235,13 +274,28 @@ export default function AddRoleNew(args) {
                       // className="form-control"
                     />
                   </Col>
+                  {ShowDataBase && ShowDataBase && (
+                    <Col>
+                      <Label>Enter Database Name * </Label>
+                      <Input
+                        required
+                        value={Database}
+                        onChange={(e) => setDatabase(e.target.value)}
+                        type="text"
+                        placeholder="Enter database Name.."
+                        // className="form-control"
+                      />
+                    </Col>
+                  )}
                 </Row>
               </div>
               <section className="mt-5 container">
                 <Row className="gy-0 container">
                   {Roles &&
                     Roles?.map((value, index) => {
-                      console.log("value", value?.TabName);
+                      {
+                        /* console.log("value", value?.TabName); */
+                      }
                       return (
                         <Col
                           key={index}
