@@ -1,6 +1,9 @@
 // Guwahati open api EndPoints
+export const Super_Admin_List = "/master/all-super-admin-list";
 export const Get_Role = "/role/get-role";
+export const Role_list_by_Master = "/master/get-super-admin-role/";
 export const Create_Role = "/role/create-role";
+export const Create_Role_by_Master = "/master/create-super-admin-role";
 export const Get_Role_by_id = "/role/get-role-by-id/";
 export const Create_Company_Details = "/company-detail/save-company-details";
 export const View_Company_Details = "/company-detail/view-company-details/";
@@ -58,6 +61,7 @@ export const ViewOne_Production = "/production/view-production-by-id/";
 export const UpdateOne_Production = "/production/update-production-items/";
 export const WareHouse_Closing_Stock = "/stock-updation/view-closing-stock/";
 export const WareHouse_OverDue_Stock = "/stock-updation/view-over-due-stock";
+export const WareHouse_Current_Stock = "/product/view-current-stock/";
 
 // production process end
 
