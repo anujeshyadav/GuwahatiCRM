@@ -775,6 +775,9 @@ const CreateStockTrx = lazy(() =>
 const CreatePromotionalActivity = lazy(() =>
   import("./views/apps/freshlist/accounts/CreatePromotionalActivity")
 );
+const EditPromotionalActivity = lazy(() =>
+  import("./views/apps/freshlist/accounts/EditPromotionalActivity")
+);
 const CreateTarget = lazy(() =>
   import("./views/apps/freshlist/accounts/CreateTarget")
 );
@@ -1307,10 +1310,10 @@ const accessControl = lazy(() =>
 const RouteConfig = ({ component: Component, fullLayout, ...rest }) => (
   <Route
     {...rest}
-    render={props => {
+    render={(props) => {
       return (
         <ContextLayout.Consumer>
-          {context => {
+          {(context) => {
             let LayoutTag =
               fullLayout === true
                 ? context.fullLayout
@@ -1330,7 +1333,7 @@ const RouteConfig = ({ component: Component, fullLayout, ...rest }) => (
     }}
   />
 );
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
   return {
     user: state.auth.login.userRole,
   };
@@ -2395,6 +2398,10 @@ class AppRouter extends React.Component {
           <AppRoute
             path="/app/ajgroup/account/CreatePromotionalActivity"
             component={CreatePromotionalActivity}
+          />
+          <AppRoute
+            path="/app/ajgroup/account/EditPromotionalActivity/:id"
+            component={EditPromotionalActivity}
           />
           <AppRoute
             path="/app/SoftNumen/account/CreateTarget"

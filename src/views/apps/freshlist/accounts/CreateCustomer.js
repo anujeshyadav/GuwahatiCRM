@@ -29,6 +29,7 @@ import {
   CreateAccountView,
   CreateCustomersave,
   CreateCustomerxmlView,
+  Get_RoleList,
 } from "../../../../ApiEndPoint/ApiCalling";
 import { BiEnvelope } from "react-icons/bi";
 import { FcPhoneAndroid } from "react-icons/fc";
@@ -40,6 +41,7 @@ import { FaPlus } from "react-icons/fa";
 
 const CreateCustomer = () => {
   const [CreatAccountView, setCreatAccountView] = useState([]);
+  const [RoleList, setRoleList] = useState([]);
   const [Countries, setCountry] = useState({});
   const [States, setState] = useState({});
   const [Cities, setCities] = useState({});
@@ -122,9 +124,30 @@ const CreateCustomer = () => {
     console.log(formData);
   }, [formData]);
   useEffect(() => {
+    let userdata = JSON.parse(localStorage.getItem("userData"));
+    Get_RoleList(userdata?._id, userdata?.database)
+      .then((res) => {
+        let ShowList = res?.Role?.filter(
+          (item, i) => item?.position > userdata?.rolename?.position
+        );
+        setRoleList(ShowList);
+        // console.log(ShowList);
+      })
+      .catch((err) => {
+        console.log(err);
+        swal("Roles List Not found");
+      });
+
+    console.log(userdata?._id);
+    formData["created_by"] = userdata?._id;
+  }, []);
+  useEffect(() => {
     CreateCustomerxmlView()
       .then((res) => {
-        const jsonData = xmlJs.xml2json(res.data, { compact: true, spaces: 2 });
+        const jsonData = xmlJs.xml2json(res.data, {
+          compact: true,
+          spaces: 2,
+        });
         console.log(JSON.parse(jsonData)?.CreateCustomer);
         setCreatAccountView(JSON.parse(jsonData)?.CreateCustomer?.input);
 
@@ -244,6 +267,31 @@ const CreateCustomer = () => {
           <CardBody>
             <Form className="m-1" onSubmit={submitHandler}>
               <Row className="mb-2">
+                <Col lg="4" md="4">
+                  <FormGroup>
+                    <Label className="mb-1">Role List</Label>
+                    <CustomInput
+                      required
+                      type="select"
+                      name="rolename"
+                      value={formData["rolename"]}
+                      onChange={(e) => {
+                        setFormData({
+                          ...formData,
+                          ["rolename"]: e.target.value,
+                        });
+                      }}>
+                      <option>--select Role--</option>
+                      {RoleList &&
+                        RoleList?.length &&
+                        RoleList?.map((ele, i) => {
+                          return (
+                            <option value={ele?._id}>{ele?.roleName}</option>
+                          );
+                        })}
+                    </CustomInput>
+                  </FormGroup>
+                </Col>
                 {dropdownValue && (
                   <Col lg="4" md="4" sm="12">
                     <FormGroup>

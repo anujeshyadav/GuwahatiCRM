@@ -1,0 +1,2 @@
+(this["webpackJsonpvuexy-react-admin-dashboard"]=this["webpackJsonpvuexy-react-admin-dashboard"]||[]).push([[405],{3095:function(a,t,e){"use strict";e.r(t);var n=e(1),r=e.n(n);t.default=function(){return r.a.createElement("div",null,"wastagestockreturnproduction")}}}]);
+//# sourceMappingURL=405.9d4b5f3e.chunk.js.map

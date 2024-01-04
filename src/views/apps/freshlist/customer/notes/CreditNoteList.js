@@ -15,6 +15,7 @@ import {
   ModalHeader,
   ModalBody,
   Badge,
+  Spinner,
 } from "reactstrap";
 import { ImDownload } from "react-icons/im";
 import { AgGridReact } from "ag-grid-react";
@@ -49,6 +50,7 @@ import {
 import * as XLSX from "xlsx";
 import UserContext from "../../../../../context/Context";
 import { CheckPermission } from "../../house/CheckPermission";
+import SuperAdminUI from "../../../../SuperAdminUi/SuperAdminUI";
 
 const SelectedColums = [];
 
@@ -59,6 +61,8 @@ class CreditNoteList extends React.Component {
     this.gridRef = React.createRef();
     this.gridApi = null;
     this.state = {
+      MasterShow: false,
+
       isOpen: false,
       Arrindex: "",
       rowData: [],
@@ -140,27 +144,81 @@ class CreditNoteList extends React.Component {
         },
         {
           headerName: "Party name",
-          field: "userId.firstName",
+          field: "partyId.OwnerName",
           filter: true,
           width: 220,
           cellRendererFramework: (params) => {
             return (
               <div>
-                <span>{params.data?.userId?.firstName}</span>
+                <span>{params.data?.partyId?.OwnerName}</span>
               </div>
             );
           },
-          // valueGetter: (params) => {
-          //   if (
-          //     params.data?.productItems &&
-          //     params.data?.productItems?.length > 0
-          //   ) {
-          //     return params?.data?.productItems?.map((val) => {
-          //       return val?.productId?.Product_Title;
-          //     });
-          //   }
-          //   return null;
-          // },
+        },
+        {
+          headerName: "Party Address",
+          field: "partyId.OwnerAddress",
+          filter: true,
+          width: 220,
+          cellRendererFramework: (params) => {
+            return (
+              <div>
+                <span>{params.data?.partyId?.OwnerAddress}</span>
+              </div>
+            );
+          },
+        },
+        {
+          headerName: "Party Transporter",
+          field: "partyId.transposrter_detail",
+          filter: true,
+          width: 220,
+          cellRendererFramework: (params) => {
+            return (
+              <div>
+                <span>{params.data?.partyId?.transposrter_detail}</span>
+              </div>
+            );
+          },
+        },
+        {
+          headerName: "Payment Term",
+          field: "partyId.PaymentTerm",
+          filter: true,
+          width: 220,
+          cellRendererFramework: (params) => {
+            return (
+              <div>
+                <span>{params.data?.partyId?.PaymentTerm}</span>
+              </div>
+            );
+          },
+        },
+        {
+          headerName: "email",
+          field: "partyId.email",
+          filter: true,
+          width: 220,
+          cellRendererFramework: (params) => {
+            return (
+              <div>
+                <span>{params.data?.partyId?.email}</span>
+              </div>
+            );
+          },
+        },
+        {
+          headerName: "City",
+          field: "partyId.City",
+          filter: true,
+          width: 220,
+          cellRendererFramework: (params) => {
+            return (
+              <div>
+                <span>{params.data?.partyId?.City}</span>
+              </div>
+            );
+          },
         },
 
         // {
@@ -257,17 +315,12 @@ class CreditNoteList extends React.Component {
       this.setState({ EditOneData: data });
     }
   };
-
-  componentDidMount() {
-    const UserInformation = this.context?.UserInformatio;
-    const InsidePermissions = CheckPermission("CreditNote");
-    this.setState({ InsiderPermissions: InsidePermissions });
-    let pageparmission = JSON.parse(localStorage.getItem("userData"));
-    let userid = pageparmission?._id;
-    CreditnoteOrderList(userid)
+  async Apicalling(id, db) {
+    this.setState({ Loading: true });
+    await CreditnoteOrderList(id, db)
       .then((res) => {
+        this.setState({ Loading: false });
         console.log(res?.CreditNote);
-
         if (res?.CreditNote?.length) {
           this.setState({ rowData: res?.CreditNote });
         }
@@ -287,8 +340,21 @@ class CreditNoteList extends React.Component {
         }
       })
       .catch((err) => {
+        this.setState({ Loading: false });
+        this.setState({ rowData: [] });
+
         console.log(err);
       });
+  }
+  async componentDidMount() {
+    let pageparmission = JSON.parse(localStorage.getItem("userData"));
+    if (pageparmission?.rolename?.rank === 0) {
+      this.setState({ MasterShow: true });
+    }
+    const UserInformation = this.context?.UserInformatio;
+    const InsidePermissions = CheckPermission("CreditNote");
+    this.setState({ InsiderPermissions: InsidePermissions });
+    await this.Apicalling(pageparmission?._id, pageparmission?.database);
   }
   toggleDropdown = () => {
     this.setState((prevState) => ({ isOpen: !prevState.isOpen }));
@@ -549,7 +615,36 @@ class CreditNoteList extends React.Component {
       });
     }
   };
+  handleParentSubmit = (e) => {
+    e.preventDefault();
+    let SuperAdmin = JSON.parse(localStorage.getItem("SuperadminIdByMaster"));
+    let id = SuperAdmin.split(" ")[0];
+    let db = SuperAdmin.split(" ")[1];
+    this.Apicalling(id, db);
+  };
+  handleDropdownChange = (selectedValue) => {
+    localStorage.setItem("SuperadminIdByMaster", JSON.stringify(selectedValue));
+  };
   render() {
+    if (this.state.Loading) {
+      return (
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            marginTop: "20rem",
+          }}>
+          <Spinner
+            style={{
+              height: "4rem",
+              width: "4rem",
+            }}
+            color="primary">
+            Loading...
+          </Spinner>
+        </div>
+      );
+    }
     const {
       rowData,
       columnDefs,
@@ -613,6 +708,14 @@ class CreditNoteList extends React.Component {
                             CreditNote List
                           </h1>
                         </Col>
+                        {this.state.MasterShow && (
+                          <Col>
+                            <SuperAdminUI
+                              onDropdownChange={this.handleDropdownChange}
+                              onSubmit={this.handleParentSubmit}
+                            />
+                          </Col>
+                        )}
 
                         {this.state.InsiderPermissions &&
                           this.state.InsiderPermissions?.View && (

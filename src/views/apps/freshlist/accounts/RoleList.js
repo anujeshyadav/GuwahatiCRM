@@ -15,6 +15,7 @@ import {
   DropdownToggle,
   Button,
   Badge,
+  Spinner,
 } from "reactstrap";
 import UserContext from "../../../../context/Context";
 import xmlJs from "xml-js";
@@ -32,9 +33,12 @@ import { BsEye, BsTrash } from "react-icons/bs";
 import {
   CreateAccountView,
   Get_RoleList,
+  _Get,
 } from "../../../../ApiEndPoint/ApiCalling";
 import { FaPlus } from "react-icons/fa";
 import { CheckPermission } from "../house/CheckPermission";
+import SuperAdminUI from "../../../SuperAdminUi/SuperAdminUI";
+import { Role_list_by_Master } from "../../../../ApiEndPoint/Api";
 
 class RoleList extends React.Component {
   static contextType = UserContext;
@@ -43,6 +47,9 @@ class RoleList extends React.Component {
     rowData: [],
     InsiderPermissions: {},
     paginationPageSize: 20,
+    Position: 0,
+    MasterShow: false,
+    MasterRoleList: false,
     currenPageSize: "",
     getPageSize: "",
     defaultColDef: {
@@ -64,7 +71,7 @@ class RoleList extends React.Component {
         filter: true,
         resizable: true,
         width: 160,
-        cellRendererFramework: params => {
+        cellRendererFramework: (params) => {
           return (
             <div className="d-flex align-items-center cursor-pointer">
               <div className="">
@@ -80,7 +87,7 @@ class RoleList extends React.Component {
         filter: true,
         resizable: true,
         width: 230,
-        cellRendererFramework: params => {
+        cellRendererFramework: (params) => {
           return (
             <div className="d-flex align-items-center cursor-pointer">
               <div className="">
@@ -96,7 +103,7 @@ class RoleList extends React.Component {
         field: "sortorder",
         field: "transactions",
         width: 200,
-        cellRendererFramework: params => {
+        cellRendererFramework: (params) => {
           return (
             <div className="actions cursor-pointer">
               {/* {this.state.InsiderPermissions &&
@@ -124,8 +131,7 @@ class RoleList extends React.Component {
                           borderRadius: "30px",
                           backgroundColor: "rgb(212, 111, 16)",
                           marginLeft: "3px",
-                        }}
-                      >
+                        }}>
                         <FaPencilAlt
                           className=""
                           size="20px"
@@ -158,34 +164,51 @@ class RoleList extends React.Component {
       },
     ],
   };
-  async componentDidMount() {
-    Get_RoleList()
-      .then(res => {
-        console.log(res?.Role);
-        this.setState({ rowData: res?.Role });
-      })
-      .catch(err => {
-        console.log(err);
-      });
 
+  async Apicalling(id, db, value) {
+    this.setState({ Loading: true });
+    if (value) {
+      await _Get(Role_list_by_Master, id)
+        .then((res) => {
+          console.log(res?.Role);
+          this.setState({ Loading: false });
+          this.setState({ rowData: res?.Role });
+        })
+        .catch((err) => {
+          this.setState({ Loading: false });
+          this.setState({ rowData: [] });
+
+          console.log(err);
+        });
+    } else {
+      await Get_RoleList(id, db)
+        .then((res) => {
+          this.setState({ Loading: false });
+
+          console.log(res?.Role);
+          this.setState({ rowData: res?.Role });
+        })
+        .catch((err) => {
+          this.setState({ Loading: false });
+          this.setState({ rowData: [] });
+
+          console.log(err);
+        });
+    }
+  }
+  async componentDidMount() {
+    let pageparmission = JSON.parse(localStorage.getItem("userData"));
+    this.setState({ Position: pageparmission?.rolename.rank });
+
+    if (pageparmission?.rolename.rank === 0) {
+      this.setState({ MasterShow: true });
+      this.setState({ MasterRoleList: true });
+    }
+    let value = pageparmission?.rolename.rank === 0;
     const InsidePermissions = CheckPermission("Create User");
     console.log(InsidePermissions);
     this.setState({ InsiderPermissions: InsidePermissions });
-    let pageparmission = JSON.parse(localStorage.getItem("userData"));
-
-    const formdata = new FormData();
-    formdata.append("user_id", pageparmission?.Userinfo?.id);
-    formdata.append("role", pageparmission?.Userinfo?.role);
-    await axiosConfig
-      .post("/getrolelist", formdata)
-      .then(response => {
-        const propertyNames = Object.values(response.data?.data);
-
-        this.setState({ rowData: propertyNames });
-      })
-      .catch(error => {
-        // console.log(error);
-      });
+    await this.Apicalling(pageparmission?._id, pageparmission?.database, value);
   }
 
   runthisfunction(id) {
@@ -196,19 +219,19 @@ class RoleList extends React.Component {
         cancel: "cancel",
         catch: { text: "Delete ", value: "delete" },
       },
-    }).then(value => {
+    }).then((value) => {
       switch (value) {
         case "delete":
           const formData = new FormData();
           formData.append("user_id", id);
           this.gridApi.updateRowData({ remove: selectedData });
-          axiosConfig.post(`/userdelete`, formData).then(response => {});
+          axiosConfig.post(`/userdelete`, formData).then((response) => {});
           break;
         default:
       }
     });
   }
-  onGridReady = params => {
+  onGridReady = (params) => {
     this.gridApi = params.api;
     this.gridColumnApi = params.columnApi;
     this.setState({
@@ -217,11 +240,11 @@ class RoleList extends React.Component {
       totalPages: this.gridApi.paginationGetTotalPages(),
     });
   };
-  updateSearchQuery = val => {
+  updateSearchQuery = (val) => {
     this.gridApi.setQuickFilter(val);
   };
 
-  filterSize = val => {
+  filterSize = (val) => {
     if (this.gridApi) {
       this.gridApi.paginationSetPageSize(Number(val));
       this.setState({
@@ -269,23 +292,59 @@ class RoleList extends React.Component {
   //         console.log(error);
   //       });
   //   };
-
+  handleParentSubmit = (e) => {
+    e.preventDefault();
+    this.setState({ MasterRoleList: false });
+    let SuperAdmin = JSON.parse(localStorage.getItem("SuperadminIdByMaster"));
+    let id = SuperAdmin.split(" ")[0];
+    let db = SuperAdmin.split(" ")[1];
+    this.Apicalling(id, db, false);
+  };
+  handleDropdownChange = (selectedValue) => {
+    localStorage.setItem("SuperadminIdByMaster", JSON.stringify(selectedValue));
+  };
   render() {
+    if (this.state.Loading) {
+      return (
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            marginTop: "20rem",
+          }}>
+          <Spinner
+            style={{
+              height: "4rem",
+              width: "4rem",
+            }}
+            color="primary">
+            Loading...
+          </Spinner>
+        </div>
+      );
+    }
     const { rowData, columnDefs, defaultColDef } = this.state;
     return (
       <Row className="app-user-list">
         <Col sm="12">
           <Card>
             <Row className="mt-2 mx-2 mr-2">
-              <Col lg="6" md="6" sm="6" xs="12">
+              <Col lg="3" md="3" sm="6" xs="12">
                 <h1 className="float-left" style={{ fontWeight: "600" }}>
-                  Created Role List
+                  Role List
                 </h1>
               </Col>
-              <Col lg="2" md="2" sm="2" xs="12"></Col>
+              {this.state.MasterShow && (
+                <Col>
+                  <SuperAdminUI
+                    onDropdownChange={this.handleDropdownChange}
+                    onSubmit={this.handleParentSubmit}
+                  />
+                </Col>
+              )}
               {this.state.InsiderPermissions &&
                 this.state.InsiderPermissions?.Create && (
-                  <Col lg="2" md="2" sm="2" xs="12">
+                  <Col>
                     <div className="d-flex justify-content-end">
                       <Route
                         render={({ history }) => (
@@ -300,8 +359,7 @@ class RoleList extends React.Component {
                             color="#39cccc"
                             onClick={() =>
                               history.push("/app/freshlist/account/addRoleNew")
-                            }
-                          >
+                            }>
                             <FaPlus size={15} /> Create Role
                           </Button>
                         )}
@@ -312,29 +370,32 @@ class RoleList extends React.Component {
 
               {this.state.InsiderPermissions &&
                 this.state.InsiderPermissions?.Create && (
-                  <Col lg="2" sm="2" md="2" ms="12">
-                    <Route
-                      render={({ history }) => (
-                        <Button
-                          style={{
-                            cursor: "pointer",
-                            backgroundColor: "#39cccc",
-                            color: "white",
-                            fontWeight: "600",
-                          }}
-                          className=" float-right"
-                          color="#39cccc"
-                          onClick={() =>
-                            history.push(
-                              "/app/freshlist/account/CreateHeirarchy"
-                            )
-                          }
-                        >
-                          <FaPlus size={15} /> Hierarchy
-                        </Button>
-                      )}
-                    />
-                  </Col>
+                  <>
+                    {this.state.Position == 1 && (
+                      <Col lg="2" sm="2" md="2" ms="12">
+                        <Route
+                          render={({ history }) => (
+                            <Button
+                              style={{
+                                cursor: "pointer",
+                                backgroundColor: "#39cccc",
+                                color: "white",
+                                fontWeight: "600",
+                              }}
+                              className=" float-right"
+                              color="#39cccc"
+                              onClick={() =>
+                                history.push(
+                                  "/app/freshlist/account/CreateHeirarchy"
+                                )
+                              }>
+                              <FaPlus size={15} /> Hierarchy
+                            </Button>
+                          )}
+                        />
+                      </Col>
+                    )}
+                  </>
                 )}
             </Row>
             <CardBody style={{ marginTop: "-1.5rem" }}>
@@ -360,26 +421,22 @@ class RoleList extends React.Component {
                         <DropdownMenu right>
                           <DropdownItem
                             tag="div"
-                            onClick={() => this.filterSize(20)}
-                          >
+                            onClick={() => this.filterSize(20)}>
                             20
                           </DropdownItem>
                           <DropdownItem
                             tag="div"
-                            onClick={() => this.filterSize(50)}
-                          >
+                            onClick={() => this.filterSize(50)}>
                             50
                           </DropdownItem>
                           <DropdownItem
                             tag="div"
-                            onClick={() => this.filterSize(100)}
-                          >
+                            onClick={() => this.filterSize(100)}>
                             100
                           </DropdownItem>
                           <DropdownItem
                             tag="div"
-                            onClick={() => this.filterSize(134)}
-                          >
+                            onClick={() => this.filterSize(134)}>
                             134
                           </DropdownItem>
                         </DropdownMenu>
@@ -433,7 +490,7 @@ class RoleList extends React.Component {
                     </div> */}
                   </div>
                   <ContextLayout.Consumer>
-                    {context => (
+                    {(context) => (
                       <AgGridReact
                         gridOptions={{}}
                         rowSelection="multiple"
