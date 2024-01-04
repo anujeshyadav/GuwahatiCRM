@@ -47,6 +47,7 @@ class RoleList extends React.Component {
     rowData: [],
     InsiderPermissions: {},
     paginationPageSize: 20,
+    Position: 0,
     MasterShow: false,
     MasterRoleList: false,
     currenPageSize: "",
@@ -164,16 +165,14 @@ class RoleList extends React.Component {
     ],
   };
 
-  async Apicalling(id, db) {
+  async Apicalling(id, db, value) {
     this.setState({ Loading: true });
-    if (this.state.MasterRoleList) {
-      _Get(Role_list_by_Master, id)
+    if (value) {
+      await _Get(Role_list_by_Master, id)
         .then((res) => {
-          this.setState({ Loading: false });
           console.log(res?.Role);
+          this.setState({ Loading: false });
           this.setState({ rowData: res?.Role });
-          debugger;
-          console.log(res);
         })
         .catch((err) => {
           this.setState({ Loading: false });
@@ -199,15 +198,17 @@ class RoleList extends React.Component {
   }
   async componentDidMount() {
     let pageparmission = JSON.parse(localStorage.getItem("userData"));
+    this.setState({ Position: pageparmission?.rolename.rank });
+
     if (pageparmission?.rolename.rank === 0) {
       this.setState({ MasterShow: true });
       this.setState({ MasterRoleList: true });
     }
-    this.Apicalling(pageparmission?._id, pageparmission?.database);
-
+    let value = pageparmission?.rolename.rank === 0;
     const InsidePermissions = CheckPermission("Create User");
     console.log(InsidePermissions);
     this.setState({ InsiderPermissions: InsidePermissions });
+    await this.Apicalling(pageparmission?._id, pageparmission?.database, value);
   }
 
   runthisfunction(id) {
@@ -293,11 +294,11 @@ class RoleList extends React.Component {
   //   };
   handleParentSubmit = (e) => {
     e.preventDefault();
+    this.setState({ MasterRoleList: false });
     let SuperAdmin = JSON.parse(localStorage.getItem("SuperadminIdByMaster"));
     let id = SuperAdmin.split(" ")[0];
     let db = SuperAdmin.split(" ")[1];
-    this.Apicalling(id, db);
-    this.setState({ MasterRoleList: false });
+    this.Apicalling(id, db, false);
   };
   handleDropdownChange = (selectedValue) => {
     localStorage.setItem("SuperadminIdByMaster", JSON.stringify(selectedValue));
@@ -369,28 +370,32 @@ class RoleList extends React.Component {
 
               {this.state.InsiderPermissions &&
                 this.state.InsiderPermissions?.Create && (
-                  <Col lg="2" sm="2" md="2" ms="12">
-                    <Route
-                      render={({ history }) => (
-                        <Button
-                          style={{
-                            cursor: "pointer",
-                            backgroundColor: "#39cccc",
-                            color: "white",
-                            fontWeight: "600",
-                          }}
-                          className=" float-right"
-                          color="#39cccc"
-                          onClick={() =>
-                            history.push(
-                              "/app/freshlist/account/CreateHeirarchy"
-                            )
-                          }>
-                          <FaPlus size={15} /> Hierarchy
-                        </Button>
-                      )}
-                    />
-                  </Col>
+                  <>
+                    {this.state.Position == 1 && (
+                      <Col lg="2" sm="2" md="2" ms="12">
+                        <Route
+                          render={({ history }) => (
+                            <Button
+                              style={{
+                                cursor: "pointer",
+                                backgroundColor: "#39cccc",
+                                color: "white",
+                                fontWeight: "600",
+                              }}
+                              className=" float-right"
+                              color="#39cccc"
+                              onClick={() =>
+                                history.push(
+                                  "/app/freshlist/account/CreateHeirarchy"
+                                )
+                              }>
+                              <FaPlus size={15} /> Hierarchy
+                            </Button>
+                          )}
+                        />
+                      </Col>
+                    )}
+                  </>
                 )}
             </Row>
             <CardBody style={{ marginTop: "-1.5rem" }}>

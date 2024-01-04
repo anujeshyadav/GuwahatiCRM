@@ -11,10 +11,6 @@ export const Roles = [
   {
     title: "Users",
     TabName: [
-      // {
-      //   title: "Customer",
-      //   permission: ["View", "Create", "Edit", "Delete"],
-      // },
       {
         title: "Create User",
         permission: ["View", "Create", "Edit", "Delete"],

@@ -131,7 +131,7 @@ class AccounSearch extends React.Component {
     const UserInformation = this.context?.UserInformatio;
     let pageparmission = JSON.parse(localStorage.getItem("userData"));
 
-    if (pageparmission?.rolename.rank === 0) {
+    if (pageparmission?.rolename?.rank === 0) {
       this.setState({ MasterShow: true });
     }
     const InsidePermissions = CheckPermission("Create User");
