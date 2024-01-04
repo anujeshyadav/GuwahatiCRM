@@ -20,14 +20,13 @@ import {
   Badge,
   Label,
   Table,
+  FormGroup,
   CustomInput,
 } from "reactstrap";
 
 import { ContextLayout } from "../../../../../utility/context/Layout";
 import { AgGridReact } from "ag-grid-react";
 import "ag-grid-community/dist/styles/ag-grid.css";
-import EditAccount from "../../accounts/EditAccount";
-import ViewAccount from "../../accounts/ViewAccount";
 import jsPDF from "jspdf";
 import "jspdf-autotable";
 import Logo from "../../../../../assets/img/profile/pages/logomain.png";
@@ -47,15 +46,12 @@ import {
 import moment from "moment-timezone";
 import swal from "sweetalert";
 import {
+  CreateAccountList,
   DeleteAccount,
   Stockupdate,
-  ViewFactoryStock,
-  ViewOneWarehouseStock,
-  WarehouseOutwardStocklist,
   _Get,
 } from "../../../../../ApiEndPoint/ApiCalling";
 import {
-  BsCloudDownloadFill,
   BsFillArrowDownSquareFill,
   BsFillArrowUpSquareFill,
 } from "react-icons/bs";
@@ -81,7 +77,8 @@ class OverDueStockReport extends React.Component {
       isOpen: false,
       ShowBill: false,
       InsiderPermissions: {},
-
+      wareHouseViewOne: [],
+      Show: false,
       Arrindex: "",
       rowData: [],
       setMySelectedarr: [],
@@ -151,25 +148,25 @@ class OverDueStockReport extends React.Component {
           field: "status",
           filter: true,
           width: 150,
-          cellRendererFramework: (params) => {
+          cellRendererFramework: params => {
             return params.data?.status === "Active" ? (
               <div className="badge badge-pill badge-success">
-                {params.data?.status}
+                {params.data?.productId?.status}
               </div>
             ) : params.data?.status === "InProcess" ? (
               <div className="badge badge-pill badge-warning">
-                {params.data?.status}
+                {params.data?.productId?.status}
               </div>
             ) : params.data?.status === "Hold" ? (
               <div className="badge badge-pill badge-danger">
-                {params.data?.status}
+                {params.data?.productId?.status}
               </div>
             ) : params.data?.status === "opening" ? (
               <div className="badge badge-pill badge-warning">
-                {params.data?.status}
+                {params.data?.productId?.status}
               </div>
             ) : (
-              <>{params?.data?.status}</>
+              <>{params?.data?.productId?.status}</>
             );
           },
         },
@@ -178,10 +175,10 @@ class OverDueStockReport extends React.Component {
           field: "Product_MRP",
           filter: true,
           width: 200,
-          cellRendererFramework: (params) => {
+          cellRendererFramework: params => {
             return (
               <div>
-                <span>{params.data?.Product_MRP}</span>
+                <span>{params.data?.productId?.Product_MRP}</span>
               </div>
             );
           },
@@ -191,10 +188,23 @@ class OverDueStockReport extends React.Component {
           field: "Product_Title",
           filter: true,
           width: 200,
-          cellRendererFramework: (params) => {
+          cellRendererFramework: params => {
             return (
               <div>
-                <span>{params.data?.Product_Title}</span>
+                <span>{params.data?.productId?.Product_Title}</span>
+              </div>
+            );
+          },
+        },
+        {
+          headerName: "SubCategroy",
+          field: "SubCategory",
+          filter: true,
+          width: 200,
+          cellRendererFramework: params => {
+            return (
+              <div>
+                <span>{params.data?.productId?.SubCategory}</span>
               </div>
             );
           },
@@ -204,10 +214,75 @@ class OverDueStockReport extends React.Component {
           field: "HSN_Code",
           filter: true,
           width: 200,
-          cellRendererFramework: (params) => {
+          cellRendererFramework: params => {
             return (
               <div>
-                <span>{params.data?.HSN_Code} Products</span>
+                <span>{params.data?.productId?.HSN_Code} </span>
+              </div>
+            );
+          },
+        },
+        {
+          headerName: "Size",
+          field: "Size",
+          filter: true,
+          width: 200,
+          cellRendererFramework: params => {
+            return (
+              <div>
+                <span>{params.data?.productId?.Size} </span>
+              </div>
+            );
+          },
+        },
+        {
+          headerName: "GST Rate",
+          field: "Size",
+          filter: true,
+          width: 200,
+          cellRendererFramework: params => {
+            return (
+              <div>
+                <span>{params.data?.productId["GST Rate"]} </span>
+              </div>
+            );
+          },
+        },
+        {
+          headerName: "CurrentStock",
+          field: "currentStock",
+          filter: true,
+          width: 200,
+          cellRendererFramework: params => {
+            return (
+              <div>
+                <span>{params.data?.currentStock} </span>
+              </div>
+            );
+          },
+        },
+        {
+          headerName: "UnitType",
+          field: "unitType",
+          filter: true,
+          width: 200,
+          cellRendererFramework: params => {
+            return (
+              <div>
+                <span>{params.data?.unitType} </span>
+              </div>
+            );
+          },
+        },
+        {
+          headerName: "TotalPrice",
+          field: "totalPrice",
+          filter: true,
+          width: 200,
+          cellRendererFramework: params => {
+            return (
+              <div>
+                <span>{params.data?.totalPrice} </span>
               </div>
             );
           },
@@ -224,7 +299,7 @@ class OverDueStockReport extends React.Component {
       },
     };
   }
-  UpdateStock = (e) => {
+  UpdateStock = e => {
     let payload = {
       status: e.target.value,
     };
@@ -236,17 +311,17 @@ class OverDueStockReport extends React.Component {
         cancel: "No",
         catch: { text: "Yes", value: "Sure" },
       },
-    }).then((value) => {
+    }).then(value => {
       switch (value) {
         case "Sure":
           Stockupdate(id, payload)
-            .then((res) => {
+            .then(res => {
               // console.log(res);
               swal("success", "Status Updated Successfully");
               this.togglemodal();
               this.ViewStockList();
             })
-            .catch((err) => {
+            .catch(err => {
               console.log(err);
             });
 
@@ -256,12 +331,12 @@ class OverDueStockReport extends React.Component {
     });
   };
   LookupviewStart = () => {
-    this.setState((prevState) => ({
+    this.setState(prevState => ({
       modal: !prevState.modal,
     }));
   };
   togglemodal = () => {
-    this.setState((prevState) => ({
+    this.setState(prevState => ({
       modalone: !prevState.modalone,
     }));
     this.setState({ ShowBill: false });
@@ -281,38 +356,56 @@ class OverDueStockReport extends React.Component {
   };
 
   async componentDidMount() {
-    const UserInformation = this.context?.UserInformatio;
     const InsidePermissions = CheckPermission("OverDue Stock");
     this.setState({ InsiderPermissions: InsidePermissions });
-    let pageparmission = JSON.parse(localStorage.getItem("userData"));
-    let URl = `${WareHouse_OverDue_Stock}/${pageparmission?._id}/`;
-    await _Get(URl, pageparmission?.database)
-      .then((res) => {
-        // let rowData = res?.Warehouse?.filter((ele) => ele?.status == "opening");
-
-        // if (rowData) {
-        this.setState({ rowData: res?.Product });
-        this.setState({ AllcolumnDefs: this.state.columnDefs });
-
-        let userHeading = JSON.parse(localStorage.getItem("OverDurStockList"));
-        if (userHeading?.length) {
-          this.setState({ columnDefs: userHeading });
-          this.gridApi.setColumnDefs(userHeading);
-          this.setState({ SelectedcolumnDefs: userHeading });
-        } else {
-          this.setState({ columnDefs: this.state.columnDefs });
-          this.setState({ SelectedcolumnDefs: this.state.columnDefs });
+    let userData = JSON.parse(localStorage.getItem("userData"));
+    await CreateAccountList(userData?._id, userData?.database)
+      .then(res => {
+        let value = res?.adminDetails;
+        if (value.length) {
+          this.setState({ wareHouseViewOne: value });
         }
-        this.setState({ SelectedCols: this.state.columnDefs });
-        // }
       })
-      .catch((err) => {
+      .catch(err => {
         console.log(err);
       });
   }
+  changeHandler = e => {
+    this.setState({ [e.target.name]: e.target.value });
+  };
+  handleShowWarehouse = async e => {
+    e.preventDefault();
+    if (this.state.warehouse != "NA") {
+      this.setState({ Show: true });
+      let userData = JSON.parse(localStorage.getItem("userData"));
+      let URl = `${WareHouse_OverDue_Stock}/${this.state.warehouse}/`;
+      await _Get(URl, userData?.database)
+        .then(res => {
+          this.setState({ rowData: res?.Product });
+          this.setState({ AllcolumnDefs: this.state.columnDefs });
 
+          let userHeading = JSON.parse(
+            localStorage.getItem("OverDurStockList")
+          );
+          if (userHeading?.length) {
+            this.setState({ columnDefs: userHeading });
+            this.gridApi.setColumnDefs(userHeading);
+            this.setState({ SelectedcolumnDefs: userHeading });
+          } else {
+            this.setState({ columnDefs: this.state.columnDefs });
+            this.setState({ SelectedcolumnDefs: this.state.columnDefs });
+          }
+          this.setState({ SelectedCols: this.state.columnDefs });
+        })
+        .catch(err => {
+          console.log(err);
+        });
+    } else {
+      swal("You did not select Any Warehouse");
+    }
+  };
   toggleDropdown = () => {
-    this.setState((prevState) => ({ isOpen: !prevState.isOpen }));
+    this.setState(prevState => ({ isOpen: !prevState.isOpen }));
   };
 
   runthisfunction(id) {
@@ -321,15 +414,15 @@ class OverDueStockReport extends React.Component {
         cancel: "cancel",
         catch: { text: "Delete ", value: "delete" },
       },
-    }).then((value) => {
+    }).then(value => {
       switch (value) {
         case "delete":
           DeleteAccount(id)
-            .then((res) => {
+            .then(res => {
               let selectedData = this.gridApi.getSelectedRows();
               this.gridApi.updateRowData({ remove: selectedData });
             })
-            .catch((err) => {
+            .catch(err => {
               console.log(err);
             });
           break;
@@ -338,7 +431,7 @@ class OverDueStockReport extends React.Component {
     });
   }
 
-  onGridReady = (params) => {
+  onGridReady = params => {
     this.gridApi = params.api;
     this.gridColumnApi = params.columnApi;
     this.gridRef.current = params.api;
@@ -350,11 +443,11 @@ class OverDueStockReport extends React.Component {
     });
   };
 
-  updateSearchQuery = (val) => {
+  updateSearchQuery = val => {
     this.gridApi.setQuickFilter(val);
   };
 
-  filterSize = (val) => {
+  filterSize = val => {
     if (this.gridApi) {
       this.gridApi.paginationSetPageSize(Number(val));
       this.setState({
@@ -369,7 +462,7 @@ class OverDueStockReport extends React.Component {
       SelectedColums?.push(value);
     } else {
       const delindex = SelectedColums?.findIndex(
-        (ele) => ele?.headerName === value?.headerName
+        ele => ele?.headerName === value?.headerName
       );
 
       SelectedColums?.splice(delindex, 1);
@@ -380,14 +473,14 @@ class OverDueStockReport extends React.Component {
       Papa.parse(csvData, {
         header: true,
         skipEmptyLines: true,
-        complete: (result) => {
+        complete: result => {
           if (result.data && result.data.length > 0) {
             resolve(result.data);
           } else {
             reject(new Error("No data found in the CSV"));
           }
         },
-        error: (error) => {
+        error: error => {
           reject(error);
         },
       });
@@ -399,7 +492,7 @@ class OverDueStockReport extends React.Component {
 
     const doc = new jsPDF("landscape", "mm", size, false);
     doc.setTextColor(5, 87, 97);
-    const tableData = parsedData.map((row) => Object.values(row));
+    const tableData = parsedData.map(row => Object.values(row));
     doc.addImage(Logo, "JPEG", 10, 10, 50, 30);
     let date = new Date();
     doc.setCreationDate(date);
@@ -424,14 +517,14 @@ class OverDueStockReport extends React.Component {
       console.error("Error parsing CSV:", error);
     }
   };
-  processCell = (params) => {
+  processCell = params => {
     // console.log(params);
     // Customize cell content as needed
     return params.value;
   };
 
   convertCsvToExcel(csvData) {
-    return new Promise((resolve) => {
+    return new Promise(resolve => {
       Papa.parse(csvData, {
         header: true,
         dynamicTyping: true,
@@ -462,7 +555,7 @@ class OverDueStockReport extends React.Component {
     window.URL.revokeObjectURL(url);
   }
 
-  exportToExcel = async (e) => {
+  exportToExcel = async e => {
     const CsvData = this.gridApi.getDataAsCsv({
       processCellCallback: this.processCell,
     });
@@ -475,7 +568,7 @@ class OverDueStockReport extends React.Component {
       processCellCallback: this.processCell,
     });
     Papa.parse(CsvData, {
-      complete: (result) => {
+      complete: result => {
         const ws = XLSX.utils.json_to_sheet(result.data);
         const wb = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(wb, ws, "Sheet1");
@@ -511,13 +604,13 @@ class OverDueStockReport extends React.Component {
       processCellCallback: this.processCell,
     });
     Papa.parse(CsvData, {
-      complete: (result) => {
+      complete: result => {
         const rows = result.data;
 
         // Create XML
         let xmlString = "<root>\n";
 
-        rows.forEach((row) => {
+        rows.forEach(row => {
           xmlString += "  <row>\n";
           row.forEach((cell, index) => {
             xmlString += `    <field${index + 1}>${cell}</field${index + 1}>\n`;
@@ -539,7 +632,7 @@ class OverDueStockReport extends React.Component {
     });
   };
 
-  HandleSetVisibleField = (e) => {
+  HandleSetVisibleField = e => {
     e.preventDefault();
     this.gridApi.setColumnDefs(this.state.SelectedcolumnDefs);
     this.setState({ columnDefs: this.state.SelectedcolumnDefs });
@@ -555,10 +648,10 @@ class OverDueStockReport extends React.Component {
   HeadingRightShift = () => {
     const updatedSelectedColumnDefs = [
       ...new Set([
-        ...this.state.SelectedcolumnDefs.map((item) => JSON.stringify(item)),
-        ...SelectedColums.map((item) => JSON.stringify(item)),
+        ...this.state.SelectedcolumnDefs.map(item => JSON.stringify(item)),
+        ...SelectedColums.map(item => JSON.stringify(item)),
       ]),
-    ].map((item) => JSON.parse(item));
+    ].map(item => JSON.parse(item));
     this.setState({
       SelectedcolumnDefs: [...new Set(updatedSelectedColumnDefs)], // Update the state with the combined array
     });
@@ -585,16 +678,50 @@ class OverDueStockReport extends React.Component {
       SelectedCols,
       AllcolumnDefs,
       InsiderPermissions,
+      Show,
     } = this.state;
     return (
       <>
-        {/* <ExcelReader /> */}
         <Row className="app-user-list">
           <Col sm="12">
             <Card>
               <Row className="mt-2 ml-2 mr-2">
                 <Col>
                   <h1 className="float-left">Overdue Stock List</h1>
+                </Col>
+                <Col>
+                  <FormGroup>
+                    <Label>Select Warehouse</Label>
+                    <CustomInput
+                      type="select"
+                      placeholder="Select Warehouse"
+                      name="warehouse"
+                      value={this.state.warehouse}
+                      onChange={this.changeHandler}
+                    >
+                      <option value="">--Select WareHouse--</option>
+                      {this.state.wareHouseViewOne?.map(cat => (
+                        <option value={cat?._id} key={cat?._id}>
+                          {cat?.firstName}
+                        </option>
+                      ))}
+                    </CustomInput>
+                  </FormGroup>
+                </Col>
+                <Col className="mb-2">
+                  <Button
+                    style={{
+                      cursor: "pointer",
+                      backgroundColor: "#39cccc",
+                      color: "white",
+                      fontWeight: "600",
+                    }}
+                    className="mt-2"
+                    color="#39cccc"
+                    onClick={this.handleShowWarehouse}
+                  >
+                    Submit
+                  </Button>
                 </Col>
                 {InsiderPermissions && InsiderPermissions?.View && (
                   <Col>
@@ -626,35 +753,41 @@ class OverDueStockReport extends React.Component {
                               border: "1px solid #39cccc",
                               backgroundColor: "white",
                             }}
-                            className="dropdown-content dropdownmy">
+                            className="dropdown-content dropdownmy"
+                          >
                             <h5
                               onClick={() => this.exportToPDF()}
                               style={{ cursor: "pointer" }}
-                              className=" mx-1 myactive mt-1">
+                              className=" mx-1 myactive mt-1"
+                            >
                               .PDF
                             </h5>
                             <h5
                               onClick={() => this.gridApi.exportDataAsCsv()}
                               style={{ cursor: "pointer" }}
-                              className=" mx-1 myactive">
+                              className=" mx-1 myactive"
+                            >
                               .CSV
                             </h5>
                             <h5
                               onClick={this.convertCSVtoExcel}
                               style={{ cursor: "pointer" }}
-                              className=" mx-1 myactive">
+                              className=" mx-1 myactive"
+                            >
                               .XLS
                             </h5>
                             <h5
                               onClick={this.exportToExcel}
                               style={{ cursor: "pointer" }}
-                              className=" mx-1 myactive">
+                              className=" mx-1 myactive"
+                            >
                               .XLSX
                             </h5>
                             <h5
                               onClick={() => this.convertCsvToXml()}
                               style={{ cursor: "pointer" }}
-                              className=" mx-1 myactive">
+                              className=" mx-1 myactive"
+                            >
                               .XML
                             </h5>
                           </div>
@@ -681,113 +814,122 @@ class OverDueStockReport extends React.Component {
                   </Col>
                 )}
               </Row>
-              <CardBody style={{ marginTop: "-1.5rem" }}>
-                {this.state.rowData === null ? null : (
-                  <div className="ag-theme-material w-100 my-2 ag-grid-table">
-                    <div className="d-flex flex-wrap justify-content-between align-items-center">
-                      <div className="mb-1">
-                        <UncontrolledDropdown className="p-1 ag-dropdown">
-                          <DropdownToggle tag="div">
-                            {this.gridApi
-                              ? this.state.currenPageSize
-                              : "" * this.state.getPageSize -
-                                (this.state.getPageSize - 1)}{" "}
-                            -{" "}
-                            {this.state.rowData.length -
-                              this.state.currenPageSize *
-                                this.state.getPageSize >
-                            0
-                              ? this.state.currenPageSize *
-                                this.state.getPageSize
-                              : this.state.rowData.length}{" "}
-                            of {this.state.rowData.length}
-                            <ChevronDown className="ml-50" size={15} />
-                          </DropdownToggle>
-                          <DropdownMenu right>
-                            <DropdownItem
-                              tag="div"
-                              onClick={() => this.filterSize(5)}>
-                              5
-                            </DropdownItem>
-                            <DropdownItem
-                              tag="div"
-                              onClick={() => this.filterSize(20)}>
-                              20
-                            </DropdownItem>
-                            <DropdownItem
-                              tag="div"
-                              onClick={() => this.filterSize(50)}>
-                              50
-                            </DropdownItem>
-                            <DropdownItem
-                              tag="div"
-                              onClick={() => this.filterSize(100)}>
-                              100
-                            </DropdownItem>
-                            <DropdownItem
-                              tag="div"
-                              onClick={() => this.filterSize(134)}>
-                              134
-                            </DropdownItem>
-                          </DropdownMenu>
-                        </UncontrolledDropdown>
-                      </div>
-                      <div className="d-flex flex-wrap justify-content-end mb-1">
-                        <div className="table-input mr-1">
-                          <Input
-                            placeholder="search Item here..."
-                            onChange={(e) =>
-                              this.updateSearchQuery(e.target.value)
-                            }
-                            value={this.state.value}
-                          />
+              {Show ? (
+                <>
+                  <CardBody style={{ marginTop: "-1.5rem" }}>
+                    {this.state.rowData === null ? null : (
+                      <div className="ag-theme-material w-100 my-2 ag-grid-table">
+                        <div className="d-flex flex-wrap justify-content-between align-items-center">
+                          <div className="mb-1">
+                            <UncontrolledDropdown className="p-1 ag-dropdown">
+                              <DropdownToggle tag="div">
+                                {this.gridApi
+                                  ? this.state.currenPageSize
+                                  : "" * this.state.getPageSize -
+                                    (this.state.getPageSize - 1)}{" "}
+                                -{" "}
+                                {this.state.rowData.length -
+                                  this.state.currenPageSize *
+                                    this.state.getPageSize >
+                                0
+                                  ? this.state.currenPageSize *
+                                    this.state.getPageSize
+                                  : this.state.rowData.length}{" "}
+                                of {this.state.rowData.length}
+                                <ChevronDown className="ml-50" size={15} />
+                              </DropdownToggle>
+                              <DropdownMenu right>
+                                <DropdownItem
+                                  tag="div"
+                                  onClick={() => this.filterSize(5)}
+                                >
+                                  5
+                                </DropdownItem>
+                                <DropdownItem
+                                  tag="div"
+                                  onClick={() => this.filterSize(20)}
+                                >
+                                  20
+                                </DropdownItem>
+                                <DropdownItem
+                                  tag="div"
+                                  onClick={() => this.filterSize(50)}
+                                >
+                                  50
+                                </DropdownItem>
+                                <DropdownItem
+                                  tag="div"
+                                  onClick={() => this.filterSize(100)}
+                                >
+                                  100
+                                </DropdownItem>
+                                <DropdownItem
+                                  tag="div"
+                                  onClick={() => this.filterSize(134)}
+                                >
+                                  134
+                                </DropdownItem>
+                              </DropdownMenu>
+                            </UncontrolledDropdown>
+                          </div>
+                          <div className="d-flex flex-wrap justify-content-end mb-1">
+                            <div className="table-input mr-1">
+                              <Input
+                                placeholder="search Item here..."
+                                onChange={e =>
+                                  this.updateSearchQuery(e.target.value)
+                                }
+                                value={this.state.value}
+                              />
+                            </div>
+                          </div>
                         </div>
-                      </div>
-                    </div>
-                    <ContextLayout.Consumer className="ag-theme-alpine">
-                      {(context) => (
-                        <AgGridReact
-                          id="myAgGrid"
-                          // gridOptions={{
-                          //   domLayout: "autoHeight",
-                          //   // or other layout options
-                          // }}
-                          gridOptions={this.gridOptions}
-                          rowSelection="multiple"
-                          defaultColDef={defaultColDef}
-                          columnDefs={columnDefs}
-                          rowData={rowData}
-                          // onGridReady={(params) => {
-                          //   this.gridApi = params.api;
-                          //   this.gridColumnApi = params.columnApi;
-                          //   this.gridRef.current = params.api;
+                        <ContextLayout.Consumer className="ag-theme-alpine">
+                          {context => (
+                            <AgGridReact
+                              id="myAgGrid"
+                              // gridOptions={{
+                              //   domLayout: "autoHeight",
+                              //   // or other layout options
+                              // }}
+                              gridOptions={this.gridOptions}
+                              rowSelection="multiple"
+                              defaultColDef={defaultColDef}
+                              columnDefs={columnDefs}
+                              rowData={rowData}
+                              // onGridReady={(params) => {
+                              //   this.gridApi = params.api;
+                              //   this.gridColumnApi = params.columnApi;
+                              //   this.gridRef.current = params.api;
 
-                          //   this.setState({
-                          //     currenPageSize:
-                          //       this.gridApi.paginationGetCurrentPage() +
-                          //       1,
-                          //     getPageSize:
-                          //       this.gridApi.paginationGetPageSize(),
-                          //     totalPages:
-                          //       this.gridApi.paginationGetTotalPages(),
-                          //   });
-                          // }}
-                          onGridReady={this.onGridReady}
-                          colResizeDefault={"shift"}
-                          animateRows={true}
-                          floatingFilter={false}
-                          pagination={true}
-                          paginationPageSize={this.state.paginationPageSize}
-                          pivotPanelShow="always"
-                          enableRtl={context.state.direction === "rtl"}
-                          ref={this.gridRef} // Attach the ref to the grid
-                          domLayout="autoHeight" // Adjust layout as needed
-                        />
-                      )}
-                    </ContextLayout.Consumer>
-                  </div>
-                )}
-              </CardBody>
+                              //   this.setState({
+                              //     currenPageSize:
+                              //       this.gridApi.paginationGetCurrentPage() +
+                              //       1,
+                              //     getPageSize:
+                              //       this.gridApi.paginationGetPageSize(),
+                              //     totalPages:
+                              //       this.gridApi.paginationGetTotalPages(),
+                              //   });
+                              // }}
+                              onGridReady={this.onGridReady}
+                              colResizeDefault={"shift"}
+                              animateRows={true}
+                              floatingFilter={false}
+                              pagination={true}
+                              paginationPageSize={this.state.paginationPageSize}
+                              pivotPanelShow="always"
+                              enableRtl={context.state.direction === "rtl"}
+                              ref={this.gridRef} // Attach the ref to the grid
+                              domLayout="autoHeight" // Adjust layout as needed
+                            />
+                          )}
+                        </ContextLayout.Consumer>
+                      </div>
+                    )}
+                  </CardBody>
+                </>
+              ) : null}
             </Card>
           </Col>
         </Row>
@@ -796,12 +938,13 @@ class OverDueStockReport extends React.Component {
           isOpen={this.state.modal}
           toggle={this.LookupviewStart}
           className={this.props.className}
-          style={{ maxWidth: "1050px" }}>
+          style={{ maxWidth: "1050px" }}
+        >
           <ModalHeader toggle={this.LookupviewStart}>Change Fileds</ModalHeader>
           <ModalBody className="modalbodyhead">
             <Row>
               <Col lg="4" md="4" sm="12" xl="4" xs="12">
-                <h4>Avilable Columns</h4>
+                <h4>Available Columns</h4>
                 <div className="mainshffling">
                   <div class="ex1">
                     {AllcolumnDefs &&
@@ -809,15 +952,15 @@ class OverDueStockReport extends React.Component {
                         return (
                           <>
                             <div
-                              onClick={(e) =>
-                                this.handleChangeHeader(e, ele, i)
-                              }
+                              onClick={e => this.handleChangeHeader(e, ele, i)}
                               key={i}
-                              className="mycustomtag mt-1">
+                              className="mycustomtag mt-1"
+                            >
                               <span className="mt-1">
                                 <h5
                                   style={{ cursor: "pointer" }}
-                                  className="allfields">
+                                  className="allfields"
+                                >
                                   <input
                                     type="checkbox"
                                     // checked={check && check}
@@ -876,14 +1019,15 @@ class OverDueStockReport extends React.Component {
                                             : ""
                                         }`,
                                       }}
-                                      className="allfields">
+                                      className="allfields"
+                                    >
                                       <IoMdRemoveCircleOutline
                                         onClick={() => {
                                           const SelectedCols =
                                             this.state.SelectedcolumnDefs.slice();
                                           const delindex =
                                             SelectedCols.findIndex(
-                                              (element) =>
+                                              element =>
                                                 element?.headerName ==
                                                 ele?.headerName
                                             );
@@ -961,12 +1105,14 @@ class OverDueStockReport extends React.Component {
           isOpen={this.state.modalone}
           toggle={this.togglemodal}
           className={this.props.className}
-          style={{ maxWidth: "1050px" }}>
+          style={{ maxWidth: "1050px" }}
+        >
           <ModalHeader toggle={this.togglemodal}>
             {this.state.ShowBill ? "Bill Download" : "All Products"}
           </ModalHeader>
           <ModalBody
-            className={`${this.state.ShowBill ? "p-1" : "modalbodyhead"}`}>
+            className={`${this.state.ShowBill ? "p-1" : "modalbodyhead"}`}
+          >
             {this.state.ViewOneUserView ? (
               <>
                 {this.state.ShowBill ? (

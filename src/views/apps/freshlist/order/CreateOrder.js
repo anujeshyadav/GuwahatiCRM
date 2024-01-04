@@ -255,7 +255,6 @@ const CreateOrder = args => {
                         handleSelectionParty(selectedList, selectedItem, index)
                       }
                       onRemove={onRemove1}
-                      // displayValue="firstName"
                       displayValue="OwnerName"
                     />
                   </div>

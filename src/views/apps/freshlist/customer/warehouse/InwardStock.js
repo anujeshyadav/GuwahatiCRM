@@ -97,7 +97,7 @@ class StockTransfer extends React.Component {
           field: "sortorder",
           field: "transactions",
           width: 150,
-          cellRendererFramework: (params) => {
+          cellRendererFramework: params => {
             return (
               <div className="actions cursor-pointer">
                 {this.state.InsiderPermissions &&
@@ -106,7 +106,7 @@ class StockTransfer extends React.Component {
                       className="mr-50"
                       size="25px"
                       color="green"
-                      onClick={(e) => {
+                      onClick={e => {
                         this.togglemodal();
                         this.setState({ ViewOneData: params?.data });
                         this.setState({ ViewOneUserView: true });
@@ -114,29 +114,6 @@ class StockTransfer extends React.Component {
                       }}
                     />
                   )}
-                {/* <Edit
-                  className="mr-50"
-                  size="25px"
-                  color="blue"
-                  onClick={(e) => {
-                    this.togglemodal();
-                    this.setState({ ViewOneData: params?.data });
-                    this.setState({ EditOneUserView: true });
-                    this.setState({ ViewOneUserView: false });
-
-                    console.log(params?.data);
-                  }}
-                /> */}
-                {/* <Trash2
-                  className="mr-50"
-                  size="25px"
-                  color="red"
-                  onClick={() => {
-                    let selectedData = this.gridApi.getSelectedRows();
-                    this.runthisfunction(params.data._id);
-                    this.gridApi.updateRowData({ remove: selectedData });
-                  }}
-                /> */}
               </div>
             );
           },
@@ -146,7 +123,7 @@ class StockTransfer extends React.Component {
           field: "transferStatus",
           filter: true,
           width: 150,
-          cellRendererFramework: (params) => {
+          cellRendererFramework: params => {
             return params.data?.transferStatus === "Completed" ? (
               <div className="badge badge-pill badge-success">
                 {params.data?.transferStatus}
@@ -171,7 +148,7 @@ class StockTransfer extends React.Component {
           field: "stockTransferDate",
           filter: true,
           width: 200,
-          cellRendererFramework: (params) => {
+          cellRendererFramework: params => {
             console.log(params.data);
             return (
               <div>
@@ -185,7 +162,7 @@ class StockTransfer extends React.Component {
           field: "warehouseFromId",
           filter: true,
           width: 200,
-          cellRendererFramework: (params) => {
+          cellRendererFramework: params => {
             return (
               <div>
                 <span>
@@ -205,7 +182,7 @@ class StockTransfer extends React.Component {
           field: "productItems",
           filter: true,
           width: 200,
-          cellRendererFramework: (params) => {
+          cellRendererFramework: params => {
             return (
               <div>
                 <span>{params.data?.productItems?.length} Products</span>
@@ -219,7 +196,7 @@ class StockTransfer extends React.Component {
           field: "grandTotal",
           filter: true,
           sortable: true,
-          cellRendererFramework: (params) => {
+          cellRendererFramework: params => {
             return (
               <>
                 <div className="actions cursor-pointer">
@@ -234,7 +211,7 @@ class StockTransfer extends React.Component {
           field: "createdAt",
           filter: true,
           sortable: true,
-          cellRendererFramework: (params) => {
+          cellRendererFramework: params => {
             return (
               <>
                 <div className="actions cursor-pointer">
@@ -249,7 +226,7 @@ class StockTransfer extends React.Component {
           field: "updatedAt",
           filter: true,
           sortable: true,
-          cellRendererFramework: (params) => {
+          cellRendererFramework: params => {
             return (
               <>
                 <div className="actions cursor-pointer">
@@ -271,7 +248,7 @@ class StockTransfer extends React.Component {
       },
     };
   }
-  UpdateStock = (e) => {
+  UpdateStock = e => {
     console.log(e.target.value);
     let payload = {
       transferStatus: e.target.value,
@@ -283,17 +260,17 @@ class StockTransfer extends React.Component {
         cancel: "No",
         catch: { text: "Yes", value: "Sure" },
       },
-    }).then((value) => {
+    }).then(value => {
       switch (value) {
         case "Sure":
           Stockupdate(id, payload)
-            .then((res) => {
+            .then(res => {
               console.log(res);
               swal("success", "Status Updated Successfully");
               this.togglemodal();
               this.ViewStockList();
             })
-            .catch((err) => {
+            .catch(err => {
               console.log(err);
             });
 
@@ -303,12 +280,12 @@ class StockTransfer extends React.Component {
     });
   };
   LookupviewStart = () => {
-    this.setState((prevState) => ({
+    this.setState(prevState => ({
       modal: !prevState.modal,
     }));
   };
   togglemodal = () => {
-    this.setState((prevState) => ({
+    this.setState(prevState => ({
       modalone: !prevState.modalone,
     }));
     this.setState({ ShowBill: false });
@@ -339,13 +316,13 @@ class StockTransfer extends React.Component {
     // let userData = JSON.parse(localStorage.getItem("userData"));
     let userData = JSON.parse(localStorage.getItem("userData"));
     await CreateAccountList(userData?._id, userData?.database)
-      .then((res) => {
+      .then(res => {
         console.log(res.adminDetails);
         if (res.adminDetails) {
           this.setState({ wareHouseViewOne: res?.adminDetails });
         }
       })
-      .catch((err) => {
+      .catch(err => {
         console.log(err);
       });
   }
@@ -354,7 +331,7 @@ class StockTransfer extends React.Component {
     let pageparmission = JSON.parse(localStorage.getItem("userData"));
     let userid = pageparmission?._id;
     await Warehouse_Inwardlist(userid)
-      .then((res) => {
+      .then(res => {
         console.log(res?.Warehouse);
         if (res?.Warehouse) {
           this.setState({ rowData: res?.Warehouse });
@@ -372,20 +349,20 @@ class StockTransfer extends React.Component {
         }
         this.setState({ SelectedCols: this.state.columnDefs });
       })
-      .catch((err) => {
+      .catch(err => {
         console.log(err);
       });
     await ViewOneWarehouseStock(userid, pageparmission?.database)
-      .then((res) => {
+      .then(res => {
         console.log(res?.Factory);
       })
-      .catch((err) => {
+      .catch(err => {
         console.log(err);
       });
   };
 
   toggleDropdown = () => {
-    this.setState((prevState) => ({ isOpen: !prevState.isOpen }));
+    this.setState(prevState => ({ isOpen: !prevState.isOpen }));
   };
 
   runthisfunction(id) {
@@ -394,15 +371,15 @@ class StockTransfer extends React.Component {
         cancel: "cancel",
         catch: { text: "Delete ", value: "delete" },
       },
-    }).then((value) => {
+    }).then(value => {
       switch (value) {
         case "delete":
           DeleteAccount(id)
-            .then((res) => {
+            .then(res => {
               let selectedData = this.gridApi.getSelectedRows();
               this.gridApi.updateRowData({ remove: selectedData });
             })
-            .catch((err) => {
+            .catch(err => {
               console.log(err);
             });
           break;
@@ -411,7 +388,7 @@ class StockTransfer extends React.Component {
     });
   }
 
-  onGridReady = (params) => {
+  onGridReady = params => {
     this.gridApi = params.api;
     this.gridColumnApi = params.columnApi;
     this.gridRef.current = params.api;
@@ -423,11 +400,11 @@ class StockTransfer extends React.Component {
     });
   };
 
-  updateSearchQuery = (val) => {
+  updateSearchQuery = val => {
     this.gridApi.setQuickFilter(val);
   };
 
-  filterSize = (val) => {
+  filterSize = val => {
     if (this.gridApi) {
       this.gridApi.paginationSetPageSize(Number(val));
       this.setState({
@@ -442,7 +419,7 @@ class StockTransfer extends React.Component {
       SelectedColums?.push(value);
     } else {
       const delindex = SelectedColums?.findIndex(
-        (ele) => ele?.headerName === value?.headerName
+        ele => ele?.headerName === value?.headerName
       );
 
       SelectedColums?.splice(delindex, 1);
@@ -453,14 +430,14 @@ class StockTransfer extends React.Component {
       Papa.parse(csvData, {
         header: true,
         skipEmptyLines: true,
-        complete: (result) => {
+        complete: result => {
           if (result.data && result.data.length > 0) {
             resolve(result.data);
           } else {
             reject(new Error("No data found in the CSV"));
           }
         },
-        error: (error) => {
+        error: error => {
           reject(error);
         },
       });
@@ -472,7 +449,7 @@ class StockTransfer extends React.Component {
 
     const doc = new jsPDF("landscape", "mm", size, false);
     doc.setTextColor(5, 87, 97);
-    const tableData = parsedData.map((row) => Object.values(row));
+    const tableData = parsedData.map(row => Object.values(row));
     doc.addImage(Logo, "JPEG", 10, 10, 50, 30);
     let date = new Date();
     doc.setCreationDate(date);
@@ -497,14 +474,12 @@ class StockTransfer extends React.Component {
       console.error("Error parsing CSV:", error);
     }
   };
-  processCell = (params) => {
-    // console.log(params);
-    // Customize cell content as needed
+  processCell = params => {
     return params.value;
   };
 
   convertCsvToExcel(csvData) {
-    return new Promise((resolve) => {
+    return new Promise(resolve => {
       Papa.parse(csvData, {
         header: true,
         dynamicTyping: true,
@@ -535,7 +510,7 @@ class StockTransfer extends React.Component {
     window.URL.revokeObjectURL(url);
   }
 
-  exportToExcel = async (e) => {
+  exportToExcel = async e => {
     const CsvData = this.gridApi.getDataAsCsv({
       processCellCallback: this.processCell,
     });
@@ -548,7 +523,7 @@ class StockTransfer extends React.Component {
       processCellCallback: this.processCell,
     });
     Papa.parse(CsvData, {
-      complete: (result) => {
+      complete: result => {
         const ws = XLSX.utils.json_to_sheet(result.data);
         const wb = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(wb, ws, "Sheet1");
@@ -584,13 +559,13 @@ class StockTransfer extends React.Component {
       processCellCallback: this.processCell,
     });
     Papa.parse(CsvData, {
-      complete: (result) => {
+      complete: result => {
         const rows = result.data;
 
         // Create XML
         let xmlString = "<root>\n";
 
-        rows.forEach((row) => {
+        rows.forEach(row => {
           xmlString += "  <row>\n";
           row.forEach((cell, index) => {
             xmlString += `    <field${index + 1}>${cell}</field${index + 1}>\n`;
@@ -608,7 +583,7 @@ class StockTransfer extends React.Component {
     });
   };
 
-  HandleSetVisibleField = (e) => {
+  HandleSetVisibleField = e => {
     e.preventDefault();
     this.gridApi.setColumnDefs(this.state.SelectedcolumnDefs);
     this.setState({ columnDefs: this.state.SelectedcolumnDefs });
@@ -620,7 +595,7 @@ class StockTransfer extends React.Component {
     );
     this.LookupviewStart();
   };
-  handleShowWarehouse = (e) => {
+  handleShowWarehouse = e => {
     e.preventDefault();
     if (this.state.warehouse != "NA") {
       console.log(this.state.wareHouseViewOne[0]);
@@ -633,7 +608,7 @@ class StockTransfer extends React.Component {
       swal("You did not select Any Warehouse");
     }
   };
-  changeHandler = (e) => {
+  changeHandler = e => {
     console.log(e.target.value, this.state.warehouse);
 
     this.setState({ [e.target.name]: e.target.value });
@@ -641,10 +616,10 @@ class StockTransfer extends React.Component {
   HeadingRightShift = () => {
     const updatedSelectedColumnDefs = [
       ...new Set([
-        ...this.state.SelectedcolumnDefs.map((item) => JSON.stringify(item)),
-        ...SelectedColums.map((item) => JSON.stringify(item)),
+        ...this.state.SelectedcolumnDefs.map(item => JSON.stringify(item)),
+        ...SelectedColums.map(item => JSON.stringify(item)),
       ]),
-    ].map((item) => JSON.parse(item));
+    ].map(item => JSON.parse(item));
     this.setState({
       SelectedcolumnDefs: [...new Set(updatedSelectedColumnDefs)], // Update the state with the combined array
     });
@@ -667,7 +642,6 @@ class StockTransfer extends React.Component {
       columnDefs,
       defaultColDef,
       InsiderPermissions,
-
       SelectedcolumnDefs,
       isOpen,
       SelectedCols,
@@ -695,9 +669,10 @@ class StockTransfer extends React.Component {
                             placeholder="Select Warehouse"
                             name="warehouse"
                             value={this.state.warehouse}
-                            onChange={this.changeHandler}>
+                            onChange={this.changeHandler}
+                          >
                             <option value="">--Select WareHouse--</option>
-                            {this.state.wareHouseViewOne?.map((cat) => (
+                            {this.state.wareHouseViewOne?.map(cat => (
                               <option value={cat?._id} key={cat?._id}>
                                 {cat?.firstName}
                               </option>
@@ -716,7 +691,8 @@ class StockTransfer extends React.Component {
                           }}
                           className="mt-2"
                           color="#39cccc"
-                          onClick={this.handleShowWarehouse}>
+                          onClick={this.handleShowWarehouse}
+                        >
                           Submit
                         </Button>
                       </Col>
@@ -754,42 +730,48 @@ class StockTransfer extends React.Component {
                                 border: "1px solid #39cccc",
                                 backgroundColor: "white",
                               }}
-                              className="dropdown-content dropdownmy">
+                              className="dropdown-content dropdownmy"
+                            >
                               <h5
                                 onClick={() => this.exportToPDF()}
                                 style={{ cursor: "pointer" }}
-                                className=" mx-1 myactive mt-1">
+                                className=" mx-1 myactive mt-1"
+                              >
                                 .PDF
                               </h5>
                               <h5
                                 onClick={() => this.gridApi.exportDataAsCsv()}
                                 style={{ cursor: "pointer" }}
-                                className=" mx-1 myactive">
+                                className=" mx-1 myactive"
+                              >
                                 .CSV
                               </h5>
                               <h5
                                 onClick={this.convertCSVtoExcel}
                                 style={{ cursor: "pointer" }}
-                                className=" mx-1 myactive">
+                                className=" mx-1 myactive"
+                              >
                                 .XLS
                               </h5>
                               <h5
                                 onClick={this.exportToExcel}
                                 style={{ cursor: "pointer" }}
-                                className=" mx-1 myactive">
+                                className=" mx-1 myactive"
+                              >
                                 .XLSX
                               </h5>
                               <h5
                                 onClick={() => this.convertCsvToXml()}
                                 style={{ cursor: "pointer" }}
-                                className=" mx-1 myactive">
+                                className=" mx-1 myactive"
+                              >
                                 .XML
                               </h5>
                             </div>
                           )}
                         </div>
                       </span>
-                      <span>
+                      {/* <span>
                         <Route
                           render={({ history }) => (
                             <Button
@@ -805,12 +787,13 @@ class StockTransfer extends React.Component {
                                 history.push(
                                   "/app/softNumen/warehouse/WareHouseStock"
                                 )
-                              }>
+                              }
+                            >
                               View My WareHouse
                             </Button>
                           )}
                         />
-                      </span>
+                      </span> */}
                     </Col>
                   )}
               </Row>
@@ -839,27 +822,32 @@ class StockTransfer extends React.Component {
                           <DropdownMenu right>
                             <DropdownItem
                               tag="div"
-                              onClick={() => this.filterSize(5)}>
+                              onClick={() => this.filterSize(5)}
+                            >
                               5
                             </DropdownItem>
                             <DropdownItem
                               tag="div"
-                              onClick={() => this.filterSize(20)}>
+                              onClick={() => this.filterSize(20)}
+                            >
                               20
                             </DropdownItem>
                             <DropdownItem
                               tag="div"
-                              onClick={() => this.filterSize(50)}>
+                              onClick={() => this.filterSize(50)}
+                            >
                               50
                             </DropdownItem>
                             <DropdownItem
                               tag="div"
-                              onClick={() => this.filterSize(100)}>
+                              onClick={() => this.filterSize(100)}
+                            >
                               100
                             </DropdownItem>
                             <DropdownItem
                               tag="div"
-                              onClick={() => this.filterSize(134)}>
+                              onClick={() => this.filterSize(134)}
+                            >
                               134
                             </DropdownItem>
                           </DropdownMenu>
@@ -869,7 +857,7 @@ class StockTransfer extends React.Component {
                         <div className="table-input mr-1">
                           <Input
                             placeholder="search Item here..."
-                            onChange={(e) =>
+                            onChange={e =>
                               this.updateSearchQuery(e.target.value)
                             }
                             value={this.state.value}
@@ -878,7 +866,7 @@ class StockTransfer extends React.Component {
                       </div>
                     </div>
                     <ContextLayout.Consumer className="ag-theme-alpine">
-                      {(context) => (
+                      {context => (
                         <AgGridReact
                           id="myAgGrid"
                           // gridOptions={{
@@ -929,7 +917,8 @@ class StockTransfer extends React.Component {
           isOpen={this.state.modal}
           toggle={this.LookupviewStart}
           className={this.props.className}
-          style={{ maxWidth: "1050px" }}>
+          style={{ maxWidth: "1050px" }}
+        >
           <ModalHeader toggle={this.LookupviewStart}>Change Fileds</ModalHeader>
           <ModalBody className="modalbodyhead">
             <Row>
@@ -942,15 +931,15 @@ class StockTransfer extends React.Component {
                         return (
                           <>
                             <div
-                              onClick={(e) =>
-                                this.handleChangeHeader(e, ele, i)
-                              }
+                              onClick={e => this.handleChangeHeader(e, ele, i)}
                               key={i}
-                              className="mycustomtag mt-1">
+                              className="mycustomtag mt-1"
+                            >
                               <span className="mt-1">
                                 <h5
                                   style={{ cursor: "pointer" }}
-                                  className="allfields">
+                                  className="allfields"
+                                >
                                   <input
                                     type="checkbox"
                                     // checked={check && check}
@@ -1009,14 +998,15 @@ class StockTransfer extends React.Component {
                                             : ""
                                         }`,
                                       }}
-                                      className="allfields">
+                                      className="allfields"
+                                    >
                                       <IoMdRemoveCircleOutline
                                         onClick={() => {
                                           const SelectedCols =
                                             this.state.SelectedcolumnDefs.slice();
                                           const delindex =
                                             SelectedCols.findIndex(
-                                              (element) =>
+                                              element =>
                                                 element?.headerName ==
                                                 ele?.headerName
                                             );
@@ -1084,12 +1074,14 @@ class StockTransfer extends React.Component {
           isOpen={this.state.modalone}
           toggle={this.togglemodal}
           className={this.props.className}
-          style={{ maxWidth: "1050px" }}>
+          style={{ maxWidth: "1050px" }}
+        >
           <ModalHeader toggle={this.togglemodal}>
             {this.state.ShowBill ? "Bill Download" : "All Products"}
           </ModalHeader>
           <ModalBody
-            className={`${this.state.ShowBill ? "p-1" : "modalbodyhead"}`}>
+            className={`${this.state.ShowBill ? "p-1" : "modalbodyhead"}`}
+          >
             {this.state.ViewOneUserView ? (
               <>
                 {this.state.ShowBill ? (
@@ -1152,7 +1144,8 @@ class StockTransfer extends React.Component {
                             <Label>Change Status</Label>
                             <CustomInput
                               onChange={this.UpdateStock}
-                              type="select">
+                              type="select"
+                            >
                               <option value="NA">--Select--</option>
                               <option value="Completed">Completed</option>
                               <option value="Pending">Pending</option>

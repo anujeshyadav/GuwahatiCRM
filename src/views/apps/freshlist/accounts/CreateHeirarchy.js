@@ -43,12 +43,12 @@ const CreateHeirarchy = ({ EditOneData }) => {
 
   const Context = useContext(UserContext);
 
-  const handleParentChange = (event) => {
+  const handleParentChange = event => {
     const selectedParent = event.target.value;
     setParentValue(selectedParent);
 
     // Set hierarchy for the selected parent
-    setHierarchy((prevHierarchy) => ({
+    setHierarchy(prevHierarchy => ({
       ...prevHierarchy,
       [selectedParent]: 1,
     }));
@@ -57,12 +57,12 @@ const CreateHeirarchy = ({ EditOneData }) => {
     setChildValue("");
   };
 
-  const handleChildChange = (event) => {
+  const handleChildChange = event => {
     const selectedChild = event.target.value;
     setChildValue(selectedChild);
 
     // Set hierarchy for the selected child
-    setHierarchy((prevHierarchy) => ({
+    setHierarchy(prevHierarchy => ({
       ...prevHierarchy,
       [selectedChild]: hierarchy[parentValue] + 1,
     }));
@@ -79,18 +79,18 @@ const CreateHeirarchy = ({ EditOneData }) => {
   useEffect(() => {
     let userdata = JSON.parse(localStorage.getItem("userData"));
     Get_RoleList(userdata?._id, userdata?.database)
-      .then((res) => {
+      .then(res => {
         setdropdownValue(res?.Role);
         setdropdownValueSecond(res?.Role);
         console.log(res?.Role);
       })
-      .catch((err) => {
+      .catch(err => {
         console.log(err);
         swal("Roles List Not found");
       });
   }, []);
 
-  const submitHandler = (e) => {
+  const submitHandler = e => {
     e.preventDefault();
     // console.log(EditOneData);
     // console.log(formData);
@@ -131,7 +131,8 @@ const CreateHeirarchy = ({ EditOneData }) => {
                       style={{ cursor: "pointer" }}
                       className="float-right mr-1"
                       color="primary"
-                      onClick={() => history.goBack()}>
+                      onClick={() => history.goBack()}
+                    >
                       {" "}
                       Back
                     </Button>
@@ -158,14 +159,15 @@ const CreateHeirarchy = ({ EditOneData }) => {
                       required
                       type="select"
                       name="rolename"
-                      onChange={(e) => {
+                      onChange={e => {
                         setParent(e.target.value);
                         let Secondary = dropdownValuesecond?.filter(
                           (ele, i) => ele?._id !== e.target.value
                         );
                         console.log(Secondary);
                         setdropdownValueSecond(Secondary);
-                      }}>
+                      }}
+                    >
                       <option value="Parent">--Select Parent--</option>
                       {dropdownValue &&
                         dropdownValue?.length &&
@@ -184,7 +186,8 @@ const CreateHeirarchy = ({ EditOneData }) => {
                       required
                       type="select"
                       name="rolename"
-                      onChange={(e) => setChild(e.target.value)}>
+                      onChange={e => setChild(e.target.value)}
+                    >
                       <option value="Child">--Select Child--</option>
                       {dropdownValuesecond &&
                         dropdownValuesecond?.length &&
@@ -233,7 +236,8 @@ const CreateHeirarchy = ({ EditOneData }) => {
                 <Button.Ripple
                   color="primary"
                   type="submit"
-                  className="mr-1 mt-2 mx-2">
+                  className="mr-1 mt-2 mx-2"
+                >
                   Submit
                 </Button.Ripple>
               </Row>

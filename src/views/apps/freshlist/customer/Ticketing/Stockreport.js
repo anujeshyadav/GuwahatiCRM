@@ -23,7 +23,6 @@ import "ag-grid-community/dist/styles/ag-grid.css";
 import EditAccount from "../../accounts/EditAccount";
 import ViewAccount from "../../accounts/ViewAccount";
 import jsPDF from "jspdf";
-// import db from "../../../../context/indexdb";
 import "jspdf-autotable";
 import Logo from "../../../../../assets/img/profile/pages/logomain.png";
 import Papa from "papaparse";
@@ -42,10 +41,9 @@ import swal from "sweetalert";
 import {
   TicketTool_ViewData,
   ticketToolDeleteOne,
-  ticketToolList,
+  StockReportList,
 } from "../../../../../ApiEndPoint/ApiCalling";
 import {
-  BsCloudDownloadFill,
   BsFillArrowDownSquareFill,
   BsFillArrowUpSquareFill,
 } from "react-icons/bs";
@@ -101,10 +99,10 @@ class Stockreport extends React.Component {
 
   async componentDidMount() {
     const UserInformation = this.context?.UserInformatio;
-    await ticketToolList()
+    await StockReportList()
       .then(res => {
-        console.log(res?.TicketTool);
-        this.setState({ rowData: res?.TicketTool });
+        console.log(res);
+        // this.setState({ rowData: res?.TicketTool });
       })
       .catch(err => {
         console.log(err);
@@ -114,7 +112,6 @@ class Stockreport extends React.Component {
       .then(res => {
         console.log(res);
         let jsonData = xmlJs.xml2json(res.data, { compact: true, spaces: 2 });
-        // console.log(JSON.parse(jsonData)?.createTicket);
         let CreatAccountView = JSON.parse(jsonData)?.createTicket;
 
         const Checkbox = CreatAccountView?.CheckBox?.input?.map(ele => {
@@ -244,51 +241,7 @@ class Stockreport extends React.Component {
               );
             },
           },
-          {
-            headerName: "Whatsapp",
-            field: "whatsapp",
-            filter: true,
-            sortable: true,
-            cellRendererFramework: params => {
-              return params.data?.whatsapp === "true" ? (
-                <div className="badge badge-pill badge-success">YES</div>
-              ) : params.data?.whatsapp === "false" ? (
-                <div className="badge badge-pill badge-warning">NO</div>
-              ) : (
-                "NA"
-              );
-            },
-          },
-          {
-            headerName: "SMS",
-            field: "sms",
-            filter: true,
-            sortable: true,
-            cellRendererFramework: params => {
-              return params.data?.sms === "true" ? (
-                <div className="badge badge-pill badge-success">YES</div>
-              ) : params.data?.sms === "false" ? (
-                <div className="badge badge-pill badge-warning">No</div>
-              ) : (
-                "NA"
-              );
-            },
-          },
-          {
-            headerName: "Gmail",
-            field: "gmail",
-            filter: true,
-            sortable: true,
-            cellRendererFramework: params => {
-              return params.data?.gmail === "true" ? (
-                <div className="badge badge-pill badge-success">YES</div>
-              ) : params.data?.gmail === "false" ? (
-                <div className="badge badge-pill badge-warning">NO</div>
-              ) : (
-                "NA"
-              );
-            },
-          },
+
           ...myHeadings,
           {
             headerName: "Created date",
