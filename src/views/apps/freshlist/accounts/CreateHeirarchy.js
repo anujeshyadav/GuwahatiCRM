@@ -20,7 +20,7 @@ import { Country, State, City } from "country-state-city";
 import Select from "react-select";
 import moment from "moment-timezone";
 import { Route } from "react-router-dom";
-
+import DummyTestHeirarchy from "./DummyTestHeirarchy";
 import swal from "sweetalert";
 import "../../../../../src/layouts/assets/scss/pages/users.scss";
 
@@ -32,7 +32,6 @@ import { CloudLightning } from "react-feather";
 import { FaPlus } from "react-icons/fa";
 
 const CreateHeirarchy = ({ EditOneData }) => {
-
   const [parentValue, setParentValue] = useState("");
   const [childValue, setChildValue] = useState("");
   const [hierarchy, setHierarchy] = useState({});
@@ -142,7 +141,7 @@ const CreateHeirarchy = ({ EditOneData }) => {
             </Col>
           </Row>
           {/* <hr /> */}
-
+          <DummyTestHeirarchy />
           <div className="d-flex justify-content-center">
             <span style={{ color: "red" }}>
               {Error && Error ? <>{Error}</> : null}
