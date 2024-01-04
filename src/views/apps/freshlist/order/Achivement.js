@@ -66,6 +66,8 @@ class Achivement extends React.Component {
     this.gridApi = null;
     this.state = {
       isOpen: false,
+      MasterShow: false,
+
       Arrindex: "",
       rowData: [],
       setMySelectedarr: [],
@@ -283,7 +285,10 @@ class Achivement extends React.Component {
       this.setState({ EditOneData: data });
     }
   };
-
+  async Apicalling(id, db) {
+    this.setState({ Loading: true });
+  
+  }
   async componentDidMount() {
     const UserInformation = this.context?.UserInformatio;
     const InsidePermissions = CheckPermission("Achievement");
@@ -292,8 +297,7 @@ class Achivement extends React.Component {
     let userId = JSON.parse(localStorage.getItem("userData"))._id;
     await TargetAchievement(userId)
       .then((res) => {
-        
-        console.log(res?.achievements);
+      console.log(res?.achievements);
 
         this.setState({ rowData: res?.achievements });
         this.setState({ AllcolumnDefs: this.state.columnDefs });
