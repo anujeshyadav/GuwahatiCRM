@@ -102,7 +102,7 @@ export default function AddRoleNew(args) {
     }
   }, [Selected]);
 
-  const handleSumit = async (e) => {
+  const handleSumit = async e => {
     e.preventDefault();
     let userdata = JSON.parse(localStorage.getItem("userData"));
 
@@ -126,7 +126,7 @@ export default function AddRoleNew(args) {
         rolePermission: Selected,
       };
       await CreateRoleByMaster(load)
-        .then((res) => {
+        .then(res => {
           console.log(res);
           swal("Created Successfully");
           var checkboxes = document.getElementsByName("check");
@@ -137,12 +137,12 @@ export default function AddRoleNew(args) {
           setDesc("");
           setRole("");
         })
-        .catch((err) => {
+        .catch(err => {
           console.log(err);
         });
     } else {
       await CreateRole(payload)
-        .then((res) => {
+        .then(res => {
           console.log(res);
           swal("Created Successfully");
 
@@ -154,7 +154,7 @@ export default function AddRoleNew(args) {
           setDesc("");
           setRole("");
         })
-        .catch((err) => {
+        .catch(err => {
           console.log(err);
         });
     }
@@ -185,7 +185,7 @@ export default function AddRoleNew(args) {
   };
   const handleopentoggle = () => {
     CreateAccountView()
-      .then((res) => {
+      .then(res => {
         const jsonData = xmlJs.xml2json(res.data, { compact: true, spaces: 2 });
         // console.log(JSON.parse(jsonData)?.CreateAccount?.MyDropdown?.dropdown);
         setCreatAccountView(
@@ -193,7 +193,7 @@ export default function AddRoleNew(args) {
         );
         setdropdownValue(JSON.parse(jsonData));
       })
-      .catch((err) => {
+      .catch(err => {
         console.log(err);
       });
     toggle();
@@ -204,7 +204,7 @@ export default function AddRoleNew(args) {
     setShow(value);
     setIndex(index);
   };
-  const HandleSelectRole = (val) => {
+  const HandleSelectRole = val => {
     setRole(val?._attributes?.value);
     toggle();
   };
@@ -227,7 +227,8 @@ export default function AddRoleNew(args) {
                         color="primary"
                         onClick={() =>
                           history.push("/app/Trupee/account/RoleList")
-                        }>
+                        }
+                      >
                         {" "}
                         Back
                         {/* <FaPlus size={15} /> Create User */}
@@ -246,7 +247,7 @@ export default function AddRoleNew(args) {
                     <Input
                       // disabled
                       value={Role}
-                      onChange={(e) => setRole(e.target.value)}
+                      onChange={e => setRole(e.target.value)}
                       type="text"
                       placeholder="Enter Role Name"
                       className="form-control inputs"
@@ -268,7 +269,7 @@ export default function AddRoleNew(args) {
                     <Input
                       required
                       value={Desc}
-                      onChange={(e) => setDesc(e.target.value)}
+                      onChange={e => setDesc(e.target.value)}
                       type="text"
                       placeholder="Enter Role Desc.."
                       // className="form-control"
@@ -280,7 +281,7 @@ export default function AddRoleNew(args) {
                       <Input
                         required
                         value={Database}
-                        onChange={(e) => setDatabase(e.target.value)}
+                        onChange={e => setDatabase(e.target.value)}
                         type="text"
                         placeholder="Enter database Name.."
                         // className="form-control"
@@ -309,21 +310,23 @@ export default function AddRoleNew(args) {
                           className="customcol gy-0 mb-2 "
                           lg="12"
                           md="12"
-                          sm="12">
+                          sm="12"
+                        >
                           <Row
                             style={{
                               lineHeight: "44px",
                               borderRadius: "6px",
                               background: "#f7f7f8",
                             }}
-                            className="roleheading">
+                            className="roleheading"
+                          >
                             <Col className="gy-2" lg="4" sm="4" md="4">
                               <div className="align-item-center">
                                 <input
                                   className="mt-1"
                                   name="check"
                                   id={`head_${value?.title}`}
-                                  onClick={(e) => {
+                                  onClick={e => {
                                     handlesetparent(e.target.checked, index);
                                     handleSelectPage(
                                       e.target.value,
@@ -386,7 +389,7 @@ export default function AddRoleNew(args) {
                                               <input
                                                 name="check"
                                                 id={`item_${permit}`}
-                                                onClick={(e) => {
+                                                onClick={e => {
                                                   handleSelectPage(
                                                     e.target.value,
                                                     e.target.checked,
@@ -421,7 +424,8 @@ export default function AddRoleNew(args) {
                       <Button
                         type="submit"
                         style={{ cursor: "pointer" }}
-                        color="primary">
+                        color="primary"
+                      >
                         Submit
                       </Button>
                     </div>
@@ -438,7 +442,8 @@ export default function AddRoleNew(args) {
         backdrop={false}
         isOpen={modal}
         toggle={toggle}
-        {...args}>
+        {...args}
+      >
         <ModalHeader toggle={toggle}>Role List</ModalHeader>
         <ModalBody>
           <div className="modalheaderaddrol p-1">
@@ -450,7 +455,8 @@ export default function AddRoleNew(args) {
               hover
               responsive
               size="sm"
-              striped>
+              striped
+            >
               <thead>
                 <tr>
                   <th>S.No.</th>
@@ -463,9 +469,10 @@ export default function AddRoleNew(args) {
                     return (
                       <tr
                         className="tabletr"
-                        onClick={(e) => HandleSelectRole(ele)}
+                        onClick={e => HandleSelectRole(ele)}
                         style={{ cursor: "pointer" }}
-                        key={i}>
+                        key={i}
+                      >
                         <th scope="row">{i + 1}</th>
                         <td>{ele?._text}</td>
                       </tr>

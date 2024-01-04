@@ -270,8 +270,6 @@ class Salesreport extends React.Component {
   handleChangeView = (data, types) => {
     let type = types;
     if (type == "readonly") {
-      console.log("ResponseData", data.orderItems);
-      console.log("Test", data);
       this.setState({ ViewOneUserView: true });
       this.setState({ ViewOneData: data });
     } else {
@@ -284,11 +282,11 @@ class Salesreport extends React.Component {
     const userId = JSON.parse(localStorage.getItem("userData"))._id;
     const UserInformation = this.context?.UserInformatio;
     const InsidePermissions = CheckPermission("Sales Order");
-    console.log(InsidePermissions);
+    // console.log(InsidePermissions);
     this.setState({ InsiderPermissions: InsidePermissions });
     await createOrderhistoryview(userId)
       .then(res => {
-        console.log(res?.orderHistory);
+        // console.log(res?.orderHistory);
         const ComplteStatus = res?.orderHistory?.filter(
           ele => ele.status == "completed" || ele.status == "Completed"
         );
@@ -352,7 +350,7 @@ class Salesreport extends React.Component {
               this.gridApi.updateRowData({ remove: selectedData });
             })
             .catch(err => {
-              console.log(err);
+              swal("Something Went Wrong");
             });
           break;
         default:

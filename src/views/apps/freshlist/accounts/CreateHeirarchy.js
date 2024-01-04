@@ -24,7 +24,10 @@ import { Route } from "react-router-dom";
 import swal from "sweetalert";
 import "../../../../../src/layouts/assets/scss/pages/users.scss";
 
-import { Get_RoleList, Update_Role_list } from "../../../../ApiEndPoint/ApiCalling";
+import {
+  Get_RoleList,
+  Update_Role_list,
+} from "../../../../ApiEndPoint/ApiCalling";
 
 import "../../../../assets/scss/pages/users.scss";
 import UserContext from "../../../../context/Context";
@@ -33,7 +36,6 @@ import { FaPlus } from "react-icons/fa";
 import { setOptions } from "leaflet";
 
 const CreateHeirarchy = ({ EditOneData }) => {
-  
   const [Positon, setPositon] = useState(0);
   const [CreatedBy, setCreatedBy] = useState("");
   const [hierarchy, setHierarchy] = useState({});
@@ -52,7 +54,6 @@ const CreateHeirarchy = ({ EditOneData }) => {
   //   setFormValues(newFormValues);
   // };
 
- 
   // above latest code//
 
   useEffect(() => {
@@ -85,18 +86,20 @@ const CreateHeirarchy = ({ EditOneData }) => {
     console.log(Parent);
     console.log(dropdownValue);
     console.log(Positon);
-    debugger
-    
-     let payload = {
-       createdBy: CreatedBy,
-       position: Positon,
-       rank: Positon,
-     };
-Update_Role_list(Child,payload).then((res)=>{
-  console.log(res)
-}).catch((err)=>{
-  console.log(err)
-})
+    debugger;
+
+    let payload = {
+      createdBy: CreatedBy,
+      position: Positon,
+      rank: Positon,
+    };
+    Update_Role_list(Child, payload)
+      .then((res) => {
+        console.log(res);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
     // if (localStorage.getItem("Herirarchy_postion")) {
     //   let current_position = localStorage.getItem("Herirarchy_postion");
 
@@ -108,11 +111,11 @@ Update_Role_list(Child,payload).then((res)=>{
   // console.log(formValues);
   console.log(dropdownValue);
   const handleChangeOne = (e) => {
-        const selectedName =
+    const selectedName =
       e.target.options[e.target.selectedIndex].getAttribute("data-name");
     console.log(selectedName);
-    let createdBY=selectedName?.split(" ")[0]
-    let Position =Number( selectedName?.split(" ")[1]);
+    let createdBY = selectedName?.split(" ")[0];
+    let Position = Number(selectedName?.split(" ")[1]);
     setCreatedBy(createdBY);
     setPositon(Position + 1);
   };
@@ -147,7 +150,7 @@ Update_Role_list(Child,payload).then((res)=>{
               {Error && Error ? <>{Error}</> : null}
             </span>
           </div>
-          
+
           <div className="container">
             <Form className="m-1" onSubmit={submitHandler}>
               <Row className="mb-2">
@@ -247,15 +250,14 @@ Update_Role_list(Child,payload).then((res)=>{
               </div>
             </Col> */}
               <Row>
-              <div className="d-flex justify-content-center">
-
-                <Button.Ripple
-                  color="primary"
-                  type="submit"
-                  className="mr-1 mt-2 mx-2">
-                  Submit
-                </Button.Ripple>
-              </div>
+                <div className="d-flex justify-content-center">
+                  <Button.Ripple
+                    color="primary"
+                    type="submit"
+                    className="mr-1 mt-2 mx-2">
+                    Submit
+                  </Button.Ripple>
+                </div>
               </Row>
             </Form>
           </div>
