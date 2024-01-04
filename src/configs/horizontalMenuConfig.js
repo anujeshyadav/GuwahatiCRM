@@ -505,6 +505,38 @@ const horizontalMenuConfig = [
     icon: <FaFileSignature size={24} />,
     children: [
       {
+        id: "AllGSTR",
+        title: "All GSTR",
+        type: "collapse",
+        icon: <FaProductHunt size={22} />,
+        children: [
+          {
+            id: "GSTR 1",
+            title: "GSTR 1",
+            type: "item",
+            icon: <GiCash size={22} />,
+            permissions: ["admin", "editor"],
+            navLink: "/app/SoftNumen/ticket/GSTR1",
+          },
+          {
+            id: "GSTR 3B",
+            title: "GSTR 3B",
+            type: "item",
+            icon: <GiCash size={22} />,
+            permissions: ["admin", "editor"],
+            navLink: "/app/SoftNumen/ticket/GSTR3B",
+          },
+          {
+            id: "GSTR 9",
+            title: "GSTR 9",
+            type: "item",
+            icon: <GiCash size={22} />,
+            permissions: ["admin", "editor"],
+            navLink: "/app/SoftNumen/ticket/GSTR9",
+          },
+        ],
+      },
+      {
         id: "Receipt and payment customise",
         title: "Receipt/Payment Customise",
         type: "item",
@@ -602,38 +634,6 @@ const horizontalMenuConfig = [
         navLink: "/app/SoftNumen/ticket/DispatchReport",
       },
 
-      {
-        id: "All GSTR",
-        title: "GSTR",
-        type: "collapse",
-        icon: <FaProductHunt size={22} />,
-        children: [
-          {
-            id: "GSTR 1",
-            title: "GSTR 1",
-            type: "item",
-            icon: <GiCash size={22} />,
-            permissions: ["admin", "editor"],
-            navLink: "/app/SoftNumen/ticket/GSTR1",
-          },
-          {
-            id: "GSTR 3B",
-            title: "GSTR 3B",
-            type: "item",
-            icon: <GiCash size={22} />,
-            permissions: ["admin", "editor"],
-            navLink: "/app/SoftNumen/ticket/GSTR3B",
-          },
-          {
-            id: "GSTR 9",
-            title: "GSTR 9",
-            type: "item",
-            icon: <GiCash size={22} />,
-            permissions: ["admin", "editor"],
-            navLink: "/app/SoftNumen/ticket/GSTR9",
-          },
-        ],
-      },
       // {
       //   id: "GSTR 1",
       //   title: "GSTR 1",

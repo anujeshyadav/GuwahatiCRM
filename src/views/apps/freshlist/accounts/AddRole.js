@@ -188,24 +188,28 @@ export const Roles = [
         title: "Dispatch Report",
         permission: ["View", "Create", "Edit", "Delete"],
       },
-
       {
         title: "All GSTR",
-        TabName: [
-          {
-            title: "GSTR 1",
-            permission: ["View", "Create", "Edit", "Delete"],
-          },
-          {
-            title: "GSTR 3B",
-            permission: ["View", "Create", "Edit", "Delete"],
-          },
-          {
-            title: "GSTR 9",
-            permission: ["View", "Create", "Edit", "Delete"],
-          },
-        ],
+        permission: ["View", "Create", "Edit", "Delete"],
       },
+
+      // {
+      //   title: "All GSTR",
+      //   TabName: [
+      //     {
+      //       title: "GSTR 1",
+      //       permission: ["View", "Create", "Edit", "Delete"],
+      //     },
+      //     {
+      //       title: "GSTR 3B",
+      //       permission: ["View", "Create", "Edit", "Delete"],
+      //     },
+      //     {
+      //       title: "GSTR 9",
+      //       permission: ["View", "Create", "Edit", "Delete"],
+      //     },
+      //   ],
+      // },
       // {
       //   title: "GSTR 3B",
       //   permission: ["View", "Create", "Edit", "Delete"],

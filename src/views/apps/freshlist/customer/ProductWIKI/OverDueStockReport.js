@@ -52,7 +52,6 @@ import {
   _Get,
 } from "../../../../../ApiEndPoint/ApiCalling";
 import {
-  BsCloudDownloadFill,
   BsFillArrowDownSquareFill,
   BsFillArrowUpSquareFill,
 } from "react-icons/bs";
