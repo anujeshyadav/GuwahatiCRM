@@ -32,6 +32,10 @@ import { CloudLightning } from "react-feather";
 import { FaPlus } from "react-icons/fa";
 
 const CreateHeirarchy = ({ EditOneData }) => {
+
+  const [parentValue, setParentValue] = useState("");
+  const [childValue, setChildValue] = useState("");
+  const [hierarchy, setHierarchy] = useState({});
   const [dropdownValue, setdropdownValue] = useState({});
   const [dropdownValuesecond, setdropdownValueSecond] = useState({});
   const [Parent, setParent] = useState("Parent");
@@ -39,6 +43,33 @@ const CreateHeirarchy = ({ EditOneData }) => {
   const [Child, setChild] = useState("Child");
 
   const Context = useContext(UserContext);
+
+  const handleParentChange = (event) => {
+    const selectedParent = event.target.value;
+    setParentValue(selectedParent);
+
+    // Set hierarchy for the selected parent
+    setHierarchy((prevHierarchy) => ({
+      ...prevHierarchy,
+      [selectedParent]: 1,
+    }));
+
+    // Clear child value when parent changes
+    setChildValue("");
+  };
+
+  const handleChildChange = (event) => {
+    const selectedChild = event.target.value;
+    setChildValue(selectedChild);
+
+    // Set hierarchy for the selected child
+    setHierarchy((prevHierarchy) => ({
+      ...prevHierarchy,
+      [selectedChild]: hierarchy[parentValue] + 1,
+    }));
+  };
+  // above latest code//
+
   useEffect(() => {
     if (Parent == Child) {
       swal("You Can not Select Same in Parent and Child");
@@ -111,63 +142,66 @@ const CreateHeirarchy = ({ EditOneData }) => {
             </Col>
           </Row>
           {/* <hr /> */}
+
           <div className="d-flex justify-content-center">
             <span style={{ color: "red" }}>
               {Error && Error ? <>{Error}</> : null}
             </span>
           </div>
-          <Form className="m-1" onSubmit={submitHandler}>
-            <Row className="mb-2">
-              <Col lg="4" md="4">
-                <FormGroup>
-                  <Label>Select Parent</Label>
-                  <CustomInput
-                    required
-                    type="select"
-                    name="rolename"
-                    onChange={(e) => {
-                      setParent(e.target.value);
-                      let Secondary = dropdownValuesecond?.filter(
-                        (ele, i) => ele?._id !== e.target.value
-                      );
-                      console.log(Secondary);
-                      setdropdownValueSecond(Secondary);
-                    }}>
-                    <option value="Parent">--Select Parent--</option>
-                    {dropdownValue &&
-                      dropdownValue?.length &&
-                      dropdownValue?.map((ele, i) => {
-                        return (
-                          <option value={ele?._id}>{ele?.roleName}</option>
-                        );
-                      })}
-                  </CustomInput>
-                </FormGroup>
-              </Col>
-              <Col lg="4" md="4">
-                <FormGroup>
-                  <Label>Select Child</Label>
-                  <CustomInput
-                    required
-                    type="select"
-                    name="rolename"
-                    onChange={(e) => setChild(e.target.value)}>
-                    <option value="Child">--Select Child--</option>
-                    {dropdownValuesecond &&
-                      dropdownValuesecond?.length &&
-                      dropdownValuesecond?.map((ele, i) => {
-                        return (
-                          <option value={ele?._id}>{ele?.roleName}</option>
-                        );
-                      })}
-                  </CustomInput>
-                </FormGroup>
-              </Col>
-            </Row>
 
-            <hr />
+          <div className="container">
+            <Form className="m-1" onSubmit={submitHandler}>
+              <Row className="mb-2">
+                <Col lg="4" md="4">
+                  <FormGroup>
+                    <Label>Select Parent</Label>
+                    <CustomInput
+                      required
+                      type="select"
+                      name="rolename"
+                      onChange={(e) => {
+                        setParent(e.target.value);
+                        let Secondary = dropdownValuesecond?.filter(
+                          (ele, i) => ele?._id !== e.target.value
+                        );
+                        console.log(Secondary);
+                        setdropdownValueSecond(Secondary);
+                      }}>
+                      <option value="Parent">--Select Parent--</option>
+                      {dropdownValue &&
+                        dropdownValue?.length &&
+                        dropdownValue?.map((ele, i) => {
+                          return (
+                            <option value={ele?._id}>{ele?.roleName}</option>
+                          );
+                        })}
+                    </CustomInput>
+                  </FormGroup>
+                </Col>
+                <Col lg="4" md="4">
+                  <FormGroup>
+                    <Label>Select Child</Label>
+                    <CustomInput
+                      required
+                      type="select"
+                      name="rolename"
+                      onChange={(e) => setChild(e.target.value)}>
+                      <option value="Child">--Select Child--</option>
+                      {dropdownValuesecond &&
+                        dropdownValuesecond?.length &&
+                        dropdownValuesecond?.map((ele, i) => {
+                          return (
+                            <option value={ele?._id}>{ele?.roleName}</option>
+                          );
+                        })}
+                    </CustomInput>
+                  </FormGroup>
+                </Col>
+              </Row>
 
-            {/* <Col lg="6" md="6" sm="6" className="mb-2 mt-1">
+              <hr />
+
+              {/* <Col lg="6" md="6" sm="6" className="mb-2 mt-1">
               <Label className="mb-0">Status</Label>
               <div
                 className="form-label-group"
@@ -196,15 +230,16 @@ const CreateHeirarchy = ({ EditOneData }) => {
                 <span style={{ marginRight: "3px" }}>Deactive</span>
               </div>
             </Col> */}
-            <Row>
-              <Button.Ripple
-                color="primary"
-                type="submit"
-                className="mr-1 mt-2 mx-2">
-                Submit
-              </Button.Ripple>
-            </Row>
-          </Form>
+              <Row>
+                <Button.Ripple
+                  color="primary"
+                  type="submit"
+                  className="mr-1 mt-2 mx-2">
+                  Submit
+                </Button.Ripple>
+              </Row>
+            </Form>
+          </div>
         </Card>
       </div>
     </div>

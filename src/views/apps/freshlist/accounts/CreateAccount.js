@@ -29,6 +29,7 @@ import {
   CreateAccountSave,
   CreateAccountView,
   Get_RoleList,
+  _Get,
 } from "../../../../ApiEndPoint/ApiCalling";
 import { BiEnvelope } from "react-icons/bi";
 import { FcPhoneAndroid } from "react-icons/fc";
@@ -37,12 +38,14 @@ import "../../../../assets/scss/pages/users.scss";
 import UserContext from "../../../../context/Context";
 import { CloudLightning } from "react-feather";
 import { FaPlus } from "react-icons/fa";
+import { Role_list_by_Master } from "../../../../ApiEndPoint/Api";
 
 const CreateAccount = () => {
   const [CreatAccountView, setCreatAccountView] = useState([]);
   const [Countries, setCountry] = useState({});
   const [States, setState] = useState({});
   const [Cities, setCities] = useState({});
+  const [Master, setMaster] = useState(false);
   const [formData, setFormData] = useState({});
   const [dropdownValue, setdropdownValue] = useState([]);
   const [index, setindex] = useState("");
@@ -124,36 +127,49 @@ const CreateAccount = () => {
 
   useEffect(() => {
     let userdata = JSON.parse(localStorage.getItem("userData"));
-    Get_RoleList(userdata?._id, userdata?.database)
-      .then((res) => {
-        let ShowList = res?.Role?.filter(
-          (item, i) => item?.position > userdata?.rolename?.position
-        );
-        setdropdownValue(ShowList);
-        // console.log(ShowList);
-      })
-      .catch((err) => {
-        console.log(err);
-        swal("Roles List Not found");
-      });
+
+    if (userdata?.rolename?.rank === 0) {
+      setMaster(true);
+      _Get(Role_list_by_Master, userdata?._id)
+        .then((res) => {
+          setdropdownValue(res?.Role);
+          // console.log(ShowList);
+        })
+        .catch((err) => {
+          console.log(err);
+          swal("Roles List Not found");
+        });
+    } else {
+      Get_RoleList(userdata?._id, userdata?.database)
+        .then((res) => {
+          debugger;
+          let ShowList = res?.Role?.filter(
+            (item, i) => item?.position > userdata?.rolename?.position
+          );
+          setdropdownValue(ShowList);
+          // console.log(ShowList);
+        })
+        .catch((err) => {
+          console.log(err);
+          swal("Roles List Not found");
+        });
+    }
     CreateAccountView()
       .then((res) => {
         const jsonData = xmlJs.xml2json(res.data, { compact: true, spaces: 2 });
         setCreatAccountView(JSON.parse(jsonData)?.CreateUser?.input);
         setdropdownValue(JSON.parse(jsonData));
-        
       })
       .catch((err) => {
         console.log(err);
       });
-      
-      console.log(userdata?._id)
-      formData["created_by"]=userdata?._id
+
+    console.log(userdata?._id);
+    formData["created_by"] = userdata?._id;
   }, []);
 
   const submitHandler = (e) => {
     e.preventDefault();
-    console.log(formData);
     if (formData?.rolename && formData?.email && formData?.firstName) {
       if (error) {
         swal("Error occured while Entering Details");
@@ -217,9 +233,15 @@ const CreateAccount = () => {
                       name="rolename"
                       value={formData["rolename"]}
                       onChange={(e) => {
+                        const selectedName =
+                          e.target.options[e.target.selectedIndex].getAttribute(
+                            "data-name"
+                          );
+
                         setFormData({
                           ...formData,
                           ["rolename"]: e.target.value,
+                          ["database"]: selectedName,
                         });
                       }}>
                       <option>--select Role--</option>
@@ -227,20 +249,29 @@ const CreateAccount = () => {
                         dropdownValue?.length &&
                         dropdownValue?.map((ele, i) => {
                           return (
-                            <option value={ele?._id}>{ele?.roleName}</option>
+                            <option data-name={ele?.database} value={ele?._id}>
+                              {ele?.roleName}
+                            </option>
                           );
                         })}
                     </CustomInput>
                   </FormGroup>
                 </Col>
+                {Master && Master && (
+                  <Col lg="4" md="4">
+                    <FormGroup>
+                      <Label>Database Name</Label>
+                      <Input
+                        readOnly
+                        type="text"
+                        value={formData["database"]}
+                      />
+                    </FormGroup>
+                  </Col>
+                )}
 
                 {CreatAccountView &&
                   CreatAccountView?.map((ele, i) => {
-                    {
-                      /* console.log(Context?.UserInformatio?.dateFormat); */
-                    }
-                    // console.log(Countries);
-                    // console.log(States);
                     const convertedTime = moment("2022-08-05T12:00:00")
                       .tz("America/New_York")
                       .format("D MMM, YYYY HH:mm");
@@ -656,12 +687,12 @@ const CreateAccount = () => {
                   }}>
                   <input
                     required
-                    style={{ marginRight: "3px"  }}
+                    style={{ marginRight: "3px" }}
                     type="radio"
                     name="status"
-                    value="Active" 
+                    value="Active"
                   />
-                  <span style={{ marginRight: "20px"  }}>Active</span>
+                  <span style={{ marginRight: "20px" }}>Active</span>
 
                   <input
                     required
