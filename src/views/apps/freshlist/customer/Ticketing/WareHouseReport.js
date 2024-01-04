@@ -40,14 +40,11 @@ import {
 import moment from "moment-timezone";
 import swal from "sweetalert";
 import {
-  TicketTool_ViewData,
   Createwarehousexml,
   ticketToolDeleteOne,
-  ticketToolList,
   CreateWarehouseList,
 } from "../../../../../ApiEndPoint/ApiCalling";
 import {
-  BsCloudDownloadFill,
   BsFillArrowDownSquareFill,
   BsFillArrowUpSquareFill,
 } from "react-icons/bs";
@@ -379,8 +376,6 @@ class WareHouseReport extends React.Component {
     }
   };
   processCell = params => {
-    // console.log(params);
-    // Customize cell content as needed
     return params.value;
   };
 

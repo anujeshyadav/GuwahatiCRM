@@ -11,10 +11,6 @@ export const Roles = [
   {
     title: "Users",
     TabName: [
-      // {
-      //   title: "Customer",
-      //   permission: ["View", "Create", "Edit", "Delete"],
-      // },
       {
         title: "Create User",
         permission: ["View", "Create", "Edit", "Delete"],
@@ -27,14 +23,6 @@ export const Roles = [
         title: "Create Customer",
         permission: ["View", "Create", "Edit", "Delete"],
       },
-      // {
-      //   title: "Assign Role",
-      //   permission: ["View", "Create", "Edit", "Delete"],
-      // },
-      // {
-      //   title: "Role List",
-      //   permission: ["View", "Create", "Edit", "Delete"],
-      // },
     ],
   },
 
@@ -144,88 +132,7 @@ export const Roles = [
       },
     ],
   },
-  // {
-  //   title: "Stock Transfer",
-  //   TabName: [
-  //     {
-  //       title: "Conversion Process",
-  //       permission: ["View", "Create", "Edit", "Delete"],
-  //     },
-  //     {
-  //       title: "Finished Product",
-  //       permission: ["View", "Create", "Edit", "Delete"],
-  //     },
-  //     {
-  //       title: "Damaged Product",
-  //       permission: ["View", "Create", "Edit", "Delete"],
-  //     },
-  //     {
-  //       title: "Wastage Details",
-  //       permission: ["View", "Create", "Edit", "Delete"],
-  //     },
-  //     {
-  //       title: "Raw Return",
-  //       permission: ["View", "Create", "Edit", "Delete"],
-  //     },
-  //     {
-  //       title: "InProcess Stock",
-  //       permission: ["View", "Create", "Edit", "Delete"],
-  //     },
-  //   ],
-  // },
-  // {
-  //   title: "Team",
-  //   TabName: [
-  //     {
-  //       title: "Area Assignment",
-  //       permission: ["View", "Create", "Edit", "Delete"],
-  //     },
-  //     {
-  //       title: "Party Assignment",
-  //       permission: ["View", "Create", "Edit", "Delete"],
-  //     },
-  //     {
-  //       title: "Target creation Partywise",
-  //       permission: ["View", "Create", "Edit", "Delete"],
-  //     },
-  //     {
-  //       title: "Target creation Product wise",
-  //       permission: ["View", "Create", "Edit", "Delete"],
-  //     },
-  //     {
-  //       title: "Auto Target Creation",
-  //       permission: ["View", "Create", "Edit", "Delete"],
-  //     },
-  //     {
-  //       title: "Balanced Target",
-  //       permission: ["View", "Create", "Edit", "Delete"],
-  //     },
-  //     {
-  //       title: "Team working Report",
-  //       permission: ["View", "Create", "Edit", "Delete"],
-  //     },
-  //     {
-  //       title: "Order Dispatch Detail",
-  //       permission: ["View", "Create", "Edit", "Delete"],
-  //     },
-  //     {
-  //       title: "Party Report",
-  //       permission: ["View", "Create", "Edit", "Delete"],
-  //     },
-  //     {
-  //       title: "Collection Report",
-  //       permission: ["View", "Create", "Edit", "Delete"],
-  //     },
-  //     {
-  //       title: "Payment due Report",
-  //       permission: ["View", "Create", "Edit", "Delete"],
-  //     },
-  //     {
-  //       title: "Dead Party",
-  //       permission: ["View", "Create", "Edit", "Delete"],
-  //     },
-  //   ],
-  // },
+
   {
     title: "Report",
     TabName: [
@@ -281,18 +188,32 @@ export const Roles = [
         title: "Dispatch Report",
         permission: ["View", "Create", "Edit", "Delete"],
       },
+
       {
-        title: "GSTR 1",
-        permission: ["View", "Create", "Edit", "Delete"],
+        title: "All GSTR",
+        TabName: [
+          {
+            title: "GSTR 1",
+            permission: ["View", "Create", "Edit", "Delete"],
+          },
+          {
+            title: "GSTR 3B",
+            permission: ["View", "Create", "Edit", "Delete"],
+          },
+          {
+            title: "GSTR 9",
+            permission: ["View", "Create", "Edit", "Delete"],
+          },
+        ],
       },
-      {
-        title: "GSTR 3B",
-        permission: ["View", "Create", "Edit", "Delete"],
-      },
-      {
-        title: "GSTR 9",
-        permission: ["View", "Create", "Edit", "Delete"],
-      },
+      // {
+      //   title: "GSTR 3B",
+      //   permission: ["View", "Create", "Edit", "Delete"],
+      // },
+      // {
+      //   title: "GSTR 9",
+      //   permission: ["View", "Create", "Edit", "Delete"],
+      // },
       {
         title: "HSN Wise sale Report",
         permission: ["View", "Create", "Edit", "Delete"],
@@ -462,78 +383,6 @@ export const Roles = [
       },
     ],
   },
-  // {
-  //   title: "Warranty Claims",
-  //   TabName: [
-  //     {
-  //       title: "OEM Warranty",
-  //       permission: ["View", "Create", "Edit", "Delete"],
-  //     },
-  //     {
-  //       title: "Supplier Warranty",
-  //       permission: ["View", "Create", "Edit", "Delete"],
-  //     },
-  //   ],
-  // },
-  // {
-  //   title: "Stock Management",
-  //   TabName: [
-  //     {
-  //       title: "Stock Report",
-  //       permission: ["View", "Create", "Edit", "Delete"],
-  //     },
-  //     {
-  //       title: "Stock Transfer",
-  //       permission: ["View", "Create", "Edit", "Delete"],
-  //     },
-  //   ],
-  // },
-  // {
-  //   title: "Ticketing",
-  //   TabName: [
-  //     {
-  //       title: "Service Request",
-  //       permission: ["View", "Create", "Edit", "Delete"],
-  //     },
-  //     {
-  //       title: "Draft Service",
-  //       permission: ["View", "Create", "Edit", "Delete"],
-  //     },
-  //     {
-  //       title: "Pending Service",
-  //       permission: ["View", "Create", "Edit", "Delete"],
-  //     },
-  //     {
-  //       title: "Completed Service",
-  //       permission: ["View", "Create", "Edit", "Delete"],
-  //     },
-  //     {
-  //       title: "Transfer Service",
-  //       permission: ["View", "Create", "Edit", "Delete"],
-  //     },
-  //     {
-  //       title: "Cancelled Service",
-  //       permission: ["View", "Create", "Edit", "Delete"],
-  //     },
-  //     {
-  //       title: "Rejected Service",
-  //       permission: ["View", "Create", "Edit", "Delete"],
-  //     },
-  //   ],
-  // },
-  // {
-  //   title: "Budget",
-  //   TabName: [
-  //     {
-  //       title: "Budget List",
-  //       permission: ["View", "Create", "Edit", "Delete"],
-  //     },
-  //     {
-  //       title: "Budget Assignment",
-  //       permission: ["View", "Create", "Edit", "Delete"],
-  //     },
-  //   ],
-  // },
   {
     title: "Reports Management",
     TabName: [

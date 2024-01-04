@@ -16,6 +16,9 @@ import {
   Button,
   ModalHeader,
   ModalBody,
+  Label,
+  CustomInput,
+  FormGroup,
 } from "reactstrap";
 import { ContextLayout } from "../../../../../utility/context/Layout";
 import { AgGridReact } from "ag-grid-react";
@@ -23,7 +26,6 @@ import "ag-grid-community/dist/styles/ag-grid.css";
 import EditAccount from "../../accounts/EditAccount";
 import ViewAccount from "../../accounts/ViewAccount";
 import jsPDF from "jspdf";
-// import db from "../../../../context/indexdb";
 import "jspdf-autotable";
 import Logo from "../../../../../assets/img/profile/pages/logomain.png";
 import Papa from "papaparse";
@@ -40,9 +42,11 @@ import {
 import moment from "moment-timezone";
 import swal from "sweetalert";
 import {
+  CreateAccountList,
   TicketTool_ViewData,
   ticketToolDeleteOne,
   ticketToolList,
+  _Get,
 } from "../../../../../ApiEndPoint/ApiCalling";
 import {
   BsCloudDownloadFill,
@@ -51,7 +55,10 @@ import {
 } from "react-icons/bs";
 import * as XLSX from "xlsx";
 import UserContext from "../../../../../context/Context";
-
+import {
+  WareHouse_Closing_Stock,
+  WareHouse_OverDue_Stock,
+} from "../../../../../ApiEndPoint/Api";
 const SelectedColums = [];
 
 class OverdueReport extends React.Component {
@@ -64,6 +71,10 @@ class OverdueReport extends React.Component {
       isOpen: false,
       Arrindex: "",
       rowData: [],
+      startDate: "",
+      EndDate: "",
+      wareHouseViewOne: [],
+      Show: false,
       setMySelectedarr: [],
       SelectedCols: [],
       paginationPageSize: 5,
@@ -79,6 +90,206 @@ class OverdueReport extends React.Component {
         resizable: true,
         suppressMenu: true,
       },
+      columnDefs: [
+        {
+          headerName: "S.No",
+          valueGetter: "node.rowIndex + 1",
+          field: "node.rowIndex + 1",
+          width: 150,
+          filter: true,
+        },
+        // {
+        //   headerName: "Actions",
+        //   field: "sortorder",
+        //   field: "transactions",
+        //   width: 150,
+        //   cellRendererFramework: (params) => {
+        //     return (
+        //       <div className="actions cursor-pointer">
+        //         {this.state.InsiderPermissions &&
+        //           this.state.InsiderPermissions?.View && (
+        //             <Eye
+        //               className="mr-50"
+        //               size="25px"
+        //               color="green"
+        //               // onClick={() =>
+        //               //   history.push(
+        //               //     `/app/freshlist/customer/viewCustomer/${params.data?._id}`
+        //               //   )
+        //               // }
+        //               onClick={(e) => {
+        //                 this.togglemodal();
+        //                 this.setState({ ViewOneData: params?.data });
+        //                 this.setState({ ViewOneUserView: true });
+        //                 this.setState({ EditOneUserView: false });
+
+        //                 // console.log(params?.data);
+        //               }}
+        //             />
+        //           )}
+
+        //         {/* {this.state.InsiderPermissions &&
+        //           this.state.InsiderPermissions?.Delete && (
+        //             <Trash2
+        //               className="mr-50"
+        //               size="25px"
+        //               color="red"
+        //               onClick={() => {
+        //                 let selectedData = this.gridApi.getSelectedRows();
+        //                 this.runthisfunction(params.data._id);
+        //                 this.gridApi.updateRowData({ remove: selectedData });
+        //               }}
+        //             />
+        //           )} */}
+        //       </div>
+        //     );
+        //   },
+        // },
+        {
+          headerName: "Status",
+          field: "status",
+          filter: true,
+          width: 150,
+          cellRendererFramework: params => {
+            return params.data?.status === "Active" ? (
+              <div className="badge badge-pill badge-success">
+                {params.data?.productId?.status}
+              </div>
+            ) : params.data?.status === "InProcess" ? (
+              <div className="badge badge-pill badge-warning">
+                {params.data?.productId?.status}
+              </div>
+            ) : params.data?.status === "Hold" ? (
+              <div className="badge badge-pill badge-danger">
+                {params.data?.productId?.status}
+              </div>
+            ) : params.data?.status === "opening" ? (
+              <div className="badge badge-pill badge-warning">
+                {params.data?.productId?.status}
+              </div>
+            ) : (
+              <>{params?.data?.productId?.status}</>
+            );
+          },
+        },
+        {
+          headerName: "Product_MRP",
+          field: "Product_MRP",
+          filter: true,
+          width: 200,
+          cellRendererFramework: params => {
+            return (
+              <div>
+                <span>{params.data?.productId?.Product_MRP}</span>
+              </div>
+            );
+          },
+        },
+        {
+          headerName: "Product_Title",
+          field: "Product_Title",
+          filter: true,
+          width: 200,
+          cellRendererFramework: params => {
+            return (
+              <div>
+                <span>{params.data?.productId?.Product_Title}</span>
+              </div>
+            );
+          },
+        },
+        {
+          headerName: "SubCategroy",
+          field: "SubCategory",
+          filter: true,
+          width: 200,
+          cellRendererFramework: params => {
+            return (
+              <div>
+                <span>{params.data?.productId?.SubCategory}</span>
+              </div>
+            );
+          },
+        },
+        {
+          headerName: "HSN_Code",
+          field: "HSN_Code",
+          filter: true,
+          width: 200,
+          cellRendererFramework: params => {
+            return (
+              <div>
+                <span>{params.data?.productId?.HSN_Code} </span>
+              </div>
+            );
+          },
+        },
+        {
+          headerName: "Size",
+          field: "Size",
+          filter: true,
+          width: 200,
+          cellRendererFramework: params => {
+            return (
+              <div>
+                <span>{params.data?.productId?.Size} </span>
+              </div>
+            );
+          },
+        },
+        {
+          headerName: "GST Rate",
+          field: "Size",
+          filter: true,
+          width: 200,
+          cellRendererFramework: params => {
+            return (
+              <div>
+                <span>{params.data?.productId["GST Rate"]} </span>
+              </div>
+            );
+          },
+        },
+        {
+          headerName: "CurrentStock",
+          field: "currentStock",
+          filter: true,
+          width: 200,
+          cellRendererFramework: params => {
+            return (
+              <div>
+                <span>{params.data?.currentStock} </span>
+              </div>
+            );
+          },
+        },
+        {
+          headerName: "UnitType",
+          field: "unitType",
+          filter: true,
+          width: 200,
+          cellRendererFramework: params => {
+            return (
+              <div>
+                <span>{params.data?.unitType} </span>
+              </div>
+            );
+          },
+        },
+        {
+          headerName: "TotalPrice",
+          field: "totalPrice",
+          filter: true,
+          width: 200,
+          cellRendererFramework: params => {
+            return (
+              <div>
+                <span>{params.data?.totalPrice} </span>
+              </div>
+            );
+          },
+        },
+      ],
     };
   }
 
@@ -87,7 +298,18 @@ class OverdueReport extends React.Component {
       modal: !prevState.modal,
     }));
   };
-
+  handleSubmitDate = () => {
+    const filteredItems = this.state.rowData.filter(item => {
+      const dateList = new Date(item.updatedAt);
+      const onlyDate = dateList.toISOString().split("T")[0];
+      return onlyDate >= this.state.startDate && onlyDate <= this.state.EndDate;
+    });
+    this.setState({ rowData: filteredItems });
+  };
+  handleDate = e => {
+    const { name, value } = e.target;
+    this.setState({ [name]: value });
+  };
   handleChangeEdit = (data, types) => {
     let type = types;
     if (type == "readonly") {
@@ -98,9 +320,56 @@ class OverdueReport extends React.Component {
       this.setState({ EditOneData: data });
     }
   };
+  handleShowWarehouse = async e => {
+    e.preventDefault();
+    if (this.state.warehouse != "NA") {
+      // console.log(this.state.wareHouseViewOne[0]);
+      // let selecteddata = this.state.wareHouseViewOne?.filter(
+      //   (ele, i) => ele?._id == this.state.warehouse
+      // );
+      this.setState({ Show: true });
+      let userData = JSON.parse(localStorage.getItem("userData"));
+      let URl = `${WareHouse_OverDue_Stock}/${this.state.warehouse}/`;
+      await _Get(URl, userData?.database)
+        .then(res => {
+          this.setState({ rowData: res?.Product });
+          this.setState({ AllcolumnDefs: this.state.columnDefs });
 
+          let userHeading = JSON.parse(
+            localStorage.getItem("OverDurStockList")
+          );
+          if (userHeading?.length) {
+            this.setState({ columnDefs: userHeading });
+            this.gridApi.setColumnDefs(userHeading);
+            this.setState({ SelectedcolumnDefs: userHeading });
+          } else {
+            this.setState({ columnDefs: this.state.columnDefs });
+            this.setState({ SelectedcolumnDefs: this.state.columnDefs });
+          }
+          this.setState({ SelectedCols: this.state.columnDefs });
+        })
+        .catch(err => {
+          console.log(err);
+        });
+    } else {
+      swal("You did not select Any Warehouse");
+    }
+  };
   async componentDidMount() {
     const UserInformation = this.context?.UserInformatio;
+    let userData = JSON.parse(localStorage.getItem("userData"));
+    await CreateAccountList(userData?._id, userData?.database)
+      .then(res => {
+        console.log(res);
+        let value = res?.adminDetails;
+        console.log(value);
+        if (value.length) {
+          this.setState({ wareHouseViewOne: value });
+        }
+      })
+      .catch(err => {
+        console.log(err);
+      });
     await ticketToolList()
       .then(res => {
         console.log(res?.TicketTool);
@@ -117,63 +386,6 @@ class OverdueReport extends React.Component {
         // console.log(JSON.parse(jsonData)?.createTicket);
         let CreatAccountView = JSON.parse(jsonData)?.createTicket;
 
-        const Checkbox = CreatAccountView?.CheckBox?.input?.map(ele => {
-          return {
-            headerName: ele?.label._text,
-            field: ele?.name._text,
-            filter: true,
-            sortable: true,
-          };
-        });
-        const partsmydropdown = CreatAccountView?.Parts?.MyDropDown?.map(
-          ele => {
-            return {
-              headerName: ele?.dropdown?.label._text,
-              field: ele?.dropdown?.name?._text,
-              filter: true,
-              sortable: true,
-            };
-          }
-        );
-
-        let dropdown = CreatAccountView?.CurrentStatus?.MyDropDown?.dropdown;
-
-        const singledropdown = {
-          headerName: dropdown?.name._text,
-          field: dropdown?.name._text,
-          filter: true,
-          sortable: true,
-        };
-
-        const partinput = CreatAccountView?.Parts?.input?.map(ele => {
-          return {
-            headerName: ele?.label._text,
-            field: ele?.name._text,
-            filter: true,
-            sortable: true,
-          };
-        });
-
-        const productdropdown = CreatAccountView?.Product?.MyDropDown?.map(
-          ele => {
-            return {
-              headerName: ele?.dropdown?.label._text,
-              field: ele?.dropdown?.name?._text,
-              filter: true,
-              sortable: true,
-            };
-          }
-        );
-
-        const productinput = CreatAccountView?.Product?.input?.map(ele => {
-          return {
-            headerName: ele?.label._text,
-            field: ele?.name._text,
-            filter: true,
-            sortable: true,
-          };
-        });
-
         const allinput = CreatAccountView?.input?.map(ele => {
           return {
             headerName: ele?.label._text,
@@ -183,7 +395,6 @@ class OverdueReport extends React.Component {
           };
         });
 
-        // formdata.append("id", randomNumber);
         let myHeadings = [
           ...Checkbox,
           ...partsmydropdown,
@@ -244,52 +455,7 @@ class OverdueReport extends React.Component {
               );
             },
           },
-          {
-            headerName: "Whatsapp",
-            field: "whatsapp",
-            filter: true,
-            sortable: true,
-            cellRendererFramework: params => {
-              return params.data?.whatsapp === "true" ? (
-                <div className="badge badge-pill badge-success">YES</div>
-              ) : params.data?.whatsapp === "false" ? (
-                <div className="badge badge-pill badge-warning">NO</div>
-              ) : (
-                "NA"
-              );
-            },
-          },
-          {
-            headerName: "SMS",
-            field: "sms",
-            filter: true,
-            sortable: true,
-            cellRendererFramework: params => {
-              return params.data?.sms === "true" ? (
-                <div className="badge badge-pill badge-success">YES</div>
-              ) : params.data?.sms === "false" ? (
-                <div className="badge badge-pill badge-warning">No</div>
-              ) : (
-                "NA"
-              );
-            },
-          },
-          {
-            headerName: "Gmail",
-            field: "gmail",
-            filter: true,
-            sortable: true,
-            cellRendererFramework: params => {
-              return params.data?.gmail === "true" ? (
-                <div className="badge badge-pill badge-success">YES</div>
-              ) : params.data?.gmail === "false" ? (
-                <div className="badge badge-pill badge-warning">NO</div>
-              ) : (
-                "NA"
-              );
-            },
-          },
-          ...myHeadings,
+
           {
             headerName: "Created date",
             field: "createdAt",
@@ -390,284 +556,6 @@ class OverdueReport extends React.Component {
       .catch(err => {
         console.log(err);
       });
-
-    // await CreateAccountView()
-    //   .then((res) => {
-    //     var mydropdownArray = [];
-    //     var adddropdown = [];
-    //     const jsonData = xmlJs.xml2json(res.data, { compact: true, spaces: 2 });
-    //     console.log(JSON.parse(jsonData));
-
-    //     const inputs = JSON.parse(jsonData).CreateAccount?.input?.map((ele) => {
-    //       return {
-    //         headerName: ele?.label._text,
-    //         field: ele?.name._text,
-    //         filter: true,
-    //         sortable: true,
-    //       };
-    //     });
-    //     let Radioinput =
-    //       JSON.parse(jsonData).CreateAccount?.Radiobutton?.input[0]?.name
-    //         ?._text;
-    //     const addRadio = [
-    //       {
-    //         headerName: Radioinput,
-    //         field: Radioinput,
-    //         filter: true,
-    //         sortable: true,
-    //         cellRendererFramework: (params) => {
-    //           return params.data?.Status === "Active" ? (
-    //             <div className="badge badge-pill badge-success">
-    //               {params.data.Status}
-    //             </div>
-    //           ) : params.data?.Status === "Deactive" ? (
-    //             <div className="badge badge-pill badge-warning">
-    //               {params.data.Status}
-    //             </div>
-    //           ) : (
-    //             "NA"
-    //           );
-    //         },
-    //       },
-    //     ];
-
-    //     let dropdown = JSON.parse(jsonData).CreateAccount?.MyDropdown?.dropdown;
-    //     if (dropdown.length) {
-    //       var mydropdownArray = dropdown?.map((ele) => {
-    //         return {
-    //           headerName: ele?.label,
-    //           field: ele?.name,
-    //           filter: true,
-    //           sortable: true,
-    //         };
-    //       });
-    //     } else {
-    //       var adddropdown = [
-    //         {
-    //           headerName: dropdown?.label._text,
-    //           field: dropdown?.name._text,
-    //           filter: true,
-    //           sortable: true,
-    //         },
-    //       ];
-    //     }
-
-    //     let myHeadings = [
-    //       // ...checkboxinput,
-    //       ...inputs,
-    //       ...adddropdown,
-    //       ...addRadio,
-    //       ...mydropdownArray,
-    //     ];
-    //     // console.log(myHeadings);
-    //     let Product = [
-    //       {
-    //         headerName: "Actions",
-    //         field: "sortorder",
-    //         field: "transactions",
-    //         width: 190,
-    //         cellRendererFramework: (params) => {
-    //           return (
-    //             <div className="actions cursor-pointer">
-    //               <Route
-    //                 render={({ history }) => (
-    //                   <Eye
-    //                     className="mr-50"
-    //                     size="25px"
-    //                     color="green"
-    //                     onClick={() => {
-    //                       this.handleChangeEdit(params.data, "readonly");
-    //                     }}
-    //                   />
-    //                 )}
-    //               />
-    //               <Route
-    //                 render={({ history }) => (
-    //                   <Edit
-    //                     className="mr-50"
-    //                     size="25px"
-    //                     color="blue"
-    //                     onClick={() => {
-    //                       this.handleChangeEdit(params.data, "Editable");
-    //                     }}
-    //                   />
-    //                 )}
-    //               />
-
-    //               <Route
-    //                 render={() => (
-    //                   <Trash2
-    //                     className="mr-50"
-    //                     size="25px"
-    //                     color="red"
-    //                     onClick={() => {
-    //                       this.runthisfunction(params?.data?._id);
-    //                     }}
-    //                   />
-    //                 )}
-    //               />
-    //             </div>
-    //           );
-    //         },
-    //       },
-    //       {
-    //         headerName: "Whatsapp",
-    //         field: "whatsapp",
-    //         filter: true,
-    //         sortable: true,
-    //         cellRendererFramework: (params) => {
-    //           console.log(params?.data?.whatsapp);
-    //           return params.data?.whatsapp === true ? (
-    //             <div className="badge badge-pill badge-success">YES</div>
-    //           ) : params.data?.whatsapp === false ? (
-    //             <div className="badge badge-pill badge-warning">NO</div>
-    //           ) : (
-    //             "NA"
-    //           );
-    //         },
-    //       },
-    //       {
-    //         headerName: "SMS",
-    //         field: "sms",
-    //         filter: true,
-    //         sortable: true,
-    //         cellRendererFramework: (params) => {
-    //           console.log(params?.data?.sms);
-    //           return params.data?.sms === true ? (
-    //             <div className="badge badge-pill badge-success">YES</div>
-    //           ) : params.data?.sms === false ? (
-    //             <div className="badge badge-pill badge-warning">No</div>
-    //           ) : (
-    //             "NA"
-    //           );
-    //         },
-    //       },
-    //       {
-    //         headerName: "Gmail",
-    //         field: "gmail",
-    //         filter: true,
-    //         sortable: true,
-    //         cellRendererFramework: (params) => {
-    //           console.log(params?.data?.gmail);
-    //           return params.data?.gmail === true ? (
-    //             <div className="badge badge-pill badge-success">YES</div>
-    //           ) : params.data?.gmail === false ? (
-    //             <div className="badge badge-pill badge-warning">NO</div>
-    //           ) : (
-    //             "NA"
-    //           );
-    //         },
-    //       },
-    //       ...myHeadings,
-    //       {
-    //         headerName: "Created date",
-    //         field: "createdAt",
-    //         filter: true,
-    //         sortable: true,
-    //         cellRendererFramework: (params) => {
-    //           let convertedTime = "NA";
-    //           if (params?.data?.createdAt == undefined) {
-    //             convertedTime = "NA";
-    //           }
-    //           if (params?.data?.createdAt) {
-    //             convertedTime = params?.data?.createdAt;
-    //           }
-    //           if (
-    //             UserInformation?.timeZone !== undefined &&
-    //             params?.data?.createdAt !== undefined
-    //           ) {
-    //             if (params?.data?.createdAt != undefined) {
-    //               convertedTime = moment(params?.data?.createdAt?.split(".")[0])
-    //                 .tz(UserInformation?.timeZone.split("-")[0])
-    //                 .format(UserInformation?.dateTimeFormat);
-    //             }
-    //           }
-
-    //           return (
-    //             <>
-    //               <div className="actions cursor-pointer">
-    //                 {convertedTime == "NA" ? (
-    //                   "NA"
-    //                 ) : (
-    //                   <span>
-    //                     {convertedTime} &nbsp;
-    //                     {UserInformation?.timeZone &&
-    //                       UserInformation?.timeZone.split("-")[1]}
-    //                   </span>
-    //                 )}
-    //               </div>
-    //             </>
-    //           );
-    //         },
-    //       },
-    //       {
-    //         headerName: "Updated date",
-    //         field: "updatedAt",
-    //         filter: true,
-    //         sortable: true,
-    //         cellRendererFramework: (params) => {
-    //           let convertedTime = "NA";
-    //           if (params?.data?.updatedAt == undefined) {
-    //             convertedTime = "NA";
-    //           }
-    //           if (params?.data?.updatedAt) {
-    //             convertedTime = params?.data?.updatedAt;
-    //           }
-    //           if (
-    //             UserInformation?.timeZone !== undefined &&
-    //             params?.data?.updatedAt !== undefined
-    //           ) {
-    //             if (params?.data?.updatedAt != undefined) {
-    //               convertedTime = moment(params?.data?.updatedAt?.split(".")[0])
-    //                 .tz(UserInformation?.timeZone.split("-")[0])
-    //                 .format(UserInformation?.dateTimeFormat);
-    //             }
-    //           }
-
-    //           return (
-    //             <>
-    //               <div className="actions cursor-pointer">
-    //                 {convertedTime == "NA" ? (
-    //                   "NA"
-    //                 ) : (
-    //                   <span>
-    //                     {convertedTime} &nbsp;
-    //                     {UserInformation?.timeZone &&
-    //                       UserInformation?.timeZone.split("-")[1]}
-    //                   </span>
-    //                 )}
-    //               </div>
-    //             </>
-    //           );
-    //         },
-    //       },
-    //     ];
-
-    //     this.setState({ AllcolumnDefs: Product });
-
-    //     let userHeading = JSON.parse(localStorage.getItem("Ticketsearch"));
-    //     if (userHeading?.length) {
-    //       this.setState({ columnDefs: userHeading });
-    //       this.gridApi.setColumnDefs(userHeading);
-    //       this.setState({ SelectedcolumnDefs: userHeading });
-    //     } else {
-    //       this.setState({ columnDefs: Product });
-    //       this.setState({ SelectedcolumnDefs: Product });
-    //     }
-    //     this.setState({ SelectedCols: Product });
-    //   })
-    //   .catch((err) => {
-    //     console.log(err);
-    //     swal("Error", "something went wrong try again");
-    //   });
-    // await CreateAccountList()
-    //   .then((res) => {
-    //     let value = res?.CreateAccount;
-    //     this.setState({ rowData: value });
-    //   })
-    //   .catch((err) => {
-    //     console.log(err);
-    //   });
   }
   toggleDropdown = () => {
     this.setState(prevState => ({ isOpen: !prevState.isOpen }));
@@ -783,8 +671,6 @@ class OverdueReport extends React.Component {
     }
   };
   processCell = params => {
-    // console.log(params);
-    // Customize cell content as needed
     return params.value;
   };
 
@@ -884,9 +770,6 @@ class OverdueReport extends React.Component {
         });
 
         xmlString += "</root>";
-
-        // setXmlData(xmlString);
-
         // Create a download link
         const blob = new Blob([xmlString], { type: "text/xml" });
         const link = document.createElement("a");
@@ -896,7 +779,9 @@ class OverdueReport extends React.Component {
       },
     });
   };
-
+  changeHandler = e => {
+    this.setState({ [e.target.name]: e.target.value });
+  };
   HandleSetVisibleField = e => {
     e.preventDefault();
     this.gridApi.setColumnDefs(this.state.SelectedcolumnDefs);
@@ -942,10 +827,10 @@ class OverdueReport extends React.Component {
       isOpen,
       SelectedCols,
       AllcolumnDefs,
+      Show,
     } = this.state;
     return (
       <>
-        {/* <ExcelReader /> */}
         <Row className="app-user-list">
           {this.state.EditOneUserView && this.state.EditOneUserView ? (
             <Row className="card">
@@ -992,12 +877,85 @@ class OverdueReport extends React.Component {
                     <Card>
                       <Row className="mt-2 ml-2 mr-2">
                         <Col>
-                          <h1
+                          <h3
                             className="float-left"
-                            style={{ fontWeight: "600" }}
+                            style={{ fontWeight: "600", fontSize: "10" }}
                           >
-                            Overdue Report
-                          </h1>
+                            Overdue ReportList
+                          </h3>
+                        </Col>
+                        <Col>
+                          <FormGroup>
+                            <Label>Select Warehouse</Label>
+                            <CustomInput
+                              type="select"
+                              placeholder="Select Warehouse"
+                              name="warehouse"
+                              value={this.state.warehouse}
+                              onChange={this.changeHandler}
+                            >
+                              <option value="">--Select WareHouse--</option>
+                              {this.state.wareHouseViewOne?.map(cat => (
+                                <option value={cat?._id} key={cat?._id}>
+                                  {cat?.firstName}
+                                </option>
+                              ))}
+                            </CustomInput>
+                          </FormGroup>
+                        </Col>
+                        <Col className="mb-2">
+                          <Button
+                            style={{
+                              cursor: "pointer",
+                              backgroundColor: "#39cccc",
+                              color: "white",
+                              fontWeight: "600",
+                            }}
+                            className="mt-2"
+                            color="#39cccc"
+                            onClick={this.handleShowWarehouse}
+                          >
+                            Submit
+                          </Button>
+                        </Col>
+                        <Col>
+                          <FormGroup>
+                            <Label>Start Date</Label>
+                            <Input
+                              type="date"
+                              name="startDate"
+                              value={this.state.startDate}
+                              onChange={this.handleDate}
+                            />
+                          </FormGroup>
+                        </Col>
+
+                        <Col>
+                          <FormGroup>
+                            <Label>End Date</Label>
+                            <Input
+                              type="date"
+                              name="EndDate"
+                              value={this.state.EndDate}
+                              onChange={this.handleDate}
+                            />
+                          </FormGroup>
+                        </Col>
+                        <Col className="">
+                          <Button
+                            type="submit"
+                            className="mt-1"
+                            color="#39cccc"
+                            style={{
+                              cursor: "pointer",
+                              backgroundColor: "#39cccc",
+                              color: "white",
+                              fontWeight: "600",
+                            }}
+                            onClick={this.handleSubmitDate}
+                          >
+                            Filter Date
+                          </Button>
                         </Col>
                         <Col>
                           <span className="mx-1">
@@ -1073,120 +1031,118 @@ class OverdueReport extends React.Component {
                           </span>
                         </Col>
                       </Row>
-                      <CardBody style={{ marginTop: "-1.5rem" }}>
-                        {this.state.rowData === null ? null : (
-                          <div className="ag-theme-material w-100 my-2 ag-grid-table">
-                            <div className="d-flex flex-wrap justify-content-between align-items-center">
-                              <div className="mb-1">
-                                <UncontrolledDropdown className="p-1 ag-dropdown">
-                                  <DropdownToggle tag="div">
-                                    {this.gridApi
-                                      ? this.state.currenPageSize
-                                      : "" * this.state.getPageSize -
-                                        (this.state.getPageSize - 1)}{" "}
-                                    -{" "}
-                                    {this.state.rowData.length -
-                                      this.state.currenPageSize *
-                                        this.state.getPageSize >
-                                    0
-                                      ? this.state.currenPageSize *
-                                        this.state.getPageSize
-                                      : this.state.rowData.length}{" "}
-                                    of {this.state.rowData.length}
-                                    <ChevronDown className="ml-50" size={15} />
-                                  </DropdownToggle>
-                                  <DropdownMenu right>
-                                    <DropdownItem
-                                      tag="div"
-                                      onClick={() => this.filterSize(5)}
-                                    >
-                                      5
-                                    </DropdownItem>
-                                    <DropdownItem
-                                      tag="div"
-                                      onClick={() => this.filterSize(20)}
-                                    >
-                                      20
-                                    </DropdownItem>
-                                    <DropdownItem
-                                      tag="div"
-                                      onClick={() => this.filterSize(50)}
-                                    >
-                                      50
-                                    </DropdownItem>
-                                    <DropdownItem
-                                      tag="div"
-                                      onClick={() => this.filterSize(100)}
-                                    >
-                                      100
-                                    </DropdownItem>
-                                    <DropdownItem
-                                      tag="div"
-                                      onClick={() => this.filterSize(134)}
-                                    >
-                                      134
-                                    </DropdownItem>
-                                  </DropdownMenu>
-                                </UncontrolledDropdown>
-                              </div>
-                              <div className="d-flex flex-wrap justify-content-end mb-1">
-                                <div className="table-input mr-1">
-                                  <Input
-                                    placeholder="search Item here..."
-                                    onChange={e =>
-                                      this.updateSearchQuery(e.target.value)
-                                    }
-                                    value={this.state.value}
-                                  />
+                      <>
+                        {Show ? (
+                          <>
+                            <CardBody style={{ marginTop: "-1.5rem" }}>
+                              {this.state.rowData === null ? null : (
+                                <div className="ag-theme-material w-100 my-2 ag-grid-table">
+                                  <div className="d-flex flex-wrap justify-content-between align-items-center">
+                                    <div className="mb-1">
+                                      <UncontrolledDropdown className="p-1 ag-dropdown">
+                                        <DropdownToggle tag="div">
+                                          {this.gridApi
+                                            ? this.state.currenPageSize
+                                            : "" * this.state.getPageSize -
+                                              (this.state.getPageSize - 1)}{" "}
+                                          -{" "}
+                                          {this.state.rowData.length -
+                                            this.state.currenPageSize *
+                                              this.state.getPageSize >
+                                          0
+                                            ? this.state.currenPageSize *
+                                              this.state.getPageSize
+                                            : this.state.rowData.length}{" "}
+                                          of {this.state.rowData.length}
+                                          <ChevronDown
+                                            className="ml-50"
+                                            size={15}
+                                          />
+                                        </DropdownToggle>
+                                        <DropdownMenu right>
+                                          <DropdownItem
+                                            tag="div"
+                                            onClick={() => this.filterSize(5)}
+                                          >
+                                            5
+                                          </DropdownItem>
+                                          <DropdownItem
+                                            tag="div"
+                                            onClick={() => this.filterSize(20)}
+                                          >
+                                            20
+                                          </DropdownItem>
+                                          <DropdownItem
+                                            tag="div"
+                                            onClick={() => this.filterSize(50)}
+                                          >
+                                            50
+                                          </DropdownItem>
+                                          <DropdownItem
+                                            tag="div"
+                                            onClick={() => this.filterSize(100)}
+                                          >
+                                            100
+                                          </DropdownItem>
+                                          <DropdownItem
+                                            tag="div"
+                                            onClick={() => this.filterSize(134)}
+                                          >
+                                            134
+                                          </DropdownItem>
+                                        </DropdownMenu>
+                                      </UncontrolledDropdown>
+                                    </div>
+                                    <div className="d-flex flex-wrap justify-content-end mb-1">
+                                      <div className="table-input mr-1">
+                                        <Input
+                                          placeholder="search Item here..."
+                                          onChange={e =>
+                                            this.updateSearchQuery(
+                                              e.target.value
+                                            )
+                                          }
+                                          value={this.state.value}
+                                        />
+                                      </div>
+                                    </div>
+                                  </div>
+                                  <ContextLayout.Consumer className="ag-theme-alpine">
+                                    {context => (
+                                      <AgGridReact
+                                        id="myAgGrid"
+                                        // gridOptions={{
+                                        //   domLayout: "autoHeight",
+                                        //   // or other layout options
+                                        // }}
+                                        gridOptions={this.gridOptions}
+                                        rowSelection="multiple"
+                                        defaultColDef={defaultColDef}
+                                        columnDefs={columnDefs}
+                                        rowData={rowData}
+                                        onGridReady={this.onGridReady}
+                                        colResizeDefault={"shift"}
+                                        animateRows={true}
+                                        floatingFilter={false}
+                                        pagination={true}
+                                        paginationPageSize={
+                                          this.state.paginationPageSize
+                                        }
+                                        pivotPanelShow="always"
+                                        enableRtl={
+                                          context.state.direction === "rtl"
+                                        }
+                                        ref={this.gridRef} // Attach the ref to the grid
+                                        domLayout="autoHeight" // Adjust layout as needed
+                                      />
+                                    )}
+                                  </ContextLayout.Consumer>
                                 </div>
-                              </div>
-                            </div>
-                            <ContextLayout.Consumer className="ag-theme-alpine">
-                              {context => (
-                                <AgGridReact
-                                  id="myAgGrid"
-                                  // gridOptions={{
-                                  //   domLayout: "autoHeight",
-                                  //   // or other layout options
-                                  // }}
-                                  gridOptions={this.gridOptions}
-                                  rowSelection="multiple"
-                                  defaultColDef={defaultColDef}
-                                  columnDefs={columnDefs}
-                                  rowData={rowData}
-                                  // onGridReady={(params) => {
-                                  //   this.gridApi = params.api;
-                                  //   this.gridColumnApi = params.columnApi;
-                                  //   this.gridRef.current = params.api;
-
-                                  //   this.setState({
-                                  //     currenPageSize:
-                                  //       this.gridApi.paginationGetCurrentPage() +
-                                  //       1,
-                                  //     getPageSize:
-                                  //       this.gridApi.paginationGetPageSize(),
-                                  //     totalPages:
-                                  //       this.gridApi.paginationGetTotalPages(),
-                                  //   });
-                                  // }}
-                                  onGridReady={this.onGridReady}
-                                  colResizeDefault={"shift"}
-                                  animateRows={true}
-                                  floatingFilter={false}
-                                  pagination={true}
-                                  paginationPageSize={
-                                    this.state.paginationPageSize
-                                  }
-                                  pivotPanelShow="always"
-                                  enableRtl={context.state.direction === "rtl"}
-                                  ref={this.gridRef} // Attach the ref to the grid
-                                  domLayout="autoHeight" // Adjust layout as needed
-                                />
                               )}
-                            </ContextLayout.Consumer>
-                          </div>
-                        )}
-                      </CardBody>
+                            </CardBody>
+                          </>
+                        ) : null}
+                      </>
                     </Card>
                   </Col>
                 </>

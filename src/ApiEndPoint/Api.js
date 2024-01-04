@@ -57,7 +57,7 @@ export const Get_Producton_ProcessList = "/production/view-production";
 export const ViewOne_Production = "/production/view-production-by-id/";
 export const UpdateOne_Production = "/production/update-production-items/";
 export const WareHouse_Closing_Stock = "/stock-updation/view-closing-stock/";
-export const WareHouse_OverDue_Stock = "/stock-updation/view-over-due-stock/";
+export const WareHouse_OverDue_Stock = "/stock-updation/view-over-due-stock";
 
 // production process end
 
