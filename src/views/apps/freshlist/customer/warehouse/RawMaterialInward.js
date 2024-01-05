@@ -279,7 +279,7 @@ class RawMaterialInward extends React.Component {
                   Item Inward List
                 </h1>
               </Col>
-              <Col>
+              {/* <Col>
                 <Button
                   style={{
                     cursor: "pointer",
@@ -297,7 +297,7 @@ class RawMaterialInward extends React.Component {
                 >
                   + Raw Material Inward
                 </Button>
-              </Col>
+              </Col> */}
               {/* <Col>
                 {this.state.Createpermisson && (
                   <Route
@@ -339,26 +339,22 @@ class RawMaterialInward extends React.Component {
                         <DropdownMenu right>
                           <DropdownItem
                             tag="div"
-                            onClick={() => this.filterSize(20)}
-                          >
+                            onClick={() => this.filterSize(20)}>
                             20
                           </DropdownItem>
                           <DropdownItem
                             tag="div"
-                            onClick={() => this.filterSize(50)}
-                          >
+                            onClick={() => this.filterSize(50)}>
                             50
                           </DropdownItem>
                           <DropdownItem
                             tag="div"
-                            onClick={() => this.filterSize(100)}
-                          >
+                            onClick={() => this.filterSize(100)}>
                             100
                           </DropdownItem>
                           <DropdownItem
                             tag="div"
-                            onClick={() => this.filterSize(134)}
-                          >
+                            onClick={() => this.filterSize(134)}>
                             134
                           </DropdownItem>
                         </DropdownMenu>
@@ -368,22 +364,23 @@ class RawMaterialInward extends React.Component {
                       <div className="table-input mr-1">
                         <Input
                           placeholder="search..."
-                          onChange={e => this.updateSearchQuery(e.target.value)}
+                          onChange={(e) =>
+                            this.updateSearchQuery(e.target.value)
+                          }
                           value={this.state.value}
                         />
                       </div>
                       <div className="export-btn">
                         <Button.Ripple
                           color="primary"
-                          onClick={() => this.gridApi.exportDataAsCsv()}
-                        >
+                          onClick={() => this.gridApi.exportDataAsCsv()}>
                           Export as CSV
                         </Button.Ripple>
                       </div>
                     </div>
                   </div>
                   <ContextLayout.Consumer>
-                    {context => (
+                    {(context) => (
                       <AgGridReact
                         gridOptions={{}}
                         rowSelection="multiple"
