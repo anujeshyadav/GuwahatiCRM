@@ -18,6 +18,7 @@ import {
   Label,
   CustomInput,
   Badge,
+  Spinner,
 } from "reactstrap";
 import OtpInput from "react-otp-input";
 import { ImDownload } from "react-icons/im";
@@ -55,6 +56,7 @@ import * as XLSX from "xlsx";
 import UserContext from "../../../../context/Context";
 import { CheckPermission } from "../house/CheckPermission";
 import ClosingStock from "../customer/ProductWIKI/ClosingStock";
+import SuperAdminUI from "../../../SuperAdminUi/SuperAdminUI";
 
 const SelectedColums = [];
 
@@ -67,6 +69,8 @@ class CompleteOrder extends React.Component {
     this.state = {
       isOpen: false,
       OtpScreen: false,
+      MasterShow: false,
+
       Arrindex: "",
       emailotp: "",
       CancelReason: "",
@@ -412,19 +416,17 @@ class CompleteOrder extends React.Component {
   //     this.setState({ EditOneData: data });
   //   }
   // };
-
-  async componentDidMount() {
-    const InsidePermissions = CheckPermission("Complete Order");
-    // console.log(InsidePermissions);
-    this.setState({ InsiderPermissions: InsidePermissions });
-    const userId = JSON.parse(localStorage.getItem("userData"))?._id;
-    await DeliveryBoyAssignedList(userId)
+  async Apicalling(id, db) {
+    this.setState({ Loading: true });
+    await DeliveryBoyAssignedList(id)
       .then((res) => {
-        console.log(res?.OrderList);
+        this.setState({ Loading: false });
+
+        //  console.log(res?.OrderList);
         let showdata = res?.OrderList?.filter(
           (ele) => ele?.status?.toLowerCase() == "completed"
         );
-        console.log(showdata);
+        //  console.log(showdata);
         this.setState({ rowData: showdata });
         this.setState({ AllcolumnDefs: this.state.columnDefs });
         this.setState({ SelectedCols: this.state.columnDefs });
@@ -440,8 +442,22 @@ class CompleteOrder extends React.Component {
         }
       })
       .catch((err) => {
+        this.setState({ Loading: false });
+        this.setState({ rowData: [] });
+
         console.log(err);
       });
+  }
+
+  async componentDidMount() {
+    const InsidePermissions = CheckPermission("Complete Order");
+    // console.log(InsidePermissions);
+    this.setState({ InsiderPermissions: InsidePermissions });
+    const userId = JSON.parse(localStorage.getItem("userData"));
+    if (userId?.rolename?.rank === 0) {
+      this.setState({ MasterShow: true });
+    }
+    await this.Apicalling(userId?._id, userId?.database);
   }
   toggleDropdown = () => {
     this.setState((prevState) => ({ isOpen: !prevState.isOpen }));
@@ -709,7 +725,36 @@ class CompleteOrder extends React.Component {
       });
     }
   };
+  handleParentSubmit = (e) => {
+    e.preventDefault();
+    let SuperAdmin = JSON.parse(localStorage.getItem("SuperadminIdByMaster"));
+    let id = SuperAdmin.split(" ")[0];
+    let db = SuperAdmin.split(" ")[1];
+    this.Apicalling(id, db);
+  };
+  handleDropdownChange = (selectedValue) => {
+    localStorage.setItem("SuperadminIdByMaster", JSON.stringify(selectedValue));
+  };
   render() {
+    if (this.state.Loading) {
+      return (
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            marginTop: "20rem",
+          }}>
+          <Spinner
+            style={{
+              height: "4rem",
+              width: "4rem",
+            }}
+            color="primary">
+            Loading...
+          </Spinner>
+        </div>
+      );
+    }
     const {
       rowData,
       columnDefs,
@@ -741,7 +786,14 @@ class CompleteOrder extends React.Component {
                             Sales Completed List
                           </h1>
                         </Col>
-
+                        {this.state.MasterShow && (
+                          <Col>
+                            <SuperAdminUI
+                              onDropdownChange={this.handleDropdownChange}
+                              onSubmit={this.handleParentSubmit}
+                            />
+                          </Col>
+                        )}
                         {InsiderPermissions && InsiderPermissions?.View && (
                           <Col>
                             <span className="mx-1">

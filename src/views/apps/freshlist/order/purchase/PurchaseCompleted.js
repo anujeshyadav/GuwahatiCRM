@@ -18,6 +18,7 @@ import {
   Badge,
   Table,
   Label,
+  Spinner,
 } from "reactstrap";
 
 import { ContextLayout } from "../../../../../utility/context/Layout";
@@ -51,6 +52,7 @@ import {
 import * as XLSX from "xlsx";
 import UserContext from "../../../../../context/Context";
 import { CheckPermission } from "../../house/CheckPermission";
+import SuperAdminUI from "../../../../SuperAdminUi/SuperAdminUI";
 
 const SelectedColums = [];
 
@@ -62,6 +64,7 @@ class PurchaseCompleted extends React.Component {
     this.gridApi = null;
     this.state = {
       isOpen: false,
+      MasterShow: false,
       Arrindex: "",
       rowData: [],
       modal: false,
@@ -97,7 +100,7 @@ class PurchaseCompleted extends React.Component {
           headerName: "Actions",
           field: "transactions",
           width: 180,
-          cellRendererFramework: params => {
+          cellRendererFramework: (params) => {
             return (
               <div className="actions cursor-pointer">
                 {this.state.InsiderPermissions &&
@@ -142,19 +145,19 @@ class PurchaseCompleted extends React.Component {
           field: "status",
           filter: true,
           width: 150,
-          cellRendererFramework: params => {
+          cellRendererFramework: (params) => {
             console.log(params.data);
             return params.value == "comleted" ? (
               <div className="badge badge-pill badge-success">
-                {params.data.status}
+                {params.data?.status}
               </div>
             ) : params.value == "pending" ? (
               <div className="badge badge-pill badge-warning">
-                {params.data.status}
+                {params.data?.status}
               </div>
             ) : (
               <div className="badge badge-pill badge-success">
-                {params.data.status}
+                {params.data?.status}
               </div>
             );
           },
@@ -164,7 +167,7 @@ class PurchaseCompleted extends React.Component {
           field: "DateofDelivery",
           filter: true,
           width: 200,
-          cellRendererFramework: params => {
+          cellRendererFramework: (params) => {
             return (
               <div className="d-flex align-items-center cursor-pointer">
                 <div>
@@ -179,7 +182,7 @@ class PurchaseCompleted extends React.Component {
           field: "MobileNo",
           filter: true,
           width: 200,
-          cellRendererFramework: params => {
+          cellRendererFramework: (params) => {
             return (
               <div className="d-flex align-items-center cursor-pointer">
                 <div>
@@ -194,7 +197,7 @@ class PurchaseCompleted extends React.Component {
           field: "fullName",
           filter: true,
           width: 200,
-          cellRendererFramework: params => {
+          cellRendererFramework: (params) => {
             return (
               <div className="d-flex align-items-center cursor-pointer">
                 <div>
@@ -209,7 +212,7 @@ class PurchaseCompleted extends React.Component {
           field: "grandTotal",
           filter: true,
           width: 200,
-          cellRendererFramework: params => {
+          cellRendererFramework: (params) => {
             return (
               <div className="d-flex align-items-center cursor-pointer">
                 <div>
@@ -226,7 +229,7 @@ class PurchaseCompleted extends React.Component {
           field: "state",
           filter: true,
           width: 200,
-          cellRendererFramework: params => {
+          cellRendererFramework: (params) => {
             return (
               <div className="d-flex align-items-center cursor-pointer">
                 <div>
@@ -240,13 +243,13 @@ class PurchaseCompleted extends React.Component {
     };
   }
   togglemodal = () => {
-    this.setState(prevState => ({
+    this.setState((prevState) => ({
       modalone: !prevState.modalone,
     }));
     this.setState({ ShowBill: false });
   };
   LookupviewStart = () => {
-    this.setState(prevState => ({
+    this.setState((prevState) => ({
       modal: !prevState.modal,
     }));
   };
@@ -261,15 +264,13 @@ class PurchaseCompleted extends React.Component {
       this.setState({ EditOneData: data });
     }
   };
+  async Apicalling(id, db) {
+    this.setState({ Loading: true });
+    await PurchaseOrderList(id, db)
+      .then((res) => {
+        this.setState({ Loading: false });
 
-  async componentDidMount() {
-    const InsidePermissions = CheckPermission("Purchase Order");
-    this.setState({ InsiderPermissions: InsidePermissions });
-
-    let userId = JSON.parse(localStorage.getItem("userData"));
-    await PurchaseOrderList(userId?._id, userId?.database)
-      .then(res => {
-        const pendingStatus = res?.orderHistory?.filter(ele =>
+        const pendingStatus = res?.orderHistory?.filter((ele) =>
           ele.status == "completed" ? ele.status : null
         );
         if (pendingStatus) {
@@ -288,13 +289,26 @@ class PurchaseCompleted extends React.Component {
           this.setState({ SelectedcolumnDefs: this.state.columnDefs });
         }
       })
-      .catch(err => {
+      .catch((err) => {
+        this.setState({ Loading: false });
+        this.setState({ rowData: [] });
+
         console.log(err);
       });
   }
+  async componentDidMount() {
+    const InsidePermissions = CheckPermission("Purchase Order");
+    this.setState({ InsiderPermissions: InsidePermissions });
+
+    let userId = JSON.parse(localStorage.getItem("userData"));
+    if (userId?.rolename?.rank === 0) {
+      this.setState({ MasterShow: true });
+    }
+    await this.Apicalling(userId?._id, userId?.database);
+  }
 
   toggleDropdown = () => {
-    this.setState(prevState => ({ isOpen: !prevState.isOpen }));
+    this.setState((prevState) => ({ isOpen: !prevState.isOpen }));
   };
 
   runthisfunction(id) {
@@ -303,15 +317,15 @@ class PurchaseCompleted extends React.Component {
         cancel: "cancel",
         catch: { text: "Delete ", value: "delete" },
       },
-    }).then(value => {
+    }).then((value) => {
       switch (value) {
         case "delete":
           Delete_targetINlist(id)
-            .then(res => {
+            .then((res) => {
               let selectedData = this.gridApi.getSelectedRows();
               this.gridApi.updateRowData({ remove: selectedData });
             })
-            .catch(err => {
+            .catch((err) => {
               console.log(err);
             });
           break;
@@ -320,7 +334,7 @@ class PurchaseCompleted extends React.Component {
     });
   }
 
-  onGridReady = params => {
+  onGridReady = (params) => {
     this.gridApi = params.api;
     this.gridColumnApi = params.columnApi;
     this.gridRef.current = params.api;
@@ -332,11 +346,11 @@ class PurchaseCompleted extends React.Component {
     });
   };
 
-  updateSearchQuery = val => {
+  updateSearchQuery = (val) => {
     this.gridApi.setQuickFilter(val);
   };
 
-  filterSize = val => {
+  filterSize = (val) => {
     if (this.gridApi) {
       this.gridApi.paginationSetPageSize(Number(val));
       this.setState({
@@ -351,7 +365,7 @@ class PurchaseCompleted extends React.Component {
       SelectedColums?.push(value);
     } else {
       const delindex = SelectedColums?.findIndex(
-        ele => ele?.headerName === value?.headerName
+        (ele) => ele?.headerName === value?.headerName
       );
 
       SelectedColums?.splice(delindex, 1);
@@ -362,14 +376,14 @@ class PurchaseCompleted extends React.Component {
       Papa.parse(csvData, {
         header: true,
         skipEmptyLines: true,
-        complete: result => {
+        complete: (result) => {
           if (result.data && result.data.length > 0) {
             resolve(result.data);
           } else {
             reject(new Error("No data found in the CSV"));
           }
         },
-        error: error => {
+        error: (error) => {
           reject(error);
         },
       });
@@ -381,7 +395,7 @@ class PurchaseCompleted extends React.Component {
 
     const doc = new jsPDF("landscape", "mm", size, false);
     doc.setTextColor(5, 87, 97);
-    const tableData = parsedData.map(row => Object.values(row));
+    const tableData = parsedData.map((row) => Object.values(row));
     doc.addImage(Logo, "JPEG", 10, 10, 50, 30);
     let date = new Date();
     doc.setCreationDate(date);
@@ -406,12 +420,12 @@ class PurchaseCompleted extends React.Component {
       console.error("Error parsing CSV:", error);
     }
   };
-  processCell = params => {
+  processCell = (params) => {
     return params.value;
   };
 
   convertCsvToExcel(csvData) {
-    return new Promise(resolve => {
+    return new Promise((resolve) => {
       Papa.parse(csvData, {
         header: true,
         dynamicTyping: true,
@@ -442,7 +456,7 @@ class PurchaseCompleted extends React.Component {
     window.URL.revokeObjectURL(url);
   }
 
-  exportToExcel = async e => {
+  exportToExcel = async (e) => {
     const CsvData = this.gridApi.getDataAsCsv({
       processCellCallback: this.processCell,
     });
@@ -455,7 +469,7 @@ class PurchaseCompleted extends React.Component {
       processCellCallback: this.processCell,
     });
     Papa.parse(CsvData, {
-      complete: result => {
+      complete: (result) => {
         const ws = XLSX.utils.json_to_sheet(result.data);
         const wb = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(wb, ws, "Sheet1");
@@ -491,13 +505,13 @@ class PurchaseCompleted extends React.Component {
       processCellCallback: this.processCell,
     });
     Papa.parse(CsvData, {
-      complete: result => {
+      complete: (result) => {
         const rows = result.data;
 
         // Create XML
         let xmlString = "<root>\n";
 
-        rows.forEach(row => {
+        rows.forEach((row) => {
           xmlString += "  <row>\n";
           row.forEach((cell, index) => {
             xmlString += `    <field${index + 1}>${cell}</field${index + 1}>\n`;
@@ -515,7 +529,7 @@ class PurchaseCompleted extends React.Component {
     });
   };
 
-  HandleSetVisibleField = e => {
+  HandleSetVisibleField = (e) => {
     e.preventDefault();
     debugger;
     this.gridApi.setColumnDefs(this.state.SelectedcolumnDefs);
@@ -532,10 +546,10 @@ class PurchaseCompleted extends React.Component {
   HeadingRightShift = () => {
     const updatedSelectedColumnDefs = [
       ...new Set([
-        ...this.state.SelectedcolumnDefs.map(item => JSON.stringify(item)),
-        ...SelectedColums.map(item => JSON.stringify(item)),
+        ...this.state.SelectedcolumnDefs.map((item) => JSON.stringify(item)),
+        ...SelectedColums.map((item) => JSON.stringify(item)),
       ]),
-    ].map(item => JSON.parse(item));
+    ].map((item) => JSON.parse(item));
     this.setState({
       SelectedcolumnDefs: [...new Set(updatedSelectedColumnDefs)], // Update the state with the combined array
     });
@@ -552,7 +566,36 @@ class PurchaseCompleted extends React.Component {
       });
     }
   };
+  handleParentSubmit = (e) => {
+    e.preventDefault();
+    let SuperAdmin = JSON.parse(localStorage.getItem("SuperadminIdByMaster"));
+    let id = SuperAdmin.split(" ")[0];
+    let db = SuperAdmin.split(" ")[1];
+    this.Apicalling(id, db);
+  };
+  handleDropdownChange = (selectedValue) => {
+    localStorage.setItem("SuperadminIdByMaster", JSON.stringify(selectedValue));
+  };
   render() {
+    if (this.state.Loading) {
+      return (
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            marginTop: "20rem",
+          }}>
+          <Spinner
+            style={{
+              height: "4rem",
+              width: "4rem",
+            }}
+            color="primary">
+            Loading...
+          </Spinner>
+        </div>
+      );
+    }
     const {
       rowData,
       columnDefs,
@@ -575,6 +618,14 @@ class PurchaseCompleted extends React.Component {
                     Purchased Complete List
                   </h1>
                 </Col>
+                {this.state.MasterShow && (
+                  <Col>
+                    <SuperAdminUI
+                      onDropdownChange={this.handleDropdownChange}
+                      onSubmit={this.handleParentSubmit}
+                    />
+                  </Col>
+                )}
                 {InsiderPermissions && InsiderPermissions.View && (
                   <Col>
                     <span className="mx-1">
@@ -605,41 +656,35 @@ class PurchaseCompleted extends React.Component {
                               border: "1px solid #39cccc",
                               backgroundColor: "white",
                             }}
-                            className="dropdown-content dropdownmy"
-                          >
+                            className="dropdown-content dropdownmy">
                             <h5
                               onClick={() => this.exportToPDF()}
                               style={{ cursor: "pointer" }}
-                              className=" mx-1 myactive mt-1"
-                            >
+                              className=" mx-1 myactive mt-1">
                               .PDF
                             </h5>
                             <h5
                               onClick={() => this.gridApi.exportDataAsCsv()}
                               style={{ cursor: "pointer" }}
-                              className=" mx-1 myactive"
-                            >
+                              className=" mx-1 myactive">
                               .CSV
                             </h5>
                             <h5
                               onClick={this.convertCSVtoExcel}
                               style={{ cursor: "pointer" }}
-                              className=" mx-1 myactive"
-                            >
+                              className=" mx-1 myactive">
                               .XLS
                             </h5>
                             <h5
                               onClick={this.exportToExcel}
                               style={{ cursor: "pointer" }}
-                              className=" mx-1 myactive"
-                            >
+                              className=" mx-1 myactive">
                               .XLSX
                             </h5>
                             <h5
                               onClick={() => this.convertCsvToXml()}
                               style={{ cursor: "pointer" }}
-                              className=" mx-1 myactive"
-                            >
+                              className=" mx-1 myactive">
                               .XML
                             </h5>
                           </div>
@@ -663,8 +708,7 @@ class PurchaseCompleted extends React.Component {
                                 history.push(
                                   "/app/AJgroup/order/AddPurchaseOrder"
                                 )
-                              }
-                            >
+                              }>
                               <FaPlus size={15} /> Add Purchase Order
                             </Button>
                           )}
@@ -699,32 +743,27 @@ class PurchaseCompleted extends React.Component {
                           <DropdownMenu right>
                             <DropdownItem
                               tag="div"
-                              onClick={() => this.filterSize(5)}
-                            >
+                              onClick={() => this.filterSize(5)}>
                               5
                             </DropdownItem>
                             <DropdownItem
                               tag="div"
-                              onClick={() => this.filterSize(20)}
-                            >
+                              onClick={() => this.filterSize(20)}>
                               20
                             </DropdownItem>
                             <DropdownItem
                               tag="div"
-                              onClick={() => this.filterSize(50)}
-                            >
+                              onClick={() => this.filterSize(50)}>
                               50
                             </DropdownItem>
                             <DropdownItem
                               tag="div"
-                              onClick={() => this.filterSize(100)}
-                            >
+                              onClick={() => this.filterSize(100)}>
                               100
                             </DropdownItem>
                             <DropdownItem
                               tag="div"
-                              onClick={() => this.filterSize(134)}
-                            >
+                              onClick={() => this.filterSize(134)}>
                               134
                             </DropdownItem>
                           </DropdownMenu>
@@ -734,7 +773,7 @@ class PurchaseCompleted extends React.Component {
                         <div className="table-input mr-1">
                           <Input
                             placeholder="search Item here..."
-                            onChange={e =>
+                            onChange={(e) =>
                               this.updateSearchQuery(e.target.value)
                             }
                             value={this.state.value}
@@ -743,7 +782,7 @@ class PurchaseCompleted extends React.Component {
                       </div>
                     </div>
                     <ContextLayout.Consumer className="ag-theme-alpine">
-                      {context => (
+                      {(context) => (
                         <AgGridReact
                           id="myAgGrid"
                           gridOptions={this.gridOptions}
@@ -775,8 +814,7 @@ class PurchaseCompleted extends React.Component {
           isOpen={this.state.modal}
           toggle={this.LookupviewStart}
           className={this.props.className}
-          style={{ maxWidth: "1050px" }}
-        >
+          style={{ maxWidth: "1050px" }}>
           <ModalHeader toggle={this.LookupviewStart}>Change Fileds</ModalHeader>
           <ModalBody className="modalbodyhead">
             <Row>
@@ -789,15 +827,15 @@ class PurchaseCompleted extends React.Component {
                         return (
                           <>
                             <div
-                              onClick={e => this.handleChangeHeader(e, ele, i)}
+                              onClick={(e) =>
+                                this.handleChangeHeader(e, ele, i)
+                              }
                               key={i}
-                              className="mycustomtag mt-1"
-                            >
+                              className="mycustomtag mt-1">
                               <span className="mt-1">
                                 <h5
                                   style={{ cursor: "pointer" }}
-                                  className="allfields"
-                                >
+                                  className="allfields">
                                   <input
                                     type="checkbox"
                                     // checked={check && check}
@@ -856,15 +894,14 @@ class PurchaseCompleted extends React.Component {
                                             : ""
                                         }`,
                                       }}
-                                      className="allfields"
-                                    >
+                                      className="allfields">
                                       <IoMdRemoveCircleOutline
                                         onClick={() => {
                                           const SelectedCols =
                                             this.state.SelectedcolumnDefs?.slice();
                                           const delindex =
                                             SelectedCols?.findIndex(
-                                              element =>
+                                              (element) =>
                                                 element?.headerName ==
                                                 ele?.headerName
                                             );
@@ -927,8 +964,7 @@ class PurchaseCompleted extends React.Component {
                     style={{ cursor: "pointer" }}
                     className=""
                     color="primary"
-                    onClick={this.HandleSetVisibleField}
-                  >
+                    onClick={this.HandleSetVisibleField}>
                     Submit
                   </Badge>
                 </div>
@@ -940,14 +976,12 @@ class PurchaseCompleted extends React.Component {
           isOpen={this.state.modalone}
           toggle={this.togglemodal}
           className={this.props.className}
-          style={{ maxWidth: "1050px" }}
-        >
+          style={{ maxWidth: "1050px" }}>
           <ModalHeader toggle={this.togglemodal}>
             {this.state.ShowBill ? "Bill Download" : "Purchase View"}
           </ModalHeader>
           <ModalBody
-            className={`${this.state.ShowBill ? "p-1" : "modalbodyhead"}`}
-          >
+            className={`${this.state.ShowBill ? "p-1" : "modalbodyhead"}`}>
             {this.state.ShowBill ? (
               <>
                 <StockTrxInvoice ViewOneData={this.state.ViewOneData} />

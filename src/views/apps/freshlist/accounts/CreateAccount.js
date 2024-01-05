@@ -45,6 +45,7 @@ const CreateAccount = () => {
   const [Countries, setCountry] = useState({});
   const [States, setState] = useState({});
   const [Cities, setCities] = useState({});
+  const [BulkImport, setBulkImport] = useState({});
   const [Master, setMaster] = useState(false);
   const [formData, setFormData] = useState({});
   const [dropdownValue, setdropdownValue] = useState([]);
@@ -101,7 +102,7 @@ const CreateAccount = () => {
     }
   };
   useEffect(() => {
-    console.log(formData);
+    // console.log(formData);
   }, [formData]);
   useEffect(() => {
     const getLocation = () => {
@@ -168,6 +169,7 @@ const CreateAccount = () => {
     formData["created_by"] = userdata?._id;
   }, []);
 
+  console.log(BulkImport);
   const submitHandler = (e) => {
     e.preventDefault();
     if (formData?.rolename && formData?.email && formData?.firstName) {
@@ -604,12 +606,6 @@ const CreateAccount = () => {
                                   name={ele?.name?._text}
                                   value={formData[ele?.name?._text]}
                                   onChange={(e) => {
-                                    // const value = e.target.value;
-                                    // // Use regular expression to allow only numbers
-                                    // const numericValue = value.replace(
-                                    //   /\D/g,
-                                    //   ""
-                                    // );
                                     handleInputChange(
                                       e,
                                       ele?.type?._attributes?.type,
@@ -635,6 +631,21 @@ const CreateAccount = () => {
                       );
                     }
                   })}
+                <Col lg="4" md="4" sm="12">
+                  <FormGroup>
+                    <Label>Bulk Import</Label>
+
+                    <Input
+                      className="form-control"
+                      type="file"
+                      placeholder=""
+                      name="BulkImport"
+                      onChange={(e) => {
+                        setBulkImport(e.target.files[0]);
+                      }}
+                    />
+                  </FormGroup>
+                </Col>
               </Row>
 
               <hr />

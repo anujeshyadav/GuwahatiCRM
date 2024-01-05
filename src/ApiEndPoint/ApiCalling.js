@@ -1462,22 +1462,22 @@ export const Warehouse_Temporarlylist = async id => {
     .then(res => res.data);
   return response;
 };
-export const DeliveryBoyAssignedList = async id => {
+export const DeliveryBoyAssignedList = async (id, db) => {
   let response = await axiosConfig
     .get(`${DeliveryBoy_AssignedList}` + id)
-    .then(res => res.data);
+    .then((res) => res.data);
   return response;
 };
-export const Goods_DeliveryOTP = async id => {
+export const Goods_DeliveryOTP = async (id) => {
   let response = await axiosConfig
     .get(`${Goods_Delivery_OTP}` + id)
-    .then(res => res.data);
+    .then((res) => res.data);
   return response;
 };
-export const TargetAchievement = async id => {
+export const TargetAchievement = async (id, db) => {
   let response = await axiosConfig
     .get(`${Target_Achievement}` + id)
-    .then(res => res.data);
+    .then((res) => res.data);
   return response;
 };
 export const Goods_DeliveryOTP_Auth = async (id, data) => {

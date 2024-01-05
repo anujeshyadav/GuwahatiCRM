@@ -43,6 +43,8 @@ const CreateCustomer = () => {
   const [CreatAccountView, setCreatAccountView] = useState([]);
   const [RoleList, setRoleList] = useState([]);
   const [Countries, setCountry] = useState({});
+  const [BulkImport, setBulkImport] = useState({});
+
   const [States, setState] = useState({});
   const [Cities, setCities] = useState({});
   const [formData, setFormData] = useState({});
@@ -160,12 +162,13 @@ const CreateCustomer = () => {
         swal("Something Went Wrong");
       });
   }, []);
+  console.log(BulkImport);
 
   const submitHandler = (e) => {
     e.preventDefault();
     // console.log(CreatAccountView);
     // console.log(dropdownValue);
-    debugger;
+
     let userdata = JSON.parse(localStorage.getItem("userData"));
     let formdata = new FormData();
     CreatAccountView?.map((ele, i) => {
@@ -797,6 +800,21 @@ const CreateCustomer = () => {
                       );
                     }
                   })}
+                <Col lg="4" md="4" sm="12">
+                  <FormGroup>
+                    <Label>Bulk Import</Label>
+
+                    <Input
+                      className="form-control"
+                      type="file"
+                      placeholder=""
+                      name="BulkImport"
+                      onChange={(e) => {
+                        setBulkImport(e.target.files[0]);
+                      }}
+                    />
+                  </FormGroup>
+                </Col>
               </Row>
 
               <hr />

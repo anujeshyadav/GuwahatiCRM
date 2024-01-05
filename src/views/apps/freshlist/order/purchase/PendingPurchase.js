@@ -18,6 +18,7 @@ import {
   Badge,
   Table,
   Label,
+  Spinner,
 } from "reactstrap";
 
 import { ContextLayout } from "../../../../../utility/context/Layout";
@@ -51,6 +52,7 @@ import {
 import * as XLSX from "xlsx";
 import UserContext from "../../../../../context/Context";
 import { CheckPermission } from "../../house/CheckPermission";
+import SuperAdminUI from "../../../../SuperAdminUi/SuperAdminUI";
 
 const SelectedColums = [];
 
@@ -62,6 +64,8 @@ class PendingPurchase extends React.Component {
     this.gridApi = null;
     this.state = {
       isOpen: false,
+      MasterShow: false,
+
       Arrindex: "",
       rowData: [],
       modal: false,
@@ -273,13 +277,12 @@ class PendingPurchase extends React.Component {
       this.setState({ EditOneData: data });
     }
   };
-
-  async componentDidMount() {
-        const InsidePermissions = CheckPermission("Purchase Pending");
-        this.setState({ InsiderPermissions: InsidePermissions });
-    let userId = JSON.parse(localStorage.getItem("userData"));
-    await PurchaseOrderList(userId?._id, userId?.database)
+  async Apicalling(id, db) {
+    this.setState({ Loading: true });
+    await PurchaseOrderList(id, db)
       .then((res) => {
+        this.setState({ Loading: false });
+
         const pendingStatus = res?.orderHistory?.filter((ele) =>
           ele.status == "pending" ? ele.status : null
         );
@@ -300,8 +303,20 @@ class PendingPurchase extends React.Component {
         }
       })
       .catch((err) => {
+        this.setState({ Loading: false });
+        this.setState({ rowData: [] });
+
         console.log(err);
       });
+  }
+  async componentDidMount() {
+    const InsidePermissions = CheckPermission("Purchase Pending");
+    this.setState({ InsiderPermissions: InsidePermissions });
+    let userId = JSON.parse(localStorage.getItem("userData"));
+    if (userId?.rolename?.rank === 0) {
+      this.setState({ MasterShow: true });
+    }
+    await this.Apicalling(userId?._id, userId?.database);
   }
 
   toggleDropdown = () => {
@@ -563,7 +578,36 @@ class PendingPurchase extends React.Component {
       });
     }
   };
+  handleParentSubmit = (e) => {
+    e.preventDefault();
+    let SuperAdmin = JSON.parse(localStorage.getItem("SuperadminIdByMaster"));
+    let id = SuperAdmin.split(" ")[0];
+    let db = SuperAdmin.split(" ")[1];
+    this.Apicalling(id, db);
+  };
+  handleDropdownChange = (selectedValue) => {
+    localStorage.setItem("SuperadminIdByMaster", JSON.stringify(selectedValue));
+  };
   render() {
+    if (this.state.Loading) {
+      return (
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            marginTop: "20rem",
+          }}>
+          <Spinner
+            style={{
+              height: "4rem",
+              width: "4rem",
+            }}
+            color="primary">
+            Loading...
+          </Spinner>
+        </div>
+      );
+    }
     const {
       rowData,
       columnDefs,
@@ -586,99 +630,105 @@ class PendingPurchase extends React.Component {
                     Pending Purchased List
                   </h1>
                 </Col>
+                {this.state.MasterShow && (
+                  <Col>
+                    <SuperAdminUI
+                      onDropdownChange={this.handleDropdownChange}
+                      onSubmit={this.handleParentSubmit}
+                    />
+                  </Col>
+                )}
                 {InsiderPermissions && InsiderPermissions.View && (
-                <Col>
-                  <span className="mx-1">
-                    <FaFilter
-                      style={{ cursor: "pointer" }}
-                      title="filter coloumn"
-                      size="35px"
-                      onClick={this.LookupviewStart}
-                      color="#39cccc"
-                      className="float-right"
-                    />
-                  </span>
-                  <span className="mx-1">
-                    <div className="dropdown-container float-right">
-                      <ImDownload
+                  <Col>
+                    <span className="mx-1">
+                      <FaFilter
                         style={{ cursor: "pointer" }}
-                        title="download file"
+                        title="filter coloumn"
                         size="35px"
-                        className="dropdown-button "
+                        onClick={this.LookupviewStart}
                         color="#39cccc"
-                        onClick={this.toggleDropdown}
+                        className="float-right"
                       />
-                      {isOpen && (
-                        <div
-                          style={{
-                            position: "absolute",
-                            zIndex: "1",
-                            border: "1px solid #39cccc",
-                            backgroundColor: "white",
-                          }}
-                          className="dropdown-content dropdownmy">
-                          <h5
-                            onClick={() => this.exportToPDF()}
-                            style={{ cursor: "pointer" }}
-                            className=" mx-1 myactive mt-1">
-                            .PDF
-                          </h5>
-                          <h5
-                            onClick={() => this.gridApi.exportDataAsCsv()}
-                            style={{ cursor: "pointer" }}
-                            className=" mx-1 myactive">
-                            .CSV
-                          </h5>
-                          <h5
-                            onClick={this.convertCSVtoExcel}
-                            style={{ cursor: "pointer" }}
-                            className=" mx-1 myactive">
-                            .XLS
-                          </h5>
-                          <h5
-                            onClick={this.exportToExcel}
-                            style={{ cursor: "pointer" }}
-                            className=" mx-1 myactive">
-                            .XLSX
-                          </h5>
-                          <h5
-                            onClick={() => this.convertCsvToXml()}
-                            style={{ cursor: "pointer" }}
-                            className=" mx-1 myactive">
-                            .XML
-                          </h5>
-                        </div>
-                      )}
-                    </div>
-                  </span>
-                {InsiderPermissions && InsiderPermissions.Create && (
-
-                  <span>
-                    <Route
-                      render={({ history }) => (
-                        <Button
-                          style={{
-                            cursor: "pointer",
-                            backgroundColor: "#39cccc",
-                            color: "white",
-                            fontWeight: "600",
-                          }}
-                          className="float-right mr-1"
+                    </span>
+                    <span className="mx-1">
+                      <div className="dropdown-container float-right">
+                        <ImDownload
+                          style={{ cursor: "pointer" }}
+                          title="download file"
+                          size="35px"
+                          className="dropdown-button "
                           color="#39cccc"
-                          onClick={() =>
-                            history.push("/app/AJgroup/order/AddPurchaseOrder")
-                          }>
-                          <FaPlus size={15} /> Add Purchase Order
-                        </Button>
-                      )}
-                    />
-                  </span>
+                          onClick={this.toggleDropdown}
+                        />
+                        {isOpen && (
+                          <div
+                            style={{
+                              position: "absolute",
+                              zIndex: "1",
+                              border: "1px solid #39cccc",
+                              backgroundColor: "white",
+                            }}
+                            className="dropdown-content dropdownmy">
+                            <h5
+                              onClick={() => this.exportToPDF()}
+                              style={{ cursor: "pointer" }}
+                              className=" mx-1 myactive mt-1">
+                              .PDF
+                            </h5>
+                            <h5
+                              onClick={() => this.gridApi.exportDataAsCsv()}
+                              style={{ cursor: "pointer" }}
+                              className=" mx-1 myactive">
+                              .CSV
+                            </h5>
+                            <h5
+                              onClick={this.convertCSVtoExcel}
+                              style={{ cursor: "pointer" }}
+                              className=" mx-1 myactive">
+                              .XLS
+                            </h5>
+                            <h5
+                              onClick={this.exportToExcel}
+                              style={{ cursor: "pointer" }}
+                              className=" mx-1 myactive">
+                              .XLSX
+                            </h5>
+                            <h5
+                              onClick={() => this.convertCsvToXml()}
+                              style={{ cursor: "pointer" }}
+                              className=" mx-1 myactive">
+                              .XML
+                            </h5>
+                          </div>
+                        )}
+                      </div>
+                    </span>
+                    {InsiderPermissions && InsiderPermissions.Create && (
+                      <span>
+                        <Route
+                          render={({ history }) => (
+                            <Button
+                              style={{
+                                cursor: "pointer",
+                                backgroundColor: "#39cccc",
+                                color: "white",
+                                fontWeight: "600",
+                              }}
+                              className="float-right mr-1"
+                              color="#39cccc"
+                              onClick={() =>
+                                history.push(
+                                  "/app/AJgroup/order/AddPurchaseOrder"
+                                )
+                              }>
+                              <FaPlus size={15} /> Add Purchase Order
+                            </Button>
+                          )}
+                        />
+                      </span>
+                    )}
+                  </Col>
                 )}
-                  
-                </Col>
-
-                )}
-
               </Row>
               <CardBody style={{ marginTop: "-1.5rem" }}>
                 {this.state.rowData === null ? null : (
