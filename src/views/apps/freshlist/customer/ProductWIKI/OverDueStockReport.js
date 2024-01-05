@@ -316,7 +316,6 @@ class OverDueStockReport extends React.Component {
         case "Sure":
           Stockupdate(id, payload)
             .then(res => {
-              // console.log(res);
               swal("success", "Status Updated Successfully");
               this.togglemodal();
               this.ViewStockList();

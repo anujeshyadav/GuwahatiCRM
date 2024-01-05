@@ -227,7 +227,7 @@ export const Cashbook_List = async id => {
 };
 export const StockReportList = async id => {
   let response = await axiosConfig
-    .get(`${Stock_Report_List}`)
+    .get(`${Stock_Report_List}` + id)
     .then(res => res.data);
   return response;
 };
