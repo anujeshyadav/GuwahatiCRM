@@ -16,6 +16,7 @@ import {
   ModalHeader,
   ModalBody,
   Badge,
+  Spinner,
 } from "reactstrap";
 import { AgGridReact } from "ag-grid-react";
 import "ag-grid-community/dist/styles/ag-grid.css";
@@ -49,6 +50,7 @@ import {
 import * as XLSX from "xlsx";
 import UserContext from "../../../../../context/Context";
 import { CheckPermission } from "../../house/CheckPermission";
+import SuperAdminUI from "../../../../SuperAdminUi/SuperAdminUI";
 
 const SelectedColums = [];
 
@@ -60,6 +62,7 @@ class DebitNoteList extends React.Component {
     this.gridApi = null;
     this.state = {
       isOpen: false,
+      MasterShow: false,
       Arrindex: "",
       rowData: [],
       modal: false,
@@ -282,16 +285,12 @@ class DebitNoteList extends React.Component {
       this.setState({ EditOneData: data });
     }
   };
-
-  async componentDidMount() {
-    const InsidePermissions = CheckPermission("Debit Notes");
-    this.setState({ InsiderPermissions: InsidePermissions });
-
-    const UserInformation = this.context?.UserInformatio;
-    const userInfo = JSON.parse(localStorage.getItem("userData"))?._id;
-    await DebitnoteOrderList(userInfo)
+  async Apicalling(id, db) {
+    this.setState({ Loading: true });
+    await DebitnoteOrderList(id, db)
       .then((res) => {
-        debugger;
+        this.setState({ Loading: false });
+
         this.setState({ rowData: res?.DebitNote });
         this.setState({ AllcolumnDefs: this.state.columnDefs });
         this.setState({ SelectedCols: this.state.columnDefs });
@@ -307,8 +306,23 @@ class DebitNoteList extends React.Component {
         }
       })
       .catch((err) => {
+        this.setState({ Loading: false });
+        this.setState({ rowData: [] });
+
         console.log(err);
       });
+  }
+
+  async componentDidMount() {
+    const InsidePermissions = CheckPermission("Debit Notes");
+    this.setState({ InsiderPermissions: InsidePermissions });
+
+    const UserInformation = this.context?.UserInformatio;
+    const userInfo = JSON.parse(localStorage.getItem("userData"));
+    if (userInfo?.rolename?.rank === 0) {
+      this.setState({ MasterShow: true });
+    }
+    await this.Apicalling(userInfo?._id, userInfo?.database);
   }
   toggleDropdown = () => {
     this.setState((prevState) => ({ isOpen: !prevState.isOpen }));
@@ -569,7 +583,36 @@ class DebitNoteList extends React.Component {
       });
     }
   };
+  handleParentSubmit = (e) => {
+    e.preventDefault();
+    let SuperAdmin = JSON.parse(localStorage.getItem("SuperadminIdByMaster"));
+    let id = SuperAdmin.split(" ")[0];
+    let db = SuperAdmin.split(" ")[1];
+    this.Apicalling(id, db);
+  };
+  handleDropdownChange = (selectedValue) => {
+    localStorage.setItem("SuperadminIdByMaster", JSON.stringify(selectedValue));
+  };
   render() {
+    if (this.state.Loading) {
+      return (
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            marginTop: "20rem",
+          }}>
+          <Spinner
+            style={{
+              height: "4rem",
+              width: "4rem",
+            }}
+            color="primary">
+            Loading...
+          </Spinner>
+        </div>
+      );
+    }
     const {
       rowData,
       columnDefs,
@@ -634,6 +677,14 @@ class DebitNoteList extends React.Component {
                             DebitNote List
                           </h1>
                         </Col>
+                        {this.state.MasterShow && (
+                          <Col>
+                            <SuperAdminUI
+                              onDropdownChange={this.handleDropdownChange}
+                              onSubmit={this.handleParentSubmit}
+                            />
+                          </Col>
+                        )}
                         {InsiderPermissions && InsiderPermissions.View && (
                           <Col>
                             <span className="mx-1">

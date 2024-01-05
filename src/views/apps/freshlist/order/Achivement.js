@@ -17,6 +17,7 @@ import {
   ModalHeader,
   ModalBody,
   Badge,
+  Spinner,
 } from "reactstrap";
 import ExcelReader from "../parts/ExcelReader";
 import { ContextLayout } from "../../../../utility/context/Layout";
@@ -55,6 +56,7 @@ import {
 import * as XLSX from "xlsx";
 import UserContext from "../../../../context/Context";
 import { CheckPermission } from "../house/CheckPermission";
+import SuperAdminUI from "../../../SuperAdminUi/SuperAdminUI";
 
 const SelectedColums = [];
 
@@ -66,6 +68,8 @@ class Achivement extends React.Component {
     this.gridApi = null;
     this.state = {
       isOpen: false,
+      MasterShow: false,
+
       Arrindex: "",
       rowData: [],
       setMySelectedarr: [],
@@ -283,17 +287,12 @@ class Achivement extends React.Component {
       this.setState({ EditOneData: data });
     }
   };
-
-  async componentDidMount() {
-    const UserInformation = this.context?.UserInformatio;
-    const InsidePermissions = CheckPermission("Achievement");
-    this.setState({ InsiderPermissions: InsidePermissions });
-
-    let userId = JSON.parse(localStorage.getItem("userData"))._id;
-    await TargetAchievement(userId)
+  async Apicalling(id, db) {
+    this.setState({ Loading: true });
+    await TargetAchievement(id, db)
       .then((res) => {
-        
         console.log(res?.achievements);
+        this.setState({ Loading: false });
 
         this.setState({ rowData: res?.achievements });
         this.setState({ AllcolumnDefs: this.state.columnDefs });
@@ -310,8 +309,23 @@ class Achivement extends React.Component {
         }
       })
       .catch((err) => {
+        this.setState({ Loading: false });
+        this.setState({ rowData: [] });
+
         console.log(err);
       });
+  }
+  async componentDidMount() {
+    const UserInformation = this.context?.UserInformatio;
+    const InsidePermissions = CheckPermission("Achievement");
+    this.setState({ InsiderPermissions: InsidePermissions });
+
+    let userId = JSON.parse(localStorage.getItem("userData"));
+
+    if (userId?.rolename?.rank === 0) {
+      this.setState({ MasterShow: true });
+    }
+    await this.Apicalling(userId?._id, userId?.database);
   }
   toggleDropdown = () => {
     this.setState((prevState) => ({ isOpen: !prevState.isOpen }));
@@ -578,7 +592,36 @@ class Achivement extends React.Component {
       });
     }
   };
+  handleParentSubmit = (e) => {
+    e.preventDefault();
+    let SuperAdmin = JSON.parse(localStorage.getItem("SuperadminIdByMaster"));
+    let id = SuperAdmin.split(" ")[0];
+    let db = SuperAdmin.split(" ")[1];
+    this.Apicalling(id, db);
+  };
+  handleDropdownChange = (selectedValue) => {
+    localStorage.setItem("SuperadminIdByMaster", JSON.stringify(selectedValue));
+  };
   render() {
+    if (this.state.Loading) {
+      return (
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            marginTop: "20rem",
+          }}>
+          <Spinner
+            style={{
+              height: "4rem",
+              width: "4rem",
+            }}
+            color="primary">
+            Loading...
+          </Spinner>
+        </div>
+      );
+    }
     const {
       rowData,
       columnDefs,
@@ -641,6 +684,14 @@ class Achivement extends React.Component {
                             Achivement
                           </h1>
                         </Col>
+                        {this.state.MasterShow && (
+                          <Col>
+                            <SuperAdminUI
+                              onDropdownChange={this.handleDropdownChange}
+                              onSubmit={this.handleParentSubmit}
+                            />
+                          </Col>
+                        )}
                         {InsiderPermissions && InsiderPermissions?.View && (
                           <Col>
                             <span className="mx-1">

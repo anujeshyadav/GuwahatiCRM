@@ -19,6 +19,7 @@ import {
   Form,
   CustomInput,
   Table,
+  Spinner,
 } from "reactstrap";
 import { ImDownload } from "react-icons/im";
 import { AiOutlineDownload } from "react-icons/ai";
@@ -72,6 +73,7 @@ import * as XLSX from "xlsx";
 import UserContext from "../../../../context/Context";
 import { CheckPermission } from "../house/CheckPermission";
 import ClosingStock from "../customer/ProductWIKI/ClosingStock";
+import SuperAdminUI from "../../../SuperAdminUi/SuperAdminUI";
 
 const SelectedColums = [];
 const toWords = new ToWords({
@@ -105,6 +107,8 @@ class Receipt extends React.Component {
     this.state = {
       isOpen: false,
       ShowMyBill: false,
+      MasterShow: false,
+
       BillNumber: "",
       Arrindex: "",
       AllbillMerged: [],
@@ -628,24 +632,12 @@ class Receipt extends React.Component {
       this.setState({ EditOneData: data });
     }
   };
-
-  async componentDidMount() {
-    const UserInformation = this.context;
-    console.log(UserInformation?.CompanyDetails);
-    this.setState({ CompanyDetails: UserInformation?.CompanyDetails });
-    let pageparmission = JSON.parse(localStorage.getItem("userData"));
-    let userid = pageparmission?._id;
-
-    let billnumner = localStorage.getItem("billnumber");
-    if (billnumner) {
-      this.setState({ ShowBill: false });
-      this.setState({ BillNumber: billnumner });
-    }
-    const InsidePermissions = CheckPermission("Receipt");
-    this.setState({ InsiderPermissions: InsidePermissions });
-    createOrderhistoryview(userid)
+  async Apicalling(id, db) {
+    this.setState({ Loading: true });
+    await createOrderhistoryview(id, db)
       .then((res) => {
-        console.log(res?.orderHistory);
+        this.setState({ Loading: false });
+        //  console.log(res?.orderHistory);
         let myarr = res?.orderHistory?.filter((ele, i) =>
           ele?.status?.toLowerCase()?.includes("complete")
         );
@@ -665,8 +657,31 @@ class Receipt extends React.Component {
         this.setState({ SelectedCols: this.state.columnDefs });
       })
       .catch((err) => {
+        this.setState({ Loading: false });
+        this.setState({ rowData: [] });
+
         console.log(err);
       });
+  }
+
+  async componentDidMount() {
+    const UserInformation = this.context;
+    console.log(UserInformation?.CompanyDetails);
+    this.setState({ CompanyDetails: UserInformation?.CompanyDetails });
+    let pageparmission = JSON.parse(localStorage.getItem("userData"));
+    if (pageparmission?.rolename?.rank === 0) {
+      this.setState({ MasterShow: true });
+    }
+    await this.Apicalling(pageparmission?._id, pageparmission?.database);
+
+    let billnumner = localStorage.getItem("billnumber");
+    if (billnumner) {
+      this.setState({ ShowBill: false });
+      this.setState({ BillNumber: billnumner });
+    }
+    const InsidePermissions = CheckPermission("Receipt");
+    this.setState({ InsiderPermissions: InsidePermissions });
+
     let userchoice = JSON.parse(localStorage.getItem("billUI"));
     console.log(userchoice);
     if (userchoice) {
@@ -674,19 +689,6 @@ class Receipt extends React.Component {
       this.setState({ Billtoposition: userchoice?.billTo });
       this.setState({ shipto: userchoice?.shipto });
     }
-    let newparmisson = pageparmission?.role?.find(
-      (value) => value?.pageName === "invoice Generator"
-    );
-    this.setState({ Viewpermisson: newparmisson?.permission.includes("View") });
-    this.setState({
-      Createpermisson: newparmisson?.permission.includes("Create"),
-    });
-    this.setState({
-      Editpermisson: newparmisson?.permission.includes("Edit"),
-    });
-    this.setState({
-      Deletepermisson: newparmisson?.permission.includes("Delete"),
-    });
   }
 
   submitHandler = (e) => {
@@ -973,7 +975,36 @@ class Receipt extends React.Component {
       });
     }
   };
+  handleParentSubmit = (e) => {
+    e.preventDefault();
+    let SuperAdmin = JSON.parse(localStorage.getItem("SuperadminIdByMaster"));
+    let id = SuperAdmin.split(" ")[0];
+    let db = SuperAdmin.split(" ")[1];
+    this.Apicalling(id, db);
+  };
+  handleDropdownChange = (selectedValue) => {
+    localStorage.setItem("SuperadminIdByMaster", JSON.stringify(selectedValue));
+  };
   render() {
+    if (this.state.Loading) {
+      return (
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            marginTop: "20rem",
+          }}>
+          <Spinner
+            style={{
+              height: "4rem",
+              width: "4rem",
+            }}
+            color="primary">
+            Loading...
+          </Spinner>
+        </div>
+      );
+    }
     const {
       rowData,
       columnDefs,
@@ -1034,19 +1065,27 @@ class Receipt extends React.Component {
                   <Col sm="12">
                     <Card>
                       <Row className="ml-2 mr-2 mt-2">
-                        <Col lg="9" sm="8" xs="8">
+                        <Col lg="" sm="" xs="">
                           <h1
                             className="float-left"
                             style={{ fontWeight: "600" }}>
                             Completed order List
                           </h1>
                         </Col>
+                        {this.state.MasterShow && (
+                          <Col>
+                            <SuperAdminUI
+                              onDropdownChange={this.handleDropdownChange}
+                              onSubmit={this.handleParentSubmit}
+                            />
+                          </Col>
+                        )}
 
                         {this.state.InsiderPermissions &&
                           this.state.InsiderPermissions?.Create && (
                             <Col lg="2" sm="2" xs="2">
                               <Button
-                                className="float-right  "
+                                className="float-right"
                                 color="#39cccc"
                                 style={{
                                   cursor: "pointer",
@@ -1070,7 +1109,7 @@ class Receipt extends React.Component {
                               </Button>
                             </Col>
                           )}
-                        <Col>
+                        <Col lg="1" md="1" sm="2">
                           {InsiderPermissions && InsiderPermissions?.View && (
                             <>
                               <span className="">

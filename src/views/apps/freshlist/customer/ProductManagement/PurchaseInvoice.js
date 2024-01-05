@@ -19,6 +19,7 @@ import {
   Label,
   Form,
   CustomInput,
+  Spinner,
 } from "reactstrap";
 import { AiOutlineDownload } from "react-icons/ai";
 import { ToWords } from "to-words";
@@ -77,6 +78,7 @@ import {
   BsFillArrowUpSquareFill,
 } from "react-icons/bs";
 import * as XLSX from "xlsx";
+import SuperAdminUI from "../../../../SuperAdminUi/SuperAdminUI";
 
 const SelectedColums = [];
 const toWords = new ToWords({
@@ -109,6 +111,8 @@ class PurchaseInvoice extends React.Component {
     this.state = {
       isOpen: false,
       ShowMyBill: false,
+      MasterShow: false,
+
       BillNumber: "",
       Arrindex: "",
       AllbillMerged: [],
@@ -547,11 +551,46 @@ class PurchaseInvoice extends React.Component {
       this.setState({ EditOneData: data });
     }
   };
+  async Apicalling(id, db) {
+    this.setState({ Loading: true });
+    PurchaseOrderList(id, db)
+      .then(res => {
+        this.setState({ Loading: false });
+
+        console.log(res?.orderHistory);
+        this.setState({ rowData: res?.orderHistory });
+        this.setState({ AllcolumnDefs: this.state.columnDefs });
+
+        let userHeading = JSON.parse(
+          localStorage.getItem("PurchaseInvoiceList")
+        );
+        if (userHeading?.length) {
+          this.setState({ columnDefs: userHeading });
+          this.gridApi.setColumnDefs(userHeading);
+          this.setState({ SelectedcolumnDefs: userHeading });
+        } else {
+          this.setState({ columnDefs: this.state.columnDefs });
+          this.setState({ SelectedcolumnDefs: this.state.columnDefs });
+        }
+        this.setState({ SelectedCols: this.state.columnDefs });
+      })
+      .catch(err => {
+        this.setState({ Loading: false });
+        this.setState({ rowData: [] });
+
+        console.log(err);
+      });
+  }
 
   async componentDidMount() {
     let pageparmission = JSON.parse(localStorage.getItem("userData"));
-    let userid = pageparmission?._id;
-    await ViewCompanyDetails(userid, pageparmission?.database)
+    if (pageparmission?.rolename?.rank === 0) {
+      this.setState({ MasterShow: true });
+    }
+
+    await this.Apicalling(pageparmission?._id, pageparmission?.database);
+
+    await ViewCompanyDetails(pageparmission?._id, pageparmission?.database)
       .then(res => {
         console.log(res?.CompanyDetail);
         this.setState({ CompanyDetails: res?.CompanyDetail });
@@ -569,26 +608,6 @@ class PurchaseInvoice extends React.Component {
     const InsidePermissions = CheckPermission("Purchase Invoice");
     console.log(InsidePermissions);
     this.setState({ InsiderPermissions: InsidePermissions });
-    PurchaseOrderList(pageparmission?._id, pageparmission?.database)
-      .then(res => {
-        console.log(res?.orderHistory);
-        this.setState({ rowData: res?.orderHistory });
-        this.setState({ AllcolumnDefs: this.state.columnDefs });
-
-        let userHeading = JSON.parse(localStorage.getItem("SalesOrderList"));
-        if (userHeading?.length) {
-          this.setState({ columnDefs: userHeading });
-          this.gridApi.setColumnDefs(userHeading);
-          this.setState({ SelectedcolumnDefs: userHeading });
-        } else {
-          this.setState({ columnDefs: this.state.columnDefs });
-          this.setState({ SelectedcolumnDefs: this.state.columnDefs });
-        }
-        this.setState({ SelectedCols: this.state.columnDefs });
-      })
-      .catch(err => {
-        console.log(err);
-      });
     // console.log(pageparmission.role);
     let userchoice = JSON.parse(localStorage.getItem("billUI"));
     console.log(userchoice);
@@ -854,7 +873,7 @@ class PurchaseInvoice extends React.Component {
     this.setState({ SelectedcolumnDefs: this.state.SelectedcolumnDefs });
     this.setState({ rowData: this.state.rowData });
     localStorage.setItem(
-      "SalesOrderList",
+      "PurchaseInvoiceList",
       JSON.stringify(this.state.SelectedcolumnDefs)
     );
     this.LookupviewStart();
@@ -883,7 +902,38 @@ class PurchaseInvoice extends React.Component {
       });
     }
   };
+  handleParentSubmit = e => {
+    e.preventDefault();
+    let SuperAdmin = JSON.parse(localStorage.getItem("SuperadminIdByMaster"));
+    let id = SuperAdmin.split(" ")[0];
+    let db = SuperAdmin.split(" ")[1];
+    this.Apicalling(id, db);
+  };
+  handleDropdownChange = selectedValue => {
+    localStorage.setItem("SuperadminIdByMaster", JSON.stringify(selectedValue));
+  };
   render() {
+    if (this.state.Loading) {
+      return (
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            marginTop: "20rem",
+          }}
+        >
+          <Spinner
+            style={{
+              height: "4rem",
+              width: "4rem",
+            }}
+            color="primary"
+          >
+            Loading...
+          </Spinner>
+        </div>
+      );
+    }
     const {
       rowData,
       columnDefs,
@@ -954,6 +1004,14 @@ class PurchaseInvoice extends React.Component {
                             Purchased Invoice
                           </h1>
                         </Col>
+                        {this.state.MasterShow && (
+                          <Col>
+                            <SuperAdminUI
+                              onDropdownChange={this.handleDropdownChange}
+                              onSubmit={this.handleParentSubmit}
+                            />
+                          </Col>
+                        )}
                         {this.state.InsiderPermissions &&
                           this.state.InsiderPermissions.View && (
                             <Col>
