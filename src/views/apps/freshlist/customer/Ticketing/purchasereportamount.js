@@ -566,7 +566,7 @@ class Purchasereportamount extends React.Component {
       this.setState({ BillNumber: billnumner });
     }
 
-    const InsidePermissions = CheckPermission("Purchase reportamount");
+    const InsidePermissions = CheckPermission("Purchase Report and Amount");
     console.log(InsidePermissions);
     this.setState({ InsiderPermissions: InsidePermissions });
     // console.log(pageparmission.role);
