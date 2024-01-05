@@ -44,6 +44,8 @@ const AddProduct = () => {
   const [States, setState] = useState({});
   const [Cities, setCities] = useState({});
   const [formData, setFormData] = useState({});
+  const [BulkImport, setBulkImport] = useState({});
+
   const [dropdownValue, setdropdownValue] = useState({});
   const [index, setindex] = useState("");
   const [error, setError] = useState("");
@@ -183,6 +185,7 @@ const AddProduct = () => {
       [name]: e.target.files[0],
     });
   };
+  console.log(BulkImport);
 
   const submitHandler = (e) => {
     e.preventDefault();
@@ -1018,6 +1021,21 @@ const AddProduct = () => {
                       );
                     }
                   })}
+                <Col className="mt-1" lg="4" md="4" sm="12">
+                  <FormGroup>
+                    <Label className="mb-1">Bulk Import</Label>
+
+                    <Input
+                      className="form-control"
+                      type="file"
+                      placeholder=""
+                      name="BulkImport"
+                      onChange={(e) => {
+                        setBulkImport(e.target.files[0]);
+                      }}
+                    />
+                  </FormGroup>
+                </Col>
               </Row>
 
               <hr />

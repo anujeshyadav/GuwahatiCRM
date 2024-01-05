@@ -135,8 +135,6 @@ class AccounSearch extends React.Component {
       this.setState({ MasterShow: true });
     }
     const InsidePermissions = CheckPermission("Create User");
-    console.log(InsidePermissions);
-    let userid = pageparmission?._id;
     this.setState({ InsiderPermissions: InsidePermissions });
     await this.Apicalling(pageparmission?._id, pageparmission?.database);
 

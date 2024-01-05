@@ -21,6 +21,7 @@ import {
   Table,
   Badge,
   CustomInput,
+  Spinner,
 } from "reactstrap";
 import { ContextLayout } from "../../../../utility/context/Layout";
 import { AgGridReact } from "ag-grid-react";
@@ -58,6 +59,7 @@ import {
 import * as XLSX from "xlsx";
 import UserContext from "../../../../context/Context";
 import { CheckPermission } from "../../freshlist/house/CheckPermission";
+import SuperAdminUI from "../../../SuperAdminUi/SuperAdminUI";
 
 const SelectedColums = [];
 
@@ -69,6 +71,8 @@ class Cashbook extends React.Component {
     this.gridApi = null;
     this.state = {
       isOpen: false,
+      MasterShow: false,
+
       Arrindex: "",
       rowData: [],
       setMySelectedarr: [],
@@ -223,314 +227,32 @@ class Cashbook extends React.Component {
     }
   };
 
-  async componentDidMount() {
-    let headings;
-    // let inputs;
-    let maxKeys = 0;
-    let elementWithMaxKeys = null;
-    const UserInformation = this.context?.UserInformatio;
-    await SparesPartsView()
+  async Apicalling(id, db) {
+    this.setState({ Loading: true });
+    await Cashbook_List(id, db)
       .then((res) => {
-        console.log(res?.SparePart);
-        this.setState({ rowData: res?.SparePart });
-        for (const element of res?.SparePart) {
-          const numKeys = Object.keys(element).length;
-          if (numKeys > maxKeys) {
-            maxKeys = numKeys;
-            elementWithMaxKeys = element;
-          }
-        }
-        console.log(maxKeys);
-        let findheading = Object.keys(elementWithMaxKeys);
-        let index = findheading.indexOf("_id");
-        if (index > -1) {
-          findheading.splice(index, 1);
-        }
-        let index1 = findheading.indexOf("__v");
-        if (index1 > -1) {
-          findheading.splice(index1, 1);
-        }
-        headings = findheading?.map((ele) => {
-          return {
-            headerName: ele,
-            field: ele,
-            filter: true,
-            sortable: true,
-          };
-        });
-        var adddropdown = [];
-        const inputs = res?.SparePart?.map((ele) => {
-          console.log(ele);
-          Object.keys(ele).map((key) => ({
-            headerName: key,
-            field: key,
-            filter: true,
-            sortable: true,
-          }));
-        });
+        this.setState({ Loading: false });
 
-        let Radioinput =
-          JSON.parse(jsonData).CreateAccount?.Radiobutton?.input[0]?.name
-            ?._text;
-        const addRadio = [
-          {
-            headerName: Radioinput,
-            field: Radioinput,
-            filter: true,
-            sortable: true,
-            cellRendererFramework: (params) => {
-              return params.data?.Status === "Active" ? (
-                <div className="badge badge-pill badge-success">
-                  {params.data.Status}
-                </div>
-              ) : params.data?.Status === "Deactive" ? (
-                <div className="badge badge-pill badge-warning">
-                  {params.data.Status}
-                </div>
-              ) : (
-                "NA"
-              );
-            },
-          },
-        ];
+        console.log(res?.Orders);
 
-        let dropdown = JSON.parse(jsonData).CreateAccount?.MyDropdown?.dropdown;
-        if (dropdown?.length) {
-          var mydropdownArray = dropdown?.map((ele) => {
-            return {
-              headerName: ele?.label,
-              field: ele?.name,
-              filter: true,
-              sortable: true,
-            };
-          });
-        } else {
-          var adddropdown = [
-            {
-              headerName: dropdown?.label._text,
-              field: dropdown?.name._text,
-              filter: true,
-              sortable: true,
-            },
-          ];
-        }
-
-        let myHeadings = [
-          ...checkboxinput,
-          ...headings,
-          ...adddropdown,
-          ...addRadio,
-          ...mydropdownArray,
-        ];
-        let Product = [
-          {
-            headerName: "Actions",
-            field: "sortorder",
-            field: "transactions",
-            width: 190,
-            cellRendererFramework: (params) => {
-              return (
-                <div className="actions cursor-pointer">
-                  <Route
-                    render={({ history }) => (
-                      <Eye
-                        className="mr-50"
-                        size="25px"
-                        color="green"
-                        onClick={() => {
-                          this.handleChangeEdit(params.data, "readonly");
-                        }}
-                      />
-                    )}
-                  />
-                  <Route
-                    render={({ history }) => (
-                      <Edit
-                        className="mr-50"
-                        size="25px"
-                        color="blue"
-                        onClick={() => {
-                          this.handleChangeEdit(params.data, "Editable");
-                        }}
-                      />
-                    )}
-                  />
-                  <Route
-                    render={() => (
-                      <Trash2
-                        className="mr-50"
-                        size="25px"
-                        color="red"
-                        onClick={() => {
-                          this.runthisfunction(params?.data?._id);
-                        }}
-                      />
-                    )}
-                  />
-                </div>
-              );
-            },
-          },
-          {
-            headerName: "Whatsapp",
-            field: "whatsapp",
-            filter: true,
-            sortable: true,
-            cellRendererFramework: (params) => {
-              console.log(params?.data?.whatsapp);
-              return params.data?.whatsapp === true || "undefined" ? (
-                <div className="badge badge-pill badge-success">YES</div>
-              ) : params.data?.whatsapp === false ? (
-                <div className="badge badge-pill badge-warning">NO</div>
-              ) : (
-                "NA"
-              );
-            },
-          },
-          {
-            headerName: "SMS",
-            field: "sms",
-            filter: true,
-            sortable: true,
-            cellRendererFramework: (params) => {
-              console.log(params?.data?.sms);
-              return params.data?.sms === true ? (
-                <div className="badge badge-pill badge-success">YES</div>
-              ) : params.data?.sms === false ? (
-                <div className="badge badge-pill badge-warning">No</div>
-              ) : (
-                "NA"
-              );
-            },
-          },
-          {
-            headerName: "Gmail",
-            field: "gmail",
-            filter: true,
-            sortable: true,
-            cellRendererFramework: (params) => {
-              console.log(params?.data?.gmail);
-              return params.data?.gmail === true ? (
-                <div className="badge badge-pill badge-success">YES</div>
-              ) : params.data?.gmail === false ? (
-                <div className="badge badge-pill badge-warning">NO</div>
-              ) : (
-                "NA"
-              );
-            },
-          },
-          ...myHeadings,
-          {
-            headerName: "Created date",
-            field: "createdAt",
-            filter: true,
-            sortable: true,
-            cellRendererFramework: (params) => {
-              let convertedTime = "NA";
-              if (params?.data?.createdAt == undefined) {
-                convertedTime = "NA";
-              }
-              if (params?.data?.createdAt) {
-                convertedTime = params?.data?.createdAt;
-              }
-              if (
-                UserInformation?.timeZone !== undefined &&
-                params?.data?.createdAt !== undefined
-              ) {
-                if (params?.data?.createdAt != undefined) {
-                  convertedTime = moment(params?.data?.createdAt?.split(".")[0])
-                    .tz(UserInformation?.timeZone.split("-")[0])
-                    .format(UserInformation?.dateTimeFormat);
-                }
-              }
-
-              return (
-                <>
-                  <div className="actions cursor-pointer">
-                    {convertedTime == "NA" ? (
-                      "NA"
-                    ) : (
-                      <span>
-                        {convertedTime} &nbsp;
-                        {UserInformation?.timeZone &&
-                          UserInformation?.timeZone.split("-")[1]}
-                      </span>
-                    )}
-                  </div>
-                </>
-              );
-            },
-          },
-          {
-            headerName: "Updated date",
-            field: "updatedAt",
-            filter: true,
-            sortable: true,
-            cellRendererFramework: (params) => {
-              let convertedTime = "NA";
-              if (params?.data?.updatedAt == undefined) {
-                convertedTime = "NA";
-              }
-              if (params?.data?.updatedAt) {
-                convertedTime = params?.data?.updatedAt;
-              }
-              if (
-                UserInformation?.timeZone !== undefined &&
-                params?.data?.updatedAt !== undefined
-              ) {
-                if (params?.data?.updatedAt != undefined) {
-                  convertedTime = moment(params?.data?.updatedAt?.split(".")[0])
-                    .tz(UserInformation?.timeZone.split("-")[0])
-                    .format(UserInformation?.dateTimeFormat);
-                }
-              }
-
-              return (
-                <>
-                  <div className="actions cursor-pointer">
-                    {convertedTime == "NA" ? (
-                      "NA"
-                    ) : (
-                      <span>
-                        {convertedTime} &nbsp;
-                        {UserInformation?.timeZone &&
-                          UserInformation?.timeZone.split("-")[1]}
-                      </span>
-                    )}
-                  </div>
-                </>
-              );
-            },
-          },
-        ];
-        this.setState({ AllcolumnDefs: Product });
-
-        let userHeading = JSON.parse(
-          localStorage.getItem("UserSearchParSearch")
+        let myarr = res?.Orders?.filter(
+          (ele, i) =>
+            ele?.cashBookType == "CashOrder" || ele?.paymentMode == "Cash"
         );
-        if (userHeading?.length) {
-          this.setState({ columnDefs: userHeading });
-          this.gridApi.setColumnDefs(userHeading);
-          this.setState({ SelectedcolumnDefs: userHeading });
-        } else {
-          this.setState({ columnDefs: Product });
-          this.setState({ SelectedcolumnDefs: Product });
+
+        // console.log(myarr);
+        if (myarr?.length) {
+          this.setState({ rowData: myarr });
         }
-        this.setState({ SelectedCols: Product });
       })
       .catch((err) => {
-        console.log(err);
-        swal("Error", "something went wrong try again");
-      });
-    await SparePart_List()
-      .then((res) => {
-        console.log(res.Parts);
-        // this.setState({ rowData: res?.Parts });
-      })
-      .catch((err) => {
+        this.setState({ Loading: false });
+        this.setState({ rowData: [] });
+
         console.log(err);
       });
   }
+
   toggleDropdown = () => {
     this.setState((prevState) => ({ isOpen: !prevState.isOpen }));
   };
@@ -816,41 +538,29 @@ class Cashbook extends React.Component {
   };
 
   async componentDidMount() {
-    const userId = JSON.parse(localStorage.getItem("userData"))?._id;
+    const userId = JSON.parse(localStorage.getItem("userData"));
     const UserInformation = this.context?.UserInformatio;
     const InsidePermissions = CheckPermission("Cashbook");
-    console.log(InsidePermissions);
-    this.setState({ InsiderPermissions: InsidePermissions });
-     this.setState({ AllcolumnDefs: this.state.columnDefs });
-     this.setState({ SelectedCols: this.state.columnDefs });
+    // console.log(InsidePermissions);
 
-     let userHeading = JSON.parse(localStorage.getItem("CashbookListView"));
-     if (userHeading?.length) {
-       this.setState({ columnDefs: userHeading });
-       this.gridApi.setColumnDefs(userHeading);
-       this.setState({ SelectedcolumnDefs: userHeading });
-     } else {
-       this.setState({ columnDefs: this.state.columnDefs });
-       this.setState({ SelectedcolumnDefs: this.state.columnDefs });
-     }
-    await Cashbook_List(userId)
-      .then((res) => {
-        console.log(res?.Orders);
-      
-        let myarr = res?.Orders?.filter(
-          (ele, i) =>
-            ele?.cashBookType == "CashOrder" || ele?.paymentMode == "Cash"
-        );
-       
-        // console.log(myarr);
-        if (myarr?.length) {
-          this.setState({ rowData: myarr });
-        }
-       
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+    if (userId?.rolename?.rank === 0) {
+      this.setState({ MasterShow: true });
+    }
+    await this.Apicalling(userId?._id, userId?.database);
+
+    this.setState({ InsiderPermissions: InsidePermissions });
+    this.setState({ AllcolumnDefs: this.state.columnDefs });
+    this.setState({ SelectedCols: this.state.columnDefs });
+
+    let userHeading = JSON.parse(localStorage.getItem("CashbookListView"));
+    if (userHeading?.length) {
+      this.setState({ columnDefs: userHeading });
+      this.gridApi.setColumnDefs(userHeading);
+      this.setState({ SelectedcolumnDefs: userHeading });
+    } else {
+      this.setState({ columnDefs: this.state.columnDefs });
+      this.setState({ SelectedcolumnDefs: this.state.columnDefs });
+    }
   }
 
   togglemodal = () => {
@@ -1120,7 +830,36 @@ class Cashbook extends React.Component {
       });
     }
   };
+  handleParentSubmit = (e) => {
+    e.preventDefault();
+    let SuperAdmin = JSON.parse(localStorage.getItem("SuperadminIdByMaster"));
+    let id = SuperAdmin.split(" ")[0];
+    let db = SuperAdmin.split(" ")[1];
+    this.Apicalling(id, db);
+  };
+  handleDropdownChange = (selectedValue) => {
+    localStorage.setItem("SuperadminIdByMaster", JSON.stringify(selectedValue));
+  };
   render() {
+    if (this.state.Loading) {
+      return (
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            marginTop: "20rem",
+          }}>
+          <Spinner
+            style={{
+              height: "4rem",
+              width: "4rem",
+            }}
+            color="primary">
+            Loading...
+          </Spinner>
+        </div>
+      );
+    }
     const {
       rowData,
       columnDefs,
@@ -1182,6 +921,14 @@ class Cashbook extends React.Component {
                             Cashbook
                           </h1>
                         </Col>
+                        {this.state.MasterShow && (
+                          <Col>
+                            <SuperAdminUI
+                              onDropdownChange={this.handleDropdownChange}
+                              onSubmit={this.handleParentSubmit}
+                            />
+                          </Col>
+                        )}
                         {this.state.InsiderPermissions &&
                           this.state.InsiderPermissions?.View && (
                             <Col>

@@ -18,6 +18,7 @@ import {
   Label,
   CustomInput,
   Badge,
+  Spinner,
 } from "reactstrap";
 import OtpInput from "react-otp-input";
 import { ImDownload } from "react-icons/im";
@@ -55,6 +56,7 @@ import * as XLSX from "xlsx";
 import UserContext from "../../../../context/Context";
 import { CheckPermission } from "../house/CheckPermission";
 import ClosingStock from "../customer/ProductWIKI/ClosingStock";
+import SuperAdminUI from "../../../SuperAdminUi/SuperAdminUI";
 
 const SelectedColums = [];
 
@@ -67,6 +69,8 @@ class PendingOrder extends React.Component {
     this.state = {
       isOpen: false,
       OtpScreen: false,
+      MasterShow: false,
+
       Arrindex: "",
       emailotp: "",
       CancelReason: "",
@@ -326,10 +330,9 @@ class PendingOrder extends React.Component {
   HandleStatusChange = async (e) => {
     e.preventDefault();
     console.log(this.state.Delivery_Status);
-debugger
+
     await Goods_DeliveryOTP(this.state.ViewOneData?.partyId)
       .then((res) => {
-        debugger;
         console.log(res);
         swal("success", "OTP Sent Successfully To Your Registered email id");
         this.setState({ OtpScreen: true });
@@ -374,15 +377,17 @@ debugger
   handleSubmitOTP = async (e) => {
     e.preventDefault();
 
-let payload = {
-  userId: this.state.ViewOneData?.userId?._id,
-  orderId: this.state.ViewOneData?.orderId,
-  partyId: this.state.ViewOneData?.partyId,
-  status: this.state.Delivery_Status,
-  otp: Number(this.state.emailotp),
-  paymentMode: `${this.state.PayMode ? this.state.PayMode : "Cancelled"}`,
-  reason: `${this.state.CancelReason ? this.state.CancelReason : "Delivered"}`,
-};
+    let payload = {
+      userId: this.state.ViewOneData?.userId?._id,
+      orderId: this.state.ViewOneData?.orderId,
+      partyId: this.state.ViewOneData?.partyId,
+      status: this.state.Delivery_Status,
+      otp: Number(this.state.emailotp),
+      paymentMode: `${this.state.PayMode ? this.state.PayMode : "Cancelled"}`,
+      reason: `${
+        this.state.CancelReason ? this.state.CancelReason : "Delivered"
+      }`,
+    };
     await Goods_DeliveryOTP_Auth(this.state.ViewOneData?._id, payload)
       .then((res) => {
         console.log(res);
@@ -395,11 +400,51 @@ let payload = {
       });
   };
 
+  async Apicalling(id, db) {
+    this.setState({ Loading: true });
+    await DeliveryBoyAssignedList(id)
+      .then((res) => {
+        this.setState({ Loading: false });
+
+        //  console.log(res?.OrderList);
+        let showdata = res?.OrderList?.filter(
+          (ele) =>
+            ele?.status?.toLowerCase() !== "completed" &&
+            ele?.status?.toLowerCase() !== "cancelled"
+        );
+        //  console.log(showdata);
+        this.setState({ rowData: showdata });
+        this.setState({ AllcolumnDefs: this.state.columnDefs });
+        this.setState({ SelectedCols: this.state.columnDefs });
+
+        let userHeading = JSON.parse(localStorage.getItem("PendingOrderList"));
+        if (userHeading?.length) {
+          this.setState({ columnDefs: userHeading });
+          this.gridApi.setColumnDefs(userHeading);
+          this.setState({ SelectedcolumnDefs: userHeading });
+        } else {
+          this.setState({ columnDefs: this.state.columnDefs });
+          this.setState({ SelectedcolumnDefs: this.state.columnDefs });
+        }
+      })
+      .catch((err) => {
+        this.setState({ Loading: false });
+        this.setState({ rowData: [] });
+
+        console.log(err);
+      });
+  }
   async componentDidMount() {
     const InsidePermissions = CheckPermission("Pending Order");
     // console.log(InsidePermissions);
     this.setState({ InsiderPermissions: InsidePermissions });
-    const userId = JSON.parse(localStorage.getItem("userData"))?._id;
+    const userId = JSON.parse(localStorage.getItem("userData"));
+    if (userId?.rolename?.rank === 0) {
+      this.setState({ MasterShow: true });
+    }
+
+    await this.Apicalling(userId?._id, userId?.database);
+
     await DeliveryBoyAssignedList(userId)
       .then((res) => {
         console.log(res?.OrderList);
@@ -692,7 +737,36 @@ let payload = {
       });
     }
   };
+  handleParentSubmit = (e) => {
+    e.preventDefault();
+    let SuperAdmin = JSON.parse(localStorage.getItem("SuperadminIdByMaster"));
+    let id = SuperAdmin.split(" ")[0];
+    let db = SuperAdmin.split(" ")[1];
+    this.Apicalling(id, db);
+  };
+  handleDropdownChange = (selectedValue) => {
+    localStorage.setItem("SuperadminIdByMaster", JSON.stringify(selectedValue));
+  };
   render() {
+    if (this.state.Loading) {
+      return (
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            marginTop: "20rem",
+          }}>
+          <Spinner
+            style={{
+              height: "4rem",
+              width: "4rem",
+            }}
+            color="primary">
+            Loading...
+          </Spinner>
+        </div>
+      );
+    }
     const {
       rowData,
       columnDefs,
@@ -724,6 +798,14 @@ let payload = {
                             Sales Pending List
                           </h1>
                         </Col>
+                        {this.state.MasterShow && (
+                          <Col>
+                            <SuperAdminUI
+                              onDropdownChange={this.handleDropdownChange}
+                              onSubmit={this.handleParentSubmit}
+                            />
+                          </Col>
+                        )}
 
                         {InsiderPermissions && InsiderPermissions?.View && (
                           <Col>

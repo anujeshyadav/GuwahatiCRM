@@ -18,6 +18,7 @@ import {
   Badge,
   Table,
   Label,
+  Spinner,
 } from "reactstrap";
 
 import { ContextLayout } from "../../../../../utility/context/Layout";
@@ -51,6 +52,7 @@ import {
 import * as XLSX from "xlsx";
 import UserContext from "../../../../../context/Context";
 import { CheckPermission } from "../../house/CheckPermission";
+import SuperAdminUI from "../../../../SuperAdminUi/SuperAdminUI";
 
 const SelectedColums = [];
 
@@ -64,6 +66,8 @@ class PurchaseOrderViewList extends React.Component {
       isOpen: false,
       Arrindex: "",
       rowData: [],
+      MasterShow: false,
+
       modal: false,
       modalone: false,
       ViewData: {},
@@ -277,13 +281,12 @@ class PurchaseOrderViewList extends React.Component {
     }
   };
 
-  async componentDidMount() {
-    const InsidePermissions = CheckPermission("Purchase Order");
-    this.setState({ InsiderPermissions: InsidePermissions });
-
-    let userId = JSON.parse(localStorage.getItem("userData"));
-    await PurchaseOrderList(userId?._id, userId?.database)
+  async Apicalling(id, db) {
+    this.setState({ Loading: true });
+    await PurchaseOrderList(id, db)
       .then((res) => {
+        this.setState({ Loading: false });
+
         if (res?.orderHistory) {
           this.setState({ rowData: res?.orderHistory });
         }
@@ -301,8 +304,22 @@ class PurchaseOrderViewList extends React.Component {
         }
       })
       .catch((err) => {
+        this.setState({ Loading: false });
+        this.setState({ rowData: [] });
+
         console.log(err);
       });
+  }
+
+  async componentDidMount() {
+    const InsidePermissions = CheckPermission("Purchase Order");
+    this.setState({ InsiderPermissions: InsidePermissions });
+
+    let userId = JSON.parse(localStorage.getItem("userData"));
+    if (userId?.rolename?.rank === 0) {
+      this.setState({ MasterShow: true });
+    }
+    await this.Apicalling(userId?._id, userId?.database);
   }
 
   toggleDropdown = () => {
@@ -564,7 +581,36 @@ class PurchaseOrderViewList extends React.Component {
       });
     }
   };
+  handleParentSubmit = (e) => {
+    e.preventDefault();
+    let SuperAdmin = JSON.parse(localStorage.getItem("SuperadminIdByMaster"));
+    let id = SuperAdmin.split(" ")[0];
+    let db = SuperAdmin.split(" ")[1];
+    this.Apicalling(id, db);
+  };
+  handleDropdownChange = (selectedValue) => {
+    localStorage.setItem("SuperadminIdByMaster", JSON.stringify(selectedValue));
+  };
   render() {
+    if (this.state.Loading) {
+      return (
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            marginTop: "20rem",
+          }}>
+          <Spinner
+            style={{
+              height: "4rem",
+              width: "4rem",
+            }}
+            color="primary">
+            Loading...
+          </Spinner>
+        </div>
+      );
+    }
     const {
       rowData,
       columnDefs,
@@ -586,6 +632,14 @@ class PurchaseOrderViewList extends React.Component {
                     Purchased List
                   </h1>
                 </Col>
+                {this.state.MasterShow && (
+                  <Col>
+                    <SuperAdminUI
+                      onDropdownChange={this.handleDropdownChange}
+                      onSubmit={this.handleParentSubmit}
+                    />
+                  </Col>
+                )}
                 {InsiderPermissions && InsiderPermissions.View && (
                   <Col>
                     <span className="mx-1">

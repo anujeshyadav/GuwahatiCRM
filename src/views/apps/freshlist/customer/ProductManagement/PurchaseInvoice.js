@@ -19,6 +19,7 @@ import {
   Label,
   Form,
   CustomInput,
+  Spinner,
 } from "reactstrap";
 import { AiOutlineDownload } from "react-icons/ai";
 import { ToWords } from "to-words";
@@ -77,6 +78,7 @@ import {
   BsFillArrowUpSquareFill,
 } from "react-icons/bs";
 import * as XLSX from "xlsx";
+import SuperAdminUI from "../../../../SuperAdminUi/SuperAdminUI";
 
 const SelectedColums = [];
 const toWords = new ToWords({
@@ -110,6 +112,8 @@ class PurchaseInvoice extends React.Component {
     this.state = {
       isOpen: false,
       ShowMyBill: false,
+      MasterShow: false,
+
       BillNumber: "",
       Arrindex: "",
       AllbillMerged: [],
@@ -464,14 +468,16 @@ class PurchaseInvoice extends React.Component {
         role: pageparmission?.Userinfo?.role,
       });
     } else {
-      let index = AddedBill.findIndex(ele => ele?.order_id === data?.order_id);
+      let index = AddedBill.findIndex(
+        (ele) => ele?.order_id === data?.order_id
+      );
       AddedBill.splice(index, 1);
     }
     // console.log(AddedBill);
     this.setState({ Mergebilllength: AddedBill?.length });
   };
 
-  MergeBillNow = data => {
+  MergeBillNow = (data) => {
     let billnum = localStorage.getItem("billnumber");
     console.log(data);
     console.log(billnum);
@@ -493,7 +499,7 @@ class PurchaseInvoice extends React.Component {
     console.log(data);
   };
 
-  handleBillDownload = data => {
+  handleBillDownload = (data) => {
     this.setState({ PrintData: data });
     const toWords = new ToWords();
     let words = toWords.convert(Number(data.sub_total), { currency: true });
@@ -501,16 +507,16 @@ class PurchaseInvoice extends React.Component {
     this.toggleModal();
   };
   toggleModal = () => {
-    this.setState(prevState => ({
+    this.setState((prevState) => ({
       modal: !prevState.modal,
     }));
   };
   toggleModalOne = () => {
-    this.setState(prevState => ({
+    this.setState((prevState) => ({
       modalOne: !prevState.modalOne,
     }));
   };
-  changeHandler = e => {
+  changeHandler = (e) => {
     this.setState({ [e.target.name]: e.target.value });
   };
   toggleModalclose = () => {
@@ -533,7 +539,7 @@ class PurchaseInvoice extends React.Component {
     }
   };
   LookupviewStart = () => {
-    this.setState(prevState => ({
+    this.setState((prevState) => ({
       modal: !prevState.modal,
     }));
   };
@@ -548,12 +554,45 @@ class PurchaseInvoice extends React.Component {
       this.setState({ EditOneData: data });
     }
   };
+  async Apicalling(id, db) {
+    this.setState({ Loading: true });
+    PurchaseOrderList(id, db)
+      .then((res) => {
+        this.setState({ Loading: false });
+
+        console.log(res?.orderHistory);
+        this.setState({ rowData: res?.orderHistory });
+        this.setState({ AllcolumnDefs: this.state.columnDefs });
+
+        let userHeading = JSON.parse(localStorage.getItem("SalesOrderList"));
+        if (userHeading?.length) {
+          this.setState({ columnDefs: userHeading });
+          this.gridApi.setColumnDefs(userHeading);
+          this.setState({ SelectedcolumnDefs: userHeading });
+        } else {
+          this.setState({ columnDefs: this.state.columnDefs });
+          this.setState({ SelectedcolumnDefs: this.state.columnDefs });
+        }
+        this.setState({ SelectedCols: this.state.columnDefs });
+      })
+      .catch((err) => {
+        this.setState({ Loading: false });
+        this.setState({ rowData: [] });
+
+        console.log(err);
+      });
+  }
 
   async componentDidMount() {
     const UserInformation = this.context;
     let pageparmission = JSON.parse(localStorage.getItem("userData"));
-    let userid = pageparmission?._id;
-    await ViewCompanyDetails(userid, pageparmission?.database)
+    if (pageparmission?.rolename?.rank === 0) {
+      this.setState({ MasterShow: true });
+    }
+
+    await this.Apicalling(pageparmission?._id, pageparmission?.database);
+
+    await ViewCompanyDetails(pageparmission?._id, pageparmission?.database)
       .then((res) => {
         console.log(res?.CompanyDetail);
         this.setState({ CompanyDetails: res?.CompanyDetail });
@@ -571,26 +610,7 @@ class PurchaseInvoice extends React.Component {
     const InsidePermissions = CheckPermission("Purchase Invoice");
     console.log(InsidePermissions);
     this.setState({ InsiderPermissions: InsidePermissions });
-     PurchaseOrderList(pageparmission?._id, pageparmission?.database)
-       .then((res) => {
-         console.log(res?.orderHistory);
-         this.setState({ rowData: res?.orderHistory });
-         this.setState({ AllcolumnDefs: this.state.columnDefs });
 
-         let userHeading = JSON.parse(localStorage.getItem("SalesOrderList"));
-         if (userHeading?.length) {
-           this.setState({ columnDefs: userHeading });
-           this.gridApi.setColumnDefs(userHeading);
-           this.setState({ SelectedcolumnDefs: userHeading });
-         } else {
-           this.setState({ columnDefs: this.state.columnDefs });
-           this.setState({ SelectedcolumnDefs: this.state.columnDefs });
-         }
-         this.setState({ SelectedCols: this.state.columnDefs });
-       })
-       .catch((err) => {
-         console.log(err);
-       });
     // console.log(pageparmission.role);
     let userchoice = JSON.parse(localStorage.getItem("billUI"));
     console.log(userchoice);
@@ -599,10 +619,9 @@ class PurchaseInvoice extends React.Component {
       this.setState({ Billtoposition: userchoice?.billTo });
       this.setState({ shipto: userchoice?.shipto });
     }
- 
   }
 
-  submitHandler = e => {
+  submitHandler = (e) => {
     e.preventDefault();
     let mychoice = {
       imagePosition: this.state.logoposition,
@@ -618,7 +637,7 @@ class PurchaseInvoice extends React.Component {
     }
   };
   toggleDropdown = () => {
-    this.setState(prevState => ({ isOpen: !prevState.isOpen }));
+    this.setState((prevState) => ({ isOpen: !prevState.isOpen }));
   };
 
   runthisfunction(id) {
@@ -627,15 +646,15 @@ class PurchaseInvoice extends React.Component {
         cancel: "cancel",
         catch: { text: "Delete ", value: "delete" },
       },
-    }).then(value => {
+    }).then((value) => {
       switch (value) {
         case "delete":
           DeleteAccount(id)
-            .then(res => {
+            .then((res) => {
               let selectedData = this.gridApi.getSelectedRows();
               this.gridApi.updateRowData({ remove: selectedData });
             })
-            .catch(err => {
+            .catch((err) => {
               console.log(err);
             });
           break;
@@ -643,13 +662,13 @@ class PurchaseInvoice extends React.Component {
       }
     });
   }
-  handleBillSet = i => {
+  handleBillSet = (i) => {
     this.setState({ BillNumber: i });
     localStorage.setItem("billnumber", i);
     this.toggleModalOne();
     // this.setState({ ShowBill: false });
   };
-  onGridReady = params => {
+  onGridReady = (params) => {
     this.gridApi = params.api;
     this.gridColumnApi = params.columnApi;
     this.gridRef.current = params.api;
@@ -661,11 +680,11 @@ class PurchaseInvoice extends React.Component {
     });
   };
 
-  updateSearchQuery = val => {
+  updateSearchQuery = (val) => {
     this.gridApi.setQuickFilter(val);
   };
 
-  filterSize = val => {
+  filterSize = (val) => {
     if (this.gridApi) {
       this.gridApi.paginationSetPageSize(Number(val));
       this.setState({
@@ -680,7 +699,7 @@ class PurchaseInvoice extends React.Component {
       SelectedColums?.push(value);
     } else {
       const delindex = SelectedColums?.findIndex(
-        ele => ele?.headerName === value?.headerName
+        (ele) => ele?.headerName === value?.headerName
       );
 
       SelectedColums?.splice(delindex, 1);
@@ -691,14 +710,14 @@ class PurchaseInvoice extends React.Component {
       Papa.parse(csvData, {
         header: true,
         skipEmptyLines: true,
-        complete: result => {
+        complete: (result) => {
           if (result.data && result.data.length > 0) {
             resolve(result.data);
           } else {
             reject(new Error("No data found in the CSV"));
           }
         },
-        error: error => {
+        error: (error) => {
           reject(error);
         },
       });
@@ -710,7 +729,7 @@ class PurchaseInvoice extends React.Component {
 
     const doc = new jsPDF("landscape", "mm", size, false);
     doc.setTextColor(5, 87, 97);
-    const tableData = parsedData.map(row => Object.values(row));
+    const tableData = parsedData.map((row) => Object.values(row));
     doc.addImage(Logo, "JPEG", 10, 10, 50, 30);
     let date = new Date();
     doc.setCreationDate(date);
@@ -735,14 +754,14 @@ class PurchaseInvoice extends React.Component {
       console.error("Error parsing CSV:", error);
     }
   };
-  processCell = params => {
+  processCell = (params) => {
     // console.log(params);
     // Customize cell content as needed
     return params.value;
   };
 
   convertCsvToExcel(csvData) {
-    return new Promise(resolve => {
+    return new Promise((resolve) => {
       Papa.parse(csvData, {
         header: true,
         dynamicTyping: true,
@@ -773,7 +792,7 @@ class PurchaseInvoice extends React.Component {
     window.URL.revokeObjectURL(url);
   }
 
-  exportToExcel = async e => {
+  exportToExcel = async (e) => {
     const CsvData = this.gridApi.getDataAsCsv({
       processCellCallback: this.processCell,
     });
@@ -786,7 +805,7 @@ class PurchaseInvoice extends React.Component {
       processCellCallback: this.processCell,
     });
     Papa.parse(CsvData, {
-      complete: result => {
+      complete: (result) => {
         const ws = XLSX.utils.json_to_sheet(result.data);
         const wb = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(wb, ws, "Sheet1");
@@ -822,13 +841,13 @@ class PurchaseInvoice extends React.Component {
       processCellCallback: this.processCell,
     });
     Papa.parse(CsvData, {
-      complete: result => {
+      complete: (result) => {
         const rows = result.data;
 
         // Create XML
         let xmlString = "<root>\n";
 
-        rows.forEach(row => {
+        rows.forEach((row) => {
           xmlString += "  <row>\n";
           row.forEach((cell, index) => {
             xmlString += `    <field${index + 1}>${cell}</field${index + 1}>\n`;
@@ -850,7 +869,7 @@ class PurchaseInvoice extends React.Component {
     });
   };
 
-  HandleSetVisibleField = e => {
+  HandleSetVisibleField = (e) => {
     e.preventDefault();
     this.gridApi.setColumnDefs(this.state.SelectedcolumnDefs);
     this.setState({ columnDefs: this.state.SelectedcolumnDefs });
@@ -866,10 +885,10 @@ class PurchaseInvoice extends React.Component {
   HeadingRightShift = () => {
     const updatedSelectedColumnDefs = [
       ...new Set([
-        ...this.state.SelectedcolumnDefs.map(item => JSON.stringify(item)),
-        ...SelectedColums.map(item => JSON.stringify(item)),
+        ...this.state.SelectedcolumnDefs.map((item) => JSON.stringify(item)),
+        ...SelectedColums.map((item) => JSON.stringify(item)),
       ]),
-    ].map(item => JSON.parse(item));
+    ].map((item) => JSON.parse(item));
     this.setState({
       SelectedcolumnDefs: [...new Set(updatedSelectedColumnDefs)], // Update the state with the combined array
     });
@@ -886,7 +905,36 @@ class PurchaseInvoice extends React.Component {
       });
     }
   };
+  handleParentSubmit = (e) => {
+    e.preventDefault();
+    let SuperAdmin = JSON.parse(localStorage.getItem("SuperadminIdByMaster"));
+    let id = SuperAdmin.split(" ")[0];
+    let db = SuperAdmin.split(" ")[1];
+    this.Apicalling(id, db);
+  };
+  handleDropdownChange = (selectedValue) => {
+    localStorage.setItem("SuperadminIdByMaster", JSON.stringify(selectedValue));
+  };
   render() {
+    if (this.state.Loading) {
+      return (
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            marginTop: "20rem",
+          }}>
+          <Spinner
+            style={{
+              height: "4rem",
+              width: "4rem",
+            }}
+            color="primary">
+            Loading...
+          </Spinner>
+        </div>
+      );
+    }
     const {
       rowData,
       columnDefs,
@@ -954,6 +1002,14 @@ class PurchaseInvoice extends React.Component {
                             Purchased Invoice
                           </h1>
                         </Col>
+                        {this.state.MasterShow && (
+                          <Col>
+                            <SuperAdminUI
+                              onDropdownChange={this.handleDropdownChange}
+                              onSubmit={this.handleParentSubmit}
+                            />
+                          </Col>
+                        )}
                         {this.state.InsiderPermissions &&
                           this.state.InsiderPermissions.View && (
                             <Col>
