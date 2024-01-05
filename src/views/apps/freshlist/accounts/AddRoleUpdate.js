@@ -229,7 +229,6 @@ export default function AddRoleNew(args) {
                           history.push("/app/Trupee/account/RoleList")
                         }
                       >
-                        {" "}
                         Back
                         {/* <FaPlus size={15} /> Create User */}
                       </Button>
@@ -295,7 +294,7 @@ export default function AddRoleNew(args) {
                   {Roles &&
                     Roles?.map((value, index) => {
                       {
-                        /* console.log("value", value?.TabName); */
+                        console.log("value", value?.TabName);
                       }
                       return (
                         <Col

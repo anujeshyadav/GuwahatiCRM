@@ -63,7 +63,7 @@ export const WareHouse_Closing_Stock = "/stock-updation/view-closing-stock/";
 export const WareHouse_OverDue_Stock = "/stock-updation/view-over-due-stock";
 export const WareHouse_Current_Stock = "/product/view-current-stock/";
 
-export const Stock_Report_List = "/warehouse/view-warehouse-stock";
+export const Stock_Report_List = "/stock-updation/view-warehouse-stock/";
 
 // production process end
 

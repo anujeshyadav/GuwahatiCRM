@@ -645,8 +645,7 @@
 // };
 // export default EditUnit;
 
-
-import React, { useEffect, useState, useRef ,useContext } from "react";
+import React, { useEffect, useState, useRef, useContext } from "react";
 import xmlJs from "xml-js";
 import PhoneInput from "react-phone-input-2";
 import Multiselect from "multiselect-react-dropdown";
@@ -677,30 +676,30 @@ import {
 import "../../../../../assets/scss/pages/users.scss";
 // import UserContext from "../../../../../context/Context";
 const StateList = [
-    { id: 1, state_title: 'Clothing & Apparel.' },
-    { id: 2, state_title: 'Footwear & Shoes.' },
-    { id: 3, state_title: 'Electronics & Gadgets.' },
-    // Add more states as needed
-  ];
-const EditUnit = ({ViewOneData}) => {
+  { id: 1, state_title: "Clothing & Apparel." },
+  { id: 2, state_title: "Footwear & Shoes." },
+  { id: 3, state_title: "Electronics & Gadgets." },
+  // Add more states as needed
+];
+const EditUnit = ({ ViewOneData }) => {
   const [CreatUnitView, setCreatUnitView] = useState({});
   const [Countries, setCountry] = useState({});
   const [States, setState] = useState({});
   const [Cities, setCities] = useState({});
-//   const [StateList, setCityList] = useState([]);
+  //   const [StateList, setCityList] = useState([]);
   const [selectedValue, setSelectedValue] = useState([]);
   const [formData, setFormData] = useState({});
   const [index, setindex] = useState("");
   const [error, setError] = useState("");
   const [permissions, setpermissions] = useState({});
-//   const formRef = useRef(null);
+  //   const formRef = useRef(null);
   // const createUserXmlView = useContext(UserContext);
 
   const handleInputChange = (e, type, i) => {
     const { name, value } = e.target;
-    console.log(value)
-  setindex(i);
- if (type == "number") {
+    console.log(value);
+    setindex(i);
+    if (type == "number") {
       if (/^\d{0,10}$/.test(value)) {
         setFormData({
           ...formData,
@@ -728,30 +727,28 @@ const EditUnit = ({ViewOneData}) => {
         // setError("Input length exceeds the maximum of 10 characters");
       }
     }
-
   };
 
-
-useEffect(() => {
-  console.log(ViewOneData)
-  CreateunitxmlView()
+  useEffect(() => {
+    console.log(ViewOneData);
+    CreateunitxmlView()
       .then(res => {
         const jsonData = xmlJs.xml2json(res.data, { compact: true, spaces: 2 });
-        console.log(JSON.parse(jsonData).CreateUnit)
-      setCreatUnitView(JSON.parse(jsonData))
+        console.log(JSON.parse(jsonData).CreateUnit);
+        setCreatUnitView(JSON.parse(jsonData));
       })
       .catch(err => {
         console.log(err);
       });
   }, []);
 
-  const onSelect1 = (selectedList) => {
-    setSelectedValue(selectedList)
-    console.log('Selected:', selectedList);
- };
-  const onRemove1 = (selectedList) => {
-    setSelectedValue(selectedList); 
-    console.log('Removed:', selectedList);
+  const onSelect1 = selectedList => {
+    setSelectedValue(selectedList);
+    console.log("Selected:", selectedList);
+  };
+  const onRemove1 = selectedList => {
+    setSelectedValue(selectedList);
+    console.log("Removed:", selectedList);
   };
 
   const submitHandler = e => {
@@ -759,22 +756,22 @@ useEffect(() => {
     //     formRef.current.reset();
     //   }
     e.preventDefault();
-    console.log(formData)
+    console.log(formData);
     if (error) {
       swal("Error occured while Entering Details");
     } else {
-     let userData = JSON.parse(localStorage.getItem("userData"));
-     formData["created_by"] = userData?._id;
-     SaveUnit(formData)
-       .then((res) => {
-         console.log(res);
-         if (res.status) {
-           swal(`${res.message}`);
-         }
-       })
-       .catch((err) => {
-         console.log(err);
-       });
+      let userData = JSON.parse(localStorage.getItem("userData"));
+      formData["created_by"] = userData?._id;
+      SaveUnit(formData)
+        .then(res => {
+          console.log(res);
+          if (res.status) {
+            swal(`${res.message}`);
+          }
+        })
+        .catch(err => {
+          console.log(err);
+        });
     }
   };
 
@@ -782,7 +779,7 @@ useEffect(() => {
     <div>
       <div>
         <Card>
-        <Row className="m-2">
+          <Row className="m-2">
             <Col>
               <h1 className="float-left">Edit Unit</h1>
             </Col>
@@ -798,7 +795,6 @@ useEffect(() => {
                         history.push("/app/SoftNumen/accounSearch")
                       }
                     >
-                      {" "}
                       Back
                     </Button>
                   )}
@@ -808,60 +804,57 @@ useEffect(() => {
           </Row>
 
           <CardBody>
-            <Form className="m-1"
-            //   ref={formRef}
-             onSubmit={submitHandler}>
+            <Form
+              className="m-1"
+              //   ref={formRef}
+              onSubmit={submitHandler}
+            >
               <Row className="mb-2">
-            <Col lg="6" md="6" sm="12">
-                <Label>Select Product</Label>
-            <Multiselect
-                          required
-                          showCheckbox="true"
-                          isObject="false"
-                          options={StateList} 
-                          onSelect={onSelect1} 
-                          onRemove={onRemove1} 
-                          displayValue="state_title" 
-                        />
-            </Col>
+                <Col lg="6" md="6" sm="12">
+                  <Label>Select Product</Label>
+                  <Multiselect
+                    required
+                    showCheckbox="true"
+                    isObject="false"
+                    options={StateList}
+                    onSelect={onSelect1}
+                    onRemove={onRemove1}
+                    displayValue="state_title"
+                  />
+                </Col>
                 {CreatUnitView &&
-                  CreatUnitView?.CreateUnit
-                  ?.input?.map((ele, i) => {
-                   return (
-                    <Col key={i} lg="6" md="6" sm="12">
-                    <FormGroup key={i}>
-                      <Label>{ele?.label?._text}</Label>
+                  CreatUnitView?.CreateUnit?.input?.map((ele, i) => {
+                    return (
+                      <Col key={i} lg="6" md="6" sm="12">
+                        <FormGroup key={i}>
+                          <Label>{ele?.label?._text}</Label>
 
-                      <Input
-                 
-                        type={ele?.type?._attributes?.type}
-                        placeholder={ele?.placeholder?._text}
-                        name={ele?.name?._text}
-                        value={formData[ele?.name?._text]}
-                        onChange={(e) =>
-                          handleInputChange(
-                            e,
-                            ele?.type?._attributes?.type,
-                            i
-                          )
-                        }
-                      />
-                      {index === i ? (
-                        <>
-                          {error && (
-                            <span style={{ color: "red" }}>
-                              {error}
-                            </span>
+                          <Input
+                            type={ele?.type?._attributes?.type}
+                            placeholder={ele?.placeholder?._text}
+                            name={ele?.name?._text}
+                            value={formData[ele?.name?._text]}
+                            onChange={e =>
+                              handleInputChange(
+                                e,
+                                ele?.type?._attributes?.type,
+                                i
+                              )
+                            }
+                          />
+                          {index === i ? (
+                            <>
+                              {error && (
+                                <span style={{ color: "red" }}>{error}</span>
+                              )}
+                            </>
+                          ) : (
+                            <></>
                           )}
-                        </>
-                      ) : (
-                        <></>
-                      )}
-                    </FormGroup>
-                  </Col>
-                   )
-      }
-                )}
+                        </FormGroup>
+                      </Col>
+                    );
+                  })}
               </Row>
               <hr />
               <Row>
@@ -881,4 +874,3 @@ useEffect(() => {
   );
 };
 export default EditUnit;
-

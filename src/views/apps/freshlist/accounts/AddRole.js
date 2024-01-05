@@ -152,14 +152,14 @@ export const Roles = [
         title: "Order Report",
         permission: ["View", "Create", "Edit", "Delete"],
       },
-      {
-        title: "Overdue Report",
-        permission: ["View", "Create", "Edit", "Delete"],
-      },
-      {
-        title: "Sales Report and Amount",
-        permission: ["View", "Create", "Edit", "Delete"],
-      },
+      // {
+      //   title: "Overdue Report",
+      //   permission: ["View", "Create", "Edit", "Delete"],
+      // },
+      // {
+      //   title: "Sales Report and Amount",
+      //   permission: ["View", "Create", "Edit", "Delete"],
+      // },
       {
         title: "Purchase Report and Amount",
         permission: ["View", "Create", "Edit", "Delete"],
@@ -168,10 +168,7 @@ export const Roles = [
         title: "Team and Target Report",
         permission: ["View", "Create", "Edit", "Delete"],
       },
-      {
-        title: "WareHouse Report",
-        permission: ["View", "Create", "Edit", "Delete"],
-      },
+
       {
         title: "Partywise ledger",
         permission: ["View", "Create", "Edit", "Delete"],
@@ -184,38 +181,8 @@ export const Roles = [
         title: "Target Report",
         permission: ["View", "Create", "Edit", "Delete"],
       },
-      {
-        title: "Dispatch Report",
-        permission: ["View", "Create", "Edit", "Delete"],
-      },
-      {
-        title: "All GSTR",
-        permission: ["View", "Create", "Edit", "Delete"],
-      },
-
       // {
-      //   title: "All GSTR",
-      //   TabName: [
-      //     {
-      //       title: "GSTR 1",
-      //       permission: ["View", "Create", "Edit", "Delete"],
-      //     },
-      //     {
-      //       title: "GSTR 3B",
-      //       permission: ["View", "Create", "Edit", "Delete"],
-      //     },
-      //     {
-      //       title: "GSTR 9",
-      //       permission: ["View", "Create", "Edit", "Delete"],
-      //     },
-      //   ],
-      // },
-      // {
-      //   title: "GSTR 3B",
-      //   permission: ["View", "Create", "Edit", "Delete"],
-      // },
-      // {
-      //   title: "GSTR 9",
+      //   title: "Dispatch Report",
       //   permission: ["View", "Create", "Edit", "Delete"],
       // },
       {
@@ -234,16 +201,68 @@ export const Roles = [
         title: "Overdue Report",
         permission: ["View", "Create", "Edit", "Delete"],
       },
+      // {
+      //   title: "Lock In Report",
+      //   permission: ["View", "Create", "Edit", "Delete"],
+      // },
+      {
+        title: "Cashbook Report",
+        permission: ["View", "Create", "Edit", "Delete"],
+      },
+      // {
+      //   title: "Pending Order Report",
+      //   permission: ["View", "Create", "Edit", "Delete"],
+      // },
+    ],
+  },
+
+  {
+    title: "All GSTR",
+    TabName: [
+      {
+        title: "GSTR 1",
+        permission: ["View", "Create", "Edit", "Delete"],
+      },
+      {
+        title: "GSTR 3B",
+        permission: ["View", "Create", "Edit", "Delete"],
+      },
+      {
+        title: "GSTR 9",
+        permission: ["View", "Create", "Edit", "Delete"],
+      },
+    ],
+  },
+
+  {
+    title: "Order Report List",
+    TabName: [
+      {
+        title: "Order Report",
+        permission: ["View", "Create", "Edit", "Delete"],
+      },
+      {
+        title: "Pending Order Report",
+        permission: ["View", "Create", "Edit", "Delete"],
+      },
+      {
+        title: "Sales Report and Amount",
+        permission: ["View", "Create", "Edit", "Delete"],
+      },
+      {
+        title: "Overdue Report",
+        permission: ["View", "Create", "Edit", "Delete"],
+      },
       {
         title: "Lock In Report",
         permission: ["View", "Create", "Edit", "Delete"],
       },
       {
-        title: "Cashbook Report",
+        title: "Dispatch Report",
         permission: ["View", "Create", "Edit", "Delete"],
       },
       {
-        title: "Pending Order Report",
+        title: "WareHouse Report",
         permission: ["View", "Create", "Edit", "Delete"],
       },
     ],
@@ -412,10 +431,6 @@ export const Roles = [
       },
       {
         title: "Earning Report",
-        permission: ["View", "Create", "Edit", "Delete"],
-      },
-      {
-        title: "WareHouse Report",
         permission: ["View", "Create", "Edit", "Delete"],
       },
     ],
