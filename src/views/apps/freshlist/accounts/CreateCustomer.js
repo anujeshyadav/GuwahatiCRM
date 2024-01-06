@@ -129,6 +129,7 @@ const CreateCustomer = () => {
     let userdata = JSON.parse(localStorage.getItem("userData"));
     Get_RoleList(userdata?._id, userdata?.database)
       .then((res) => {
+        debugger;
         let ShowList = res?.Role?.filter(
           (item, i) => item?.position > userdata?.rolename?.position
         );

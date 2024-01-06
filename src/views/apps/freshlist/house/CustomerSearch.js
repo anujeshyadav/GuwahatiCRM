@@ -316,6 +316,7 @@ class CustomerSearch extends React.Component {
             filter: true,
             sortable: true,
             cellRendererFramework: (params) => {
+              console.log(params.data?.Shopphoto);
               return (
                 <>
                   <div className="actions cursor-pointer">
@@ -324,7 +325,7 @@ class CustomerSearch extends React.Component {
                         width={40}
                         height={40}
                         src={`http://64.227.162.41:5000/Images/${params?.data?.Shopphoto[0]}`}
-                        alt="dddd"
+                        alt="Img"
                       />
                     )}
                   </div>

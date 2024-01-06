@@ -100,15 +100,14 @@ class StockTransfer extends React.Component {
                   className="mr-50"
                   size="25px"
                   color="green"
-                  onClick={e => {
+                  onClick={(e) => {
                     this.togglemodal();
                     this.setState({ ViewOneData: params?.data });
                     this.setState({ ViewOneUserView: true });
                     this.setState({ EditOneUserView: false });
-
                   }}
                 />
-                <Edit
+                {/* <Edit
                   className="mr-50"
                   size="25px"
                   color="blue"
@@ -120,7 +119,7 @@ class StockTransfer extends React.Component {
 
                     console.log(params?.data);
                   }}
-                />
+                /> */}
                 <Trash2
                   className="mr-50"
                   size="25px"
