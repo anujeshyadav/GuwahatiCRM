@@ -1,5 +1,4 @@
 import React, { useRef } from "react";
-import xmlJs from "xml-js";
 import { ImDownload } from "react-icons/im";
 import {
   Card,
@@ -21,7 +20,6 @@ import {
   CustomInput,
   Spinner,
 } from "reactstrap";
-import { AiOutlineDownload } from "react-icons/ai";
 import { ToWords } from "to-words";
 import {
   Eye,
@@ -35,10 +33,8 @@ import {
 import InvoicGenerator from "../../subcategory/InvoiceGeneratorone";
 import { Route, Link } from "react-router-dom";
 import swal from "sweetalert";
-
 import { AgGridReact } from "ag-grid-react";
 import "ag-grid-community/dist/styles/ag-grid.css";
-
 import jsPDF from "jspdf";
 import "jspdf-autotable";
 import { IoMdRemoveCircleOutline } from "react-icons/io";
@@ -111,7 +107,6 @@ class Purchasereportamount extends React.Component {
       isOpen: false,
       ShowMyBill: false,
       MasterShow: false,
-
       BillNumber: "",
       Arrindex: "",
       AllbillMerged: [],
@@ -204,7 +199,6 @@ class Purchasereportamount extends React.Component {
           filter: true,
           width: 140,
           cellRendererFramework: params => {
-            // console.log(params.data);
             return params.data?.status === "completed" ? (
               <div className="badge badge-pill badge-success">Completed</div>
             ) : params.data?.status === "pending" ? (
@@ -244,39 +238,7 @@ class Purchasereportamount extends React.Component {
             );
           },
         },
-        // {
-        //   headerName: "Invoice",
-        //   field: "invoice",
-        //   filter: true,
-        //   resizable: true,
-        //   width: 140,
-        //   cellRendererFramework: params => {
-        //     // console.log(params?.data?.status);
 
-        //     return (
-        //       <div className="d-flex align-items-center justify-content-center cursor-pointer">
-        //         <div>
-        //           {params?.data?.status == "completed" ? (
-        //             <>
-        //               {this.state.InsiderPermissions &&
-        //                 this.state.InsiderPermissions?.View && (
-        //                   <AiOutlineDownload
-        //                     // onClick={() => this.handleBillDownload(params.data)}
-        //                     onClick={() => this.MergeBillNow(params.data)}
-        //                     fill="green"
-        //                     size="30px"
-        //                   />
-        //                 )}
-        //             </>
-        //           ) : (
-        //             "NA"
-        //           )}
-        //           <span></span>
-        //         </div>
-        //       </div>
-        //     );
-        //   },
-        // },
         {
           headerName: "FullName",
           field: "fullName",
@@ -309,22 +271,6 @@ class Purchasereportamount extends React.Component {
             );
           },
         },
-        // {
-        //   headerName: "Address",
-        //   field: "address",
-        //   filter: true,
-        //   resizable: true,
-        //   width: 200,
-        //   cellRendererFramework: params => {
-        //     return (
-        //       <div className="d-flex align-items-center justify-content-center cursor-pointer">
-        //         <div>
-        //           <span>{params?.data?.address}</span>
-        //         </div>
-        //       </div>
-        //     );
-        //   },
-        // },
         {
           headerName: "GrandTotal",
           field: "grandTotal",
@@ -357,22 +303,6 @@ class Purchasereportamount extends React.Component {
             );
           },
         },
-        // {
-        //   headerName: "Party Name",
-        //   field: "partyId.firstName",
-        //   filter: true,
-        //   resizable: true,
-        //   width: 210,
-        //   cellRendererFramework: params => {
-        //     return (
-        //       <div className="d-flex align-items-center cursor-pointer">
-        //         <div>
-        //           <span>{params.data?.partyId?.firstName}</span>
-        //         </div>
-        //       </div>
-        //     );
-        //   },
-        // },
 
         {
           headerName: "Total Product",
@@ -389,23 +319,6 @@ class Purchasereportamount extends React.Component {
             );
           },
         },
-
-        // {
-        //   headerName: "order Creation date",
-        //   field: "order_date",
-        //   filter: true,
-        //   resizable: true,
-        //   width: 230,
-        //   cellRendererFramework: params => {
-        //     return (
-        //       <div className="d-flex align-items-center cursor-pointer">
-        //         <div>
-        //           <span>{params.data?.order_date}</span>
-        //         </div>
-        //       </div>
-        //     );
-        //   },
-        // },
       ],
       setMySelectedarr: [],
       SelectedCols: [],
@@ -436,7 +349,6 @@ class Purchasereportamount extends React.Component {
       let index = AddedBill.findIndex(ele => ele?.order_id === data?.order_id);
       AddedBill.splice(index, 1);
     }
-    // console.log(AddedBill);
     this.setState({ Mergebilllength: AddedBill?.length });
   };
 
@@ -448,7 +360,6 @@ class Purchasereportamount extends React.Component {
       this.setState({ ShowBill: false });
       this.setState({ PrintData: data });
 
-      // e.preventDefault();
       const toWords = new ToWords();
       let words = toWords.convert(Number(data?.grandTotal), { currency: true });
       this.setState({ wordsNumber: words });
@@ -566,7 +477,7 @@ class Purchasereportamount extends React.Component {
       this.setState({ BillNumber: billnumner });
     }
 
-    const InsidePermissions = CheckPermission("Purchase reportamount");
+    const InsidePermissions = CheckPermission("Purchase Report and Amount");
     console.log(InsidePermissions);
     this.setState({ InsiderPermissions: InsidePermissions });
     // console.log(pageparmission.role);
