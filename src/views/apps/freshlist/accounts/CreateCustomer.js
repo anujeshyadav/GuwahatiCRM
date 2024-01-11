@@ -30,6 +30,7 @@ import {
   CreateCustomersave,
   CreateCustomerxmlView,
   Get_RoleList,
+  _BulkUpload,
 } from "../../../../ApiEndPoint/ApiCalling";
 import { BiEnvelope } from "react-icons/bi";
 import { FcPhoneAndroid } from "react-icons/fc";
@@ -38,6 +39,7 @@ import "../../../../assets/scss/pages/users.scss";
 import UserContext from "../../../../context/Context";
 import { CloudLightning } from "react-feather";
 import { FaPlus } from "react-icons/fa";
+import { Bulk_Upload_Customer } from "../../../../ApiEndPoint/Api";
 
 const CreateCustomer = () => {
   const [CreatAccountView, setCreatAccountView] = useState([]);
@@ -130,7 +132,6 @@ const CreateCustomer = () => {
     let userdata = JSON.parse(localStorage.getItem("userData"));
     Get_RoleList(userdata?._id, userdata?.database)
       .then((res) => {
-        debugger;
         let ShowList = res?.Role?.filter(
           (item, i) => item?.position > userdata?.rolename?.position
         );
@@ -164,78 +165,89 @@ const CreateCustomer = () => {
         swal("Something Went Wrong");
       });
   }, []);
-  console.log(BulkImport);
 
-  const submitHandler = (e) => {
+  const submitHandler = async (e) => {
     e.preventDefault();
-    // console.log(CreatAccountView);
-    // console.log(dropdownValue);
 
-    let userdata = JSON.parse(localStorage.getItem("userData"));
-    let formdata = new FormData();
-    CreatAccountView?.map((ele, i) => {
-      if (ele?.type?._attributes?.type == "text") {
-        formdata.append(`${ele?.name._text}`, formData[ele?.name?._text]);
-      } else if (ele?.type?._attributes?.type == "file") {
-        if (ele?.name?._text == "Shopphoto") {
-          formData[ele?.name?._text]?.map((val, index) => {
-            formdata.append("file", formData[ele?.name?._text][index]);
-          });
-        }
-        if (ele?.name?._text == "photo") {
-          formData[ele?.name?._text]?.map((val, index) => {
-            formdata.append("files", formData[ele?.name?._text][index]);
-          });
-        }
-      } else {
-        formdata.append(`${ele?.name._text}`, formData[ele?.name?._text]);
-      }
-    });
-    formdata.append(
-      `${dropdownValue?.name?._text}`,
-      formData[dropdownValue?.name?._text]
-    );
-    formdata.append("status", formData.status);
-    formdata.append("created_by", userdata?._id);
-    formdata.append("rolename", userdata?.rolename?._id);
+    if (BulkImport !== null || BulkImport != undefined) {
+      let formdata = new FormData();
+      formdata.append("file", BulkImport);
 
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          const date = new Date(position.timestamp);
-          const CurentTime = date.toLocaleString();
-          formdata.append("latitude", position.coords.latitude);
-          formdata.append("longitude", position.coords.longitude);
-        },
-        (error) => {
-          // this.setState({ Error: `Error: ${error}` });
-          swal(`Error: ${error}`);
-        },
-        { timeout: 10000, enableHighAccuracy: true }
-      );
-    } else {
-      swal(`Error: Geolocation not found`);
-    }
-
-    formdata.forEach((value, key) => {
-      // console.log(key, value);
-    });
-    if (error) {
-      // swal("Error occured while Entering Details");
-    } else {
-      CreateCustomersave(formdata)
+      await _BulkUpload(Bulk_Upload_Customer, formdata)
         .then((res) => {
-          console.log(res);
-          setFormData({});
-          if (res.status) {
-            history.goBack();
-            swal("Customer Created Successfully");
-          }
+          swal(`${res?.message}`);
         })
         .catch((err) => {
-          console.log(err.response);
-          swal("Please Fill correct details");
+          console.log(err);
+          swal("Something Went Wrong");
         });
+    } else {
+      let userdata = JSON.parse(localStorage.getItem("userData"));
+      let formdata = new FormData();
+      CreatAccountView?.map((ele, i) => {
+        if (ele?.type?._attributes?.type == "text") {
+          formdata.append(`${ele?.name._text}`, formData[ele?.name?._text]);
+        } else if (ele?.type?._attributes?.type == "file") {
+          if (ele?.name?._text == "Shopphoto") {
+            formData[ele?.name?._text]?.map((val, index) => {
+              formdata.append("file", formData[ele?.name?._text][index]);
+            });
+          }
+          if (ele?.name?._text == "photo") {
+            formData[ele?.name?._text]?.map((val, index) => {
+              formdata.append("files", formData[ele?.name?._text][index]);
+            });
+          }
+        } else {
+          formdata.append(`${ele?.name._text}`, formData[ele?.name?._text]);
+        }
+      });
+      formdata.append(
+        `${dropdownValue?.name?._text}`,
+        formData[dropdownValue?.name?._text]
+      );
+      formdata.append("status", formData.status);
+      formdata.append("created_by", userdata?._id);
+      formdata.append("rolename", userdata?.rolename?._id);
+
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          (position) => {
+            const date = new Date(position.timestamp);
+            const CurentTime = date.toLocaleString();
+            formdata.append("latitude", position.coords.latitude);
+            formdata.append("longitude", position.coords.longitude);
+          },
+          (error) => {
+            // this.setState({ Error: `Error: ${error}` });
+            swal(`Error: ${error}`);
+          },
+          { timeout: 10000, enableHighAccuracy: true }
+        );
+      } else {
+        swal(`Error: Geolocation not found`);
+      }
+
+      formdata.forEach((value, key) => {
+        // console.log(key, value);
+      });
+      if (error) {
+        // swal("Error occured while Entering Details");
+      } else {
+        CreateCustomersave(formdata)
+          .then((res) => {
+            console.log(res);
+            setFormData({});
+            if (res.status) {
+              history.goBack();
+              swal("Customer Created Successfully");
+            }
+          })
+          .catch((err) => {
+            console.log(err.response);
+            swal("Please Fill correct details");
+          });
+      }
     }
   };
 

@@ -13,6 +13,7 @@ import {
   FormGroup,
   CustomInput,
   Badge,
+  Spinner,
 } from "reactstrap";
 import { history } from "../../../../history";
 import PhoneInput from "react-phone-input-2";
@@ -44,6 +45,7 @@ import { FaPlus } from "react-icons/fa";
 import {
   Assign_Role_To_SuperAdmin,
   Bulk_Upload_Customer,
+  Bulk_Upload_User,
   Role_list_by_Master,
   country_state_City_List,
 } from "../../../../ApiEndPoint/Api";
@@ -62,6 +64,7 @@ const CreateAccount = () => {
   const [SelectedRoleToAssign, setSelectedRoleToAssign] = useState([]);
   const [index, setindex] = useState("");
   const [error, setError] = useState("");
+  const [Loader, setLoader] = useState(false);
   const [permissions, setpermissions] = useState({});
 
   const Context = useContext(UserContext);
@@ -113,7 +116,7 @@ const CreateAccount = () => {
       }
     }
   };
-  console.log(formData);
+
   useEffect(() => {
     // console.log(formData);
   }, [formData]);
@@ -138,6 +141,26 @@ const CreateAccount = () => {
 
     getLocation();
   }, []);
+
+  // if (Loader) {
+  //   return (
+  //     <div
+  //       style={{
+  //         display: "flex",
+  //         justifyContent: "center",
+  //         marginTop: "20rem",
+  //       }}>
+  //       <Spinner
+  //         style={{
+  //           height: "4rem",
+  //           width: "4rem",
+  //         }}
+  //         color="primary">
+  //         Loading...
+  //       </Spinner>
+  //     </div>
+  //   );
+  // }
   useEffect(() => {
     let userdata = JSON.parse(localStorage.getItem("userData"));
     _GetList(country_state_City_List)
@@ -202,65 +225,70 @@ const CreateAccount = () => {
   const submitHandler = async (e) => {
     e.preventDefault();
 
-    if (BulkImport) {
+    if (BulkImport !== null || BulkImport != undefined) {
       let formdata = new FormData();
       formdata.append("file", BulkImport);
-      formdata.append("created_by", formData["created_by"]);
-      await _BulkUpload(Bulk_Upload_Customer, formdata)
+
+      await _BulkUpload(Bulk_Upload_User, formdata)
         .then((res) => {
-          console.log(res);
+          swal(`${res?.message}`);
         })
         .catch((err) => {
           console.log(err);
+          swal("Something Went Wrong");
         });
-    }
-    if (formData?.rolename && formData?.email && formData?.firstName) {
-      if (error) {
-        swal("Error occured while Entering Details");
-      } else {
-        CreateAccountSave(formData)
-          .then((res) => {
-            if (res?.status) {
-              // window.location.reload();
-              let AssignDataBase = [];
-              if (SelectedRoleToAssign?.length) {
-                AssignDataBase = SelectedRoleToAssign?.map((ele) => {
-                  return {
-                    role: {
-                      roleName: ele?.roleName,
-                      position: 0,
-                      desc: ele?.desc,
-                      rank: 0,
-                      rolePermission: ele?.rolePermission,
-                      database: formData["database"],
-                      createdBy: res?.User._id,
-                    },
-                  };
-                });
-                let payload = {
-                  Roles: AssignDataBase,
-                };
-
-                if (res?.User._id) {
-                  _PostSave(Assign_Role_To_SuperAdmin, payload)
-                    .then((res) => {
-                      console.log(res);
-                    })
-                    .catch((err) => {
-                      console.log(err);
-                    });
-                }
-              }
-              history.goBack();
-              swal("User Created Successfully");
-            }
-          })
-          .catch((err) => {
-            console.log(err);
-          });
-      }
     } else {
-      swal("Enter User Name Email and Select Role");
+      if (formData?.rolename && formData?.email && formData?.firstName) {
+        if (error) {
+          swal("Error occured while Entering Details");
+        } else {
+          CreateAccountSave(formData)
+            .then((res) => {
+              if (res?.status) {
+                let AssignDataBase = [];
+                if (SelectedRoleToAssign?.length) {
+                  AssignDataBase = SelectedRoleToAssign?.map((ele) => {
+                    return {
+                      role: {
+                        roleName: ele?.roleName,
+                        position: 0,
+                        desc: ele?.desc,
+                        rank: 0,
+                        rolePermission: ele?.rolePermission,
+                        database: formData["database"],
+                        createdBy: res?.User._id,
+                      },
+                    };
+                  });
+                  let payload = {
+                    Roles: AssignDataBase,
+                  };
+
+                  if (res?.User._id) {
+                    _PostSave(Assign_Role_To_SuperAdmin, payload)
+                      .then((res) => {
+                        // setLoader(false);
+
+                        console.log(res);
+                      })
+                      .catch((err) => {
+                        // setLoader(false);
+
+                        console.log(err);
+                      });
+                  }
+                }
+                swal("User Created Successfully");
+                history.goBack();
+              }
+            })
+            .catch((err) => {
+              console.log(err);
+            });
+        }
+      } else {
+        swal("Enter User Name Email and Select Role");
+      }
     }
   };
   const onSelect1 = (selectedList, selectedItem) => {

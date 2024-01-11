@@ -4,7 +4,472 @@ export const Roles = [
     TabName: [
       {
         title: "Dashboard",
-        permission: ["View"],
+        permission: ["View", "Create", "Edit", "Delete", "Download"],
+      },
+    ],
+  },
+  {
+    title: "Users",
+    TabName: [
+      {
+        title: "Create User",
+        permission: ["View", "Create", "Edit", "Delete", "Download"],
+      },
+      {
+        title: "Roles and Persmissions",
+        permission: ["View", "Create", "Edit", "Delete", "Download"],
+      },
+      {
+        title: "Create Customer",
+        permission: ["View", "Create", "Edit", "Delete", "Download"],
+      },
+    ],
+  },
+
+  {
+    title: "Sales",
+    TabName: [
+      {
+        title: "Sales Invoice",
+        permission: ["View", "Create", "Edit", "Delete", "Download"],
+      },
+
+      {
+        title: "Sales Order",
+        permission: ["View", "Create", "Edit", "Delete", "Download"],
+      },
+      {
+        title: "Place Order",
+        permission: ["View", "Create", "Edit", "Delete", "Download"],
+      },
+
+      {
+        title: "Pending Order",
+        permission: ["View", "Create", "Edit", "Delete", "Download"],
+      },
+      {
+        title: "Complete Order",
+        permission: ["View", "Create", "Edit", "Delete", "Download"],
+      },
+      {
+        title: "Dispatch details",
+        permission: ["View", "Create", "Edit", "Delete", "Download"],
+      },
+      {
+        title: "Sales Return",
+        permission: ["View", "Create", "Edit", "Delete", "Download"],
+      },
+      {
+        title: "Target Creation",
+        permission: ["View", "Create", "Edit", "Delete", "Download"],
+      },
+      {
+        title: "Promotional Activity",
+        permission: ["View", "Create", "Edit", "Delete", "Download"],
+      },
+      {
+        title: "Auto Billing Lock",
+        permission: ["View", "Create", "Edit", "Delete", "Download"],
+      },
+      {
+        title: "Achievement",
+        permission: ["View", "Create", "Edit", "Delete", "Download"],
+      },
+      {
+        title: "CreditNote",
+        permission: ["View", "Create", "Edit", "Delete", "Download"],
+      },
+    ],
+  },
+  {
+    title: "Purchase",
+    TabName: [
+      {
+        title: "Purchase Order",
+        permission: ["View", "Create", "Edit", "Delete", "Download"],
+      },
+      {
+        title: "Purchase Pending",
+        permission: ["View", "Create", "Edit", "Delete", "Download"],
+      },
+      {
+        title: "Purchase Complete",
+        permission: ["View", "Create", "Edit", "Delete", "Download"],
+      },
+      {
+        title: "Purchase Invoice",
+        permission: ["View", "Create", "Edit", "Delete", "Download"],
+      },
+      {
+        title: "Purchase Damage",
+        permission: ["View", "Create", "Edit", "Delete", "Download"],
+      },
+      {
+        title: "Debit Notes",
+        permission: ["View", "Create", "Edit", "Delete", "Download"],
+      },
+
+      {
+        title: "Purchase Return",
+        permission: ["View", "Create", "Edit", "Delete", "Download"],
+      },
+    ],
+  },
+  {
+    title: "Transaction",
+    TabName: [
+      {
+        title: "Receipt",
+        permission: ["View", "Create", "Edit", "Delete", "Download"],
+      },
+      {
+        title: "Payment",
+        permission: ["View", "Create", "Edit", "Delete", "Download"],
+      },
+      {
+        title: "Cashbook",
+        permission: ["View", "Create", "Edit", "Delete", "Download"],
+      },
+    ],
+  },
+
+  {
+    title: "Report",
+    TabName: [
+      {
+        title: "Party List",
+        permission: ["View", "Create", "Edit", "Delete", "Download"],
+      },
+      {
+        title: "Receipt and Payment Customized",
+        permission: ["View", "Create", "Edit", "Delete", "Download"],
+      },
+      {
+        title: "Stock Report",
+        permission: ["View", "Create", "Edit", "Delete", "Download"],
+      },
+      {
+        title: "Order Report",
+        permission: ["View", "Create", "Edit", "Delete", "Download"],
+      },
+      // {
+      //   title: "Overdue Report",
+      //  permission: ["View", "Create", "Edit", "Delete","Download"],
+      // },
+      // {
+      //   title: "Sales Report and Amount",
+      //  permission: ["View", "Create", "Edit", "Delete","Download"],
+      // },
+      {
+        title: "Purchase Report and Amount",
+        permission: ["View", "Create", "Edit", "Delete", "Download"],
+      },
+      {
+        title: "Team and Target Report",
+        permission: ["View", "Create", "Edit", "Delete", "Download"],
+      },
+
+      {
+        title: "Partywise ledger",
+        permission: ["View", "Create", "Edit", "Delete", "Download"],
+      },
+      {
+        title: "Transportor Report",
+        permission: ["View", "Create", "Edit", "Delete", "Download"],
+      },
+      {
+        title: "Target Report",
+        permission: ["View", "Create", "Edit", "Delete", "Download"],
+      },
+      // {
+      //   title: "Dispatch Report",
+      //  permission: ["View", "Create", "Edit", "Delete","Download"],
+      // },
+      {
+        title: "HSN Wise sale Report",
+        permission: ["View", "Create", "Edit", "Delete", "Download"],
+      },
+      {
+        title: "Product List with HSN and GST",
+        permission: ["View", "Create", "Edit", "Delete", "Download"],
+      },
+      {
+        title: "Out Standing Report",
+        permission: ["View", "Create", "Edit", "Delete", "Download"],
+      },
+      {
+        title: "Overdue Report",
+        permission: ["View", "Create", "Edit", "Delete", "Download"],
+      },
+      // {
+      //   title: "Lock In Report",
+      //  permission: ["View", "Create", "Edit", "Delete","Download"],
+      // },
+      {
+        title: "Cashbook Report",
+        permission: ["View", "Create", "Edit", "Delete", "Download"],
+      },
+      // {
+      //   title: "Pending Order Report",
+      //  permission: ["View", "Create", "Edit", "Delete","Download"],
+      // },
+    ],
+  },
+
+  {
+    title: "All GSTR",
+    TabName: [
+      {
+        title: "GSTR 1",
+        permission: ["View", "Create", "Edit", "Delete", "Download"],
+      },
+      {
+        title: "GSTR 3B",
+        permission: ["View", "Create", "Edit", "Delete", "Download"],
+      },
+      {
+        title: "GSTR 9",
+        permission: ["View", "Create", "Edit", "Delete", "Download"],
+      },
+    ],
+  },
+
+  {
+    title: "Order Report List",
+    TabName: [
+      {
+        title: "Order Report",
+        permission: ["View", "Create", "Edit", "Delete", "Download"],
+      },
+      {
+        title: "Pending Order Report",
+        permission: ["View", "Create", "Edit", "Delete", "Download"],
+      },
+      {
+        title: "Sales Report and Amount",
+        permission: ["View", "Create", "Edit", "Delete", "Download"],
+      },
+      {
+        title: "Overdue Report",
+        permission: ["View", "Create", "Edit", "Delete", "Download"],
+      },
+      {
+        title: "Lock In Report",
+        permission: ["View", "Create", "Edit", "Delete", "Download"],
+      },
+      {
+        title: "Dispatch Report",
+        permission: ["View", "Create", "Edit", "Delete", "Download"],
+      },
+      {
+        title: "WareHouse Report",
+        permission: ["View", "Create", "Edit", "Delete", "Download"],
+      },
+    ],
+  },
+  {
+    title: "Stock",
+    TabName: [
+      {
+        title: "Inward Stock",
+        permission: ["View", "Create", "Edit", "Delete", "Download"],
+      },
+      {
+        title: "Outward Stock",
+        permission: ["View", "Create", "Edit", "Delete", "Download"],
+      },
+      {
+        title: "Closing Stock",
+        permission: ["View", "Create", "Edit", "Delete", "Download"],
+      },
+      {
+        title: "Opening Stock",
+        permission: ["View", "Create", "Edit", "Delete", "Download"],
+      },
+      {
+        title: "Low Stock",
+        permission: ["View", "Create", "Edit", "Delete", "Download"],
+      },
+      {
+        title: "Damaged Stock",
+        permission: ["View", "Create", "Edit", "Delete", "Download"],
+      },
+      {
+        title: "OverDue Stock",
+        permission: ["View", "Create", "Edit", "Delete", "Download"],
+      },
+      {
+        title: "Dead Party",
+        permission: ["View", "Create", "Edit", "Delete", "Download"],
+      },
+    ],
+  },
+  {
+    title: "Product",
+    TabName: [
+      {
+        title: "Category List",
+        permission: ["View", "Create", "Edit", "Delete", "Download"],
+      },
+      {
+        title: "subCategory List",
+        permission: ["View", "Create", "Edit", "Delete", "Download"],
+      },
+      {
+        title: "Product Creation",
+        permission: ["View", "Create", "Edit", "Delete", "Download"],
+      },
+    ],
+  },
+
+  {
+    title: "Warehouse",
+    TabName: [
+      {
+        title: "WarehouseList",
+        permission: ["View", "Create", "Edit", "Delete", "Download"],
+      },
+      {
+        title: "Item Inward",
+        permission: ["View", "Create", "Edit", "Delete", "Download"],
+      },
+      {
+        title: "Item Outward",
+        permission: ["View", "Create", "Edit", "Delete", "Download"],
+      },
+      {
+        title: "Stock Transfer",
+        permission: ["View", "Create", "Edit", "Delete", "Download"],
+      },
+      {
+        title: "Damage Report",
+        permission: ["View", "Create", "Edit", "Delete", "Download"],
+      },
+      {
+        title: "Stock Storage",
+        permission: ["View", "Create", "Edit", "Delete", "Download"],
+      },
+      {
+        title: "Wastage Detail",
+        permission: ["View", "Create", "Edit", "Delete", "Download"],
+      },
+      {
+        title: "Dispatch Detail",
+        permission: ["View", "Create", "Edit", "Delete", "Download"],
+      },
+    ],
+  },
+  {
+    title: "Production",
+    TabName: [
+      {
+        title: "Item",
+        permission: ["View", "Create", "Edit", "Delete", "Download"],
+      },
+      {
+        title: "Production Process",
+        permission: ["View", "Create", "Edit", "Delete", "Download"],
+      },
+      {
+        title: "Wastage Material",
+        permission: ["View", "Create", "Edit", "Delete", "Download"],
+      },
+      {
+        title: "Wastage Stock Return",
+        permission: ["View", "Create", "Edit", "Delete", "Download"],
+      },
+      {
+        title: "Price Calculater",
+        permission: ["View", "Create", "Edit", "Delete", "Download"],
+      },
+    ],
+  },
+
+  {
+    title: "Others",
+    TabName: [
+      {
+        title: "HRM",
+        permission: ["View", "Create", "Edit", "Delete", "Download"],
+      },
+      {
+        title: "Setting",
+        permission: ["View", "Create", "Edit", "Delete", "Download"],
+      },
+      {
+        title: "Price Calculation",
+        permission: ["View", "Create", "Edit", "Delete", "Download"],
+      },
+      {
+        title: "UnitList",
+        permission: ["View", "Create", "Edit", "Delete", "Download"],
+      },
+    ],
+  },
+  {
+    title: "Reports Management",
+    TabName: [
+      {
+        title: "Admin Report",
+        permission: ["View", "Create", "Edit", "Delete", "Download"],
+      },
+      {
+        title: "Customer Report",
+        permission: ["View", "Create", "Edit", "Delete", "Download"],
+      },
+      {
+        title: "Staff Report",
+        permission: ["View", "Create", "Edit", "Delete", "Download"],
+      },
+      {
+        title: "Transaction Report",
+        permission: ["View", "Create", "Edit", "Delete", "Download"],
+      },
+      {
+        title: "Product Report",
+        permission: ["View", "Create", "Edit", "Delete", "Download"],
+      },
+      {
+        title: "Earning Report",
+        permission: ["View", "Create", "Edit", "Delete", "Download"],
+      },
+    ],
+  },
+  {
+    title: "Promotion Management",
+    TabName: [
+      {
+        title: "Promotion",
+        permission: ["View", "Create", "Edit", "Delete", "Download"],
+      },
+      {
+        title: "Discount&Coupon",
+        permission: ["View", "Create", "Edit", "Delete", "Download"],
+      },
+    ],
+  },
+  {
+    title: "Media Status Management",
+    TabName: [
+      {
+        title: "LivestreamStatus",
+        permission: ["View", "Create", "Edit", "Delete", "Download"],
+      },
+      {
+        title: "ChatStatus",
+        permission: ["View", "Create", "Edit", "Delete", "Download"],
+      },
+    ],
+  },
+];
+
+export const NormalRoles = [
+  {
+    title: "Dashboard",
+    TabName: [
+      {
+        title: "Dashboard",
+        permission: ["View", "Create", "Edit", "Delete"],
       },
     ],
   },
@@ -154,11 +619,11 @@ export const Roles = [
       },
       // {
       //   title: "Overdue Report",
-      //   permission: ["View", "Create", "Edit", "Delete"],
+      //  permission: ["View", "Create", "Edit", "Delete","Download"],
       // },
       // {
       //   title: "Sales Report and Amount",
-      //   permission: ["View", "Create", "Edit", "Delete"],
+      //  permission: ["View", "Create", "Edit", "Delete","Download"],
       // },
       {
         title: "Purchase Report and Amount",
@@ -183,7 +648,7 @@ export const Roles = [
       },
       // {
       //   title: "Dispatch Report",
-      //   permission: ["View", "Create", "Edit", "Delete"],
+      //  permission: ["View", "Create", "Edit", "Delete","Download"],
       // },
       {
         title: "HSN Wise sale Report",
@@ -203,7 +668,7 @@ export const Roles = [
       },
       // {
       //   title: "Lock In Report",
-      //   permission: ["View", "Create", "Edit", "Delete"],
+      //  permission: ["View", "Create", "Edit", "Delete","Download"],
       // },
       {
         title: "Cashbook Report",
@@ -211,7 +676,7 @@ export const Roles = [
       },
       // {
       //   title: "Pending Order Report",
-      //   permission: ["View", "Create", "Edit", "Delete"],
+      //  permission: ["View", "Create", "Edit", "Delete","Download"],
       // },
     ],
   },
