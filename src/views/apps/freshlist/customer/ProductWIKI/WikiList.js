@@ -88,7 +88,7 @@ class WikiList extends React.Component {
   }
 
   LookupviewStart = () => {
-    this.setState((prevState) => ({
+    this.setState(prevState => ({
       modal: !prevState.modal,
     }));
   };
@@ -108,23 +108,23 @@ class WikiList extends React.Component {
     const UserInformation = this.context?.UserInformatio;
 
     await ViewProductWikiList()
-      .then((res) => {
+      .then(res => {
         console.log(res?.ProductWiki);
         this.setState({ rowData: res?.ProductWiki });
       })
-      .catch((err) => {
+      .catch(err => {
         console.log(err);
       });
 
     await Productwiki_ViewData()
-      .then((res) => {
+      .then(res => {
         var mydropdownArray = [];
         var adddropdown = [];
         console.log(res);
         const jsonData = xmlJs.xml2json(res.data, { compact: true, spaces: 2 });
         console.log(JSON.parse(jsonData).createWiki);
 
-        const inputs = JSON.parse(jsonData).createWiki?.input?.map((ele) => {
+        const inputs = JSON.parse(jsonData).createWiki?.input?.map(ele => {
           return {
             headerName: ele?.label._text,
             field: ele?.name._text,
@@ -140,8 +140,7 @@ class WikiList extends React.Component {
             field: Radioinput,
             filter: true,
             sortable: true,
-            cellRendererFramework: (params) => {
-              // console.log(params?.data);
+            cellRendererFramework: params => {
               return params.data?.Status === "Active" ? (
                 <div className="badge badge-pill badge-success">
                   {params.data.Status}
@@ -161,7 +160,7 @@ class WikiList extends React.Component {
         let dropdown = JSON.parse(jsonData).createWiki?.MyDropDown;
         // console.log(dropdown);
         if (dropdown.length) {
-          var mydropdownArray = dropdown?.map((ele) => {
+          var mydropdownArray = dropdown?.map(ele => {
             return {
               headerName: ele?.dropdown?.label?._text,
               field: ele?.dropdown?.name?._text,
@@ -194,7 +193,7 @@ class WikiList extends React.Component {
             field: "sortorder",
             field: "transactions",
             width: 190,
-            cellRendererFramework: (params) => {
+            cellRendererFramework: params => {
               return (
                 <div className="actions cursor-pointer">
                   <Route
@@ -243,7 +242,7 @@ class WikiList extends React.Component {
             field: "whatsapp",
             filter: true,
             sortable: true,
-            cellRendererFramework: (params) => {
+            cellRendererFramework: params => {
               console.log(params?.data?.whatsapp);
               return params.data?.whatsapp === true ? (
                 <div className="badge badge-pill badge-success">YES</div>
@@ -259,7 +258,7 @@ class WikiList extends React.Component {
             field: "sms",
             filter: true,
             sortable: true,
-            cellRendererFramework: (params) => {
+            cellRendererFramework: params => {
               console.log(params?.data?.sms);
               return params.data?.sms === true ? (
                 <div className="badge badge-pill badge-success">YES</div>
@@ -275,7 +274,7 @@ class WikiList extends React.Component {
             field: "gmail",
             filter: true,
             sortable: true,
-            cellRendererFramework: (params) => {
+            cellRendererFramework: params => {
               console.log(params?.data?.gmail);
               return params.data?.gmail === true ? (
                 <div className="badge badge-pill badge-success">YES</div>
@@ -292,7 +291,7 @@ class WikiList extends React.Component {
             field: "createdAt",
             filter: true,
             sortable: true,
-            cellRendererFramework: (params) => {
+            cellRendererFramework: params => {
               let convertedTime = "NA";
               if (params?.data?.createdAt == undefined) {
                 convertedTime = "NA";
@@ -333,7 +332,7 @@ class WikiList extends React.Component {
             field: "updatedAt",
             filter: true,
             sortable: true,
-            cellRendererFramework: (params) => {
+            cellRendererFramework: params => {
               let convertedTime = "NA";
               if (params?.data?.updatedAt == undefined) {
                 convertedTime = "NA";
@@ -384,7 +383,7 @@ class WikiList extends React.Component {
         }
         this.setState({ SelectedCols: Product });
       })
-      .catch((err) => {
+      .catch(err => {
         console.log(err);
         swal("Error", "something went wrong try again");
       });
@@ -398,7 +397,7 @@ class WikiList extends React.Component {
     //   });
   }
   toggleDropdown = () => {
-    this.setState((prevState) => ({ isOpen: !prevState.isOpen }));
+    this.setState(prevState => ({ isOpen: !prevState.isOpen }));
   };
 
   runthisfunction(id) {
@@ -407,15 +406,15 @@ class WikiList extends React.Component {
         cancel: "cancel",
         catch: { text: "Delete ", value: "delete" },
       },
-    }).then((value) => {
+    }).then(value => {
       switch (value) {
         case "delete":
           DeleteProductWiki(id)
-            .then((res) => {
+            .then(res => {
               let selectedData = this.gridApi.getSelectedRows();
               this.gridApi.updateRowData({ remove: selectedData });
             })
-            .catch((err) => {
+            .catch(err => {
               console.log(err);
             });
           break;
@@ -424,7 +423,7 @@ class WikiList extends React.Component {
     });
   }
 
-  onGridReady = (params) => {
+  onGridReady = params => {
     this.gridApi = params.api;
     this.gridColumnApi = params.columnApi;
     this.gridRef.current = params.api;
@@ -436,11 +435,11 @@ class WikiList extends React.Component {
     });
   };
 
-  updateSearchQuery = (val) => {
+  updateSearchQuery = val => {
     this.gridApi.setQuickFilter(val);
   };
 
-  filterSize = (val) => {
+  filterSize = val => {
     if (this.gridApi) {
       this.gridApi.paginationSetPageSize(Number(val));
       this.setState({
@@ -455,7 +454,7 @@ class WikiList extends React.Component {
       SelectedColums?.push(value);
     } else {
       const delindex = SelectedColums?.findIndex(
-        (ele) => ele?.headerName === value?.headerName
+        ele => ele?.headerName === value?.headerName
       );
 
       SelectedColums?.splice(delindex, 1);
@@ -466,14 +465,14 @@ class WikiList extends React.Component {
       Papa.parse(csvData, {
         header: true,
         skipEmptyLines: true,
-        complete: (result) => {
+        complete: result => {
           if (result.data && result.data.length > 0) {
             resolve(result.data);
           } else {
             reject(new Error("No data found in the CSV"));
           }
         },
-        error: (error) => {
+        error: error => {
           reject(error);
         },
       });
@@ -485,7 +484,7 @@ class WikiList extends React.Component {
 
     const doc = new jsPDF("landscape", "mm", size, false);
     doc.setTextColor(5, 87, 97);
-    const tableData = parsedData.map((row) => Object.values(row));
+    const tableData = parsedData.map(row => Object.values(row));
     doc.addImage(Logo, "JPEG", 10, 10, 50, 30);
     let date = new Date();
     doc.setCreationDate(date);
@@ -510,14 +509,14 @@ class WikiList extends React.Component {
       console.error("Error parsing CSV:", error);
     }
   };
-  processCell = (params) => {
+  processCell = params => {
     // console.log(params);
     // Customize cell content as needed
     return params.value;
   };
 
   convertCsvToExcel(csvData) {
-    return new Promise((resolve) => {
+    return new Promise(resolve => {
       Papa.parse(csvData, {
         header: true,
         dynamicTyping: true,
@@ -548,7 +547,7 @@ class WikiList extends React.Component {
     window.URL.revokeObjectURL(url);
   }
 
-  exportToExcel = async (e) => {
+  exportToExcel = async e => {
     const CsvData = this.gridApi.getDataAsCsv({
       processCellCallback: this.processCell,
     });
@@ -561,7 +560,7 @@ class WikiList extends React.Component {
       processCellCallback: this.processCell,
     });
     Papa.parse(CsvData, {
-      complete: (result) => {
+      complete: result => {
         const ws = XLSX.utils.json_to_sheet(result.data);
         const wb = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(wb, ws, "Sheet1");
@@ -597,13 +596,13 @@ class WikiList extends React.Component {
       processCellCallback: this.processCell,
     });
     Papa.parse(CsvData, {
-      complete: (result) => {
+      complete: result => {
         const rows = result.data;
 
         // Create XML
         let xmlString = "<root>\n";
 
-        rows.forEach((row) => {
+        rows.forEach(row => {
           xmlString += "  <row>\n";
           row.forEach((cell, index) => {
             xmlString += `    <field${index + 1}>${cell}</field${index + 1}>\n`;
@@ -625,7 +624,7 @@ class WikiList extends React.Component {
     });
   };
 
-  HandleSetVisibleField = (e) => {
+  HandleSetVisibleField = e => {
     e.preventDefault();
     this.gridApi.setColumnDefs(this.state.SelectedcolumnDefs);
     this.setState({ columnDefs: this.state.SelectedcolumnDefs });
@@ -641,10 +640,10 @@ class WikiList extends React.Component {
   HeadingRightShift = () => {
     const updatedSelectedColumnDefs = [
       ...new Set([
-        ...this.state.SelectedcolumnDefs.map((item) => JSON.stringify(item)),
-        ...SelectedColums.map((item) => JSON.stringify(item)),
+        ...this.state.SelectedcolumnDefs.map(item => JSON.stringify(item)),
+        ...SelectedColums.map(item => JSON.stringify(item)),
       ]),
-    ].map((item) => JSON.parse(item));
+    ].map(item => JSON.parse(item));
     this.setState({
       SelectedcolumnDefs: [...new Set(updatedSelectedColumnDefs)], // Update the state with the combined array
     });
@@ -680,7 +679,7 @@ class WikiList extends React.Component {
               <Col>
                 <div className="d-flex justify-content-end p-1">
                   <Button
-                    onClick={(e) => {
+                    onClick={e => {
                       e.preventDefault();
                       this.setState({ EditOneUserView: false });
                     }}
@@ -701,7 +700,7 @@ class WikiList extends React.Component {
                     <Col>
                       <div className="d-flex justify-content-end p-1">
                         <Button
-                          onClick={(e) => {
+                          onClick={e => {
                             e.preventDefault();
                             this.setState({ ViewOneUserView: false });
                           }}
@@ -854,7 +853,7 @@ class WikiList extends React.Component {
                                 <div className="table-input mr-1">
                                   <Input
                                     placeholder="search Item here..."
-                                    onChange={(e) =>
+                                    onChange={e =>
                                       this.updateSearchQuery(e.target.value)
                                     }
                                     value={this.state.value}
@@ -863,7 +862,7 @@ class WikiList extends React.Component {
                               </div>
                             </div>
                             <ContextLayout.Consumer className="ag-theme-alpine">
-                              {(context) => (
+                              {context => (
                                 <AgGridReact
                                   id="myAgGrid"
                                   // gridOptions={{
@@ -934,9 +933,7 @@ class WikiList extends React.Component {
                         return (
                           <>
                             <div
-                              onClick={(e) =>
-                                this.handleChangeHeader(e, ele, i)
-                              }
+                              onClick={e => this.handleChangeHeader(e, ele, i)}
                               key={i}
                               className="mycustomtag mt-1"
                             >
@@ -1011,7 +1008,7 @@ class WikiList extends React.Component {
                                             this.state.SelectedcolumnDefs.slice();
                                           const delindex =
                                             SelectedCols.findIndex(
-                                              (element) =>
+                                              element =>
                                                 element?.headerName ==
                                                 ele?.headerName
                                             );

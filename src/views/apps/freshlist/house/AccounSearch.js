@@ -48,7 +48,6 @@ import {
   CreateAccountList,
   CreateAccountView,
   DeleteAccount,
-  Deleteproductlist,
 } from "../../../../ApiEndPoint/ApiCalling";
 import {
   BsCloudDownloadFill,
@@ -93,7 +92,7 @@ class AccounSearch extends React.Component {
   }
 
   LookupviewStart = () => {
-    this.setState((prevState) => ({
+    this.setState(prevState => ({
       modal: !prevState.modal,
     }));
   };
@@ -113,7 +112,7 @@ class AccounSearch extends React.Component {
     this.setState({ Loading: true });
     
     await CreateAccountList(id, db)
-      .then((res) => {
+      .then(res => {
         this.setState({ Loading: false });
 
         let value = res?.adminDetails;
@@ -121,7 +120,7 @@ class AccounSearch extends React.Component {
           this.setState({ rowData: value });
         }
       })
-      .catch((err) => {
+      .catch(err => {
         this.setState({ Loading: false });
 
         console.log(err);
@@ -141,15 +140,13 @@ class AccounSearch extends React.Component {
     await this.Apicalling(pageparmission?._id, pageparmission?.database);
 
     await CreateAccountView()
-      .then((res) => {
-        var mydropdownArray = [];
-        var adddropdown = [];
+      .then(res => {
         const jsonData = xmlJs.xml2json(res.data, {
           compact: true,
           spaces: 2,
         });
         console.log(JSON.parse(jsonData)?.CreateUser);
-        const inputs = JSON.parse(jsonData)?.CreateUser?.input?.map((ele) => {
+        const inputs = JSON.parse(jsonData)?.CreateUser?.input?.map(ele => {
           return {
             headerName: ele?.label._text,
             field: ele?.name._text,
@@ -166,7 +163,7 @@ class AccounSearch extends React.Component {
             field: "sortorder",
             field: "transactions",
             width: 190,
-            cellRendererFramework: (params) => {
+            cellRendererFramework: params => {
               return (
                 <div className="actions cursor-pointer">
                   {this.state.InsiderPermissions &&
@@ -179,7 +176,8 @@ class AccounSearch extends React.Component {
                               padding: "10px",
                               borderRadius: "30px",
                               backgroundColor: "#39cccc",
-                            }}>
+                            }}
+                          >
                             <Eye
                               className=""
                               size="20px"
@@ -203,7 +201,8 @@ class AccounSearch extends React.Component {
                               borderRadius: "30px",
                               backgroundColor: "rgb(212, 111, 16)",
                               marginLeft: "3px",
-                            }}>
+                            }}
+                          >
                             <FaPencilAlt
                               className=""
                               size="20px"
@@ -227,7 +226,8 @@ class AccounSearch extends React.Component {
                               borderRadius: "30px",
                               backgroundColor: "rgb(236, 24, 9)",
                               marginLeft: "3px",
-                            }}>
+                            }}
+                          >
                             <Trash2
                               className=""
                               size="20px"
@@ -249,7 +249,7 @@ class AccounSearch extends React.Component {
             field: "status",
             filter: true,
             width: 150,
-            cellRendererFramework: (params) => {
+            cellRendererFramework: params => {
               return params.data?.status === "Active" ? (
                 <div className="badge badge-pill badge-success">
                   {params.data?.status}
@@ -267,7 +267,7 @@ class AccounSearch extends React.Component {
             field: "created_by.firstName",
             filter: true,
             sortable: true,
-            cellRendererFramework: (params) => {
+            cellRendererFramework: params => {
               // console.log(params?.data);
               return (
                 <>
@@ -283,7 +283,7 @@ class AccounSearch extends React.Component {
             field: "rolename.roleName",
             filter: true,
             sortable: true,
-            cellRendererFramework: (params) => {
+            cellRendererFramework: params => {
               console.log(params.data);
               return (
                 <>
@@ -300,7 +300,7 @@ class AccounSearch extends React.Component {
             field: "createdAt",
             filter: true,
             sortable: true,
-            cellRendererFramework: (params) => {
+            cellRendererFramework: params => {
               return (
                 <>
                   <div className="actions cursor-pointer">
@@ -315,7 +315,7 @@ class AccounSearch extends React.Component {
             field: "updatedAt",
             filter: true,
             sortable: true,
-            cellRendererFramework: (params) => {
+            cellRendererFramework: params => {
               return (
                 <>
                   <div className="actions cursor-pointer">
@@ -342,14 +342,14 @@ class AccounSearch extends React.Component {
         }
         this.setState({ SelectedCols: Product });
       })
-      .catch((err) => {
+      .catch(err => {
         console.log(err);
         swal("Error", "something went wrong try again");
       });
   }
 
   toggleDropdown = () => {
-    this.setState((prevState) => ({ isOpen: !prevState.isOpen }));
+    this.setState(prevState => ({ isOpen: !prevState.isOpen }));
   };
 
   runthisfunction(id) {
@@ -358,15 +358,15 @@ class AccounSearch extends React.Component {
         cancel: "cancel",
         catch: { text: "Delete ", value: "delete" },
       },
-    }).then((value) => {
+    }).then(value => {
       switch (value) {
         case "delete":
           DeleteAccount(id)
-            .then((res) => {
+            .then(res => {
               let selectedData = this.gridApi.getSelectedRows();
               this.gridApi.updateRowData({ remove: selectedData });
             })
-            .catch((err) => {
+            .catch(err => {
               console.log(err);
             });
           break;
@@ -375,7 +375,7 @@ class AccounSearch extends React.Component {
     });
   }
 
-  onGridReady = (params) => {
+  onGridReady = params => {
     this.gridApi = params.api;
     this.gridColumnApi = params.columnApi;
     this.gridRef.current = params.api;
@@ -387,11 +387,11 @@ class AccounSearch extends React.Component {
     });
   };
 
-  updateSearchQuery = (val) => {
+  updateSearchQuery = val => {
     this.gridApi.setQuickFilter(val);
   };
 
-  filterSize = (val) => {
+  filterSize = val => {
     if (this.gridApi) {
       this.gridApi.paginationSetPageSize(Number(val));
       this.setState({
@@ -406,7 +406,7 @@ class AccounSearch extends React.Component {
       SelectedColums?.push(value);
     } else {
       const delindex = SelectedColums?.findIndex(
-        (ele) => ele?.headerName === value?.headerName
+        ele => ele?.headerName === value?.headerName
       );
 
       SelectedColums?.splice(delindex, 1);
@@ -417,14 +417,14 @@ class AccounSearch extends React.Component {
       Papa.parse(csvData, {
         header: true,
         skipEmptyLines: true,
-        complete: (result) => {
+        complete: result => {
           if (result.data && result.data.length > 0) {
             resolve(result.data);
           } else {
             reject(new Error("No data found in the CSV"));
           }
         },
-        error: (error) => {
+        error: error => {
           reject(error);
         },
       });
@@ -436,7 +436,7 @@ class AccounSearch extends React.Component {
 
     const doc = new jsPDF("landscape", "mm", size, false);
     doc.setTextColor(5, 87, 97);
-    const tableData = parsedData.map((row) => Object.values(row));
+    const tableData = parsedData.map(row => Object.values(row));
     doc.addImage(Logo, "JPEG", 10, 10, 50, 30);
     let date = new Date();
     doc.setCreationDate(date);
@@ -461,14 +461,14 @@ class AccounSearch extends React.Component {
       console.error("Error parsing CSV:", error);
     }
   };
-  processCell = (params) => {
+  processCell = params => {
     // console.log(params);
     // Customize cell content as needed
     return params.value;
   };
 
   convertCsvToExcel(csvData) {
-    return new Promise((resolve) => {
+    return new Promise(resolve => {
       Papa.parse(csvData, {
         header: true,
         dynamicTyping: true,
@@ -499,7 +499,7 @@ class AccounSearch extends React.Component {
     window.URL.revokeObjectURL(url);
   }
 
-  exportToExcel = async (e) => {
+  exportToExcel = async e => {
     const CsvData = this.gridApi.getDataAsCsv({
       processCellCallback: this.processCell,
     });
@@ -512,7 +512,7 @@ class AccounSearch extends React.Component {
       processCellCallback: this.processCell,
     });
     Papa.parse(CsvData, {
-      complete: (result) => {
+      complete: result => {
         const ws = XLSX.utils.json_to_sheet(result.data);
         const wb = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(wb, ws, "Sheet1");
@@ -548,13 +548,13 @@ class AccounSearch extends React.Component {
       processCellCallback: this.processCell,
     });
     Papa.parse(CsvData, {
-      complete: (result) => {
+      complete: result => {
         const rows = result.data;
 
         // Create XML
         let xmlString = "<root>\n";
 
-        rows.forEach((row) => {
+        rows.forEach(row => {
           xmlString += "  <row>\n";
           row.forEach((cell, index) => {
             xmlString += `    <field${index + 1}>${cell}</field${index + 1}>\n`;
@@ -576,7 +576,7 @@ class AccounSearch extends React.Component {
     });
   };
 
-  HandleSetVisibleField = (e) => {
+  HandleSetVisibleField = e => {
     e.preventDefault();
     this.gridApi.setColumnDefs(this.state.SelectedcolumnDefs);
     this.setState({ columnDefs: this.state.SelectedcolumnDefs });
@@ -592,10 +592,10 @@ class AccounSearch extends React.Component {
   HeadingRightShift = () => {
     const updatedSelectedColumnDefs = [
       ...new Set([
-        ...this.state.SelectedcolumnDefs.map((item) => JSON.stringify(item)),
-        ...SelectedColums.map((item) => JSON.stringify(item)),
+        ...this.state.SelectedcolumnDefs.map(item => JSON.stringify(item)),
+        ...SelectedColums.map(item => JSON.stringify(item)),
       ]),
-    ].map((item) => JSON.parse(item));
+    ].map(item => JSON.parse(item));
     this.setState({
       SelectedcolumnDefs: [...new Set(updatedSelectedColumnDefs)], // Update the state with the combined array
     });
@@ -612,14 +612,14 @@ class AccounSearch extends React.Component {
       });
     }
   };
-  handleParentSubmit = (e) => {
+  handleParentSubmit = e => {
     e.preventDefault();
     let SuperAdmin = JSON.parse(localStorage.getItem("SuperadminIdByMaster"));
     let id = SuperAdmin.split(" ")[0];
     let db = SuperAdmin.split(" ")[1];
     this.Apicalling(id, db);
   };
-  handleDropdownChange = (selectedValue) => {
+  handleDropdownChange = selectedValue => {
     localStorage.setItem("SuperadminIdByMaster", JSON.stringify(selectedValue));
   };
   render() {
@@ -630,13 +630,15 @@ class AccounSearch extends React.Component {
             display: "flex",
             justifyContent: "center",
             marginTop: "20rem",
-          }}>
+          }}
+        >
           <Spinner
             style={{
               height: "4rem",
               width: "4rem",
             }}
-            color="primary">
+            color="primary"
+          >
             Loading...
           </Spinner>
         </div>
@@ -654,19 +656,19 @@ class AccounSearch extends React.Component {
     } = this.state;
     return (
       <>
-        {/* <ExcelReader /> */}
         <Row className="app-user-list">
           {this.state.EditOneUserView && this.state.EditOneUserView ? (
             <Row className="card">
               <Col>
                 <div className="d-flex justify-content-end p-1">
                   <Button
-                    onClick={(e) => {
+                    onClick={e => {
                       e.preventDefault();
                       this.setState({ EditOneUserView: false });
                       this.componentDidMount();
                     }}
-                    color="danger">
+                    color="danger"
+                  >
                     Back
                   </Button>
                 </div>
@@ -685,11 +687,12 @@ class AccounSearch extends React.Component {
                     <Col>
                       <div className="d-flex justify-content-end p-1">
                         <Button
-                          onClick={(e) => {
+                          onClick={e => {
                             e.preventDefault();
                             this.setState({ ViewOneUserView: false });
                           }}
-                          color="danger">
+                          color="danger"
+                        >
                           Back
                         </Button>
                       </div>
@@ -705,7 +708,8 @@ class AccounSearch extends React.Component {
                         <Col lg="4" md="4" sm="12">
                           <h1
                             className="float-left "
-                            style={{ fontWeight: "600" }}>
+                            style={{ fontWeight: "600" }}
+                          >
                             User list
                           </h1>
                         </Col>
@@ -747,11 +751,13 @@ class AccounSearch extends React.Component {
                                       border: "1px solid #39cccc",
                                       backgroundColor: "white",
                                     }}
-                                    className="dropdown-content dropdownmy">
+                                    className="dropdown-content dropdownmy"
+                                  >
                                     <h5
                                       onClick={() => this.exportToPDF()}
                                       style={{ cursor: "pointer" }}
-                                      className=" mx-1 myactive mt-1">
+                                      className=" mx-1 myactive mt-1"
+                                    >
                                       .PDF
                                     </h5>
                                     <h5
@@ -759,25 +765,29 @@ class AccounSearch extends React.Component {
                                         this.gridApi.exportDataAsCsv()
                                       }
                                       style={{ cursor: "pointer" }}
-                                      className=" mx-1 myactive">
+                                      className=" mx-1 myactive"
+                                    >
                                       .CSV
                                     </h5>
                                     <h5
                                       onClick={this.convertCSVtoExcel}
                                       style={{ cursor: "pointer" }}
-                                      className=" mx-1 myactive">
+                                      className=" mx-1 myactive"
+                                    >
                                       .XLS
                                     </h5>
                                     <h5
                                       onClick={this.exportToExcel}
                                       style={{ cursor: "pointer" }}
-                                      className=" mx-1 myactive">
+                                      className=" mx-1 myactive"
+                                    >
                                       .XLSX
                                     </h5>
                                     <h5
                                       onClick={() => this.convertCsvToXml()}
                                       style={{ cursor: "pointer" }}
-                                      className=" mx-1 myactive">
+                                      className=" mx-1 myactive"
+                                    >
                                       .XML
                                     </h5>
                                   </div>
@@ -800,7 +810,8 @@ class AccounSearch extends React.Component {
                                       history.push(
                                         "/app/SoftNumen/account/CreateAccount"
                                       )
-                                    }>
+                                    }
+                                  >
                                     <FaPlus size={15} /> Create User
                                   </Button>
                                 )}
@@ -856,27 +867,32 @@ class AccounSearch extends React.Component {
                                   <DropdownMenu right>
                                     <DropdownItem
                                       tag="div"
-                                      onClick={() => this.filterSize(5)}>
+                                      onClick={() => this.filterSize(5)}
+                                    >
                                       5
                                     </DropdownItem>
                                     <DropdownItem
                                       tag="div"
-                                      onClick={() => this.filterSize(20)}>
+                                      onClick={() => this.filterSize(20)}
+                                    >
                                       20
                                     </DropdownItem>
                                     <DropdownItem
                                       tag="div"
-                                      onClick={() => this.filterSize(50)}>
+                                      onClick={() => this.filterSize(50)}
+                                    >
                                       50
                                     </DropdownItem>
                                     <DropdownItem
                                       tag="div"
-                                      onClick={() => this.filterSize(100)}>
+                                      onClick={() => this.filterSize(100)}
+                                    >
                                       100
                                     </DropdownItem>
                                     <DropdownItem
                                       tag="div"
-                                      onClick={() => this.filterSize(134)}>
+                                      onClick={() => this.filterSize(134)}
+                                    >
                                       134
                                     </DropdownItem>
                                   </DropdownMenu>
@@ -886,7 +902,7 @@ class AccounSearch extends React.Component {
                                 <div className="table-input mr-1">
                                   <Input
                                     placeholder="search Item here..."
-                                    onChange={(e) =>
+                                    onChange={e =>
                                       this.updateSearchQuery(e.target.value)
                                     }
                                     value={this.state.value}
@@ -895,7 +911,7 @@ class AccounSearch extends React.Component {
                               </div>
                             </div>
                             <ContextLayout.Consumer className="ag-theme-alpine">
-                              {(context) => (
+                              {context => (
                                 <AgGridReact
                                   id="myAgGrid"
                                   // gridOptions={{
@@ -952,7 +968,8 @@ class AccounSearch extends React.Component {
           isOpen={this.state.modal}
           toggle={this.LookupviewStart}
           className={this.props.className}
-          style={{ maxWidth: "1050px" }}>
+          style={{ maxWidth: "1050px" }}
+        >
           <ModalHeader toggle={this.LookupviewStart}>Change Fileds</ModalHeader>
           <ModalBody className="modalbodyhead">
             <Row>
@@ -965,15 +982,15 @@ class AccounSearch extends React.Component {
                         return (
                           <>
                             <div
-                              onClick={(e) =>
-                                this.handleChangeHeader(e, ele, i)
-                              }
+                              onClick={e => this.handleChangeHeader(e, ele, i)}
                               key={i}
-                              className="mycustomtag mt-1">
+                              className="mycustomtag mt-1"
+                            >
                               <span className="mt-1">
                                 <h5
                                   style={{ cursor: "pointer" }}
-                                  className="allfields">
+                                  className="allfields"
+                                >
                                   <input
                                     type="checkbox"
                                     // checked={check && check}
@@ -1032,14 +1049,15 @@ class AccounSearch extends React.Component {
                                             : ""
                                         }`,
                                       }}
-                                      className="allfields">
+                                      className="allfields"
+                                    >
                                       <IoMdRemoveCircleOutline
                                         onClick={() => {
                                           const SelectedCols =
                                             this.state.SelectedcolumnDefs.slice();
                                           const delindex =
                                             SelectedCols.findIndex(
-                                              (element) =>
+                                              element =>
                                                 element?.headerName ==
                                                 ele?.headerName
                                             );
