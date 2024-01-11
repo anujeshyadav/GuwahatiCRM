@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Button, Col, Input, Label, Row } from "reactstrap";
+import { Button, Col, Input, Label, Row, Spinner } from "reactstrap";
 import {
   Get_RoleList,
   _Get,
@@ -19,8 +19,8 @@ const DepartmentRoleAssign = () => {
   const [selectedRoles, setSelectedRoles] = useState([]);
   const [DepartMentList, setDepartMentList] = useState([]);
   const [RoleList, setRoleList] = useState([]);
+  const [Loader, setLoader] = useState(false);
 
-  const departmentList = ["HR", "Finance", "IT"]; // Replace with your actual department list
   //   const roleList = ["Manager", "Developer", "Accountant"]; // Replace with your actual role list
 
   const handleDepartmentChange = (event) => {
@@ -34,6 +34,7 @@ const DepartmentRoleAssign = () => {
     _GetList(URL)
       .then((res) => {
         console.log(res?.Department);
+        debugger;
         setDepartMentList(res?.Department);
       })
       .catch((err) => {
@@ -46,7 +47,6 @@ const DepartmentRoleAssign = () => {
     let userData = JSON.parse(localStorage.getItem("userData"));
     Get_RoleList(userData?._id, userData?.database)
       .then((res) => {
-        debugger;
         let WithoutAssign = res?.Role?.filter(
           (ele) =>
             ele?.assign == 0 &&
@@ -82,7 +82,7 @@ const DepartmentRoleAssign = () => {
   const handleAssignRoles = async () => {
     // Implement your logic to assign roles to the selected department
     let userinfo = JSON.parse(localStorage.getItem("userData"));
-
+    setLoader(true);
     let MainData = selectedRoles?.map((ele, i) => {
       return {
         roleName: ele?.roleName,
@@ -101,24 +101,45 @@ const DepartmentRoleAssign = () => {
     await _PostSave(Save_Assigned_Role, payload)
       .then((res) => {
         console.log(res);
+        setSelectedRoles([]);
+        setLoader(false);
+
         swal("Roles Assigned Successfully");
         RoleLists();
       })
       .catch((err) => {
+        setLoader(false);
+
         console.log(err);
         swal("Something went wrong");
       });
     // You can send this data to your server or manage it in your state
   };
+  if (Loader) {
+    return (
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          marginTop: "20rem",
+        }}>
+        <Spinner
+          style={{
+            height: "4rem",
+            width: "4rem",
+          }}
+          color="primary">
+          Loading...
+        </Spinner>
+      </div>
+    );
+  }
   const handleAddRanking = (e, data, i) => {
     let AllSelected = [...selectedRoles];
-    // console.log(e.target.value);
-    // console.log(data);
-    // console.log(i);
-    let index = selectedRoles.indexOf(data);
+
+    let index = selectedRoles?.indexOf(data);
     AllSelected[index]["createdPosition"] = Number(e.target.value);
     setSelectedRoles(AllSelected);
-    debugger;
   };
   return (
     <>
@@ -143,7 +164,7 @@ const DepartmentRoleAssign = () => {
         </Row>
         <div className="d-flex justify-content-center">
           <h3 className="mb-3">
-            <strong>Assign Roles to SuperAdmin</strong>
+            <strong>Assign Roles to Department</strong>
           </h3>
         </div>
         <Row>
@@ -154,7 +175,7 @@ const DepartmentRoleAssign = () => {
               className="form-control"
               onChange={handleDepartmentChange}
               value={selectedDepartment}>
-              <option value="">Select Department</option>
+              <option value="">--Select Department--</option>
               {DepartMentList &&
                 DepartMentList?.map((department, i) => (
                   <option key={department?._id} value={department?._id}>

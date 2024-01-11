@@ -64,6 +64,7 @@ class RoleList extends React.Component {
       paginationPageSize: 20,
       Position: 0,
       MasterShow: false,
+      DepartmentPresent: false,
       MasterRoleList: false,
       currenPageSize: "",
       getPageSize: "",
@@ -219,17 +220,31 @@ class RoleList extends React.Component {
   }
 
   handleSubmit = async (e) => {
+    this.setState({ Loading: true });
     e.preventDefault();
     let userinfo = JSON.parse(localStorage.getItem("userData"));
-
-    let alldata = this.state.formValues?.map((ele, i) => {
-      return {
-        departmentName: ele?.DepartmentName,
-        departmentDesc: ele?.Description,
-        database: userinfo?.database,
-        created_by: userinfo?._id,
-      };
-    });
+    let alldata = [];
+    if (this.state.DepartmentPresent) {
+      alldata = this.state.formValues?.map((ele, i) => {
+        return {
+          departmentName: ele?.DepartmentName,
+          departmentDesc: ele?.Description,
+          database: userinfo?.database,
+          departmentId: ele?.Id ? ele?.Id : null,
+          created_by: userinfo?._id,
+        };
+      });
+    } else {
+      alldata = this.state.formValues?.map((ele, i) => {
+        return {
+          departmentName: ele?.DepartmentName,
+          departmentDesc: ele?.Description,
+          database: userinfo?.database,
+          created_by: userinfo?._id,
+        };
+      });
+    }
+    debugger;
     let payload = {
       Departments: alldata,
     };
@@ -237,10 +252,14 @@ class RoleList extends React.Component {
     let URL = Create_Department;
     await _PostSave(URL, payload)
       .then((res) => {
+        this.setState({ Loading: false });
+
         swal("Departments Created");
         localStorage.setItem("CompanyDepartments", JSON.stringify(payload));
       })
       .catch((err) => {
+        this.setState({ Loading: false });
+
         console.log(err);
       });
   };
@@ -255,8 +274,12 @@ class RoleList extends React.Component {
             return {
               DepartmentName: ele?.departmentName,
               Description: ele?.departmentDesc,
+              Id: ele?._id,
             };
           });
+          if (values?.length) {
+            this.setState({ DepartmentPresent: true });
+          }
           this.setState({
             formValues: values,
           });
@@ -642,13 +665,13 @@ class RoleList extends React.Component {
                           value={this.state.value}
                         />
                       </div>
-                      <div className="export-btn">
+                      {/* <div className="export-btn">
                         <Button.Ripple
                           color="primary"
                           onClick={() => this.gridApi.exportDataAsCsv()}>
                           Export as CSV
                         </Button.Ripple>
-                      </div>
+                      </div> */}
                     </div>
                   </div>
                   <ContextLayout.Consumer>

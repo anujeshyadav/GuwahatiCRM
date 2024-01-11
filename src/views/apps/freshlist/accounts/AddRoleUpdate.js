@@ -14,7 +14,7 @@ import {
   ModalFooter,
   Table,
 } from "reactstrap";
-import { Roles } from "./AddRole";
+import { Roles, NormalRoles } from "./AddRole";
 import axiosConfig from "../../../../axiosConfig";
 import swal from "sweetalert";
 import { Route, useHistory } from "react-router-dom";
@@ -95,13 +95,21 @@ export default function AddRoleNew(args) {
   // console.log(Selected);
   useEffect(() => {
     console.log(Selected);
+    // let userdata = JSON.parse(localStorage.getItem("userData"));
+
+    // console.log(userdata?.rolename?.position == 0);
+    // if (userdata?.rolename?.position == 0) {
+    //   setShowDataBase(true);
+    // }
+  }, [Selected]);
+  useEffect(() => {
     let userdata = JSON.parse(localStorage.getItem("userData"));
 
     console.log(userdata?.rolename?.position == 0);
     if (userdata?.rolename?.position == 0) {
       // setShowDataBase(true);
     }
-  }, [Selected]);
+  }, []);
 
   const handleSumit = async (e) => {
     e.preventDefault();
@@ -161,30 +169,6 @@ export default function AddRoleNew(args) {
           console.log(err);
         });
     }
-
-    // let formdata = new FormData();
-
-    // formdata.append("user_id", userdata?.Userinfo?.id);
-    // formdata.set("role_name", Role);
-    // formdata.set("description", Desc);
-    // formdata.set("selectedarray", JSON.stringify(Selected));
-
-    // axiosConfig
-    //   .post(`/addroles`, formdata)
-    //   .then((res) => {
-    //     console.log(res);
-    //     swal("Success", "Role Created");
-    //     setSelected("");
-    //     setDesc("");
-    //     setRole("");
-    //     var checkboxes = document.getElementsByName("check");
-    //     for (var checkbox of checkboxes) {
-    //       checkbox.checked = false;
-    //     }
-    //   })
-    //   .catch((er) => {
-    //     console.log(er);
-    //   });
   };
   const handleopentoggle = () => {
     CreateAccountView()
@@ -305,13 +289,10 @@ export default function AddRoleNew(args) {
                     }}
                 </Row>
               </div>
-              <section className="mt-5 container">
-                <Row className="gy-0 container">
+              <section className="mt-5 p-2">
+                <Row className="gy-0 p-3">
                   {Roles &&
                     Roles?.map((value, index) => {
-                      {
-                        console.log("value", value?.TabName);
-                      }
                       return (
                         <Col
                           key={index}
@@ -333,7 +314,7 @@ export default function AddRoleNew(args) {
                               background: "#f7f7f8",
                             }}
                             className="roleheading">
-                            <Col className="gy-2" lg="4" sm="4" md="4">
+                            <Col className="gy-2" lg="2" sm="2" md="2">
                               <div className="align-item-center">
                                 <input
                                   className="mt-1"
@@ -382,16 +363,21 @@ export default function AddRoleNew(args) {
                                 <span className="mx-3"> Delete</span>
                               </div>
                             </Col>
+                            <Col className="gy-2">
+                              <div className="d-flex justify-content-center">
+                                <span className="mx-3"> Download</span>
+                              </div>
+                            </Col>
                           </Row>
 
                           {show && SelectedIndex === index ? (
                             <>
-                              <div className="container">
+                              <div className="p-3">
                                 <div className="gy-2 mt-2">
                                   {value?.TabName?.map((ele, i) => (
                                     <>
                                       <Row key={i} className="">
-                                        <Col lg="4" sm="4" md="4">
+                                        <Col lg="2" sm="2" md="2">
                                           <h6 className="mt-1">
                                             {" "}
                                             {ele?.title}

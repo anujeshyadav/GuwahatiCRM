@@ -1,14 +1,17 @@
 import React, { useContext, useEffect, useState } from "react";
 import { Row, Col, Card, Button, Label, Input, Form } from "reactstrap";
 import { Roles } from "./AddRole";
-import axios from "axios";
+
 import axiosConfig from "../../../../axiosConfig";
 // import { Route, Link } from "react-router-dom";
 import swal from "sweetalert";
 import { BsFillArrowDownCircleFill } from "react-icons/bs";
 import { permission } from "./DummyPermissiom";
 import { useParams, useHistory } from "react-router-dom";
-import { Get_Role_byid, Update_Role_list } from "../../../../ApiEndPoint/ApiCalling";
+import {
+  Get_Role_byid,
+  Update_Role_list,
+} from "../../../../ApiEndPoint/ApiCalling";
 
 export default function AddRoleNew() {
   const [Desc, setDesc] = useState("");
@@ -23,189 +26,20 @@ export default function AddRoleNew() {
   const history = useHistory();
 
   useEffect(() => {
-    Get_Role_byid(param.id).then((res)=>{
-      console.log(res?.Role)
-      setSelected(res?.Role?.rolePermission);
-      setRole(res?.Role?.roleName);
-      setDesc(res?.Role?.desc);
-      setExistingpermission(res?.Role.data);
-
-    }).catch((err)=>{
-      console.log(err)
-    })
-   
-    // const formdata = new FormData();
-    // formdata.append("role_name", param.id);
-    // axiosConfig
-    //   .post(`/editroleview`, formdata)
-    //   .then((res) => {
-    //     // setSelected(permission);
-    //     setSelected(res?.data?.data?.permissioninfo);
-    //     // console.log("origional permission", res?.data?.data);
-    //     console.log("origional permission", res?.data?.data?.permissioninfo);
-    //     setRole(res?.data?.data?.roleinfo?.role_name);
-    //     setDesc(res?.data?.data?.roleinfo?.description);
-    //     setExistingpermission(res?.data?.data);
-    //   })
-    //   .catch((err) => {
-    //     console.log(err);
-    //   });
+    Get_Role_byid(param.id)
+      .then((res) => {
+        console.log(res?.Role);
+       
+        setSelected(res?.Role?.rolePermission);
+        setRole(res?.Role?.roleName);
+        setDesc(res?.Role?.desc);
+        setExistingpermission(res?.Role.data);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   }, []);
 
-  // const navigate = useNavigate();
-
-  // const handleSelectPage = (value, checked, permit, title, ele) => {
-  //   if (checked) {
-  //
-  //     const newarrry = Selected.map((val, i) => {
-  //       let x = val?.pagename;
-  //       if (x === title) {
-  //         const newperset = Selected[i].permission.includes(permit);
-
-  //         if (newperset) {
-  //           // console.log(newperset);
-  //         } else {
-  //           // console.log(newperset);
-  //           let arr = Selected[i].permission.push(permit);
-  //           // console.log(arr);
-  //         }
-  //       } else {
-  //         const found = Selected.find(
-  //           (element, i) => element.pagename === title
-  //         );
-  //         let newfound = found?.pagename === title;
-  //         if (newfound === false) {
-  //           const newarr = Selected.concat({
-  //             pagename: title,
-  //             permission: [permit],
-  //           });
-  //           setSelected(newarr);
-  //         }
-  //       }
-  //     });
-  //     if (Selected.length < 1) {
-  //       const newarr = Selected.concat({
-  //         pagename: title,
-  //         permission: [permit],
-  //       });
-  //       setSelected(newarr);
-  //     }
-  //   } else {
-  //     let remove = Selected?.map((ele, i) => {
-  //       let y = ele?.pagename;
-  //       if (title === y) {
-  //         ele?.permission.splice(ele?.permission.indexOf(permit), 1);
-  //       }
-  //       if (ele?.permission.length === 0) {
-  //         Selected.splice(i, 1);
-  //       }
-  //     });
-  //   }
-  //
-  //   const updatedPermissionsCopy = [...updatedPermissions];
-  //   const pageIndex = updatedPermissions.findIndex((p) => p.pagename === title);
-
-  //   if (pageIndex !== -1) {
-  //     if (checked) {
-  //       // Add the permit to the permission array if it doesn't exist
-  //       if (!updatedPermissions[pageIndex].permission.includes(permit)) {
-  //         updatedPermissionsCopy[pageIndex].permission.push(permit);
-  //       }
-  //     } else {
-  //       // Remove the permit from the permission array
-  //       updatedPermissionsCopy[pageIndex].permission = updatedPermissions[
-  //         pageIndex
-  //       ].permission.filter((p) => p !== permit);
-  //     }
-  //   } else {
-  //     // The page doesn't exist in the permission array, so add it with the selected permit
-  //     updatedPermissionsCopy.push({ pagename: title, permission: [permit] });
-  //   }
-
-  //   setUpdatedPermissions(updatedPermissionsCopy);
-  // };
-  // const handleSelectPage = (value, checked, permit, title, ele) => {
-  //   const newSelected = [...Selected];
-
-  //   const pageIndex = newSelected.findIndex((item) => item.pagename === title);
-
-  //   if (checked) {
-  //     if (pageIndex !== -1) {
-  //       if (!newSelected[pageIndex].permission.includes(permit)) {
-  //         newSelected[pageIndex].permission.push(permit);
-  //       }
-  //     } else {
-  //       newSelected.push({ pagename: title, permission: [permit] });
-  //     }
-  //   } else {
-  //     if (pageIndex !== -1) {
-  //       newSelected[pageIndex].permission = newSelected[
-  //         pageIndex
-  //       ].permission.filter((p) => p !== permit);
-
-  //       if (newSelected[pageIndex].permission.length === 0) {
-  //         newSelected.splice(pageIndex, 1);
-  //       }
-  //     }
-  //   }
-  //   console.log(newSelected);
-  //   setSelected(newSelected);
-
-  //   // Update child checkboxes when parent checkbox is checked/unchecked
-  //   const permissionIndex = updatedPermissions.findIndex(
-  //     (p) => p.pagename === title
-  //   );
-
-  //   if (permissionIndex !== -1) {
-  //     updatedPermissions[permissionIndex].permission = newSelected
-  //       .filter((item) => item.pagename === title)
-  //       .flatMap((item) => item.permission);
-  //   }
-
-  //   setUpdatedPermissions([...updatedPermissions]);
-  // };
-  // const handleSelectPage = (value, checked, permit, title, ele) => {
-  //   const newSelected = [...Selected];
-
-  //   const pageIndex = newSelected.findIndex((item) => item.pagename === title);
-
-  //   if (checked) {
-  //     if (pageIndex !== -1) {
-  //       if (!newSelected[pageIndex].permission.includes(permit)) {
-  //         newSelected[pageIndex].permission.push(permit);
-  //       }
-  //     } else {
-  //       newSelected.push({ pagename: title, permission: [permit] });
-  //     }
-  //   } else {
-  //     if (pageIndex !== -1) {
-  //       newSelected[pageIndex].permission = newSelected[
-  //         pageIndex
-  //       ].permission.filter((p) => p !== permit);
-
-  //       if (newSelected[pageIndex].permission.length === 0) {
-  //         newSelected.splice(pageIndex, 1);
-  //       }
-  //     }
-  //   }
-
-  //   setSelected(newSelected);
-
-  //   // Update child checkboxes when parent checkbox is checked/unchecked
-  //   const updatedPermissionsCopy = updatedPermissions.map((item) => {
-  //     if (item.pagename === title) {
-  //       return {
-  //         ...item,
-  //         permission: newSelected
-  //           .filter((selectedItem) => selectedItem.pagename === title)
-  //           .flatMap((selectedItem) => selectedItem.permission),
-  //       };
-  //     }
-  //     return item;
-  //   });
-
-  //   setUpdatedPermissions(updatedPermissionsCopy);
-  // };
   const handleSelectPage = (value, checked, permit, title, ele) => {
     const newSelected = [...Selected];
     const pageIndex = newSelected.findIndex((item) => item.pagename === title);
@@ -232,7 +66,6 @@ export default function AddRoleNew() {
 
     setSelected(newSelected);
 
-    // Update child checkboxes when parent checkbox is checked/unchecked
     const updatedPermissionsCopy = updatedPermissions.map((item) => {
       if (item.pagename === title) {
         return {
@@ -291,57 +124,31 @@ export default function AddRoleNew() {
     setUpdatedPermissions([...updatedPermissions]);
   };
 
-  // console.log(Selected);
-  // console.log(updatedPermissions);
-
   const handleSumit = (e) => {
     e.preventDefault();
-    let payload={
-      desc:Desc,
-      roleName:Role,
-      rolePermission:Selected
-    }
-    Update_Role_list(param.id,payload).then((res)=>{
-      console.log(res)
-      swal("Success", "Role Updated");
-    }).catch((err)=>{
-      console.log(err)
-    })
-    
-
-    // let userdata = JSON.parse(localStorage.getItem("userData"));
-    // console.log(userdata?.Userinfo?.id);
-    // const formdata = new FormData();
-    // formdata.set("user_id", userdata?.Userinfo?.id);
-    // formdata.set("role_name", Role);
-    // formdata.set("description", Desc);
-    // formdata.set("selectedarray", JSON.stringify(Selected));
-
-    // axiosConfig
-    //   .post(`/editrolesubmit`, formdata)
-    //   .then((res) => {
-    //     console.log(res);
-    //     swal("Success", "Role Updated");
-    //     var checkboxes = document.getElementsByName("check");
-    //           })
-    //   .catch((er) => {
-    //     console.log(er);
-    //   });
+    let payload = {
+      desc: Desc,
+      roleName: Role,
+      rolePermission: Selected,
+    };
+    Update_Role_list(param.id, payload)
+      .then((res) => {
+        console.log(res);
+        swal("Success", "Role Updated");
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   };
   const handlesetparent = (value, index) => {
-    // console.log(value);
-    // console.log(index);
     setShow(value);
     setIndex(index);
   };
 
   return (
     <>
-      {Selected  ? (
+      {Selected ? (
         <>
-          {/* <Row className="m-2">
-        
-          </Row> */}
           <Row className="">
             <Col xl={12}>
               <Card>
@@ -354,8 +161,7 @@ export default function AddRoleNew() {
                       className=" btn btn-danger float-right "
                       onClick={() =>
                         history.push("/app/Trupee/account/RoleList")
-                      }
-                    >
+                      }>
                       Back
                     </Button>
                   </Col>
@@ -378,24 +184,18 @@ export default function AddRoleNew() {
                       <Col>
                         <Label>Existing Role Description * </Label>
                         <Input
-                          // disabled
                           value={Desc}
                           onChange={(e) => setDesc(e.target.value)}
                           type="text"
                           placeholder="Enter Role Desc.."
-                          // className="form-control"
                         />
                       </Col>
                     </Row>
                   </div>
-                  <section className="mt-5 container">
-                    <Row className="gy-0 container">
+                  <section className="mt-5 p-3">
+                    <Row className="gy-0 p-3">
                       {Roles &&
                         Roles?.map((value, index) => {
-                          {
-                            /* console.log(Selected);
-                          debugger; */
-                          }
                           return (
                             <Col
                               key={index}
@@ -415,17 +215,15 @@ export default function AddRoleNew() {
                               className="customcol gy-0 mb-2 "
                               lg="12"
                               md="12"
-                              sm="12"
-                            >
+                              sm="12">
                               <Row
                                 style={{
                                   lineHeight: "44px",
                                   borderRadius: "6px",
                                   background: "#f7f7f8",
                                 }}
-                                className="roleheading"
-                              >
-                                <Col className="gy-2" lg="4" sm="4" md="4">
+                                className="roleheading">
+                                <Col className="gy-2" lg="2" sm="2" md="2">
                                   <div className="align-item-center">
                                     <input
                                       checked={Selected?.some(
@@ -460,19 +258,6 @@ export default function AddRoleNew() {
 
                                     <span className="mx-3 gy-0">
                                       {value?.title}
-                                      {/* {!show ? (
-                                  <>
-                                    <BsFillArrowDownCircleFill
-                                      title="show Subpages"
-                                      onClick={() =>
-                                        handlesetparent("true", index)
-                                      }
-                                      style={{ cursor: "pointer" }}
-                                      fill="blue"
-                                      size="25px"
-                                    />
-                                  </>
-                                ) : null} */}
                                     </span>
                                   </div>
                                 </Col>
@@ -496,6 +281,11 @@ export default function AddRoleNew() {
                                     <span className="mx-3"> Delete</span>
                                   </div>
                                 </Col>
+                                <Col className="gy-2">
+                                  <div className="d-flex justify-content-center">
+                                    <span className="mx-3"> Download</span>
+                                  </div>
+                                </Col>
                               </Row>
 
                               {Selected?.some(
@@ -505,13 +295,13 @@ export default function AddRoleNew() {
                               ) ? (
                                 <>
                                   <>
-                                    <div className="container">
+                                    <div className="p-3">
                                       <div className="gy-2 mt-2">
                                         {value?.TabName?.map((ele, i) => {
                                           return (
                                             <>
                                               <Row key={i} className="">
-                                                <Col lg="4" sm="4" md="4">
+                                                <Col lg="2" sm="2" md="2">
                                                   <h6 className="mt-1">
                                                     {" "}
                                                     {ele?.title}
@@ -533,8 +323,7 @@ export default function AddRoleNew() {
                                                         key={ind}
                                                         lg="2"
                                                         md="2"
-                                                        sm="2"
-                                                      >
+                                                        sm="2">
                                                         <div className="d-flex justify-content-center">
                                                           <input
                                                             checked={
@@ -582,9 +371,7 @@ export default function AddRoleNew() {
                           <Button
                             type="submit"
                             style={{ cursor: "pointer" }}
-                            // onClick={(e) => handleSumit(e)}
-                            color="primary"
-                          >
+                            color="primary">
                             Update Permission
                           </Button>
                         </div>

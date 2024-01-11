@@ -963,7 +963,7 @@ class GoodDispatchList extends React.Component {
                           </Col>
                         )}
 
-                        {InsiderPermissions && InsiderPermissions?.View && (
+                        {InsiderPermissions && InsiderPermissions?.Download && (
                           <Col>
                             <span className="mx-1">
                               <FaFilter

@@ -30,9 +30,11 @@ import {
   UnitListView,
   CreateWarehouseList,
   CreateAccountList,
+  _BulkUpload,
 } from "../../../../ApiEndPoint/ApiCalling";
 import "../../../../assets/scss/pages/users.scss";
 import UserContext from "../../../../context/Context";
+import { Bulk_Upload_Product } from "../../../../ApiEndPoint/Api";
 
 const AddProduct = () => {
   const [CreatAccountView, setCreatAccountView] = useState([]);
@@ -41,6 +43,7 @@ const AddProduct = () => {
   const [wareHouseList, setWareHouseList] = useState([]);
   const [subcatlist, setsubcatlist] = useState([]);
   const [Countries, setCountry] = useState({});
+  const [Show, setShow] = useState(false);
   const [States, setState] = useState({});
   const [Cities, setCities] = useState({});
   const [formData, setFormData] = useState({});
@@ -125,6 +128,7 @@ const AddProduct = () => {
     });
   };
   const changeHandler2 = (e) => {
+    setShow(true);
     setFormData({
       ...formData,
       ["ProductType"]: e.target.value,
@@ -187,49 +191,62 @@ const AddProduct = () => {
   };
   console.log(BulkImport);
 
-  const submitHandler = (e) => {
+  const submitHandler = async (e) => {
     e.preventDefault();
 
-    let formdata = new FormData();
-    let userData = JSON.parse(localStorage.getItem("userData"));
-    formdata.append("created_by", userData?._id);
-    CreatAccountView?.input?.map((ele, i) => {
-      if (ele?.type?._attributes?.type == "text") {
-        formdata.append(`${ele?.name._text}`, formData[ele?.name?._text]);
-      } else if (ele?.type?._attributes?.type == "file") {
-        formdata.append("file", formData[ele?.name?._text]);
-      } else {
-        formdata.append(`${ele?.name._text}`, formData[ele?.name?._text]);
-      }
-    });
-
-    formdata.append("unitType", formData?.unitType);
-    formdata.append("addProductType", formData?.ProductType);
-    CreatAccountView?.MyDropDown?.map((ele, i) => {
-      formdata.append(
-        `${ele?.dropdown?.name?._text}`,
-        formData[ele?.dropdown?.name?._text]
-      );
-    });
-    if (error) {
-      swal("Error occured while Entering Details");
+    if (BulkImport !== null || BulkImport != undefined) {
+      let formdata = new FormData();
+      formdata.append("file", BulkImport);
+      await _BulkUpload(Bulk_Upload_Product, formdata)
+        .then((res) => {
+          swal(`${res?.message}`);
+        })
+        .catch((err) => {
+          console.log(err);
+          swal("Something Went Wrong");
+        });
     } else {
-      if (formData?.ProductType) {
-        SaveProduct(formdata)
-          .then((res) => {
-            console.log(res);
-            setFormData({});
-            if (res.status) {
-              // window.location.reload();
-              swal("Product Created Successfully");
-            }
-          })
-          .catch((err) => {
-            console.log(err);
-            swal("Enter All Details");
-          });
+      let formdata = new FormData();
+      let userData = JSON.parse(localStorage.getItem("userData"));
+      formdata.append("created_by", userData?._id);
+      CreatAccountView?.input?.map((ele, i) => {
+        if (ele?.type?._attributes?.type == "text") {
+          formdata.append(`${ele?.name._text}`, formData[ele?.name?._text]);
+        } else if (ele?.type?._attributes?.type == "file") {
+          formdata.append("file", formData[ele?.name?._text]);
+        } else {
+          formdata.append(`${ele?.name._text}`, formData[ele?.name?._text]);
+        }
+      });
+
+      formdata.append("unitType", formData?.unitType);
+      formdata.append("addProductType", formData?.ProductType);
+      CreatAccountView?.MyDropDown?.map((ele, i) => {
+        formdata.append(
+          `${ele?.dropdown?.name?._text}`,
+          formData[ele?.dropdown?.name?._text]
+        );
+      });
+      if (error) {
+        swal("Error occured while Entering Details");
       } else {
-        swal("error", "Choose Product Type");
+        if (formData?.ProductType) {
+          SaveProduct(formdata)
+            .then((res) => {
+              console.log(res);
+              setFormData({});
+              if (res.status) {
+                // window.location.reload();
+                swal("Product Created Successfully");
+              }
+            })
+            .catch((err) => {
+              console.log(err);
+              swal("Enter All Details");
+            });
+        } else {
+          swal("error", "Choose Product Type");
+        }
       }
     }
   };
@@ -301,215 +318,230 @@ const AddProduct = () => {
           {/* <hr /> */}
 
           <CardBody>
-            <Form className="m-1" onSubmit={submitHandler}>
-              <Row className="mb-2">
-                {dropdownValue &&
-                  dropdownValue?.MyDropDown?.map((ele, i) => {
-                    if (ele?.dropdown?.name?._text == "category") {
-                      return (
-                        <>
-                          <Col key={i} lg="4" md="4">
-                            <Label className="mb-1">
-                              {ele?.dropdown?.label?._text}
-                            </Label>
-                            <CustomInput
-                              required
-                              type="select"
-                              placeholder="Select Category"
-                              name={ele?.dropdown?.name?._text}
-                              value={formData[ele?.dropdown?.name?._text]}
-                              onChange={(e) => {
-                                handleInputChange(e);
-                                handlechangeSubcat(e);
-                              }}>
-                              <option value="NA">--Select Category--</option>
-                              {categoryList?.map((cat) => (
-                                <option value={cat?.name} key={cat?._id}>
-                                  {cat?.name}
-                                </option>
-                              ))}
-                            </CustomInput>
-                          </Col>
-                        </>
-                      );
-                    }
-                    if (ele?.dropdown?.name?._text == "SubCategory") {
-                      return (
-                        <>
-                          <Col key={i} lg="4" md="4">
-                            <Label className="mb-1">
-                              {ele?.dropdown?.label?._text}
-                            </Label>
-                            <CustomInput
-                              required
-                              type="select"
-                              placeholder="Select Category"
-                              name={ele?.dropdown?.name?._text}
-                              value={formData[ele?.dropdown?.name?._text]}
-                              onChange={handleInputChange}>
-                              <option value="NA">--Select SubCategory--</option>
-                              {subcatlist?.map((cat) => (
-                                <option value={cat?.name} key={cat?._id}>
-                                  {cat?.name}
-                                </option>
-                              ))}
-                            </CustomInput>
-                          </Col>
-                        </>
-                      );
-                    }
-                    if (
-                      ele?.dropdown?.name?._text
-                        ?.toLowerCase()
-                        ?.includes("arehouse")
-                    ) {
-                      return (
-                        <>
-                          {formData?.ProductType == "Product" && (
+            {Show && Show && (
+              <Form className="m-1" onSubmit={submitHandler}>
+                <Row className="mb-2">
+                  {dropdownValue &&
+                    dropdownValue?.MyDropDown?.map((ele, i) => {
+                      if (ele?.dropdown?.name?._text == "category") {
+                        return (
+                          <>
                             <Col key={i} lg="4" md="4">
-                              <Label className="mb-1 mt-1">
-                                {ele?.dropdown?.label?._text} *
+                              <Label className="mb-1">
+                                {ele?.dropdown?.label?._text}
                               </Label>
                               <CustomInput
                                 required
                                 type="select"
-                                placeholder="Select WareHouse"
+                                placeholder="Select Category"
+                                name={ele?.dropdown?.name?._text}
+                                value={formData[ele?.dropdown?.name?._text]}
+                                onChange={(e) => {
+                                  handleInputChange(e);
+                                  handlechangeSubcat(e);
+                                }}>
+                                <option value="NA">--Select Category--</option>
+                                {categoryList?.map((cat) => (
+                                  <option value={cat?.name} key={cat?._id}>
+                                    {cat?.name}
+                                  </option>
+                                ))}
+                              </CustomInput>
+                            </Col>
+                          </>
+                        );
+                      }
+                      if (ele?.dropdown?.name?._text == "SubCategory") {
+                        return (
+                          <>
+                            <Col key={i} lg="4" md="4">
+                              <Label className="mb-1">
+                                {ele?.dropdown?.label?._text}
+                              </Label>
+                              <CustomInput
+                                required
+                                type="select"
+                                placeholder="Select Category"
                                 name={ele?.dropdown?.name?._text}
                                 value={formData[ele?.dropdown?.name?._text]}
                                 onChange={handleInputChange}>
-                                <option value="NA">--Select WareHouse--</option>
-
-                                {wareHouseList &&
-                                  wareHouseList?.map((whList) => (
-                                    <option
-                                      value={whList?._id}
-                                      key={whList?._id}>
-                                      {whList?.firstName}
-                                    </option>
-                                  ))}
+                                <option value="NA">
+                                  --Select SubCategory--
+                                </option>
+                                {subcatlist?.map((cat) => (
+                                  <option value={cat?.name} key={cat?._id}>
+                                    {cat?.name}
+                                  </option>
+                                ))}
                               </CustomInput>
                             </Col>
-                          )}
-                        </>
-                      );
-                    }
-                    if (ele?.dropdown?.name?._text == "Unit") {
-                      return (
-                        <>
-                          {formData?.ProductType == "Item" ? (
-                            <>
-                              <Col lg="4" md="4">
-                                <div className="">
-                                  <label className="mb-1" for="unit">
-                                    Select Unit
-                                  </label>
-                                  <select
-                                    id="unitType"
-                                    className="form-control"
-                                    name="Unit"
-                                    placeholder="selecetedUnit"
-                                    // value={product?.selecetedUnit}
-                                    onChange={handleInputChange}>
-                                    <option value="">--select Unit--</option>
-                                    {UnitList &&
-                                      UnitList?.map((cat) => (
-                                        <option
-                                          value={cat?.primaryUnit}
-                                          key={cat?._id}>
-                                          {cat?.primaryUnit}
-                                        </option>
-                                      ))}
-
-                                    <option value="kg">Kilogram (kg)</option>
-                                    <option value="Pcs">Pieces (Pcs)</option>
-                                    <option value="g">Gram (g)</option>
-                                    <option value="tonne">
-                                      Metric Ton (tonne)
-                                    </option>
-                                    <option value="m">Meter (m)</option>
-                                    <option value="cm">Centimeter (cm)</option>
-                                    <option value="mm">Millimeter (mm)</option>
-                                    <option value="in">Inch (in)</option>
-                                    <option value="ft">Foot (ft)</option>
-                                    <option value="m3">Cubic Meter (m³)</option>
-                                    <option value="L">Liter (L)</option>
-                                    <option value="ml">Milliliter (ml)</option>
-                                    <option value="s">Second (s)</option>
-                                    <option value="min">Minute (min)</option>
-                                    <option value="hr">Hour (hr)</option>
-                                    <option value="°C">Celsius (°C)</option>
-                                    <option value="°F">Fahrenheit (°F)</option>
-                                    <option value="Pa">Pascal (Pa)</option>
-                                    <option value="bar">Bar (bar)</option>
-                                    <option value="m/s">
-                                      Meters per Second (m/s)
-                                    </option>
-                                    <option value="km/h">
-                                      Kilometers per Hour (km/h)
-                                    </option>
-                                    <option value="A">Ampere (A)</option>
-                                    <option value="V">Volt (V)</option>
-                                    <option value="W">Watt (W)</option>
-                                    <option value="kW">Kilowatt (kW)</option>
-                                  </select>
-                                </div>
-                              </Col>
-                            </>
-                          ) : (
-                            <>
+                          </>
+                        );
+                      }
+                      if (
+                        ele?.dropdown?.name?._text
+                          ?.toLowerCase()
+                          ?.includes("arehouse")
+                      ) {
+                        return (
+                          <>
+                            {formData?.ProductType == "Product" && (
                               <Col key={i} lg="4" md="4">
-                                <Label className="mb-1">
-                                  {ele?.dropdown?.label?._text}
+                                <Label className="mb-1 mt-1">
+                                  {ele?.dropdown?.label?._text} *
                                 </Label>
                                 <CustomInput
                                   required
-                                  id="unitType"
                                   type="select"
-                                  placeholder="Select Category"
+                                  placeholder="Select WareHouse"
                                   name={ele?.dropdown?.name?._text}
                                   value={formData[ele?.dropdown?.name?._text]}
                                   onChange={handleInputChange}>
-                                  <option value="NA">--Select Unit--</option>
-                                  {UnitList &&
-                                    UnitList?.map((cat) => (
+                                  <option value="NA">
+                                    --Select WareHouse--
+                                  </option>
+
+                                  {wareHouseList &&
+                                    wareHouseList?.map((whList) => (
                                       <option
-                                        value={cat?.unitQty}
-                                        key={cat?._id}>
-                                        {cat?.primaryUnit}
+                                        value={whList?._id}
+                                        key={whList?._id}>
+                                        {whList?.firstName}
                                       </option>
                                     ))}
                                 </CustomInput>
                               </Col>
-                            </>
-                          )}
-                        </>
-                      );
-                    } else {
-                      return (
-                        <Col lg="4" md="4">
-                          <FormGroup>
-                            <Label>{ele?.dropdown?.label?._text}</Label>
-                            <CustomInput
-                              required
-                              type="select"
-                              name={ele?.dropdown?.name?._text}
-                              value={formData[ele?.dropdown?.name?._text]}
-                              onChange={handleInputChange}>
-                              <option value="">--Select Role--</option>
-                              {ele?.dropdown?.option?.map((option, index) => (
-                                <option
-                                  key={index}
-                                  value={option?._attributes?.value}>
-                                  {option?._attributes?.value}
-                                </option>
-                              ))}
-                            </CustomInput>
-                          </FormGroup>
-                        </Col>
-                      );
-                    }
-                  })}
-                {/* <Col lg="6" md="6">
+                            )}
+                          </>
+                        );
+                      }
+                      if (ele?.dropdown?.name?._text == "Unit") {
+                        return (
+                          <>
+                            {formData?.ProductType == "Item" ? (
+                              <>
+                                <Col lg="4" md="4">
+                                  <div className="">
+                                    <label className="mb-1" for="unit">
+                                      Select Unit
+                                    </label>
+                                    <select
+                                      id="unitType"
+                                      className="form-control"
+                                      name="Unit"
+                                      placeholder="selecetedUnit"
+                                      // value={product?.selecetedUnit}
+                                      onChange={handleInputChange}>
+                                      <option value="">--select Unit--</option>
+                                      {UnitList &&
+                                        UnitList?.map((cat) => (
+                                          <option
+                                            value={cat?.primaryUnit}
+                                            key={cat?._id}>
+                                            {cat?.primaryUnit}
+                                          </option>
+                                        ))}
+
+                                      <option value="kg">Kilogram (kg)</option>
+                                      <option value="Pcs">Pieces (Pcs)</option>
+                                      <option value="g">Gram (g)</option>
+                                      <option value="tonne">
+                                        Metric Ton (tonne)
+                                      </option>
+                                      <option value="m">Meter (m)</option>
+                                      <option value="cm">
+                                        Centimeter (cm)
+                                      </option>
+                                      <option value="mm">
+                                        Millimeter (mm)
+                                      </option>
+                                      <option value="in">Inch (in)</option>
+                                      <option value="ft">Foot (ft)</option>
+                                      <option value="m3">
+                                        Cubic Meter (m³)
+                                      </option>
+                                      <option value="L">Liter (L)</option>
+                                      <option value="ml">
+                                        Milliliter (ml)
+                                      </option>
+                                      <option value="s">Second (s)</option>
+                                      <option value="min">Minute (min)</option>
+                                      <option value="hr">Hour (hr)</option>
+                                      <option value="°C">Celsius (°C)</option>
+                                      <option value="°F">
+                                        Fahrenheit (°F)
+                                      </option>
+                                      <option value="Pa">Pascal (Pa)</option>
+                                      <option value="bar">Bar (bar)</option>
+                                      <option value="m/s">
+                                        Meters per Second (m/s)
+                                      </option>
+                                      <option value="km/h">
+                                        Kilometers per Hour (km/h)
+                                      </option>
+                                      <option value="A">Ampere (A)</option>
+                                      <option value="V">Volt (V)</option>
+                                      <option value="W">Watt (W)</option>
+                                      <option value="kW">Kilowatt (kW)</option>
+                                    </select>
+                                  </div>
+                                </Col>
+                              </>
+                            ) : (
+                              <>
+                                <Col key={i} lg="4" md="4">
+                                  <Label className="mb-1">
+                                    {ele?.dropdown?.label?._text}
+                                  </Label>
+                                  <CustomInput
+                                    required
+                                    id="unitType"
+                                    type="select"
+                                    placeholder="Select Category"
+                                    name={ele?.dropdown?.name?._text}
+                                    value={formData[ele?.dropdown?.name?._text]}
+                                    onChange={handleInputChange}>
+                                    <option value="NA">--Select Unit--</option>
+                                    {UnitList &&
+                                      UnitList?.map((cat) => (
+                                        <option
+                                          value={cat?.unitQty}
+                                          key={cat?._id}>
+                                          {cat?.primaryUnit}
+                                        </option>
+                                      ))}
+                                  </CustomInput>
+                                </Col>
+                              </>
+                            )}
+                          </>
+                        );
+                      } else {
+                        return (
+                          <Col lg="4" md="4">
+                            <FormGroup>
+                              <Label>{ele?.dropdown?.label?._text}</Label>
+                              <CustomInput
+                                required
+                                type="select"
+                                name={ele?.dropdown?.name?._text}
+                                value={formData[ele?.dropdown?.name?._text]}
+                                onChange={handleInputChange}>
+                                <option value="">--Select Role--</option>
+                                {ele?.dropdown?.option?.map((option, index) => (
+                                  <option
+                                    key={index}
+                                    value={option?._attributes?.value}>
+                                    {option?._attributes?.value}
+                                  </option>
+                                ))}
+                              </CustomInput>
+                            </FormGroup>
+                          </Col>
+                        );
+                      }
+                    })}
+                  {/* <Col lg="6" md="6">
                   <FormGroup>
                     <Label>
                       {
@@ -547,180 +579,297 @@ const AddProduct = () => {
                   </FormGroup>
                 </Col> */}
 
-                {CreatAccountView &&
-                  CreatAccountView?.input?.map((ele, i) => {
-                    {
-                      /* console.log(Context?.UserInformatio?.dateFormat); */
-                    }
-                    // console.log(Countries);
-                    // console.log(States);
-                    const convertedTime = moment("2022-08-05T12:00:00")
-                      .tz("America/New_York")
-                      .format("D MMM, YYYY HH:mm");
+                  {CreatAccountView &&
+                    CreatAccountView?.input?.map((ele, i) => {
+                      {
+                        /* console.log(Context?.UserInformatio?.dateFormat); */
+                      }
+                      // console.log(Countries);
+                      // console.log(States);
+                      const convertedTime = moment("2022-08-05T12:00:00")
+                        .tz("America/New_York")
+                        .format("D MMM, YYYY HH:mm");
 
-                    if (!!ele?.phoneinput) {
-                      return (
-                        <>
-                          <Col className="mt-1" key={i} lg="4" md="4" sm="12">
-                            <FormGroup>
-                              <Label>{ele?.label?._text}</Label>
-                              <PhoneInput
-                                inputClass="myphoneinput"
-                                country={"us"}
-                                onKeyDown={(e) => {
-                                  if (
-                                    ele?.type?._attributes?.type == "number"
-                                  ) {
-                                    ["e", "E", "+", "-"].includes(e.key) &&
-                                      e.preventDefault();
-                                  }
-                                }}
-                                countryCodeEditable={false}
-                                name={ele?.name?._text}
-                                value={formData[ele?.name?._text]}
-                                onChange={(phone) => {
-                                  setFormData({
-                                    ...formData,
-                                    [ele?.name?._text]: phone,
-                                  });
-                                }}
-                              />
-                              {index === i ? (
-                                <>
-                                  {error && (
-                                    <span style={{ color: "red" }}>
-                                      {error}
-                                    </span>
-                                  )}
-                                </>
-                              ) : (
-                                <></>
-                              )}
-                            </FormGroup>
-                          </Col>
-                        </>
-                      );
-                    } else if (!!ele?.library) {
-                      if (ele?.label._text?.includes("ountry")) {
-                        console.log(ele);
+                      if (!!ele?.phoneinput) {
                         return (
-                          <Col className="mt-1" key={i} lg="4" md="4" sm="12">
-                            <FormGroup>
-                              <Label>{ele?.label?._text}</Label>
-                              <Select
-                                inputClass="countryclass"
-                                className="countryclassnw"
-                                options={Country.getAllCountries()}
-                                getOptionLabel={(options) => {
-                                  return options["name"];
-                                }}
-                                getOptionValue={(options) => {
-                                  return options["name"];
-                                }}
-                                value={Countries}
-                                onChange={(country) => {
-                                  setCountry(country);
-                                  setFormData({
-                                    ...formData,
-                                    ["Country"]: country?.name,
-                                  });
-                                }}
-                              />
-                              {index === i ? (
-                                <>
-                                  {error && (
-                                    <span style={{ color: "red" }}>
-                                      {error}
-                                    </span>
-                                  )}
-                                </>
-                              ) : (
-                                <></>
-                              )}
-                            </FormGroup>
-                          </Col>
-                        );
-                      } else if (ele?.label._text?.includes("tate")) {
-                        return (
-                          <Col className="mt-1" key={i} lg="4" md="4" sm="12">
-                            <FormGroup>
-                              <Label>{ele?.label?._text}</Label>
-                              <Select
-                                options={State?.getStatesOfCountry(
-                                  Countries?.isoCode
+                          <>
+                            <Col className="mt-1" key={i} lg="4" md="4" sm="12">
+                              <FormGroup>
+                                <Label>{ele?.label?._text}</Label>
+                                <PhoneInput
+                                  inputClass="myphoneinput"
+                                  country={"us"}
+                                  onKeyDown={(e) => {
+                                    if (
+                                      ele?.type?._attributes?.type == "number"
+                                    ) {
+                                      ["e", "E", "+", "-"].includes(e.key) &&
+                                        e.preventDefault();
+                                    }
+                                  }}
+                                  countryCodeEditable={false}
+                                  name={ele?.name?._text}
+                                  value={formData[ele?.name?._text]}
+                                  onChange={(phone) => {
+                                    setFormData({
+                                      ...formData,
+                                      [ele?.name?._text]: phone,
+                                    });
+                                  }}
+                                />
+                                {index === i ? (
+                                  <>
+                                    {error && (
+                                      <span style={{ color: "red" }}>
+                                        {error}
+                                      </span>
+                                    )}
+                                  </>
+                                ) : (
+                                  <></>
                                 )}
-                                getOptionLabel={(options) => {
-                                  return options["name"];
-                                }}
-                                getOptionValue={(options) => {
-                                  return options["name"];
-                                }}
-                                value={States}
-                                onChange={(State) => {
-                                  setState(State);
-                                  setFormData({
-                                    ...formData,
-                                    ["State"]: State?.name,
-                                  });
-                                }}
-                              />
-                              {index === i ? (
-                                <>
-                                  {error && (
-                                    <span style={{ color: "red" }}>
-                                      {error}
-                                    </span>
-                                  )}
-                                </>
-                              ) : (
-                                <></>
-                              )}
-                            </FormGroup>
-                          </Col>
+                              </FormGroup>
+                            </Col>
+                          </>
                         );
-                      } else if (ele?.label._text?.includes("ity")) {
-                        return (
-                          <Col className="mt-1" key={i} lg="4" md="4" sm="12">
-                            <FormGroup>
-                              <Label>{ele?.label?._text}</Label>
-                              <Select
-                                options={City?.getCitiesOfState(
-                                  States?.countryCode,
-                                  States?.isoCode
+                      } else if (!!ele?.library) {
+                        if (ele?.label._text?.includes("ountry")) {
+                          console.log(ele);
+                          return (
+                            <Col className="mt-1" key={i} lg="4" md="4" sm="12">
+                              <FormGroup>
+                                <Label>{ele?.label?._text}</Label>
+                                <Select
+                                  inputClass="countryclass"
+                                  className="countryclassnw"
+                                  options={Country.getAllCountries()}
+                                  getOptionLabel={(options) => {
+                                    return options["name"];
+                                  }}
+                                  getOptionValue={(options) => {
+                                    return options["name"];
+                                  }}
+                                  value={Countries}
+                                  onChange={(country) => {
+                                    setCountry(country);
+                                    setFormData({
+                                      ...formData,
+                                      ["Country"]: country?.name,
+                                    });
+                                  }}
+                                />
+                                {index === i ? (
+                                  <>
+                                    {error && (
+                                      <span style={{ color: "red" }}>
+                                        {error}
+                                      </span>
+                                    )}
+                                  </>
+                                ) : (
+                                  <></>
                                 )}
-                                getOptionLabel={(options) => {
-                                  return options["name"];
-                                }}
-                                getOptionValue={(options) => {
-                                  return options["name"];
-                                }}
-                                value={Cities}
-                                onChange={(City) => {
-                                  setCities(City);
-                                  setFormData({
-                                    ...formData,
-                                    ["City"]: City?.name,
-                                  });
-                                }}
-                              />
-                              {index === i ? (
-                                <>
-                                  {error && (
-                                    <span style={{ color: "red" }}>
-                                      {error}
-                                    </span>
+                              </FormGroup>
+                            </Col>
+                          );
+                        } else if (ele?.label._text?.includes("tate")) {
+                          return (
+                            <Col className="mt-1" key={i} lg="4" md="4" sm="12">
+                              <FormGroup>
+                                <Label>{ele?.label?._text}</Label>
+                                <Select
+                                  options={State?.getStatesOfCountry(
+                                    Countries?.isoCode
                                   )}
+                                  getOptionLabel={(options) => {
+                                    return options["name"];
+                                  }}
+                                  getOptionValue={(options) => {
+                                    return options["name"];
+                                  }}
+                                  value={States}
+                                  onChange={(State) => {
+                                    setState(State);
+                                    setFormData({
+                                      ...formData,
+                                      ["State"]: State?.name,
+                                    });
+                                  }}
+                                />
+                                {index === i ? (
+                                  <>
+                                    {error && (
+                                      <span style={{ color: "red" }}>
+                                        {error}
+                                      </span>
+                                    )}
+                                  </>
+                                ) : (
+                                  <></>
+                                )}
+                              </FormGroup>
+                            </Col>
+                          );
+                        } else if (ele?.label._text?.includes("ity")) {
+                          return (
+                            <Col className="mt-1" key={i} lg="4" md="4" sm="12">
+                              <FormGroup>
+                                <Label>{ele?.label?._text}</Label>
+                                <Select
+                                  options={City?.getCitiesOfState(
+                                    States?.countryCode,
+                                    States?.isoCode
+                                  )}
+                                  getOptionLabel={(options) => {
+                                    return options["name"];
+                                  }}
+                                  getOptionValue={(options) => {
+                                    return options["name"];
+                                  }}
+                                  value={Cities}
+                                  onChange={(City) => {
+                                    setCities(City);
+                                    setFormData({
+                                      ...formData,
+                                      ["City"]: City?.name,
+                                    });
+                                  }}
+                                />
+                                {index === i ? (
+                                  <>
+                                    {error && (
+                                      <span style={{ color: "red" }}>
+                                        {error}
+                                      </span>
+                                    )}
+                                  </>
+                                ) : (
+                                  <></>
+                                )}
+                              </FormGroup>
+                            </Col>
+                          );
+                        } else {
+                          return (
+                            <>
+                              {ele?.type?._attributes?.type == "date" ? (
+                                <>
+                                  <Col
+                                    className="mt-1"
+                                    key={i}
+                                    lg="4"
+                                    md="4"
+                                    sm="12">
+                                    <FormGroup key={i}>
+                                      <Label>{ele?.label?._text}</Label>
+
+                                      <Input
+                                        onKeyDown={(e) => {
+                                          if (
+                                            ele?.type?._attributes?.type ==
+                                            "number"
+                                          ) {
+                                            ["e", "E", "+", "-"].includes(
+                                              e.key
+                                            ) && e.preventDefault();
+                                          }
+                                        }}
+                                        type={ele?.type?._attributes?.type}
+                                        placeholder={ele?.placeholder?._text}
+                                        name={ele?.name?._text}
+                                        dateFormat={
+                                          Context?.UserInformatio?.dateFormat
+                                        }
+                                        value={
+                                          moment(formData[ele?.name?._text])
+                                            .tz(
+                                              Context?.UserInformatio?.timeZone
+                                            )
+                                            .format(
+                                              Context?.UserInformatio
+                                                ?.dateFormat
+                                            )
+                                          // formData[ele?.name?._text]
+                                        }
+                                        // value={formData[ele?.name?._text]}
+                                        onChange={(e) =>
+                                          handleInputChange(
+                                            e,
+                                            ele?.type?._attributes?.type,
+                                            i
+                                          )
+                                        }
+                                      />
+                                      {index === i ? (
+                                        <>
+                                          {error && (
+                                            <span style={{ color: "red" }}>
+                                              {error}
+                                            </span>
+                                          )}
+                                        </>
+                                      ) : (
+                                        <></>
+                                      )}
+                                    </FormGroup>
+                                  </Col>
                                 </>
                               ) : (
-                                <></>
+                                <>
+                                  <Col
+                                    className="mt-1"
+                                    key={i}
+                                    lg="4"
+                                    md="4"
+                                    sm="12">
+                                    <FormGroup key={i}>
+                                      <Label>{ele?.label?._text}</Label>
+
+                                      <Input
+                                        onKeyDown={(e) => {
+                                          if (
+                                            ele?.type?._attributes?.type ==
+                                            "number"
+                                          ) {
+                                            ["e", "E", "+", "-"].includes(
+                                              e.key
+                                            ) && e.preventDefault();
+                                          }
+                                        }}
+                                        type={ele?.type?._attributes?.type}
+                                        placeholder={ele?.placeholder?._text}
+                                        name={ele?.name?._text}
+                                        value={formData[ele?.name?._text]}
+                                        onChange={(e) =>
+                                          handleInputChange(
+                                            e,
+                                            ele?.type?._attributes?.type,
+                                            i
+                                          )
+                                        }
+                                      />
+                                      {index === i ? (
+                                        <>
+                                          {error && (
+                                            <span style={{ color: "red" }}>
+                                              {error}
+                                            </span>
+                                          )}
+                                        </>
+                                      ) : (
+                                        <></>
+                                      )}
+                                    </FormGroup>
+                                  </Col>
+                                </>
                               )}
-                            </FormGroup>
-                          </Col>
-                        );
+                            </>
+                          );
+                        }
                       } else {
                         return (
                           <>
-                            {ele?.type?._attributes?.type == "date" ? (
+                            {!!ele?.number ? (
                               <>
                                 <Col
                                   className="mt-1"
@@ -732,6 +881,9 @@ const AddProduct = () => {
                                     <Label>{ele?.label?._text}</Label>
 
                                     <Input
+                                      onWheel={(e) => {
+                                        e.preventDefault(); // Prevent the mouse wheel scroll event
+                                      }}
                                       onKeyDown={(e) => {
                                         if (
                                           ele?.type?._attributes?.type ==
@@ -745,18 +897,7 @@ const AddProduct = () => {
                                       type={ele?.type?._attributes?.type}
                                       placeholder={ele?.placeholder?._text}
                                       name={ele?.name?._text}
-                                      dateFormat={
-                                        Context?.UserInformatio?.dateFormat
-                                      }
-                                      value={
-                                        moment(formData[ele?.name?._text])
-                                          .tz(Context?.UserInformatio?.timeZone)
-                                          .format(
-                                            Context?.UserInformatio?.dateFormat
-                                          )
-                                        // formData[ele?.name?._text]
-                                      }
-                                      // value={formData[ele?.name?._text]}
+                                      value={formData[ele?.name?._text]}
                                       onChange={(e) =>
                                         handleInputChange(
                                           e,
@@ -780,62 +921,6 @@ const AddProduct = () => {
                                 </Col>
                               </>
                             ) : (
-                              <>
-                                <Col
-                                  className="mt-1"
-                                  key={i}
-                                  lg="4"
-                                  md="4"
-                                  sm="12">
-                                  <FormGroup key={i}>
-                                    <Label>{ele?.label?._text}</Label>
-
-                                    <Input
-                                      onKeyDown={(e) => {
-                                        if (
-                                          ele?.type?._attributes?.type ==
-                                          "number"
-                                        ) {
-                                          ["e", "E", "+", "-"].includes(
-                                            e.key
-                                          ) && e.preventDefault();
-                                        }
-                                      }}
-                                      type={ele?.type?._attributes?.type}
-                                      placeholder={ele?.placeholder?._text}
-                                      name={ele?.name?._text}
-                                      value={formData[ele?.name?._text]}
-                                      onChange={(e) =>
-                                        handleInputChange(
-                                          e,
-                                          ele?.type?._attributes?.type,
-                                          i
-                                        )
-                                      }
-                                    />
-                                    {index === i ? (
-                                      <>
-                                        {error && (
-                                          <span style={{ color: "red" }}>
-                                            {error}
-                                          </span>
-                                        )}
-                                      </>
-                                    ) : (
-                                      <></>
-                                    )}
-                                  </FormGroup>
-                                </Col>
-                              </>
-                            )}
-                          </>
-                        );
-                      }
-                    } else {
-                      return (
-                        <>
-                          {!!ele?.number ? (
-                            <>
                               <Col
                                 className="mt-1"
                                 key={i}
@@ -843,139 +928,96 @@ const AddProduct = () => {
                                 md="4"
                                 sm="12">
                                 <FormGroup key={i}>
-                                  <Label>{ele?.label?._text}</Label>
-
-                                  <Input
-                                    onWheel={(e) => {
-                                      e.preventDefault(); // Prevent the mouse wheel scroll event
-                                    }}
-                                    onKeyDown={(e) => {
-                                      if (
-                                        ele?.type?._attributes?.type == "number"
-                                      ) {
-                                        ["e", "E", "+", "-"].includes(e.key) &&
-                                          e.preventDefault();
-                                      }
-                                    }}
-                                    type={ele?.type?._attributes?.type}
-                                    placeholder={ele?.placeholder?._text}
-                                    name={ele?.name?._text}
-                                    value={formData[ele?.name?._text]}
-                                    onChange={(e) =>
-                                      handleInputChange(
-                                        e,
-                                        ele?.type?._attributes?.type,
-                                        i
-                                      )
-                                    }
-                                  />
-                                  {index === i ? (
+                                  {ele?.type?._attributes?.type &&
+                                  ele?.type?._attributes?.type == "file" ? (
                                     <>
-                                      {error && (
-                                        <span style={{ color: "red" }}>
-                                          {error}
-                                        </span>
+                                      <Label className="mb-1">
+                                        {ele?.label?._text}
+                                      </Label>
+
+                                      <Input
+                                        className="form-control"
+                                        type={ele?.type?._attributes?.type}
+                                        placeholder={ele?.placeholder?._text}
+                                        name={ele?.name?._text}
+                                        //   value={formData[ele?.name?._text]}
+                                        onChange={(e) => {
+                                          // const value = e.target.value;
+                                          // // Use regular expression to allow only numbers
+                                          // const numericValue = value.replace(
+                                          //   /\D/g,
+                                          //   ""
+                                          // );
+                                          handleFileChange(
+                                            e,
+                                            ele?.type?._attributes?.type,
+                                            i
+                                          );
+                                        }}
+                                      />
+                                      {index === i ? (
+                                        <>
+                                          {error && (
+                                            <span style={{ color: "red" }}>
+                                              {error}
+                                            </span>
+                                          )}
+                                        </>
+                                      ) : (
+                                        <></>
                                       )}
                                     </>
                                   ) : (
-                                    <></>
+                                    <>
+                                      <Label className="mb-1">
+                                        {ele?.label?._text}
+                                      </Label>
+
+                                      <Input
+                                        className="form-control"
+                                        onKeyDown={(e) => {
+                                          if (
+                                            ele?.type?._attributes?.type ==
+                                            "number"
+                                          ) {
+                                            ["e", "E", "+", "-"].includes(
+                                              e.key
+                                            ) && e.preventDefault();
+                                          }
+                                        }}
+                                        type={ele?.type?._attributes?.type}
+                                        placeholder={ele?.placeholder?._text}
+                                        name={ele?.name?._text}
+                                        value={formData[ele?.name?._text]}
+                                        onChange={(e) => {
+                                          // const value = e.target.value;
+                                          // // Use regular expression to allow only numbers
+                                          // const numericValue = value.replace(
+                                          //   /\D/g,
+                                          //   ""
+                                          // );
+                                          handleInputChange(
+                                            e,
+                                            ele?.type?._attributes?.type,
+                                            i
+                                          );
+                                        }}
+                                      />
+                                      {index === i ? (
+                                        <>
+                                          {error && (
+                                            <span style={{ color: "red" }}>
+                                              {error}
+                                            </span>
+                                          )}
+                                        </>
+                                      ) : (
+                                        <></>
+                                      )}
+                                    </>
                                   )}
-                                </FormGroup>
-                              </Col>
-                            </>
-                          ) : (
-                            <Col className="mt-1" key={i} lg="4" md="4" sm="12">
-                              <FormGroup key={i}>
-                                {ele?.type?._attributes?.type &&
-                                ele?.type?._attributes?.type == "file" ? (
-                                  <>
-                                    <Label className="mb-1">
-                                      {ele?.label?._text}
-                                    </Label>
 
-                                    <Input
-                                      className="form-control"
-                                      type={ele?.type?._attributes?.type}
-                                      placeholder={ele?.placeholder?._text}
-                                      name={ele?.name?._text}
-                                      //   value={formData[ele?.name?._text]}
-                                      onChange={(e) => {
-                                        // const value = e.target.value;
-                                        // // Use regular expression to allow only numbers
-                                        // const numericValue = value.replace(
-                                        //   /\D/g,
-                                        //   ""
-                                        // );
-                                        handleFileChange(
-                                          e,
-                                          ele?.type?._attributes?.type,
-                                          i
-                                        );
-                                      }}
-                                    />
-                                    {index === i ? (
-                                      <>
-                                        {error && (
-                                          <span style={{ color: "red" }}>
-                                            {error}
-                                          </span>
-                                        )}
-                                      </>
-                                    ) : (
-                                      <></>
-                                    )}
-                                  </>
-                                ) : (
-                                  <>
-                                    <Label className="mb-1">
-                                      {ele?.label?._text}
-                                    </Label>
-
-                                    <Input
-                                      className="form-control"
-                                      onKeyDown={(e) => {
-                                        if (
-                                          ele?.type?._attributes?.type ==
-                                          "number"
-                                        ) {
-                                          ["e", "E", "+", "-"].includes(
-                                            e.key
-                                          ) && e.preventDefault();
-                                        }
-                                      }}
-                                      type={ele?.type?._attributes?.type}
-                                      placeholder={ele?.placeholder?._text}
-                                      name={ele?.name?._text}
-                                      value={formData[ele?.name?._text]}
-                                      onChange={(e) => {
-                                        // const value = e.target.value;
-                                        // // Use regular expression to allow only numbers
-                                        // const numericValue = value.replace(
-                                        //   /\D/g,
-                                        //   ""
-                                        // );
-                                        handleInputChange(
-                                          e,
-                                          ele?.type?._attributes?.type,
-                                          i
-                                        );
-                                      }}
-                                    />
-                                    {index === i ? (
-                                      <>
-                                        {error && (
-                                          <span style={{ color: "red" }}>
-                                            {error}
-                                          </span>
-                                        )}
-                                      </>
-                                    ) : (
-                                      <></>
-                                    )}
-                                  </>
-                                )}
-
-                                {/* <Label className="mb-1">
+                                  {/* <Label className="mb-1">
                                   {ele?.label?._text}
                                 </Label>
 
@@ -1018,64 +1060,65 @@ const AddProduct = () => {
                                 ) : (
                                   <></>
                                 )} */}
-                              </FormGroup>
-                            </Col>
-                          )}
-                        </>
-                      );
-                    }
-                  })}
-                <Col className="mt-1" lg="4" md="4" sm="12">
-                  <FormGroup>
-                    <Label className="mb-1">Bulk Import</Label>
+                                </FormGroup>
+                              </Col>
+                            )}
+                          </>
+                        );
+                      }
+                    })}
+                  <Col className="mt-1" lg="4" md="4" sm="12">
+                    <FormGroup>
+                      <Label className="mb-1">Bulk Import</Label>
 
-                    <Input
-                      className="form-control"
-                      type="file"
-                      placeholder=""
-                      name="BulkImport"
-                      onChange={(e) => {
-                        setBulkImport(e.target.files[0]);
-                      }}
-                    />
-                  </FormGroup>
-                </Col>
-              </Row>
+                      <Input
+                        className="form-control"
+                        type="file"
+                        placeholder=""
+                        name="BulkImport"
+                        onChange={(e) => {
+                          setBulkImport(e.target.files[0]);
+                        }}
+                      />
+                    </FormGroup>
+                  </Col>
+                </Row>
 
-              <hr />
-              <Row>
-                <Col lg="4" md="4" sm="6" className="mb-2 mt-1">
-                  <Label className="mb-0">Status</Label>
-                  <div className="form-label-group" onChange={changeHandler1}>
-                    <input
-                      style={{ marginRight: "3px" }}
-                      type="radio"
-                      // value={formData["status"]}
-                      name="status"
-                      value="Active"
-                    />
-                    <span style={{ marginRight: "20px" }}>Active</span>
+                <hr />
+                <Row>
+                  <Col lg="4" md="4" sm="6" className="mb-2 mt-1">
+                    <Label className="mb-0">Status</Label>
+                    <div className="form-label-group" onChange={changeHandler1}>
+                      <input
+                        style={{ marginRight: "3px" }}
+                        type="radio"
+                        // value={formData["status"]}
+                        name="status"
+                        value="Active"
+                      />
+                      <span style={{ marginRight: "20px" }}>Active</span>
 
-                    <input
-                      style={{ marginRight: "3px" }}
-                      type="radio"
-                      name="status"
-                      value="Deactive"
-                    />
-                    <span style={{ marginRight: "3px" }}>Deactive</span>
-                  </div>
-                </Col>
-              </Row>
+                      <input
+                        style={{ marginRight: "3px" }}
+                        type="radio"
+                        name="status"
+                        value="Deactive"
+                      />
+                      <span style={{ marginRight: "3px" }}>Deactive</span>
+                    </div>
+                  </Col>
+                </Row>
 
-              <Row>
-                <Button.Ripple
-                  color="primary"
-                  type="submit"
-                  className="mr-1 mt-2 mx-2">
-                  Submit
-                </Button.Ripple>
-              </Row>
-            </Form>
+                <Row>
+                  <Button.Ripple
+                    color="primary"
+                    type="submit"
+                    className="mr-1 mt-2 mx-2">
+                    Submit
+                  </Button.Ripple>
+                </Row>
+              </Form>
+            )}
           </CardBody>
         </Card>
       </div>

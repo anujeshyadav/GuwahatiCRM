@@ -11,6 +11,7 @@ export const CheckPermission = (props) => {
     Create: newparmisson?.permission.includes("Create"),
     Edit: newparmisson?.permission.includes("Edit"),
     Delete: newparmisson?.permission.includes("Delete"),
+    Download: newparmisson?.permission.includes("Download"),
   };
 
   return pageParmission;
