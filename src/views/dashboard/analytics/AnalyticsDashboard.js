@@ -44,7 +44,7 @@ class AnalyticsDashboard extends React.Component {
     let pageparmission = JSON.parse(localStorage.getItem("userData"));
     // console.log(pageparmission.role);
     let newparmisson = pageparmission?.role?.find(
-      (value) => value?.pageName === "Dashboard"
+      value => value?.pageName === "Dashboard"
     );
     // console.log(newparmisson);
     this.setState({ Viewpermisson: newparmisson?.permission.includes("View") });
@@ -67,7 +67,7 @@ class AnalyticsDashboard extends React.Component {
     data.append("role", pageparmission?.Userinfo?.role);
     axiosConfig
       .post("/dashboard", data)
-      .then((response) => {
+      .then(response => {
         // console.log(response?.data?.data?.Dashboard);
         // this.setState({ product: [] });
         const Product = [];
@@ -83,7 +83,7 @@ class AnalyticsDashboard extends React.Component {
 
         this.setState({ product: uniqueChars });
       })
-      .catch((error) => {
+      .catch(error => {
         console.log(error);
       });
     // axios
@@ -410,8 +410,6 @@ class AnalyticsDashboard extends React.Component {
         <section>
           <EcommerceDashboard />
         </section>
-
-        {/* </div> */}
       </React.Fragment>
     );
   }

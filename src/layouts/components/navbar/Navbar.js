@@ -30,7 +30,7 @@ import { Route } from "react-router-dom";
 import HorizontalMenu from "./Myhorizontalmenu";
 import UserContext from "../../../context/Context";
 // import HorizontalMenu from "../../../../src/layouts/layouts/components/menu/horizontal-menu/HorizontalMenu";
-const PhoneNo = (props) => {
+const PhoneNo = props => {
   console.log(props);
   let phone_no = "";
   if (props.userdata !== undefined) {
@@ -49,7 +49,7 @@ const PhoneNo = (props) => {
 
   return phone_no;
 };
-const ThemeNavbar = (props) => {
+const ThemeNavbar = props => {
   const [screenSize, setScreenSize] = useState();
   const [screenheight, setScreenheight] = useState(false);
   const [myCustomColor, SetmyCustomColor] = useState("");
@@ -68,9 +68,7 @@ const ThemeNavbar = (props) => {
     // });
   }, []);
 
-  useEffect(() => {
-    console.log(contextValue);
-  }, [screenSize, screenheight]);
+  useEffect(() => {}, [screenSize, screenheight]);
 
   return (
     <React.Fragment>
@@ -110,14 +108,16 @@ const ThemeNavbar = (props) => {
             "fixed-top": props.navbarType === "sticky" || props.horizontal,
             scrolling: props.horizontal && props.scrolling,
           }
-        )}>
+        )}
+      >
         <div className="navbar-wrapper">
           {/* <HorizontalMenu /> */}
 
           <div className="navbar-container content">
             <div
               className="navbar-collapse d-flex justify-content-between align-items-center"
-              id="navbar-mobile">
+              id="navbar-mobile"
+            >
               {" "}
               <Route
                 render={({ history }) => (
@@ -128,7 +128,8 @@ const ThemeNavbar = (props) => {
                       width: `${window.innerWidth <= 768 ? "25%" : "8%"}`,
                     }}
                     // style={{ cursor: "pointer", width: "8%" }}
-                    onClick={() => history.push("/dashboard")}>
+                    onClick={() => history.push("/dashboard")}
+                  >
                     {contextValue?.CompanyDetails?.logo &&
                     contextValue?.CompanyDetails?.logo ? (
                       <>
@@ -225,14 +226,16 @@ const ThemeNavbar = (props) => {
             "fixed-top": props.navbarType === "sticky" || props.horizontal,
             scrolling: props.horizontal && props.scrolling,
           }
-        )}>
+        )}
+      >
         <div className="navbar-wrapper">
           {/* <HorizontalMenu /> */}
 
           <div className="navbar-container content">
             <div
               className="navbar-collapse d-flex justify-content-between align-items-center"
-              id="navbar-mobile">
+              id="navbar-mobile"
+            >
               {" "}
               <Route
                 render={({ history }) => (
@@ -243,7 +246,8 @@ const ThemeNavbar = (props) => {
                       width: `${window.innerWidth <= 768 ? "25%" : "8%"}`,
                     }}
                     // style={{ cursor: "pointer", width: "8%" }}
-                    onClick={() => history.push("/dashboard")}>
+                    onClick={() => history.push("/dashboard")}
+                  >
                     {contextValue?.CompanyDetails?.logo &&
                     contextValue?.CompanyDetails?.logo ? (
                       <>
@@ -305,7 +309,7 @@ const ThemeNavbar = (props) => {
   );
 };
 
-const mapStateToProps = (state) => {
+const mapStateToProps = state => {
   return {
     user: state.auth,
   };
