@@ -110,6 +110,7 @@ class AccounSearch extends React.Component {
 
   async Apicalling(id, db) {
     this.setState({ Loading: true });
+    
     await CreateAccountList(id, db)
       .then(res => {
         this.setState({ Loading: false });
@@ -135,6 +136,7 @@ class AccounSearch extends React.Component {
     }
     const InsidePermissions = CheckPermission("Create User");
     this.setState({ InsiderPermissions: InsidePermissions });
+    debugger
     await this.Apicalling(pageparmission?._id, pageparmission?.database);
 
     await CreateAccountView()
@@ -811,6 +813,28 @@ class AccounSearch extends React.Component {
                                     }
                                   >
                                     <FaPlus size={15} /> Create User
+                                  </Button>
+                                )}
+                              />
+                            </span>
+                            <span>
+                              <Route
+                                render={({ history }) => (
+                                  <Button
+                                    style={{
+                                      cursor: "pointer",
+                                      backgroundColor: "#39cccc",
+                                      color: "white",
+                                      fontWeight: "600",
+                                    }}
+                                    className="float-right mr-1 "
+                                    color="#39cccc"
+                                    onClick={() =>
+                                      history.push(
+                                        "/app/Ajgroup/account/AssignTeamMember"
+                                      )
+                                    }>
+                                    Assign Team
                                   </Button>
                                 )}
                               />

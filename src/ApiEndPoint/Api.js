@@ -1,12 +1,22 @@
 // Guwahati open api EndPoints
 export const Super_Admin_List = "/master/all-super-admin-list";
 export const Get_Role = "/role/get-role";
+export const Assign_Role_To_SuperAdmin = "/role/assign-role";
+export const User_Assign_User = "/user/assign-user";
+export const All_Users_List = "/user/user-list/";
+export const Deptartment_with_Role = "/assign-role/view-assign-role/";
+export const country_state_City_List =
+  "https://vikram-pratap-singh10.github.io/pincodeAPI/output.json";
 export const Role_list_by_Master = "/master/get-super-admin-role/";
 export const Create_Role = "/role/create-role";
+export const Create_Department = "/department/save-department";
+export const List_Department = "/department/view-department";
+export const Save_Assigned_Role = "/assign-role/save-assign-role";
 export const Create_Role_by_Master = "/master/create-super-admin-role";
 export const Get_Role_by_id = "/role/get-role-by-id/";
 export const Create_Company_Details = "/company-detail/save-company-details";
 export const View_Company_Details = "/company-detail/view-company-details/";
+export const Bulk_Upload_Customer = "/customer/party-data";
 export const Update_Role = "/role/update-role/";
 export const Create_warehouse_xmlView = "/warehouse/get-xml";
 export const Create_warehouse_save = "/warehouse/save-warehouse";

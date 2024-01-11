@@ -19,7 +19,7 @@ import "react-phone-input-2/lib/style.css";
 import { Country, State, City } from "country-state-city";
 import Select from "react-select";
 import moment from "moment-timezone";
-import { Route } from "react-router-dom";
+import { Route, useHistory } from "react-router-dom";
 
 import swal from "sweetalert";
 import "../../../../../src/layouts/assets/scss/pages/users.scss";
@@ -54,6 +54,7 @@ const CreateCustomer = () => {
   const [permissions, setpermissions] = useState({});
 
   const Context = useContext(UserContext);
+  let history = useHistory();
 
   const handleFileChange = (e, type, i) => {
     const { name, value, checked } = e.target;
@@ -227,7 +228,7 @@ const CreateCustomer = () => {
           console.log(res);
           setFormData({});
           if (res.status) {
-            // window.location.goBack();
+            history.goBack();
             swal("Customer Created Successfully");
           }
         })
