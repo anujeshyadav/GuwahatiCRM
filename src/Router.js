@@ -745,6 +745,9 @@ const AddRoleNew = lazy(() =>
 const CreateHeirarchy = lazy(() =>
   import("./views/apps/freshlist/accounts/CreateHeirarchy")
 );
+const AssignTeamMember = lazy(() =>
+  import("./views/apps/freshlist/accounts/AssignTeamMember")
+);
 const EditRole = lazy(() => import("./views/apps/freshlist/accounts/EditRole"));
 
 const UpdateExistingRole = lazy(() =>
@@ -912,6 +915,12 @@ const InspectionsSearch = lazy(() =>
   import("./views/apps/freshlist/inspection/InspectionsSearch")
 );
 const RoleList = lazy(() => import("./views/apps/freshlist/accounts/RoleList"));
+const DepartmentRoleAssign = lazy(() =>
+  import("./views/apps/freshlist/accounts/DepartmentRoleAssign")
+);
+const AssignToSuperAdmin = lazy(() =>
+  import("./views/apps/freshlist/accounts/AssignToSuperAdmin")
+);
 // INhouseProduct
 const HouseProductList = lazy(() =>
   import("./views/apps/freshlist/house/HouseProductList")
@@ -1311,10 +1320,10 @@ const accessControl = lazy(() =>
 const RouteConfig = ({ component: Component, fullLayout, ...rest }) => (
   <Route
     {...rest}
-    render={props => {
+    render={(props) => {
       return (
         <ContextLayout.Consumer>
-          {context => {
+          {(context) => {
             let LayoutTag =
               fullLayout === true
                 ? context.fullLayout
@@ -1334,7 +1343,7 @@ const RouteConfig = ({ component: Component, fullLayout, ...rest }) => (
     }}
   />
 );
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
   return {
     user: state.auth.login.userRole,
   };
@@ -2380,6 +2389,10 @@ class AppRouter extends React.Component {
             component={CreateHeirarchy}
           />
           <AppRoute
+            path="/app/Ajgroup/account/AssignTeamMember"
+            component={AssignTeamMember}
+          />
+          <AppRoute
             path="/app/freshlist/account/editRole/:id"
             component={EditRole}
           />
@@ -2485,6 +2498,14 @@ class AppRouter extends React.Component {
             component={InspectionsSearch}
           />
           <AppRoute path="/app/Trupee/account/RoleList" component={RoleList} />
+          <AppRoute
+            path="/app/Ajgroup/account/DepartmentRoleAssign"
+            component={DepartmentRoleAssign}
+          />
+          <AppRoute
+            path="/app/Ajgroup/account/AssignToSuperAdmin"
+            component={AssignToSuperAdmin}
+          />
           {/* inhouse Product */}
           <AppRoute
             path="/app/freshlist/house/houseProductList"

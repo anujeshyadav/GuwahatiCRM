@@ -330,8 +330,8 @@ class PendingOrder extends React.Component {
   HandleStatusChange = async (e) => {
     e.preventDefault();
     console.log(this.state.Delivery_Status);
-
-    await Goods_DeliveryOTP(this.state.ViewOneData?.partyId)
+    debugger;
+    await Goods_DeliveryOTP(this.state.ViewOneData?.partyId?._id)
       .then((res) => {
         console.log(res);
         swal("success", "OTP Sent Successfully To Your Registered email id");
@@ -376,7 +376,6 @@ class PendingOrder extends React.Component {
   };
   handleSubmitOTP = async (e) => {
     e.preventDefault();
-
     let payload = {
       userId: this.state.ViewOneData?.userId?._id,
       orderId: this.state.ViewOneData?.orderId,
@@ -402,7 +401,7 @@ class PendingOrder extends React.Component {
 
   async Apicalling(id, db) {
     this.setState({ Loading: true });
-    await DeliveryBoyAssignedList(id)
+    await DeliveryBoyAssignedList(id,db)
       .then((res) => {
         this.setState({ Loading: false });
 
@@ -445,32 +444,32 @@ class PendingOrder extends React.Component {
 
     await this.Apicalling(userId?._id, userId?.database);
 
-    await DeliveryBoyAssignedList(userId)
-      .then((res) => {
-        console.log(res?.OrderList);
-        let showdata = res?.OrderList?.filter(
-          (ele) =>
-            ele?.status?.toLowerCase() !== "completed" &&
-            ele?.status?.toLowerCase() !== "cancelled"
-        );
-        console.log(showdata);
-        this.setState({ rowData: showdata });
-        this.setState({ AllcolumnDefs: this.state.columnDefs });
-        this.setState({ SelectedCols: this.state.columnDefs });
+    // await DeliveryBoyAssignedList(userId?._id,userId?.database)
+    //   .then((res) => {
+    //     console.log(res?.OrderList);
+    //     let showdata = res?.OrderList?.filter(
+    //       (ele) =>
+    //         ele?.status?.toLowerCase() !== "completed" &&
+    //         ele?.status?.toLowerCase() !== "cancelled"
+    //     );
+    //     console.log(showdata);
+    //     this.setState({ rowData: showdata });
+    //     this.setState({ AllcolumnDefs: this.state.columnDefs });
+    //     this.setState({ SelectedCols: this.state.columnDefs });
 
-        let userHeading = JSON.parse(localStorage.getItem("PendingOrderList"));
-        if (userHeading?.length) {
-          this.setState({ columnDefs: userHeading });
-          this.gridApi.setColumnDefs(userHeading);
-          this.setState({ SelectedcolumnDefs: userHeading });
-        } else {
-          this.setState({ columnDefs: this.state.columnDefs });
-          this.setState({ SelectedcolumnDefs: this.state.columnDefs });
-        }
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+    //     let userHeading = JSON.parse(localStorage.getItem("PendingOrderList"));
+    //     if (userHeading?.length) {
+    //       this.setState({ columnDefs: userHeading });
+    //       this.gridApi.setColumnDefs(userHeading);
+    //       this.setState({ SelectedcolumnDefs: userHeading });
+    //     } else {
+    //       this.setState({ columnDefs: this.state.columnDefs });
+    //       this.setState({ SelectedcolumnDefs: this.state.columnDefs });
+    //     }
+    //   })
+    //   .catch((err) => {
+    //     console.log(err);
+    //   });
   }
   toggleDropdown = () => {
     this.setState((prevState) => ({ isOpen: !prevState.isOpen }));

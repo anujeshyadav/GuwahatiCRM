@@ -7,6 +7,9 @@ import {
   Label,
   Row,
   CustomInput,
+  Modal,
+  ModalHeader,
+  ModalBody,
   Col,
   Form,
   UncontrolledDropdown,
@@ -34,79 +37,107 @@ import {
   CreateAccountView,
   Get_RoleList,
   _Get,
+  _GetList,
+  _PostSave,
 } from "../../../../ApiEndPoint/ApiCalling";
 import { FaPlus } from "react-icons/fa";
 import { CheckPermission } from "../house/CheckPermission";
 import SuperAdminUI from "../../../SuperAdminUi/SuperAdminUI";
-import { Role_list_by_Master } from "../../../../ApiEndPoint/Api";
+import {
+  Create_Department,
+  List_Department,
+  Role_list_by_Master,
+} from "../../../../ApiEndPoint/Api";
+import DepartmentRoleAssign from "./DepartmentRoleAssign";
 
 class RoleList extends React.Component {
   static contextType = UserContext;
-
-  state = {
-    rowData: [],
-    InsiderPermissions: {},
-    paginationPageSize: 20,
-    Position: 0,
-    MasterShow: false,
-    MasterRoleList: false,
-    currenPageSize: "",
-    getPageSize: "",
-    defaultColDef: {
-      sortable: true,
-      resizable: true,
-      suppressMenu: true,
-    },
-    columnDefs: [
-      {
-        headerName: "S.No",
-        valueGetter: "node.rowIndex + 1",
-        field: "node.rowIndex + 1",
-        width: 150,
-        filter: true,
-      },
-      {
-        headerName: "Role Name",
-        field: "roleName",
-        filter: true,
+  constructor(props) {
+    super(props);
+    this.state = {
+      rowData: [],
+      isOpen: false,
+      formValues: [{ DepartmentName: "", Description: "" }],
+      modal: false,
+      DepartmentName: "",
+      InsiderPermissions: {},
+      paginationPageSize: 20,
+      Position: 0,
+      MasterShow: false,
+      MasterRoleList: false,
+      currenPageSize: "",
+      getPageSize: "",
+      defaultColDef: {
+        sortable: true,
         resizable: true,
-        width: 160,
-        cellRendererFramework: (params) => {
-          return (
-            <div className="d-flex align-items-center cursor-pointer">
-              <div className="">
-                <span>{params?.data?.roleName}</span>
-              </div>
-            </div>
-          );
-        },
+        suppressMenu: true,
       },
-      {
-        headerName: "Role desc",
-        field: "desc",
-        filter: true,
-        resizable: true,
-        width: 230,
-        cellRendererFramework: (params) => {
-          return (
-            <div className="d-flex align-items-center cursor-pointer">
-              <div className="">
-                <span>{params?.data?.desc}</span>
-              </div>
-            </div>
-          );
+      columnDefs: [
+        {
+          headerName: "S.No",
+          valueGetter: "node.rowIndex + 1",
+          field: "node.rowIndex + 1",
+          width: 150,
+          filter: true,
         },
-      },
+        {
+          headerName: "Role Name",
+          field: "roleName",
+          filter: true,
+          resizable: true,
+          width: 160,
+          cellRendererFramework: (params) => {
+            return (
+              <div className="d-flex align-items-center cursor-pointer">
+                <div className="">
+                  <span>{params?.data?.roleName}</span>
+                </div>
+              </div>
+            );
+          },
+        },
+        {
+          headerName: "Role desc",
+          field: "desc",
+          filter: true,
+          resizable: true,
+          width: 230,
+          cellRendererFramework: (params) => {
+            return (
+              <div className="d-flex align-items-center cursor-pointer">
+                <div className="">
+                  <span>{params?.data?.desc}</span>
+                </div>
+              </div>
+            );
+          },
+        },
+        // {
+        //   headerName: "Under Department",
+        //   field: "desc",
+        //   filter: true,
+        //   resizable: true,
+        //   width: 230,
+        //   cellRendererFramework: (params) => {
+        //     return (
+        //       <div className="d-flex align-items-center cursor-pointer">
+        //         <div className="">
+        //           <span>{params?.data?.desc}</span>
+        //         </div>
+        //       </div>
+        //     );
+        //   },
+        // },
 
-      {
-        headerName: "Actions",
-        field: "sortorder",
-        field: "transactions",
-        width: 200,
-        cellRendererFramework: (params) => {
-          return (
-            <div className="actions cursor-pointer">
-              {/* {this.state.InsiderPermissions &&
+        {
+          headerName: "Actions",
+          field: "sortorder",
+          field: "transactions",
+          width: 200,
+          cellRendererFramework: (params) => {
+            return (
+              <div className="actions cursor-pointer">
+                {/* {this.state.InsiderPermissions &&
                 this.state.InsiderPermissions.View && (
                   <BsEye
                     className="mr-50"
@@ -120,35 +151,35 @@ class RoleList extends React.Component {
                   />
                 )} */}
 
-              {this.state.InsiderPermissions &&
-                this.state.InsiderPermissions.Edit && (
-                  <Route
-                    render={({ history }) => (
-                      <span
-                        style={{
-                          border: "1px solid white",
-                          padding: "10px",
-                          borderRadius: "30px",
-                          backgroundColor: "rgb(212, 111, 16)",
-                          marginLeft: "3px",
-                        }}>
-                        <FaPencilAlt
-                          className=""
-                          size="20px"
-                          color="white"
-                          onClick={() =>
-                            history.push({
-                              pathname: `/app/freshlist/account/editRole/${params?.data?._id}`,
-                              data: params,
-                            })
-                          }
-                        />
-                      </span>
-                    )}
-                  />
-                )}
-              {/* )} */}
-              {/* {this.state.Deletepermisson && (
+                {this.state.InsiderPermissions &&
+                  this.state.InsiderPermissions.Edit && (
+                    <Route
+                      render={({ history }) => (
+                        <span
+                          style={{
+                            border: "1px solid white",
+                            padding: "10px",
+                            borderRadius: "30px",
+                            backgroundColor: "rgb(212, 111, 16)",
+                            marginLeft: "3px",
+                          }}>
+                          <FaPencilAlt
+                            className=""
+                            size="20px"
+                            color="white"
+                            onClick={() =>
+                              history.push({
+                                pathname: `/app/freshlist/account/editRole/${params?.data?._id}`,
+                                data: params,
+                              })
+                            }
+                          />
+                        </span>
+                      )}
+                    />
+                  )}
+                {/* )} */}
+                {/* {this.state.Deletepermisson && (
                 <BsTrash
                   className="mr-50"
                   size="25px"
@@ -158,13 +189,91 @@ class RoleList extends React.Component {
                   }}
                 />
               )} */}
-            </div>
-          );
+              </div>
+            );
+          },
         },
-      },
-    ],
+      ],
+    };
+    this.handleSubmit = this.handleSubmit.bind(this);
+  }
+  handleChange(i, e) {
+    let formValues = this.state.formValues;
+    formValues[i][e.target.name] = e.target.value;
+    this.setState({ formValues });
+  }
+
+  addFormFields() {
+    this.setState({
+      formValues: [
+        ...this.state.formValues,
+        { DepartmentName: "", Description: "" },
+      ],
+    });
+  }
+
+  removeFormFields(i) {
+    let formValues = this.state.formValues;
+    formValues.splice(i, 1);
+    this.setState({ formValues });
+  }
+
+  handleSubmit = async (e) => {
+    e.preventDefault();
+    let userinfo = JSON.parse(localStorage.getItem("userData"));
+
+    let alldata = this.state.formValues?.map((ele, i) => {
+      return {
+        departmentName: ele?.DepartmentName,
+        departmentDesc: ele?.Description,
+        database: userinfo?.database,
+        created_by: userinfo?._id,
+      };
+    });
+    let payload = {
+      Departments: alldata,
+    };
+
+    let URL = Create_Department;
+    await _PostSave(URL, payload)
+      .then((res) => {
+        swal("Departments Created");
+        localStorage.setItem("CompanyDepartments", JSON.stringify(payload));
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+  handleShowDepartment = () => {
+    let userData = JSON.parse(localStorage.getItem("userData"));
+    let URL = `${List_Department}/${userData?.database}`;
+    _GetList(URL)
+      .then((res) => {
+        let AllDeparts = res?.Department;
+        if (AllDeparts) {
+          let values = AllDeparts?.map((ele, i) => {
+            return {
+              DepartmentName: ele?.departmentName,
+              Description: ele?.departmentDesc,
+            };
+          });
+          this.setState({
+            formValues: values,
+          });
+        }
+
+        //  setDepartMentList(res?.Department[0]?.department);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   };
 
+  toggleModal = () => {
+    this.setState((prevState) => ({
+      modal: !prevState.modal,
+    }));
+  };
   async Apicalling(id, db, value) {
     this.setState({ Loading: true });
     if (value) {
@@ -185,7 +294,7 @@ class RoleList extends React.Component {
         .then((res) => {
           this.setState({ Loading: false });
 
-          console.log(res?.Role);
+          // console.log(res?.Role);
           this.setState({ rowData: res?.Role });
         })
         .catch((err) => {
@@ -197,9 +306,9 @@ class RoleList extends React.Component {
     }
   }
   async componentDidMount() {
+    this.handleShowDepartment();
     let pageparmission = JSON.parse(localStorage.getItem("userData"));
     this.setState({ Position: pageparmission?.rolename.rank });
-
     if (pageparmission?.rolename.rank === 0) {
       this.setState({ MasterShow: true });
       this.setState({ MasterRoleList: true });
@@ -323,16 +432,17 @@ class RoleList extends React.Component {
         </div>
       );
     }
+    // console.log(this.state.InsiderPermissions);
     const { rowData, columnDefs, defaultColDef } = this.state;
     return (
       <Row className="app-user-list">
         <Col sm="12">
           <Card>
             <Row className="mt-2 mx-2 mr-2">
-              <Col lg="3" md="3" sm="6" xs="12">
-                <h1 className="float-left" style={{ fontWeight: "600" }}>
+              <Col lg="1" md="1" sm="6" xs="12">
+                <h3 className="float-left" style={{ fontWeight: "600" }}>
                   Role List
-                </h1>
+                </h3>
               </Col>
               {this.state.MasterShow && (
                 <Col>
@@ -344,7 +454,7 @@ class RoleList extends React.Component {
               )}
               {this.state.InsiderPermissions &&
                 this.state.InsiderPermissions?.Create && (
-                  <Col>
+                  <Col lg="2" md="2" sm="2">
                     <div className="d-flex justify-content-end">
                       <Route
                         render={({ history }) => (
@@ -360,7 +470,87 @@ class RoleList extends React.Component {
                             onClick={() =>
                               history.push("/app/freshlist/account/addRoleNew")
                             }>
-                            <FaPlus size={15} /> Create Role
+                            <FaPlus size={15} /> Role
+                          </Button>
+                        )}
+                      />
+                    </div>
+                  </Col>
+                )}
+              {/* {this.state.InsiderPermissions &&
+                this.state.InsiderPermissions?.Create && (
+                  <Col>
+                    <div className="d-flex justify-content-end">
+                      <Route
+                        render={({ history }) => (
+                          <Button
+                            style={{
+                              cursor: "pointer",
+                              backgroundColor: "#39cccc",
+                              color: "white",
+                              fontWeight: "600",
+                            }}
+                            className=" float-right mb-1"
+                            color="#39cccc"
+                            onClick={() =>
+                              history.push(
+                                "/app/Ajgroup/account/AssignToSuperAdmin"
+                              )
+                            }>
+                            Assign To SuperAdmin
+                          </Button>
+                        )}
+                      />
+                    </div>
+                  </Col>
+                )} */}
+              {this.state.InsiderPermissions &&
+                this.state.InsiderPermissions?.Create && (
+                  <Col lg="2" sm="2">
+                    <div className="d-flex justify-content-end">
+                      <Route
+                        render={({ history }) => (
+                          <Button
+                            style={{
+                              cursor: "pointer",
+                              backgroundColor: "#39cccc",
+                              color: "white",
+                              fontWeight: "600",
+                            }}
+                            className=" float-right mb-1"
+                            color="#39cccc"
+                            onClick={() => {
+                              history.push(
+                                "/app/Ajgroup/account/DepartmentRoleAssign"
+                              );
+                            }}>
+                            Role Assignment
+                          </Button>
+                        )}
+                      />
+                    </div>
+                  </Col>
+                )}
+              {this.state.InsiderPermissions &&
+                this.state.InsiderPermissions?.Create && (
+                  <Col lg="2" sm="2">
+                    <div className="d-flex justify-content-end">
+                      <Route
+                        render={({ history }) => (
+                          <Button
+                            style={{
+                              cursor: "pointer",
+                              backgroundColor: "#39cccc",
+                              color: "white",
+                              fontWeight: "600",
+                            }}
+                            className=" float-right mb-1"
+                            color="#39cccc"
+                            onClick={() => {
+                              // history.push("/app/freshlist/account/addRoleNew")
+                              this.toggleModal();
+                            }}>
+                            Department
                           </Button>
                         )}
                       />
@@ -371,30 +561,30 @@ class RoleList extends React.Component {
               {this.state.InsiderPermissions &&
                 this.state.InsiderPermissions?.Create && (
                   <>
-                    {/* {this.state.Position == 1 && (
-                      <Col lg="2" sm="2" md="2" ms="12">
-                        <Route
-                          render={({ history }) => (
-                            <Button
-                              style={{
-                                cursor: "pointer",
-                                backgroundColor: "#39cccc",
-                                color: "white",
-                                fontWeight: "600",
-                              }}
-                              className=" float-right"
-                              color="#39cccc"
-                              onClick={() =>
-                                history.push(
-                                  "/app/freshlist/account/CreateHeirarchy"
-                                )
-                              }>
-                              <FaPlus size={15} /> Hierarchy
-                            </Button>
-                          )}
-                        />
-                      </Col>
-                    )} */}
+                    {/* {this.state.Position == 1 && ( */}
+                    <Col lg="2" sm="2" md="2" ms="12">
+                      <Route
+                        render={({ history }) => (
+                          <Button
+                            style={{
+                              cursor: "pointer",
+                              backgroundColor: "#39cccc",
+                              color: "white",
+                              fontWeight: "600",
+                            }}
+                            className=" float-right"
+                            color="#39cccc"
+                            onClick={() =>
+                              history.push(
+                                "/app/freshlist/account/CreateHeirarchy"
+                              )
+                            }>
+                            View Hierarchy
+                          </Button>
+                        )}
+                      />
+                    </Col>
+                    {/* )} */}
                   </>
                 )}
             </Row>
@@ -442,37 +632,10 @@ class RoleList extends React.Component {
                         </DropdownMenu>
                       </UncontrolledDropdown>
                     </div>
-                    {/* <div className="d-flex flex-wrap justify-content-between mb-1">
+                    <div className="d-flex flex-wrap justify-content-between mb-1">
                       <div className="table-input mr-1">
                         <Input
-                          placeholder="Hub Name"
-                          onChange={(e) =>
-                            this.updateSearchQuery(e.target.value)
-                          }
-                          value={this.state.value}
-                        />
-                      </div>
-                      <div className="table-input mr-1">
-                        <Input
-                          placeholder="Order Id"
-                          onChange={(e) =>
-                            this.updateSearchQuery(e.target.value)
-                          }
-                          value={this.state.value}
-                        />
-                      </div>
-                      <div className="table-input mr-1">
-                        <Input
-                          placeholder="Phone Number"
-                          onChange={(e) =>
-                            this.updateSearchQuery(e.target.value)
-                          }
-                          value={this.state.value}
-                        />
-                      </div>
-                      <div className="table-input mr-1">
-                        <Input
-                          placeholder="Enter Email"
+                          placeholder="Search here..."
                           onChange={(e) =>
                             this.updateSearchQuery(e.target.value)
                           }
@@ -482,12 +645,11 @@ class RoleList extends React.Component {
                       <div className="export-btn">
                         <Button.Ripple
                           color="primary"
-                          onClick={() => this.gridApi.exportDataAsCsv()}
-                        >
+                          onClick={() => this.gridApi.exportDataAsCsv()}>
                           Export as CSV
                         </Button.Ripple>
                       </div>
-                    </div> */}
+                    </div>
                   </div>
                   <ContextLayout.Consumer>
                     {(context) => (
@@ -513,6 +675,77 @@ class RoleList extends React.Component {
             </CardBody>
           </Card>
         </Col>
+        <Modal
+          isOpen={this.state.modal}
+          toggle={this.toggleModal}
+          className={this.props.className}
+          style={{ maxWidth: "1050px" }}>
+          <ModalHeader toggle={this.toggleModal}>Add Department</ModalHeader>
+          <ModalBody className="modalbodyhead">
+            <div className="d-flex justify-content-center mb-2">
+              <b>
+                <h3>Create Your Departments</h3>
+              </b>
+            </div>
+            <Form onSubmit={this.handleSubmit}>
+              {this.state.formValues?.map((element, index) => (
+                <Row key={index}>
+                  <Col lg="4" sm="6" md="4" className="mb-2">
+                    <Label className="mb-1">Create Department</Label>
+                    <Input
+                      required
+                      placeholder="Department Name"
+                      name="DepartmentName"
+                      value={element.DepartmentName || ""}
+                      onChange={(e) => this.handleChange(index, e)}
+                      type="text"
+                    />
+                  </Col>
+                  <Col lg="4" sm="6" md="4" className="mb-2">
+                    <Label className="mb-1"> Description</Label>
+                    <textarea
+                      className="form-control"
+                      rows={2}
+                      required
+                      placeholder="Department Description"
+                      name="Description"
+                      value={element.Description || ""}
+                      onChange={(e) => this.handleChange(index, e)}
+                      type="text"
+                    />
+                  </Col>
+                  <Col lg="4" sm="6" md="4" className="">
+                    <div className="mt-4">
+                      {index ? (
+                        <Button
+                          color="danger"
+                          type="button"
+                          className="button remove"
+                          onClick={() => this.removeFormFields(index)}>
+                          Remove
+                        </Button>
+                      ) : null}
+
+                      <Button
+                        color="primary"
+                        className="button add ml-1"
+                        type="button"
+                        onClick={() => this.addFormFields()}>
+                        Add
+                      </Button>
+                    </div>
+                  </Col>
+                </Row>
+              ))}
+
+              <div className="d-flex justify-content-center mt-1">
+                <Button type="submit" color="primary">
+                  Submit
+                </Button>
+              </div>
+            </Form>
+          </ModalBody>
+        </Modal>
       </Row>
     );
   }

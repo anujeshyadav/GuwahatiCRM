@@ -10,14 +10,20 @@ const SuperAdminUI = ({ onDropdownChange, onSubmit }) => {
 
   useEffect(() => {
     // Super_Admin_List;
-    _GetList(Super_Admin_List)
-      .then((res) => {
-        console.log(res?.SuperAdmin);
-        setSuperAdminList(res?.SuperAdmin);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+    let List = JSON.parse(localStorage.getItem("AllSuper"));
+    if (List?.length) {
+      setSuperAdminList(List);
+    } else {
+      _GetList(Super_Admin_List)
+        .then((res) => {
+          console.log(res?.SuperAdmin);
+          localStorage.setItem("AllSuper", JSON.stringify(res?.SuperAdmin));
+          setSuperAdminList(res?.SuperAdmin);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }
   }, []);
 
   const handleSubmit = (e) => {
