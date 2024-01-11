@@ -51,6 +51,7 @@ const ProductionProcess = (args) => {
   const [AddExtraCharges, setAddExtraCharges] = useState(false);
   const [error, setError] = useState("");
   const [ProductList, setProductList] = useState([]);
+  const [itemList, setitemList] = useState([]);
   const [ProductWTWList, setProductWTWList] = useState([]);
   const [PartyList, setPartyList] = useState([]);
   const [Salesperson, setSalesperson] = useState("");
@@ -88,7 +89,10 @@ const ProductionProcess = (args) => {
       product: "",
       productId: "",
       selecetedUnit: "",
+      WasteUnit: "",
       AvailaleQty: null,
+      Waste_Qty: null,
+      WastePrice: "",
       availableQty: "",
       transferQty: 1,
       RequiredQty: "",
@@ -371,7 +375,18 @@ const ProductionProcess = (args) => {
     ProductListView(userdata?._id, userdata?.database)
       .then((res) => {
         console.log(res.Product);
-        setProductList(res?.Product);
+        let Items = res?.Product?.filter(
+          (ele) => ele?.addProductType == "Item"
+        );
+        let Products = res?.Product?.filter(
+          (ele) => ele?.addProductType == "Product"
+        );
+        if (Products?.length) {
+          setProductList(Products);
+        }
+        if (Items?.length) {
+          setitemList(Items);
+        }
       })
       .catch((err) => {
         console.log(err);
@@ -391,6 +406,9 @@ const ProductionProcess = (args) => {
         productId: "",
         selecetedUnit: "",
         AvailaleQty: null,
+        AvailaleQty: null,
+        Waste_Qty: null,
+        WastePrice: "",
         availableQty: "",
         transferQty: 1, //
         RequiredQty: "",
@@ -480,6 +498,16 @@ const ProductionProcess = (args) => {
         totalPrice: ele?.price * ele?.RequiredQty,
       };
     });
+    let AllWastagematerial = product?.map((ele, i) => {
+      return {
+        productId: ele?.productId,
+        unit: ele?.WasteUnit,
+        price: ele?.price,
+        qty: ele?.Waste_Qty,
+        unitType: ele?.WasteUnit,
+        totalPrice: ele?.price * ele?.Waste_Qty,
+      };
+    });
     let ALL =
       Number(grandTotalAmt) +
       Number(ExtraCharges?.Other_Expenses) +
@@ -490,13 +518,14 @@ const ProductionProcess = (args) => {
       created_by: userdata?._id,
       product_name: ProductinProduct?._id,
       productItems: Allproduct,
+      wastageItems: AllWastagematerial,
       miscellaneousExpennses: ExtraCharges?.Other_Expenses,
       gstApplied: ExtraCharges?.GSTApplied,
       otherCharges: ExtraCharges?.Other_charges,
       discount: ExtraCharges?.discount,
       grandTotal: ALL,
     };
-
+    debugger;
     _PostSave(Save_Producton_Process, payload)
       .then((res) => {
         console.log(res);
@@ -507,7 +536,7 @@ const ProductionProcess = (args) => {
       });
   };
   const onSelect1 = (selectedList, selectedItem, index) => {
-    console.log(selectedList[0]);
+    // console.log(selectedList[0]);
     setProductionProduct(selectedList[0]);
     // setProductList(selectedList[0].productItems);
   };
@@ -528,25 +557,25 @@ const ProductionProcess = (args) => {
       }
     );
 
-    console.log(selectedList[0]?.productItems);
+    // console.log(selectedList[0]?.productItems);
 
     setProductWTWList(selectedList[0]?.productItems);
   };
   const onRemove1 = (selectedList, removedItem, index) => {
-    console.log(selectedList);
-    console.log(index);
+    // console.log(selectedList);
+    // console.log(index);
   };
   const onRemoveone = (selectedList, removedItem, index) => {
-    console.log(selectedList);
-    console.log(index);
+    // console.log(selectedList);
+    // console.log(index);
   };
   const onSelect2 = (selectedList, selectedItem, index) => {
-    console.log(selectedList);
+    // console.log(selectedList);
     setWareHousetwo(selectedList);
   };
   const onRemove2 = (selectedList, removedItem, index) => {
-    console.log(selectedList);
-    console.log(index);
+    // console.log(selectedList);
+    // console.log(index);
   };
   return (
     <div>
@@ -607,7 +636,7 @@ const ProductionProcess = (args) => {
                         selectionLimit={1}
                         // showCheckbox="true"
                         isObject="false"
-                        options={ProductList}
+                        options={itemList}
                         // selectedValues={selectedValue}   // Preselected value to persist in dropdown
                         onSelect={(selectedList, selectedItem) =>
                           handleSelectionProduct(
@@ -716,7 +745,7 @@ const ProductionProcess = (args) => {
                       />
                     </div>
                   </Col>
-                  <Col className="mb-1" lg="2" md="2" sm="12">
+                  <Col className="mb-1" lg="1" md="1" sm="12">
                     <div className="">
                       <Label>Total Price</Label>
                       <Input
@@ -725,6 +754,76 @@ const ProductionProcess = (args) => {
                         readOnly
                         placeholder="TtlPrice"
                         value={product?.price * product?.RequiredQty}
+                      />
+                    </div>
+                  </Col>
+                  <Col className="mb-1" lg="1" md="1" sm="12">
+                    <div className="">
+                      <label for="unit">Waste Unit</label>
+                      <select
+                        required
+                        className="form-control"
+                        name="WasteUnit"
+                        placeholder="WasteUnit"
+                        value={product?.WasteUnit}
+                        onChange={(e) =>
+                          handleProductChangeProductTwo(e, index)
+                        }
+                        id="unit">
+                        <option value="">--select Unit--</option>
+                        <option value="kg">Kilogram (kg)</option>
+                        <option value="Pcs">Pieces (Pcs)</option>
+                        <option value="g">Gram (g)</option>
+                        <option value="tonne">Metric Ton (tonne)</option>
+                        <option value="m">Meter (m)</option>
+                        <option value="cm">Centimeter (cm)</option>
+                        <option value="mm">Millimeter (mm)</option>
+                        <option value="in">Inch (in)</option>
+                        <option value="ft">Foot (ft)</option>
+                        <option value="m3">Cubic Meter (m³)</option>
+                        <option value="L">Liter (L)</option>
+                        <option value="ml">Milliliter (ml)</option>
+                        <option value="s">Second (s)</option>
+                        <option value="min">Minute (min)</option>
+                        <option value="hr">Hour (hr)</option>
+                        <option value="°C">Celsius (°C)</option>
+                        <option value="°F">Fahrenheit (°F)</option>
+                        <option value="Pa">Pascal (Pa)</option>
+                        <option value="bar">Bar (bar)</option>
+                        <option value="m/s">Meters per Second (m/s)</option>
+                        <option value="km/h">Kilometers per Hour (km/h)</option>
+                        <option value="A">Ampere (A)</option>
+                        <option value="V">Volt (V)</option>
+                        <option value="W">Watt (W)</option>
+                        <option value="kW">Kilowatt (kW)</option>
+                      </select>
+                    </div>
+                  </Col>
+                  <Col className="mb-1" lg="1" md="1" sm="12">
+                    <div className="">
+                      <Label>Waste_Qty</Label>
+                      <Input
+                        type="number"
+                        min={0}
+                        step="any"
+                        name="Waste_Qty"
+                        placeholder="Waste_Qty"
+                        value={product?.Waste_Qty}
+                        onChange={(e) =>
+                          handleProductChangeProductone(e, index)
+                        }
+                      />
+                    </div>
+                  </Col>
+                  <Col className="mb-1" lg="1" md="1" sm="12">
+                    <div className="">
+                      <Label>Total</Label>
+                      <Input
+                        type="number"
+                        name="WastePrice"
+                        readOnly
+                        placeholder="WasteTotal"
+                        value={product?.price * product?.Waste_Qty}
                       />
                     </div>
                   </Col>

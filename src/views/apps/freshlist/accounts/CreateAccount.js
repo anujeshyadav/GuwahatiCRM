@@ -20,7 +20,7 @@ import "react-phone-input-2/lib/style.css";
 import { Country, State, City } from "country-state-city";
 import Select from "react-select";
 import moment from "moment-timezone";
-import { Route } from "react-router-dom";
+import { Route, useHistory } from "react-router-dom";
 
 import swal from "sweetalert";
 import "../../../../../src/layouts/assets/scss/pages/users.scss";
@@ -29,7 +29,10 @@ import {
   CreateAccountSave,
   CreateAccountView,
   Get_RoleList,
+  _BulkUpload,
   _Get,
+  _GetList,
+  _PostSave,
 } from "../../../../ApiEndPoint/ApiCalling";
 import { BiEnvelope } from "react-icons/bi";
 import { FcPhoneAndroid } from "react-icons/fc";
@@ -38,7 +41,12 @@ import "../../../../assets/scss/pages/users.scss";
 import UserContext from "../../../../context/Context";
 import { CloudLightning } from "react-feather";
 import { FaPlus } from "react-icons/fa";
-import { Role_list_by_Master } from "../../../../ApiEndPoint/Api";
+import {
+  Assign_Role_To_SuperAdmin,
+  Bulk_Upload_Customer,
+  Role_list_by_Master,
+  country_state_City_List,
+} from "../../../../ApiEndPoint/Api";
 
 const CreateAccount = () => {
   const [CreatAccountView, setCreatAccountView] = useState([]);
@@ -49,11 +57,15 @@ const CreateAccount = () => {
   const [Master, setMaster] = useState(false);
   const [formData, setFormData] = useState({});
   const [dropdownValue, setdropdownValue] = useState([]);
+  const [Country_State_city, setCountry_State_city] = useState([]);
+  const [AllAssignRoleList, setAllAssignRoleList] = useState([]);
+  const [SelectedRoleToAssign, setSelectedRoleToAssign] = useState([]);
   const [index, setindex] = useState("");
   const [error, setError] = useState("");
   const [permissions, setpermissions] = useState({});
 
   const Context = useContext(UserContext);
+  let history = useHistory();
 
   const handleInputChange = (e, type, i) => {
     const { name, value, checked } = e.target;
@@ -101,6 +113,7 @@ const CreateAccount = () => {
       }
     }
   };
+  console.log(formData);
   useEffect(() => {
     // console.log(formData);
   }, [formData]);
@@ -125,15 +138,32 @@ const CreateAccount = () => {
 
     getLocation();
   }, []);
-
   useEffect(() => {
     let userdata = JSON.parse(localStorage.getItem("userData"));
-
+    _GetList(country_state_City_List)
+      .then((res) => {
+        setCountry_State_city(res);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
     if (userdata?.rolename?.rank === 0) {
       setMaster(true);
       _Get(Role_list_by_Master, userdata?._id)
         .then((res) => {
-          setdropdownValue(res?.Role);
+          let Superadmin = res?.Role?.filter((ele) =>
+            ele?.roleName?.toLowerCase()?.includes("superadmin")
+          );
+          let WithoutSuperadmin = res?.Role?.filter(
+            (ele) => ele?.roleName !== "SuperAdmin"
+          );
+          if (Superadmin) {
+            setdropdownValue(Superadmin);
+          }
+
+          if (WithoutSuperadmin) {
+            setAllAssignRoleList(res?.Role);
+          }
           // console.log(ShowList);
         })
         .catch((err) => {
@@ -143,11 +173,10 @@ const CreateAccount = () => {
     } else {
       Get_RoleList(userdata?._id, userdata?.database)
         .then((res) => {
-          debugger;
           let ShowList = res?.Role?.filter(
             (item, i) => item?.position > userdata?.rolename?.position
           );
-          setdropdownValue(ShowList);
+          setdropdownValue(res?.Role);
           // console.log(ShowList);
         })
         .catch((err) => {
@@ -165,22 +194,64 @@ const CreateAccount = () => {
         console.log(err);
       });
 
-    console.log(userdata?._id);
-    formData["created_by"] = userdata?._id;
+    // console.log(userdata?._id);
+    // formData["created_by"] = userdata?._id;
   }, []);
 
-  console.log(BulkImport);
-  const submitHandler = (e) => {
+  // console.log(BulkImport);
+  const submitHandler = async (e) => {
     e.preventDefault();
+
+    if (BulkImport) {
+      let formdata = new FormData();
+      formdata.append("file", BulkImport);
+      formdata.append("created_by", formData["created_by"]);
+      await _BulkUpload(Bulk_Upload_Customer, formdata)
+        .then((res) => {
+          console.log(res);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }
     if (formData?.rolename && formData?.email && formData?.firstName) {
       if (error) {
         swal("Error occured while Entering Details");
       } else {
         CreateAccountSave(formData)
           .then((res) => {
-            setFormData({});
-            if (res.status) {
+            if (res?.status) {
               // window.location.reload();
+              let AssignDataBase = [];
+              if (SelectedRoleToAssign?.length) {
+                AssignDataBase = SelectedRoleToAssign?.map((ele) => {
+                  return {
+                    role: {
+                      roleName: ele?.roleName,
+                      position: 0,
+                      desc: ele?.desc,
+                      rank: 0,
+                      rolePermission: ele?.rolePermission,
+                      database: formData["database"],
+                      createdBy: res?.User._id,
+                    },
+                  };
+                });
+                let payload = {
+                  Roles: AssignDataBase,
+                };
+
+                if (res?.User._id) {
+                  _PostSave(Assign_Role_To_SuperAdmin, payload)
+                    .then((res) => {
+                      console.log(res);
+                    })
+                    .catch((err) => {
+                      console.log(err);
+                    });
+                }
+              }
+              history.goBack();
               swal("User Created Successfully");
             }
           })
@@ -192,7 +263,17 @@ const CreateAccount = () => {
       swal("Enter User Name Email and Select Role");
     }
   };
+  const onSelect1 = (selectedList, selectedItem) => {
+    console.log(selectedList);
+    setSelectedRoleToAssign(selectedList);
+    // setProductList(selectedList[0].productItems);
+  };
+  const onRemove1 = (selectedList, removedItem) => {
+    console.log(selectedList);
+    setSelectedRoleToAssign(selectedList);
 
+    // console.log(index);
+  };
   return (
     <div>
       <div>
@@ -239,7 +320,25 @@ const CreateAccount = () => {
                           e.target.options[e.target.selectedIndex].getAttribute(
                             "data-name"
                           );
+                        const selectedPosition =
+                          e.target.options[e.target.selectedIndex].getAttribute(
+                            "data-id"
+                          );
 
+                        if (
+                          selectedPosition?.toLowerCase()?.includes("admin") ||
+                          selectedPosition
+                            ?.toLowerCase()
+                            ?.includes("superadmin")
+                        ) {
+                          let userdata = JSON.parse(
+                            localStorage.getItem("userData")
+                          );
+
+                          formData["created_by"] = userdata?._id;
+                        }
+                        // console.log(dropdownValue);
+                        // console.log(formData["created_by"] = userdata?._id;)
                         setFormData({
                           ...formData,
                           ["rolename"]: e.target.value,
@@ -251,7 +350,10 @@ const CreateAccount = () => {
                         dropdownValue?.length &&
                         dropdownValue?.map((ele, i) => {
                           return (
-                            <option data-name={ele?.database} value={ele?._id}>
+                            <option
+                              data-id={ele?.roleName}
+                              data-name={ele?.database}
+                              value={ele?._id}>
                               {ele?.roleName}
                             </option>
                           );
@@ -260,16 +362,41 @@ const CreateAccount = () => {
                   </FormGroup>
                 </Col>
                 {Master && Master && (
-                  <Col lg="4" md="4">
-                    <FormGroup>
-                      <Label>Database Name</Label>
-                      <Input
-                        readOnly
-                        type="text"
-                        value={formData["database"]}
-                      />
-                    </FormGroup>
-                  </Col>
+                  <>
+                    <Col className="mb-1" lg="4" md="4">
+                      <div className="">
+                        <Label>Select Roles to Assign * </Label>
+
+                        <Multiselect
+                          required
+                          showCheckbox="true"
+                          isObject="false"
+                          options={AllAssignRoleList} // Options to display in the dropdown
+                          // selectedValues={selectedValue}   // Preselected value to persist in dropdown
+                          onSelect={onSelect1} // Function will trigger on select event
+                          onRemove={onRemove1} // Function will trigger on remove event
+                          displayValue="roleName" // Property name to display in the dropdown options
+                        />
+                      </div>
+                    </Col>
+
+                    <Col lg="4" md="4">
+                      <FormGroup>
+                        <Label>Database Name *</Label>
+                        <Input
+                          placeholder="one or two or three ..."
+                          type="text"
+                          value={formData["database"]}
+                          onChange={(e) => {
+                            setFormData({
+                              ...formData,
+                              ["database"]: e.target.value,
+                            });
+                          }}
+                        />
+                      </FormGroup>
+                    </Col>
+                  </>
                 )}
 
                 {CreatAccountView &&
@@ -326,7 +453,29 @@ const CreateAccount = () => {
                           <Col key={i} lg="4" md="4" sm="12">
                             <FormGroup>
                               <Label>{ele?.label?._text}</Label>
-                              <Select
+
+                              <Input
+                                onKeyDown={(e) => {
+                                  if (
+                                    ele?.type?._attributes?.type == "number"
+                                  ) {
+                                    ["e", "E", "+", "-"].includes(e.key) &&
+                                      e.preventDefault();
+                                  }
+                                }}
+                                type={ele?.type?._attributes?.type}
+                                placeholder={ele?.placeholder?._text}
+                                name={ele?.name?._text}
+                                value={formData[ele?.name?._text]}
+                                onChange={(e) =>
+                                  handleInputChange(
+                                    e,
+                                    ele?.type?._attributes?.type,
+                                    i
+                                  )
+                                }
+                              />
+                              {/* <Select
                                 inputClass="countryclass"
                                 className="countryclassnw"
                                 options={Country.getAllCountries()}
@@ -344,7 +493,7 @@ const CreateAccount = () => {
                                     ["Country"]: country?.name,
                                   });
                                 }}
-                              />
+                              /> */}
                               {index === i ? (
                                 <>
                                   {error && (
@@ -364,7 +513,29 @@ const CreateAccount = () => {
                           <Col key={i} lg="4" md="4" sm="12">
                             <FormGroup>
                               <Label>{ele?.label?._text}</Label>
-                              <Select
+                              <Input
+                                disabled
+                                onKeyDown={(e) => {
+                                  if (
+                                    ele?.type?._attributes?.type == "number"
+                                  ) {
+                                    ["e", "E", "+", "-"].includes(e.key) &&
+                                      e.preventDefault();
+                                  }
+                                }}
+                                type={ele?.type?._attributes?.type}
+                                placeholder={ele?.placeholder?._text}
+                                name={ele?.name?._text}
+                                value={formData[ele?.name?._text]}
+                                onChange={(e) =>
+                                  handleInputChange(
+                                    e,
+                                    ele?.type?._attributes?.type,
+                                    i
+                                  )
+                                }
+                              />
+                              {/* <Select
                                 options={State?.getStatesOfCountry(
                                   Countries?.isoCode
                                 )}
@@ -382,7 +553,7 @@ const CreateAccount = () => {
                                     ["State"]: State?.name,
                                   });
                                 }}
-                              />
+                              /> */}
                               {index === i ? (
                                 <>
                                   {error && (
@@ -402,7 +573,29 @@ const CreateAccount = () => {
                           <Col key={i} lg="4" md="4" sm="12">
                             <FormGroup>
                               <Label>{ele?.label?._text}</Label>
-                              <Select
+                              <Input
+                                disabled
+                                onKeyDown={(e) => {
+                                  if (
+                                    ele?.type?._attributes?.type == "number"
+                                  ) {
+                                    ["e", "E", "+", "-"].includes(e.key) &&
+                                      e.preventDefault();
+                                  }
+                                }}
+                                type={ele?.type?._attributes?.type}
+                                placeholder={ele?.placeholder?._text}
+                                name={ele?.name?._text}
+                                value={formData[ele?.name?._text]}
+                                onChange={(e) =>
+                                  handleInputChange(
+                                    e,
+                                    ele?.type?._attributes?.type,
+                                    i
+                                  )
+                                }
+                              />
+                              {/* <Select
                                 options={City?.getCitiesOfState(
                                   States?.countryCode,
                                   States?.isoCode
@@ -421,7 +614,7 @@ const CreateAccount = () => {
                                     ["City"]: City?.name,
                                   });
                                 }}
-                              />
+                              /> */}
                               {index === i ? (
                                 <>
                                   {error && (
@@ -540,6 +733,79 @@ const CreateAccount = () => {
                           </>
                         );
                       }
+                    } else if (ele?.label._text?.includes("incode")) {
+                      return (
+                        <Col key={i} lg="4" md="4" sm="12">
+                          <FormGroup>
+                            <Label>{ele?.label?._text}</Label>
+                            <Input
+                              onKeyDown={(e) => {
+                                if (ele?.type?._attributes?.type == "number") {
+                                  ["e", "E", "+", "-"].includes(e.key) &&
+                                    e.preventDefault();
+                                }
+                              }}
+                              type={ele?.type?._attributes?.type}
+                              placeholder={ele?.placeholder?._text}
+                              name={ele?.name?._text}
+                              value={formData[ele?.name?._text]}
+                              onChange={(e) => {
+                                let SelectedCity = Country_State_city?.filter(
+                                  (ele) => ele?.Pincode == e.target.value
+                                );
+                                // console.log(SelectedCity);
+                                if (SelectedCity?.length) {
+                                  setFormData({
+                                    ...formData,
+                                    ["State"]: SelectedCity[0]?.StateName,
+                                    ["City"]: SelectedCity[0]?.District,
+                                    ["pincode"]: e.target.value,
+                                  });
+                                } else {
+                                  setFormData({
+                                    ...formData,
+                                    [ele?.name?._text]: e.target.value,
+                                  });
+                                }
+                                // handleInputChange(
+                                //   e,
+                                //   ele?.type?._attributes?.type,
+                                //   i
+                                // );
+                              }}
+                            />
+                            {/* <Select
+                                options={City?.getCitiesOfState(
+                                  States?.countryCode,
+                                  States?.isoCode
+                                )}
+                                getOptionLabel={(options) => {
+                                  return options["name"];
+                                }}
+                                getOptionValue={(options) => {
+                                  return options["name"];
+                                }}
+                                value={Cities}
+                                onChange={(City) => {
+                                  setCities(City);
+                                  setFormData({
+                                    ...formData,
+                                    ["City"]: City?.name,
+                                  });
+                                }}
+                              /> */}
+                            {index === i ? (
+                              <>
+                                {error && (
+                                  <span style={{ color: "red" }}>{error}</span>
+                                )}
+                              </>
+                            ) : (
+                              <></>
+                            )}
+                          </FormGroup>
+                        </Col>
+                      );
                     } else {
                       return (
                         <>

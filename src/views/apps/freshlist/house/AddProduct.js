@@ -365,27 +365,31 @@ const AddProduct = () => {
                     ) {
                       return (
                         <>
-                          <Col key={i} lg="4" md="4">
-                            <Label className="mb-1 mt-1">
-                              {ele?.dropdown?.label?._text} *
-                            </Label>
-                            <CustomInput
-                              required
-                              type="select"
-                              placeholder="Select WareHouse"
-                              name={ele?.dropdown?.name?._text}
-                              value={formData[ele?.dropdown?.name?._text]}
-                              onChange={handleInputChange}>
-                              <option value="NA">--Select WareHouse--</option>
+                          {formData?.ProductType == "Product" && (
+                            <Col key={i} lg="4" md="4">
+                              <Label className="mb-1 mt-1">
+                                {ele?.dropdown?.label?._text} *
+                              </Label>
+                              <CustomInput
+                                required
+                                type="select"
+                                placeholder="Select WareHouse"
+                                name={ele?.dropdown?.name?._text}
+                                value={formData[ele?.dropdown?.name?._text]}
+                                onChange={handleInputChange}>
+                                <option value="NA">--Select WareHouse--</option>
 
-                              {wareHouseList &&
-                                wareHouseList?.map((whList) => (
-                                  <option value={whList?._id} key={whList?._id}>
-                                    {whList?.firstName}
-                                  </option>
-                                ))}
-                            </CustomInput>
-                          </Col>
+                                {wareHouseList &&
+                                  wareHouseList?.map((whList) => (
+                                    <option
+                                      value={whList?._id}
+                                      key={whList?._id}>
+                                      {whList?.firstName}
+                                    </option>
+                                  ))}
+                              </CustomInput>
+                            </Col>
+                          )}
                         </>
                       );
                     }
