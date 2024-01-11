@@ -21,14 +21,7 @@ import {
   Spinner,
 } from "reactstrap";
 import { ToWords } from "to-words";
-import {
-  Eye,
-  Trash2,
-  ChevronDown,
-  Edit,
-  CloudLightning,
-  CornerDownLeft,
-} from "react-feather";
+import { ChevronDown } from "react-feather";
 
 import InvoicGenerator from "../../subcategory/InvoiceGeneratorone";
 import { Route, Link } from "react-router-dom";
@@ -44,6 +37,7 @@ import Logo from "../../../../../assets/img/profile/pages/logomain.png";
 import {
   ViewCompanyDetails,
   PurchaseOrderList,
+  DeleteAccount,
 } from "../../../../../ApiEndPoint/ApiCalling";
 import "../../../../../assets/scss/plugins/tables/_agGridStyleOverride.scss";
 import "../../../../../assets/scss/pages/users.scss";
@@ -60,11 +54,7 @@ import {
   FaFilter,
   FaPlus,
 } from "react-icons/fa";
-import {
-  CreateAccountList,
-  CreateAccountView,
-  DeleteAccount,
-} from "../../../../../ApiEndPoint/ApiCalling";
+
 import UserContext from "../../../../../context/Context";
 import { CheckPermission } from "../../house/CheckPermission";
 import {
@@ -107,6 +97,8 @@ class Purchasereportamount extends React.Component {
       isOpen: false,
       ShowMyBill: false,
       MasterShow: false,
+      startDate: "",
+      EndDate: "",
       BillNumber: "",
       Arrindex: "",
       AllbillMerged: [],
@@ -140,83 +132,21 @@ class Purchasereportamount extends React.Component {
           headerName: "S.No",
           valueGetter: "node.rowIndex + 1",
           field: "node.rowIndex + 1",
-          width: 80,
+          width: 120,
           filter: true,
         },
-        // {
-        //   headerName: "Actions",
-        //   field: "sortorder",
-        //   field: "transactions",
-        //   width: 120,
-        //   cellRendererFramework: params => {
-        //     return (
-        //       <div className="actions cursor-pointer">
-        //         {this.state.InsiderPermissions &&
-        //           this.state.InsiderPermissions?.Edit && (
-        //             <CornerDownLeft
-        //               className="mr-50"
-        //               size="25px"
-        //               color="green"
-        //               onClick={() => {
-        //                 localStorage.setItem(
-        //                   "OrderList",
-        //                   JSON.stringify(params.data)
-        //                 );
-        //                 this.props.history.push({
-        //                   pathname: `/app/AJGroup/order/placeOrderReturn/${params.data?._id}`,
-        //                   state: params.data,
-        //                 });
-        //               }}
-        //             />
-        //           )}
 
-        //         {this.state.InsiderPermissions &&
-        //           this.state.InsiderPermissions?.Delete && (
-        //             <Route
-        //               render={() => (
-        //                 <Trash2
-        //                   className="mr-50"
-        //                   size="25px"
-        //                   color="red"
-        //                   onClick={() => {
-        //                     let selectedData = this.gridApi.getSelectedRows();
-        //                     this.runthisfunction(params.data?._id);
-        //                     this.gridApi.updateRowData({
-        //                       remove: selectedData,
-        //                     });
-        //                   }}
-        //                 />
-        //               )}
-        //             />
-        //           )}
-        //       </div>
-        //     );
-        //   },
-        // },
         {
           headerName: "Status",
           field: "order_status",
           filter: true,
           width: 140,
           cellRendererFramework: params => {
-            return params.data?.status === "completed" ? (
-              <div className="badge badge-pill badge-success">Completed</div>
-            ) : params.data?.status === "pending" ? (
-              <div className="badge badge-pill badge-warning">
-                {params.data?.status}
-              </div>
-            ) : params.data?.status === "return" ? (
-              <div className="badge badge-pill bg-danger">Returned</div>
-            ) : params.data?.status === "cancelled" ? (
-              <div className="badge badge-pill bg-danger">
+            params.data?.status === "completed";
+            return (
+              <div className="badge badge-pill badge-success">
                 {params.data.status}
               </div>
-            ) : params.data?.status === "completed" ? (
-              <div className="badge badge-pill bg-success">Completed</div>
-            ) : (
-              <>
-                <div className="badge badge-pill bg-warning">Cancelled</div>
-              </>
             );
           },
         },
@@ -227,8 +157,6 @@ class Purchasereportamount extends React.Component {
           resizable: true,
           width: 180,
           cellRendererFramework: params => {
-            console.log(params.data);
-
             return (
               <div className="d-flex align-items-center cursor-pointer">
                 <div>
@@ -306,17 +234,27 @@ class Purchasereportamount extends React.Component {
 
         {
           headerName: "Total Product",
-          field: "params?.data?.orderItems?.length",
+          field: "TotalProduct",
           filter: true,
           resizable: true,
           width: 180,
           cellRendererFramework: params => {
-            // console.log(params.data);
             return (
               <div className="d-flex cursor-pointer">
                 <div>{params?.data?.orderItems?.length} Products</div>
               </div>
             );
+          },
+        },
+        {
+          headerName: "Create Date",
+          field: "orderItems",
+          filter: true,
+          width: 180,
+          valueGetter: params => {
+            const dateList = new Date(params?.data?.updatedAt);
+            const onlyDate = dateList?.toISOString()?.split("T")[0];
+            return onlyDate;
           },
         },
       ],
@@ -351,11 +289,22 @@ class Purchasereportamount extends React.Component {
     }
     this.setState({ Mergebilllength: AddedBill?.length });
   };
+  handleDate = e => {
+    const { name, value } = e.target;
+    this.setState({ [name]: value });
+  };
 
+  handleSubmitDate = () => {
+    const filteredItems = this.state.rowData.filter(item => {
+      const dateList = new Date(item.updatedAt);
+      const onlyDate = dateList.toISOString().split("T")[0];
+      return onlyDate >= this.state.startDate && onlyDate <= this.state.EndDate;
+    });
+    this.setState({ rowData: filteredItems });
+  };
   MergeBillNow = data => {
     let billnum = localStorage.getItem("billnumber");
-    console.log(data);
-    console.log(billnum);
+
     if (billnum) {
       this.setState({ ShowBill: false });
       this.setState({ PrintData: data });
@@ -428,9 +377,10 @@ class Purchasereportamount extends React.Component {
     PurchaseOrderList(id, db)
       .then(res => {
         this.setState({ Loading: false });
-
-        console.log(res?.orderHistory);
-        this.setState({ rowData: res?.orderHistory });
+        const allCompltedList = res?.orderHistory?.filter(
+          ele => ele?.status == "completed"
+        );
+        this.setState({ rowData: allCompltedList });
         this.setState({ AllcolumnDefs: this.state.columnDefs });
 
         let userHeading = JSON.parse(
@@ -464,7 +414,6 @@ class Purchasereportamount extends React.Component {
 
     await ViewCompanyDetails(pageparmission?._id, pageparmission?.database)
       .then(res => {
-        console.log(res?.CompanyDetail);
         this.setState({ CompanyDetails: res?.CompanyDetail });
       })
       .catch(err => {
@@ -478,16 +427,8 @@ class Purchasereportamount extends React.Component {
     }
 
     const InsidePermissions = CheckPermission("Purchase Report and Amount");
-    console.log(InsidePermissions);
+
     this.setState({ InsiderPermissions: InsidePermissions });
-    // console.log(pageparmission.role);
-    let userchoice = JSON.parse(localStorage.getItem("billUI"));
-    console.log(userchoice);
-    if (userchoice) {
-      this.setState({ logoposition: userchoice?.imagePosition });
-      this.setState({ Billtoposition: userchoice?.billTo });
-      this.setState({ shipto: userchoice?.shipto });
-    }
   }
 
   submitHandler = e => {
@@ -624,7 +565,6 @@ class Purchasereportamount extends React.Component {
     }
   };
   processCell = params => {
-    // console.log(params);
     // Customize cell content as needed
     return params.value;
   };
@@ -876,6 +816,34 @@ class Purchasereportamount extends React.Component {
                             Purchased ReportAmount
                           </h1>
                         </Col>
+                        <Col>
+                          <Label>Start Date</Label>
+                          <Input
+                            type="date"
+                            name="startDate"
+                            value={this.state.startDate}
+                            onChange={this.handleDate}
+                          />
+                        </Col>
+                        <Col>
+                          <Label>End Date</Label>
+                          <Input
+                            type="date"
+                            name="EndDate"
+                            value={this.state.EndDate}
+                            onChange={this.handleDate}
+                          />
+                        </Col>
+                        <Col>
+                          <Button
+                            type="submit"
+                            className="mt-1"
+                            color="primary"
+                            onClick={this.handleSubmitDate}
+                          >
+                            Submit
+                          </Button>
+                        </Col>
                         {this.state.MasterShow && (
                           <Col>
                             <SuperAdminUI
@@ -1033,30 +1001,11 @@ class Purchasereportamount extends React.Component {
                               {context => (
                                 <AgGridReact
                                   id="myAgGrid"
-                                  // gridOptions={{
-                                  //   domLayout: "autoHeight",
-                                  //   // or other layout options
-                                  // }}
                                   gridOptions={this.gridOptions}
                                   rowSelection="multiple"
                                   defaultColDef={defaultColDef}
                                   columnDefs={columnDefs}
                                   rowData={rowData}
-                                  // onGridReady={(params) => {
-                                  //   this.gridApi = params.api;
-                                  //   this.gridColumnApi = params.columnApi;
-                                  //   this.gridRef.current = params.api;
-
-                                  //   this.setState({
-                                  //     currenPageSize:
-                                  //       this.gridApi.paginationGetCurrentPage() +
-                                  //       1,
-                                  //     getPageSize:
-                                  //       this.gridApi.paginationGetPageSize(),
-                                  //     totalPages:
-                                  //       this.gridApi.paginationGetTotalPages(),
-                                  //   });
-                                  // }}
                                   onGridReady={this.onGridReady}
                                   colResizeDefault={"shift"}
                                   animateRows={true}

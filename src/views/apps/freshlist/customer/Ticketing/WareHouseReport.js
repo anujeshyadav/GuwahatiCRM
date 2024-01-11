@@ -17,6 +17,8 @@ import {
   ModalHeader,
   ModalBody,
   FormGroup,
+  Label,
+  CustomInput,
 } from "reactstrap";
 import { ContextLayout } from "../../../../../utility/context/Layout";
 import { AgGridReact } from "ag-grid-react";
@@ -43,6 +45,7 @@ import {
   Createwarehousexml,
   ticketToolDeleteOne,
   CreateWarehouseList,
+  CreateAccountList,
 } from "../../../../../ApiEndPoint/ApiCalling";
 import {
   BsFillArrowDownSquareFill,
@@ -63,6 +66,7 @@ class WareHouseReport extends React.Component {
       isOpen: false,
       Arrindex: "",
       rowData: [],
+      wareHouseViewOne: [],
       setMySelectedarr: [],
       SelectedCols: [],
       paginationPageSize: 5,
@@ -97,14 +101,40 @@ class WareHouseReport extends React.Component {
       this.setState({ EditOneData: data });
     }
   };
-
+  handleShowWarehouse = e => {
+    e.preventDefault();
+    if (this.state.warehouse != "NA") {
+      let selecteddata = this.state.wareHouseViewOne?.filter(
+        (ele, i) => ele?._id == this.state.warehouse
+      );
+      console.log(selecteddata);
+      this.setState({ Show: true });
+      this.setState({ rowData: selecteddata });
+    } else {
+      swal("You did not select Any Warehouse");
+    }
+  };
+  changeHandler = e => {
+    this.setState({ [e.target.name]: e.target.value });
+  };
   async componentDidMount() {
     const UserInformation = this.context?.UserInformatio;
     let userData = JSON.parse(localStorage.getItem("userData"));
-    await CreateWarehouseList(userData._id)
+    // await CreateWarehouseList(userData._id)
+    //   .then(res => {
+    //     // console.log(res);
+    //     this.setState({ rowData: res?.Warehouse });
+    //   })
+    //   .catch(err => {
+    //     console.log(err);
+    //   });
+
+    await CreateAccountList(userData?._id, userData?.database)
       .then(res => {
-        console.log(res);
-        this.setState({ rowData: res?.Warehouse });
+        console.log(res.adminDetails);
+        if (res.adminDetails) {
+          this.setState({ wareHouseViewOne: res?.adminDetails });
+        }
       })
       .catch(err => {
         console.log(err);
@@ -184,7 +214,6 @@ class WareHouseReport extends React.Component {
                     .format(UserInformation?.dateTimeFormat);
                 }
               }
-
               return (
                 <>
                   <div className="actions cursor-pointer">
@@ -247,7 +276,7 @@ class WareHouseReport extends React.Component {
 
         this.setState({ AllcolumnDefs: Product });
 
-        let userHeading = JSON.parse(localStorage.getItem("Ticketsearch"));
+        let userHeading = JSON.parse(localStorage.getItem("WareHouseReport"));
         if (userHeading?.length) {
           this.setState({ columnDefs: userHeading });
           this.gridApi.setColumnDefs(userHeading);
@@ -476,8 +505,6 @@ class WareHouseReport extends React.Component {
 
         xmlString += "</root>";
 
-        // setXmlData(xmlString);
-
         // Create a download link
         const blob = new Blob([xmlString], { type: "text/xml" });
         const link = document.createElement("a");
@@ -495,7 +522,7 @@ class WareHouseReport extends React.Component {
     this.setState({ SelectedcolumnDefs: this.state.SelectedcolumnDefs });
     this.setState({ rowData: this.state.rowData });
     localStorage.setItem(
-      "Ticketsearch",
+      "WareHouseReport",
       JSON.stringify(this.state.SelectedcolumnDefs)
     );
     this.LookupviewStart();
@@ -536,7 +563,6 @@ class WareHouseReport extends React.Component {
     } = this.state;
     return (
       <>
-        {/* <ExcelReader /> */}
         <Row className="app-user-list">
           {this.state.EditOneUserView && this.state.EditOneUserView ? (
             <Row className="card">
@@ -590,6 +616,46 @@ class WareHouseReport extends React.Component {
                             WareHouse Report
                           </h1>
                         </Col>
+                        {/* {this.state.InsiderPermissions &&
+                          this.state.InsiderPermissions?.View && (
+                            <> */}
+                        <Col>
+                          <FormGroup>
+                            <Label>Select Warehouse</Label>
+                            <CustomInput
+                              type="select"
+                              placeholder="Select Warehouse"
+                              name="warehouse"
+                              value={this.state.warehouse}
+                              onChange={this.changeHandler}
+                            >
+                              <option value="">--Select WareHouse--</option>
+                              {this.state.wareHouseViewOne?.map(cat => (
+                                <option value={cat?._id} key={cat?._id}>
+                                  {cat?.firstName}
+                                </option>
+                              ))}
+                            </CustomInput>
+                          </FormGroup>
+                        </Col>
+
+                        <Col lg="2" md="2" className="mb-2">
+                          <Button
+                            style={{
+                              cursor: "pointer",
+                              backgroundColor: "#39cccc",
+                              color: "white",
+                              fontWeight: "600",
+                            }}
+                            className="mt-2"
+                            color="#39cccc"
+                            onClick={this.handleShowWarehouse}
+                          >
+                            Submit
+                          </Button>
+                        </Col>
+                        {/* </>
+                          )} */}
                         <Col>
                           <span className="mx-1">
                             <FaFilter
@@ -736,30 +802,11 @@ class WareHouseReport extends React.Component {
                               {context => (
                                 <AgGridReact
                                   id="myAgGrid"
-                                  // gridOptions={{
-                                  //   domLayout: "autoHeight",
-                                  //   // or other layout options
-                                  // }}
                                   gridOptions={this.gridOptions}
                                   rowSelection="multiple"
                                   defaultColDef={defaultColDef}
                                   columnDefs={columnDefs}
                                   rowData={rowData}
-                                  // onGridReady={(params) => {
-                                  //   this.gridApi = params.api;
-                                  //   this.gridColumnApi = params.columnApi;
-                                  //   this.gridRef.current = params.api;
-
-                                  //   this.setState({
-                                  //     currenPageSize:
-                                  //       this.gridApi.paginationGetCurrentPage() +
-                                  //       1,
-                                  //     getPageSize:
-                                  //       this.gridApi.paginationGetPageSize(),
-                                  //     totalPages:
-                                  //       this.gridApi.paginationGetTotalPages(),
-                                  //   });
-                                  // }}
                                   onGridReady={this.onGridReady}
                                   colResizeDefault={"shift"}
                                   animateRows={true}
@@ -796,7 +843,7 @@ class WareHouseReport extends React.Component {
           <ModalBody className="modalbodyhead">
             <Row>
               <Col lg="4" md="4" sm="12" xl="4" xs="12">
-                <h4>Avilable Columns</h4>
+                <h4>Available Columns</h4>
                 <div className="mainshffling">
                   <div class="ex1">
                     {AllcolumnDefs &&
@@ -813,11 +860,7 @@ class WareHouseReport extends React.Component {
                                   style={{ cursor: "pointer" }}
                                   className="allfields"
                                 >
-                                  <input
-                                    type="checkbox"
-                                    // checked={check && check}
-                                    className="mx-1"
-                                  />
+                                  <input type="checkbox" className="mx-1" />
 
                                   {ele?.headerName}
                                 </h5>

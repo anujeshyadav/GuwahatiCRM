@@ -7,7 +7,7 @@ import {
 } from "../ApiEndPoint/ApiCalling";
 import xmlJs from "xml-js";
 
-const State = (props) => {
+const State = props => {
   const [crateUserXmlView, setcreateUserXmlView] = useState({});
   const [CompanyDetails, setCompanyDetails] = useState({});
   const [Mode, setMode] = useState("semi-dark");
@@ -34,19 +34,18 @@ const State = (props) => {
 
   useEffect(() => {
     let user = JSON.parse(localStorage.getItem("userData"));
-    console.log(UserInformatio);
     const fetchData = async () => {
       try {
         await ViewCompanyDetails(user?._id, user?.database)
-          .then((res) => {
-            console.log(res?.CompanyDetail);
+          .then(res => {
+            // console.log(res?.CompanyDetail);
             localStorage.setItem(
               "Companydetail",
               JSON.stringify(res?.CompanyDetail)
             );
             setCompanyDetails(res?.CompanyDetail);
           })
-          .catch((err) => {
+          .catch(err => {
             console.log(err);
           });
       } catch (error) {
@@ -68,13 +67,13 @@ const State = (props) => {
       currency = "USD_$";
     }
     CurrencyConvertor(currency?.split("_")[0])
-      .then((res) => {
+      .then(res => {
         let fromRate = res?.rates[PresentCurrency.split("_")[0]];
         let toRate = res?.rates[currency?.split("_")[0]];
         const value = toRate / fromRate;
         setCurrencyconvert(value);
       })
-      .catch((err) => {
+      .catch(err => {
         console.log(err);
       });
   }, [user?.currency]);
@@ -101,7 +100,8 @@ const State = (props) => {
         setPartsCatloguelength,
         PartsCatloguelength,
         UserInformatio,
-      }}>
+      }}
+    >
       {props.children}
     </UserContext.Provider>
   );
