@@ -276,11 +276,12 @@ class HorizontalSidebar extends React.Component {
   };
 
   renderDropdown = arr => {
-    // console.log(arr);
+    console.log(arr);
     return arr?.map((item, i) => {
       arr[i].children?.forEach(tab => {
         if (tab.children) {
           tab?.children?.forEach(tab1 => {
+            // console.log(tab1, 111);
             if (this.state.showpage?.includes(tab1?.title)) {
               tab1.hidden = false;
             } else {

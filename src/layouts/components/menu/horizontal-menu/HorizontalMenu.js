@@ -40,6 +40,7 @@ class HorizontalSidebar extends React.Component {
       isOpen: false,
       Arrindex: "",
       openDropdown: [],
+      showpage: [],
       AllAvailableCol: [],
       columnDefs: [],
       AllcolumnDefs: [],
@@ -116,6 +117,7 @@ class HorizontalSidebar extends React.Component {
     });
   };
   handleChangeHeader = (e, value, index) => {
+    console.log(value);
     let check = e.target.checked;
     if (check) {
       if (SelectedColums?.length < 12) {
@@ -340,6 +342,12 @@ class HorizontalSidebar extends React.Component {
   };
 
   componentDidMount() {
+    let userCredentials = JSON.parse(localStorage.getItem("userData"));
+    let TabparMission = userCredentials?.rolename?.rolePermission?.map(
+      value => value?.pagename
+    );
+    // console.log(TabparMission);
+    this.setState({ showpage: TabparMission });
     let myheadings = JSON.parse(localStorage.getItem("myHeadings"));
     if (myheadings?.length) {
       this.setState({ SelectedcolumnDefs: myheadings });
@@ -379,6 +387,7 @@ class HorizontalSidebar extends React.Component {
                   history.push(ele?.navLink);
                 }}
               >
+                {/* {this.state.showpage?.includes(ele?.title)} */}
                 {ele?.title}
               </Badge>
             )}
@@ -537,7 +546,7 @@ class HorizontalSidebar extends React.Component {
               </div>
               <Row>
                 <Col lg="4" md="4" sm="12" xl="4" xs="12">
-                  <h4>Avilable Columns</h4>
+                  <h4>Available Columns</h4>
                   <div className="mainshffling">
                     <div class="ex1">
                       {AllAvailableCol &&
@@ -556,13 +565,21 @@ class HorizontalSidebar extends React.Component {
                                     style={{ cursor: "pointer" }}
                                     className="allfields"
                                   >
-                                    <input
-                                      type="checkbox"
-                                      // checked={check && check}
-                                      className="mx-1"
-                                    />
-
-                                    {ele?.title}
+                                    {this.state.showpage.includes(
+                                      ele?.title
+                                    ) ? (
+                                      <>
+                                        <input
+                                          type="checkbox"
+                                          className="mx-1"
+                                        />
+                                        {this.state.showpage.includes(
+                                          ele?.title
+                                        )
+                                          ? ele?.title
+                                          : null}
+                                      </>
+                                    ) : null}
                                   </h5>
                                 </span>
                               </div>
