@@ -584,7 +584,7 @@ class PurchaseInvoice extends React.Component {
 
   async componentDidMount() {
     let pageparmission = JSON.parse(localStorage.getItem("userData"));
-    if (pageparmission?.rolename?.rank === 0) {
+    if (pageparmission?.rolename?.roleName === "MASTER") {
       this.setState({ MasterShow: true });
     }
 
@@ -953,13 +953,12 @@ class PurchaseInvoice extends React.Component {
               <Col>
                 <div className="d-flex justify-content-end p-1">
                   <Button
-                    onClick={e => {
+                    onClick={(e) => {
                       e.preventDefault();
                       this.setState({ EditOneUserView: false });
                       this.componentDidMount();
                     }}
-                    color="danger"
-                  >
+                    color="danger">
                     Back
                   </Button>
                 </div>
@@ -978,12 +977,11 @@ class PurchaseInvoice extends React.Component {
                     <Col>
                       <div className="d-flex justify-content-end p-1">
                         <Button
-                          onClick={e => {
+                          onClick={(e) => {
                             e.preventDefault();
                             this.setState({ ViewOneUserView: false });
                           }}
-                          color="danger"
-                        >
+                          color="danger">
                           Back
                         </Button>
                       </div>
@@ -999,8 +997,7 @@ class PurchaseInvoice extends React.Component {
                         <Col>
                           <h1
                             className="float-left "
-                            style={{ fontWeight: "600" }}
-                          >
+                            style={{ fontWeight: "600" }}>
                             Purchased Invoice
                           </h1>
                         </Col>
@@ -1012,19 +1009,24 @@ class PurchaseInvoice extends React.Component {
                             />
                           </Col>
                         )}
-                        {this.state.InsiderPermissions &&
-                          this.state.InsiderPermissions.View && (
-                            <Col>
-                              <span className="mx-1">
-                                <FaFilter
-                                  style={{ cursor: "pointer" }}
-                                  title="filter coloumn"
-                                  size="35px"
-                                  onClick={this.LookupviewStart}
-                                  color="#39cccc"
-                                  className="float-right"
-                                />
-                              </span>
+                        <Col>
+                          {this.state.InsiderPermissions &&
+                            this.state.InsiderPermissions.View && (
+                              <>
+                                <span className="mx-1">
+                                  <FaFilter
+                                    style={{ cursor: "pointer" }}
+                                    title="filter coloumn"
+                                    size="35px"
+                                    onClick={this.LookupviewStart}
+                                    color="#39cccc"
+                                    className="float-right"
+                                  />
+                                </span>
+                              </>
+                            )}
+                          {this.state.InsiderPermissions &&
+                            this.state.InsiderPermissions?.Download && (
                               <span className="mx-1">
                                 <div className="dropdown-container float-right">
                                   <ImDownload
@@ -1043,13 +1045,11 @@ class PurchaseInvoice extends React.Component {
                                         border: "1px solid #39cccc",
                                         backgroundColor: "white",
                                       }}
-                                      className="dropdown-content dropdownmy"
-                                    >
+                                      className="dropdown-content dropdownmy">
                                       <h5
                                         onClick={() => this.exportToPDF()}
                                         style={{ cursor: "pointer" }}
-                                        className=" mx-1 myactive mt-1"
-                                      >
+                                        className=" mx-1 myactive mt-1">
                                         .PDF
                                       </h5>
                                       <h5
@@ -1057,152 +1057,151 @@ class PurchaseInvoice extends React.Component {
                                           this.gridApi.exportDataAsCsv()
                                         }
                                         style={{ cursor: "pointer" }}
-                                        className=" mx-1 myactive"
-                                      >
+                                        className=" mx-1 myactive">
                                         .CSV
                                       </h5>
                                       <h5
                                         onClick={this.convertCSVtoExcel}
                                         style={{ cursor: "pointer" }}
-                                        className=" mx-1 myactive"
-                                      >
+                                        className=" mx-1 myactive">
                                         .XLS
                                       </h5>
                                       <h5
                                         onClick={this.exportToExcel}
                                         style={{ cursor: "pointer" }}
-                                        className=" mx-1 myactive"
-                                      >
+                                        className=" mx-1 myactive">
                                         .XLSX
                                       </h5>
                                       <h5
                                         onClick={() => this.convertCsvToXml()}
                                         style={{ cursor: "pointer" }}
-                                        className=" mx-1 myactive"
-                                      >
+                                        className=" mx-1 myactive">
                                         .XML
                                       </h5>
                                     </div>
                                   )}
                                 </div>
                               </span>
-                            </Col>
-                          )}
+                            )}
+                        </Col>
                       </Row>
-                      <CardBody>
-                        {this.state.rowData === null ? null : (
-                          <div className="ag-theme-material w-100 my-2 ag-grid-table">
-                            <div className="d-flex flex-wrap justify-content-between align-items-center">
-                              <div className="mb-1">
-                                <UncontrolledDropdown className="p-1 ag-dropdown">
-                                  <DropdownToggle tag="div">
-                                    {this.gridApi
-                                      ? this.state.currenPageSize
-                                      : "" * this.state.getPageSize -
-                                        (this.state.getPageSize - 1)}{" "}
-                                    -{" "}
-                                    {this.state.rowData.length -
-                                      this.state.currenPageSize *
-                                        this.state.getPageSize >
-                                    0
-                                      ? this.state.currenPageSize *
-                                        this.state.getPageSize
-                                      : this.state.rowData.length}{" "}
-                                    of {this.state.rowData.length}
-                                    <ChevronDown className="ml-50" size={15} />
-                                  </DropdownToggle>
-                                  <DropdownMenu right>
-                                    <DropdownItem
-                                      tag="div"
-                                      onClick={() => this.filterSize(5)}
-                                    >
-                                      5
-                                    </DropdownItem>
-                                    <DropdownItem
-                                      tag="div"
-                                      onClick={() => this.filterSize(20)}
-                                    >
-                                      20
-                                    </DropdownItem>
-                                    <DropdownItem
-                                      tag="div"
-                                      onClick={() => this.filterSize(50)}
-                                    >
-                                      50
-                                    </DropdownItem>
-                                    <DropdownItem
-                                      tag="div"
-                                      onClick={() => this.filterSize(100)}
-                                    >
-                                      100
-                                    </DropdownItem>
-                                    <DropdownItem
-                                      tag="div"
-                                      onClick={() => this.filterSize(134)}
-                                    >
-                                      134
-                                    </DropdownItem>
-                                  </DropdownMenu>
-                                </UncontrolledDropdown>
-                              </div>
-                              <div className="d-flex flex-wrap justify-content-end mb-1">
-                                <div className="table-input mr-1">
-                                  <Input
-                                    placeholder="search Item here..."
-                                    onChange={e =>
-                                      this.updateSearchQuery(e.target.value)
-                                    }
-                                    value={this.state.value}
-                                  />
+                      {this.state.InsiderPermissions &&
+                        this.state.InsiderPermissions?.View && (
+                          <CardBody>
+                            {this.state.rowData === null ? null : (
+                              <div className="ag-theme-material w-100 my-2 ag-grid-table">
+                                <div className="d-flex flex-wrap justify-content-between align-items-center">
+                                  <div className="mb-1">
+                                    <UncontrolledDropdown className="p-1 ag-dropdown">
+                                      <DropdownToggle tag="div">
+                                        {this.gridApi
+                                          ? this.state.currenPageSize
+                                          : "" * this.state.getPageSize -
+                                            (this.state.getPageSize - 1)}{" "}
+                                        -{" "}
+                                        {this.state.rowData.length -
+                                          this.state.currenPageSize *
+                                            this.state.getPageSize >
+                                        0
+                                          ? this.state.currenPageSize *
+                                            this.state.getPageSize
+                                          : this.state.rowData.length}{" "}
+                                        of {this.state.rowData.length}
+                                        <ChevronDown
+                                          className="ml-50"
+                                          size={15}
+                                        />
+                                      </DropdownToggle>
+                                      <DropdownMenu right>
+                                        <DropdownItem
+                                          tag="div"
+                                          onClick={() => this.filterSize(5)}>
+                                          5
+                                        </DropdownItem>
+                                        <DropdownItem
+                                          tag="div"
+                                          onClick={() => this.filterSize(20)}>
+                                          20
+                                        </DropdownItem>
+                                        <DropdownItem
+                                          tag="div"
+                                          onClick={() => this.filterSize(50)}>
+                                          50
+                                        </DropdownItem>
+                                        <DropdownItem
+                                          tag="div"
+                                          onClick={() => this.filterSize(100)}>
+                                          100
+                                        </DropdownItem>
+                                        <DropdownItem
+                                          tag="div"
+                                          onClick={() => this.filterSize(134)}>
+                                          134
+                                        </DropdownItem>
+                                      </DropdownMenu>
+                                    </UncontrolledDropdown>
+                                  </div>
+                                  <div className="d-flex flex-wrap justify-content-end mb-1">
+                                    <div className="table-input mr-1">
+                                      <Input
+                                        placeholder="search Item here..."
+                                        onChange={(e) =>
+                                          this.updateSearchQuery(e.target.value)
+                                        }
+                                        value={this.state.value}
+                                      />
+                                    </div>
+                                  </div>
                                 </div>
-                              </div>
-                            </div>
-                            <ContextLayout.Consumer className="ag-theme-alpine">
-                              {context => (
-                                <AgGridReact
-                                  id="myAgGrid"
-                                  // gridOptions={{
-                                  //   domLayout: "autoHeight",
-                                  //   // or other layout options
-                                  // }}
-                                  gridOptions={this.gridOptions}
-                                  rowSelection="multiple"
-                                  defaultColDef={defaultColDef}
-                                  columnDefs={columnDefs}
-                                  rowData={rowData}
-                                  // onGridReady={(params) => {
-                                  //   this.gridApi = params.api;
-                                  //   this.gridColumnApi = params.columnApi;
-                                  //   this.gridRef.current = params.api;
+                                <ContextLayout.Consumer className="ag-theme-alpine">
+                                  {(context) => (
+                                    <AgGridReact
+                                      id="myAgGrid"
+                                      // gridOptions={{
+                                      //   domLayout: "autoHeight",
+                                      //   // or other layout options
+                                      // }}
+                                      gridOptions={this.gridOptions}
+                                      rowSelection="multiple"
+                                      defaultColDef={defaultColDef}
+                                      columnDefs={columnDefs}
+                                      rowData={rowData}
+                                      // onGridReady={(params) => {
+                                      //   this.gridApi = params.api;
+                                      //   this.gridColumnApi = params.columnApi;
+                                      //   this.gridRef.current = params.api;
 
-                                  //   this.setState({
-                                  //     currenPageSize:
-                                  //       this.gridApi.paginationGetCurrentPage() +
-                                  //       1,
-                                  //     getPageSize:
-                                  //       this.gridApi.paginationGetPageSize(),
-                                  //     totalPages:
-                                  //       this.gridApi.paginationGetTotalPages(),
-                                  //   });
-                                  // }}
-                                  onGridReady={this.onGridReady}
-                                  colResizeDefault={"shift"}
-                                  animateRows={true}
-                                  floatingFilter={false}
-                                  pagination={true}
-                                  paginationPageSize={
-                                    this.state.paginationPageSize
-                                  }
-                                  pivotPanelShow="always"
-                                  enableRtl={context.state.direction === "rtl"}
-                                  ref={this.gridRef} // Attach the ref to the grid
-                                  domLayout="autoHeight" // Adjust layout as needed
-                                />
-                              )}
-                            </ContextLayout.Consumer>
-                          </div>
+                                      //   this.setState({
+                                      //     currenPageSize:
+                                      //       this.gridApi.paginationGetCurrentPage() +
+                                      //       1,
+                                      //     getPageSize:
+                                      //       this.gridApi.paginationGetPageSize(),
+                                      //     totalPages:
+                                      //       this.gridApi.paginationGetTotalPages(),
+                                      //   });
+                                      // }}
+                                      onGridReady={this.onGridReady}
+                                      colResizeDefault={"shift"}
+                                      animateRows={true}
+                                      floatingFilter={false}
+                                      pagination={true}
+                                      paginationPageSize={
+                                        this.state.paginationPageSize
+                                      }
+                                      pivotPanelShow="always"
+                                      enableRtl={
+                                        context.state.direction === "rtl"
+                                      }
+                                      ref={this.gridRef} // Attach the ref to the grid
+                                      domLayout="autoHeight" // Adjust layout as needed
+                                    />
+                                  )}
+                                </ContextLayout.Consumer>
+                              </div>
+                            )}
+                          </CardBody>
                         )}
-                      </CardBody>
                     </Card>
                   </Col>
                 </>
@@ -1215,8 +1214,7 @@ class PurchaseInvoice extends React.Component {
           isOpen={this.state.modal}
           toggle={this.LookupviewStart}
           className={this.props.className}
-          style={{ maxWidth: "1050px" }}
-        >
+          style={{ maxWidth: "1050px" }}>
           <ModalHeader toggle={this.LookupviewStart}>Change Fileds</ModalHeader>
           <ModalBody className="modalbodyhead">
             <Row>
@@ -1229,15 +1227,15 @@ class PurchaseInvoice extends React.Component {
                         return (
                           <>
                             <div
-                              onClick={e => this.handleChangeHeader(e, ele, i)}
+                              onClick={(e) =>
+                                this.handleChangeHeader(e, ele, i)
+                              }
                               key={i}
-                              className="mycustomtag mt-1"
-                            >
+                              className="mycustomtag mt-1">
                               <span className="mt-1">
                                 <h5
                                   style={{ cursor: "pointer" }}
-                                  className="allfields"
-                                >
+                                  className="allfields">
                                   <input
                                     type="checkbox"
                                     // checked={check && check}
@@ -1296,15 +1294,14 @@ class PurchaseInvoice extends React.Component {
                                             : ""
                                         }`,
                                       }}
-                                      className="allfields"
-                                    >
+                                      className="allfields">
                                       <IoMdRemoveCircleOutline
                                         onClick={() => {
                                           const SelectedCols =
                                             this.state.SelectedcolumnDefs.slice();
                                           const delindex =
                                             SelectedCols.findIndex(
-                                              element =>
+                                              (element) =>
                                                 element?.headerName ==
                                                 ele?.headerName
                                             );
@@ -1382,8 +1379,7 @@ class PurchaseInvoice extends React.Component {
           isOpen={this.state.modalOne}
           toggle={this.toggleModalOne}
           className={this.props.className}
-          style={{ maxWidth: "1050px" }}
-        >
+          style={{ maxWidth: "1050px" }}>
           <ModalHeader toggle={this.toggleModalclose}>
             {this.state.ShowBill ? "Select Bill Format" : "Download BIll"}
           </ModalHeader>
@@ -1397,7 +1393,7 @@ class PurchaseInvoice extends React.Component {
                   <Col lg="3" md="3" s="3">
                     <div className="imagebackground p-1">
                       <img
-                        onClick={e => this.handleBillSet(1)}
+                        onClick={(e) => this.handleBillSet(1)}
                         style={{ cursor: "pointer" }}
                         width={130}
                         height={150}
@@ -1409,7 +1405,7 @@ class PurchaseInvoice extends React.Component {
                   <Col lg="3" md="3" s="3">
                     <div className="imagebackground p-1">
                       <img
-                        onClick={e => this.handleBillSet(2)}
+                        onClick={(e) => this.handleBillSet(2)}
                         className="imagebackground"
                         style={{ cursor: "pointer" }}
                         width={130}
@@ -1422,7 +1418,7 @@ class PurchaseInvoice extends React.Component {
                   <Col lg="3" md="3" s="3">
                     <div className="imagebackground p-1">
                       <img
-                        onClick={e => this.handleBillSet(3)}
+                        onClick={(e) => this.handleBillSet(3)}
                         className="imagebackground"
                         style={{ cursor: "pointer" }}
                         width={130}
@@ -1435,7 +1431,7 @@ class PurchaseInvoice extends React.Component {
                   <Col lg="3" md="3" s="3">
                     <div className="imagebackground p-1">
                       <img
-                        onClick={e => this.handleBillSet(4)}
+                        onClick={(e) => this.handleBillSet(4)}
                         className="imagebackground"
                         style={{ cursor: "pointer" }}
                         width={130}
@@ -1473,7 +1469,7 @@ class PurchaseInvoice extends React.Component {
                     ) : (
                       <>
                         <div style={{ width: "100%" }} className="">
-                          <Form onSubmit={e => this.handleSubmit(e)}>
+                          <Form onSubmit={(e) => this.handleSubmit(e)}>
                             <Row className="main div heading px-3 py-3">
                               <Col lg="6" className="mb-2">
                                 <Label>SGST</Label>
@@ -1482,8 +1478,7 @@ class PurchaseInvoice extends React.Component {
                                   className="form-control"
                                   value={this.state.sgst}
                                   onChange={this.changeHandler}
-                                  name="sgst"
-                                >
+                                  name="sgst">
                                   <option value="not selected">
                                     --Select--
                                   </option>
@@ -1500,8 +1495,7 @@ class PurchaseInvoice extends React.Component {
                                   name="cgst"
                                   placeholder="Enter CGST"
                                   value={this.state.cgst}
-                                  onChange={this.changeHandler}
-                                >
+                                  onChange={this.changeHandler}>
                                   <option value="not selected">
                                     --Select--
                                   </option>
@@ -1517,8 +1511,7 @@ class PurchaseInvoice extends React.Component {
                                   name="otherCharges"
                                   placeholder="Enter Other Charges"
                                   value={this.state.otherCharges}
-                                  onChange={this.changeHandler}
-                                ></Input>
+                                  onChange={this.changeHandler}></Input>
                               </Col>
                               <Col lg="6">
                                 <Label className="mt-2">Delivery Charges</Label>
@@ -1527,8 +1520,7 @@ class PurchaseInvoice extends React.Component {
                                   name="deliveryCharges"
                                   placeholder="Enter Delivery Charges"
                                   value={this.state.deliveryCharges}
-                                  onChange={this.changeHandler}
-                                ></Input>
+                                  onChange={this.changeHandler}></Input>
                               </Col>
                               <Col lg="6">
                                 <Label className="mt-2">Discount </Label>
@@ -1537,8 +1529,7 @@ class PurchaseInvoice extends React.Component {
                                   name="discount"
                                   placeholder="Enter discount value"
                                   value={this.state.discount}
-                                  onChange={this.changeHandler}
-                                ></Input>
+                                  onChange={this.changeHandler}></Input>
                               </Col>
                             </Row>
                             <Row>
@@ -1551,8 +1542,7 @@ class PurchaseInvoice extends React.Component {
                                         : false
                                     }
                                     color="primary"
-                                    type="submit"
-                                  >
+                                    type="submit">
                                     {this.state.ButtonText}
                                   </Button>
                                 </div>
@@ -1574,8 +1564,7 @@ class PurchaseInvoice extends React.Component {
                             placeholder="Select Type"
                             name="logoposition"
                             value={this.state.logoposition}
-                            onChange={this.changeHandler}
-                          >
+                            onChange={this.changeHandler}>
                             <option>---Select---</option>
                             <option value="Left">Left</option>
                             <option value="right">Right</option>
@@ -1588,8 +1577,7 @@ class PurchaseInvoice extends React.Component {
                             placeholder="Select Type"
                             name="shipto"
                             value={this.state.shipto}
-                            onChange={this.changeHandler}
-                          >
+                            onChange={this.changeHandler}>
                             <option>---Select---</option>
                             <option value="Left">Left</option>
                             <option value="right">Right</option>
@@ -1610,8 +1598,7 @@ class PurchaseInvoice extends React.Component {
                             placeholder="Select Type"
                             name="Billtoposition"
                             value={this.state.Billtoposition}
-                            onChange={this.changeHandler}
-                          >
+                            onChange={this.changeHandler}>
                             <option>---Select---</option>
                             <option value="Left">Left</option>
                             <option value="right">Right</option>
@@ -1632,8 +1619,7 @@ class PurchaseInvoice extends React.Component {
                             <Button.Ripple
                               color="primary"
                               type="submit"
-                              className="mr-1 mb-1"
-                            >
+                              className="mr-1 mb-1">
                               Submit
                             </Button.Ripple>
                           </div>

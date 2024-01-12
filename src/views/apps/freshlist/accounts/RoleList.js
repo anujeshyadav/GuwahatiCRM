@@ -332,11 +332,12 @@ class RoleList extends React.Component {
     this.handleShowDepartment();
     let pageparmission = JSON.parse(localStorage.getItem("userData"));
     this.setState({ Position: pageparmission?.rolename.rank });
-    if (pageparmission?.rolename.rank === 0) {
+    if (pageparmission?.rolename?.roleName === "MASTER") {
       this.setState({ MasterShow: true });
       this.setState({ MasterRoleList: true });
     }
-    let value = pageparmission?.rolename.rank === 0;
+
+    let value = pageparmission?.rolename?.roleName == "MASTER";
     const InsidePermissions = CheckPermission("Create User");
     console.log(InsidePermissions);
     this.setState({ InsiderPermissions: InsidePermissions });

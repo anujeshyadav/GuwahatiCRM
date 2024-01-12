@@ -128,7 +128,7 @@ class CustomerSearch extends React.Component {
     const InsidePermissions = CheckPermission("Create Customer");
     this.setState({ InsiderPermissions: InsidePermissions });
     let userData = JSON.parse(localStorage.getItem("userData"));
-    if (userData?.rolename?.rank === 0) {
+    if (userData?.rolename?.roleName === "MASTER") {
       this.setState({ MasterShow: true });
     }
     await this.Apicalling(userData?._id, userData?.database);

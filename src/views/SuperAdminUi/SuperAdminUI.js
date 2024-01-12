@@ -5,18 +5,21 @@ import { _Get, _GetList } from "../../ApiEndPoint/ApiCalling";
 
 const SuperAdminUI = ({ onDropdownChange, onSubmit }) => {
   const [SuperAdminList, setSuperAdminList] = useState([]);
+  const [UserInfo, setUserInfo] = useState({});
   const [selectedSuperAdmin, setSelectedSuperAdmin] = useState("");
   const [selectedSuperAdminName, setSelectedSuperAdminName] = useState("");
 
   useEffect(() => {
     // Super_Admin_List;
+    let Userinfo = JSON.parse(localStorage.getItem("userData"));
+    setUserInfo(Userinfo);
     let List = JSON.parse(localStorage.getItem("AllSuper"));
     if (List?.length) {
       setSuperAdminList(List);
     } else {
       _GetList(Super_Admin_List)
         .then((res) => {
-          console.log(res?.SuperAdmin);
+          // console.log(res?.SuperAdmin);
           localStorage.setItem("AllSuper", JSON.stringify(res?.SuperAdmin));
           setSuperAdminList(res?.SuperAdmin);
         })
@@ -45,27 +48,32 @@ const SuperAdminUI = ({ onDropdownChange, onSubmit }) => {
   return (
     <div>
       <Row>
-        <Col lg="6" sm="6" md="6">
-          <CustomInput
-            value={selectedSuperAdmin}
-            onChange={handleDropdownChange}
-            type="select">
-            <option>--select SuperAdmin--</option>
-            {SuperAdminList &&
-              SuperAdminList?.map((ele, i) => (
-                <option
-                  data-name={`${ele?._id} ${ele?.database}`}
-                  value={ele?._id}>
-                  {ele?.firstName} {ele?.lastName}
-                </option>
-              ))}
-          </CustomInput>
-        </Col>
-        <Col>
-          <Button onClick={handleSubmit} color="primary">
-            Submit
-          </Button>
-        </Col>
+        {UserInfo?.rolename?.roleName === "MASTER" &&
+          UserInfo?.rolename?.roleName === "MASTER" && (
+            <>
+              <Col lg="6" sm="6" md="6">
+                <CustomInput
+                  value={selectedSuperAdmin}
+                  onChange={handleDropdownChange}
+                  type="select">
+                  <option>--select SuperAdmin--</option>
+                  {SuperAdminList &&
+                    SuperAdminList?.map((ele, i) => (
+                      <option
+                        data-name={`${ele?._id} ${ele?.database}`}
+                        value={ele?._id}>
+                        {ele?.firstName} {ele?.lastName}
+                      </option>
+                    ))}
+                </CustomInput>
+              </Col>
+              <Col>
+                <Button onClick={handleSubmit} color="primary">
+                  Submit
+                </Button>
+              </Col>
+            </>
+          )}
       </Row>
     </div>
   );

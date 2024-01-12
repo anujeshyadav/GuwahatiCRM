@@ -149,7 +149,7 @@ class PromotionalActivityList extends React.Component {
     const InsidePermissions = CheckPermission("Promotional Activity");
     this.setState({ InsiderPermissions: InsidePermissions });
     let pageparmission = JSON.parse(localStorage.getItem("userData"));
-    if (pageparmission?.rolename?.rank === 0) {
+    if (pageparmission?.rolename?.roleName === "MASTER") {
       this.setState({ MasterShow: true });
     }
     await this.Apicalling(pageparmission?._id, pageparmission?.database);
@@ -739,39 +739,47 @@ class PromotionalActivityList extends React.Component {
                             />
                           </Col>
                         )}
-                        <Col lg="2" md="2" sm="2" xs="2">
-                          <CustomInput
-                            type="select"
-                            name="typeofpromotion"
-                            className="float-right"
-                            onChange={(e) => this.handleFilter(e)}>
-                            <option value="NA">
-                              --Select Promotion Type--
-                            </option>
-                            {this.state.Dropdown &&
-                              this.state.Dropdown?.map((ele, i) => {
-                                return (
-                                  <>
-                                    <option value={ele}>{ele}</option>
-                                  </>
-                                );
-                              })}
-                          </CustomInput>
-                        </Col>
-
                         {this.state.InsiderPermissions &&
                           this.state.InsiderPermissions?.View && (
-                            <Col lg="2" md="2" sm="2">
-                              <span className="">
-                                <FaFilter
-                                  style={{ cursor: "pointer" }}
-                                  title="filter coloumn"
-                                  size="25px"
-                                  onClick={this.LookupviewStart}
-                                  color="#39cccc"
-                                  className="float-right"
-                                />
-                              </span>
+                            <Col lg="2" md="2" sm="2" xs="2">
+                              <CustomInput
+                                type="select"
+                                name="typeofpromotion"
+                                className="float-right"
+                                onChange={(e) => this.handleFilter(e)}>
+                                <option value="NA">
+                                  --Select Promotion Type--
+                                </option>
+                                {this.state.Dropdown &&
+                                  this.state.Dropdown?.map((ele, i) => {
+                                    return (
+                                      <>
+                                        <option value={ele}>{ele}</option>
+                                      </>
+                                    );
+                                  })}
+                              </CustomInput>
+                            </Col>
+                          )}
+
+                        <Col lg="2" md="2" sm="2">
+                          {this.state.InsiderPermissions &&
+                            this.state.InsiderPermissions?.View && (
+                              <>
+                                <span className="">
+                                  <FaFilter
+                                    style={{ cursor: "pointer" }}
+                                    title="filter coloumn"
+                                    size="25px"
+                                    onClick={this.LookupviewStart}
+                                    color="#39cccc"
+                                    className="float-right"
+                                  />
+                                </span>
+                              </>
+                            )}
+                          {this.state.InsiderPermissions &&
+                            this.state.InsiderPermissions?.Download && (
                               <span className="mx-1">
                                 <div className="dropdown-container float-right">
                                   <BsCloudDownloadFill
@@ -825,147 +833,166 @@ class PromotionalActivityList extends React.Component {
                                   )}
                                 </div>
                               </span>
-                              {this.state.InsiderPermissions &&
-                                this.state.InsiderPermissions?.Create && (
-                                  <span>
-                                    <Route
-                                      render={({ history }) => (
-                                        <Badge
-                                          style={{ cursor: "pointer" }}
-                                          className="float-right mr-1"
-                                          color="primary"
-                                          onClick={() =>
-                                            history.push(
-                                              "/app/ajgroup/account/CreatePromotionalActivity"
-                                            )
-                                          }>
-                                          <FaPlus size={15} /> Activiity
-                                        </Badge>
-                                      )}
-                                    />
-                                  </span>
-                                )}
-                            </Col>
-                          )}
-                      </Row>
-                      {this.state.Table && this.state.Table ? (
-                        <>
-                          <CardBody>
-                            {this.state.rowData === null ? null : (
-                              <div className="ag-theme-material w-100 my-2 ag-grid-table">
-                                <div className="d-flex flex-wrap justify-content-between align-items-center">
-                                  <div className="mb-1">
-                                    <UncontrolledDropdown className="p-1 ag-dropdown">
-                                      <DropdownToggle tag="div">
-                                        {this.gridApi
-                                          ? this.state.currenPageSize
-                                          : "" * this.state.getPageSize -
-                                            (this.state.getPageSize - 1)}{" "}
-                                        -{" "}
-                                        {this.state.rowData.length -
-                                          this.state.currenPageSize *
-                                            this.state.getPageSize >
-                                        0
-                                          ? this.state.currenPageSize *
-                                            this.state.getPageSize
-                                          : this.state.rowData.length}{" "}
-                                        of {this.state.rowData.length}
-                                        <ChevronDown
-                                          className="ml-50"
-                                          size={15}
-                                        />
-                                      </DropdownToggle>
-                                      <DropdownMenu right>
-                                        <DropdownItem
-                                          tag="div"
-                                          onClick={() => this.filterSize(5)}>
-                                          5
-                                        </DropdownItem>
-                                        <DropdownItem
-                                          tag="div"
-                                          onClick={() => this.filterSize(20)}>
-                                          20
-                                        </DropdownItem>
-                                        <DropdownItem
-                                          tag="div"
-                                          onClick={() => this.filterSize(50)}>
-                                          50
-                                        </DropdownItem>
-                                        <DropdownItem
-                                          tag="div"
-                                          onClick={() => this.filterSize(100)}>
-                                          100
-                                        </DropdownItem>
-                                        <DropdownItem
-                                          tag="div"
-                                          onClick={() => this.filterSize(134)}>
-                                          134
-                                        </DropdownItem>
-                                      </DropdownMenu>
-                                    </UncontrolledDropdown>
-                                  </div>
-                                  <div className="d-flex flex-wrap justify-content-end mb-1">
-                                    <div className="table-input mr-1">
-                                      <Input
-                                        placeholder="search Item here..."
-                                        onChange={(e) =>
-                                          this.updateSearchQuery(e.target.value)
-                                        }
-                                        value={this.state.value}
-                                      />
-                                    </div>
-                                  </div>
-                                </div>
-                                <ContextLayout.Consumer className="ag-theme-alpine">
-                                  {(context) => (
-                                    <AgGridReact
-                                      id="myAgGrid"
-                                      // gridOptions={{
-                                      //   domLayout: "autoHeight",
-                                      //   // or other layout options
-                                      // }}
-                                      gridOptions={this.gridOptions}
-                                      rowSelection="multiple"
-                                      defaultColDef={defaultColDef}
-                                      columnDefs={columnDefs}
-                                      rowData={rowData}
-                                      // onGridReady={(params) => {
-                                      //   this.gridApi = params.api;
-                                      //   this.gridColumnApi = params.columnApi;
-                                      //   this.gridRef.current = params.api;
-
-                                      //   this.setState({
-                                      //     currenPageSize:
-                                      //       this.gridApi.paginationGetCurrentPage() +
-                                      //       1,
-                                      //     getPageSize:
-                                      //       this.gridApi.paginationGetPageSize(),
-                                      //     totalPages:
-                                      //       this.gridApi.paginationGetTotalPages(),
-                                      //   });
-                                      // }}
-                                      onGridReady={this.onGridReady}
-                                      colResizeDefault={"shift"}
-                                      animateRows={true}
-                                      floatingFilter={false}
-                                      pagination={true}
-                                      paginationPageSize={
-                                        this.state.paginationPageSize
-                                      }
-                                      pivotPanelShow="always"
-                                      enableRtl={
-                                        context.state.direction === "rtl"
-                                      }
-                                      ref={this.gridRef} // Attach the ref to the grid
-                                      domLayout="autoHeight" // Adjust layout as needed
-                                    />
-                                  )}
-                                </ContextLayout.Consumer>
-                              </div>
                             )}
-                          </CardBody>
-                        </>
-                      ) : null}
+                          {this.state.InsiderPermissions &&
+                            this.state.InsiderPermissions?.Create && (
+                              <span>
+                                <Route
+                                  render={({ history }) => (
+                                    <Badge
+                                      style={{ cursor: "pointer" }}
+                                      className="float-right mr-1"
+                                      color="primary"
+                                      onClick={() =>
+                                        history.push(
+                                          "/app/ajgroup/account/CreatePromotionalActivity"
+                                        )
+                                      }>
+                                      <FaPlus size={15} /> Activiity
+                                    </Badge>
+                                  )}
+                                />
+                              </span>
+                            )}
+                        </Col>
+                      </Row>
+                      {this.state.InsiderPermissions &&
+                        this.state.InsiderPermissions?.View && (
+                          <>
+                            {this.state.Table && this.state.Table ? (
+                              <>
+                                <CardBody>
+                                  {this.state.rowData === null ? null : (
+                                    <div className="ag-theme-material w-100 my-2 ag-grid-table">
+                                      <div className="d-flex flex-wrap justify-content-between align-items-center">
+                                        <div className="mb-1">
+                                          <UncontrolledDropdown className="p-1 ag-dropdown">
+                                            <DropdownToggle tag="div">
+                                              {this.gridApi
+                                                ? this.state.currenPageSize
+                                                : "" * this.state.getPageSize -
+                                                  (this.state.getPageSize -
+                                                    1)}{" "}
+                                              -{" "}
+                                              {this.state.rowData.length -
+                                                this.state.currenPageSize *
+                                                  this.state.getPageSize >
+                                              0
+                                                ? this.state.currenPageSize *
+                                                  this.state.getPageSize
+                                                : this.state.rowData
+                                                    .length}{" "}
+                                              of {this.state.rowData.length}
+                                              <ChevronDown
+                                                className="ml-50"
+                                                size={15}
+                                              />
+                                            </DropdownToggle>
+                                            <DropdownMenu right>
+                                              <DropdownItem
+                                                tag="div"
+                                                onClick={() =>
+                                                  this.filterSize(5)
+                                                }>
+                                                5
+                                              </DropdownItem>
+                                              <DropdownItem
+                                                tag="div"
+                                                onClick={() =>
+                                                  this.filterSize(20)
+                                                }>
+                                                20
+                                              </DropdownItem>
+                                              <DropdownItem
+                                                tag="div"
+                                                onClick={() =>
+                                                  this.filterSize(50)
+                                                }>
+                                                50
+                                              </DropdownItem>
+                                              <DropdownItem
+                                                tag="div"
+                                                onClick={() =>
+                                                  this.filterSize(100)
+                                                }>
+                                                100
+                                              </DropdownItem>
+                                              <DropdownItem
+                                                tag="div"
+                                                onClick={() =>
+                                                  this.filterSize(134)
+                                                }>
+                                                134
+                                              </DropdownItem>
+                                            </DropdownMenu>
+                                          </UncontrolledDropdown>
+                                        </div>
+                                        <div className="d-flex flex-wrap justify-content-end mb-1">
+                                          <div className="table-input mr-1">
+                                            <Input
+                                              placeholder="search Item here..."
+                                              onChange={(e) =>
+                                                this.updateSearchQuery(
+                                                  e.target.value
+                                                )
+                                              }
+                                              value={this.state.value}
+                                            />
+                                          </div>
+                                        </div>
+                                      </div>
+                                      <ContextLayout.Consumer className="ag-theme-alpine">
+                                        {(context) => (
+                                          <AgGridReact
+                                            id="myAgGrid"
+                                            // gridOptions={{
+                                            //   domLayout: "autoHeight",
+                                            //   // or other layout options
+                                            // }}
+                                            gridOptions={this.gridOptions}
+                                            rowSelection="multiple"
+                                            defaultColDef={defaultColDef}
+                                            columnDefs={columnDefs}
+                                            rowData={rowData}
+                                            // onGridReady={(params) => {
+                                            //   this.gridApi = params.api;
+                                            //   this.gridColumnApi = params.columnApi;
+                                            //   this.gridRef.current = params.api;
+
+                                            //   this.setState({
+                                            //     currenPageSize:
+                                            //       this.gridApi.paginationGetCurrentPage() +
+                                            //       1,
+                                            //     getPageSize:
+                                            //       this.gridApi.paginationGetPageSize(),
+                                            //     totalPages:
+                                            //       this.gridApi.paginationGetTotalPages(),
+                                            //   });
+                                            // }}
+                                            onGridReady={this.onGridReady}
+                                            colResizeDefault={"shift"}
+                                            animateRows={true}
+                                            floatingFilter={false}
+                                            pagination={true}
+                                            paginationPageSize={
+                                              this.state.paginationPageSize
+                                            }
+                                            pivotPanelShow="always"
+                                            enableRtl={
+                                              context.state.direction === "rtl"
+                                            }
+                                            ref={this.gridRef} // Attach the ref to the grid
+                                            domLayout="autoHeight" // Adjust layout as needed
+                                          />
+                                        )}
+                                      </ContextLayout.Consumer>
+                                    </div>
+                                  )}
+                                </CardBody>
+                              </>
+                            ) : null}
+                          </>
+                        )}
                     </Card>
                   </Col>
                 </>

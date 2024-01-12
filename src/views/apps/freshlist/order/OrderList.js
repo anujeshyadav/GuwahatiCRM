@@ -351,7 +351,7 @@ class OrderList extends React.Component {
     this.setState({ InsiderPermissions: InsidePermissions });
     let pageparmission = JSON.parse(localStorage.getItem("userData"));
 
-    if (pageparmission?.rolename.rank === 0) {
+    if (pageparmission?.rolename?.roleName === "MASTER") {
       this.setState({ MasterShow: true });
     }
 

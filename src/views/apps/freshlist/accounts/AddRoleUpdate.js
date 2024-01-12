@@ -97,7 +97,7 @@ export default function AddRoleNew(args) {
 
     setUserinfo(userdata);
 
-    if (userdata?.rolename?.position == 0) {
+    if (userdata?.rolename?.roleName === "MASTER") {
       setRolesPermission(Roles);
     } else {
       setRolesPermission(NormalRoles);
