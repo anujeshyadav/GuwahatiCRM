@@ -348,7 +348,7 @@ class CreditNoteList extends React.Component {
   }
   async componentDidMount() {
     let pageparmission = JSON.parse(localStorage.getItem("userData"));
-    if (pageparmission?.rolename?.rank === 0) {
+    if (pageparmission?.rolename?.roleName === "MASTER") {
       this.setState({ MasterShow: true });
     }
     const UserInformation = this.context?.UserInformatio;

@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import { Row, Col, Card, Button, Label, Input, Form } from "reactstrap";
-import { Roles } from "./AddRole";
+import { Roles, NormalRoles } from "./AddRole";
 
 import axiosConfig from "../../../../axiosConfig";
 // import { Route, Link } from "react-router-dom";
@@ -15,7 +15,9 @@ import {
 
 export default function AddRoleNew() {
   const [Desc, setDesc] = useState("");
+  const [RolesPermission, setRolesPermission] = useState([]);
   const [Role, setRole] = useState("");
+  const [Userinfo, setUserinfo] = useState({});
   const [Selected, setSelected] = useState([]);
   const [SelectedIndex, setIndex] = useState("");
   const [show, setShow] = useState(false);
@@ -24,12 +26,22 @@ export default function AddRoleNew() {
 
   const param = useParams();
   const history = useHistory();
+  useEffect(() => {
+    let userdata = JSON.parse(localStorage.getItem("userData"));
 
+    setUserinfo(userdata);
+
+    if (userdata?.rolename?.roleName === "MASTER") {
+      setRolesPermission(Roles);
+    } else {
+      setRolesPermission(NormalRoles);
+    }
+  }, []);
   useEffect(() => {
     Get_Role_byid(param.id)
       .then((res) => {
         console.log(res?.Role);
-       
+
         setSelected(res?.Role?.rolePermission);
         setRole(res?.Role?.roleName);
         setDesc(res?.Role?.desc);
@@ -194,8 +206,8 @@ export default function AddRoleNew() {
                   </div>
                   <section className="mt-5 p-3">
                     <Row className="gy-0 p-3">
-                      {Roles &&
-                        Roles?.map((value, index) => {
+                      {RolesPermission &&
+                        RolesPermission?.map((value, index) => {
                           return (
                             <Col
                               key={index}
@@ -281,11 +293,13 @@ export default function AddRoleNew() {
                                     <span className="mx-3"> Delete</span>
                                   </div>
                                 </Col>
-                                <Col className="gy-2">
-                                  <div className="d-flex justify-content-center">
-                                    <span className="mx-3"> Download</span>
-                                  </div>
-                                </Col>
+                                {Userinfo?.rolename?.position == 0 && (
+                                  <Col className="gy-2">
+                                    <div className="d-flex justify-content-center">
+                                      <span className="mx-3"> Download</span>
+                                    </div>
+                                  </Col>
+                                )}
                               </Row>
 
                               {Selected?.some(
@@ -319,11 +333,7 @@ export default function AddRoleNew() {
                                                           )
                                                       );
                                                     return (
-                                                      <Col
-                                                        key={ind}
-                                                        lg="2"
-                                                        md="2"
-                                                        sm="2">
+                                                      <Col key={ind}>
                                                         <div className="d-flex justify-content-center">
                                                           <input
                                                             checked={

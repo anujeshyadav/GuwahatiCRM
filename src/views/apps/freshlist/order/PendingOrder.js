@@ -438,7 +438,7 @@ class PendingOrder extends React.Component {
     // console.log(InsidePermissions);
     this.setState({ InsiderPermissions: InsidePermissions });
     const userId = JSON.parse(localStorage.getItem("userData"));
-    if (userId?.rolename?.rank === 0) {
+    if (userId?.rolename?.roleName === "MASTER") {
       this.setState({ MasterShow: true });
     }
 

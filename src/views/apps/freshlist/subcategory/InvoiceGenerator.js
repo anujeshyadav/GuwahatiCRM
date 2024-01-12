@@ -622,7 +622,7 @@ class InvoiceGenerator extends React.Component {
     this.setState({ CompanyDetails: UserInformation?.CompanyDetails });
     let pageparmission = JSON.parse(localStorage.getItem("userData"));
     let userid = pageparmission?._id;
-    if (pageparmission?.rolename.rank === 0) {
+    if (pageparmission?.rolename?.roleName === "MASTER") {
       this.setState({ MasterShow: true });
     }
     let billnumner = localStorage.getItem("billnumber");

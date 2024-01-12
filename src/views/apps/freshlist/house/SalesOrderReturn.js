@@ -308,7 +308,7 @@ class SalesOrderReturn extends React.Component {
 
     let pageparmission = JSON.parse(localStorage.getItem("userData"));
 
-    if (pageparmission?.rolename.rank === 0) {
+    if (pageparmission?.rolename?.roleName === "MASTER") {
       this.setState({ MasterShow: true });
     }
     await this.Apicalling(pageparmission?._id, pageparmission?.database);

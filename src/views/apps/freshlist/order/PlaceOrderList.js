@@ -374,7 +374,7 @@ class PlaceOrderList extends React.Component {
     this.setState({ InsiderPermissions: InsidePermissions });
     let userId = JSON.parse(localStorage.getItem("userData"));
     await this.Apicalling(userId?._id, userId?.database);
-    if (userId?.rolename?.rank === 0) {
+    if (userId?.rolename?.roleName === "MASTER") {
       this.setState({ MasterShow: true });
     }
   }
