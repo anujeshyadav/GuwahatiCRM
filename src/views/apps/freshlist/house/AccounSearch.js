@@ -136,7 +136,6 @@ class AccounSearch extends React.Component {
     }
     const InsidePermissions = CheckPermission("Create User");
     this.setState({ InsiderPermissions: InsidePermissions });
-    debugger
     await this.Apicalling(pageparmission?._id, pageparmission?.database);
 
     await CreateAccountView()
@@ -167,7 +166,7 @@ class AccounSearch extends React.Component {
               return (
                 <div className="actions cursor-pointer">
                   {this.state.InsiderPermissions &&
-                    this.state.InsiderPermissions.View && (
+                    this.state.InsiderPermissions?.View && (
                       <Route
                         render={({ history }) => (
                           <span
@@ -191,7 +190,7 @@ class AccounSearch extends React.Component {
                       />
                     )}
                   {this.state.InsiderPermissions &&
-                    this.state.InsiderPermissions.Edit && (
+                    this.state.InsiderPermissions?.Edit && (
                       <Route
                         render={({ history }) => (
                           <span
@@ -216,7 +215,7 @@ class AccounSearch extends React.Component {
                       />
                     )}
                   {this.state.InsiderPermissions &&
-                    this.state.InsiderPermissions.Delete && (
+                    this.state.InsiderPermissions?.Delete && (
                       <Route
                         render={() => (
                           <span
@@ -662,13 +661,12 @@ class AccounSearch extends React.Component {
               <Col>
                 <div className="d-flex justify-content-end p-1">
                   <Button
-                    onClick={e => {
+                    onClick={(e) => {
                       e.preventDefault();
                       this.setState({ EditOneUserView: false });
                       this.componentDidMount();
                     }}
-                    color="danger"
-                  >
+                    color="danger">
                     Back
                   </Button>
                 </div>
@@ -687,12 +685,11 @@ class AccounSearch extends React.Component {
                     <Col>
                       <div className="d-flex justify-content-end p-1">
                         <Button
-                          onClick={e => {
+                          onClick={(e) => {
                             e.preventDefault();
                             this.setState({ ViewOneUserView: false });
                           }}
-                          color="danger"
-                        >
+                          color="danger">
                           Back
                         </Button>
                       </div>
@@ -708,8 +705,7 @@ class AccounSearch extends React.Component {
                         <Col lg="4" md="4" sm="12">
                           <h1
                             className="float-left "
-                            style={{ fontWeight: "600" }}
-                          >
+                            style={{ fontWeight: "600" }}>
                             User list
                           </h1>
                         </Col>
@@ -721,241 +717,247 @@ class AccounSearch extends React.Component {
                             />
                           </Col>
                         )}
-                        {InsiderPermissions && InsiderPermissions.Download && (
-                          <Col>
-                            <span className="mx-1">
-                              <FaFilter
-                                style={{ cursor: "pointer" }}
-                                title="filter coloumn"
-                                size="35px"
-                                onClick={this.LookupviewStart}
-                                color="#39cccc"
-                                className="float-right"
-                              />
-                            </span>
-                            <span className="mx-1">
-                              <div className="dropdown-container float-right">
-                                <ImDownload
-                                  style={{ cursor: "pointer" }}
-                                  title="download file"
-                                  size="35px"
-                                  className="dropdown-button "
-                                  color="#39cccc"
-                                  onClick={this.toggleDropdown}
-                                />
-                                {isOpen && (
-                                  <div
-                                    style={{
-                                      position: "absolute",
-                                      zIndex: "1",
-                                      border: "1px solid #39cccc",
-                                      backgroundColor: "white",
-                                    }}
-                                    className="dropdown-content dropdownmy"
-                                  >
-                                    <h5
-                                      onClick={() => this.exportToPDF()}
+                        <Col>
+                          {InsiderPermissions &&
+                            InsiderPermissions.Download && (
+                              <>
+                                <span className="mx-1">
+                                  <div className="dropdown-container float-right">
+                                    <ImDownload
                                       style={{ cursor: "pointer" }}
-                                      className=" mx-1 myactive mt-1"
-                                    >
-                                      .PDF
-                                    </h5>
-                                    <h5
-                                      onClick={() =>
-                                        this.gridApi.exportDataAsCsv()
-                                      }
-                                      style={{ cursor: "pointer" }}
-                                      className=" mx-1 myactive"
-                                    >
-                                      .CSV
-                                    </h5>
-                                    <h5
-                                      onClick={this.convertCSVtoExcel}
-                                      style={{ cursor: "pointer" }}
-                                      className=" mx-1 myactive"
-                                    >
-                                      .XLS
-                                    </h5>
-                                    <h5
-                                      onClick={this.exportToExcel}
-                                      style={{ cursor: "pointer" }}
-                                      className=" mx-1 myactive"
-                                    >
-                                      .XLSX
-                                    </h5>
-                                    <h5
-                                      onClick={() => this.convertCsvToXml()}
-                                      style={{ cursor: "pointer" }}
-                                      className=" mx-1 myactive"
-                                    >
-                                      .XML
-                                    </h5>
+                                      title="download file"
+                                      size="35px"
+                                      className="dropdown-button "
+                                      color="#39cccc"
+                                      onClick={this.toggleDropdown}
+                                    />
+                                    {isOpen && (
+                                      <div
+                                        style={{
+                                          position: "absolute",
+                                          zIndex: "1",
+                                          border: "1px solid #39cccc",
+                                          backgroundColor: "white",
+                                        }}
+                                        className="dropdown-content dropdownmy">
+                                        <h5
+                                          onClick={() => this.exportToPDF()}
+                                          style={{ cursor: "pointer" }}
+                                          className=" mx-1 myactive mt-1">
+                                          .PDF
+                                        </h5>
+                                        <h5
+                                          onClick={() =>
+                                            this.gridApi.exportDataAsCsv()
+                                          }
+                                          style={{ cursor: "pointer" }}
+                                          className=" mx-1 myactive">
+                                          .CSV
+                                        </h5>
+                                        <h5
+                                          onClick={this.convertCSVtoExcel}
+                                          style={{ cursor: "pointer" }}
+                                          className=" mx-1 myactive">
+                                          .XLS
+                                        </h5>
+                                        <h5
+                                          onClick={this.exportToExcel}
+                                          style={{ cursor: "pointer" }}
+                                          className=" mx-1 myactive">
+                                          .XLSX
+                                        </h5>
+                                        <h5
+                                          onClick={() => this.convertCsvToXml()}
+                                          style={{ cursor: "pointer" }}
+                                          className=" mx-1 myactive">
+                                          .XML
+                                        </h5>
+                                      </div>
+                                    )}
                                   </div>
-                                )}
-                              </div>
-                            </span>
-                            <span>
-                              <Route
-                                render={({ history }) => (
-                                  <Button
-                                    style={{
-                                      cursor: "pointer",
-                                      backgroundColor: "#39cccc",
-                                      color: "white",
-                                      fontWeight: "600",
-                                    }}
-                                    className="float-right mr-1 "
-                                    color="#39cccc"
-                                    onClick={() =>
-                                      history.push(
-                                        "/app/SoftNumen/account/CreateAccount"
-                                      )
-                                    }
-                                  >
-                                    <FaPlus size={15} /> Create User
-                                  </Button>
-                                )}
-                              />
-                            </span>
-                            <span>
-                              <Route
-                                render={({ history }) => (
-                                  <Button
-                                    style={{
-                                      cursor: "pointer",
-                                      backgroundColor: "#39cccc",
-                                      color: "white",
-                                      fontWeight: "600",
-                                    }}
-                                    className="float-right mr-1 "
-                                    color="#39cccc"
-                                    onClick={() =>
-                                      history.push(
-                                        "/app/Ajgroup/account/AssignTeamMember"
-                                      )
-                                    }>
-                                    Assign Team
-                                  </Button>
-                                )}
-                              />
-                            </span>
-                          </Col>
-                        )}
+                                </span>
+                              </>
+                            )}
+                          {InsiderPermissions && InsiderPermissions.View && (
+                            <>
+                              <span className="mx-1">
+                                <FaFilter
+                                  style={{ cursor: "pointer" }}
+                                  title="filter coloumn"
+                                  size="35px"
+                                  onClick={this.LookupviewStart}
+                                  color="#39cccc"
+                                  className="float-right"
+                                />
+                              </span>
+                            </>
+                          )}
+                          {InsiderPermissions && InsiderPermissions.Create && (
+                            <>
+                              <span>
+                                <Route
+                                  render={({ history }) => (
+                                    <Button
+                                      style={{
+                                        cursor: "pointer",
+                                        backgroundColor: "#39cccc",
+                                        color: "white",
+                                        fontWeight: "600",
+                                      }}
+                                      className="float-right mr-1 "
+                                      color="#39cccc"
+                                      onClick={() =>
+                                        history.push(
+                                          "/app/SoftNumen/account/CreateAccount"
+                                        )
+                                      }>
+                                      <FaPlus size={15} /> Create User
+                                    </Button>
+                                  )}
+                                />
+                              </span>
+                              <span>
+                                <Route
+                                  render={({ history }) => (
+                                    <Button
+                                      style={{
+                                        cursor: "pointer",
+                                        backgroundColor: "#39cccc",
+                                        color: "white",
+                                        fontWeight: "600",
+                                      }}
+                                      className="float-right mr-1 "
+                                      color="#39cccc"
+                                      onClick={() =>
+                                        history.push(
+                                          "/app/Ajgroup/account/AssignTeamMember"
+                                        )
+                                      }>
+                                      Assign Team
+                                    </Button>
+                                  )}
+                                />
+                              </span>
+                            </>
+                          )}
+                        </Col>
                       </Row>
-                      <CardBody style={{ marginTop: "-1.5rem" }}>
-                        {this.state.rowData === null ? null : (
-                          <div className="ag-theme-material w-100 my-2 ag-grid-table">
-                            <div className="d-flex flex-wrap justify-content-between align-items-center">
-                              <div className="mb-1">
-                                <UncontrolledDropdown className="p-1 ag-dropdown">
-                                  <DropdownToggle tag="div">
-                                    {this.gridApi
-                                      ? this.state.currenPageSize
-                                      : "" * this.state.getPageSize -
-                                        (this.state.getPageSize - 1)}{" "}
-                                    -{" "}
-                                    {this.state.rowData.length -
-                                      this.state.currenPageSize *
-                                        this.state.getPageSize >
-                                    0
-                                      ? this.state.currenPageSize *
-                                        this.state.getPageSize
-                                      : this.state.rowData.length}{" "}
-                                    of {this.state.rowData.length}
-                                    <ChevronDown className="ml-50" size={15} />
-                                  </DropdownToggle>
-                                  <DropdownMenu right>
-                                    <DropdownItem
-                                      tag="div"
-                                      onClick={() => this.filterSize(5)}
-                                    >
-                                      5
-                                    </DropdownItem>
-                                    <DropdownItem
-                                      tag="div"
-                                      onClick={() => this.filterSize(20)}
-                                    >
-                                      20
-                                    </DropdownItem>
-                                    <DropdownItem
-                                      tag="div"
-                                      onClick={() => this.filterSize(50)}
-                                    >
-                                      50
-                                    </DropdownItem>
-                                    <DropdownItem
-                                      tag="div"
-                                      onClick={() => this.filterSize(100)}
-                                    >
-                                      100
-                                    </DropdownItem>
-                                    <DropdownItem
-                                      tag="div"
-                                      onClick={() => this.filterSize(134)}
-                                    >
-                                      134
-                                    </DropdownItem>
-                                  </DropdownMenu>
-                                </UncontrolledDropdown>
-                              </div>
-                              <div className="d-flex flex-wrap justify-content-end mb-1">
-                                <div className="table-input mr-1">
-                                  <Input
-                                    placeholder="search Item here..."
-                                    onChange={e =>
-                                      this.updateSearchQuery(e.target.value)
-                                    }
-                                    value={this.state.value}
-                                  />
+                      {InsiderPermissions && InsiderPermissions?.View && (
+                        <CardBody style={{ marginTop: "-1.5rem" }}>
+                          {this.state.rowData === null ? null : (
+                            <div className="ag-theme-material w-100 my-2 ag-grid-table">
+                              <div className="d-flex flex-wrap justify-content-between align-items-center">
+                                <div className="mb-1">
+                                  <UncontrolledDropdown className="p-1 ag-dropdown">
+                                    <DropdownToggle tag="div">
+                                      {this.gridApi
+                                        ? this.state.currenPageSize
+                                        : "" * this.state.getPageSize -
+                                          (this.state.getPageSize - 1)}{" "}
+                                      -{" "}
+                                      {this.state.rowData.length -
+                                        this.state.currenPageSize *
+                                          this.state.getPageSize >
+                                      0
+                                        ? this.state.currenPageSize *
+                                          this.state.getPageSize
+                                        : this.state.rowData.length}{" "}
+                                      of {this.state.rowData.length}
+                                      <ChevronDown
+                                        className="ml-50"
+                                        size={15}
+                                      />
+                                    </DropdownToggle>
+                                    <DropdownMenu right>
+                                      <DropdownItem
+                                        tag="div"
+                                        onClick={() => this.filterSize(5)}>
+                                        5
+                                      </DropdownItem>
+                                      <DropdownItem
+                                        tag="div"
+                                        onClick={() => this.filterSize(20)}>
+                                        20
+                                      </DropdownItem>
+                                      <DropdownItem
+                                        tag="div"
+                                        onClick={() => this.filterSize(50)}>
+                                        50
+                                      </DropdownItem>
+                                      <DropdownItem
+                                        tag="div"
+                                        onClick={() => this.filterSize(100)}>
+                                        100
+                                      </DropdownItem>
+                                      <DropdownItem
+                                        tag="div"
+                                        onClick={() => this.filterSize(134)}>
+                                        134
+                                      </DropdownItem>
+                                    </DropdownMenu>
+                                  </UncontrolledDropdown>
+                                </div>
+                                <div className="d-flex flex-wrap justify-content-end mb-1">
+                                  <div className="table-input mr-1">
+                                    <Input
+                                      placeholder="search Item here..."
+                                      onChange={(e) =>
+                                        this.updateSearchQuery(e.target.value)
+                                      }
+                                      value={this.state.value}
+                                    />
+                                  </div>
                                 </div>
                               </div>
-                            </div>
-                            <ContextLayout.Consumer className="ag-theme-alpine">
-                              {context => (
-                                <AgGridReact
-                                  id="myAgGrid"
-                                  // gridOptions={{
-                                  //   domLayout: "autoHeight",
-                                  //   // or other layout options
-                                  // }}
-                                  gridOptions={this.gridOptions}
-                                  rowSelection="multiple"
-                                  defaultColDef={defaultColDef}
-                                  columnDefs={columnDefs}
-                                  rowData={rowData}
-                                  // onGridReady={(params) => {
-                                  //   this.gridApi = params.api;
-                                  //   this.gridColumnApi = params.columnApi;
-                                  //   this.gridRef.current = params.api;
+                              <ContextLayout.Consumer className="ag-theme-alpine">
+                                {(context) => (
+                                  <AgGridReact
+                                    id="myAgGrid"
+                                    // gridOptions={{
+                                    //   domLayout: "autoHeight",
+                                    //   // or other layout options
+                                    // }}
+                                    gridOptions={this.gridOptions}
+                                    rowSelection="multiple"
+                                    defaultColDef={defaultColDef}
+                                    columnDefs={columnDefs}
+                                    rowData={rowData}
+                                    // onGridReady={(params) => {
+                                    //   this.gridApi = params.api;
+                                    //   this.gridColumnApi = params.columnApi;
+                                    //   this.gridRef.current = params.api;
 
-                                  //   this.setState({
-                                  //     currenPageSize:
-                                  //       this.gridApi.paginationGetCurrentPage() +
-                                  //       1,
-                                  //     getPageSize:
-                                  //       this.gridApi.paginationGetPageSize(),
-                                  //     totalPages:
-                                  //       this.gridApi.paginationGetTotalPages(),
-                                  //   });
-                                  // }}
-                                  onGridReady={this.onGridReady}
-                                  colResizeDefault={"shift"}
-                                  animateRows={true}
-                                  floatingFilter={false}
-                                  pagination={true}
-                                  paginationPageSize={
-                                    this.state.paginationPageSize
-                                  }
-                                  pivotPanelShow="always"
-                                  enableRtl={context.state.direction === "rtl"}
-                                  ref={this.gridRef} // Attach the ref to the grid
-                                  domLayout="autoHeight" // Adjust layout as needed
-                                />
-                              )}
-                            </ContextLayout.Consumer>
-                          </div>
-                        )}
-                      </CardBody>
+                                    //   this.setState({
+                                    //     currenPageSize:
+                                    //       this.gridApi.paginationGetCurrentPage() +
+                                    //       1,
+                                    //     getPageSize:
+                                    //       this.gridApi.paginationGetPageSize(),
+                                    //     totalPages:
+                                    //       this.gridApi.paginationGetTotalPages(),
+                                    //   });
+                                    // }}
+                                    onGridReady={this.onGridReady}
+                                    colResizeDefault={"shift"}
+                                    animateRows={true}
+                                    floatingFilter={false}
+                                    pagination={true}
+                                    paginationPageSize={
+                                      this.state.paginationPageSize
+                                    }
+                                    pivotPanelShow="always"
+                                    enableRtl={
+                                      context.state.direction === "rtl"
+                                    }
+                                    ref={this.gridRef} // Attach the ref to the grid
+                                    domLayout="autoHeight" // Adjust layout as needed
+                                  />
+                                )}
+                              </ContextLayout.Consumer>
+                            </div>
+                          )}
+                        </CardBody>
+                      )}
                     </Card>
                   </Col>
                 </>
@@ -968,8 +970,7 @@ class AccounSearch extends React.Component {
           isOpen={this.state.modal}
           toggle={this.LookupviewStart}
           className={this.props.className}
-          style={{ maxWidth: "1050px" }}
-        >
+          style={{ maxWidth: "1050px" }}>
           <ModalHeader toggle={this.LookupviewStart}>Change Fileds</ModalHeader>
           <ModalBody className="modalbodyhead">
             <Row>
@@ -982,15 +983,15 @@ class AccounSearch extends React.Component {
                         return (
                           <>
                             <div
-                              onClick={e => this.handleChangeHeader(e, ele, i)}
+                              onClick={(e) =>
+                                this.handleChangeHeader(e, ele, i)
+                              }
                               key={i}
-                              className="mycustomtag mt-1"
-                            >
+                              className="mycustomtag mt-1">
                               <span className="mt-1">
                                 <h5
                                   style={{ cursor: "pointer" }}
-                                  className="allfields"
-                                >
+                                  className="allfields">
                                   <input
                                     type="checkbox"
                                     // checked={check && check}
@@ -1049,15 +1050,14 @@ class AccounSearch extends React.Component {
                                             : ""
                                         }`,
                                       }}
-                                      className="allfields"
-                                    >
+                                      className="allfields">
                                       <IoMdRemoveCircleOutline
                                         onClick={() => {
                                           const SelectedCols =
                                             this.state.SelectedcolumnDefs.slice();
                                           const delindex =
                                             SelectedCols.findIndex(
-                                              element =>
+                                              (element) =>
                                                 element?.headerName ==
                                                 ele?.headerName
                                             );

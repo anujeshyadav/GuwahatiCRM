@@ -7,39 +7,35 @@ import {
   Label,
   Input,
   Form,
-  InputGroup,
   Modal,
   ModalHeader,
   ModalBody,
-  ModalFooter,
   Table,
 } from "reactstrap";
 import { Roles, NormalRoles } from "./AddRole";
-import axiosConfig from "../../../../axiosConfig";
 import swal from "sweetalert";
 import { Route, useHistory } from "react-router-dom";
 
 import "../../../../assets/scss/pages/users.scss";
-import { BsFillArrowDownCircleFill } from "react-icons/bs";
-import { AiOutlineSearch } from "react-icons/ai";
 import {
   CreateAccountView,
   CreateRole,
   CreateRoleByMaster,
 } from "../../../../ApiEndPoint/ApiCalling";
 import xmlJs from "xml-js";
-import { CloudLightning } from "react-feather";
 
 export default function AddRoleNew(args) {
   const [Desc, setDesc] = useState("");
   const [Role, setRole] = useState("");
   const [Selected, setSelected] = useState([]);
+  const [RolesPermission, setRolesPermission] = useState([]);
   const [SelectedIndex, setIndex] = useState("");
   const [Database, setDatabase] = useState("");
   const [show, setShow] = useState(false);
   const [ShowDataBase, setShowDataBase] = useState(false);
   const [modal, setModal] = useState(false);
   const [CreatAccountView, setCreatAccountView] = useState({});
+  const [Userinfo, setUserinfo] = useState({});
   const [dropdownValue, setdropdownValue] = useState({});
 
   const toggle = () => setModal(!modal);
@@ -92,22 +88,19 @@ export default function AddRoleNew(args) {
       });
     }
   };
-  // console.log(Selected);
-  useEffect(() => {
-    console.log(Selected);
-    // let userdata = JSON.parse(localStorage.getItem("userData"));
 
-    // console.log(userdata?.rolename?.position == 0);
-    // if (userdata?.rolename?.position == 0) {
-    //   setShowDataBase(true);
-    // }
-  }, [Selected]);
+  // useEffect(() => {
+  //   console.log(Selected);
+  // }, [Selected]);
   useEffect(() => {
     let userdata = JSON.parse(localStorage.getItem("userData"));
 
-    console.log(userdata?.rolename?.position == 0);
+    setUserinfo(userdata);
+
     if (userdata?.rolename?.position == 0) {
-      // setShowDataBase(true);
+      setRolesPermission(Roles);
+    } else {
+      setRolesPermission(NormalRoles);
     }
   }, []);
 
@@ -174,7 +167,6 @@ export default function AddRoleNew(args) {
     CreateAccountView()
       .then((res) => {
         const jsonData = xmlJs.xml2json(res.data, { compact: true, spaces: 2 });
-        // console.log(JSON.parse(jsonData)?.CreateAccount?.MyDropdown?.dropdown);
         setCreatAccountView(
           JSON.parse(jsonData)?.CreateAccount?.MyDropdown?.dropdown
         );
@@ -186,8 +178,6 @@ export default function AddRoleNew(args) {
     toggle();
   };
   const handlesetparent = (value, index) => {
-    // console.log(value);
-    // console.log(index);
     setShow(value);
     setIndex(index);
   };
@@ -228,7 +218,6 @@ export default function AddRoleNew(args) {
                           history.push("/app/Trupee/account/RoleList")
                         }>
                         Back
-                        {/* <FaPlus size={15} /> Create User */}
                       </Button>
                     )}
                   />
@@ -269,7 +258,6 @@ export default function AddRoleNew(args) {
                       onChange={(e) => setDesc(e.target.value)}
                       type="text"
                       placeholder="Enter Role Desc.."
-                      // className="form-control"
                     />
                   </Col>
                   {ShowDataBase &&
@@ -291,8 +279,8 @@ export default function AddRoleNew(args) {
               </div>
               <section className="mt-5 p-2">
                 <Row className="gy-0 p-3">
-                  {Roles &&
-                    Roles?.map((value, index) => {
+                  {RolesPermission &&
+                    RolesPermission?.map((value, index) => {
                       return (
                         <Col
                           key={index}
@@ -317,7 +305,7 @@ export default function AddRoleNew(args) {
                             <Col className="gy-2" lg="2" sm="2" md="2">
                               <div className="align-item-center">
                                 <input
-                                  className="mt-1"
+                                  className="mt-1 permissioncheckbox"
                                   name="check"
                                   id={`head_${value?.title}`}
                                   onClick={(e) => {
@@ -363,53 +351,70 @@ export default function AddRoleNew(args) {
                                 <span className="mx-3"> Delete</span>
                               </div>
                             </Col>
-                            <Col className="gy-2">
-                              <div className="d-flex justify-content-center">
-                                <span className="mx-3"> Download</span>
-                              </div>
-                            </Col>
+                            {Userinfo?.rolename?.position == 0 && (
+                              <Col className="gy-2">
+                                <div className="d-flex justify-content-center">
+                                  <span className="mx-3"> Download</span>
+                                </div>
+                              </Col>
+                            )}
                           </Row>
 
                           {show && SelectedIndex === index ? (
                             <>
                               <div className="p-3">
                                 <div className="gy-2 mt-2">
-                                  {value?.TabName?.map((ele, i) => (
-                                    <>
-                                      <Row key={i} className="">
-                                        <Col lg="2" sm="2" md="2">
-                                          <h6 className="mt-1">
-                                            {" "}
-                                            {ele?.title}
-                                          </h6>
-                                        </Col>
-                                        {ele?.permission?.map((permit, ind) => (
-                                          <Col key={ind} lg="2" md="2" sm="2">
-                                            <div className="d-flex justify-content-center">
-                                              <input
-                                                name="check"
-                                                id={`item_${permit}`}
-                                                onClick={(e) => {
-                                                  handleSelectPage(
-                                                    e.target.value,
-                                                    e.target.checked,
-                                                    permit,
-                                                    ele.title,
-                                                    ind
-                                                  );
-                                                }}
-                                                style={{
-                                                  height: "19px",
-                                                  width: "26px",
-                                                }}
-                                                type="checkbox"
-                                              />
-                                            </div>
+                                  {value?.TabName?.map((ele, i) => {
+                                    {
+                                      /* console.log(ele?.permission);
+                                    console.log(Userinfo?.rolename?.position);
+                                    if (Userinfo?.rolename?.position !== 0) {
+                                      ele?.permission.pop();
+                                    }
+                                    debugger;
+                                    console.log(ele?.permission); */
+                                    }
+
+                                    return (
+                                      <>
+                                        <Row key={i} className="">
+                                          <Col lg="2" sm="2" md="2">
+                                            <h6 className="mt-1">
+                                              {" "}
+                                              {ele?.title}
+                                            </h6>
                                           </Col>
-                                        ))}
-                                      </Row>
-                                    </>
-                                  ))}
+                                          {ele?.permission?.map(
+                                            (permit, ind) => (
+                                              <Col key={ind}>
+                                                <div className="d-flex justify-content-center">
+                                                  <input
+                                                    name="check"
+                                                    className="permissioncheckbox"
+                                                    id={`item_${permit}`}
+                                                    onClick={(e) => {
+                                                      handleSelectPage(
+                                                        e.target.value,
+                                                        e.target.checked,
+                                                        permit,
+                                                        ele.title,
+                                                        ind
+                                                      );
+                                                    }}
+                                                    style={{
+                                                      // height: "26px !important ",
+                                                      width: "26px",
+                                                    }}
+                                                    type="checkbox"
+                                                  />
+                                                </div>
+                                              </Col>
+                                            )
+                                          )}
+                                        </Row>
+                                      </>
+                                    );
+                                  })}
                                 </div>
                               </div>
                             </>
@@ -478,14 +483,6 @@ export default function AddRoleNew(args) {
             </Table>
           </div>
         </ModalBody>
-        {/* <ModalFooter>
-          <Button color="primary" onClick={toggle}>
-            Do Something
-          </Button>{" "}
-          <Button color="secondary" onClick={toggle}>
-            Cancel
-          </Button>
-        </ModalFooter> */}
       </Modal>
     </>
   );

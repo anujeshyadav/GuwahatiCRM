@@ -244,7 +244,7 @@ class RoleList extends React.Component {
         };
       });
     }
-    debugger;
+    
     let payload = {
       Departments: alldata,
     };
@@ -582,7 +582,7 @@ class RoleList extends React.Component {
                 )}
 
               {this.state.InsiderPermissions &&
-                this.state.InsiderPermissions?.Create && (
+                this.state.InsiderPermissions?.View && (
                   <>
                     {/* {this.state.Position == 1 && ( */}
                     <Col lg="2" sm="2" md="2" ms="12">
@@ -611,91 +611,101 @@ class RoleList extends React.Component {
                   </>
                 )}
             </Row>
-            <CardBody style={{ marginTop: "-1.5rem" }}>
-              {this.state.rowData === null ? null : (
-                <div className="ag-theme-material w-100 my-1 ag-grid-table">
-                  <div className="d-flex flex-wrap justify-content-between align-items-center">
-                    <div className="mb-1">
-                      <UncontrolledDropdown className="p-1 ag-dropdown">
-                        <DropdownToggle tag="div">
-                          {this.gridApi
-                            ? this.state.currenPageSize
-                            : "" * this.state.getPageSize -
-                              (this.state.getPageSize - 1)}{" "}
-                          -{" "}
-                          {this.state.rowData.length -
-                            this.state.currenPageSize * this.state.getPageSize >
-                          0
-                            ? this.state.currenPageSize * this.state.getPageSize
-                            : this.state.rowData.length}{" "}
-                          of {this.state.rowData.length}
-                          <ChevronDown className="ml-50" size={15} />
-                        </DropdownToggle>
-                        <DropdownMenu right>
-                          <DropdownItem
-                            tag="div"
-                            onClick={() => this.filterSize(20)}>
-                            20
-                          </DropdownItem>
-                          <DropdownItem
-                            tag="div"
-                            onClick={() => this.filterSize(50)}>
-                            50
-                          </DropdownItem>
-                          <DropdownItem
-                            tag="div"
-                            onClick={() => this.filterSize(100)}>
-                            100
-                          </DropdownItem>
-                          <DropdownItem
-                            tag="div"
-                            onClick={() => this.filterSize(134)}>
-                            134
-                          </DropdownItem>
-                        </DropdownMenu>
-                      </UncontrolledDropdown>
-                    </div>
-                    <div className="d-flex flex-wrap justify-content-between mb-1">
-                      <div className="table-input mr-1">
-                        <Input
-                          placeholder="Search here..."
-                          onChange={(e) =>
-                            this.updateSearchQuery(e.target.value)
-                          }
-                          value={this.state.value}
-                        />
+            {this.state.InsiderPermissions &&
+              this.state.InsiderPermissions?.View && (
+                <CardBody style={{ marginTop: "-1.5rem" }}>
+                  {this.state.rowData === null ? null : (
+                    <div className="ag-theme-material w-100 my-1 ag-grid-table">
+                      <div className="d-flex flex-wrap justify-content-between align-items-center">
+                        <div className="mb-1">
+                          <UncontrolledDropdown className="p-1 ag-dropdown">
+                            <DropdownToggle tag="div">
+                              {this.gridApi
+                                ? this.state.currenPageSize
+                                : "" * this.state.getPageSize -
+                                  (this.state.getPageSize - 1)}{" "}
+                              -{" "}
+                              {this.state.rowData.length -
+                                this.state.currenPageSize *
+                                  this.state.getPageSize >
+                              0
+                                ? this.state.currenPageSize *
+                                  this.state.getPageSize
+                                : this.state.rowData.length}{" "}
+                              of {this.state.rowData.length}
+                              <ChevronDown className="ml-50" size={15} />
+                            </DropdownToggle>
+                            <DropdownMenu right>
+                              <DropdownItem
+                                tag="div"
+                                onClick={() => this.filterSize(20)}>
+                                20
+                              </DropdownItem>
+                              <DropdownItem
+                                tag="div"
+                                onClick={() => this.filterSize(50)}>
+                                50
+                              </DropdownItem>
+                              <DropdownItem
+                                tag="div"
+                                onClick={() => this.filterSize(100)}>
+                                100
+                              </DropdownItem>
+                              <DropdownItem
+                                tag="div"
+                                onClick={() => this.filterSize(134)}>
+                                134
+                              </DropdownItem>
+                            </DropdownMenu>
+                          </UncontrolledDropdown>
+                        </div>
+                        <div className="d-flex flex-wrap justify-content-between mb-1">
+                          <div className="table-input mr-1">
+                            <Input
+                              placeholder="Search here..."
+                              onChange={(e) =>
+                                this.updateSearchQuery(e.target.value)
+                              }
+                              value={this.state.value}
+                            />
+                          </div>
+                          {this.state.InsiderPermissions &&
+                            this.state.InsiderPermissions?.Download && (
+                              <div className="export-btn">
+                                <Button.Ripple
+                                  color="primary"
+                                  onClick={() =>
+                                    this.gridApi.exportDataAsCsv()
+                                  }>
+                                  Export as CSV
+                                </Button.Ripple>
+                              </div>
+                            )}
+                        </div>
                       </div>
-                      {/* <div className="export-btn">
-                        <Button.Ripple
-                          color="primary"
-                          onClick={() => this.gridApi.exportDataAsCsv()}>
-                          Export as CSV
-                        </Button.Ripple>
-                      </div> */}
+                      <ContextLayout.Consumer>
+                        {(context) => (
+                          <AgGridReact
+                            gridOptions={{}}
+                            rowSelection="multiple"
+                            defaultColDef={defaultColDef}
+                            columnDefs={columnDefs}
+                            rowData={rowData}
+                            onGridReady={this.onGridReady}
+                            colResizeDefault={"shift"}
+                            animateRows={true}
+                            floatingFilter={false}
+                            pagination={true}
+                            paginationPageSize={this.state.paginationPageSize}
+                            pivotPanelShow="always"
+                            enableRtl={context.state.direction === "rtl"}
+                          />
+                        )}
+                      </ContextLayout.Consumer>
                     </div>
-                  </div>
-                  <ContextLayout.Consumer>
-                    {(context) => (
-                      <AgGridReact
-                        gridOptions={{}}
-                        rowSelection="multiple"
-                        defaultColDef={defaultColDef}
-                        columnDefs={columnDefs}
-                        rowData={rowData}
-                        onGridReady={this.onGridReady}
-                        colResizeDefault={"shift"}
-                        animateRows={true}
-                        floatingFilter={false}
-                        pagination={true}
-                        paginationPageSize={this.state.paginationPageSize}
-                        pivotPanelShow="always"
-                        enableRtl={context.state.direction === "rtl"}
-                      />
-                    )}
-                  </ContextLayout.Consumer>
-                </div>
+                  )}
+                </CardBody>
               )}
-            </CardBody>
           </Card>
         </Col>
         <Modal
