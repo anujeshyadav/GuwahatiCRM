@@ -55,7 +55,7 @@ const CreateAccount = () => {
   const [Countries, setCountry] = useState({});
   const [States, setState] = useState({});
   const [Cities, setCities] = useState({});
-  const [BulkImport, setBulkImport] = useState({});
+  const [BulkImport, setBulkImport] = useState(null);
   const [Master, setMaster] = useState(false);
   const [formData, setFormData] = useState({});
   const [dropdownValue, setdropdownValue] = useState([]);
@@ -196,6 +196,7 @@ const CreateAccount = () => {
     } else {
       Get_RoleList(userdata?._id, userdata?.database)
         .then((res) => {
+
           let ShowList = res?.Role?.filter(
             (item, i) => item?.position > userdata?.rolename?.position
           );

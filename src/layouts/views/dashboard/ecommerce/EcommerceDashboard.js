@@ -42,25 +42,52 @@ class EcommerceDashboard extends React.Component {
     super(props);
     this.state = {
       isOpen: false,
-      list: [],
+      List: [],
       basicList: [
-        { key: 1, name: <SubscribersGained /> },
-        { key: 2, name: <RevenueGenerated /> },
-        { key: 3, name: <OrdersReceived /> },
+        {
+          key: 1,
+          value: <SubscribersGained />,
+          Name: "Subscribers Gained",
+          Show: true,
+        },
+        {
+          key: 2,
+          value: <RevenueGenerated />,
+          Name: "Revenue Generated",
+          Show: false,
+        },
+        {
+          key: 3,
+          value: <QuaterlySales />,
+          Name: "Quaterly Sales",
+          Show: true,
+        },
+        {
+          key: 4,
+          value: <OrdersReceived />,
+          Name: "Orders Received",
+          Show: true,
+        },
         ,
       ],
     };
   }
   componentDidMount() {
-    this.setState({ list: cardList });
+    this.setState({ List: this.state.basicList });
   }
   LookupviewStart = () => {
-    this.setState(prevState => ({
+    this.setState((prevState) => ({
       modal: !prevState.modal,
     }));
   };
-  hanldeSetBox = e => {
-    console.log(e.target.checked);
+  hanldeSetBox = (e, ele, i) => {
+    let allList = this.state.List;
+    if (e.target.checked) {
+      allList[i]["Show"] = e.target.checked;
+    } else {
+      allList[i]["Show"] = e.target.checked;
+    }
+    this.setState({ List: allList });
   };
   handleTogglemodal = () => {
     this.LookupviewStart();
@@ -69,15 +96,17 @@ class EcommerceDashboard extends React.Component {
     return (
       <React.Fragment>
         <Row className="match-height">
-          {/* {this.state.basicList &&
-            this.state.basicList?.map(ele =>
-              ele?.includes(ele.key) ? (
-                <Col lg="3" md="6" sm="6">
-                  {ele.name}
-                </Col>
-              ) : null
-            )} */}
-          <Col lg="3" md="6" sm="6">
+          {this.state.basicList &&
+            this.state.basicList?.map((ele) => (
+              <>
+                {ele?.Show && ele?.Show && (
+                  <Col lg="3" md="6" sm="6">
+                    {ele.value}
+                  </Col>
+                )}
+              </>
+            ))}
+          {/* <Col lg="3" md="6" sm="6">
             <SubscribersGained />
           </Col>
           <Col lg="3" md="6" sm="6">
@@ -88,7 +117,7 @@ class EcommerceDashboard extends React.Component {
           </Col>
           <Col lg="3" md="6" sm="6">
             <OrdersReceived />
-          </Col>
+          </Col> */}
           <span className="editbtn">
             <Edit
               onClick={this.handleTogglemodal}
@@ -98,7 +127,7 @@ class EcommerceDashboard extends React.Component {
               className=""
             />
           </span>
-          <Col lg="3" md="6" sm="6">
+          {/* <Col lg="3" md="6" sm="6">
             <SubscribersGained />
           </Col>
           <Col lg="3" md="6" sm="6">
@@ -109,7 +138,7 @@ class EcommerceDashboard extends React.Component {
           </Col>
           <Col lg="3" md="6" sm="6">
             <OrdersReceived />
-          </Col>
+          </Col> */}
         </Row>
 
         {/* <Row className="match-height">
@@ -175,8 +204,7 @@ class EcommerceDashboard extends React.Component {
           isOpen={this.state.modal}
           toggle={this.LookupviewStart}
           className={this.props.className}
-          style={{ maxWidth: "1050px" }}
-        >
+          style={{ maxWidth: "1050px" }}>
           <ModalHeader toggle={this.LookupviewStart}>
             Dahboard Card Fileds
           </ModalHeader>
@@ -188,17 +216,18 @@ class EcommerceDashboard extends React.Component {
             <Row>
               <Col>
                 {this.state.basicList &&
-                  this.state.basicList?.map(ele => (
-                    <div>
+                  this.state.basicList?.map((ele, i) => (
+                    <div key={i}>
                       <div>
                         <Input
+                          checked={ele?.Show}
                           type="checkbox"
                           className="mx-1 p-2"
-                          onChange={this.hanldeSetBox}
+                          onChange={(e) => this.hanldeSetBox(e, ele, i)}
                         />
                       </div>
                       <div>
-                        <h2 className="item">{ele.key}</h2>
+                        <h4 className="item mx-3">{ele?.Name}</h4>
                       </div>
                     </div>
                   ))}
@@ -206,11 +235,12 @@ class EcommerceDashboard extends React.Component {
                 <div className="d-flex justify-content-center">
                   <Button
                     color="primary"
-                    onClick={e => {
+                    onClick={(e) => {
                       e.preventDefault();
+                      this.setState({ basicList: this.state.List });
+
                       this.LookupviewStart();
-                    }}
-                  >
+                    }}>
                     Submit
                   </Button>
                 </div>

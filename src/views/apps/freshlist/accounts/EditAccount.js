@@ -101,18 +101,19 @@ const EditAccount = ({ EditOneData }) => {
     console.log(formData);
   }, [formData]);
   useEffect(() => {
+    // debugger;
     setFormData(EditOneData);
-    console.log(EditOneData);
-let userdata = JSON.parse(localStorage.getItem("userData"));
-Get_RoleList(userdata?._id, userdata?.database)
-  .then((res) => {
-    setdropdownValue(res?.Role);
-    formData["rolename"] = EditOneData?.rolename?._id;
-  })
-  .catch((err) => {
-    console.log(err);
-    swal("Roles List Not found");
-  });
+    // console.log(EditOneData);
+    let userdata = JSON.parse(localStorage.getItem("userData"));
+    Get_RoleList(userdata?._id, userdata?.database)
+      .then((res) => {
+        setdropdownValue(res?.Role);
+        formData["rolename"] = EditOneData?.rolename?._id;
+      })
+      .catch((err) => {
+        console.log(err);
+        swal("Roles List Not found");
+      });
     if (EditOneData?.Country) {
       let countryselected = Country?.getAllCountries()?.filter(
         (ele, i) => ele?.name == EditOneData?.Country
@@ -135,7 +136,7 @@ Get_RoleList(userdata?._id, userdata?.database)
 
     formData["status"] = EditOneData?.status;
     CreateAccountView()
-      .then(res => {
+      .then((res) => {
         const jsonData = xmlJs.xml2json(res.data, { compact: true, spaces: 2 });
         // console.log(JSON.parse(jsonData)?.CreateUser?.input);
 
@@ -143,12 +144,12 @@ Get_RoleList(userdata?._id, userdata?.database)
 
         setdropdownValue(JSON.parse(jsonData));
       })
-      .catch(err => {
+      .catch((err) => {
         console.log(err);
       });
   }, []);
 
-  const submitHandler = e => {
+  const submitHandler = (e) => {
     e.preventDefault();
     // console.log(EditOneData);
     // console.log(formData);
@@ -156,14 +157,14 @@ Get_RoleList(userdata?._id, userdata?.database)
       swal("Error occured while Entering Details");
     } else {
       CreateAccountUpdate(EditOneData?._id, formData)
-        .then(res => {
+        .then((res) => {
           setFormData({});
           if (res.status) {
             // window.location.reload();
             swal("User Updated Successfully");
           }
         })
-        .catch(err => {
+        .catch((err) => {
           console.log(err);
         });
     }
@@ -240,28 +241,20 @@ Get_RoleList(userdata?._id, userdata?.database)
                 </Col> */}
               <Col lg="4" md="4">
                 <FormGroup>
-                  <Label>Role List</Label>
-                  <CustomInput
-                    required
-                    type="select"
-                    name="rolename"
-                    value={formData["rolename"]}
-                    onChange={e => {
-                      setFormData({
-                        ...formData,
-                        ["rolename"]: e.target.value,
-                      });
-                    }}
-                  >
-                    <option>--select Role--</option>
-                    {dropdownValue &&
-                      dropdownValue?.length &&
-                      dropdownValue?.map((ele, i) => {
-                        return (
-                          <option value={ele?._id}>{ele?.roleName}</option>
-                        );
-                      })}
-                  </CustomInput>
+                  <Label>
+                    Role Name-
+                    <strong>
+                      {formData?.rolename?.roleName &&
+                        formData?.rolename?.roleName}
+                    </strong>
+                  </Label>
+                  <Input
+                    readOnly
+                    value={
+                      formData?.rolename?.roleName &&
+                      formData?.rolename?.roleName
+                    }
+                  />
                 </FormGroup>
               </Col>
               {CreatAccountView &&
@@ -284,7 +277,7 @@ Get_RoleList(userdata?._id, userdata?.database)
                             <PhoneInput
                               inputClass="myphoneinput"
                               country={"in"}
-                              onKeyDown={e => {
+                              onKeyDown={(e) => {
                                 if (ele?.type?._attributes?.type == "number") {
                                   ["e", "E", "+", "-"].includes(e.key) &&
                                     e.preventDefault();
@@ -293,7 +286,7 @@ Get_RoleList(userdata?._id, userdata?.database)
                               countryCodeEditable={false}
                               name={ele?.name?._text}
                               value={formData[ele?.name?._text]}
-                              onChange={phone => {
+                              onChange={(phone) => {
                                 setFormData({
                                   ...formData,
                                   [ele?.name?._text]: phone,
@@ -325,14 +318,14 @@ Get_RoleList(userdata?._id, userdata?.database)
                               inputClass="countryclass"
                               className="countryclassnw"
                               options={Country.getAllCountries()}
-                              getOptionLabel={options => {
+                              getOptionLabel={(options) => {
                                 return options["name"];
                               }}
-                              getOptionValue={options => {
+                              getOptionValue={(options) => {
                                 return options["name"];
                               }}
                               value={Countries}
-                              onChange={country => {
+                              onChange={(country) => {
                                 setCountry(country);
                                 setFormData({
                                   ...formData,
@@ -362,14 +355,14 @@ Get_RoleList(userdata?._id, userdata?.database)
                               options={State?.getStatesOfCountry(
                                 Countries?.isoCode
                               )}
-                              getOptionLabel={options => {
+                              getOptionLabel={(options) => {
                                 return options["name"];
                               }}
-                              getOptionValue={options => {
+                              getOptionValue={(options) => {
                                 return options["name"];
                               }}
                               value={States}
-                              onChange={State => {
+                              onChange={(State) => {
                                 setState(State);
                                 setFormData({
                                   ...formData,
@@ -400,14 +393,14 @@ Get_RoleList(userdata?._id, userdata?.database)
                                 States?.countryCode,
                                 States?.isoCode
                               )}
-                              getOptionLabel={options => {
+                              getOptionLabel={(options) => {
                                 return options["name"];
                               }}
-                              getOptionValue={options => {
+                              getOptionValue={(options) => {
                                 return options["name"];
                               }}
                               value={Cities}
-                              onChange={City => {
+                              onChange={(City) => {
                                 setCities(City);
                                 setFormData({
                                   ...formData,
@@ -437,7 +430,7 @@ Get_RoleList(userdata?._id, userdata?.database)
                                   <Label>{ele?.label?._text}</Label>
 
                                   <Input
-                                    onKeyDown={e => {
+                                    onKeyDown={(e) => {
                                       if (
                                         ele?.type?._attributes?.type == "number"
                                       ) {
@@ -460,7 +453,7 @@ Get_RoleList(userdata?._id, userdata?.database)
                                       // formData[ele?.name?._text]
                                     }
                                     // value={formData[ele?.name?._text]}
-                                    onChange={e =>
+                                    onChange={(e) =>
                                       handleInputChange(
                                         e,
                                         ele?.type?._attributes?.type,
@@ -489,7 +482,7 @@ Get_RoleList(userdata?._id, userdata?.database)
                                   <Label>{ele?.label?._text}</Label>
 
                                   <Input
-                                    onKeyDown={e => {
+                                    onKeyDown={(e) => {
                                       if (
                                         ele?.type?._attributes?.type == "number"
                                       ) {
@@ -501,7 +494,7 @@ Get_RoleList(userdata?._id, userdata?.database)
                                     placeholder={ele?.placeholder?._text}
                                     name={ele?.name?._text}
                                     value={formData[ele?.name?._text]}
-                                    onChange={e =>
+                                    onChange={(e) =>
                                       handleInputChange(
                                         e,
                                         ele?.type?._attributes?.type,
@@ -537,10 +530,10 @@ Get_RoleList(userdata?._id, userdata?.database)
                                 <Label>{ele?.label?._text}</Label>
 
                                 <Input
-                                  onWheel={e => {
+                                  onWheel={(e) => {
                                     e.preventDefault(); // Prevent the mouse wheel scroll event
                                   }}
-                                  onKeyDown={e => {
+                                  onKeyDown={(e) => {
                                     if (
                                       ele?.type?._attributes?.type == "number"
                                     ) {
@@ -552,7 +545,7 @@ Get_RoleList(userdata?._id, userdata?.database)
                                   placeholder={ele?.placeholder?._text}
                                   name={ele?.name?._text}
                                   value={formData[ele?.name?._text]}
-                                  onChange={e =>
+                                  onChange={(e) =>
                                     handleInputChange(
                                       e,
                                       ele?.type?._attributes?.type,
@@ -580,7 +573,7 @@ Get_RoleList(userdata?._id, userdata?.database)
                               <Label>{ele?.label?._text}</Label>
 
                               <Input
-                                onKeyDown={e => {
+                                onKeyDown={(e) => {
                                   if (
                                     ele?.type?._attributes?.type == "number"
                                   ) {
@@ -592,7 +585,7 @@ Get_RoleList(userdata?._id, userdata?.database)
                                 placeholder={ele?.placeholder?._text}
                                 name={ele?.name?._text}
                                 value={formData[ele?.name?._text]}
-                                onChange={e => {
+                                onChange={(e) => {
                                   handleInputChange(
                                     e,
                                     ele?.type?._attributes?.type,
@@ -662,13 +655,12 @@ Get_RoleList(userdata?._id, userdata?.database)
               <Label className="mb-0">Status</Label>
               <div
                 className="form-label-group"
-                onChange={e => {
+                onChange={(e) => {
                   setFormData({
                     ...formData,
                     ["status"]: e.target.value,
                   });
-                }}
-              >
+                }}>
                 <input
                   checked={formData["status"] == "Active"}
                   style={{ marginRight: "3px" }}
@@ -693,8 +685,7 @@ Get_RoleList(userdata?._id, userdata?.database)
               <Button.Ripple
                 color="primary"
                 type="submit"
-                className="mr-1 mt-2 mx-2"
-              >
+                className="mr-1 mt-2 mx-2">
                 Submit
               </Button.Ripple>
             </Row>

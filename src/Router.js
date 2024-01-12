@@ -1002,6 +1002,9 @@ const PromotionalActivityList = lazy(() =>
 const Productionitem = lazy(() =>
   import("./views/apps/freshlist/Production/Itemproduct")
 );
+const Wastageproduction = lazy(() =>
+  import("./views/apps/freshlist/Production/Wastageproduction")
+);
 const TargetCreationList = lazy(() =>
   import("./views/apps/freshlist/house/TargetCreation")
 );
@@ -2590,6 +2593,10 @@ class AppRouter extends React.Component {
           <AppRoute
             path="/views/apps/freshlist/Production/Itemproduct"
             component={Productionitem}
+          />
+          <AppRoute
+            path="/views/apps/AjGroup/Production/Wastageproduction"
+            component={Wastageproduction}
           />
           <AppRoute
             path="/views/apps/freshlist/Production/Createitemforproduction"

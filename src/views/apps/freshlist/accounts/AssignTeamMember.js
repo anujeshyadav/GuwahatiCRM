@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import {
+  Badge,
   Button,
   Card,
   CardBody,
@@ -8,6 +9,7 @@ import {
   Input,
   Label,
   Row,
+  Spinner,
   Table,
 } from "reactstrap";
 import { Route } from "react-router-dom";
@@ -19,10 +21,12 @@ import {
 } from "../../../../ApiEndPoint/Api";
 import swal from "sweetalert";
 let SelectedChild = [];
+let SetAllHeadOfdepartment = [];
 const AssignTeamMember = () => {
   const [DepartmentWithRole, setDepartmentWithRole] = useState([]);
   const [SelectedDepartment, setSelectedDepartment] = useState([]);
   const [ShowParentList, setShowParentList] = useState([]);
+  const [ALLheadsofDept, setALLheadsofDept] = useState([]);
   const [ShowChildList, setShowChildList] = useState([]);
   const [Show, setShow] = useState(false);
   const [Child, setChild] = useState(false);
@@ -33,6 +37,8 @@ const AssignTeamMember = () => {
     []
   );
   const [NoChild, setNoChild] = useState(false);
+  const [Loader, setLoader] = useState(false);
+  const [HeadOfDepartment, setHeadOfDepartment] = useState(false);
   const [Parent, setParent] = useState("");
   const [ParentName, setParentName] = useState("");
   const [SelectedRoleId, setSelectedRoleId] = useState("");
@@ -46,15 +52,16 @@ const AssignTeamMember = () => {
       .then((res) => {
         console.log(res?.User);
         let WithoutCreatedBy = res?.User?.filter((ele, i) => !ele?.created_by);
-
-        if (WithoutCreatedBy?.length) {
-          setAllUsersList(WithoutCreatedBy);
-        }
+        setAllUsersList(res?.User);
+        // if (WithoutCreatedBy?.length) {
+        //   setAllUsersList(WithoutCreatedBy);
+        // }
       })
       .catch((err) => {
         console.log(err);
       });
   };
+  console.log([...new Set(ALLheadsofDept)]);
   useEffect(() => {
     let userData = JSON.parse(localStorage.getItem("userData"));
 
@@ -75,6 +82,7 @@ const AssignTeamMember = () => {
   const handleSaveChild = (child, e) => {
     if (e.target.checked) {
       SelectedChild.push(child);
+
       setSelectedChildForHeirarchy(child);
     } else {
       let index = SelectedChild?.indexOf(child);
@@ -84,7 +92,7 @@ const AssignTeamMember = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+    // setLoader(true);
     let ParentID = SelectedParentForHeirarchy?._id;
     let child = SelectedChild?.map((ele, i) => {
       return {
@@ -98,7 +106,9 @@ const AssignTeamMember = () => {
 
     await _PostSave(User_Assign_User, payload)
       .then((res) => {
+        setLoader(false);
         console.log(res);
+
         UserList();
         setSelectedDepartment([]);
         setShowParentList([]);
@@ -106,11 +116,12 @@ const AssignTeamMember = () => {
         setShowChildList([]);
         setChild(false);
         setChildList([]);
+        SelectedChild = [];
         swal("Assigned Successfully");
       })
       .catch((err) => {
+        setLoader(false);
         swal("Something Went Wrong");
-
         console.log(err);
       });
   };
@@ -150,14 +161,47 @@ const AssignTeamMember = () => {
                   value={SelectedDepartment}
                   onChange={(e) => {
                     e.target.value ? setShow(true) : setShow(false);
+                    if (e.target.value == "All_Dept_Heads") {
+                      SetAllHeadOfdepartment = [];
+                      setShow(false);
+                      DepartmentWithRole?.map((ele, i) => {
+                        ele?.roles?.forEach((val, index) => {
+                          if (val?.rolePosition == 1) {
+                            SetAllHeadOfdepartment?.push(val);
+                          }
+                        });
+                      });
+                      setALLheadsofDept(SetAllHeadOfdepartment);
+                      let allHeadUsers = [];
+                      SetAllHeadOfdepartment?.map((ele, i) => {
+                        AllUsersList?.forEach((val, i) => {
+                          if (val?.rolename?._id == ele?.roleId?._id) {
+                            allHeadUsers.push(val);
+                          }
+                        });
+                      });
+                      setSelectedDepartment(e.target.value);
+                      setShowChildList(allHeadUsers);
+                      if (allHeadUsers?.length) {
+                        setChild(true);
+                      }
+                      let userData = JSON.parse(
+                        localStorage.getItem("userData")
+                      );
 
-                    let selectedDepartment = DepartmentWithRole?.filter(
-                      (ele, i) => ele?._id == e.target.value
-                    );
-                    setSelectedDepartment(selectedDepartment[0]?.roles);
+                      let arr = [userData];
+                      setShowParentList(arr);
+                      // setChildList(SelectedChild);
+                    } else {
+                      let selectedDepartment = DepartmentWithRole?.filter(
+                        (ele, i) => ele?._id == e.target.value
+                      );
+                      setSelectedDepartment(selectedDepartment[0]?.roles);
+                    }
                   }}
                   type="select">
                   <option value="">--Select Department--</option>
+                  <option value="All_Dept_Heads">All Department Head</option>
                   {DepartmentWithRole &&
                     DepartmentWithRole?.map((ele, i) => (
                       <option
@@ -177,6 +221,10 @@ const AssignTeamMember = () => {
                       const selected = e.target.options[e.target.selectedIndex]
                         .getAttribute("data-name")
                         ?.split(" ");
+                      if (selected[0] === 1) {
+                        // pass created by
+                        setHeadOfDepartment(true);
+                      }
                       const name = selected.slice(2).join(" ");
                       let child = SelectedDepartment?.filter(
                         (ele) => ele?.rolePosition == Number(selected[0]) + 1
@@ -234,7 +282,7 @@ const AssignTeamMember = () => {
                       <Button
                         color="primary"
                         onClick={(e) => handleSubmit(e)}
-                        className="mt-1">
+                        className="mt-2">
                         Submit
                       </Button>
                     </Col>
@@ -265,7 +313,7 @@ const AssignTeamMember = () => {
                         {ParentName && ParentName ? (
                           <> {ParentName} (Parent)</>
                         ) : (
-                          "Parent"
+                          "Head"
                         )}{" "}
                         Users List
                       </strong>
@@ -283,6 +331,7 @@ const AssignTeamMember = () => {
                       <thead>
                         <tr>
                           <th>#</th>
+                          <th>Assigned To</th>
                           <th>First Name</th>
                           <th>Last Name</th>
                           <th>Mobile Number</th>
@@ -295,25 +344,36 @@ const AssignTeamMember = () => {
                         {ShowParentList && ShowParentList?.length ? (
                           <>
                             {ShowParentList &&
-                              ShowParentList?.map((ele, i) => (
-                                <tr key={ele?._id}>
-                                  <th scope="row">
-                                    {/* {i + 1}{" "} */}
-                                    <Input
-                                      name="Parent"
-                                      value="checkbox1"
-                                      type="radio"
-                                      onClick={(e) => handleSaveParent(ele)}
-                                    />
-                                  </th>
-                                  <td>{ele?.firstName}</td>
-                                  <td>{ele?.lastName}</td>
-                                  <td>{ele?.mobileNumber}</td>
-                                  <td>{ele?.email}</td>
-                                  <td>{ele?.State}</td>
-                                  <td>{ele?.City}</td>
-                                </tr>
-                              ))}
+                              ShowParentList?.map((ele, i) => {
+                                console.log(ele);
+                                return (
+                                  <tr key={ele?._id}>
+                                    <th scope="row">
+                                      {/* {i + 1}{" "} */}
+                                      <Input
+                                        name="Parent"
+                                        value="checkbox1"
+                                        type="radio"
+                                        onClick={(e) => handleSaveParent(ele)}
+                                      />
+                                    </th>
+                                    <td>
+                                      <Badge color="primary">
+                                        <strong>
+                                          {ele?.created_by?.firstName &&
+                                            ele?.created_by?.firstName}
+                                        </strong>
+                                      </Badge>
+                                    </td>
+                                    <td>{ele?.firstName}</td>
+                                    <td>{ele?.lastName}</td>
+                                    <td>{ele?.mobileNumber}</td>
+                                    <td>{ele?.email}</td>
+                                    <td>{ele?.State}</td>
+                                    <td>{ele?.City}</td>
+                                  </tr>
+                                );
+                              })}
                           </>
                         ) : null}
                       </tbody>
@@ -334,7 +394,7 @@ const AssignTeamMember = () => {
                             (child)
                           </>
                         ) : (
-                          "Child"
+                          "All Dept Head"
                         )}{" "}
                         Users List
                       </strong>
@@ -350,6 +410,7 @@ const AssignTeamMember = () => {
                       <thead>
                         <tr>
                           <th>#</th>
+                          <th>Assigned To</th>
                           <th>First Name</th>
                           <th>Last Name</th>
                           <th>Mobile Number</th>
@@ -361,24 +422,40 @@ const AssignTeamMember = () => {
 
                       <tbody>
                         {ShowChildList &&
-                          ShowChildList?.map((ele, i) => (
-                            <tr key={ele?._id}>
-                              <th scope="row">
-                                {" "}
-                                <Input
-                                  value="checkbox1"
-                                  type="checkbox"
-                                  onClick={(e) => handleSaveChild(ele, e)}
-                                />
-                              </th>
-                              <td>{ele?.firstName}</td>
-                              <td>{ele?.lastName}</td>
-                              <td>{ele?.mobileNumber}</td>
-                              <td>{ele?.email}</td>
-                              <td>{ele?.State}</td>
-                              <td>{ele?.City}</td>
-                            </tr>
-                          ))}
+                          ShowChildList?.map((ele, i) => {
+                            console.log(ele);
+                            return (
+                              <tr key={ele?._id}>
+                                <th scope="row">
+                                  {" "}
+                                  {ele?.created_by?.firstName &&
+                                  ele?.created_by?.firstName ? null : (
+                                    <>
+                                      <Input
+                                        value="checkbox1"
+                                        type="checkbox"
+                                        onClick={(e) => handleSaveChild(ele, e)}
+                                      />
+                                    </>
+                                  )}
+                                </th>
+                                <td>
+                                  <Badge color="primary">
+                                    <strong>
+                                      {ele?.created_by?.firstName &&
+                                        ele?.created_by?.firstName}
+                                    </strong>
+                                  </Badge>
+                                </td>
+                                <td>{ele?.firstName}</td>
+                                <td>{ele?.lastName}</td>
+                                <td>{ele?.mobileNumber}</td>
+                                <td>{ele?.email}</td>
+                                <td>{ele?.State}</td>
+                                <td>{ele?.City}</td>
+                              </tr>
+                            );
+                          })}
                       </tbody>
                     </Table>
                   </div>

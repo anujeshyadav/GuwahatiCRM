@@ -899,7 +899,8 @@ const horizontalMenuConfig = [
             type: "item",
             icon: <GiNuclearWaste size={22} />,
             permissions: ["admin", "editor"],
-            navLink: "/app/softNumen/warehouse/WastageDetail",
+            navLink: "/views/apps/AjGroup/Production/Wastageproduction",
+            // navLink: "/app/softNumen/warehouse/WastageDetail",
           },
           {
             id: "dispatchDetail",
@@ -940,8 +941,9 @@ const horizontalMenuConfig = [
             type: "item",
             icon: <FaList size={12} />,
             permissions: ["admin", "editor"],
-            navLink:
-              "/views/apps/freshlist/Production/wastagematerialproduction",
+            navLink: "/views/apps/AjGroup/Production/Wastageproduction",
+            // navLink:
+            //   "/views/apps/freshlist/Production/wastagematerialproduction",
           },
           {
             id: "wastagestockreturn",

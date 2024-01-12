@@ -143,6 +143,16 @@ function CreateHeriarchy() {
       <div>
         <Row>
           <Col></Col>
+          {/* <Col className="m-2" lg="3" sm="6" md="3">
+            <Button
+              style={{ cursor: "pointer" }}
+              className="float-right mr-1"
+              color="primary"
+             
+            >
+              Connect with SuperAdmin
+            </Button>
+          </Col> */}
           <Col className="m-2" lg="2">
             <Route
               render={({ history }) => (

@@ -45,7 +45,7 @@ const CreateCustomer = () => {
   const [CreatAccountView, setCreatAccountView] = useState([]);
   const [RoleList, setRoleList] = useState([]);
   const [Countries, setCountry] = useState({});
-  const [BulkImport, setBulkImport] = useState({});
+  const [BulkImport, setBulkImport] = useState(null);
 
   const [States, setState] = useState({});
   const [Cities, setCities] = useState({});
@@ -132,8 +132,8 @@ const CreateCustomer = () => {
     let userdata = JSON.parse(localStorage.getItem("userData"));
     Get_RoleList(userdata?._id, userdata?.database)
       .then((res) => {
-        let ShowList = res?.Role?.filter(
-          (item, i) => item?.position > userdata?.rolename?.position
+        let ShowList = res?.Role?.filter((item, i) =>
+          item?.roleName?.toLowerCase()?.includes("customer")
         );
         setRoleList(ShowList);
         // console.log(ShowList);

@@ -391,7 +391,7 @@ class Itemproduct extends React.Component {
   async componentDidMount() {
     const userId = JSON.parse(localStorage.getItem("userData"));
     const UserInformation = this.context?.UserInformatio;
-    const InsidePermissions = CheckPermission("Sales Order");
+    const InsidePermissions = CheckPermission("item");
     // console.log(InsidePermissions);
     this.setState({ InsiderPermissions: InsidePermissions });
     let url = `${Get_Producton_ProcessList}/${userId?._id}/`;

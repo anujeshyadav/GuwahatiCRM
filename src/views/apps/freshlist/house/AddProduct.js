@@ -18,7 +18,7 @@ import "react-phone-input-2/lib/style.css";
 import { Country, State, City } from "country-state-city";
 import Select from "react-select";
 import moment from "moment-timezone";
-import { Route } from "react-router-dom";
+import { Route, useHistory } from "react-router-dom";
 
 import swal from "sweetalert";
 import "../../../../../src/layouts/assets/scss/pages/users.scss";
@@ -47,7 +47,7 @@ const AddProduct = () => {
   const [States, setState] = useState({});
   const [Cities, setCities] = useState({});
   const [formData, setFormData] = useState({});
-  const [BulkImport, setBulkImport] = useState({});
+  const [BulkImport, setBulkImport] = useState(null);
 
   const [dropdownValue, setdropdownValue] = useState({});
   const [index, setindex] = useState("");
@@ -55,6 +55,7 @@ const AddProduct = () => {
   const [permissions, setpermissions] = useState({});
 
   const Context = useContext(UserContext);
+  const history = useHistory();
 
   const handleInputChange = (e, type, i) => {
     const { name, value, checked } = e.target;
@@ -120,7 +121,7 @@ const AddProduct = () => {
       }
     }
   };
-  console.log(formData);
+
   const changeHandler1 = (e) => {
     setFormData({
       ...formData,
@@ -199,6 +200,7 @@ const AddProduct = () => {
       formdata.append("file", BulkImport);
       await _BulkUpload(Bulk_Upload_Product, formdata)
         .then((res) => {
+          history.push("/app/freshlist/house/houseProductList");
           swal(`${res?.message}`);
         })
         .catch((err) => {

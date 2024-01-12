@@ -215,28 +215,20 @@ const EditAccount = ({ ViewOneData }) => {
                 </Col> */}
               <Col lg="4" md="4">
                 <FormGroup>
-                  <Label>Selected Role</Label>
-                  <CustomInput
-                    disabled
-                    required
-                    type="select"
-                    name="rolename"
-                    value={formData["rolename"]}
-                    //        onChange={(e)=>{
-                    //         setFormData({
-                    //         ...formData,
-                    //         ["rolename"]: e.target.value
-                    // })}}
-                  >
-                    <option>--select Role--</option>
-                    {dropdownValue &&
-                      dropdownValue?.length &&
-                      dropdownValue?.map((ele, i) => {
-                        return (
-                          <option value={ele?._id}>{ele?.roleName}</option>
-                        );
-                      })}
-                  </CustomInput>
+                  <Label>
+                    Role Name-
+                    <strong>
+                      {formData?.rolename?.roleName &&
+                        formData?.rolename?.roleName}
+                    </strong>
+                  </Label>
+                  <Input
+                    readOnly
+                    value={
+                      formData?.rolename?.roleName &&
+                      formData?.rolename?.roleName
+                    }
+                  />
                 </FormGroup>
               </Col>
               {CreatAccountView &&
@@ -251,7 +243,7 @@ const EditAccount = ({ ViewOneData }) => {
                               disabled
                               inputClass="myphoneinput"
                               country={"in"}
-                              onKeyDown={e => {
+                              onKeyDown={(e) => {
                                 if (ele?.type?._attributes?.type == "number") {
                                   ["e", "E", "+", "-"].includes(e.key) &&
                                     e.preventDefault();
@@ -260,7 +252,7 @@ const EditAccount = ({ ViewOneData }) => {
                               countryCodeEditable={false}
                               name={ele?.name?._text}
                               value={formData[ele?.name?._text]}
-                              onChange={phone => {
+                              onChange={(phone) => {
                                 setFormData({
                                   ...formData,
                                   [ele?.name?._text]: phone,
@@ -292,14 +284,14 @@ const EditAccount = ({ ViewOneData }) => {
                               inputClass="countryclass"
                               className="countryclassnw"
                               options={Country.getAllCountries()}
-                              getOptionLabel={options => {
+                              getOptionLabel={(options) => {
                                 return options["name"];
                               }}
-                              getOptionValue={options => {
+                              getOptionValue={(options) => {
                                 return options["name"];
                               }}
                               value={Countries}
-                              onChange={country => {
+                              onChange={(country) => {
                                 setCountry(country);
                                 setFormData({
                                   ...formData,
@@ -329,14 +321,14 @@ const EditAccount = ({ ViewOneData }) => {
                               options={State?.getStatesOfCountry(
                                 Countries?.isoCode
                               )}
-                              getOptionLabel={options => {
+                              getOptionLabel={(options) => {
                                 return options["name"];
                               }}
-                              getOptionValue={options => {
+                              getOptionValue={(options) => {
                                 return options["name"];
                               }}
                               value={States}
-                              onChange={State => {
+                              onChange={(State) => {
                                 setState(State);
                                 setFormData({
                                   ...formData,
@@ -367,14 +359,14 @@ const EditAccount = ({ ViewOneData }) => {
                                 States?.countryCode,
                                 States?.isoCode
                               )}
-                              getOptionLabel={options => {
+                              getOptionLabel={(options) => {
                                 return options["name"];
                               }}
-                              getOptionValue={options => {
+                              getOptionValue={(options) => {
                                 return options["name"];
                               }}
                               value={Cities}
-                              onChange={City => {
+                              onChange={(City) => {
                                 setCities(City);
                                 setFormData({
                                   ...formData,
@@ -405,7 +397,7 @@ const EditAccount = ({ ViewOneData }) => {
 
                                   <Input
                                     disabled
-                                    onKeyDown={e => {
+                                    onKeyDown={(e) => {
                                       if (
                                         ele?.type?._attributes?.type == "number"
                                       ) {
@@ -428,7 +420,7 @@ const EditAccount = ({ ViewOneData }) => {
                                       // formData[ele?.name?._text]
                                     }
                                     // value={formData[ele?.name?._text]}
-                                    onChange={e =>
+                                    onChange={(e) =>
                                       handleInputChange(
                                         e,
                                         ele?.type?._attributes?.type,
@@ -457,7 +449,7 @@ const EditAccount = ({ ViewOneData }) => {
                                   <Label>{ele?.label?._text}</Label>
                                   <Input
                                     disabled
-                                    onKeyDown={e => {
+                                    onKeyDown={(e) => {
                                       if (
                                         ele?.type?._attributes?.type == "number"
                                       ) {
@@ -469,7 +461,7 @@ const EditAccount = ({ ViewOneData }) => {
                                     placeholder={ele?.placeholder?._text}
                                     name={ele?.name?._text}
                                     value={formData[ele?.name?._text]}
-                                    onChange={e =>
+                                    onChange={(e) =>
                                       handleInputChange(
                                         e,
                                         ele?.type?._attributes?.type,
@@ -506,10 +498,10 @@ const EditAccount = ({ ViewOneData }) => {
 
                                 <Input
                                   disabled
-                                  onWheel={e => {
+                                  onWheel={(e) => {
                                     e.preventDefault(); // Prevent the mouse wheel scroll event
                                   }}
-                                  onKeyDown={e => {
+                                  onKeyDown={(e) => {
                                     if (
                                       ele?.type?._attributes?.type == "number"
                                     ) {
@@ -521,7 +513,7 @@ const EditAccount = ({ ViewOneData }) => {
                                   placeholder={ele?.placeholder?._text}
                                   name={ele?.name?._text}
                                   value={formData[ele?.name?._text]}
-                                  onChange={e =>
+                                  onChange={(e) =>
                                     handleInputChange(
                                       e,
                                       ele?.type?._attributes?.type,
@@ -550,7 +542,7 @@ const EditAccount = ({ ViewOneData }) => {
 
                               <Input
                                 disabled
-                                onKeyDown={e => {
+                                onKeyDown={(e) => {
                                   if (
                                     ele?.type?._attributes?.type == "number"
                                   ) {
@@ -562,7 +554,7 @@ const EditAccount = ({ ViewOneData }) => {
                                 placeholder={ele?.placeholder?._text}
                                 name={ele?.name?._text}
                                 value={formData[ele?.name?._text]}
-                                onChange={e => {
+                                onChange={(e) => {
                                   // const value = e.target.value;
                                   // // Use regular expression to allow only numbers
                                   // const numericValue = value.replace(
