@@ -38,6 +38,7 @@ const AssignTeamMember = () => {
   );
   const [NoChild, setNoChild] = useState(false);
   const [Loader, setLoader] = useState(false);
+  const [Party, setParty] = useState(false);
   const [HeadOfDepartment, setHeadOfDepartment] = useState(false);
   const [Parent, setParent] = useState("");
   const [ParentName, setParentName] = useState("");
@@ -50,7 +51,7 @@ const AssignTeamMember = () => {
 
     _Get(All_Users_List, userData?.database)
       .then((res) => {
-        console.log(res?.User);
+        // console.log(res?.User);
         let WithoutCreatedBy = res?.User?.filter((ele, i) => !ele?.created_by);
         setAllUsersList(res?.User);
         // if (WithoutCreatedBy?.length) {
@@ -61,14 +62,13 @@ const AssignTeamMember = () => {
         console.log(err);
       });
   };
-  console.log([...new Set(ALLheadsofDept)]);
   useEffect(() => {
     let userData = JSON.parse(localStorage.getItem("userData"));
 
     UserList();
     _Get(Deptartment_with_Role, userData?.database)
       .then((res) => {
-        console.log(res?.Department);
+        // console.log(res?.Department);
         setDepartmentWithRole(res?.Department);
       })
       .catch((err) => {
@@ -107,7 +107,7 @@ const AssignTeamMember = () => {
     await _PostSave(User_Assign_User, payload)
       .then((res) => {
         setLoader(false);
-        console.log(res);
+        // console.log(res);
 
         UserList();
         setSelectedDepartment([]);
@@ -125,7 +125,7 @@ const AssignTeamMember = () => {
         console.log(err);
       });
   };
-
+  console.log(ShowChildList);
   return (
     <div>
       <Card>
@@ -218,6 +218,7 @@ const AssignTeamMember = () => {
                   <CustomInput
                     value={Parent}
                     onChange={(e) => {
+                      debugger;
                       const selected = e.target.options[e.target.selectedIndex]
                         .getAttribute("data-name")
                         ?.split(" ");
@@ -226,9 +227,16 @@ const AssignTeamMember = () => {
                         setHeadOfDepartment(true);
                       }
                       const name = selected.slice(2).join(" ");
-                      let child = SelectedDepartment?.filter(
-                        (ele) => ele?.rolePosition == Number(selected[0]) + 1
-                      );
+                      let child = [];
+                      if (name == "Sales Person") {
+                        child = AllUsersList?.filter(
+                          (ele) => ele?.rolename?.roleName == "Customer"
+                        );
+                      } else {
+                        child = SelectedDepartment?.filter(
+                          (ele) => ele?.rolePosition == Number(selected[0]) + 1
+                        );
+                      }
 
                       let ParentList = AllUsersList?.filter(
                         (ele) => ele?.rolename?._id == selected[1]
@@ -240,12 +248,23 @@ const AssignTeamMember = () => {
                       setSelectedRoleId(selected[1]);
 
                       if (child?.length) {
-                        let ChildList = AllUsersList?.filter(
-                          (ele) => ele?.rolename?._id == child[0]?.roleId?._id
-                        );
-                        setShowChildList(ChildList);
-                        setChild(true);
-                        setChildList(child);
+                        let ChildList = [];
+                        if (name == "Sales Person") {
+                          setShowChildList(child);
+                          setParty(true);
+                          // setShowChildList(ChildList);
+                          setChild(true);
+                          setChildList(child);
+                        } else {
+                          ChildList = AllUsersList?.filter(
+                            (ele) => ele?.rolename?._id == child[0]?.roleId?._id
+                          );
+                          setShowChildList(ChildList);
+                          setChild(true);
+                          setParty(false);
+
+                          setChildList(child);
+                        }
                       } else {
                         setChildList([]);
                         setShowChildList([]);
@@ -345,7 +364,6 @@ const AssignTeamMember = () => {
                           <>
                             {ShowParentList &&
                               ShowParentList?.map((ele, i) => {
-                                console.log(ele);
                                 return (
                                   <tr key={ele?._id}>
                                     <th scope="row">
@@ -358,12 +376,15 @@ const AssignTeamMember = () => {
                                       />
                                     </th>
                                     <td>
-                                      <Badge color="primary">
-                                        <strong>
-                                          {ele?.created_by?.firstName &&
-                                            ele?.created_by?.firstName}
-                                        </strong>
-                                      </Badge>
+                                      {ele?.created_by?.firstName &&
+                                        ele?.created_by?.firstName && (
+                                          <Badge color="primary">
+                                            <strong>
+                                              {ele?.created_by?.firstName &&
+                                                ele?.created_by?.firstName}
+                                            </strong>
+                                          </Badge>
+                                        )}
                                     </td>
                                     <td>{ele?.firstName}</td>
                                     <td>{ele?.lastName}</td>
@@ -394,7 +415,7 @@ const AssignTeamMember = () => {
                             (child)
                           </>
                         ) : (
-                          "All Dept Head"
+                          <>{Party && Party ? "Party" : "All Dept Head"}</>
                         )}{" "}
                         Users List
                       </strong>
@@ -412,6 +433,7 @@ const AssignTeamMember = () => {
                           <th>#</th>
                           <th>Assigned To</th>
                           <th>First Name</th>
+
                           <th>Last Name</th>
                           <th>Mobile Number</th>
                           <th>email</th>
@@ -423,7 +445,9 @@ const AssignTeamMember = () => {
                       <tbody>
                         {ShowChildList &&
                           ShowChildList?.map((ele, i) => {
-                            console.log(ele);
+                            {
+                              /* console.log(ele); */
+                            }
                             return (
                               <tr key={ele?._id}>
                                 <th scope="row">

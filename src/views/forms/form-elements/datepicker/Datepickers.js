@@ -1,6 +1,7 @@
 import React from "react";
 import { Row, Col, Card, CardBody, CardHeader, CardTitle } from "reactstrap";
 import Flatpickr from "react-flatpickr";
+import "flatpickr/dist/themes/material_green.css";
 
 class Datepickers extends React.Component {
   state = {

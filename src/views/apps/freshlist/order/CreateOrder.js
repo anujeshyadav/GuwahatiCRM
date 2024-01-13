@@ -24,12 +24,14 @@ import {
   UnitListView,
   BaseUnitListView,
   CreateCustomerList,
+  _Get,
 } from "../../../../ApiEndPoint/ApiCalling";
 import "../../../../assets/scss/pages/users.scss";
+import { WareHouse_Current_Stock } from "../../../../ApiEndPoint/Api";
 let GrandTotal = [];
 let SelectedITems = [];
 let SelectedSize = [];
-const CreateOrder = args => {
+const CreateOrder = (args) => {
   const [Index, setIndex] = useState("");
   const [index, setindex] = useState("");
   const [error, setError] = useState("");
@@ -63,7 +65,7 @@ const CreateOrder = args => {
 
         let amt = 0;
         if (list.length > 0) {
-          const x = list?.map(val => {
+          const x = list?.map((val) => {
             GrandTotal[index] = val.Size * val.qty * val.price;
             list[index]["totalprice"] = val.Size * val.qty * val.price;
             return val.Size * val.qty * val.price;
@@ -80,14 +82,30 @@ const CreateOrder = args => {
     setPartyId(selectedItem._id);
   };
 
-  const handleSelection = (selectedList, selectedItem, index) => {
+  const handleSelection = async (selectedList, selectedItem, index) => {
+    const userdata = JSON.parse(localStorage.getItem("userData"));
+
     SelectedITems.push(selectedItem);
-    setProduct(prevProductList => {
+    // console.log(selectedItem?.warehouse);
+    // console.log(selectedItem?._id);
+    // console.log(userdata?._id, userdata?.database);
+    let URl = `${WareHouse_Current_Stock}${selectedItem?.warehouse}/`;
+    var Stock;
+    await _Get(URl, selectedItem?._id)
+      .then((res) => {
+        console.log(res?.currentStock);
+        Stock = res?.currentStock;
+      })
+      .catch((err) => {
+        console.log(err);
+        swal("something went Wrong");
+      });
+    setProduct((prevProductList) => {
       const updatedProductList = [...prevProductList];
       const updatedProduct = { ...updatedProductList[index] }; // Create a copy of the product at the specified index
       updatedProduct.price = selectedItem.Product_MRP; // Update the price of the copied product
       updatedProduct.productId = selectedItem._id;
-      updatedProduct.availableQty = selectedItem.Size;
+      updatedProduct.availableQty = Stock?.currentStock;
       updatedProductList[index] = updatedProduct; // Replace the product at the specified index with the updated one
       return updatedProductList; // Return the updated product list to set the state
     });
@@ -95,7 +113,7 @@ const CreateOrder = args => {
 
   const handleSelectionUnit = (selectedList, selectedItem, index) => {
     SelectedSize.push(selectedItem);
-    setProduct(prevProductList => {
+    setProduct((prevProductList) => {
       const updatedUnitList = [...prevProductList];
       const updatedProduct = { ...updatedUnitList[index] }; // Create a copy of the product at the specified index
       updatedProduct.Size = selectedItem.unitQty;
@@ -126,27 +144,30 @@ const CreateOrder = args => {
     let userdata = JSON.parse(localStorage.getItem("userData"));
 
     ProductListView(userdata?._id, userdata?.database)
-      .then(res => {
-        setProductList(res?.Product);
+      .then((res) => {
+        let product = res?.Product?.filter(
+          (ele) => ele?.addProductType == "Product"
+        );
+        setProductList(product);
       })
-      .catch(err => {
+      .catch((err) => {
         console.log(err);
       });
     CreateCustomerList(userdata?._id, userdata?.database)
-      .then(res => {
+      .then((res) => {
         let value = res?.Customer;
         if (value?.length) {
           setPartyList(value);
         }
       })
-      .catch(err => {
+      .catch((err) => {
         console.log(err);
       });
     UnitListView(userdata?._id, userdata?.database)
-      .then(res => {
+      .then((res) => {
         setUnitList(res.Unit);
       })
-      .catch(err => {
+      .catch((err) => {
         console.log(err);
       });
   }, []);
@@ -169,7 +190,7 @@ const CreateOrder = args => {
       },
     ]);
   };
-  let removeMoreProduct = i => {
+  let removeMoreProduct = (i) => {
     let newFormValues = [...product];
     newFormValues.splice(i, 1);
     GrandTotal.splice(i, 1);
@@ -177,7 +198,7 @@ const CreateOrder = args => {
     setGrandTotalAmt(amt);
     setProduct(newFormValues);
   };
-  const submitHandler = e => {
+  const submitHandler = (e) => {
     e.preventDefault();
     const fullname = UserInfo?.firstName + " " + UserInfo?.lastName;
     const payload = {
@@ -197,12 +218,12 @@ const CreateOrder = args => {
       swal("Error occured while Entering Details");
     } else {
       SaveOrder(payload)
-        .then(res => {
+        .then((res) => {
           console.log(res);
           swal("Order Created Successfully");
           //  history.push("/app/softnumen/order/orderList")
         })
-        .catch(err => {
+        .catch((err) => {
           console.log(err);
         });
     }
@@ -230,8 +251,7 @@ const CreateOrder = args => {
                     size="sm"
                     onClick={() =>
                       history.push("/app/softnumen/order/orderList")
-                    }
-                  >
+                    }>
                     Back
                   </Button>
                 )}
@@ -267,7 +287,7 @@ const CreateOrder = args => {
                       type="date"
                       name="DateofDelivery"
                       value={dateofDelivery}
-                      onChange={e => setDateofDelivery(e.target.value)}
+                      onChange={(e) => setDateofDelivery(e.target.value)}
                     />
                   </div>
                 </Col>
@@ -317,7 +337,7 @@ const CreateOrder = args => {
                           required
                           autocomplete="off"
                           value={product?.qty}
-                          onChange={e =>
+                          onChange={(e) =>
                             handleRequredQty(e, index, product?.availableQty)
                           }
                         />
@@ -379,8 +399,7 @@ const CreateOrder = args => {
                             color="danger"
                             className="button remove "
                             size="sm"
-                            onClick={() => removeMoreProduct(index)}
-                          >
+                            onClick={() => removeMoreProduct(index)}>
                             -
                           </Button>
                         ) : null}
@@ -392,8 +411,7 @@ const CreateOrder = args => {
                           color="primary"
                           type="button"
                           size="sm"
-                          onClick={() => addMoreProduct()}
-                        >
+                          onClick={() => addMoreProduct()}>
                           +
                         </Button>
                       </div>
@@ -447,8 +465,7 @@ const CreateOrder = args => {
                     <Button.Ripple
                       color="primary"
                       type="submit"
-                      className="mt-2"
-                    >
+                      className="mt-2">
                       Submit
                     </Button.Ripple>
                   </div>

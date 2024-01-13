@@ -50,7 +50,7 @@ const CreateCustomer = () => {
   const [States, setState] = useState({});
   const [Cities, setCities] = useState({});
   const [formData, setFormData] = useState({});
-  const [dropdownValue, setdropdownValue] = useState({});
+  const [dropdownValue, setdropdownValue] = useState([]);
   const [index, setindex] = useState("");
   const [error, setError] = useState("");
   const [permissions, setpermissions] = useState({});
@@ -143,8 +143,8 @@ const CreateCustomer = () => {
         swal("Roles List Not found");
       });
 
-    console.log(userdata?._id);
-    formData["created_by"] = userdata?._id;
+    // console.log(userdata?._id);
+    // formData["created_by"] = userdata?._id;
   }, []);
   useEffect(() => {
     CreateCustomerxmlView()
@@ -153,22 +153,19 @@ const CreateCustomer = () => {
           compact: true,
           spaces: 2,
         });
+
         console.log(JSON.parse(jsonData)?.CreateCustomer);
         setCreatAccountView(JSON.parse(jsonData)?.CreateCustomer?.input);
 
-        setdropdownValue(
-          JSON.parse(jsonData)?.CreateCustomer?.MyDropDown?.dropdown
-        );
+        setdropdownValue(JSON.parse(jsonData)?.CreateCustomer?.MyDropDown);
       })
       .catch((err) => {
         console.log(err);
         swal("Something Went Wrong");
       });
   }, []);
-
   const submitHandler = async (e) => {
     e.preventDefault();
-
     if (BulkImport !== null || BulkImport != undefined) {
       let formdata = new FormData();
       formdata.append("file", BulkImport);
@@ -184,6 +181,12 @@ const CreateCustomer = () => {
     } else {
       let userdata = JSON.parse(localStorage.getItem("userData"));
       let formdata = new FormData();
+      dropdownValue?.map((ele, i) => {
+        formdata.append(
+          `${ele?.dropdown?.name?._text}`,
+          formData[ele?.dropdown?.name?._text]
+        );
+      });
       CreatAccountView?.map((ele, i) => {
         if (ele?.type?._attributes?.type == "text") {
           formdata.append(`${ele?.name._text}`, formData[ele?.name?._text]);
@@ -199,16 +202,16 @@ const CreateCustomer = () => {
             });
           }
         } else {
-          formdata.append(`${ele?.name._text}`, formData[ele?.name?._text]);
+          formdata.append(`${ele?.name?._text}`, formData[ele?.name?._text]);
         }
       });
-      formdata.append(
-        `${dropdownValue?.name?._text}`,
-        formData[dropdownValue?.name?._text]
-      );
-      formdata.append("status", formData.status);
-      formdata.append("created_by", userdata?._id);
-      formdata.append("rolename", userdata?.rolename?._id);
+      // formdata.append(
+      //   `${dropdownValue?.name?._text}`,
+      //   formData[dropdownValue?.name?._text]
+      // );
+      formdata.append("status", formData?.status);
+      formdata.append("database", userdata?.database);
+      formdata.append("rolename", formData?.rolename);
 
       if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(
@@ -229,8 +232,9 @@ const CreateCustomer = () => {
       }
 
       formdata.forEach((value, key) => {
-        // console.log(key, value);
+        console.log(key, value);
       });
+      debugger;
       if (error) {
         // swal("Error occured while Entering Details");
       } else {
@@ -286,7 +290,7 @@ const CreateCustomer = () => {
               <Row className="mb-2">
                 <Col lg="4" md="4">
                   <FormGroup>
-                    <Label className="mb-1">Role List</Label>
+                    <Label className="mb-1">Role List *</Label>
                     <CustomInput
                       required
                       type="select"
@@ -309,30 +313,39 @@ const CreateCustomer = () => {
                     </CustomInput>
                   </FormGroup>
                 </Col>
-                {dropdownValue && (
-                  <Col lg="4" md="4" sm="12">
-                    <FormGroup>
-                      <Label className="mb-1">
-                        {dropdownValue && dropdownValue?.label?._text}
-                      </Label>
-                      <CustomInput
-                        required
-                        type="select"
-                        name={dropdownValue?.name?._text}
-                        value={formData[dropdownValue?.name?._text]}
-                        onChange={handleInputChange}>
-                        <option value="">--Select --</option>
-                        {dropdownValue?.option?.map((option, index) => (
-                          <option
-                            key={index}
-                            value={option?._attributes?.value}>
-                            {option?._attributes?.value}
-                          </option>
-                        ))}
-                      </CustomInput>
-                    </FormGroup>
-                  </Col>
-                )}
+                {dropdownValue && dropdownValue ? (
+                  <>
+                    {dropdownValue?.map((ele, i) => {
+                      return (
+                        <>
+                          <Col key={i} lg="4" md="4" sm="12">
+                            <FormGroup>
+                              <Label className="mb-1">
+                                {ele?.dropdown?.label?._text &&
+                                  ele?.dropdown?.label?._text}
+                              </Label>
+                              <CustomInput
+                                required
+                                type="select"
+                                name={ele?.dropdown?.name?._text}
+                                value={formData[ele?.dropdown?.name?._text]}
+                                onChange={handleInputChange}>
+                                <option value="">--Select --</option>
+                                {ele?.dropdown?.option?.map((option, index) => (
+                                  <option
+                                    key={index}
+                                    value={option?._attributes?.value}>
+                                    {option?._attributes?.value}
+                                  </option>
+                                ))}
+                              </CustomInput>
+                            </FormGroup>
+                          </Col>
+                        </>
+                      );
+                    })}
+                  </>
+                ) : null}
 
                 {CreatAccountView &&
                   CreatAccountView?.map((ele, i) => {
@@ -814,6 +827,13 @@ const CreateCustomer = () => {
                       );
                     }
                   })}
+              </Row>
+
+              <hr />
+              <Row>
+                <Col lg="12" md="12" sm="12">
+                  <Label>OR</Label>
+                </Col>
                 <Col lg="4" md="4" sm="12">
                   <FormGroup>
                     <Label>Bulk Import</Label>
@@ -830,8 +850,6 @@ const CreateCustomer = () => {
                   </FormGroup>
                 </Col>
               </Row>
-
-              <hr />
               <Row className="mt-2">
                 <Col lg="6" md="6" sm="6" className="mb-2 mt-1">
                   <Label className="mb-0">Status</Label>
@@ -861,43 +879,6 @@ const CreateCustomer = () => {
                   </div>
                 </Col>
               </Row>
-              {/* <Row className="mt-2 ">
-                <Col lg="6" md="6" sm="6" className="mb-2">
-                  <Label className="">
-                    <h4>Status</h4>
-                  </Label>
-                  <div className="form-label-group mx-1">
-                    {CreatAccountView &&
-                      CreatAccountView?.CreateAccount?.Radiobutton?.input?.map(
-                        (ele, i) => {
-                          return (
-                            <FormGroup key={i}>
-                              <Input
-                                key={i}
-                                style={{ marginRight: "3px" }}
-                                required
-                                type={ele?.type?._attributes?.type}
-                                name={ele?.name?._text}
-                                value={`${
-                                  ele?.label?._text == "Active"
-                                    ? "Active"
-                                    : "Deactive"
-                                }`}
-                                onChange={handleInputChange}
-                              />{" "}
-                              <span
-                                className="mx-1 mt-1"
-                                style={{ marginRight: "20px" }}
-                              >
-                                {ele?.label?._text}
-                              </span>
-                            </FormGroup>
-                          );
-                        }
-                      )}
-                  </div>
-                </Col>
-              </Row> */}
 
               <Row>
                 <Button.Ripple
