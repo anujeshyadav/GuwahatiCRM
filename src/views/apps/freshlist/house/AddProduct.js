@@ -190,7 +190,6 @@ const AddProduct = () => {
       [name]: e.target.files[0],
     });
   };
-  console.log(BulkImport);
 
   const submitHandler = async (e) => {
     e.preventDefault();
@@ -404,13 +403,20 @@ const AddProduct = () => {
                                   </option>
 
                                   {wareHouseList &&
-                                    wareHouseList?.map((whList) => (
-                                      <option
-                                        value={whList?._id}
-                                        key={whList?._id}>
-                                        {whList?.firstName}
-                                      </option>
-                                    ))}
+                                    wareHouseList?.map((whList) => {
+                                      if (
+                                        whList?.rolename?.roleName ==
+                                        "WareHouse Incharge"
+                                      ) {
+                                        return (
+                                          <option
+                                            value={whList?._id}
+                                            key={whList?._id}>
+                                            {whList?.firstName}
+                                          </option>
+                                        );
+                                      }
+                                    })}
                                 </CustomInput>
                               </Col>
                             )}
@@ -1018,50 +1024,6 @@ const AddProduct = () => {
                                       )}
                                     </>
                                   )}
-
-                                  {/* <Label className="mb-1">
-                                  {ele?.label?._text}
-                                </Label>
-
-                                <Input
-                                  className="form-control"
-                                  onKeyDown={(e) => {
-                                    if (
-                                      ele?.type?._attributes?.type == "number"
-                                    ) {
-                                      ["e", "E", "+", "-"].includes(e.key) &&
-                                        e.preventDefault();
-                                    }
-                                  }}
-                                  type={ele?.type?._attributes?.type}
-                                  placeholder={ele?.placeholder?._text}
-                                  name={ele?.name?._text}
-                                  value={formData[ele?.name?._text]}
-                                  onChange={(e) => {
-                                    // const value = e.target.value;
-                                    // // Use regular expression to allow only numbers
-                                    // const numericValue = value.replace(
-                                    //   /\D/g,
-                                    //   ""
-                                    // );
-                                    handleInputChange(
-                                      e,
-                                      ele?.type?._attributes?.type,
-                                      i
-                                    );
-                                  }}
-                                />
-                                {index === i ? (
-                                  <>
-                                    {error && (
-                                      <span style={{ color: "red" }}>
-                                        {error}
-                                      </span>
-                                    )}
-                                  </>
-                                ) : (
-                                  <></>
-                                )} */}
                                 </FormGroup>
                               </Col>
                             )}
@@ -1069,9 +1031,16 @@ const AddProduct = () => {
                         );
                       }
                     })}
-                  <Col className="mt-1" lg="4" md="4" sm="12">
+                </Row>
+
+                <hr />
+                <Row>
+                  <Col lg="12" md="12" sm="12">
+                    <Label>OR</Label>
+                  </Col>
+                  <Col lg="4" md="4" sm="12">
                     <FormGroup>
-                      <Label className="mb-1">Bulk Import</Label>
+                      <Label>Bulk Import</Label>
 
                       <Input
                         className="form-control"
@@ -1085,8 +1054,6 @@ const AddProduct = () => {
                     </FormGroup>
                   </Col>
                 </Row>
-
-                <hr />
                 <Row>
                   <Col lg="4" md="4" sm="6" className="mb-2 mt-1">
                     <Label className="mb-0">Status</Label>

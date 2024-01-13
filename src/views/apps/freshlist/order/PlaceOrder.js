@@ -137,9 +137,9 @@ const PlaceOrder = (args) => {
   const handleSelection = async (selectedList, selectedItem, index) => {
     const userdata = JSON.parse(localStorage.getItem("userData"));
     SelectedITems.push(selectedItem);
-    console.log(selectedItem?.warehouse);
-    console.log(selectedItem?._id);
-    console.log(userdata?._id, userdata?.database);
+    // console.log(selectedItem?.warehouse);
+    // console.log(selectedItem?._id);
+    // console.log(userdata?._id, userdata?.database);
     let URl = `${WareHouse_Current_Stock}${selectedItem?.warehouse}/`;
     var Stock;
     await _Get(URl, selectedItem?._id)
@@ -174,8 +174,11 @@ const PlaceOrder = (args) => {
 
     ProductListView(userdata?._id, userdata?.database)
       .then((res) => {
-        console.log(res.Product);
-        setProductList(res?.Product);
+        let product = res?.Product?.filter(
+          (ele) => ele?.addProductType == "Product"
+        );
+        // console.log(product);
+        setProductList(product);
       })
       .catch((err) => {
         console.log(err);

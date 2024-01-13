@@ -225,7 +225,9 @@ const CreateAccount = () => {
   // console.log(BulkImport);
   const submitHandler = async (e) => {
     e.preventDefault();
-
+    if (Master) {
+      formData["position"] = 1;
+    }
     if (BulkImport !== null || BulkImport != undefined) {
       let formdata = new FormData();
       formdata.append("file", BulkImport);
@@ -926,6 +928,13 @@ const CreateAccount = () => {
                       );
                     }
                   })}
+              </Row>
+
+              <hr />
+              <Row>
+                <Col lg="12" md="12" sm="12">
+                  <Label>OR</Label>
+                </Col>
                 <Col lg="4" md="4" sm="12">
                   <FormGroup>
                     <Label>Bulk Import</Label>
@@ -943,44 +952,6 @@ const CreateAccount = () => {
                 </Col>
               </Row>
 
-              <hr />
-              {/* <Row className="mt-2 ">
-                <Col lg="6" md="6" sm="6" className="mb-2">
-                  <Label className="">
-                    <h4>Status</h4>
-                  </Label>
-                  <div className="form-label-group mx-1">
-                    {CreatAccountView &&
-                      CreatAccountView?.CreateAccount?.Radiobutton?.input?.map(
-                        (ele, i) => {
-                          return (
-                            <FormGroup key={i}>
-                              <Input
-                                key={i}
-                                style={{ marginRight: "3px" }}
-                                required
-                                type={ele?.type?._attributes?.type}
-                                name={ele?.name?._text}
-                                value={`${
-                                  ele?.label?._text == "Active"
-                                    ? "Active"
-                                    : "Deactive"
-                                }`}
-                                onChange={handleInputChange}
-                              />{" "}
-                              <span
-                                className="mx-1 mt-1"
-                                style={{ marginRight: "20px" }}
-                              >
-                                {ele?.label?._text}
-                              </span>
-                            </FormGroup>
-                          );
-                        }
-                      )}
-                  </div>
-                </Col>
-              </Row> */}
               <Col lg="6" md="6" sm="6" className="mb-2 mt-1">
                 <Label className="mb-0">Status</Label>
                 <div

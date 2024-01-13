@@ -126,7 +126,6 @@ const CreateTarget = (args) => {
       } else {
         list[index][name] = value;
       }
-      console.log(GrandTotal);
 
       let amt = 0;
       if (list.length > 0) {
@@ -309,20 +308,13 @@ const CreateTarget = (args) => {
     let userData = JSON.parse(localStorage.getItem("userData"));
     CreateAccountList(userData?._id, userData?.database)
       .then((res) => {
-        debugger;
-        let value = res?.adminDetails;
+        let value = res?.adminDetails?.filter(
+          (ele) => ele?.rolename?.roleName == "WareHouse Incharge"
+        );
         console.log(value);
         if (value.length) {
           setWarehouseList(value);
         }
-        console.log(res?.adminDetails);
-        // let myWarehouse = res?.adminDetails?.filter((ele, i) =>
-        //   ele?.rolename?.roleName
-        //     ?.split(" ")
-        //     .join("")
-        //     .toLowerCase()
-        //     .includes("warehouse")
-        // );
       })
       .catch((err) => {
         console.log(err);
@@ -348,7 +340,11 @@ const CreateTarget = (args) => {
     ProductListView(userData?._id, userData?.database)
       .then((res) => {
         console.log(res.Product);
-        setProductList(res?.Product);
+        let AllProduct = res?.Product?.filter(
+          (ele) => ele?.addProductType == "Product"
+        );
+        debugger;
+        setProductList(AllProduct);
       })
       .catch((err) => {
         console.log(err);
@@ -511,6 +507,7 @@ const CreateTarget = (args) => {
     console.log(selectedList);
 
     setWareHouseone(selectedList);
+    debugger;
     // const list = [...product];
     let MySelectedwarehouseProduct = selectedList[0].productItems?.map(
       (ele, i) => {

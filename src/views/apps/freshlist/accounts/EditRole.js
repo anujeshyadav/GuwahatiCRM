@@ -185,7 +185,7 @@ export default function AddRoleNew() {
                       <Col>
                         <Label>Existing Role *</Label>
                         <Input
-                          // disabled
+                          disabled
                           value={Role}
                           onChange={(e) => setRole(e.target.value)}
                           type="text"

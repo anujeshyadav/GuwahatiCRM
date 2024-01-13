@@ -703,7 +703,7 @@ class AccounSearch extends React.Component {
                   <Col sm="12">
                     <Card>
                       <Row className="mt-2 ml-2 mr-2 ">
-                        <Col lg="4" md="4" sm="12">
+                        <Col lg="2" md="2" sm="12">
                           <h1
                             className="float-left "
                             style={{ fontWeight: "600" }}>
