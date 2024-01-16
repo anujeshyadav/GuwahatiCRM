@@ -1314,7 +1314,7 @@ class StockTransfer extends React.Component {
                     <Row>
                       {this.state.ViewOneData?.productItems && (
                         <Col>
-                          <Table style={{ cursor: "pointer" }} striped>
+                          <Table style={{ cursor: "pointer" }} responsive>
                             <thead>
                               <tr>
                                 <th>#</th>

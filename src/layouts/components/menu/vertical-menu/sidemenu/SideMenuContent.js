@@ -114,7 +114,6 @@ class SideMenuContent extends React.Component {
     let TabparMission = userCredentials?.rolename?.rolePermission?.map(
       (value) => value?.pagename
     );
-    console.log(TabparMission);
     this.setState({ showpage: TabparMission });
     this.setState({ userData: userCredentials });
   };

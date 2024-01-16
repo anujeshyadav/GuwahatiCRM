@@ -10,6 +10,8 @@ export const country_state_City_List =
 export const Role_list_by_Master = "/master/get-super-admin-role/";
 export const Create_Role = "/role/create-role";
 export const Create_Department = "/department/save-department";
+export const Delete_Department = "/department/delete-department/";
+
 export const List_Department = "/department/view-department";
 export const Save_Assigned_Role = "/assign-role/save-assign-role";
 export const Create_Role_by_Master = "/master/create-super-admin-role";

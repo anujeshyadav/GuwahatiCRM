@@ -1351,7 +1351,7 @@ class GoodDispatchList extends React.Component {
               </Row>
               <Row>
                 <Col>
-                  <Table style={{ cursor: "pointer" }} striped>
+                  <Table style={{ cursor: "pointer" }} responsive>
                     <thead>
                       <tr>
                         <th>#</th>

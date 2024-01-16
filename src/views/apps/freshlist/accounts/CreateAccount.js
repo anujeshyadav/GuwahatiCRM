@@ -47,6 +47,7 @@ import {
   Bulk_Upload_Customer,
   Bulk_Upload_User,
   Role_list_by_Master,
+  Super_Admin_List,
   country_state_City_List,
 } from "../../../../ApiEndPoint/Api";
 
@@ -196,7 +197,6 @@ const CreateAccount = () => {
     } else {
       Get_RoleList(userdata?._id, userdata?.database)
         .then((res) => {
-
           let ShowList = res?.Role?.filter(
             (item, i) => item?.position > userdata?.rolename?.position
           );
@@ -248,7 +248,9 @@ const CreateAccount = () => {
           CreateAccountSave(formData)
             .then((res) => {
               if (res?.status) {
+                let userData = JSON.parse(localStorage.getItem("userData"));
                 let AssignDataBase = [];
+
                 if (SelectedRoleToAssign?.length) {
                   AssignDataBase = SelectedRoleToAssign?.map((ele) => {
                     return {
@@ -259,7 +261,7 @@ const CreateAccount = () => {
                         rank: 0,
                         rolePermission: ele?.rolePermission,
                         database: formData["database"],
-                        createdBy: res?.User._id,
+                        createdBy: userData?._id,
                       },
                     };
                   });
@@ -270,8 +272,17 @@ const CreateAccount = () => {
                   if (res?.User._id) {
                     _PostSave(Assign_Role_To_SuperAdmin, payload)
                       .then((res) => {
-                        // setLoader(false);
-
+                        console.log(res);
+                        _GetList(Super_Admin_List)
+                          .then((res) => {
+                            localStorage.setItem(
+                              "AllSuper",
+                              JSON.stringify(res?.SuperAdmin)
+                            );
+                          })
+                          .catch((err) => {
+                            console.log(err);
+                          });
                         console.log(res);
                       })
                       .catch((err) => {

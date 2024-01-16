@@ -882,116 +882,120 @@ class PendingOrder extends React.Component {
                         </Col>
                       </Row>
                       {InsiderPermissions && InsiderPermissions?.View && (
-
-                      <CardBody style={{ marginTop: "-1.5rem" }}>
-                        {this.state.rowData === null ? null : (
-                          <div className="ag-theme-material w-100 my-2 ag-grid-table">
-                            <div className="d-flex flex-wrap justify-content-between align-items-center">
-                              <div className="mb-1">
-                                <UncontrolledDropdown className="p-1 ag-dropdown">
-                                  <DropdownToggle tag="div">
-                                    {this.gridApi
-                                      ? this.state.currenPageSize
-                                      : "" * this.state.getPageSize -
-                                        (this.state.getPageSize - 1)}{" "}
-                                    -{" "}
-                                    {this.state.rowData.length -
-                                      this.state.currenPageSize *
-                                        this.state.getPageSize >
-                                    0
-                                      ? this.state.currenPageSize *
-                                        this.state.getPageSize
-                                      : this.state.rowData.length}{" "}
-                                    of {this.state.rowData.length}
-                                    <ChevronDown className="ml-50" size={15} />
-                                  </DropdownToggle>
-                                  <DropdownMenu right>
-                                    <DropdownItem
-                                      tag="div"
-                                      onClick={() => this.filterSize(5)}>
-                                      5
-                                    </DropdownItem>
-                                    <DropdownItem
-                                      tag="div"
-                                      onClick={() => this.filterSize(20)}>
-                                      20
-                                    </DropdownItem>
-                                    <DropdownItem
-                                      tag="div"
-                                      onClick={() => this.filterSize(50)}>
-                                      50
-                                    </DropdownItem>
-                                    <DropdownItem
-                                      tag="div"
-                                      onClick={() => this.filterSize(100)}>
-                                      100
-                                    </DropdownItem>
-                                    <DropdownItem
-                                      tag="div"
-                                      onClick={() => this.filterSize(134)}>
-                                      134
-                                    </DropdownItem>
-                                  </DropdownMenu>
-                                </UncontrolledDropdown>
-                              </div>
-                              <div className="d-flex flex-wrap justify-content-end mb-1">
-                                <div className="table-input mr-1">
-                                  <Input
-                                    placeholder="search Item here..."
-                                    onChange={(e) =>
-                                      this.updateSearchQuery(e.target.value)
-                                    }
-                                    value={this.state.value}
-                                  />
+                        <CardBody style={{ marginTop: "-1.5rem" }}>
+                          {this.state.rowData === null ? null : (
+                            <div className="ag-theme-material w-100 my-2 ag-grid-table">
+                              <div className="d-flex flex-wrap justify-content-between align-items-center">
+                                <div className="mb-1">
+                                  <UncontrolledDropdown className="p-1 ag-dropdown">
+                                    <DropdownToggle tag="div">
+                                      {this.gridApi
+                                        ? this.state.currenPageSize
+                                        : "" * this.state.getPageSize -
+                                          (this.state.getPageSize - 1)}{" "}
+                                      -{" "}
+                                      {this.state.rowData.length -
+                                        this.state.currenPageSize *
+                                          this.state.getPageSize >
+                                      0
+                                        ? this.state.currenPageSize *
+                                          this.state.getPageSize
+                                        : this.state.rowData.length}{" "}
+                                      of {this.state.rowData.length}
+                                      <ChevronDown
+                                        className="ml-50"
+                                        size={15}
+                                      />
+                                    </DropdownToggle>
+                                    <DropdownMenu right>
+                                      <DropdownItem
+                                        tag="div"
+                                        onClick={() => this.filterSize(5)}>
+                                        5
+                                      </DropdownItem>
+                                      <DropdownItem
+                                        tag="div"
+                                        onClick={() => this.filterSize(20)}>
+                                        20
+                                      </DropdownItem>
+                                      <DropdownItem
+                                        tag="div"
+                                        onClick={() => this.filterSize(50)}>
+                                        50
+                                      </DropdownItem>
+                                      <DropdownItem
+                                        tag="div"
+                                        onClick={() => this.filterSize(100)}>
+                                        100
+                                      </DropdownItem>
+                                      <DropdownItem
+                                        tag="div"
+                                        onClick={() => this.filterSize(134)}>
+                                        134
+                                      </DropdownItem>
+                                    </DropdownMenu>
+                                  </UncontrolledDropdown>
+                                </div>
+                                <div className="d-flex flex-wrap justify-content-end mb-1">
+                                  <div className="table-input mr-1">
+                                    <Input
+                                      placeholder="search Item here..."
+                                      onChange={(e) =>
+                                        this.updateSearchQuery(e.target.value)
+                                      }
+                                      value={this.state.value}
+                                    />
+                                  </div>
                                 </div>
                               </div>
-                            </div>
-                            <ContextLayout.Consumer className="ag-theme-alpine">
-                              {(context) => (
-                                <AgGridReact
-                                  id="myAgGrid"
-                                  // gridOptions={{
-                                  //   domLayout: "autoHeight",
-                                  //   // or other layout options
-                                  // }}
-                                  gridOptions={this.gridOptions}
-                                  rowSelection="multiple"
-                                  defaultColDef={defaultColDef}
-                                  columnDefs={columnDefs}
-                                  rowData={rowData}
-                                  // onGridReady={(params) => {
-                                  //   this.gridApi = params.api;
-                                  //   this.gridColumnApi = params.columnApi;
-                                  //   this.gridRef.current = params.api;
+                              <ContextLayout.Consumer className="ag-theme-alpine">
+                                {(context) => (
+                                  <AgGridReact
+                                    id="myAgGrid"
+                                    // gridOptions={{
+                                    //   domLayout: "autoHeight",
+                                    //   // or other layout options
+                                    // }}
+                                    gridOptions={this.gridOptions}
+                                    rowSelection="multiple"
+                                    defaultColDef={defaultColDef}
+                                    columnDefs={columnDefs}
+                                    rowData={rowData}
+                                    // onGridReady={(params) => {
+                                    //   this.gridApi = params.api;
+                                    //   this.gridColumnApi = params.columnApi;
+                                    //   this.gridRef.current = params.api;
 
-                                  //   this.setState({
-                                  //     currenPageSize:
-                                  //       this.gridApi.paginationGetCurrentPage() +
-                                  //       1,
-                                  //     getPageSize:
-                                  //       this.gridApi.paginationGetPageSize(),
-                                  //     totalPages:
-                                  //       this.gridApi.paginationGetTotalPages(),
-                                  //   });
-                                  // }}
-                                  onGridReady={this.onGridReady}
-                                  colResizeDefault={"shift"}
-                                  animateRows={true}
-                                  floatingFilter={false}
-                                  pagination={true}
-                                  paginationPageSize={
-                                    this.state.paginationPageSize
-                                  }
-                                  pivotPanelShow="always"
-                                  enableRtl={context.state.direction === "rtl"}
-                                  ref={this.gridRef} // Attach the ref to the grid
-                                  domLayout="autoHeight" // Adjust layout as needed
-                                />
-                              )}
-                            </ContextLayout.Consumer>
-                          </div>
-                        )}
-                      </CardBody>
+                                    //   this.setState({
+                                    //     currenPageSize:
+                                    //       this.gridApi.paginationGetCurrentPage() +
+                                    //       1,
+                                    //     getPageSize:
+                                    //       this.gridApi.paginationGetPageSize(),
+                                    //     totalPages:
+                                    //       this.gridApi.paginationGetTotalPages(),
+                                    //   });
+                                    // }}
+                                    onGridReady={this.onGridReady}
+                                    colResizeDefault={"shift"}
+                                    animateRows={true}
+                                    floatingFilter={false}
+                                    pagination={true}
+                                    paginationPageSize={
+                                      this.state.paginationPageSize
+                                    }
+                                    pivotPanelShow="always"
+                                    enableRtl={
+                                      context.state.direction === "rtl"
+                                    }
+                                    ref={this.gridRef} // Attach the ref to the grid
+                                    domLayout="autoHeight" // Adjust layout as needed
+                                  />
+                                )}
+                              </ContextLayout.Consumer>
+                            </div>
+                          )}
+                        </CardBody>
                       )}
                     </Card>
                   </Col>
@@ -1419,7 +1423,7 @@ class PendingOrder extends React.Component {
                   </Row>
                   <Row>
                     <Col>
-                      <Table style={{ cursor: "pointer" }} striped>
+                      <Table style={{ cursor: "pointer" }} responsive>
                         <thead>
                           <tr>
                             <th>#</th>

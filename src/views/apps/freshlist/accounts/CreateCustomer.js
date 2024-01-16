@@ -128,12 +128,15 @@ const CreateCustomer = () => {
   useEffect(() => {
     console.log(formData);
   }, [formData]);
+
   useEffect(() => {
     let userdata = JSON.parse(localStorage.getItem("userData"));
     Get_RoleList(userdata?._id, userdata?.database)
       .then((res) => {
-        let ShowList = res?.Role?.filter((item, i) =>
-          item?.roleName?.toLowerCase()?.includes("customer")
+        let ShowList = res?.Role?.filter(
+          (item, i) =>
+            item?.roleName?.toLowerCase()?.includes("customer") ||
+            item?.roleName?.toLowerCase()?.includes("transporter")
         );
         setRoleList(ShowList);
         // console.log(ShowList);
@@ -297,9 +300,16 @@ const CreateCustomer = () => {
                       name="rolename"
                       value={formData["rolename"]}
                       onChange={(e) => {
+                        const selected = e.target.options[
+                          e.target.selectedIndex
+                        ]
+                          .getAttribute("data-name")
+                          ?.split(" ");
+
                         setFormData({
                           ...formData,
                           ["rolename"]: e.target.value,
+                          ["roleName"]: selected[1],
                         });
                       }}>
                       <option>--select Role--</option>
@@ -307,7 +317,11 @@ const CreateCustomer = () => {
                         RoleList?.length &&
                         RoleList?.map((ele, i) => {
                           return (
-                            <option value={ele?._id}>{ele?.roleName}</option>
+                            <option
+                              data-name={`${ele?.position} ${ele?.roleName}`}
+                              value={ele?._id}>
+                              {ele?.roleName}
+                            </option>
                           );
                         })}
                     </CustomInput>
@@ -316,39 +330,88 @@ const CreateCustomer = () => {
                 {dropdownValue && dropdownValue ? (
                   <>
                     {dropdownValue?.map((ele, i) => {
-                      return (
-                        <>
-                          <Col key={i} lg="4" md="4" sm="12">
-                            <FormGroup>
-                              <Label className="mb-1">
-                                {ele?.dropdown?.label?._text &&
-                                  ele?.dropdown?.label?._text}
-                              </Label>
-                              <CustomInput
-                                required
-                                type="select"
-                                name={ele?.dropdown?.name?._text}
-                                value={formData[ele?.dropdown?.name?._text]}
-                                onChange={handleInputChange}>
-                                <option value="">--Select --</option>
-                                {ele?.dropdown?.option?.map((option, index) => (
-                                  <option
-                                    key={index}
-                                    value={option?._attributes?.value}>
-                                    {option?._attributes?.value}
-                                  </option>
-                                ))}
-                              </CustomInput>
-                            </FormGroup>
-                          </Col>
-                        </>
-                      );
+                      if (
+                        formData?.roleName &&
+                        formData?.roleName == "Transporter"
+                      ) {
+                        if (
+                          ele?.dropdown?.label?._text == "Select Party Type"
+                        ) {
+                          return null;
+                        } else {
+                          return (
+                            <>
+                              <Col key={i} lg="4" md="4" sm="12">
+                                <FormGroup>
+                                  <Label className="mb-1">
+                                    {ele?.dropdown?.label?._text &&
+                                      ele?.dropdown?.label?._text}
+                                  </Label>
+                                  <CustomInput
+                                    required
+                                    type="select"
+                                    name={ele?.dropdown?.name?._text}
+                                    value={formData[ele?.dropdown?.name?._text]}
+                                    onChange={handleInputChange}>
+                                    <option value="">--Select --</option>
+                                    {ele?.dropdown?.option?.map(
+                                      (option, index) => (
+                                        <option
+                                          key={index}
+                                          value={option?._attributes?.value}>
+                                          {option?._attributes?.value}
+                                        </option>
+                                      )
+                                    )}
+                                  </CustomInput>
+                                </FormGroup>
+                              </Col>
+                            </>
+                          );
+                        }
+                      } else {
+                        return (
+                          <>
+                            <Col key={i} lg="4" md="4" sm="12">
+                              <FormGroup>
+                                <Label className="mb-1">
+                                  {ele?.dropdown?.label?._text &&
+                                    ele?.dropdown?.label?._text}
+                                </Label>
+                                <CustomInput
+                                  required
+                                  type="select"
+                                  name={ele?.dropdown?.name?._text}
+                                  value={formData[ele?.dropdown?.name?._text]}
+                                  onChange={handleInputChange}>
+                                  <option value="">--Select --</option>
+                                  {ele?.dropdown?.option?.map(
+                                    (option, index) => (
+                                      <option
+                                        key={index}
+                                        value={option?._attributes?.value}>
+                                        {option?._attributes?.value}
+                                      </option>
+                                    )
+                                  )}
+                                </CustomInput>
+                              </FormGroup>
+                            </Col>
+                          </>
+                        );
+                      }
                     })}
                   </>
                 ) : null}
 
                 {CreatAccountView &&
                   CreatAccountView?.map((ele, i) => {
+                    if (
+                      formData?.roleName &&
+                      formData?.roleName == "Transporter"
+                    ) {
+                      debugger;
+                    }
                     {
                       /* console.log(Context?.UserInformatio?.dateFormat); */
                     }

@@ -812,7 +812,7 @@ const CreateDispach = (args) => {
               </Row>
               <Row>
                 <Col>
-                  <Table style={{ cursor: "pointer" }} striped>
+                  <Table style={{ cursor: "pointer" }} responsive>
                     <thead>
                       <tr>
                         <th>#</th>

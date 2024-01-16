@@ -20,7 +20,12 @@ import { Route } from "react-router-dom";
 import { FormattedMessage } from "react-intl";
 import { history } from "../../../../history";
 import navigationConfig from "../../../../configs/horizontalMenuConfig";
-import { FaArrowAltCircleLeft, FaArrowAltCircleRight } from "react-icons/fa";
+import {
+  FaArrowAltCircleDown,
+  FaArrowAltCircleLeft,
+  FaArrowAltCircleRight,
+  FaArrowAltCircleUp,
+} from "react-icons/fa";
 import {
   BsFillArrowDownSquareFill,
   BsFillArrowUpSquareFill,
@@ -62,10 +67,10 @@ class HorizontalSidebar extends React.Component {
   HeadingRightShift = () => {
     const updatedSelectedColumnDefs = [
       ...new Set([
-        ...this.state.SelectedcolumnDefs?.map(item => JSON.stringify(item)),
-        ...SelectedColums.map(item => JSON.stringify(item)),
+        ...this.state.SelectedcolumnDefs?.map((item) => JSON.stringify(item)),
+        ...SelectedColums.map((item) => JSON.stringify(item)),
       ]),
-    ].map(item => JSON.parse(item));
+    ].map((item) => JSON.parse(item));
     let myArr = [...new Set(updatedSelectedColumnDefs)];
     if (myArr.length < 12) {
       this.setState({
@@ -88,14 +93,14 @@ class HorizontalSidebar extends React.Component {
     }
   };
   LookupviewStart = () => {
-    this.setState(prevState => ({
+    this.setState((prevState) => ({
       modal: !prevState.modal,
     }));
   };
   handleTogglemodal = () => {
     this.LookupviewStart();
   };
-  openDropdown = id => {
+  openDropdown = (id) => {
     let arr = this.state.openDropdown;
     if (!arr.includes(id)) arr.push(id);
     return this.setState({
@@ -103,7 +108,7 @@ class HorizontalSidebar extends React.Component {
     });
   };
 
-  closeDropdown = id => {
+  closeDropdown = (id) => {
     let arr = this.state.openDropdown;
     arr.splice(arr.indexOf(id), 1);
     return this.setState({
@@ -111,7 +116,7 @@ class HorizontalSidebar extends React.Component {
     });
   };
 
-  handleItemHover = id => {
+  handleItemHover = (id) => {
     this.setState({
       itemHover: id,
     });
@@ -127,13 +132,13 @@ class HorizontalSidebar extends React.Component {
       }
     } else {
       const delindex = SelectedColums?.findIndex(
-        ele => ele?.title === value?.title
+        (ele) => ele?.title === value?.title
       );
 
       SelectedColums?.splice(delindex, 1);
     }
   };
-  handleParentHover = id => {
+  handleParentHover = (id) => {
     this.setState({
       parentHover: id,
     });
@@ -141,7 +146,7 @@ class HorizontalSidebar extends React.Component {
   // Active for guwahati
   componentDidMount() {
     // debugger
-    console.log(this.props)
+    console.log(this.props);
     this.handleActiveParent(this.activeParentItems);
   }
 
@@ -166,7 +171,7 @@ class HorizontalSidebar extends React.Component {
     }
   };
 
-  handleActiveParent = arr => {
+  handleActiveParent = (arr) => {
     this.setState({
       activeParents: arr,
     });
@@ -198,12 +203,12 @@ class HorizontalSidebar extends React.Component {
       <DropdownMenu
         tag="ul"
         className="mt-50"
-        onMouseEnter={e => e.preventDefault()}
+        onMouseEnter={(e) => e.preventDefault()}
         // onMouseEnter={(e) => e.preventDefault()}
         modifiers={{
           setMaxHeight: {
             enabled: true,
-            fn: data => {
+            fn: (data) => {
               let pageHeight = window.innerHeight,
                 ddTop = data.instance.reference.getBoundingClientRect().top,
                 ddHeight = data.popper.height,
@@ -227,9 +232,8 @@ class HorizontalSidebar extends React.Component {
               };
             },
           },
-        }}
-      >
-        {submenu.map(child => {
+        }}>
+        {submenu.map((child) => {
           const CustomAnchorTag = child.type === "external-link" ? `a` : Link;
           if (child.navLink && child.navLink === this.props.activePath) {
             this.activeFlag = true;
@@ -241,8 +245,7 @@ class HorizontalSidebar extends React.Component {
               <li
                 className={classnames({
                   active: this.state.activeParents.includes(child.id),
-                })}
-              >
+                })}>
                 <DropdownItem
                   className={classnames("w-100", {
                     hover: this.state.itemHover === child.id,
@@ -271,8 +274,7 @@ class HorizontalSidebar extends React.Component {
                   target={child.newTab ? "_blank" : undefined}
                   onClick={() => this.handleItemHover(child.id)}
                   // onMouseEnter={() => this.handleItemHover(child.id)}
-                  onMouseLeave={() => this.handleItemHover(null)}
-                >
+                  onMouseLeave={() => this.handleItemHover(null)}>
                   {child.children ? (
                     <Dropdown
                       className={classnames("sub-menu w-100", {})}
@@ -281,13 +283,11 @@ class HorizontalSidebar extends React.Component {
                       toggle={() => true}
                       onClick={() => this.openDropdown(child.id)}
                       // onMouseEnter={() => this.openDropdown(child.id)}
-                      onMouseLeave={() => this.closeDropdown(child.id)}
-                    >
+                      onMouseLeave={() => this.closeDropdown(child.id)}>
                       <DropdownToggle
                         className="d-flex justify-content-between align-items-center item-content"
                         tag={"div"}
-                        onClick={() => this.closeDropdown(child.id)}
-                      >
+                        onClick={() => this.closeDropdown(child.id)}>
                         <div className="dropdown-toggle-sub text-truncate">
                           <span className="menu-icon align-bottom mr-1">
                             {child.icon}
@@ -344,11 +344,9 @@ class HorizontalSidebar extends React.Component {
   };
 
   componentDidMount() {
-    
-
     let userCredentials = JSON.parse(localStorage.getItem("userData"));
     let TabparMission = userCredentials?.rolename?.rolePermission?.map(
-      value => value?.pagename
+      (value) => value?.pagename
     );
     // console.log(TabparMission);
     this.setState({ showpage: TabparMission });
@@ -368,7 +366,7 @@ class HorizontalSidebar extends React.Component {
     this.setState({ AllAvailableCol: myallList });
   }
 
-  renderDropdown = arr => {
+  renderDropdown = (arr) => {
     // console.log(this.state.SelectedcolumnDefs);
     let myownlink = this.state.SelectedcolumnDefs;
     if (this.state.SelectedcolumnDefs?.length) {
@@ -377,30 +375,39 @@ class HorizontalSidebar extends React.Component {
         JSON.stringify(this.state.SelectedcolumnDefs)
       );
     }
-    return myownlink?.map((ele, i) => {
+    return myownlink?.slice(0, 3)?.map((ele, i) => {
       return (
         <>
           <Route
             render={({ history }) => (
-              <Badge
-                className="mr-1"
-                style={{ cursor: "pointer" }}
-                size="25px"
-                color="primary"
-                onClick={() => {
-                  history.push(ele?.navLink);
-                }}>
-                {ele?.title}
-              </Badge>
+              <>
+                <span
+                  className="mr-1 d-flex justify-content-center"
+                  style={{
+                    cursor: "pointer",
+                    backgroundColor: "#39cccc",
+                    height: "100%",
+                    borderRadius: "8px",
+                  }}
+                  size="25px"
+                  color="primary"
+                  onClick={() => {
+                    history.push(ele?.navLink);
+                  }}>
+                  <span style={{ color: "white" }} className="p-1">
+                    {ele?.title}
+                  </span>
+                </span>
+              </>
             )}
           />
         </>
       );
     });
-   
   };
 
   render() {
+    console.log(this.state.SelectedcolumnDefs);
     const {
       rowData,
       columnDefs,
@@ -412,42 +419,28 @@ class HorizontalSidebar extends React.Component {
       AllcolumnDefs,
     } = this.state;
     return (
-      <div className="horizontal-menu-wrapper">
-      {/* <div className="horizontal-menu-wrapper"> */}
-        <div
-          className={classnames(
-            "header-navbar navbar-expand-sm navbar navbar-horizontal navbar-shadow",
-            {
-              "navbar-static": this.props.navbarType === "static",
-              "fixed-top": this.props.navbarType === "sticky",
-              "floating-nav":
-                this.props.navbarType === "floating" ||
-                !["static", "sticky", "floating"].includes(
-                  this.props.navbarType
-                ),
-            }
-          )}
-        >
-          <div className="navbar-container main-menu-content">
+      <div className="d-flex">
+        {/* <div className="horizontal-menu-wrapper"> */}
+        <div className="d-flex">
+          <div className="d-flex float-left">
             {/* <ul className="nav navbar-nav" id="main-menu-navigation"> */}
             {this.renderDropdown(this.state.SelectedcolumnDefs)}
             {/* </ul> */}
           </div>
-          <span>
+          <span className="float-right">
             <Edit
               onClick={this.handleTogglemodal}
               style={{ cursor: "pointer" }}
               color="red"
               size={18}
-              className="mr-2 "
+              className="mr-1"
             />
           </span>
           <Modal
             isOpen={this.state.modal}
             toggle={this.LookupviewStart}
             className={this.props.className}
-            style={{ maxWidth: "1050px" }}
-          >
+            style={{ maxWidth: "1050px" }}>
             <ModalHeader toggle={this.LookupviewStart}>
               Change Fileds
             </ModalHeader>
@@ -465,17 +458,15 @@ class HorizontalSidebar extends React.Component {
                           return (
                             <>
                               <div
-                                onClick={e =>
+                                onClick={(e) =>
                                   this.handleChangeHeader(e, ele, i)
                                 }
                                 key={i}
-                                className="mycustomtag mt-1"
-                              >
+                                className="mycustomtag mt-1">
                                 <span className="mt-1">
                                   <h5
                                     style={{ cursor: "pointer" }}
-                                    className="allfields"
-                                  >
+                                    className="allfields">
                                     {this.state.showpage.includes(
                                       ele?.title
                                     ) ? (
@@ -506,20 +497,18 @@ class HorizontalSidebar extends React.Component {
                   sm="12"
                   xl="2"
                   xs="12"
-                  className="colarrowbtn"
-                >
+                  className=" d-flex justify-content-center p-2">
                   <div className="mainarrowbtn">
                     <div style={{ cursor: "pointer" }}>
-                      <FaArrowAltCircleRight
+                      <FaArrowAltCircleDown
                         onClick={this.HeadingRightShift}
                         className="arrowassign"
                         size="30px"
                       />
-                    </div>
-                    <div style={{ cursor: "pointer" }} className="my-2">
-                      <FaArrowAltCircleLeft
+
+                      <FaArrowAltCircleUp
                         onClick={this.handleLeftShift}
-                        className="arrowassign"
+                        className="arrowassign mx-1"
                         size="30px"
                       />
                     </div>
@@ -549,15 +538,14 @@ class HorizontalSidebar extends React.Component {
                                               : ""
                                           }`,
                                         }}
-                                        className="allfields"
-                                      >
+                                        className="allfields">
                                         <IoMdRemoveCircleOutline
                                           onClick={() => {
                                             const SelectedCols =
                                               this.state.SelectedcolumnDefs.slice();
                                             const delindex =
                                               SelectedCols.findIndex(
-                                                element =>
+                                                (element) =>
                                                   element?.title == ele?.title
                                               );
 
@@ -603,18 +591,17 @@ class HorizontalSidebar extends React.Component {
                       </div>
                     </Col>
                     <Col lg="4" md="4" sm="12" xs="12">
-                      <div className="updownbtn justify-content-center">
+                      <div className=" d-flex p-2 justify-content-center">
                         <div>
                           <BsFillArrowUpSquareFill
                             className="arrowassign mb-1"
                             size="30px"
                             onClick={this.shiftElementUp}
                           />
-                        </div>
-                        <div>
+
                           <BsFillArrowDownSquareFill
                             onClick={this.shiftElementDown}
-                            className="arrowassign"
+                            className="arrowassign mx-1 mb-1"
                             size="30px"
                           />
                         </div>
@@ -628,11 +615,10 @@ class HorizontalSidebar extends React.Component {
                   <div className="d-flex justify-content-center">
                     <Button
                       color="primary"
-                      onClick={e => {
+                      onClick={(e) => {
                         e.preventDefault();
                         this.LookupviewStart();
-                      }}
-                    >
+                      }}>
                       Submit
                     </Button>
                   </div>
@@ -645,7 +631,7 @@ class HorizontalSidebar extends React.Component {
     );
   }
 }
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
   return {
     currentUser: state.auth.login.userRole,
   };

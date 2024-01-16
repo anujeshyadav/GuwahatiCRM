@@ -52,6 +52,7 @@ class HorizontalLayout extends PureComponent {
   };
 
   componentDidMount() {
+  
     this.mounted = true;
     if (this.mounted) {
       if (window !== "undefined") {
@@ -74,6 +75,7 @@ class HorizontalLayout extends PureComponent {
   }
 
   componentDidUpdate() {
+    
     if (this.mounted) {
       if (this.state.currRoute !== this.props.location.pathname) {
         this.handleRouteChange();
@@ -196,9 +198,8 @@ class HorizontalLayout extends PureComponent {
             "navbar-hidden": customizerProps.navbarType === "hidden",
             "theme-primary": !menuThemeArr.includes(customizerProps.menuTheme),
           }
-        )}
-      >
-        {/* working top bar sidemenu */}
+        )}>
+        {/* working top 2nd bar sidemenu */}
         <div className="sidebarmenu">
           <Sidebar
             toggleSidebarMenu={this.toggleSidebarMenu}
@@ -219,8 +220,7 @@ class HorizontalLayout extends PureComponent {
           className={classnames("app-content content", {
             "show-overlay": this.state.appOverlay === true,
           })}
-          onClick={this.handleAppOverlayClick}
-        >
+          onClick={this.handleAppOverlayClick}>
           <Navbar
             horizontal
             scrolling={this.state.scroll > 50 ? true : false}

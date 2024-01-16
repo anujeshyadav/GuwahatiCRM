@@ -36,6 +36,7 @@ import { BsEye, BsTrash } from "react-icons/bs";
 import {
   CreateAccountView,
   Get_RoleList,
+  _Delete,
   _Get,
   _GetList,
   _PostSave,
@@ -45,6 +46,7 @@ import { CheckPermission } from "../house/CheckPermission";
 import SuperAdminUI from "../../../SuperAdminUi/SuperAdminUI";
 import {
   Create_Department,
+  Delete_Department,
   List_Department,
   Role_list_by_Master,
 } from "../../../../ApiEndPoint/Api";
@@ -61,6 +63,7 @@ class RoleList extends React.Component {
       modal: false,
       DepartmentName: "",
       InsiderPermissions: {},
+      userData: {},
       paginationPageSize: 20,
       Position: 0,
       MasterShow: false,
@@ -152,33 +155,73 @@ class RoleList extends React.Component {
                   />
                 )} */}
 
-                {this.state.InsiderPermissions &&
-                  this.state.InsiderPermissions.Edit && (
-                    <Route
-                      render={({ history }) => (
-                        <span
-                          style={{
-                            border: "1px solid white",
-                            padding: "10px",
-                            borderRadius: "30px",
-                            backgroundColor: "rgb(212, 111, 16)",
-                            marginLeft: "3px",
-                          }}>
-                          <FaPencilAlt
-                            className=""
-                            size="20px"
-                            color="white"
-                            onClick={() =>
-                              history.push({
-                                pathname: `/app/freshlist/account/editRole/${params?.data?._id}`,
-                                data: params,
-                              })
-                            }
-                          />
-                        </span>
-                      )}
-                    />
-                  )}
+                {this.state.userData &&
+                this.state.userData?._id == params?.data?.createdBy?._id ? (
+                  <>
+                    {this.state.userData?._id ==
+                      params?.data?.createdBy?._id && (
+                      <>
+                        {this.state.InsiderPermissions &&
+                          this.state.InsiderPermissions.Edit && (
+                            <Route
+                              render={({ history }) => (
+                                <span
+                                  style={{
+                                    border: "1px solid white",
+                                    padding: "10px",
+                                    borderRadius: "30px",
+                                    backgroundColor: "rgb(212, 111, 16)",
+                                    marginLeft: "3px",
+                                  }}>
+                                  <FaPencilAlt
+                                    className=""
+                                    size="20px"
+                                    color="white"
+                                    onClick={() =>
+                                      history.push({
+                                        pathname: `/app/freshlist/account/editRole/${params?.data?._id}`,
+                                        data: params,
+                                      })
+                                    }
+                                  />
+                                </span>
+                              )}
+                            />
+                          )}
+                      </>
+                    )}
+                  </>
+                ) : (
+                  <>
+                    {this.state.MasterShow && this.state.MasterShow && (
+                      <Route
+                        render={({ history }) => (
+                          <span
+                            style={{
+                              border: "1px solid white",
+                              padding: "10px",
+                              borderRadius: "30px",
+                              backgroundColor: "rgb(212, 111, 16)",
+                              marginLeft: "3px",
+                            }}>
+                            <FaPencilAlt
+                              className=""
+                              size="20px"
+                              color="white"
+                              onClick={() =>
+                                history.push({
+                                  pathname: `/app/freshlist/account/editRole/${params?.data?._id}`,
+                                  data: params,
+                                })
+                              }
+                            />
+                          </span>
+                        )}
+                      />
+                    )}
+                  </>
+                )}
+
                 {/* )} */}
                 {/* {this.state.Deletepermisson && (
                 <BsTrash
@@ -213,11 +256,32 @@ class RoleList extends React.Component {
     });
   }
 
-  removeFormFields(i) {
-    let formValues = this.state.formValues;
-    formValues.splice(i, 1);
-    this.setState({ formValues });
-  }
+  removeFormFields = (data, i) => {
+    console.log(data, i);
+
+    swal("Warning", "Sure You Want to Delete it", {
+      buttons: {
+        cancel: "cancel",
+        catch: { text: "Delete ", value: "delete" },
+      },
+    }).then((value) => {
+      switch (value) {
+        case "delete":
+          _Delete(Delete_Department, data?.Id)
+            .then((res) => {
+              console.log(res);
+              let formValues = this.state.formValues;
+              formValues.splice(i, 1);
+              this.setState({ formValues });
+            })
+            .catch((err) => {
+              console.log(err);
+            });
+          break;
+        default:
+      }
+    });
+  };
 
   handleSubmit = async (e) => {
     this.setState({ Loading: true });
@@ -240,11 +304,12 @@ class RoleList extends React.Component {
           departmentName: ele?.DepartmentName,
           departmentDesc: ele?.Description,
           database: userinfo?.database,
+          departmentId: ele?.Id ? ele?.Id : null,
           created_by: userinfo?._id,
         };
       });
     }
-    
+
     let payload = {
       Departments: alldata,
     };
@@ -268,7 +333,9 @@ class RoleList extends React.Component {
     let URL = `${List_Department}/${userData?.database}`;
     _GetList(URL)
       .then((res) => {
-        let AllDeparts = res?.Department;
+        let AllDeparts = res?.Department?.filter(
+          (ele) => ele?.status == "Active"
+        );
         if (AllDeparts) {
           let values = AllDeparts?.map((ele, i) => {
             return {
@@ -317,7 +384,6 @@ class RoleList extends React.Component {
         .then((res) => {
           this.setState({ Loading: false });
 
-          // console.log(res?.Role);
           this.setState({ rowData: res?.Role });
         })
         .catch((err) => {
@@ -332,6 +398,8 @@ class RoleList extends React.Component {
     this.handleShowDepartment();
     let pageparmission = JSON.parse(localStorage.getItem("userData"));
     this.setState({ Position: pageparmission?.rolename.rank });
+    this.setState({ userData: pageparmission });
+
     if (pageparmission?.rolename?.roleName === "MASTER") {
       this.setState({ MasterShow: true });
       this.setState({ MasterRoleList: true });
@@ -339,7 +407,7 @@ class RoleList extends React.Component {
 
     let value = pageparmission?.rolename?.roleName == "MASTER";
     const InsidePermissions = CheckPermission("Create User");
-    console.log(InsidePermissions);
+
     this.setState({ InsiderPermissions: InsidePermissions });
     await this.Apicalling(pageparmission?._id, pageparmission?.database, value);
   }
@@ -755,7 +823,7 @@ class RoleList extends React.Component {
                           color="danger"
                           type="button"
                           className="button remove"
-                          onClick={() => this.removeFormFields(index)}>
+                          onClick={() => this.removeFormFields(element, index)}>
                           Remove
                         </Button>
                       ) : null}
