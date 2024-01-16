@@ -1729,7 +1729,6 @@ class InvoiceGenerator extends React.Component {
                       {this.state.ViewOneData &&
                         this.state.ViewOneData?.address}{" "}
                     </strong>
-                    Rs/-
                   </h5>
                 </Col>
                 <Col>
@@ -1765,7 +1764,7 @@ class InvoiceGenerator extends React.Component {
               </Row>
               <Row>
                 <Col>
-                  <Table style={{ cursor: "pointer" }} striped>
+                  <Table style={{ cursor: "pointer" }} responsive>
                     <thead>
                       <tr>
                         <th>#</th>

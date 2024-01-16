@@ -1038,8 +1038,6 @@ class ClosingStock extends React.Component {
                         </div>
                       </Col>
 
-                     
-
                       {/* <Col>
                         <Label>Download Invoice :</Label>
                         <div className="d-flex justify-content-center">
@@ -1061,7 +1059,7 @@ class ClosingStock extends React.Component {
                     </Row>
                     <Row>
                       <Col>
-                        <Table style={{ cursor: "pointer" }} striped>
+                        <Table style={{ cursor: "pointer" }} responsive>
                           <thead>
                             <tr>
                               <th>#</th>

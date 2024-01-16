@@ -703,22 +703,23 @@ class AccounSearch extends React.Component {
                   <Col sm="12">
                     <Card>
                       <Row className="mt-2 ml-2 mr-2 ">
-                        <Col lg="2" md="2" sm="12">
+                        <Col lg="1" md="1" sm="12">
                           <h1
                             className="float-left "
                             style={{ fontWeight: "600" }}>
-                            User list
+                            Users
                           </h1>
                         </Col>
                         {this.state.MasterShow && (
-                          <Col>
+                          <Col className="p-1">
                             <SuperAdminUI
                               onDropdownChange={this.handleDropdownChange}
                               onSubmit={this.handleParentSubmit}
                             />
                           </Col>
                         )}
-                        <Col>
+
+                        <Col className="p-1">
                           {InsiderPermissions &&
                             InsiderPermissions.Download && (
                               <>
@@ -846,7 +847,7 @@ class AccounSearch extends React.Component {
                       {InsiderPermissions && InsiderPermissions?.View && (
                         <CardBody style={{ marginTop: "-1.5rem" }}>
                           {this.state.rowData === null ? null : (
-                            <div className="ag-theme-material w-100 my-2 ag-grid-table">
+                            <div className="ag-theme-material w-100 my-2 ">
                               <div className="d-flex flex-wrap justify-content-between align-items-center">
                                 <div className="mb-1">
                                   <UncontrolledDropdown className="p-1 ag-dropdown">
@@ -872,8 +873,8 @@ class AccounSearch extends React.Component {
                                     <DropdownMenu right>
                                       <DropdownItem
                                         tag="div"
-                                        onClick={() => this.filterSize(5)}>
-                                        5
+                                        onClick={() => this.filterSize(8)}>
+                                        8
                                       </DropdownItem>
                                       <DropdownItem
                                         tag="div"

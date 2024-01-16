@@ -696,10 +696,9 @@ class OverDueStockReport extends React.Component {
                       placeholder="Select Warehouse"
                       name="warehouse"
                       value={this.state.warehouse}
-                      onChange={this.changeHandler}
-                    >
+                      onChange={this.changeHandler}>
                       <option value="">--Select WareHouse--</option>
-                      {this.state.wareHouseViewOne?.map(cat => (
+                      {this.state.wareHouseViewOne?.map((cat) => (
                         <option value={cat?._id} key={cat?._id}>
                           {cat?.firstName}
                         </option>
@@ -717,8 +716,7 @@ class OverDueStockReport extends React.Component {
                     }}
                     className="mt-2"
                     color="#39cccc"
-                    onClick={this.handleShowWarehouse}
-                  >
+                    onClick={this.handleShowWarehouse}>
                     Submit
                   </Button>
                 </Col>
@@ -752,41 +750,35 @@ class OverDueStockReport extends React.Component {
                               border: "1px solid #39cccc",
                               backgroundColor: "white",
                             }}
-                            className="dropdown-content dropdownmy"
-                          >
+                            className="dropdown-content dropdownmy">
                             <h5
                               onClick={() => this.exportToPDF()}
                               style={{ cursor: "pointer" }}
-                              className=" mx-1 myactive mt-1"
-                            >
+                              className=" mx-1 myactive mt-1">
                               .PDF
                             </h5>
                             <h5
                               onClick={() => this.gridApi.exportDataAsCsv()}
                               style={{ cursor: "pointer" }}
-                              className=" mx-1 myactive"
-                            >
+                              className=" mx-1 myactive">
                               .CSV
                             </h5>
                             <h5
                               onClick={this.convertCSVtoExcel}
                               style={{ cursor: "pointer" }}
-                              className=" mx-1 myactive"
-                            >
+                              className=" mx-1 myactive">
                               .XLS
                             </h5>
                             <h5
                               onClick={this.exportToExcel}
                               style={{ cursor: "pointer" }}
-                              className=" mx-1 myactive"
-                            >
+                              className=" mx-1 myactive">
                               .XLSX
                             </h5>
                             <h5
                               onClick={() => this.convertCsvToXml()}
                               style={{ cursor: "pointer" }}
-                              className=" mx-1 myactive"
-                            >
+                              className=" mx-1 myactive">
                               .XML
                             </h5>
                           </div>
@@ -840,32 +832,27 @@ class OverDueStockReport extends React.Component {
                               <DropdownMenu right>
                                 <DropdownItem
                                   tag="div"
-                                  onClick={() => this.filterSize(5)}
-                                >
+                                  onClick={() => this.filterSize(5)}>
                                   5
                                 </DropdownItem>
                                 <DropdownItem
                                   tag="div"
-                                  onClick={() => this.filterSize(20)}
-                                >
+                                  onClick={() => this.filterSize(20)}>
                                   20
                                 </DropdownItem>
                                 <DropdownItem
                                   tag="div"
-                                  onClick={() => this.filterSize(50)}
-                                >
+                                  onClick={() => this.filterSize(50)}>
                                   50
                                 </DropdownItem>
                                 <DropdownItem
                                   tag="div"
-                                  onClick={() => this.filterSize(100)}
-                                >
+                                  onClick={() => this.filterSize(100)}>
                                   100
                                 </DropdownItem>
                                 <DropdownItem
                                   tag="div"
-                                  onClick={() => this.filterSize(134)}
-                                >
+                                  onClick={() => this.filterSize(134)}>
                                   134
                                 </DropdownItem>
                               </DropdownMenu>
@@ -875,7 +862,7 @@ class OverDueStockReport extends React.Component {
                             <div className="table-input mr-1">
                               <Input
                                 placeholder="search Item here..."
-                                onChange={e =>
+                                onChange={(e) =>
                                   this.updateSearchQuery(e.target.value)
                                 }
                                 value={this.state.value}
@@ -884,7 +871,7 @@ class OverDueStockReport extends React.Component {
                           </div>
                         </div>
                         <ContextLayout.Consumer className="ag-theme-alpine">
-                          {context => (
+                          {(context) => (
                             <AgGridReact
                               id="myAgGrid"
                               // gridOptions={{
@@ -937,8 +924,7 @@ class OverDueStockReport extends React.Component {
           isOpen={this.state.modal}
           toggle={this.LookupviewStart}
           className={this.props.className}
-          style={{ maxWidth: "1050px" }}
-        >
+          style={{ maxWidth: "1050px" }}>
           <ModalHeader toggle={this.LookupviewStart}>Change Fileds</ModalHeader>
           <ModalBody className="modalbodyhead">
             <Row>
@@ -951,15 +937,15 @@ class OverDueStockReport extends React.Component {
                         return (
                           <>
                             <div
-                              onClick={e => this.handleChangeHeader(e, ele, i)}
+                              onClick={(e) =>
+                                this.handleChangeHeader(e, ele, i)
+                              }
                               key={i}
-                              className="mycustomtag mt-1"
-                            >
+                              className="mycustomtag mt-1">
                               <span className="mt-1">
                                 <h5
                                   style={{ cursor: "pointer" }}
-                                  className="allfields"
-                                >
+                                  className="allfields">
                                   <input
                                     type="checkbox"
                                     // checked={check && check}
@@ -1018,15 +1004,14 @@ class OverDueStockReport extends React.Component {
                                             : ""
                                         }`,
                                       }}
-                                      className="allfields"
-                                    >
+                                      className="allfields">
                                       <IoMdRemoveCircleOutline
                                         onClick={() => {
                                           const SelectedCols =
                                             this.state.SelectedcolumnDefs.slice();
                                           const delindex =
                                             SelectedCols.findIndex(
-                                              element =>
+                                              (element) =>
                                                 element?.headerName ==
                                                 ele?.headerName
                                             );
@@ -1104,14 +1089,12 @@ class OverDueStockReport extends React.Component {
           isOpen={this.state.modalone}
           toggle={this.togglemodal}
           className={this.props.className}
-          style={{ maxWidth: "1050px" }}
-        >
+          style={{ maxWidth: "1050px" }}>
           <ModalHeader toggle={this.togglemodal}>
             {this.state.ShowBill ? "Bill Download" : "All Products"}
           </ModalHeader>
           <ModalBody
-            className={`${this.state.ShowBill ? "p-1" : "modalbodyhead"}`}
-          >
+            className={`${this.state.ShowBill ? "p-1" : "modalbodyhead"}`}>
             {this.state.ViewOneUserView ? (
               <>
                 {this.state.ShowBill ? (
@@ -1178,7 +1161,7 @@ class OverDueStockReport extends React.Component {
                     </Row>
                     <Row>
                       <Col>
-                        <Table style={{ cursor: "pointer" }} striped>
+                        <Table style={{ cursor: "pointer" }} responsive>
                           <thead>
                             <tr>
                               <th>#</th>

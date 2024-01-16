@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import "./Tree.css";
-import { Button, Card, Col, Row } from "reactstrap";
+import { Button, Card, Col, Row, Spinner } from "reactstrap";
 import { Route } from "react-router-dom";
 import { Deptartment_with_Role } from "../../../../ApiEndPoint/Api";
 import { _Get } from "../../../../ApiEndPoint/ApiCalling";
@@ -124,26 +124,51 @@ const Trees = [treeData, treeData];
 
 function CreateHeriarchy() {
   const [DepartmentWithRole, setDepartmentWithRole] = useState([]);
+  const [Loading, setLoading] = useState(false);
 
   useEffect(() => {
     let userData = JSON.parse(localStorage.getItem("userData"));
-
+    setLoading(true);
     _Get(Deptartment_with_Role, userData?.database)
       .then((res) => {
         console.log(res?.Department);
+        setLoading(false);
+
         setDepartmentWithRole(res?.Department);
       })
       .catch((err) => {
+        setLoading(false);
+
         console.log(err);
       });
   }, []);
 
   return (
-    <Card>
+    <Card style={{ height: window.innerHeight }}>
       <div>
-        <Row>
-          <Col></Col>
-          {/* <Col className="m-2" lg="3" sm="6" md="3">
+        {Loading && Loading ? (
+          <>
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "center",
+                marginTop: "20rem",
+              }}>
+              <Spinner
+                style={{
+                  height: "4rem",
+                  width: "4rem",
+                }}
+                color="primary">
+                Loading...
+              </Spinner>
+            </div>
+          </>
+        ) : (
+          <>
+            <Row>
+              <Col></Col>
+              {/* <Col className="m-2" lg="3" sm="6" md="3">
             <Button
               style={{ cursor: "pointer" }}
               className="float-right mr-1"
@@ -153,38 +178,41 @@ function CreateHeriarchy() {
               Connect with SuperAdmin
             </Button>
           </Col> */}
-          <Col className="m-2" lg="2">
-            <Route
-              render={({ history }) => (
-                <Button
-                  style={{ cursor: "pointer" }}
-                  className="float-right mr-1"
-                  color="primary"
-                  onClick={() => history.goBack()}>
-                  {" "}
-                  Back
-                  {/* <FaPlus size={15} /> Create User */}
-                </Button>
-              )}
-            />
-          </Col>
-        </Row>
-        <Row>
-          <Col>
-            <div className="d-flex justify-content-center">
-              <h1>Your Organization Structure</h1>
-            </div>
-          </Col>
-        </Row>
-        {DepartmentWithRole && DepartmentWithRole ? (
-          DepartmentWithRole?.map((ele, i) => <Tree key={i} data={ele} />)
-        ) : (
-          <>
-            <div style={{ color: "red" }}>
-              <h3>No Organization Structure found</h3>
-            </div>
+              <Col className="m-2" lg="2">
+                <Route
+                  render={({ history }) => (
+                    <Button
+                      style={{ cursor: "pointer" }}
+                      className="float-right mr-1"
+                      color="primary"
+                      onClick={() => history.goBack()}>
+                      {" "}
+                      Back
+                      {/* <FaPlus size={15} /> Create User */}
+                    </Button>
+                  )}
+                />
+              </Col>
+            </Row>
+            <Row>
+              <Col>
+                <div className="d-flex justify-content-center">
+                  <h1>Your Organization Structure</h1>
+                </div>
+              </Col>
+            </Row>
+            {DepartmentWithRole && DepartmentWithRole ? (
+              DepartmentWithRole?.map((ele, i) => <Tree key={i} data={ele} />)
+            ) : (
+              <>
+                <div style={{ color: "red" }}>
+                  <h3>No Organization Structure found</h3>
+                </div>
+              </>
+            )}
           </>
         )}
+
         {/* {Trees && Trees?.map((ele, i) => <Tree key={i} data={ele} />)} */}
       </div>
     </Card>

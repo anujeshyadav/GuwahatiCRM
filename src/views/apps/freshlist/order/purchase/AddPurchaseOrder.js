@@ -170,8 +170,11 @@ const AddPurchaseOrder = (args) => {
 
     ProductListView(userdata?._id, userdata?.database)
       .then((res) => {
-        console.log(res.Product);
-        setProductList(res?.Product);
+        
+        let Items = res?.Product?.filter(
+          (ele) => ele?.addProductType == "Item"
+        );
+        setProductList(Items);
       })
       .catch((err) => {
         console.log(err);

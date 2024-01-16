@@ -20,6 +20,7 @@ const DepartmentRoleAssign = () => {
   const [DepartMentList, setDepartMentList] = useState([]);
   const [RoleList, setRoleList] = useState([]);
   const [Loader, setLoader] = useState(false);
+  const [Index, setIndex] = useState(null);
 
   //   const roleList = ["Manager", "Developer", "Accountant"]; // Replace with your actual role list
 
@@ -33,9 +34,11 @@ const DepartmentRoleAssign = () => {
     let URL = `${List_Department}/${userData?.database}`;
     _GetList(URL)
       .then((res) => {
-        console.log(res?.Department);
-        debugger;
-        setDepartMentList(res?.Department);
+        let Departments = res?.Department?.filter(
+          (ele) => ele?.status == "Active"
+        );
+
+        setDepartMentList(Departments);
       })
       .catch((err) => {
         console.log(err);
@@ -50,7 +53,6 @@ const DepartmentRoleAssign = () => {
         let WithoutAssign = res?.Role?.filter(
           (ele) =>
             ele?.assign == 0 &&
-            ele?.rank == 0 &&
             ele?.roleName != "SuperAdmin" &&
             ele?.roleName != "Admin"
         );
@@ -65,7 +67,8 @@ const DepartmentRoleAssign = () => {
       });
   };
 
-  const handleRoleChange = (role) => {
+  const handleRoleChange = (role, i) => {
+    setIndex(i);
     const roles = [...selectedRoles];
 
     if (roles?.includes(role)) {
@@ -189,13 +192,23 @@ const DepartmentRoleAssign = () => {
 
         <div className="d-flex justify-content-center">
           <h3 className="mb-3">
-            <strong>Choose Roles</strong>
+            {RoleList && RoleList ? (
+              <>
+                <strong>Choose Roles</strong>
+              </>
+            ) : (
+              <>
+                <strong>No Roles Found</strong>
+              </>
+            )}
           </h3>
         </div>
         <Row>
           {RoleList.map((role, i) => (
             <Col lg="6" sm="12" md="6">
-              <div key={role?._id} className="form-label-group d-flex">
+              <div
+                key={role?._id}
+                className="form-label-group d-flex justify-content-space-between">
                 <input
                   className="mt-1"
                   required
@@ -204,19 +217,24 @@ const DepartmentRoleAssign = () => {
                   id={role}
                   value={role}
                   //   checked={selectedRoles?.includes(role?._id)}
-                  onChange={() => handleRoleChange(role)}
+                  onChange={() => handleRoleChange(role, i)}
                 />
                 <span
                   className="mb-1 ml-1"
                   style={{ marginRight: "20px", fontSize: "25px" }}>
-                  {role?.roleName}
+                  {role?.roleName?.length > 12 ? (
+                    <>{role?.roleName?.slice(0, 12)}..</>
+                  ) : (
+                    <>{role?.roleName}</>
+                  )}
                 </span>
+
                 <span
                   className="input"
-                  style={{ position: "absolute", right: 200 }}>
+                  style={{ position: "absolute", right: 20, width: "100px" }}>
                   <Input
                     onChange={(e) => handleAddRanking(e, role, i)}
-                    placeholder="Enter Position of Role"
+                    placeholder="Ex. 1 or 2 or 3"
                     type="number"
                   />
                 </span>
