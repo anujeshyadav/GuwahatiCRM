@@ -11,15 +11,20 @@ import { useParams, useHistory } from "react-router-dom";
 import {
   Get_Role_byid,
   Update_Role_list,
+  _PostSave,
 } from "../../../../ApiEndPoint/ApiCalling";
+import { Update_Role_Globally } from "../../../../ApiEndPoint/Api";
 
 export default function AddRoleNew() {
   const [Desc, setDesc] = useState("");
   const [RolesPermission, setRolesPermission] = useState([]);
   const [Role, setRole] = useState("");
+  const [Master, setMaster] = useState(false);
   const [Userinfo, setUserinfo] = useState({});
   const [Selected, setSelected] = useState([]);
   const [SelectedIndex, setIndex] = useState("");
+  const [RoleUpdateGlobally, setRoleUpdateGlobally] =
+    useState("Update Globally");
   const [show, setShow] = useState(false);
   const [Existingpermission, setExistingpermission] = useState({});
   const [updatedPermissions, setUpdatedPermissions] = useState([...permission]);
@@ -32,6 +37,7 @@ export default function AddRoleNew() {
     setUserinfo(userdata);
 
     if (userdata?.rolename?.roleName === "MASTER") {
+      setMaster(true);
       setRolesPermission(Roles);
     } else {
       setRolesPermission(NormalRoles);
@@ -155,6 +161,28 @@ export default function AddRoleNew() {
   const handlesetparent = (value, index) => {
     setShow(value);
     setIndex(index);
+  };
+  const handleUpdateGlobaly = (e) => {
+    setRoleUpdateGlobally("Updating...");
+    e.preventDefault();
+    let payload = {
+      desc: Desc,
+      roleName: Role,
+      rolePermission: Selected,
+    };
+    Update_Role_Globally;
+    _PostSave(Update_Role_Globally, payload)
+      .then((res) => {
+        console.log(res);
+        setRoleUpdateGlobally("Updated Globally");
+
+        swal("Success", "Role Updated Successfully");
+      })
+      .catch((err) => {
+        setRoleUpdateGlobally("Update Globally");
+
+        console.log(err);
+      });
   };
 
   return (
@@ -384,6 +412,16 @@ export default function AddRoleNew() {
                             color="primary">
                             Update Permission
                           </Button>
+
+                          {Master && Master && (
+                            <Button
+                              className="ml-1"
+                              onClick={handleUpdateGlobaly}
+                              style={{ cursor: "pointer" }}
+                              color="danger">
+                              {RoleUpdateGlobally}
+                            </Button>
+                          )}
                         </div>
                       </Col>
                     </Row>

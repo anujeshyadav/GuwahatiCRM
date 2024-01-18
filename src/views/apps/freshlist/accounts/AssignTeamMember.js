@@ -68,7 +68,6 @@ const AssignTeamMember = () => {
     UserList();
     _Get(Deptartment_with_Role, userData?.database)
       .then((res) => {
-        // console.log(res?.Department);
         setDepartmentWithRole(res?.Department);
       })
       .catch((err) => {
@@ -218,7 +217,6 @@ const AssignTeamMember = () => {
                   <CustomInput
                     value={Parent}
                     onChange={(e) => {
-                      debugger;
                       const selected = e.target.options[e.target.selectedIndex]
                         .getAttribute("data-name")
                         ?.split(" ");
@@ -353,10 +351,10 @@ const AssignTeamMember = () => {
                           <th>Assigned To</th>
                           <th>First Name</th>
                           <th>Last Name</th>
-                          <th>Mobile Number</th>
+                          {/* <th>Mobile Number</th>
                           <th>email</th>
                           <th>State</th>
-                          <th>City</th>
+                          <th>City</th> */}
                         </tr>
                       </thead>
                       <tbody>
@@ -388,10 +386,10 @@ const AssignTeamMember = () => {
                                     </td>
                                     <td>{ele?.firstName}</td>
                                     <td>{ele?.lastName}</td>
-                                    <td>{ele?.mobileNumber}</td>
+                                    {/* <td>{ele?.mobileNumber}</td>
                                     <td>{ele?.email}</td>
                                     <td>{ele?.State}</td>
-                                    <td>{ele?.City}</td>
+                                    <td>{ele?.City}</td> */}
                                   </tr>
                                 );
                               })}
@@ -435,10 +433,10 @@ const AssignTeamMember = () => {
                           <th>First Name</th>
 
                           <th>Last Name</th>
-                          <th>Mobile Number</th>
+                          {/* <th>Mobile Number</th>
                           <th>email</th>
                           <th>State</th>
-                          <th>City</th>
+                          <th>City</th> */}
                         </tr>
                       </thead>
 
@@ -464,19 +462,28 @@ const AssignTeamMember = () => {
                                   )}
                                 </th>
                                 <td>
-                                  <Badge color="primary">
-                                    <strong>
-                                      {ele?.created_by?.firstName &&
-                                        ele?.created_by?.firstName}
-                                    </strong>
-                                  </Badge>
+                                  {!!ele?.created_by?.firstName &&
+                                  ele?.created_by?.firstName ? (
+                                    <Badge color="danger">
+                                      <strong>
+                                        {ele?.created_by?.firstName &&
+                                          ele?.created_by?.firstName}
+                                      </strong>
+                                    </Badge>
+                                  ) : (
+                                    <>
+                                      <Badge color="primary">
+                                        <strong>Not Assigned</strong>
+                                      </Badge>
+                                    </>
+                                  )}
                                 </td>
                                 <td>{ele?.firstName}</td>
                                 <td>{ele?.lastName}</td>
-                                <td>{ele?.mobileNumber}</td>
+                                {/* <td>{ele?.mobileNumber}</td>
                                 <td>{ele?.email}</td>
                                 <td>{ele?.State}</td>
-                                <td>{ele?.City}</td>
+                                <td>{ele?.City}</td> */}
                               </tr>
                             );
                           })}

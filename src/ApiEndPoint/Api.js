@@ -1,6 +1,7 @@
 // Guwahati open api EndPoints
 export const Super_Admin_List = "/master/all-super-admin-list";
 export const Get_Role = "/role/get-role";
+export const Update_Role_Globally = "/role/update-permission";
 export const Assign_Role_To_SuperAdmin = "/role/assign-role";
 export const User_Assign_User = "/user/assign-user";
 export const All_Users_List = "/user/user-list/";
@@ -10,8 +11,23 @@ export const country_state_City_List =
 export const Role_list_by_Master = "/master/get-super-admin-role/";
 export const Create_Role = "/role/create-role";
 export const Create_Department = "/department/save-department";
+export const ViewDepartmentWise_Assign_Role = "/assign-role/view-assign-role/";
 export const Delete_Department = "/department/delete-department/";
+export const Update_AssignRole_InDepartment =
+  "/assign-role/update-assign-role/";
 
+// create Customer group
+
+export const Create_CustomerGroup = "/customer-group/save-customer-group";
+export const View_CustomerGroup = "/customer-group/view-customer-group/";
+export const View_CustomerGroup_by_id =
+  "/customer-group/view-customer-group-by-id/";
+export const Update_CustomerGroup_by_id =
+  "/customer-group/update-customer-group/";
+export const Delete_CustomerGroup_by_id =
+  "/customer-group/delete-customer-group/";
+
+// end customer group
 export const List_Department = "/department/view-department";
 export const Save_Assigned_Role = "/assign-role/save-assign-role";
 export const Create_Role_by_Master = "/master/create-super-admin-role";
@@ -51,7 +67,9 @@ export const Save_Promotion = "/promotion/save-promotion";
 export const View_Promotion_List = "/promotion/view-promotion/";
 export const Create_transporter_xmlView = "/transporter/get-xml";
 export const Create_transporter_save = "/transporter/save-transporter";
-export const Create_Transporter_List = "/transporter/view-transporter";
+export const Create_Transporter_List = "/transporter/view-transporter/";
+export const View_TransporterByID = "/transporter/view-transporter-by-id/";
+export const Update_TransporterByID = "/transporter/update-transporter/";
 export const Delete_Transporter_List = "/transporter/delete-transporter/";
 export const Create_Ware_House = "/raw-material/get-xml";
 export const Create_unit_xmlView = "/unit/get-xml";
@@ -178,6 +196,7 @@ export const Delete_individual_Target = "/target-creation/";
 
 export const Create_Target_save = "/target-creation/save-target-creation";
 export const Create_Customer_save = "/customer/save-customer";
+export const View_Customer_ById = "/customer/view-customer-by-id/";
 export const Create_Customer_Update = "/customer/update-customer/";
 export const Create_Account_save = "/user/save-user";
 export const Create_Account_List = "/user/view-user-by-id/";

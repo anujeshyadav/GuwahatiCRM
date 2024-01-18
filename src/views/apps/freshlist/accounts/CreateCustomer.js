@@ -13,13 +13,14 @@ import {
   CustomInput,
   Badge,
 } from "reactstrap";
+import Multiselect from "multiselect-react-dropdown";
 import { history } from "../../../../history";
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
 import { Country, State, City } from "country-state-city";
 import Select from "react-select";
 import moment from "moment-timezone";
-import { Route, useHistory } from "react-router-dom";
+import { Route, useHistory, useParams } from "react-router-dom";
 
 import swal from "sweetalert";
 import "../../../../../src/layouts/assets/scss/pages/users.scss";
@@ -31,6 +32,7 @@ import {
   CreateCustomerxmlView,
   Get_RoleList,
   _BulkUpload,
+  _Get,
 } from "../../../../ApiEndPoint/ApiCalling";
 import { BiEnvelope } from "react-icons/bi";
 import { FcPhoneAndroid } from "react-icons/fc";
@@ -39,24 +41,33 @@ import "../../../../assets/scss/pages/users.scss";
 import UserContext from "../../../../context/Context";
 import { CloudLightning } from "react-feather";
 import { FaPlus } from "react-icons/fa";
-import { Bulk_Upload_Customer } from "../../../../ApiEndPoint/Api";
-
+import {
+  Bulk_Upload_Customer,
+  Create_Transporter_List,
+  View_CustomerGroup,
+  View_Customer_ById,
+} from "../../../../ApiEndPoint/Api";
+let TransPorterToShow = [];
 const CreateCustomer = () => {
   const [CreatAccountView, setCreatAccountView] = useState([]);
   const [RoleList, setRoleList] = useState([]);
+  const [TransporterList, setTransporterList] = useState([]);
+  const [AllTransporterList, setAllTransporterList] = useState([]);
   const [Countries, setCountry] = useState({});
   const [BulkImport, setBulkImport] = useState(null);
-
   const [States, setState] = useState({});
   const [Cities, setCities] = useState({});
   const [formData, setFormData] = useState({});
   const [dropdownValue, setdropdownValue] = useState([]);
+  const [CustomerGroup, setCustomerGroup] = useState([]);
   const [index, setindex] = useState("");
+  const [Mode, setMode] = useState("Create");
   const [error, setError] = useState("");
   const [permissions, setpermissions] = useState({});
 
   const Context = useContext(UserContext);
   let history = useHistory();
+  let Params = useParams();
 
   const handleFileChange = (e, type, i) => {
     const { name, value, checked } = e.target;
@@ -126,20 +137,56 @@ const CreateCustomer = () => {
     }
   };
   useEffect(() => {
-    console.log(formData);
-  }, [formData]);
+    if (Params?.id == 0) {
+      setMode("Create");
+    } else {
+      setMode("Edit");
+
+      _Get(View_Customer_ById, Params?.id)
+        .then((res) => {
+          debugger;
+          console.log(res);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }
+    let userData = JSON.parse(localStorage.getItem("userData"));
+    _Get(Create_Transporter_List, userData?.database)
+      .then((res) => {
+        let value = res?.Transporter;
+
+        if (value?.length) {
+          setTransporterList(value);
+          setAllTransporterList(value);
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }, []);
 
   useEffect(() => {
     let userdata = JSON.parse(localStorage.getItem("userData"));
+    _Get(View_CustomerGroup, userdata?.database)
+      .then((res) => {
+        let myActive = res?.CustomerGroup?.filter(
+          (ele) => ele?.status == "Active"
+        );
+        setCustomerGroup(myActive);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+
     Get_RoleList(userdata?._id, userdata?.database)
       .then((res) => {
         let ShowList = res?.Role?.filter(
-          (item, i) =>
-            item?.roleName?.toLowerCase()?.includes("customer") ||
-            item?.roleName?.toLowerCase()?.includes("transporter")
+          (item, i) => item?.roleName?.toLowerCase()?.includes("customer")
+          //  ||
+          // item?.roleName?.toLowerCase()?.includes("transporter")
         );
         setRoleList(ShowList);
-        // console.log(ShowList);
       })
       .catch((err) => {
         console.log(err);
@@ -167,6 +214,7 @@ const CreateCustomer = () => {
         swal("Something Went Wrong");
       });
   }, []);
+
   const submitHandler = async (e) => {
     e.preventDefault();
     if (BulkImport !== null || BulkImport != undefined) {
@@ -192,7 +240,22 @@ const CreateCustomer = () => {
       });
       CreatAccountView?.map((ele, i) => {
         if (ele?.type?._attributes?.type == "text") {
-          formdata.append(`${ele?.name._text}`, formData[ele?.name?._text]);
+          if (ele?.name._text == "transporter_detail") {
+            formdata.append(`${ele?.name._text}`, formData[ele?.name?._text]);
+
+            if (formData.transporter_detail == "other") {
+              let id = TransporterList?.map((ele) => {
+                return { id: ele?._id };
+              });
+              let assignTransporter = id;
+              formdata.append(
+                "assignTransporter",
+                JSON.stringify(assignTransporter)
+              );
+            }
+          } else {
+            formdata.append(`${ele?.name._text}`, formData[ele?.name?._text]);
+          }
         } else if (ele?.type?._attributes?.type == "file") {
           if (ele?.name?._text == "Shopphoto") {
             formData[ele?.name?._text]?.map((val, index) => {
@@ -205,7 +268,12 @@ const CreateCustomer = () => {
             });
           }
         } else {
-          formdata.append(`${ele?.name?._text}`, formData[ele?.name?._text]);
+          formdata.append(
+            `${ele?.name?._text}`,
+            formData[ele?.name?._text] && formData[ele?.name?._text]
+              ? formData[ele?.name?._text]
+              : null
+          );
         }
       });
       // formdata.append(
@@ -214,6 +282,7 @@ const CreateCustomer = () => {
       // );
       formdata.append("status", formData?.status);
       formdata.append("database", userdata?.database);
+
       formdata.append("rolename", formData?.rolename);
 
       if (navigator.geolocation) {
@@ -234,10 +303,10 @@ const CreateCustomer = () => {
         swal(`Error: Geolocation not found`);
       }
 
-      formdata.forEach((value, key) => {
-        console.log(key, value);
-      });
-      debugger;
+      // formdata.forEach((value, key) => {
+      //   console.log(key, value);
+      // });
+
       if (error) {
         // swal("Error occured while Entering Details");
       } else {
@@ -257,16 +326,42 @@ const CreateCustomer = () => {
       }
     }
   };
+  const handleSetShowTransporter = (VALUE) => {
+    let list = [...AllTransporterList];
+    TransPorterToShow = [];
+    list?.map((ele) => {
+      ele?.City?.map((val) => {
+        if (val?.name.includes(formData?.City)) {
+          TransPorterToShow?.push(ele);
+        }
+      });
+    });
+
+    setTransporterList(TransPorterToShow);
+  };
+  const onSelect1 = (selectedList, selectedItem) => {
+    setCities(selectedList);
+    console.log(selectedList);
+  };
+  const onRemove1 = (selectedList, selectedItem) => {
+    console.log(selectedList);
+    setCities(selectedList);
+  };
+
+  useEffect(() => {
+    console.log(formData);
+  }, [formData]);
 
   return (
     <div>
       <div>
         <Card>
           <Row className="m-2">
-            <Col>
-              <h1 className="float-left">Create Customer</h1>
+            <Col lg="2" md="2">
+              <h1 className="float-left">{Mode && Mode} Customer</h1>
             </Col>
-            <Col>
+            <Col></Col>
+            <Col lg="2" md="2">
               <div className="float-right">
                 <Route
                   render={({ history }) => (
@@ -279,6 +374,28 @@ const CreateCustomer = () => {
                       }>
                       {" "}
                       Back
+                      {/* <FaPlus size={15} /> Create User */}
+                    </Button>
+                  )}
+                />
+              </div>
+            </Col>
+            <Col lg="2" md="2">
+              <div className="float-right">
+                <Route
+                  render={({ history }) => (
+                    <Button
+                      style={{ cursor: "pointer" }}
+                      className="float-right mr-1"
+                      color="primary"
+                      onClick={() =>
+                        history.push(
+                          `/app/ajgroup/house/CustomerGroupList`
+                          // `/app/Ajgroup/account/CreateCustomerGroup/${0}`
+                        )
+                      }>
+                      {" "}
+                      Create Customer Group
                       {/* <FaPlus size={15} /> Create User */}
                     </Button>
                   )}
@@ -406,17 +523,134 @@ const CreateCustomer = () => {
 
                 {CreatAccountView &&
                   CreatAccountView?.map((ele, i) => {
+                    if (ele?.name?._text == "Category") {
+                      return (
+                        <>
+                          <Col key={i} lg="4" md="4" sm="12">
+                            <FormGroup>
+                              <Label className="mb-1">
+                                {ele?.label?._text} *
+                              </Label>
+                              <CustomInput
+                                value={formData?.ele?.name?._text}
+                                onChange={(e) => {
+                                  setFormData({
+                                    ...formData,
+                                    [ele?.name?._text]: e.target.value,
+                                  });
+                                }}
+                                type="select">
+                                <option>--Select Category--</option>
+                                {CustomerGroup &&
+                                  CustomerGroup?.map((ele, i) => (
+                                    <option key={ele?._id} value={ele?._id}>
+                                      {ele?.groupName}
+                                    </option>
+                                  ))}
+                              </CustomInput>
+
+                              {index === i ? (
+                                <>
+                                  {error && (
+                                    <span style={{ color: "red" }}>
+                                      {error}
+                                    </span>
+                                  )}
+                                </>
+                              ) : (
+                                <></>
+                              )}
+                            </FormGroup>
+                          </Col>
+                        </>
+                      );
+                    }
                     if (
-                      formData?.roleName &&
-                      formData?.roleName == "Transporter"
+                      formData?.Registration_Type &&
+                      formData?.Registration_Type == "Unregistered"
                     ) {
-                      debugger;
+                      if (ele?.label?._text.includes("GST Number")) {
+                        return null;
+                      }
                     }
-                    {
-                      /* console.log(Context?.UserInformatio?.dateFormat); */
+                    if (
+                      ele?.label?._text &&
+                      ele?.label?._text?.toLowerCase()?.includes("transporter")
+                    ) {
+                      return (
+                        <>
+                          <Col key={i} lg="4" md="4" sm="12">
+                            <FormGroup>
+                              <Label className="mb-1">
+                                {ele?.label?._text}
+                              </Label>
+                              <CustomInput
+                                value={formData?.ele?.name?._text}
+                                onChange={(e) => {
+                                  if (e.target.value == "other") {
+                                    handleSetShowTransporter(e.target.value);
+                                  }
+                                  setFormData({
+                                    ...formData,
+                                    [ele?.name?._text]: e.target.value,
+                                  });
+                                }}
+                                type="select">
+                                <option>--Select Transporter Type--</option>
+                                <option value="Local">Local</option>
+                                <option value="other">Other</option>
+                              </CustomInput>
+
+                              {index === i ? (
+                                <>
+                                  {error && (
+                                    <span style={{ color: "red" }}>
+                                      {error}
+                                    </span>
+                                  )}
+                                </>
+                              ) : (
+                                <></>
+                              )}
+                            </FormGroup>
+                          </Col>
+                          {formData?.transporter_detail &&
+                          formData?.transporter_detail == "other" ? (
+                            <>
+                              <Col key={i} lg="4" md="4" sm="12">
+                                <FormGroup>
+                                  <Label className="mb-1">
+                                    Transporter List
+                                  </Label>
+                                  <Multiselect
+                                    required
+                                    isObject="false"
+                                    options={TransporterList} // Options to display in the dropdown
+                                    selectedValues={Cities && Cities} // Preselected value to persist in dropdown
+                                    onSelect={onSelect1} // Function will trigger on select event
+                                    onRemove={onRemove1} // Function will trigger on remove event
+                                    displayValue="firstName" // Property name to display in the dropdown options
+                                  />
+
+                                  {index === i ? (
+                                    <>
+                                      {error && (
+                                        <span style={{ color: "red" }}>
+                                          {error}
+                                        </span>
+                                      )}
+                                    </>
+                                  ) : (
+                                    <></>
+                                  )}
+                                </FormGroup>
+                              </Col>
+                            </>
+                          ) : null}
+                        </>
+                      );
                     }
-                    // console.log(Countries);
-                    // console.log(States);
+
                     const convertedTime = moment("2022-08-05T12:00:00")
                       .tz("America/New_York")
                       .format("D MMM, YYYY HH:mm");
@@ -573,6 +807,7 @@ const CreateCustomer = () => {
                                   setFormData({
                                     ...formData,
                                     ["City"]: City?.name,
+                                    ["transporter_detail"]: "Local",
                                   });
                                 }}
                               />
