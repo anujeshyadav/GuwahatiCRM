@@ -47,6 +47,8 @@ import {
   FaUserAstronaut,
   FaCalculator,
   FaLaptopHouse,
+  FaArtstation,
+  FaShip,
 } from "react-icons/fa";
 import { GiDamagedHouse } from "react-icons/gi";
 import { AiOutlineStock } from "react-icons/ai";
@@ -145,6 +147,14 @@ const horizontalMenuConfig = [
         icon: <FaPeopleArrows size={22} />,
         permissions: ["admin", "editor"],
         navLink: "/app/SoftNumen/CustomerSearch",
+      },
+      {
+        id: "CreateTransport",
+        title: "Create Transporter",
+        type: "item",
+        icon: <FaShip size={22} />,
+        permissions: ["admin", "editor"],
+        navLink: "/app/ajgroup/CreateTransportList",
       },
     ],
   },

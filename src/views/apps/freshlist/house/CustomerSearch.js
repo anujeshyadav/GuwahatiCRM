@@ -35,6 +35,7 @@ import { IoMdRemoveCircleOutline } from "react-icons/io";
 import "../../../../assets/scss/plugins/tables/_agGridStyleOverride.scss";
 import "../../../../assets/scss/pages/users.scss";
 
+
 import {
   FaArrowAltCircleLeft,
   FaArrowAltCircleRight,
@@ -257,9 +258,14 @@ class CustomerSearch extends React.Component {
                               className=""
                               size="20px"
                               color="white"
-                              onClick={() => {
-                                this.handleChangeEdit(params?.data, "Editable");
-                              }}
+                              // onClick={() => {
+                              //   this.handleChangeEdit(params?.data, "Editable");
+                              // }}
+                              onClick={() =>
+                                history.push(
+                                  `/app/SoftNumen/account/CreateCustomer/${params?.data?._id}`
+                                )
+                              }
                             />
                           </span>
                         )}
@@ -316,7 +322,7 @@ class CustomerSearch extends React.Component {
             filter: true,
             sortable: true,
             cellRendererFramework: (params) => {
-              console.log(params.data?.Shopphoto);
+              // console.log(params.data?.Shopphoto);
               return (
                 <>
                   <div className="actions cursor-pointer">
@@ -863,7 +869,7 @@ class CustomerSearch extends React.Component {
                                     color="#39cccc"
                                     onClick={() =>
                                       history.push(
-                                        "/app/SoftNumen/account/CreateCustomer"
+                                        `/app/SoftNumen/account/CreateCustomer/${0}`
                                       )
                                     }>
                                     <FaPlus size={15} /> Create Customer

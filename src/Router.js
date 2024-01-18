@@ -622,9 +622,9 @@ const DispatchDetail = lazy(() =>
 const TransporterList = lazy(() =>
   import("./views/apps/freshlist/customer/transporter/TransporterList")
 );
-const CreateTransporter = lazy(() =>
-  import("./views/apps/freshlist/customer/transporter/CreateTransporter")
-);
+// const CreateTransporter = lazy(() =>
+//   import("./views/apps/freshlist/customer/transporter/CreateTransporter")
+// );
 const UnitList = lazy(() =>
   import("./views/apps/freshlist/customer/unit/UnitList")
 );
@@ -748,6 +748,9 @@ const CreateHeirarchy = lazy(() =>
 const AssignTeamMember = lazy(() =>
   import("./views/apps/freshlist/accounts/AssignTeamMember")
 );
+const EditTeamRolePosition = lazy(() =>
+  import("./views/apps/freshlist/accounts/EditTeamRolePosition")
+);
 const EditRole = lazy(() => import("./views/apps/freshlist/accounts/EditRole"));
 
 const UpdateExistingRole = lazy(() =>
@@ -784,6 +787,9 @@ const EditPromotionalActivity = lazy(() =>
 const CreateTarget = lazy(() =>
   import("./views/apps/freshlist/accounts/CreateTarget")
 );
+const CreateCustomerGroup = lazy(() =>
+  import("./views/apps/freshlist/accounts/CreateCustomerGroup")
+);
 const EditTarget = lazy(() =>
   import("./views/apps/freshlist/accounts/EditTarget")
 );
@@ -795,6 +801,9 @@ const PartyCreation = lazy(() =>
 );
 const CreateCustomer = lazy(() =>
   import("./views/apps/freshlist/accounts/CreateCustomer")
+);
+const CreateTransporter = lazy(() =>
+  import("./views/apps/freshlist/accounts/CreateTransporter")
 );
 const CreateSalesTeam = lazy(() =>
   import("./views/apps/freshlist/accounts/CreateSalesTeam")
@@ -958,6 +967,9 @@ const AssignToClient = lazy(() =>
 const AssignToClientlist = lazy(() =>
   import("./views/apps/freshlist/house/AssignedCLientlist")
 );
+const CustomerGroupList = lazy(() =>
+  import("./views/apps/freshlist/house/CustomerGroupList")
+);
 const AssignedPage = lazy(() =>
   import("./views/apps/freshlist/house/AssignedPage")
 );
@@ -1014,6 +1026,9 @@ const SalesOrderReturn = lazy(() =>
 const PartyList = lazy(() => import("./views/apps/freshlist/house/PartyList"));
 const CustomerSearch = lazy(() =>
   import("./views/apps/freshlist/house/CustomerSearch")
+);
+const CreateTransportList = lazy(() =>
+  import("./views/apps/freshlist/house/CreateTransportList")
 );
 const CreateSalesMan = lazy(() =>
   import("./views/apps/freshlist/house/SalesManList")
@@ -2221,7 +2236,7 @@ class AppRouter extends React.Component {
             component={TransporterList}
           />
           <AppRoute
-            path="/app/softNumen/transporter/CreateTransporter"
+            path="/app/ajgroup/transporter/CreateTransporter/:id"
             component={CreateTransporter}
           />
           <AppRoute
@@ -2396,6 +2411,10 @@ class AppRouter extends React.Component {
             component={AssignTeamMember}
           />
           <AppRoute
+            path="/app/Ajgroup/account/EditTeamRolePosition"
+            component={EditTeamRolePosition}
+          />
+          <AppRoute
             path="/app/freshlist/account/editRole/:id"
             component={EditRole}
           />
@@ -2425,6 +2444,10 @@ class AppRouter extends React.Component {
             component={CreateTarget}
           />
           <AppRoute
+            path="/app/Ajgroup/account/CreateCustomerGroup/:id"
+            component={CreateCustomerGroup}
+          />
+          <AppRoute
             path="/app/AJGroup/account/EditTarget/:id"
             component={EditTarget}
           />
@@ -2438,7 +2461,7 @@ class AppRouter extends React.Component {
             component={PartyCreation}
           />
           <AppRoute
-            path="/app/SoftNumen/account/CreateCustomer"
+            path="/app/SoftNumen/account/CreateCustomer/:id"
             component={CreateCustomer}
           />
           <AppRoute
@@ -2543,6 +2566,10 @@ class AppRouter extends React.Component {
             component={AssignToClientlist}
           />
           <AppRoute
+            path="/app/ajgroup/house/CustomerGroupList"
+            component={CustomerGroupList}
+          />
+          <AppRoute
             path="/app/freshlist/house/ProductDashboard"
             component={ProductDashboard}
           />
@@ -2629,6 +2656,10 @@ class AppRouter extends React.Component {
           <AppRoute
             path="/app/SoftNumen/CustomerSearch"
             component={CustomerSearch}
+          />
+          <AppRoute
+            path="/app/ajgroup/CreateTransportList"
+            component={CreateTransportList}
           />
           <AppRoute
             path="/app/SoftNumen/CreateSalesMan"

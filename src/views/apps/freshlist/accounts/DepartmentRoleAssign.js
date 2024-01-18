@@ -149,6 +149,48 @@ const DepartmentRoleAssign = () => {
       <div className="card p-3">
         <Row>
           <Col></Col>
+          <Col lg="2" sm="2" md="2" ms="12">
+            <Route
+              render={({ history }) => (
+                <Button
+                  style={{
+                    cursor: "pointer",
+                    backgroundColor: "#39cccc",
+                    color: "white",
+                    fontWeight: "600",
+                  }}
+                  className=" float-right"
+                  color="#39cccc"
+                  onClick={() =>
+                    history.push("/app/freshlist/account/CreateHeirarchy")
+                  }>
+                  View Hierarchy
+                </Button>
+              )}
+            />
+          </Col>
+          <Col lg="2" sm="2" md="2" ms="12">
+            <Route
+              render={({ history }) => (
+                <Button
+                  style={{
+                    cursor: "pointer",
+                    backgroundColor: "#39cccc",
+                    color: "white",
+                    fontWeight: "600",
+                  }}
+                  className=" float-right"
+                  color="#39cccc"
+                  onClick={() =>
+                    history.push("/app/Ajgroup/account/EditTeamRolePosition")
+                  }>
+                  Edit Hierarchy
+                </Button>
+              )}
+            />
+          </Col>
+          {/* )} */}
+
           <Col lg="2">
             <Route
               render={({ history }) => (
@@ -166,7 +208,7 @@ const DepartmentRoleAssign = () => {
           </Col>
         </Row>
         <div className="d-flex justify-content-center">
-          <h3 className="mb-3">
+          <h3 className="mb-3 mt-2">
             <strong>Assign Roles to Department</strong>
           </h3>
         </div>
@@ -223,7 +265,7 @@ const DepartmentRoleAssign = () => {
                   className="mb-1 ml-1"
                   style={{ marginRight: "20px", fontSize: "25px" }}>
                   {role?.roleName?.length > 12 ? (
-                    <>{role?.roleName?.slice(0, 12)}..</>
+                    <>{role?.roleName?.slice(0, 18)}..</>
                   ) : (
                     <>{role?.roleName}</>
                   )}
