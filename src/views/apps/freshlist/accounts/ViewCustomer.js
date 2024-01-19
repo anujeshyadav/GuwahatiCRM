@@ -31,7 +31,7 @@ import {
   CreateCustomerxmlView,
   _Get,
 } from "../../../../ApiEndPoint/ApiCalling";
-import { BiEnvelope } from "react-icons/bi";
+import { BiBorderRadius, BiEnvelope } from "react-icons/bi";
 import { FcPhoneAndroid } from "react-icons/fc";
 import { BsWhatsapp } from "react-icons/bs";
 import "../../../../assets/scss/pages/users.scss";
@@ -121,28 +121,40 @@ const CreateCustomer = ({ ViewOneData }) => {
       }
     }
   };
-  useEffect(() => {
-    let userData = JSON.parse(localStorage.getItem("userData"));
-    _Get(Create_Transporter_List, userData?.database)
-      .then((res) => {
-        let value = res?.Transporter;
-
-        if (value?.length) {
-          setTransporterList(value);
-          setAllTransporterList(value);
-        }
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  }, []);
+  // useEffect(() => {
+  //   let userData = JSON.parse(localStorage.getItem("userData"));
+  //   _Get(Create_Transporter_List, userData?.database)
+  //     .then((res) => {
+  //       let value = res?.Transporter;
+  //       console.log(ViewOneData?.assignTransporter);
+  //       let selectedtransporter = ViewOneData?.assignTransporter?.map((ele) => {
+  //         return ele?.id;
+  //       });
+  //       debugger;
+  //       if (value?.length) {
+  //         setTransporterList(selectedtransporter);
+  //         setAllTransporterList(value);
+  //       }
+  //     })
+  //     .catch((err) => {
+  //       console.log(err);
+  //     });
+  // }, []);
   useEffect(() => {
     console.log(formData);
   }, [formData]);
+
   useEffect(() => {
     console.log(ViewOneData);
     debugger;
     setFormData(ViewOneData);
+    let selectedtransporter = ViewOneData?.assignTransporter?.map((ele) => {
+      return ele?.id;
+    });
+
+    if (selectedtransporter?.length) {
+      setTransporterList(selectedtransporter);
+    }
     if (ViewOneData?.Country) {
       let countryselected = Country?.getAllCountries()?.filter(
         (ele, i) => ele?.name == ViewOneData?.Country
@@ -449,12 +461,14 @@ const CreateCustomer = ({ ViewOneData }) => {
                                     Transporter List
                                   </Label>
                                   <Multiselect
-                                    required
+                                    disable
                                     isObject="false"
-                                    options={TransporterList} // Options to display in the dropdown
-                                    selectedValues={Cities && Cities} // Preselected value to persist in dropdown
-                                    onSelect={onSelect1} // Function will trigger on select event
-                                    onRemove={onRemove1} // Function will trigger on remove event
+                                    // options={TransporterList} // Options to display in the dropdown
+                                    selectedValues={
+                                      TransporterList && TransporterList
+                                    } // Preselected value to persist in dropdown
+                                    // onSelect={onSelect1} // Function will trigger on select event
+                                    // onRemove={onRemove1} // Function will trigger on remove event
                                     displayValue="firstName" // Property name to display in the dropdown options
                                   />
 
@@ -957,7 +971,43 @@ const CreateCustomer = ({ ViewOneData }) => {
                     }
                   })}
               </Row>
-
+              <Row>
+                {formData.Shopphoto &&
+                  formData.Shopphoto?.map((ele) => {
+                    return (
+                      <>
+                        <Col key={ele}>
+                          <label>Shop Photo</label>
+                          <img
+                            style={{ borderRadius: "12px" }}
+                            width={220}
+                            height={280}
+                            src={`http://64.227.162.41:5000/Images/${ele}`}
+                            alt="Img"
+                          />
+                        </Col>
+                      </>
+                    );
+                  })}
+                {formData.photo &&
+                  formData.photo?.map((ele) => {
+                    return (
+                      <>
+                        <Col key={ele}>
+                          <label>Photo</label>
+                          <img
+                            style={{ borderRadius: "12px" }}
+                            width={220}
+                            height={280}
+                            src={`http://64.227.162.41:5000/Images/${ele}`}
+                            alt="Img"
+                          />
+                        </Col>
+                      </>
+                    );
+                  })}
+                <Col></Col>
+              </Row>
               <hr />
               <Col lg="6" md="6" sm="6" className="mb-2 mt-1">
                 <Label className="mb-0">Status</Label>

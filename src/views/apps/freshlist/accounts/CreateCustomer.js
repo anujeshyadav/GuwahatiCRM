@@ -57,6 +57,7 @@ const CreateCustomer = () => {
   const [BulkImport, setBulkImport] = useState(null);
   const [States, setState] = useState({});
   const [Cities, setCities] = useState({});
+  const [Selectedtransporter, setSelectedtransporter] = useState([]);
   const [formData, setFormData] = useState({});
   const [dropdownValue, setdropdownValue] = useState([]);
   const [CustomerGroup, setCustomerGroup] = useState([]);
@@ -111,7 +112,6 @@ const CreateCustomer = () => {
         //   );
         // }
       } else if (type == "file") {
-        // debugger;
         if (e.target.files) {
           setFormData({
             ...formData,
@@ -137,6 +137,23 @@ const CreateCustomer = () => {
     }
   };
   useEffect(() => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const date = new Date(position.timestamp);
+          const CurentTime = date.toLocaleString();
+          formData.Geotagging = `${position.coords.latitude},${position.coords.longitude}`;
+        },
+        (error) => {
+          swal(`Error: ${error}`);
+        },
+        { timeout: 10000, enableHighAccuracy: true }
+      );
+    } else {
+      swal(`Error: Geolocation not found`);
+    }
+  }, []);
+  useEffect(() => {
     if (Params?.id == 0) {
       setMode("Create");
     } else {
@@ -144,8 +161,38 @@ const CreateCustomer = () => {
 
       _Get(View_Customer_ById, Params?.id)
         .then((res) => {
-          debugger;
-          console.log(res);
+          let value = res?.Customer[0];
+          setFormData(value);
+          let selectedtransporter = value?.assignTransporter?.map((ele) => {
+            return ele?.id;
+          });
+
+          if (selectedtransporter?.length) {
+            setSelectedtransporter(selectedtransporter);
+          }
+          if (value?.Country) {
+            let countryselected = Country?.getAllCountries()?.filter(
+              (ele, i) => ele?.name == value?.Country
+            );
+            setCountry(countryselected);
+            if (value?.State) {
+              let stateselected = State?.getStatesOfCountry(
+                countryselected[0]?.isoCode
+              )?.filter((ele, i) => ele?.name == value?.State);
+              setState(stateselected);
+              console.log(stateselected);
+              if (value?.City) {
+                let cityselected = City.getCitiesOfState(
+                  stateselected[0]?.countryCode,
+                  stateselected[0]?.isoCode
+                )?.filter((ele, i) => ele?.name == value?.City);
+                setCities(cityselected);
+              }
+            }
+          }
+          if (value?.status) {
+            formData["status"] = value?.status;
+          }
         })
         .catch((err) => {
           console.log(err);
@@ -321,7 +368,7 @@ const CreateCustomer = () => {
           })
           .catch((err) => {
             console.log(err.response);
-            swal("Please Fill correct details");
+            swal("something Went Wrong");
           });
       }
     }
@@ -340,17 +387,17 @@ const CreateCustomer = () => {
     setTransporterList(TransPorterToShow);
   };
   const onSelect1 = (selectedList, selectedItem) => {
-    setCities(selectedList);
+    setSelectedtransporter(selectedList);
     console.log(selectedList);
   };
   const onRemove1 = (selectedList, selectedItem) => {
     console.log(selectedList);
-    setCities(selectedList);
+    setSelectedtransporter(selectedList);
   };
 
-  useEffect(() => {
-    console.log(formData);
-  }, [formData]);
+  // useEffect(() => {
+  //   console.log(formData);
+  // }, [formData]);
 
   return (
     <div>
@@ -585,7 +632,7 @@ const CreateCustomer = () => {
                                 {ele?.label?._text}
                               </Label>
                               <CustomInput
-                                value={formData?.ele?.name?._text}
+                                value={formData["transporter_detail"]}
                                 onChange={(e) => {
                                   if (e.target.value == "other") {
                                     handleSetShowTransporter(e.target.value);
@@ -626,7 +673,9 @@ const CreateCustomer = () => {
                                     required
                                     isObject="false"
                                     options={TransporterList} // Options to display in the dropdown
-                                    selectedValues={Cities && Cities} // Preselected value to persist in dropdown
+                                    selectedValues={
+                                      Selectedtransporter && Selectedtransporter
+                                    } // Preselected value to persist in dropdown
                                     onSelect={onSelect1} // Function will trigger on select event
                                     onRemove={onRemove1} // Function will trigger on remove event
                                     displayValue="firstName" // Property name to display in the dropdown options
@@ -1160,6 +1209,7 @@ const CreateCustomer = () => {
                       });
                     }}>
                     <input
+                      checked={formData.status == "Active"}
                       style={{ marginRight: "3px" }}
                       type="radio"
                       name="status"
@@ -1168,6 +1218,7 @@ const CreateCustomer = () => {
                     <span style={{ marginRight: "20px" }}>Active</span>
 
                     <input
+                      checked={formData.status == "Deactive"}
                       style={{ marginRight: "3px" }}
                       type="radio"
                       name="status"

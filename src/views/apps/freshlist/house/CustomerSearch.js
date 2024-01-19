@@ -142,7 +142,7 @@ class CustomerSearch extends React.Component {
           compact: true,
           spaces: 2,
         });
-        console.log(JSON.parse(jsonData));
+        // console.log(JSON.parse(jsonData));
         let allinput = JSON.parse(jsonData).CreateCustomer?.input?.filter(
           (ele, i) => ele?.type?._attributes?.type !== "file"
         );
@@ -180,13 +180,12 @@ class CustomerSearch extends React.Component {
         //   },
         // ];
 
-        let dropdown =
-          JSON.parse(jsonData).CreateCustomer?.MyDropDown?.dropdown;
+        let dropdown = JSON.parse(jsonData).CreateCustomer?.MyDropDown;
         if (dropdown?.length) {
           var mydropdownArray = dropdown?.map((ele) => {
             return {
-              headerName: ele?.label,
-              field: ele?.name,
+              headerName: ele?.dropdown?.label?._text,
+              field: ele?.dropdown?.name?._text,
               filter: true,
               sortable: true,
             };
@@ -790,7 +789,7 @@ class CustomerSearch extends React.Component {
                                   size="35px"
                                   onClick={this.LookupviewStart}
                                   color="#39cccc"
-                                  className="float-right"
+                                  className="float-right mb-1"
                                 />
                               </span>
                             </>
@@ -803,7 +802,7 @@ class CustomerSearch extends React.Component {
                                     style={{ cursor: "pointer" }}
                                     title="download file"
                                     size="35px"
-                                    className="dropdown-button "
+                                    className="dropdown-button mb-1"
                                     color="#39cccc"
                                     onClick={this.toggleDropdown}
                                   />
@@ -865,7 +864,7 @@ class CustomerSearch extends React.Component {
                                       color: "white",
                                       fontWeight: "600",
                                     }}
-                                    className="float-right mr-1 "
+                                    className="float-right mr-1 mb-1 "
                                     color="#39cccc"
                                     onClick={() =>
                                       history.push(

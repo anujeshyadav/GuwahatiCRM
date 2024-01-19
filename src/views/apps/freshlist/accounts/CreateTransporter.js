@@ -135,7 +135,7 @@ const CreateCustomer = () => {
     } else {
       swal(`Error: Geolocation not found`);
     }
-  }, [formData]);
+  }, []);
 
   useEffect(() => {
     let userdata = JSON.parse(localStorage.getItem("userData"));

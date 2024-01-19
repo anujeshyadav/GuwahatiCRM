@@ -728,7 +728,7 @@ class AccounSearch extends React.Component {
                                       style={{ cursor: "pointer" }}
                                       title="download file"
                                       size="35px"
-                                      className="dropdown-button "
+                                      className="dropdown-button mb-1"
                                       color="#39cccc"
                                       onClick={this.toggleDropdown}
                                     />
@@ -788,14 +788,14 @@ class AccounSearch extends React.Component {
                                   size="35px"
                                   onClick={this.LookupviewStart}
                                   color="#39cccc"
-                                  className="float-right"
+                                  className="float-right mb-1"
                                 />
                               </span>
                             </>
                           )}
                           {InsiderPermissions && InsiderPermissions.Create && (
                             <>
-                              <span>
+                              <span className="">
                                 <Route
                                   render={({ history }) => (
                                     <Button
@@ -805,14 +805,14 @@ class AccounSearch extends React.Component {
                                         color: "white",
                                         fontWeight: "600",
                                       }}
-                                      className="float-right mr-1 "
+                                      className="float-right mr-1 mb-2"
                                       color="#39cccc"
                                       onClick={() =>
                                         history.push(
                                           "/app/SoftNumen/account/CreateAccount"
                                         )
                                       }>
-                                      <FaPlus size={15} /> Create User
+                                      <FaPlus size={15} /> User
                                     </Button>
                                   )}
                                 />

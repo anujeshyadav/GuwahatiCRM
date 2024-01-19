@@ -55,6 +55,7 @@ const SuperAdminUI = ({ onDropdownChange, onSubmit }) => {
               <>
                 <Col>
                   <CustomInput
+                    className="mb-1"
                     value={selectedSuperAdmin}
                     onChange={handleDropdownChange}
                     type="select">
@@ -70,7 +71,10 @@ const SuperAdminUI = ({ onDropdownChange, onSubmit }) => {
                   </CustomInput>
                 </Col>
                 <Col lg="2" sm="2" md="2">
-                  <Button onClick={handleSubmit} color="primary">
+                  <Button
+                    className="mb-1"
+                    onClick={handleSubmit}
+                    color="primary">
                     Submit
                   </Button>
                 </Col>
