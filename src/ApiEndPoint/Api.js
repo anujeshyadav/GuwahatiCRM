@@ -180,6 +180,13 @@ export const Edit_GoodDispatch = "/good-dispatch/update-good-dispatch/";
 
 // Guwahati close
 
+
+// ledger
+
+export const View_Ledger_by_id = "/ledger/view-ledger/";
+
+// end ledger
+
 export const Create_Account_xmlView = "/user/get-xml";
 export const Create_SalesMan_xmlView =
   "https://xmlfileaws.s3.ap-south-1.amazonaws.com/CreateSalesmanConfig%5D.xml";

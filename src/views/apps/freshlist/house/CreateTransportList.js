@@ -355,7 +355,7 @@ class CreateTransportList extends React.Component {
                         width={40}
                         height={40}
                         src={`http://64.227.162.41:5000/Images/${params?.data?.photo[0]}`}
-                        alt="dddd"
+                        alt="img"
                       />
                     )}
                   </div>

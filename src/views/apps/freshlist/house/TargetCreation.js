@@ -185,17 +185,16 @@ class TargetCreation extends React.Component {
         },
         {
           headerName: "FullName",
-          field: "salesPersonId.firstName",
+          field: "partyId.firstName",
           filter: "agSetColumnFilter",
           width: 200,
           cellRendererFramework: (params) => {
-            // console.log(params.data);
             return (
               <div className="d-flex align-items-center cursor-pointer">
                 <div className="">
                   <span>
-                    {params.data?.salesPersonId?.firstName +
-                      params.data?.salesPersonId?.lastName}
+                    {params.data?.partyId?.OwnerName &&
+                      params.data?.partyId?.OwnerName}
                   </span>
                 </div>
               </div>

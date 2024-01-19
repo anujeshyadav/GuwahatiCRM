@@ -924,6 +924,9 @@ const InspectionsSearch = lazy(() =>
   import("./views/apps/freshlist/inspection/InspectionsSearch")
 );
 const RoleList = lazy(() => import("./views/apps/freshlist/accounts/RoleList"));
+const ViewLedger = lazy(() =>
+  import("./views/apps/freshlist/accounts/ViewLedger")
+);
 const DepartmentRoleAssign = lazy(() =>
   import("./views/apps/freshlist/accounts/DepartmentRoleAssign")
 );
@@ -2524,6 +2527,10 @@ class AppRouter extends React.Component {
             component={InspectionsSearch}
           />
           <AppRoute path="/app/Trupee/account/RoleList" component={RoleList} />
+          <AppRoute
+            path="/app/ajgroup/Ledger/ViewLedger/:id"
+            component={ViewLedger}
+          />
           <AppRoute
             path="/app/Ajgroup/account/DepartmentRoleAssign"
             component={DepartmentRoleAssign}

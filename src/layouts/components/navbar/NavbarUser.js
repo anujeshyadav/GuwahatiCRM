@@ -106,14 +106,13 @@ const UserDropdown = (props) => {
             onClick={(e) => {
               e.preventDefault();
               history.push("/pages/profile/userProfile");
-            }}
-          >
+            }}>
             <Icon.User size={14} className="mr-50" />
             <span className="align-middle">Edit Profile</span>
           </DropdownItem>
         )}
       />
-      <Route
+      {/* <Route
         render={({ history }) => (
           <DropdownItem
             tag="a"
@@ -126,7 +125,7 @@ const UserDropdown = (props) => {
             <span className="align-middle">Upload Logo</span>
           </DropdownItem>
         )}
-      />
+      /> */}
       <Route
         render={({ history }) => (
           <DropdownItem
@@ -170,8 +169,7 @@ const UserDropdown = (props) => {
                 // localStorage.clear();
                 history.push("/#/pages/login");
               }
-            }}
-          >
+            }}>
             <Icon.Power size={14} className="mr-50" />
             <span className="align-middle">Log Out</span>
           </DropdownItem>

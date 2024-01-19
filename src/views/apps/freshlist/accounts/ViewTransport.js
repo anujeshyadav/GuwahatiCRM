@@ -115,6 +115,7 @@ const CreateCustomer = ({ ViewOneData }) => {
   }, [formData]);
   useEffect(() => {
     setFormData(ViewOneData);
+    debugger;
     if (ViewOneData?.Country) {
       let countryselected = Country?.getAllCountries()?.filter(
         (ele, i) => ele?.name == ViewOneData?.Country
@@ -768,7 +769,42 @@ const CreateCustomer = ({ ViewOneData }) => {
                     }
                   })}
               </Row>
-
+              <Row>
+                {formData.Shopphoto &&
+                  formData.Shopphoto?.map((ele) => {
+                    return (
+                      <>
+                        <Col key={ele}>
+                          <label>Shop Photo</label>
+                          <img
+                            style={{ borderRadius: "12px" }}
+                            width={220}
+                            height={280}
+                            src={`http://64.227.162.41:5000/Images/${ele}`}
+                            alt="Img"
+                          />
+                        </Col>
+                      </>
+                    );
+                  })}
+                {formData.photo &&
+                  formData.photo?.map((ele) => {
+                    return (
+                      <>
+                        <Col key={ele}>
+                          <label>Photo</label>
+                          <img
+                            style={{ borderRadius: "12px" }}
+                            width={220}
+                            height={280}
+                            src={`http://64.227.162.41:5000/Images/${ele}`}
+                            alt="Img"
+                          />
+                        </Col>
+                      </>
+                    );
+                  })}
+              </Row>
               <hr />
               <Col lg="6" md="6" sm="6" className="mb-2 mt-1">
                 <Label className="mb-0">Status</Label>

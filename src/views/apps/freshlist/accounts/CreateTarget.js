@@ -20,13 +20,14 @@ import {
   CreatePartyList,
   Create_Sales_personList,
   Create_Targetsave,
+  CreateCustomerList,
 } from "../../../../ApiEndPoint/ApiCalling";
 import "../../../../assets/scss/pages/users.scss";
 import { Route } from "react-router-dom";
 
 let GrandTotal = [];
 let SelectedITems = [];
-const CreateTarget = args => {
+const CreateTarget = (args) => {
   const [Index, setIndex] = useState("");
   const [targetStartDate, settargetStartDate] = useState("");
   const [targetEndDate, settargetEndDate] = useState("");
@@ -63,7 +64,7 @@ const CreateTarget = args => {
     // console.log(GrandTotal);
     let amt = 0;
     if (list.length > 0) {
-      const x = list?.map(val => {
+      const x = list?.map((val) => {
         // console.log(val.qty * val.price);
         GrandTotal[index] = val.qty * val.price;
 
@@ -95,7 +96,7 @@ const CreateTarget = args => {
   };
   const handleSelection = (selectedList, selectedItem, index) => {
     SelectedITems.push(selectedItem);
-    setProduct(prevProductList => {
+    setProduct((prevProductList) => {
       const updatedProductList = [...prevProductList];
       const updatedProduct = { ...updatedProductList[index] };
       updatedProduct.price = selectedItem?.Product_MRP;
@@ -116,7 +117,7 @@ const CreateTarget = args => {
 
     const listprice = [...product];
 
-    const grandTTl = listprice.map(val => {
+    const grandTTl = listprice.map((val) => {
       val.totalprice * totalPrice;
     });
     setGrandTotalAmt(grandTTl);
@@ -126,17 +127,17 @@ const CreateTarget = args => {
     const userInfo = JSON.parse(localStorage.getItem("userData"));
 
     let userData = JSON.parse(localStorage.getItem("userData"));
-    CreateAccountList(userData?._id, userData?.database)
+    CreateCustomerList(userData?._id, userData?.database)
       .then((res) => {
-        setUserList(res?.adminDetails);
+        setUserList(res?.Customer);
       })
       .catch((err) => console.log(err));
 
-    Create_Sales_personList()
-      .then((res) => {
-        setSalesPersonList(res?.SalesPerson);
-      })
-      .catch((err) => console.log(err));
+    // Create_Sales_personList()
+    //   .then((res) => {
+    //     setSalesPersonList(res?.SalesPerson);
+    //   })
+    //   .catch((err) => console.log(err));
     let userdata = JSON.parse(localStorage.getItem("userData"));
 
     ProductListView(userdata?._id, userdata?.database)
@@ -147,6 +148,7 @@ const CreateTarget = args => {
         console.log(err);
       });
   }, []);
+
   useEffect(() => {
     const userInfo = JSON.parse(localStorage.getItem("userData"));
     setUserInfo(userInfo);
@@ -168,7 +170,7 @@ const CreateTarget = args => {
       },
     ]);
   };
-  let removeMoreProduct = i => {
+  let removeMoreProduct = (i) => {
     let newFormValues = [...product];
     newFormValues.splice(i, 1);
     GrandTotal.splice(i, 1);
@@ -178,7 +180,7 @@ const CreateTarget = args => {
     setProduct(newFormValues);
   };
 
-  const submitHandler = e => {
+  const submitHandler = (e) => {
     e.preventDefault();
     let Allproduct = product?.map((ele, i) => {
       return {
@@ -193,7 +195,7 @@ const CreateTarget = args => {
         startDate: targetStartDate,
         endDate: targetEndDate,
         grandTotal: totalPrice,
-        salesPersonId: Salesperson?._id,
+        partyId: Salesperson?._id,
         products: Allproduct,
         created_by: UserInfo?._id,
       };
@@ -201,10 +203,10 @@ const CreateTarget = args => {
         swal("Error occured while Entering Details");
       } else {
         Create_Targetsave(payload)
-          .then(res => {
+          .then((res) => {
             swal("Target Created Successfully");
           })
-          .catch(err => {
+          .catch((err) => {
             console.log(err);
           });
       }
@@ -252,7 +254,7 @@ const CreateTarget = args => {
               <Row>
                 <Col className="mb-1" lg="2" md="2" sm="12">
                   <div className="">
-                    <Label>Choose Sales Person</Label>
+                    <Label>Choose Party</Label>
                     <Multiselect
                       required
                       selectionLimit={1}
@@ -260,7 +262,7 @@ const CreateTarget = args => {
                       options={UserList}
                       onSelect={onSelect1}
                       onRemove={onRemove1}
-                      displayValue="firstName"
+                      displayValue="OwnerName"
                     />
                   </div>
                 </Col>
