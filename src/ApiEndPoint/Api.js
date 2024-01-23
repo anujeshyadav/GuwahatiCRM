@@ -178,6 +178,15 @@ export const SAVE_GoodDispatch = "/good-dispatch/save-good-dispatch";
 export const GoodDispatch_List = "/good-dispatch/view-good-dispatch/";
 export const Edit_GoodDispatch = "/good-dispatch/update-good-dispatch/";
 
+// create receipt
+export const Create_Receipt = "/receipt/save-receipt";
+export const View_Receipt = "/receipt/view-reciept/";
+export const View_Receipt_By_Id = "/receipt/view-receipt-by-id/";
+export const Delete_Receipt_By_Id = "/receipt/delete-receipt/";
+export const Update_Receipt_By_Id = "/receipt/update-receipt/";
+
+
+// end receipt
 // Guwahati close
 
 

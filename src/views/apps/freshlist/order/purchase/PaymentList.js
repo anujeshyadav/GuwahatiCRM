@@ -29,7 +29,7 @@ import jsPDF from "jspdf";
 import "jspdf-autotable";
 import Logo from "../../../../../assets/img/profile/pages/logomain.png";
 import Papa from "papaparse";
-import { Eye, ChevronDown, Edit, CornerDownLeft } from "react-feather";
+import { Eye, ChevronDown, Edit, CornerDownLeft, Trash2 } from "react-feather";
 import { IoMdRemoveCircleOutline } from "react-icons/io";
 import "../../../../../assets/scss/plugins/tables/_agGridStyleOverride.scss";
 import "../../../../../assets/scss/pages/users.scss";
@@ -44,6 +44,8 @@ import swal from "sweetalert";
 import {
   PurchaseOrderList,
   Delete_targetINlist,
+  _Get,
+  _Delete,
 } from "../../../../../ApiEndPoint/ApiCalling";
 import {
   BsFillArrowDownSquareFill,
@@ -53,6 +55,10 @@ import * as XLSX from "xlsx";
 import UserContext from "../../../../../context/Context";
 import { CheckPermission } from "../../house/CheckPermission";
 import SuperAdminUI from "../../../../SuperAdminUi/SuperAdminUI";
+import {
+  Delete_Receipt_By_Id,
+  View_Receipt,
+} from "../../../../../ApiEndPoint/Api";
 
 const SelectedColums = [];
 
@@ -89,7 +95,7 @@ class PurchaseCompleted extends React.Component {
       },
       columnDefs: [
         {
-          headerName: "UID",
+          headerName: "S.No",
           valueGetter: "node.rowIndex + 1",
           field: "node.rowIndex + 1",
           width: 80,
@@ -97,81 +103,262 @@ class PurchaseCompleted extends React.Component {
         },
 
         {
+          headerName: "Status",
+          field: "order_status",
+          filter: true,
+          width: 140,
+          cellRendererFramework: (params) => {
+            return params.data?.status === "Active" ? (
+              <div className="badge badge-pill badge-success">
+                {params.data?.status}
+              </div>
+            ) : params.data?.status === "pending" ? (
+              <div className="badge badge-pill badge-warning">
+                {params.data?.status}
+              </div>
+            ) : params.data?.status === "return" ? (
+              <div className="badge badge-pill bg-danger">Returned</div>
+            ) : params.data?.status === "cancelled" ? (
+              <div className="badge badge-pill bg-danger">
+                {params.data.status}
+              </div>
+            ) : params.data?.status === "completed" ? (
+              <div className="badge badge-pill bg-success">Completed</div>
+            ) : (
+              <>
+                <div className="badge badge-pill bg-warning">Cancelled</div>
+              </>
+            );
+          },
+        },
+        {
           headerName: "Actions",
+          field: "sortorder",
           field: "transactions",
-          width: 180,
+          width: 120,
           cellRendererFramework: (params) => {
             return (
               <div className="actions cursor-pointer">
-                {/* {this.state.InsiderPermissions &&
-                  this.state.InsiderPermissions.Edit && (
-                    <CornerDownLeft
+                {this.state.InsiderPermissions &&
+                  this.state.InsiderPermissions?.Edit && (
+                    <Trash2
+                      style={{ cursor: "pointer" }}
                       className="mr-50"
                       size="25px"
-                      color="green"
-                      onClick={() => {
-                        localStorage.setItem(
-                          "OrderList",
-                          JSON.stringify(params.data)
-                        );
-                        this.props.history.push({
-                          // pathname: `/app/AJGroup/order/purchaseReturn/${params.data?._id}`,
-                          pathname: `/app/AJGroup/order/purchaseReturn/${params.data?._id}`,
-                          state: params.data,
-                        });
-                      }}
+                      color="red"
+                      onClick={() => this.runthisfunction(params?.data?._id)}
+                    />
+                  )}
+
+                {/* {this.state.InsiderPermissions &&
+                  this.state.InsiderPermissions?.View && (
+                    <Route
+                      render={() => (
+                        <Eye
+                          className="mr-50"
+                          size="25px"
+                          color="green"
+                          onClick={() => {
+                            this.setState({ ViewOneData: params?.data });
+                            this.toggleModalTwo();
+                            console.log(params?.data);
+                          }}
+                        />
+                      )}
                     />
                   )} */}
-
                 {this.state.InsiderPermissions &&
-                  this.state.InsiderPermissions.View && (
-                    <Eye
-                      className="mr-50"
-                      size="25px"
-                      color="green"
-                      onClick={() => {
-                        this.togglemodal();
-                        this.handleChangeView(params.data, "readonly");
-                      }}
+                  this.state.InsiderPermissions?.Edit && (
+                    <Route
+                      render={() => (
+                        <Edit
+                          style={{ cursor: "pointer" }}
+                          className="mr-50"
+                          size="25px"
+                          color="green"
+                          onClick={() =>
+                            this.props.history.push(
+                              `/app/ajgroup/order/CreatePayment/${params?.data?._id}`
+                            )
+                          }
+                        />
+                      )}
                     />
                   )}
               </div>
             );
           },
         },
-
         {
-          headerName: "Status",
-          field: "status",
+          headerName: "OwnerName",
+          field: "partyId.OwnerName",
           filter: true,
-          width: 150,
+          resizable: true,
+          width: 180,
           cellRendererFramework: (params) => {
-            console.log(params.data);
-            return params.value == "comleted" ? (
-              <div className="badge badge-pill badge-success">
-                {params.data?.status}
-              </div>
-            ) : params.value == "pending" ? (
-              <div className="badge badge-pill badge-warning">
-                {params.data?.status}
-              </div>
-            ) : (
-              <div className="badge badge-pill badge-success">
-                {params.data?.status}
+            return (
+              <div className="d-flex align-items-center cursor-pointer">
+                <div>
+                  <span>{params?.data?.partyId?.OwnerName}</span>
+                </div>
               </div>
             );
           },
         },
         {
-          headerName: "Purchase Date",
-          field: "DateofDelivery",
+          headerName: "Payment Mode",
+          field: "paymentMode",
           filter: true,
+          resizable: true,
+          width: 180,
+          cellRendererFramework: (params) => {
+            return (
+              <div className="d-flex align-items-center cursor-pointer">
+                <div>
+                  <span>{params?.data?.paymentMode}</span>
+                </div>
+              </div>
+            );
+          },
+        },
+        {
+          headerName: "Amount",
+          field: "amount",
+          filter: true,
+          resizable: true,
+          width: 180,
+          cellRendererFramework: (params) => {
+            return (
+              <div className="d-flex align-items-center cursor-pointer">
+                <div>
+                  <Badge color="primary">{params?.data?.amount}</Badge>
+                </div>
+              </div>
+            );
+          },
+        },
+        {
+          headerName: "instrument No",
+          field: "instrumentNo",
+          filter: true,
+          resizable: true,
+          width: 180,
+          cellRendererFramework: (params) => {
+            return (
+              <div className="d-flex align-items-center cursor-pointer">
+                <div>
+                  <span>{params?.data?.instrumentNo}</span>
+                </div>
+              </div>
+            );
+          },
+        },
+        {
+          headerName: "Payment Type",
+          field: "paymentType",
+          filter: true,
+          resizable: true,
           width: 200,
           cellRendererFramework: (params) => {
             return (
               <div className="d-flex align-items-center cursor-pointer">
                 <div>
-                  <span>{params.data?.DateofDelivery}</span>
+                  <span>{params?.data?.paymentType}</span>
+                </div>
+              </div>
+            );
+          },
+        },
+        {
+          headerName: "Title",
+          field: "title",
+          filter: true,
+          resizable: true,
+          width: 200,
+          cellRendererFramework: (params) => {
+            return (
+              <div className="d-flex align-items-center cursor-pointer">
+                <div>
+                  <span>{params?.data?.title}</span>
+                </div>
+              </div>
+            );
+          },
+        },
+
+        {
+          headerName: "note",
+          field: "note",
+          filter: true,
+          resizable: true,
+          width: 200,
+          cellRendererFramework: (params) => {
+            return (
+              <div className="d-flex align-items-center cursor-pointer">
+                <div>
+                  <span>{params?.data?.note}</span>
+                </div>
+              </div>
+            );
+          },
+        },
+        // {
+        //   headerName: "Invoice",
+        //   field: "invoice",
+        //   filter: true,
+        //   resizable: true,
+        //   width: 140,
+        //   cellRendererFramework: (params) => {
+        //     // console.log(params?.data?.status);
+
+        //     return (
+        //       <div className="d-flex align-items-center justify-content-center cursor-pointer">
+        //         <div>
+        //           {/* {params?.data?.status == "completed" ? ( */}
+        //           <>
+        //             {this.state.InsiderPermissions &&
+        //               this.state.InsiderPermissions?.View && (
+        //                 <AiOutlineDownload
+        //                   // onClick={() => this.handleBillDownload(params.data)}
+        //                   onClick={() => this.MergeBillNow(params.data)}
+        //                   fill="green"
+        //                   size="30px"
+        //                 />
+        //               )}
+        //           </>
+        //           <span></span>
+        //         </div>
+        //       </div>
+        //     );
+        //   },
+        // },
+        // {
+        //   headerName: "FullName",
+        //   field: "fullName",
+        //   filter: true,
+        //   resizable: true,
+        //   width: 150,
+        //   cellRendererFramework: (params) => {
+        //     return (
+        //       <div className="d-flex align-items-center justify-content-center cursor-pointer">
+        //         <div>
+        //           <span>{params?.data?.fullName}</span>
+        //         </div>
+        //       </div>
+        //     );
+        //   },
+        // },
+        {
+          headerName: "Email",
+          field: "partyId.email",
+          filter: true,
+          resizable: true,
+          width: 260,
+          cellRendererFramework: (params) => {
+            return (
+              <div className="d-flex align-items-center justify-content-center cursor-pointer">
+                <div>
+                  <span>{params?.data?.partyId?.email}</span>
                 </div>
               </div>
             );
@@ -179,61 +366,32 @@ class PurchaseCompleted extends React.Component {
         },
         {
           headerName: "MobileNo",
-          field: "MobileNo",
+          field: "Owner_Mobile_numer",
           filter: true,
-          width: 200,
+          resizable: true,
+          width: 180,
           cellRendererFramework: (params) => {
             return (
-              <div className="d-flex align-items-center cursor-pointer">
+              <div className="d-flex align-items-center justify-content-center cursor-pointer">
                 <div>
-                  <span>{params.data?.MobileNo}</span>
+                  <span>{params?.data?.partyId?.Owner_Mobile_numer}</span>
                 </div>
               </div>
             );
           },
         },
+
         {
-          headerName: "fullName",
-          field: "fullName",
+          headerName: "Creation Date",
+          field: "createdAt",
           filter: true,
-          width: 200,
+          resizable: true,
+          width: 230,
           cellRendererFramework: (params) => {
             return (
               <div className="d-flex align-items-center cursor-pointer">
                 <div>
-                  <span>{params.data?.fullName}</span>
-                </div>
-              </div>
-            );
-          },
-        },
-        {
-          headerName: "GrandTotal",
-          field: "grandTotal",
-          filter: true,
-          width: 200,
-          cellRendererFramework: (params) => {
-            return (
-              <div className="d-flex align-items-center cursor-pointer">
-                <div>
-                  <Badge color="primary">
-                    <strong>{params.data?.grandTotal}</strong>
-                  </Badge>
-                </div>
-              </div>
-            );
-          },
-        },
-        {
-          headerName: "state",
-          field: "state",
-          filter: true,
-          width: 200,
-          cellRendererFramework: (params) => {
-            return (
-              <div className="d-flex align-items-center cursor-pointer">
-                <div>
-                  <span>{params.data?.state}</span>
+                  <span>{params.data?.createdAt?.split("T")[0]}</span>
                 </div>
               </div>
             );
@@ -264,22 +422,51 @@ class PurchaseCompleted extends React.Component {
       this.setState({ EditOneData: data });
     }
   };
+  // async Apicalling(id, db) {
+  //   this.setState({ Loading: true });
+  //   await PurchaseOrderList(id, db)
+  //     .then((res) => {
+  //       this.setState({ Loading: false });
+
+  //       const pendingStatus = res?.orderHistory?.filter((ele) =>
+  //         ele.status == "completed" ? ele.status : null
+  //       );
+  //       if (pendingStatus) {
+  //         this.setState({ rowData: pendingStatus });
+  //       }
+  //       this.setState({ AllcolumnDefs: this.state.columnDefs });
+  //       this.setState({ SelectedCols: this.state.columnDefs });
+
+  //       let userHeading = JSON.parse(localStorage.getItem("TargetList"));
+  //       if (userHeading?.length) {
+  //         this.setState({ columnDefs: userHeading });
+  //         this.gridApi.setColumnDefs(userHeading);
+  //         this.setState({ SelectedcolumnDefs: userHeading });
+  //       } else {
+  //         this.setState({ columnDefs: this.state.columnDefs });
+  //         this.setState({ SelectedcolumnDefs: this.state.columnDefs });
+  //       }
+  //     })
+  //     .catch((err) => {
+  //       this.setState({ Loading: false });
+  //       this.setState({ rowData: [] });
+
+  //       console.log(err);
+  //     });
+  // }
   async Apicalling(id, db) {
     this.setState({ Loading: true });
-    await PurchaseOrderList(id, db)
+    await _Get(View_Receipt, db)
       .then((res) => {
+        debugger;
+        let Payment = res?.Receipt?.filter((ele) => ele?.type == "Payment");
         this.setState({ Loading: false });
-
-        const pendingStatus = res?.orderHistory?.filter((ele) =>
-          ele.status == "completed" ? ele.status : null
-        );
-        if (pendingStatus) {
-          this.setState({ rowData: pendingStatus });
+        if (Payment?.length) {
+          this.setState({ rowData: Payment });
         }
         this.setState({ AllcolumnDefs: this.state.columnDefs });
-        this.setState({ SelectedCols: this.state.columnDefs });
 
-        let userHeading = JSON.parse(localStorage.getItem("TargetList"));
+        let userHeading = JSON.parse(localStorage.getItem("ReceiptList"));
         if (userHeading?.length) {
           this.setState({ columnDefs: userHeading });
           this.gridApi.setColumnDefs(userHeading);
@@ -288,12 +475,13 @@ class PurchaseCompleted extends React.Component {
           this.setState({ columnDefs: this.state.columnDefs });
           this.setState({ SelectedcolumnDefs: this.state.columnDefs });
         }
+        this.setState({ SelectedCols: this.state.columnDefs });
+        console.log(res);
       })
       .catch((err) => {
-        this.setState({ Loading: false });
         this.setState({ rowData: [] });
 
-        console.log(err);
+        this.setState({ Loading: false });
       });
   }
   async componentDidMount() {
@@ -320,7 +508,7 @@ class PurchaseCompleted extends React.Component {
     }).then((value) => {
       switch (value) {
         case "delete":
-          Delete_targetINlist(id)
+          _Delete(Delete_Receipt_By_Id, id)
             .then((res) => {
               let selectedData = this.gridApi.getSelectedRows();
               this.gridApi.updateRowData({ remove: selectedData });
@@ -626,8 +814,28 @@ class PurchaseCompleted extends React.Component {
                     />
                   </Col>
                 )}
-
-                <Col>
+                <Col lg="2" md="2" sm="6">
+                  {InsiderPermissions && InsiderPermissions?.Create && (
+                    <span>
+                      <Route
+                        render={({ history }) => (
+                          <Button
+                            style={{ cursor: "pointer" }}
+                            className="float-right mr-1"
+                            color="primary"
+                            onClick={() =>
+                              history.push(
+                                `/app/ajgroup/order/CreatePayment/${0}`
+                              )
+                            }>
+                            <FaPlus size={15} /> Payment
+                          </Button>
+                        )}
+                      />
+                    </span>
+                  )}
+                </Col>
+                <Col lg="2" md="2" sm="6">
                   {InsiderPermissions && InsiderPermissions.View && (
                     <>
                       <span className="mx-1">
