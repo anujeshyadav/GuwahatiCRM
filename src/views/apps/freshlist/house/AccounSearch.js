@@ -914,30 +914,11 @@ class AccounSearch extends React.Component {
                                 {(context) => (
                                   <AgGridReact
                                     id="myAgGrid"
-                                    // gridOptions={{
-                                    //   domLayout: "autoHeight",
-                                    //   // or other layout options
-                                    // }}
                                     gridOptions={this.gridOptions}
                                     rowSelection="multiple"
                                     defaultColDef={defaultColDef}
                                     columnDefs={columnDefs}
                                     rowData={rowData}
-                                    // onGridReady={(params) => {
-                                    //   this.gridApi = params.api;
-                                    //   this.gridColumnApi = params.columnApi;
-                                    //   this.gridRef.current = params.api;
-
-                                    //   this.setState({
-                                    //     currenPageSize:
-                                    //       this.gridApi.paginationGetCurrentPage() +
-                                    //       1,
-                                    //     getPageSize:
-                                    //       this.gridApi.paginationGetPageSize(),
-                                    //     totalPages:
-                                    //       this.gridApi.paginationGetTotalPages(),
-                                    //   });
-                                    // }}
                                     onGridReady={this.onGridReady}
                                     colResizeDefault={"shift"}
                                     animateRows={true}

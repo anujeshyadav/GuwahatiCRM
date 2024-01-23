@@ -103,7 +103,6 @@ class InvoiceGenerator extends React.Component {
       isOpen: false,
       ShowMyBill: false,
       MasterShow: false,
-
       BillNumber: "",
       Arrindex: "",
       AllbillMerged: [],
@@ -190,6 +189,7 @@ class InvoiceGenerator extends React.Component {
                             this.setState({ ViewOneData: params?.data });
                             this.toggleModalTwo();
                             console.log(params?.data);
+                            // debugger;
                           }}
                         />
                       )}
@@ -485,16 +485,17 @@ class InvoiceGenerator extends React.Component {
   };
 
   MergeBillNow = async (data) => {
+
     let billnum = localStorage.getItem("billnumber");
-    // console.log("Bill", data);
-    // // console.log("grandTotal", data.grandTotal);
-    // console.log(this.state.CompanyDetails);
-    // this.setState({ ShowBill: false });
-    // this.setState({ PrintData: data });
-    // const toWords = new ToWords();
-    // let words = toWords.convert(Number(data?.grandTotal), { currency: true });
-    // this.setState({ wordsNumber: words });
-    // this.toggleModalOne();
+    console.log("Bill", data);
+    // console.log("grandTotal", data.grandTotal);
+    console.log(this.state.CompanyDetails);
+    this.setState({ ShowBill: false });
+    this.setState({ PrintData: data });
+    const toWords = new ToWords();
+    let words = toWords.convert(Number(data?.grandTotal), { currency: true });
+    this.setState({ wordsNumber: words });
+    this.toggleModalOne();
     if (billnum) {
       await Sales_OrderToDispatchList(data?._id)
         .then((res) => {

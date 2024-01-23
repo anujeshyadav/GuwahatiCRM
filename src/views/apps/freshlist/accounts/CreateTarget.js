@@ -8,6 +8,7 @@ import {
   Input,
   Label,
   Button,
+  CustomInput,
 } from "reactstrap";
 import "react-phone-input-2/lib/style.css";
 
@@ -46,6 +47,8 @@ const CreateTarget = (args) => {
     {
       product: "", //
       productId: "",
+      IncrementPercent: "",
+      IncrementMonth: "",
       availableQty: "",
       qty: 1, //
       price: "", //
@@ -125,7 +128,6 @@ const CreateTarget = (args) => {
 
   useEffect(() => {
     const userInfo = JSON.parse(localStorage.getItem("userData"));
-
     let userData = JSON.parse(localStorage.getItem("userData"));
     CreateCustomerList(userData?._id, userData?.database)
       .then((res) => {
@@ -158,12 +160,14 @@ const CreateTarget = (args) => {
     setProduct([
       ...product,
       {
-        product: "", //
+        product: "",
         productId: "",
         availableQty: "",
-        qty: 1, //
-        price: "", //
-        totalprice: "", //
+        IncrementPercent: "",
+        IncrementMonth: "",
+        qty: 1,
+        price: "",
+        totalprice: "",
         Salespersonname: "",
         targetstartDate: "",
         targetEndDate: "",
@@ -182,14 +186,22 @@ const CreateTarget = (args) => {
 
   const submitHandler = (e) => {
     e.preventDefault();
+
     let Allproduct = product?.map((ele, i) => {
       return {
         productId: ele?.productId,
         qtyAssign: Number(ele?.qty),
         price: ele?.price,
         totalPrice: ele?.totalprice,
+        assignPercentage: [
+          {
+            month: ele?.IncrementMonth,
+            percentage: Number(ele?.IncrementPercent),
+          },
+        ],
       };
     });
+
     if (Salesperson?._id) {
       let payload = {
         startDate: targetStartDate,
@@ -214,13 +226,13 @@ const CreateTarget = (args) => {
       swal("Error", "Choose Sales Person First");
     }
   };
+
   const onSelect1 = (selectedList, selectedItem) => {
-    debugger;
     setSalesperson(selectedItem);
   };
   const onRemove1 = (selectedList, removedItem, index) => {
     console.log(selectedList);
-    console.log(index);
+    // console.log(index);
   };
   return (
     <div>
@@ -316,9 +328,9 @@ const CreateTarget = (args) => {
                         />
                       </div>
                     </Col>
-                    <Col className="mb-1" lg="2" md="2" sm="12">
+                    <Col className="mb-1" lg="1" md="1" sm="12">
                       <div className="">
-                        <Label>Quantity Assign</Label>
+                        <Label>Qty Assign</Label>
                         <Input
                           type="number"
                           name="qty"
@@ -330,7 +342,7 @@ const CreateTarget = (args) => {
                         />
                       </div>
                     </Col>
-                    <Col className="mb-1" lg="2" md="2" sm="12">
+                    <Col className="mb-1" lg="1" md="1" sm="12">
                       <div className="">
                         <Label>Price</Label>
                         <Input
@@ -338,11 +350,11 @@ const CreateTarget = (args) => {
                           name="price"
                           readOnly
                           placeholder="Price"
-                          value={product.price}
+                          value={product?.price}
                         />
                       </div>
                     </Col>
-                    <Col className="mb-1" lg="2" md="2" sm="12">
+                    <Col className="mb-1" lg="1" md="1" sm="12">
                       <div className="">
                         <Label>Total Price</Label>
                         <Input
@@ -352,6 +364,43 @@ const CreateTarget = (args) => {
                           placeholder="TtlPrice"
                           value={product.price * product?.qty}
                         />
+                      </div>
+                    </Col>
+                    <Col className="mb-1" lg="2" md="2" sm="12">
+                      <div className="">
+                        <Label>Percentage Increment</Label>
+                        <Input
+                          type="number"
+                          name="IncrementPercent"
+                          placeholder="Percentage Inrement"
+                          value={product?.IncrementPercent}
+                          onChange={(e) => handleQuantity(e, index)}
+                        />
+                      </div>
+                    </Col>
+                    <Col className="mb-1" lg="2" md="2" sm="12">
+                      <div className="">
+                        <Label>Increment Month</Label>
+                        <CustomInput
+                          onChange={(e) => handleQuantity(e, index)}
+                          type="select"
+                          name="IncrementMonth"
+                          placeholder="Increment Month"
+                          value={product?.IncrementMonth}>
+                          <option value="00">--Select--</option>
+                          <option value="January">January</option>
+                          <option value="February">February</option>
+                          <option value="March">March</option>
+                          <option value="April">April</option>
+                          <option value="May">May</option>
+                          <option value="June">June</option>
+                          <option value="July">July</option>
+                          <option value="August">August</option>
+                          <option value="September">September</option>
+                          <option value="October">October</option>
+                          <option value="November">November</option>
+                          <option value="December">December</option>
+                        </CustomInput>
                       </div>
                     </Col>
 

@@ -752,7 +752,7 @@ class RoleList extends React.Component {
                             )}
                         </div>
                       </div>
-                      <ContextLayout.Consumer>
+                      {/* <ContextLayout.Consumer className="ag-theme-alpine">
                         {(context) => (
                           <AgGridReact
                             gridOptions={{}}
@@ -768,6 +768,28 @@ class RoleList extends React.Component {
                             paginationPageSize={this.state.paginationPageSize}
                             pivotPanelShow="always"
                             enableRtl={context.state.direction === "rtl"}
+                          />
+                        )}
+                      </ContextLayout.Consumer> */}
+                      <ContextLayout.Consumer className="ag-theme-alpine">
+                        {(context) => (
+                          <AgGridReact
+                            id="myAgGrid"
+                            gridOptions={this.gridOptions}
+                            rowSelection="multiple"
+                            defaultColDef={defaultColDef}
+                            columnDefs={columnDefs}
+                            rowData={rowData}
+                            onGridReady={this.onGridReady}
+                            colResizeDefault={"shift"}
+                            animateRows={true}
+                            floatingFilter={false}
+                            pagination={true}
+                            paginationPageSize={this.state.paginationPageSize}
+                            pivotPanelShow="always"
+                            enableRtl={context.state.direction === "rtl"}
+                            ref={this.gridRef} // Attach the ref to the grid
+                            domLayout="autoHeight" // Adjust layout as needed
                           />
                         )}
                       </ContextLayout.Consumer>

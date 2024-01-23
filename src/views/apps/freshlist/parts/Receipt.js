@@ -24,7 +24,7 @@ import {
 import { ImDownload } from "react-icons/im";
 import { AiOutlineDownload } from "react-icons/ai";
 import { ToWords } from "to-words";
-import { Eye, ChevronDown, CornerDownLeft } from "react-feather";
+import { Eye, ChevronDown, CornerDownLeft, Edit } from "react-feather";
 import { history } from "../../../../history";
 import Templatethree from "../../../../assets/Billtemp/Templatethree.png";
 import Templatetwo from "../../../../assets/Billtemp/Templatetwo.png";
@@ -208,6 +208,23 @@ class Receipt extends React.Component {
                     <Route
                       render={() => (
                         <Eye
+                          className="mr-50"
+                          size="25px"
+                          color="green"
+                          onClick={() => {
+                            this.setState({ ViewOneData: params?.data });
+                            this.toggleModalTwo();
+                            console.log(params?.data);
+                          }}
+                        />
+                      )}
+                    />
+                  )}
+                {this.state.InsiderPermissions &&
+                  this.state.InsiderPermissions?.Edit && (
+                    <Route
+                      render={() => (
+                        <Edit
                           className="mr-50"
                           size="25px"
                           color="green"

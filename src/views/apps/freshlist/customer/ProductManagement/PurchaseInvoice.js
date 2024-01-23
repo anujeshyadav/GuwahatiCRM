@@ -475,6 +475,7 @@ class PurchaseInvoice extends React.Component {
   };
 
   MergeBillNow = data => {
+    debugger;
     let billnum = localStorage.getItem("billnumber");
     console.log(data);
     console.log(billnum);

@@ -180,14 +180,14 @@ const horizontalMenuConfig = [
         permissions: ["admin", "editor"],
         navLink: "/app/softnumen/order/orderList",
       },
-      {
-        id: "PlaceOrder",
-        title: "Place Order",
-        type: "item",
-        icon: <FaLuggageCart size={22} />,
-        permissions: ["admin", "editor"],
-        navLink: "/app/AjGroup/order/placeOrderList",
-      },
+      // {
+      //   id: "PlaceOrder",
+      //   title: "Place Order",
+      //   type: "item",
+      //   icon: <FaLuggageCart size={22} />,
+      //   permissions: ["admin", "editor"],
+      //   navLink: "/app/AjGroup/order/placeOrderList",
+      // },
       {
         id: "PendingOrder",
         title: "Pending Order",

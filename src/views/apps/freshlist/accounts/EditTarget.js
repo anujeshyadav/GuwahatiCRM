@@ -42,15 +42,18 @@ import {
   Create_Sales_personList,
   Create_Targetsave,
   CreateCustomerList,
+  _Put,
 } from "../../../../ApiEndPoint/ApiCalling";
 import "../../../../assets/scss/pages/users.scss";
 import Timepickers from "../../../forms/form-elements/datepicker/Timepicker";
 import Pickers from "../../../forms/form-elements/datepicker/Pickers";
 import { Route } from "react-router-dom";
+import { Update_target_INlist } from "../../../../ApiEndPoint/Api";
 
 let GrandTotal = [];
 let SelectedITems = [];
 let IndividualIndex = [];
+
 const EditTarget = (args) => {
   const [formData, setFormData] = useState({});
   const [Index, setIndex] = useState("");
@@ -61,7 +64,7 @@ const EditTarget = (args) => {
   const [ProductList, setProductList] = useState([]);
   const [PartyList, setPartyList] = useState([]);
   const [SelectedPartyList, setSelectedPartyList] = useState([]);
-  const [Salesperson, setSalesperson] = useState("");
+  const [Salesperson, setSalesperson] = useState({});
   const [grandTotalAmt, setGrandTotalAmt] = useState(0);
   const [Editdata, setEditdata] = useState({});
   const [UserInfo, setUserInfo] = useState({});
@@ -91,6 +94,8 @@ const EditTarget = (args) => {
     {
       product: "", //
       productId: "",
+      IncrementPercent: "",
+      IncrementMonth: "",
       availableQty: "",
       qty: 1, //
       price: "", //
@@ -107,11 +112,12 @@ const EditTarget = (args) => {
 
   const handleProductChangeProduct = (e, index) => {
     // product.price * product?.qty
+    debugger;
     setIndex(index);
     const { name, value } = e.target;
-    const list = [...product];
+    const list = [...AllProductList];
     list[index][name] = value;
-    console.log(GrandTotal);
+    // console.log(GrandTotal);
     let amt = 0;
     if (list.length > 0) {
       const x = list?.map((val) => {
@@ -126,6 +132,7 @@ const EditTarget = (args) => {
     }
     // console.log(list)
     setProduct(list);
+    setAllProductList(list);
     setGrandTotalAmt(amt);
     // setAmount(amt);
   };
@@ -231,6 +238,8 @@ const EditTarget = (args) => {
             qty: ele?.qtyAssign,
             totalPrice: ele?.totalPrice,
             price: ele?.totalPrice,
+            IncrementPercent: ele?.assignPercentage[0]?.percentage,
+            IncrementMonth: ele?.assignPercentage[0]?.month,
           };
         });
       }
@@ -267,7 +276,9 @@ const EditTarget = (args) => {
         let data = location?.state?.partyId?._id;
         let selectedParty = res?.Customer?.filter((ele) => ele?._id == data);
         setUserList(res?.Customer);
+        debugger;
         setSelectedPartyList(selectedParty);
+        setSalesperson(selectedParty[0]);
       })
       .catch((err) => console.log(err));
     Create_Sales_personList()
@@ -279,7 +290,7 @@ const EditTarget = (args) => {
 
     ProductListView(userdata?._id, userdata?.database)
       .then((res) => {
-       setProductList(res?.Product);
+        setProductList(res?.Product);
       })
       .catch((err) => {
         console.log(err);
@@ -322,6 +333,8 @@ const EditTarget = (args) => {
       {
         product: "", //
         productId: "",
+        IncrementPercent: "",
+        IncrementMonth: "",
         availableQty: "",
         qty: 1, //
         price: "", //
@@ -346,35 +359,39 @@ const EditTarget = (args) => {
 
     setProduct(newFormValues);
   };
-
-  const submitHandler = (e) => {
+  const submitHandler =async (e) => {
     e.preventDefault();
-
-    let Allproduct = product?.map((ele, i) => {
+    debugger;
+    let Allproduct = AllProductList?.map((ele, i) => {
       console.log(ele);
       return {
-        productId: ele?.productId,
+        productId: ele?._id,
         qtyAssign: ele?.qty,
         price: ele?.price,
         totalPrice: ele?.totalprice,
+        assignPercentage: [
+          {
+            month: ele?.IncrementMonth,
+            percentage: Number(ele?.IncrementPercent),
+          },
+        ],
       };
     });
     let payload = {
       startDate: targetStartDate,
       endDate: targetEndDate,
       grandTotal: grandTotalAmt,
-      salesPersonId: Salesperson[0]?._id,
+      partyId: Salesperson?._id,
       products: Allproduct,
     };
 
     if (error) {
       swal("Error occured while Entering Details");
     } else {
-      Create_Targetsave(payload)
+  await _Put(Update_target_INlist, Salesperson?._id, payload)
         .then((res) => {
-          swal("Target Created Successfully");
-          // }
-          console.log(res);
+          console.log(res.data);
+          swal("Target Updated Successfully");
         })
         .catch((err) => {
           console.log(err);
@@ -383,7 +400,7 @@ const EditTarget = (args) => {
   };
   const onSelect1 = (selectedList, selectedItem, index) => {
     // console.log(selectedList);
-    setSalesperson(selectedList);
+    setSalesperson(selectedItem);
     // console.log(index);
     // if (selectedList.length) {
     //   for (var i = 0; i < selectedList.length; i++) {
@@ -546,9 +563,9 @@ const EditTarget = (args) => {
                           />
                         </div>
                       </Col>
-                      <Col className="mb-1" lg="2" md="2" sm="12">
+                      <Col className="mb-1" lg="1" md="1" sm="12">
                         <div className="">
-                          <Label>Quantity Assign</Label>
+                          <Label>Qty Assign</Label>
                           <Input
                             type="number"
                             name="qty"
@@ -561,7 +578,7 @@ const EditTarget = (args) => {
                           />
                         </div>
                       </Col>
-                      <Col className="mb-1" lg="2" md="2" sm="12">
+                      <Col className="mb-1" lg="1" md="1" sm="12">
                         <div className="">
                           <Label>Price</Label>
                           <Input
@@ -573,7 +590,7 @@ const EditTarget = (args) => {
                           />
                         </div>
                       </Col>
-                      <Col className="mb-1" lg="2" md="2" sm="12">
+                      <Col className="mb-1" lg="1" md="1" sm="12">
                         <div className="">
                           <Label>Total Price</Label>
                           <Input
@@ -583,6 +600,47 @@ const EditTarget = (args) => {
                             placeholder="TtlPrice"
                             value={product.price * product?.qty}
                           />
+                        </div>
+                      </Col>
+                      <Col className="mb-1" lg="2" md="2" sm="12">
+                        <div className="">
+                          <Label>Percentage Increment</Label>
+                          <Input
+                            type="number"
+                            name="IncrementPercent"
+                            placeholder="Percentage Inrement"
+                            value={product?.IncrementPercent}
+                            onChange={(e) =>
+                              handleProductChangeProduct(e, index)
+                            }
+                          />
+                        </div>
+                      </Col>
+                      <Col className="mb-1" lg="2" md="2" sm="12">
+                        <div className="">
+                          <Label>Increment Month</Label>
+                          <CustomInput
+                            onChange={(e) =>
+                              handleProductChangeProduct(e, index)
+                            }
+                            type="select"
+                            name="IncrementMonth"
+                            placeholder="Increment Month"
+                            value={product?.IncrementMonth}>
+                            <option value="00">--Select--</option>
+                            <option value="January">January</option>
+                            <option value="February">February</option>
+                            <option value="March">March</option>
+                            <option value="April">April</option>
+                            <option value="May">May</option>
+                            <option value="June">June</option>
+                            <option value="July">July</option>
+                            <option value="August">August</option>
+                            <option value="September">September</option>
+                            <option value="October">October</option>
+                            <option value="November">November</option>
+                            <option value="December">December</option>
+                          </CustomInput>
                         </div>
                       </Col>
 

@@ -220,9 +220,9 @@ dotenv.config();
 
 // guwahati api calling open
 
-export const Cashbook_List = async (id) => {
+export const Cashbook_List = async (id, db) => {
   let response = await axiosConfig
-    .get(`${CashbookList}` + id)
+    .get(`${CashbookList + id}/` + db)
     .then((res) => res.data);
   return response;
 };
