@@ -495,6 +495,12 @@ const SupplierWarranty = lazy(() =>
 const CreateOrder = lazy(() =>
   import("./views/apps/freshlist/order/CreateOrder")
 );
+const CreatePayment = lazy(() =>
+  import("./views/apps/freshlist/order/CreatePayment")
+);
+const CreateReceipt = lazy(() =>
+  import("./views/apps/freshlist/order/CreateReceipt")
+);
 const Addorderbycashbook = lazy(() =>
   import("./views/apps/freshlist/parts/Addorderbycashbook")
 );
@@ -1623,6 +1629,14 @@ class AppRouter extends React.Component {
           <AppRoute
             path="/app/softnumen/order/createorder"
             component={CreateOrder}
+          />
+          <AppRoute
+            path="/app/ajgroup/order/CreatePayment/:id"
+            component={CreatePayment}
+          />
+          <AppRoute
+            path="/app/ajgroup/order/CreateReceipt/:id"
+            component={CreateReceipt}
           />
           <AppRoute
             path="/app/softnumen/order/pendingOrder"
