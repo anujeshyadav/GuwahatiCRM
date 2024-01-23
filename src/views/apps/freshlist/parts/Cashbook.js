@@ -113,6 +113,7 @@ class Cashbook extends React.Component {
                   color="green"
                   onClick={(e) => {
                     this.togglemodal();
+                    debugger
                     this.setState({ ViewOneData: params.data });
                   }}
                 />
@@ -229,6 +230,7 @@ class Cashbook extends React.Component {
 
   async Apicalling(id, db) {
     this.setState({ Loading: true });
+
     await Cashbook_List(id, db)
       .then((res) => {
         this.setState({ Loading: false });
@@ -1422,7 +1424,7 @@ class Cashbook extends React.Component {
                           <>
                             <tr>
                               <th scope="row">{i + 1}</th>
-                              <td>{ele?.product?.Product_Title}</td>
+                              <td>{ele?.productId?.Product_Title}</td>
                               <td>{ele?.price}</td>
                               <td>{ele?.Size}</td>
                               <td>{ele?.unitType}</td>

@@ -135,6 +135,7 @@ const CreateDispach = (args) => {
     let userdata = JSON.parse(localStorage.getItem("userData"));
     Get_RoleList(userdata?._id, userdata?.database)
       .then((res) => {
+        debugger;
         let ShowList = res?.Role?.filter(
           (item, i) => item?.position > userdata?.rolename?.position
         );
@@ -160,9 +161,12 @@ const CreateDispach = (args) => {
     CreateAccountList(userData?._id, userData?.database)
       .then((res) => {
         let value = res?.adminDetails;
-        console.log(value);
+
+        let Delevery = value?.filter(
+          (ele) => ele?.rolename?.roleName == "Delivery Boy"
+        );
         if (value) {
-          setDeliveryBoy(value);
+          setDeliveryBoy(Delevery);
           setAllUsers(value);
         }
       })
@@ -651,7 +655,7 @@ const CreateDispach = (args) => {
                       );
                     }
                   })}
-                <Col lg="3" md="3">
+                {/* <Col lg="3" md="3">
                   <div className="mt-1">
                     <FormGroup>
                       <Label>Select Delivery Role *</Label>
@@ -677,7 +681,7 @@ const CreateDispach = (args) => {
                       </CustomInput>
                     </FormGroup>
                   </div>
-                </Col>
+                </Col> */}
 
                 <Col lg="3" md="3" sm="12">
                   <div className="mt-1">

@@ -289,17 +289,18 @@ const POInvoiceone = ({
                               fontSize: "13px",
                               fontWeight: "bold",
                             }}>
-                            {`${invoiceData?.fullName} `}
+                            {`Name: ${BilData?.PrintData?.partyId?.OwnerName}`}
                           </Text>{" "}
                           <Text
                             style={{
                               fontSize: "10px",
-                              width: "45%",
+                              width: "95%",
                               fontWeight: "bold",
                             }}>
-                            {`${invoiceData?.address} `}
-                            {`${invoiceData?.landMark} `}
-                            Mobile No: {`${invoiceData?.MobileNo} `}
+                            {`Address: ${BilData?.PrintData?.partyId?.OwnerAddress}
+                            Mobile No.: ${BilData?.PrintData?.partyId?.Owner_Mobile_numer}
+                            State.: ${BilData?.PrintData?.partyId?.State}
+                            City.: ${BilData?.PrintData?.partyId?.City}`}
                           </Text>{" "}
                         </View>
                       )}
@@ -381,17 +382,18 @@ const POInvoiceone = ({
                               fontSize: "13px",
                               fontWeight: "bold",
                             }}>
-                            {`${invoiceData?.fullName} `}
+                            {`Name: ${BilData?.PrintData?.partyId?.OwnerName}`}
                           </Text>{" "}
                           <Text
                             style={{
                               fontSize: "10px",
-                              width: "45%",
+                              width: "95%",
                               fontWeight: "bold",
                             }}>
-                            {`${invoiceData?.address} `}
-                            {`${invoiceData?.landMark} `}
-                            Mobile No: {`${invoiceData?.MobileNo}`}
+                            {`Address: ${BilData?.PrintData?.partyId?.OwnerAddress}
+                              Mobile No.: ${BilData?.PrintData?.partyId?.Owner_Mobile_numer}
+                              State.: ${BilData?.PrintData?.partyId?.State}
+                              City.: ${BilData?.PrintData?.partyId?.City}`}
                           </Text>{" "}
                         </View>
                       )}

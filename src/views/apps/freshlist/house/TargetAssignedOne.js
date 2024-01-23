@@ -294,53 +294,48 @@ class TargetAssignedOne extends React.Component {
             );
           },
         },
-        {
-          headerName: "Actions",
-          field: "transactions",
-          width: 180,
-          cellRendererFramework: (params) => {
-            return (
-              <div className="actions cursor-pointer">
-                {/* {this.state.Viewpermisson && ( */}
-                <Eye
-                  className="mr-50"
-                  size="25px"
-                  color="green"
-                  //   onClick={
-                  //     () => this.toggleModal()
-                  // history.push(
-                  //   `/app/freshlist/order/viewAll/${params.data._id}`
-                  // )
-                  //   }
-                />
-                {/* )} */}
-                {/* {this.state.Editpermisson && ( */}
-                {/* <Edit
-                  className="mr-50"
-                  size="25px"
-                  color="blue"
-                  onClick={() =>
-                    this.props.history.push({
-                      pathname: `/app/freshlist/house/editmyproduct/${params.data?._id}`,
-                      state: params.data,
-                    })
-                  } */}
-                {/* /> */}
-                {/* )} */}
-                {/* {this.state.Deletepermisson && ( */}
-                <Trash2
-                  className="mr-50"
-                  size="25px"
-                  color="Red"
-                  onClick={() => {
-                    this.runthisfunction(params?.data);
-                  }}
-                />
-                {/* )} */}
-              </div>
-            );
-          },
-        },
+        // {
+        //   headerName: "Actions",
+        //   field: "transactions",
+        //   width: 180,
+        //   cellRendererFramework: (params) => {
+        //     return (
+        //       <div className="actions cursor-pointer">
+        //         {/* {this.state.Viewpermisson && ( */}
+        //         {/* <Eye
+        //           className="mr-50"
+        //           size="25px"
+        //           color="green"
+
+        //         /> */}
+        //         {/* )} */}
+        //         {/* {this.state.Editpermisson && ( */}
+        //         {/* <Edit
+        //           className="mr-50"
+        //           size="25px"
+        //           color="blue"
+        //           onClick={() =>
+        //             this.props.history.push({
+        //               pathname: `/app/freshlist/house/editmyproduct/${params.data?._id}`,
+        //               state: params.data,
+        //             })
+        //           } */}
+        //         {/* /> */}
+        //         {/* )} */}
+        //         {/* {this.state.Deletepermisson && ( */}
+        //         {/* <Trash2
+        //           className="mr-50"
+        //           size="25px"
+        //           color="Red"
+        //           onClick={() => {
+        //             this.runthisfunction(params?.data);
+        //           }}
+        //         /> */}
+        //         {/* )} */}
+        //       </div>
+        //     );
+        //   },
+        // },
 
         // {
         //   headerName: "Products",

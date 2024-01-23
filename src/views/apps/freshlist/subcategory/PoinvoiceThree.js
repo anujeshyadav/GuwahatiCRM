@@ -433,21 +433,21 @@ const PoinvoiceThree = ({
                       <Text
                         style={{
                           fontSize: "13px",
+                          width: "98%",
                           fontWeight: "bold",
                         }}>
-                        {/* {invoiceData?.company_name} */}
+                        {`Name: ${BilData?.PrintData?.partyId?.OwnerName}`}
                       </Text>{" "}
                       <Text
                         style={{
                           fontSize: "10px",
-                          width: "45%",
+                          width: "98%",
                           fontWeight: "bold",
                         }}>
-                        {/* fvd vdf vf vvv Avdvs vsfvASDv sdvs sd gsdg */}
-                        {/* {invoiceData?.shipping_street}
-                      {invoiceData?.shippingcity_city_name}{" "}
-                      {invoiceData?.shippingstate_state_name} ,
-                      {invoiceData?.shipping_pincode} */}
+                        {`Address: ${BilData?.PrintData?.partyId?.OwnerAddress}
+                        Mobile No.: ${BilData?.PrintData?.partyId?.Owner_Mobile_numer}
+                        State.: ${BilData?.PrintData?.partyId?.State}
+                        City.: ${BilData?.PrintData?.partyId?.City}`}
                       </Text>{" "}
                     </View>
                   )}
@@ -494,33 +494,21 @@ const PoinvoiceThree = ({
                       <Text
                         style={{
                           fontSize: "13px",
+                          width: "98%",
                           fontWeight: "bold",
                         }}>
-                        {/* {invoiceData?.company_name} */}
+                        {`Name: ${BilData?.PrintData?.partyId?.OwnerName}`}
                       </Text>{" "}
                       <Text
                         style={{
                           fontSize: "10px",
-                          width: "45%",
+                          width: "100%",
                           fontWeight: "bold",
                         }}>
-                        {`${invoiceData?.fullName} `}
-                        {/* {invoiceData?.shipping_street}111
-                      {invoiceData?.shippingcity_city_name}{" "}
-                      {invoiceData?.shippingstate_state_name} ,
-                      {invoiceData?.shipping_pincode} */}
-                      </Text>
-                      <Text
-                        style={{
-                          fontSize: "10px",
-                          width: "45%",
-                          fontWeight: "bold",
-                        }}>
-                        {`${invoiceData?.address} `}
-                        {`${invoiceData?.landMark} `}
-                        Mobile No: {`${invoiceData?.MobileNo} `}
-                        {/* {`${invoiceData?.adminDetail?.currentAddress} `}2222
-                        {`${invoiceData?.adminDetail?.State} `} */}
+                        {`Address: ${BilData?.PrintData?.partyId?.OwnerAddress}
+                          Mobile No.: ${BilData?.PrintData?.partyId?.Owner_Mobile_numer}
+                          State: ${BilData?.PrintData?.partyId?.State}
+                           City: ${BilData?.PrintData?.partyId?.City}`}
                       </Text>
                     </View>
                   )}

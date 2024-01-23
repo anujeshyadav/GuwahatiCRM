@@ -626,6 +626,7 @@ class PurchaseCompleted extends React.Component {
                     />
                   </Col>
                 )}
+
                 <Col>
                   {InsiderPermissions && InsiderPermissions.View && (
                     <>
