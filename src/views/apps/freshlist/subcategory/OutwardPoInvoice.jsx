@@ -11,6 +11,7 @@ import {
 
 import logo from "../../../../assets/img/logo/logowithoutback.png";
 import signature from "../../../../assets/img/logo/signature.png";
+import { Image_URL } from "../../../../ApiEndPoint/Api";
 
 const styles = StyleSheet.create({
   page: {
@@ -77,7 +78,6 @@ const StockTrxPOinvoice = ({
 }) => {
   // const { items, customerName, date, total, place_supply } = invoiceData;
   const curentDate = new Date();
-
   let day = curentDate.getDate();
   let month = curentDate.getMonth() + 1;
   let year = curentDate.getFullYear();
@@ -107,7 +107,7 @@ const StockTrxPOinvoice = ({
                       <>
                         <Image
                           style={{ width: "230px", padding: "25px 10px" }}
-                          src={`http://64.227.162.41:5000/Images/${AllData?.CompanyDetails?.logo}`}
+                          src={`${Image_URL}/Images/${AllData?.CompanyDetails?.logo}`}
                         ></Image>
                       </>
                     ) : (
@@ -193,7 +193,7 @@ const StockTrxPOinvoice = ({
                       <>
                         <Image
                           style={{ width: "230px", padding: "25px 10px" }}
-                          src={`http://64.227.162.41:5000/Images/${AllData?.CompanyDetails?.logo}`}
+                          src={`${Image_URL}/Images/${AllData?.CompanyDetails?.logo}`}
                         ></Image>
                       </>
                     ) : (
@@ -1291,7 +1291,7 @@ const StockTrxPOinvoice = ({
                     <>
                       <Image
                         style={{ height: "50px", marginTop: "15px" }}
-                        src={`http://64.227.162.41:5000/Images/${AllData?.CompanyDetails?.signature}`}
+                        src={`${Image_URL}/Images/${AllData?.CompanyDetails?.signature}`}
                         width="200px"
                         height="200px"
                       ></Image>

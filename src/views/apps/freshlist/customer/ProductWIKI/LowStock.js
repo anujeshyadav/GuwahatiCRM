@@ -189,7 +189,9 @@ class LowStock extends React.Component {
           cellRendererFramework: (params) => {
             return (
               <div>
-                <span>{params.data?.Product_Title}</span>
+                <span>
+                  {params.data?.Product_Title && params.data?.Product_Title}
+                </span>
               </div>
             );
           },
@@ -268,13 +270,14 @@ class LowStock extends React.Component {
   };
 
   async componentDidMount() {
+    let {id}=this.props?.match?.params
     const UserInformation = this.context?.UserInformatio;
     const InsidePermissions = CheckPermission("Low Stock");
     this.setState({ InsiderPermissions: InsidePermissions });
     let pageparmission = JSON.parse(localStorage.getItem("userData"));
-    let userid = pageparmission?._id;
+  
 
-    await _Get(Low_Stock_Alerts, userid)
+    await _Get(Low_Stock_Alerts, id)
       .then((res) => {
         // console.log(res?.alertProducts);
         let rowData = res?.alertProducts;
@@ -583,9 +586,24 @@ class LowStock extends React.Component {
                 <Col>
                   <h1 className="float-left">Low Stock</h1>
                 </Col>
+                <Col lg="2" md="2" sm="6">
+                  <span>
+                    <Route
+                      render={({ history }) => (
+                        <Button
+                          style={{ cursor: "pointer" }}
+                          className="float-right mr-1"
+                          color="primary"
+                          onClick={() => history.goBack()}>
+                          Back
+                        </Button>
+                      )}
+                    />
+                  </span>
+                </Col>
                 {InsiderPermissions && InsiderPermissions?.View && (
-                  <Col>
-                    <span className="mx-1">
+                  <Col lg="1" md="1" sm="6">
+                    <span className="">
                       <FaFilter
                         style={{ cursor: "pointer" }}
                         title="filter coloumn"
@@ -595,7 +613,7 @@ class LowStock extends React.Component {
                         className="float-right"
                       />
                     </span>
-                    <span className="mx-1">
+                    <span className="">
                       <div className="dropdown-container float-right">
                         <ImDownload
                           style={{ cursor: "pointer" }}
@@ -648,23 +666,6 @@ class LowStock extends React.Component {
                         )}
                       </div>
                     </span>
-                    {/* <span>
-                    <Route
-                      render={({ history }) => (
-                        <Badge
-                          style={{ cursor: "pointer" }}
-                          className="float-right mr-1"
-                          color="primary"
-                          onClick={() =>
-                            history.push(
-                              "/app/softNumen/warehouse/WareHouseStock"
-                            )
-                          }>
-                          View My WareHouse
-                        </Badge>
-                      )}
-                    />
-                  </span> */}
                   </Col>
                 )}
               </Row>

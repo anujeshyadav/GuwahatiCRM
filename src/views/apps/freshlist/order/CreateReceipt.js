@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useContext } from "react";
 import xmlJs from "xml-js";
-import { Route, useHistory } from "react-router-dom";
+import { Route, useHistory, useParams } from "react-router-dom";
 import { history } from "../../../../history";
 import {
   Card,
@@ -23,20 +23,28 @@ import {
   _Get,
   _Post,
   _PostSave,
+  _Put,
 } from "../../../../ApiEndPoint/ApiCalling";
 import "../../../../assets/scss/pages/users.scss";
-import { Create_Receipt } from "../../../../ApiEndPoint/Api";
+import {
+  Create_Receipt,
+  Update_Receipt_By_Id,
+  View_Receipt_By_Id,
+} from "../../../../ApiEndPoint/Api";
 import swal from "sweetalert";
+
 let GrandTotal = [];
 let SelectedITems = [];
 let SelectedSize = [];
 const CreateReceipt = (args) => {
   const [error, setError] = useState("");
   const [PaymentType, setPaymentType] = useState("");
+  const [Mode, setMode] = useState("Create");
   const [PartyList, setPartyList] = useState([]);
   const [PartyId, setPartyId] = useState("");
   const [grandTotalAmt, setGrandTotalAmt] = useState(0);
   const [UserInfo, setUserInfo] = useState({});
+  const [SelectedParty, setSelectedParty] = useState({});
   const [AllData, setAllData] = useState({});
   const [product, setProduct] = useState([
     {
@@ -50,11 +58,40 @@ const CreateReceipt = (args) => {
     },
   ]);
   let History = useHistory();
+  let Params = useParams();
   const handleSelectionParty = (selectedList, selectedItem) => {
     setPartyId(selectedItem?._id);
   };
 
   useEffect(() => {
+    let id = Params?.id;
+    if (id == 0) {
+      setMode("Create");
+    } else {
+      setMode("Edit");
+      _Get(View_Receipt_By_Id, id)
+        .then((res) => {
+          console.log(res?.Product);
+          let data = res?.Product;
+
+          setSelectedParty(data?.partyId);
+          setPartyId(data?.partyId?._id);
+          let payload = {
+            Paymentmode: data?.paymentMode,
+            PaymentType: data?.paymentType,
+            Amount: data?.amount,
+            Date: data?.createdAt?.split("T")[0],
+            Note: data?.note,
+            Title: data?.title,
+            InstrumentNumber: data?.instrumentNo,
+          };
+          setPaymentType(data?.paymentType);
+          setAllData(payload);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }
     let userdata = JSON.parse(localStorage.getItem("userData"));
 
     CreateCustomerList(userdata?._id, userdata?.database)
@@ -75,14 +112,14 @@ const CreateReceipt = (args) => {
 
   const submitHandler = (e) => {
     e.preventDefault();
-    console.log(AllData);
 
+    let id = Params?.id;
     const payload = {
       created_by: UserInfo?._id,
       paymentType: AllData?.PaymentType,
       paymentMode: AllData?.Paymentmode,
       partyId: PartyId ? PartyId : null,
-      amount: AllData?.Amount ? AllData?.Amount : null,
+      amount: AllData?.Amount ? Number(AllData?.Amount) : null,
       instrumentNo: AllData?.InstrumentNumber
         ? AllData?.InstrumentNumber
         : null,
@@ -91,28 +128,33 @@ const CreateReceipt = (args) => {
       database: UserInfo?.database,
       type: "Received",
     };
-    if (error) {
-      swal("Error occured while Entering Details");
+
+    if (id == 0) {
+      if (error) {
+        swal("Error occured while Entering Details");
+      } else {
+        _PostSave(Create_Receipt, payload)
+          .then((res) => {
+            History.goBack();
+            swal("Added Successfully");
+            console.log(res);
+          })
+          .catch((err) => {
+            swal("Somthing went Wrong");
+            console.log(err);
+          });
+      }
     } else {
-      _PostSave(Create_Receipt, payload)
+      _Put(Update_Receipt_By_Id, id, payload)
         .then((res) => {
-          History.goBack();
-          swal("Added Successfully");
           console.log(res);
+          swal("Updated Successfully");
+          History.goBack();
         })
         .catch((err) => {
-          swal("Somthing went Wrong");
           console.log(err);
+          swal("Something Went Wrong");
         });
-      //   SaveOrder(payload)
-      //     .then((res) => {
-      //       console.log(res);
-      //       swal("Order Created Successfully");
-      //       //  history.push("/app/softnumen/order/orderList")
-      //     })
-      //     .catch((err) => {
-      //       console.log(err);
-      //     });
     }
   };
 
@@ -132,7 +174,7 @@ const CreateReceipt = (args) => {
           <Row className="m-2">
             <Col className="">
               <div>
-                <h1 className="">Create Receipt</h1>
+                <h1 className="">{Mode && Mode} Receipt</h1>
               </div>
             </Col>
             <Col>
@@ -192,6 +234,7 @@ const CreateReceipt = (args) => {
                       <Label>Choose Party</Label>
                       <Multiselect
                         required
+                        selectedValues={[SelectedParty]}
                         selectionLimit={1}
                         isObject="false"
                         options={PartyList}

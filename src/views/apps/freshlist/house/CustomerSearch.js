@@ -58,6 +58,7 @@ import * as XLSX from "xlsx";
 import UserContext from "../../../../context/Context";
 import { CheckPermission } from "./CheckPermission";
 import SuperAdminUI from "../../../SuperAdminUi/SuperAdminUI";
+import { Image_URL } from "../../../../ApiEndPoint/Api";
 
 const SelectedColums = [];
 
@@ -329,7 +330,7 @@ class CustomerSearch extends React.Component {
                       <img
                         width={40}
                         height={40}
-                        src={`http://64.227.162.41:5000/Images/${params?.data?.Shopphoto[0]}`}
+                        src={`${Image_URL}/Images/${params?.data?.Shopphoto[0]}`}
                         alt="Img"
                       />
                     )}
@@ -351,8 +352,8 @@ class CustomerSearch extends React.Component {
                       <img
                         width={40}
                         height={40}
-                        src={`http://64.227.162.41:5000/Images/${params?.data?.photo[0]}`}
-                        alt="dddd"
+                        src={`${Image_URL}/Images/${params?.data?.photo[0]}`}
+                        alt="img"
                       />
                     )}
                   </div>

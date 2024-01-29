@@ -1218,8 +1218,6 @@ class StockTransfer extends React.Component {
                         <Label>WareHouse Name :</Label>
                         <h5 className="mx-1">
                           <span>
-                            {this.state.ViewOneData?.firstName &&
-                              this.state.ViewOneData?.firstName}
                             {this.state.ViewOneData?.warehouseToId?.firstName &&
                             this.state.ViewOneData?.warehouseToId?.firstName ? (
                               <>
@@ -1229,7 +1227,14 @@ class StockTransfer extends React.Component {
                                 }
                               </>
                             ) : (
-                              "Factory"
+                              <>
+                                {this.state.ViewOneData?.firstName &&
+                                this.state.ViewOneData?.firstName ? (
+                                  <>{this.state.ViewOneData?.firstName}</>
+                                ) : (
+                                  "Factory"
+                                )}
+                              </>
                             )}
                           </span>
                         </h5>

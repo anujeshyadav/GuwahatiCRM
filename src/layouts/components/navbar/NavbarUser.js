@@ -52,6 +52,7 @@ import {
 import swal from "sweetalert";
 import { FaAngleLeft } from "react-icons/fa";
 import Payment from "../../../views/apps/freshlist/order/payment/Payment";
+import { Image_URL } from "../../../ApiEndPoint/Api";
 
 const total = [];
 const handleNavigation = (e) => {
@@ -419,7 +420,7 @@ class NavbarUser extends React.PureComponent {
 
     this.setState({ LoginData: pageparmission });
     let accessToken = localStorage.getItem("userData");
-    
+
     if (accessToken === null || accessToken === undefined) {
       history.push("/pages/login");
     }
@@ -589,8 +590,7 @@ class NavbarUser extends React.PureComponent {
           <div className="cart-item" key={item.id}>
             <Media
               className="p-0"
-              onClick={() => history.push("/ecommerce/product-detail")}
-            >
+              onClick={() => history.push("/ecommerce/product-detail")}>
               <Media className="text-center pr-0 mr-1" left>
                 <img
                   className={`${
@@ -1566,7 +1566,7 @@ class NavbarUser extends React.PureComponent {
               {this.state.LoginData?.profileImage ? (
                 <>
                   <img
-                    src={`http://64.227.162.41:5000/Images/${user?.UserInformatio?.profileImage}`}
+                    src={`${Image_URL}Images/${user?.UserInformatio?.profileImage}`}
                     className="round"
                     height="30"
                     width="30"

@@ -330,16 +330,16 @@ class ClosingStock extends React.Component {
   };
 
   async componentDidMount() {
+    let {id}=this.props?.match.params
     const UserInformation = this.context?.UserInformatio;
     const InsidePermissions = CheckPermission("Closing Stock");
     this.setState({ InsiderPermissions: InsidePermissions });
     let pageparmission = JSON.parse(localStorage.getItem("userData"));
-    // WareHouse_Closing_Stock
-    await _Get(WareHouse_Closing_Stock, pageparmission?._id)
+
+    await _Get(WareHouse_Closing_Stock, id)
       .then((res) => {
         let rowData = res?.Warehouse;
-        // let rowData = res?.Warehouse?.filter((ele) => ele?.status == "closing");
-
+        
         if (rowData) {
           this.setState({ rowData: rowData });
           this.setState({ AllcolumnDefs: this.state.columnDefs });
@@ -711,23 +711,19 @@ class ClosingStock extends React.Component {
                         )}
                       </div>
                     </span>
-                    {/* <span>
-                    <Route
-                      render={({ history }) => (
-                        <Badge
-                          style={{ cursor: "pointer" }}
-                          className="float-right mr-1"
-                          color="primary"
-                          onClick={() =>
-                            history.push(
-                              "/app/softNumen/warehouse/WareHouseStock"
-                            )
-                          }>
-                          View My WareHouse
-                        </Badge>
-                      )}
-                    />
-                  </span> */}
+                    <span>
+                      <Route
+                        render={({ history }) => (
+                          <Button
+                            style={{ cursor: "pointer" }}
+                            className="float-right mr-1"
+                            color="primary"
+                            onClick={() => history.goBack()}>
+                            Back
+                          </Button>
+                        )}
+                      />
+                    </span>
                   </Col>
                 )}
               </Row>

@@ -2,9 +2,10 @@ import React from "react";
 import { useState, useEffect } from "react";
 
 export const CheckPermission = (props) => {
+
   let pageparmission = JSON.parse(localStorage.getItem("userData"));
   let newparmisson = pageparmission?.rolename?.rolePermission?.find(
-    (value) => value?.pagename === props
+    (value) => value?.pagename == props
   );
   const pageParmission = {
     View: newparmisson?.permission.includes("View"),

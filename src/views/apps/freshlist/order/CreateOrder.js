@@ -28,6 +28,7 @@ import {
 } from "../../../../ApiEndPoint/ApiCalling";
 import "../../../../assets/scss/pages/users.scss";
 import { WareHouse_Current_Stock } from "../../../../ApiEndPoint/Api";
+import UserContext from "../../../../context/Context";
 let GrandTotal = [];
 let SelectedITems = [];
 let SelectedSize = [];
@@ -54,6 +55,7 @@ const CreateOrder = (args) => {
       totalprice: "",
     },
   ]);
+  const Context = useContext(UserContext);
 
   const handleRequredQty = (e, index, avalaibleSize) => {
     const { name, value } = e.target;
@@ -139,6 +141,8 @@ const CreateOrder = (args) => {
   let Grandtotals = subtotal + tax;
 
   useEffect(() => {
+    // console.log(Context?.CompanyDetails?.created_by);
+    // debugger;
     const userId = JSON.parse(localStorage.getItem("userData"))._id;
 
     let userdata = JSON.parse(localStorage.getItem("userData"));
@@ -203,6 +207,7 @@ const CreateOrder = (args) => {
     const fullname = UserInfo?.firstName + " " + UserInfo?.lastName;
     const payload = {
       userId: UserInfo?._id,
+      SuperAdmin: Context?.CompanyDetails?.created_by,
       fullName: fullname,
       address: UserInfo?.currentAddress,
       grandTotal: grandTotalAmt + grandTotalAmt * 0.05 + grandTotalAmt * 0.18,

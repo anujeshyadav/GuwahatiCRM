@@ -163,6 +163,7 @@ const CreateAccount = () => {
   //   );
   // }
   useEffect(() => {
+    
     let userdata = JSON.parse(localStorage.getItem("userData"));
     _GetList(country_state_City_List)
       .then((res) => {
@@ -171,7 +172,7 @@ const CreateAccount = () => {
       .catch((err) => {
         console.log(err);
       });
-    if (userdata?.rolename?.rank === 0) {
+    if (userdata?.rolename?.position === 0) {
       setMaster(true);
       _Get(Role_list_by_Master, userdata?._id)
         .then((res) => {

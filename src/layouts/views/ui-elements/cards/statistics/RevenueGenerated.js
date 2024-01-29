@@ -10,12 +10,12 @@ class RevenueGenerated extends React.Component {
         icon={<CreditCard className="success" size={22} />}
         iconBg="success"
         stat="97.5k"
-        statTitle="Revenue Generated"
+        statTitle="Sales"
         options={revenueGenerated}
         series={revenueGeneratedSeries}
         type="area"
       />
-    )
+    );
   }
 }
 export default RevenueGenerated

@@ -1,6 +1,7 @@
 import React, { useRef } from "react";
 import { Route } from "react-router-dom";
 import xmlJs from "xml-js";
+import { ImDownload } from "react-icons/im";
 import {
   Card,
   CardBody,
@@ -15,15 +16,14 @@ import {
   Button,
   ModalHeader,
   ModalBody,
-  Badge,
 } from "reactstrap";
-
 import { ContextLayout } from "../../../../../utility/context/Layout";
 import { AgGridReact } from "ag-grid-react";
 import "ag-grid-community/dist/styles/ag-grid.css";
 import EditAccount from "../../accounts/EditAccount";
 import ViewAccount from "../../accounts/ViewAccount";
 import jsPDF from "jspdf";
+// import db from "../../../../context/indexdb";
 import "jspdf-autotable";
 import Logo from "../../../../../assets/img/profile/pages/logomain.png";
 import Papa from "papaparse";
@@ -36,17 +36,13 @@ import {
   FaArrowAltCircleLeft,
   FaArrowAltCircleRight,
   FaFilter,
-  FaPlus,
 } from "react-icons/fa";
 import moment from "moment-timezone";
 import swal from "sweetalert";
 import {
-  CreateAccountList,
-  CreateAccountView,
-  DeleteAccount,
-  Stock_trxFactorytoWList,
-  ViewFactoryStock,
-  View_Wareahouseid,
+  TicketTool_ViewData,
+  ticketToolDeleteOne,
+  ticketToolList,
 } from "../../../../../ApiEndPoint/ApiCalling";
 import {
   BsCloudDownloadFill,
@@ -58,7 +54,7 @@ import UserContext from "../../../../../context/Context";
 
 const SelectedColums = [];
 
-class WareHouseStock extends React.Component {
+class GSTR3B extends React.Component {
   static contextType = UserContext;
   constructor(props) {
     super(props);
@@ -73,162 +69,7 @@ class WareHouseStock extends React.Component {
       paginationPageSize: 5,
       currenPageSize: "",
       getPageSize: "",
-
-      columnDefs: [
-        {
-          headerName: "S.No",
-          valueGetter: "node.rowIndex + 1",
-          field: "node.rowIndex + 1",
-          width: 150,
-          filter: true,
-        },
-        {
-          headerName: "Product Title",
-          field: "productId.Product_Title",
-          filter: true,
-          width: 200,
-          cellRendererFramework: (params) => {
-            return (
-              <div>
-                <span>{params.data?.productId.Product_Title}</span>
-              </div>
-            );
-          },
-        },
-        {
-          headerName: "Price",
-          field: "price",
-          filter: true,
-          width: 200,
-          cellRendererFramework: (params) => {
-            console.log(params);
-            return (
-              <div>
-                <span>{params.data?.price}</span>
-              </div>
-            );
-          },
-        },
-
-        {
-          headerName: "UnitType",
-          field: "unitType",
-          filter: true,
-          width: 200,
-          cellRendererFramework: (params) => {
-            return (
-              <div>
-                <span>{params.data?.unitType}</span>
-              </div>
-            );
-          },
-        },
-        {
-          headerName: "Current Stock",
-          field: "currentStock",
-          filter: true,
-          width: 200,
-          cellRendererFramework: (params) => {
-            console.log(params?.data);
-            return (
-              <div>
-                <Badge color="primary">{params.data?.currentStock}</Badge>
-              </div>
-            );
-          },
-        },
-
-        // {
-        //   headerName: "Status",
-        //   field: "status",
-        //   filter: true,
-        //   width: 150,
-        //   cellRendererFramework: (params) => {
-        //     return params.data?.status === "transferring" ? (
-        //       <div className="badge badge-pill badge-success">
-        //         {params.data?.status}
-        //       </div>
-        //     ) : params.value === "false" ? (
-        //       <div className="badge badge-pill badge-warning">
-        //         {params.data?.status}
-        //       </div>
-        //     ) : null;
-        //   },
-        // },
-        // {
-        //   headerName: "Grand Total",
-        //   field: "grandTotal",
-        //   filter: true,
-        //   sortable: true,
-        //   cellRendererFramework: (params) => {
-        //     return (
-        //       <>
-        //         <div className="actions cursor-pointer">
-        //           <span>{params?.data?.grandTotal}</span>
-        //         </div>
-        //       </>
-        //     );
-        //   },
-        // },
-        // {
-        //   headerName: "Created date",
-        //   field: "createdAt",
-        //   filter: true,
-        //   sortable: true,
-        //   cellRendererFramework: (params) => {
-        //     return (
-        //       <>
-        //         <div className="actions cursor-pointer">
-        //           <span>{params?.data?.createdAt}</span>
-        //         </div>
-        //       </>
-        //     );
-        //   },
-        // },
-
-        // {
-        //   headerName: "Actions",
-        //   field: "sortorder",
-        //   field: "transactions",
-        //   width: 150,
-        //   cellRendererFramework: (params) => {
-        //     return (
-        //       <div className="actions cursor-pointer">
-        //         <Eye
-        //           className="mr-50"
-        //           size="25px"
-        //           color="green"
-        //             onClick={() =>
-        //               history.push(
-        //                 `/app/freshlist/customer/viewCustomer/${params.data?._id}`
-        //               )
-        //             }
-        //         />
-        //         <Edit
-        //           className="mr-50"
-        //           size="25px"
-        //           color="blue"
-        //           //   onClick={() =>
-        //           //     history.push(
-        //           //       `/app/freshlist/customer/editCustomer/${params.data._id}`
-        //           //     )
-        //           //   }
-        //         />
-        //         <Trash2
-        //           className="mr-50"
-        //           size="25px"
-        //           color="red"
-        //           onClick={() => {
-        //             let selectedData = this.gridApi.getSelectedRows();
-        //             this.runthisfunction(params.data._id);
-        //             this.gridApi.updateRowData({ remove: selectedData });
-        //           }}
-        //         />
-        //       </div>
-        //     );
-        //   },
-        // },
-      ],
+      columnDefs: [],
       AllcolumnDefs: [],
       SelectedcolumnDefs: [],
       defaultColDef: {
@@ -259,52 +100,575 @@ class WareHouseStock extends React.Component {
   };
 
   async componentDidMount() {
-    let { id } = this.props?.match.params;
-
     const UserInformation = this.context?.UserInformatio;
-    let pageparmission = JSON.parse(localStorage.getItem("userData"));
-
-    await View_Wareahouseid(id)
+    await ticketToolList()
       .then((res) => {
-        console.log(res?.User);
-
-        if (res?.User?.productItems) {
-          this.setState({ rowData: res?.User?.productItems });
-        }
+        console.log(res?.TicketTool);
+        this.setState({ rowData: res?.TicketTool });
       })
       .catch((err) => {
         console.log(err);
       });
-    // await ViewFactoryStock()
-    //   .then((res) => {
-    //     debugger;
-    //     console.log(res?.Factory);
-    //     this.setState({ rowData: res?.Factory });
-    //     this.setState({ AllcolumnDefs: this.state.columnDefs });
 
-    //     let userHeading = JSON.parse(localStorage.getItem("FactoryStock"));
+    TicketTool_ViewData()
+      .then((res) => {
+        console.log(res);
+        let jsonData = xmlJs.xml2json(res.data, { compact: true, spaces: 2 });
+        // console.log(JSON.parse(jsonData)?.createTicket);
+        let CreatAccountView = JSON.parse(jsonData)?.createTicket;
+
+        const Checkbox = CreatAccountView?.CheckBox?.input?.map((ele) => {
+          return {
+            headerName: ele?.label._text,
+            field: ele?.name._text,
+            filter: true,
+            sortable: true,
+          };
+        });
+        const partsmydropdown = CreatAccountView?.Parts?.MyDropDown?.map(
+          (ele) => {
+            return {
+              headerName: ele?.dropdown?.label._text,
+              field: ele?.dropdown?.name?._text,
+              filter: true,
+              sortable: true,
+            };
+          }
+        );
+
+        let dropdown = CreatAccountView?.CurrentStatus?.MyDropDown?.dropdown;
+
+        const singledropdown = {
+          headerName: dropdown?.name._text,
+          field: dropdown?.name._text,
+          filter: true,
+          sortable: true,
+        };
+
+        const partinput = CreatAccountView?.Parts?.input?.map((ele) => {
+          return {
+            headerName: ele?.label._text,
+            field: ele?.name._text,
+            filter: true,
+            sortable: true,
+          };
+        });
+
+        const productdropdown = CreatAccountView?.Product?.MyDropDown?.map(
+          (ele) => {
+            return {
+              headerName: ele?.dropdown?.label._text,
+              field: ele?.dropdown?.name?._text,
+              filter: true,
+              sortable: true,
+            };
+          }
+        );
+
+        const productinput = CreatAccountView?.Product?.input?.map((ele) => {
+          return {
+            headerName: ele?.label._text,
+            field: ele?.name._text,
+            filter: true,
+            sortable: true,
+          };
+        });
+
+        const allinput = CreatAccountView?.input?.map((ele) => {
+          return {
+            headerName: ele?.label._text,
+            field: ele?.name._text,
+            filter: true,
+            sortable: true,
+          };
+        });
+
+        // formdata.append("id", randomNumber);
+        let myHeadings = [
+          ...Checkbox,
+          ...partsmydropdown,
+          singledropdown,
+          ...partinput,
+          ...productinput,
+          ...allinput,
+          ...productdropdown,
+        ];
+        // console.log(myHeadings);
+        let Product = [
+          {
+            headerName: "Actions",
+            field: "sortorder",
+            field: "transactions",
+            width: 190,
+            cellRendererFramework: (params) => {
+              return (
+                <div className="actions cursor-pointer">
+                  <Route
+                    render={({ history }) => (
+                      <Eye
+                        className="mr-50"
+                        size="25px"
+                        color="green"
+                        onClick={() => {
+                          this.handleChangeEdit(params.data, "readonly");
+                        }}
+                      />
+                    )}
+                  />
+                  <Route
+                    render={({ history }) => (
+                      <Edit
+                        className="mr-50"
+                        size="25px"
+                        color="blue"
+                        onClick={() => {
+                          this.handleChangeEdit(params.data, "Editable");
+                        }}
+                      />
+                    )}
+                  />
+
+                  <Route
+                    render={() => (
+                      <Trash2
+                        className="mr-50"
+                        size="25px"
+                        color="red"
+                        onClick={() => {
+                          this.runthisfunction(params?.data?._id);
+                        }}
+                      />
+                    )}
+                  />
+                </div>
+              );
+            },
+          },
+          {
+            headerName: "Whatsapp",
+            field: "whatsapp",
+            filter: true,
+            sortable: true,
+            cellRendererFramework: (params) => {
+              return params.data?.whatsapp === "true" ? (
+                <div className="badge badge-pill badge-success">YES</div>
+              ) : params.data?.whatsapp === "false" ? (
+                <div className="badge badge-pill badge-warning">NO</div>
+              ) : (
+                "NA"
+              );
+            },
+          },
+          {
+            headerName: "SMS",
+            field: "sms",
+            filter: true,
+            sortable: true,
+            cellRendererFramework: (params) => {
+              return params.data?.sms === "true" ? (
+                <div className="badge badge-pill badge-success">YES</div>
+              ) : params.data?.sms === "false" ? (
+                <div className="badge badge-pill badge-warning">No</div>
+              ) : (
+                "NA"
+              );
+            },
+          },
+          {
+            headerName: "Gmail",
+            field: "gmail",
+            filter: true,
+            sortable: true,
+            cellRendererFramework: (params) => {
+              return params.data?.gmail === "true" ? (
+                <div className="badge badge-pill badge-success">YES</div>
+              ) : params.data?.gmail === "false" ? (
+                <div className="badge badge-pill badge-warning">NO</div>
+              ) : (
+                "NA"
+              );
+            },
+          },
+          ...myHeadings,
+          {
+            headerName: "Created date",
+            field: "createdAt",
+            filter: true,
+            sortable: true,
+            cellRendererFramework: (params) => {
+              let convertedTime = "NA";
+              if (params?.data?.createdAt == undefined) {
+                convertedTime = "NA";
+              }
+              if (params?.data?.createdAt) {
+                convertedTime = params?.data?.createdAt;
+              }
+              if (
+                UserInformation?.timeZone !== undefined &&
+                params?.data?.createdAt !== undefined
+              ) {
+                if (params?.data?.createdAt != undefined) {
+                  convertedTime = moment(params?.data?.createdAt?.split(".")[0])
+                    .tz(UserInformation?.timeZone.split("-")[0])
+                    .format(UserInformation?.dateTimeFormat);
+                }
+              }
+
+              return (
+                <>
+                  <div className="actions cursor-pointer">
+                    {convertedTime == "NA" ? (
+                      "NA"
+                    ) : (
+                      <span>
+                        {convertedTime} &nbsp;
+                        {UserInformation?.timeZone &&
+                          UserInformation?.timeZone.split("-")[1]}
+                      </span>
+                    )}
+                  </div>
+                </>
+              );
+            },
+          },
+          {
+            headerName: "Updated date",
+            field: "updatedAt",
+            filter: true,
+            sortable: true,
+            cellRendererFramework: (params) => {
+              let convertedTime = "NA";
+              if (params?.data?.updatedAt == undefined) {
+                convertedTime = "NA";
+              }
+              if (params?.data?.updatedAt) {
+                convertedTime = params?.data?.updatedAt;
+              }
+              if (
+                UserInformation?.timeZone !== undefined &&
+                params?.data?.updatedAt !== undefined
+              ) {
+                if (params?.data?.updatedAt != undefined) {
+                  convertedTime = moment(params?.data?.updatedAt?.split(".")[0])
+                    .tz(UserInformation?.timeZone.split("-")[0])
+                    .format(UserInformation?.dateTimeFormat);
+                }
+              }
+
+              return (
+                <>
+                  <div className="actions cursor-pointer">
+                    {convertedTime == "NA" ? (
+                      "NA"
+                    ) : (
+                      <span>
+                        {convertedTime} &nbsp;
+                        {UserInformation?.timeZone &&
+                          UserInformation?.timeZone.split("-")[1]}
+                      </span>
+                    )}
+                  </div>
+                </>
+              );
+            },
+          },
+        ];
+
+        this.setState({ AllcolumnDefs: Product });
+
+        let userHeading = JSON.parse(localStorage.getItem("Ticketsearch"));
+        if (userHeading?.length) {
+          this.setState({ columnDefs: userHeading });
+          this.gridApi.setColumnDefs(userHeading);
+          this.setState({ SelectedcolumnDefs: userHeading });
+        } else {
+          this.setState({ columnDefs: Product });
+          this.setState({ SelectedcolumnDefs: Product });
+        }
+        this.setState({ SelectedCols: Product });
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+
+    // await CreateAccountView()
+    //   .then((res) => {
+    //     var mydropdownArray = [];
+    //     var adddropdown = [];
+    //     const jsonData = xmlJs.xml2json(res.data, { compact: true, spaces: 2 });
+    //     console.log(JSON.parse(jsonData));
+
+    //     const inputs = JSON.parse(jsonData).CreateAccount?.input?.map((ele) => {
+    //       return {
+    //         headerName: ele?.label._text,
+    //         field: ele?.name._text,
+    //         filter: true,
+    //         sortable: true,
+    //       };
+    //     });
+    //     let Radioinput =
+    //       JSON.parse(jsonData).CreateAccount?.Radiobutton?.input[0]?.name
+    //         ?._text;
+    //     const addRadio = [
+    //       {
+    //         headerName: Radioinput,
+    //         field: Radioinput,
+    //         filter: true,
+    //         sortable: true,
+    //         cellRendererFramework: (params) => {
+    //           return params.data?.Status === "Active" ? (
+    //             <div className="badge badge-pill badge-success">
+    //               {params.data.Status}
+    //             </div>
+    //           ) : params.data?.Status === "Deactive" ? (
+    //             <div className="badge badge-pill badge-warning">
+    //               {params.data.Status}
+    //             </div>
+    //           ) : (
+    //             "NA"
+    //           );
+    //         },
+    //       },
+    //     ];
+
+    //     let dropdown = JSON.parse(jsonData).CreateAccount?.MyDropdown?.dropdown;
+    //     if (dropdown.length) {
+    //       var mydropdownArray = dropdown?.map((ele) => {
+    //         return {
+    //           headerName: ele?.label,
+    //           field: ele?.name,
+    //           filter: true,
+    //           sortable: true,
+    //         };
+    //       });
+    //     } else {
+    //       var adddropdown = [
+    //         {
+    //           headerName: dropdown?.label._text,
+    //           field: dropdown?.name._text,
+    //           filter: true,
+    //           sortable: true,
+    //         },
+    //       ];
+    //     }
+
+    //     let myHeadings = [
+    //       // ...checkboxinput,
+    //       ...inputs,
+    //       ...adddropdown,
+    //       ...addRadio,
+    //       ...mydropdownArray,
+    //     ];
+    //     // console.log(myHeadings);
+    //     let Product = [
+    //       {
+    //         headerName: "Actions",
+    //         field: "sortorder",
+    //         field: "transactions",
+    //         width: 190,
+    //         cellRendererFramework: (params) => {
+    //           return (
+    //             <div className="actions cursor-pointer">
+    //               <Route
+    //                 render={({ history }) => (
+    //                   <Eye
+    //                     className="mr-50"
+    //                     size="25px"
+    //                     color="green"
+    //                     onClick={() => {
+    //                       this.handleChangeEdit(params.data, "readonly");
+    //                     }}
+    //                   />
+    //                 )}
+    //               />
+    //               <Route
+    //                 render={({ history }) => (
+    //                   <Edit
+    //                     className="mr-50"
+    //                     size="25px"
+    //                     color="blue"
+    //                     onClick={() => {
+    //                       this.handleChangeEdit(params.data, "Editable");
+    //                     }}
+    //                   />
+    //                 )}
+    //               />
+
+    //               <Route
+    //                 render={() => (
+    //                   <Trash2
+    //                     className="mr-50"
+    //                     size="25px"
+    //                     color="red"
+    //                     onClick={() => {
+    //                       this.runthisfunction(params?.data?._id);
+    //                     }}
+    //                   />
+    //                 )}
+    //               />
+    //             </div>
+    //           );
+    //         },
+    //       },
+    //       {
+    //         headerName: "Whatsapp",
+    //         field: "whatsapp",
+    //         filter: true,
+    //         sortable: true,
+    //         cellRendererFramework: (params) => {
+    //           console.log(params?.data?.whatsapp);
+    //           return params.data?.whatsapp === true ? (
+    //             <div className="badge badge-pill badge-success">YES</div>
+    //           ) : params.data?.whatsapp === false ? (
+    //             <div className="badge badge-pill badge-warning">NO</div>
+    //           ) : (
+    //             "NA"
+    //           );
+    //         },
+    //       },
+    //       {
+    //         headerName: "SMS",
+    //         field: "sms",
+    //         filter: true,
+    //         sortable: true,
+    //         cellRendererFramework: (params) => {
+    //           console.log(params?.data?.sms);
+    //           return params.data?.sms === true ? (
+    //             <div className="badge badge-pill badge-success">YES</div>
+    //           ) : params.data?.sms === false ? (
+    //             <div className="badge badge-pill badge-warning">No</div>
+    //           ) : (
+    //             "NA"
+    //           );
+    //         },
+    //       },
+    //       {
+    //         headerName: "Gmail",
+    //         field: "gmail",
+    //         filter: true,
+    //         sortable: true,
+    //         cellRendererFramework: (params) => {
+    //           console.log(params?.data?.gmail);
+    //           return params.data?.gmail === true ? (
+    //             <div className="badge badge-pill badge-success">YES</div>
+    //           ) : params.data?.gmail === false ? (
+    //             <div className="badge badge-pill badge-warning">NO</div>
+    //           ) : (
+    //             "NA"
+    //           );
+    //         },
+    //       },
+    //       ...myHeadings,
+    //       {
+    //         headerName: "Created date",
+    //         field: "createdAt",
+    //         filter: true,
+    //         sortable: true,
+    //         cellRendererFramework: (params) => {
+    //           let convertedTime = "NA";
+    //           if (params?.data?.createdAt == undefined) {
+    //             convertedTime = "NA";
+    //           }
+    //           if (params?.data?.createdAt) {
+    //             convertedTime = params?.data?.createdAt;
+    //           }
+    //           if (
+    //             UserInformation?.timeZone !== undefined &&
+    //             params?.data?.createdAt !== undefined
+    //           ) {
+    //             if (params?.data?.createdAt != undefined) {
+    //               convertedTime = moment(params?.data?.createdAt?.split(".")[0])
+    //                 .tz(UserInformation?.timeZone.split("-")[0])
+    //                 .format(UserInformation?.dateTimeFormat);
+    //             }
+    //           }
+
+    //           return (
+    //             <>
+    //               <div className="actions cursor-pointer">
+    //                 {convertedTime == "NA" ? (
+    //                   "NA"
+    //                 ) : (
+    //                   <span>
+    //                     {convertedTime} &nbsp;
+    //                     {UserInformation?.timeZone &&
+    //                       UserInformation?.timeZone.split("-")[1]}
+    //                   </span>
+    //                 )}
+    //               </div>
+    //             </>
+    //           );
+    //         },
+    //       },
+    //       {
+    //         headerName: "Updated date",
+    //         field: "updatedAt",
+    //         filter: true,
+    //         sortable: true,
+    //         cellRendererFramework: (params) => {
+    //           let convertedTime = "NA";
+    //           if (params?.data?.updatedAt == undefined) {
+    //             convertedTime = "NA";
+    //           }
+    //           if (params?.data?.updatedAt) {
+    //             convertedTime = params?.data?.updatedAt;
+    //           }
+    //           if (
+    //             UserInformation?.timeZone !== undefined &&
+    //             params?.data?.updatedAt !== undefined
+    //           ) {
+    //             if (params?.data?.updatedAt != undefined) {
+    //               convertedTime = moment(params?.data?.updatedAt?.split(".")[0])
+    //                 .tz(UserInformation?.timeZone.split("-")[0])
+    //                 .format(UserInformation?.dateTimeFormat);
+    //             }
+    //           }
+
+    //           return (
+    //             <>
+    //               <div className="actions cursor-pointer">
+    //                 {convertedTime == "NA" ? (
+    //                   "NA"
+    //                 ) : (
+    //                   <span>
+    //                     {convertedTime} &nbsp;
+    //                     {UserInformation?.timeZone &&
+    //                       UserInformation?.timeZone.split("-")[1]}
+    //                   </span>
+    //                 )}
+    //               </div>
+    //             </>
+    //           );
+    //         },
+    //       },
+    //     ];
+
+    //     this.setState({ AllcolumnDefs: Product });
+
+    //     let userHeading = JSON.parse(localStorage.getItem("Ticketsearch"));
     //     if (userHeading?.length) {
     //       this.setState({ columnDefs: userHeading });
     //       this.gridApi.setColumnDefs(userHeading);
     //       this.setState({ SelectedcolumnDefs: userHeading });
     //     } else {
-    //       this.setState({ columnDefs: this.state.columnDefs });
-    //       this.setState({ SelectedcolumnDefs: this.state.columnDefs });
+    //       this.setState({ columnDefs: Product });
+    //       this.setState({ SelectedcolumnDefs: Product });
     //     }
-    //     this.setState({ SelectedCols: this.state.columnDefs });
+    //     this.setState({ SelectedCols: Product });
     //   })
     //   .catch((err) => {
     //     console.log(err);
+    //     swal("Error", "something went wrong try again");
     //   });
-    // Stock_trxFactorytoWList(userid)
+    // await CreateAccountList()
     //   .then((res) => {
-    //     console.log(res);
+    //     let value = res?.CreateAccount;
+    //     this.setState({ rowData: value });
     //   })
     //   .catch((err) => {
     //     console.log(err);
     //   });
   }
-
   toggleDropdown = () => {
     this.setState((prevState) => ({ isOpen: !prevState.isOpen }));
   };
@@ -318,7 +682,7 @@ class WareHouseStock extends React.Component {
     }).then((value) => {
       switch (value) {
         case "delete":
-          DeleteAccount(id)
+          ticketToolDeleteOne(id)
             .then((res) => {
               let selectedData = this.gridApi.getSelectedRows();
               this.gridApi.updateRowData({ remove: selectedData });
@@ -540,7 +904,7 @@ class WareHouseStock extends React.Component {
     this.setState({ SelectedcolumnDefs: this.state.SelectedcolumnDefs });
     this.setState({ rowData: this.state.rowData });
     localStorage.setItem(
-      "FactoryStock",
+      "Ticketsearch",
       JSON.stringify(this.state.SelectedcolumnDefs)
     );
     this.LookupviewStart();
@@ -591,7 +955,6 @@ class WareHouseStock extends React.Component {
                     onClick={(e) => {
                       e.preventDefault();
                       this.setState({ EditOneUserView: false });
-                      this.componentDidMount();
                     }}
                     color="danger">
                     Back
@@ -606,9 +969,6 @@ class WareHouseStock extends React.Component {
               {this.state.ViewOneUserView && this.state.ViewOneUserView ? (
                 <>
                   <Row className="card">
-                    <Col>
-                      <h1 className="float-left">Stock Trx</h1>
-                    </Col>
                     <Col>
                       <div className="d-flex justify-content-end p-1">
                         <Button
@@ -628,16 +988,20 @@ class WareHouseStock extends React.Component {
                 <>
                   <Col sm="12">
                     <Card>
-                      <Row className="m-2">
+                      <Row className="mt-2 ml-2 mr-2">
                         <Col>
-                          <h1 className="float-left">My Stock List</h1>
+                          <h1
+                            className="float-left"
+                            style={{ fontWeight: "600" }}>
+                            GSTR 3B
+                          </h1>
                         </Col>
                         <Col>
                           <span className="mx-1">
                             <FaFilter
                               style={{ cursor: "pointer" }}
                               title="filter coloumn"
-                              size="25px"
+                              size="35px"
                               onClick={this.LookupviewStart}
                               color="#39cccc"
                               className="float-right"
@@ -645,10 +1009,10 @@ class WareHouseStock extends React.Component {
                           </span>
                           <span className="mx-1">
                             <div className="dropdown-container float-right">
-                              <BsCloudDownloadFill
+                              <ImDownload
                                 style={{ cursor: "pointer" }}
                                 title="download file"
-                                size="25px"
+                                size="35px"
                                 className="dropdown-button "
                                 color="#39cccc"
                                 onClick={this.toggleDropdown}
@@ -658,6 +1022,8 @@ class WareHouseStock extends React.Component {
                                   style={{
                                     position: "absolute",
                                     zIndex: "1",
+                                    border: "1px solid #39cccc",
+                                    backgroundColor: "white",
                                   }}
                                   className="dropdown-content dropdownmy">
                                   <h5
@@ -696,22 +1062,9 @@ class WareHouseStock extends React.Component {
                               )}
                             </div>
                           </span>
-                          <span>
-                            <Route
-                              render={({ history }) => (
-                                <Badge
-                                  style={{ cursor: "pointer" }}
-                                  className="float-right mr-1"
-                                  color="primary"
-                                  onClick={() => history.goBack()}>
-                                  <FaPlus size={15} /> Back
-                                </Badge>
-                              )}
-                            />
-                          </span>
                         </Col>
                       </Row>
-                      <CardBody>
+                      <CardBody style={{ marginTop: "-1.5rem" }}>
                         {this.state.rowData === null ? null : (
                           <div className="ag-theme-material w-100 my-2 ag-grid-table">
                             <div className="d-flex flex-wrap justify-content-between align-items-center">
@@ -997,4 +1350,4 @@ class WareHouseStock extends React.Component {
     );
   }
 }
-export default WareHouseStock;
+export default GSTR3B;

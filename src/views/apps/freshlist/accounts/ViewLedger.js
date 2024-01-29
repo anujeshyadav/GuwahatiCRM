@@ -14,6 +14,7 @@ import {
   Badge,
   Table,
 } from "reactstrap";
+import Ledgers from "./Ledger";
 import { history } from "../../../../history";
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
@@ -21,6 +22,7 @@ import { Country, State, City } from "country-state-city";
 import Select from "react-select";
 import moment from "moment-timezone";
 import { Route, useParams } from "react-router-dom";
+// import LedgerPdf from "../house/LedgerPdf";
 
 import swal from "sweetalert";
 import "../../../../../src/layouts/assets/scss/pages/users.scss";
@@ -40,16 +42,9 @@ import UserContext from "../../../../context/Context";
 import { CloudLightning } from "react-feather";
 import { FaPlus } from "react-icons/fa";
 import Multiselect from "multiselect-react-dropdown";
-import {
-  Create_Transporter_List,
-  View_Ledger_by_id,
-} from "../../../../ApiEndPoint/Api";
+import { View_Ledger_by_id } from "../../../../ApiEndPoint/Api";
 let SecondLast = null;
 const ViewLedger = () => {
-  const [formData, setFormData] = useState({});
-
-  const [Debit, setDebit] = useState(null);
-  const [Credit, setCredit] = useState(null);
   const [Ledger, setLedger] = useState([]);
 
   let Params = useParams();
@@ -65,10 +60,6 @@ const ViewLedger = () => {
       .catch((err) => {
         console.log(err);
       });
-
-    // let selectedtransporter = ViewOneData?.assignTransporter?.map((ele) => {
-    //   return ele?.id;
-    // });
   }, []);
 
   return (
@@ -99,8 +90,8 @@ const ViewLedger = () => {
           {/* <hr /> */}
 
           <CardBody>
-            <div className="p-4">
-              <Table bordered hover responsive size="sm">
+            {/* <div className="p-4"> */}
+            {/* <Table bordered hover responsive size="sm">
                 {Ledger?.length > 0 && Ledger && (
                   <thead>
                     <tr>
@@ -136,7 +127,6 @@ const ViewLedger = () => {
                 <tbody>
                   {Ledger &&
                     Ledger?.map((ele, index) => {
-                      console.log(ele);
                       return (
                         <tr key={ele?._id}>
                           <th scope="row">
@@ -235,8 +225,15 @@ const ViewLedger = () => {
                     </>
                   )}
                 </tbody>
-              </Table>
-            </div>
+              </Table> */}
+            {/* </div> */}
+            <Row>
+              {Ledger && Ledger?.length > 0 && (
+                <Col>
+                  <Ledgers Ledger={Ledger} />
+                </Col>
+              )}
+            </Row>
           </CardBody>
         </Card>
       </div>

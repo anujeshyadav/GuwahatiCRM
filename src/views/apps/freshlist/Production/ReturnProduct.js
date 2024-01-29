@@ -1,6 +1,8 @@
 import React, { useRef } from "react";
+import { Route } from "react-router-dom";
 import { ImDownload } from "react-icons/im";
 import {
+  Label,
   Card,
   CardBody,
   Input,
@@ -15,56 +17,53 @@ import {
   ModalHeader,
   ModalBody,
   Badge,
-  Label,
   Table,
   CustomInput,
 } from "reactstrap";
-
-import { ContextLayout } from "../../../../../utility/context/Layout";
+import { ContextLayout } from "../../../../utility/context/Layout";
 import { AgGridReact } from "ag-grid-react";
 import "ag-grid-community/dist/styles/ag-grid.css";
-import EditAccount from "../../accounts/EditAccount";
-import ViewAccount from "../../accounts/ViewAccount";
+// import ViewOrder from "../order/ViewAll";
 import jsPDF from "jspdf";
 import "jspdf-autotable";
-import Logo from "../../../../../assets/img/profile/pages/logomain.png";
+import Logo from "../../../../assets/img/profile/pages/logomain.png";
 import Papa from "papaparse";
-import { Eye, Trash2, ChevronDown, Edit } from "react-feather";
+import { Eye, Trash2, ChevronDown, Edit, CornerDownLeft } from "react-feather";
 import { IoMdRemoveCircleOutline } from "react-icons/io";
-import "../../../../../assets/scss/plugins/tables/_agGridStyleOverride.scss";
-import "../../../../../assets/scss/pages/users.scss";
-
+import "../../../../assets/scss/plugins/tables/_agGridStyleOverride.scss";
+import "../../../../assets/scss/pages/users.scss";
+// import StockTrxInvoice from "../../subcategory/StockTrxInvoice";
+import StockTrxInvoice from "../subcategory/StockTrxInvoice";
 import {
+  FaAd,
   FaArrowAltCircleLeft,
   FaArrowAltCircleRight,
   FaDownload,
   FaFilter,
   FaPlus,
 } from "react-icons/fa";
-import moment from "moment-timezone";
 import swal from "sweetalert";
 import {
-  DeleteAccount,
-  Stockupdate,
   _Get,
-} from "../../../../../ApiEndPoint/ApiCalling";
+  createOrderhistoryview,
+  CreateProductList,
+  Delete_targetINlist,
+  Deleteproductlist,
+} from "../../../../ApiEndPoint/ApiCalling";
 import {
+  BsCloudDownloadFill,
   BsFillArrowDownSquareFill,
   BsFillArrowUpSquareFill,
 } from "react-icons/bs";
 import * as XLSX from "xlsx";
-import UserContext from "../../../../../context/Context";
-import UpdateStockTrx from "../../accounts/UpdateStockTrx";
-import StockTrxInvoice from "../../subcategory/OutWardStockPO";
-import { CheckPermission } from "../../house/CheckPermission";
-import {
-  WareHouse_Closing_Stock,
-  WareHouse_OverDue_Stock,
-} from "../../../../../ApiEndPoint/Api";
+import UserContext from "../../../../context/Context";
+import { CheckPermission } from "../house/CheckPermission";
+import { Get_Producton_ProcessList } from "../../../../ApiEndPoint/Api";
+import { IoReturnDownBackSharp } from "react-icons/io5";
 
 const SelectedColums = [];
 
-class OverDueStockReport extends React.Component {
+class ReturnProduct extends React.Component {
   static contextType = UserContext;
   constructor(props) {
     super(props);
@@ -72,139 +71,18 @@ class OverDueStockReport extends React.Component {
     this.gridApi = null;
     this.state = {
       isOpen: false,
-      ShowBill: false,
-      InsiderPermissions: {},
       Arrindex: "",
       rowData: [],
+      ShowBill: false,
+      modal: false,
+      modalone: false,
+      ViewData: {},
+      InsiderPermissions: {},
       setMySelectedarr: [],
-      ViewOneData: {},
       SelectedCols: [],
       paginationPageSize: 5,
       currenPageSize: "",
       getPageSize: "",
-
-      columnDefs: [
-        {
-          headerName: "S.No",
-          valueGetter: "node.rowIndex + 1",
-          field: "node.rowIndex + 1",
-          width: 150,
-          filter: true,
-        },
-        // {
-        //   headerName: "Actions",
-        //   field: "sortorder",
-        //   field: "transactions",
-        //   width: 150,
-        //   cellRendererFramework: (params) => {
-        //     return (
-        //       <div className="actions cursor-pointer">
-        //         {this.state.InsiderPermissions &&
-        //           this.state.InsiderPermissions?.View && (
-        //             <Eye
-        //               className="mr-50"
-        //               size="25px"
-        //               color="green"
-        //               // onClick={() =>
-        //               //   history.push(
-        //               //     `/app/freshlist/customer/viewCustomer/${params.data?._id}`
-        //               //   )
-        //               // }
-        //               onClick={(e) => {
-        //                 this.togglemodal();
-        //                 this.setState({ ViewOneData: params?.data });
-        //                 this.setState({ ViewOneUserView: true });
-        //                 this.setState({ EditOneUserView: false });
-
-        //                 // console.log(params?.data);
-        //               }}
-        //             />
-        //           )}
-
-        //         {/* {this.state.InsiderPermissions &&
-        //           this.state.InsiderPermissions?.Delete && (
-        //             <Trash2
-        //               className="mr-50"
-        //               size="25px"
-        //               color="red"
-        //               onClick={() => {
-        //                 let selectedData = this.gridApi.getSelectedRows();
-        //                 this.runthisfunction(params.data._id);
-        //                 this.gridApi.updateRowData({ remove: selectedData });
-        //               }}
-        //             />
-        //           )} */}
-        //       </div>
-        //     );
-        //   },
-        // },
-        {
-          headerName: "Status",
-          field: "status",
-          filter: true,
-          width: 150,
-          cellRendererFramework: (params) => {
-            return params.data?.status === "Active" ? (
-              <div className="badge badge-pill badge-success">
-                {params.data?.status}
-              </div>
-            ) : params.data?.status === "InProcess" ? (
-              <div className="badge badge-pill badge-warning">
-                {params.data?.status}
-              </div>
-            ) : params.data?.status === "Hold" ? (
-              <div className="badge badge-pill badge-danger">
-                {params.data?.status}
-              </div>
-            ) : params.data?.status === "opening" ? (
-              <div className="badge badge-pill badge-warning">
-                {params.data?.status}
-              </div>
-            ) : (
-              <>{params?.data?.status}</>
-            );
-          },
-        },
-        {
-          headerName: "Product_MRP",
-          field: "Product_MRP",
-          filter: true,
-          width: 200,
-          cellRendererFramework: (params) => {
-            return (
-              <div>
-                <span>{params.data?.Product_MRP}</span>
-              </div>
-            );
-          },
-        },
-        {
-          headerName: "Product_Title",
-          field: "Product_Title",
-          filter: true,
-          width: 200,
-          cellRendererFramework: (params) => {
-            return (
-              <div>
-                <span>{params.data?.Product_Title}</span>
-              </div>
-            );
-          },
-        },
-        {
-          headerName: "HSN_Code",
-          field: "HSN_Code",
-          filter: true,
-          width: 200,
-          cellRendererFramework: (params) => {
-            return (
-              <div>
-                <span>{params.data?.HSN_Code} Products</span>
-              </div>
-            );
-          },
-        },
-      ],
       AllcolumnDefs: [],
       SelectedcolumnDefs: [],
       defaultColDef: {
@@ -214,44 +92,364 @@ class OverDueStockReport extends React.Component {
         resizable: true,
         suppressMenu: true,
       },
+      columnDefs: [
+        {
+          headerName: "UID",
+          valueGetter: "node.rowIndex + 1",
+          field: "node.rowIndex + 1",
+          width: 80,
+          filter: true,
+        },
+
+        {
+          headerName: "Actions",
+          field: "transactions",
+          width: 180,
+          cellRendererFramework: (params) => {
+            return (
+              <div className="actions cursor-pointer">
+                {this.state.InsiderPermissions &&
+                  this.state.InsiderPermissions?.Edit && (
+                    <Eye
+                      title="Returned Raw materials"
+                      className="mr-50"
+                      size="25px"
+                      color="green"
+                      onClick={() => {
+                        this.togglemodal();
+                        this.handleChangeView(params.data, "readonly");
+                      }}
+                    />
+                  )}
+                {this.state.InsiderPermissions &&
+                  this.state.InsiderPermissions?.View && (
+                    <Edit
+                      className="mr-50"
+                      size="25px"
+                      title="Return Raw Materials"
+                      color="blue"
+                      onClick={() =>
+                        this.props.history.push({
+                          pathname: `/app/freshlist/order/AddReturnProductionProduct/${params.data?._id}`,
+                          state: params.data,
+                        })
+                      }
+                    />
+                  )}
+                {this.state.InsiderPermissions &&
+                  this.state.InsiderPermissions?.Create && (
+                    <FaPlus
+                      title="Add Return Raw materials"
+                      className=""
+                      size="20px"
+                      color="red"
+                      onClick={() =>
+                        this.props.history.push({
+                          pathname: `/app/freshlist/order/AddReturnProductionProduct/${params.data?._id}`,
+                          state: params.data,
+                        })
+                      }
+                    />
+                  )}
+              </div>
+            );
+          },
+        },
+        // {
+        //   headerName: "Status",
+        //   field: "status",
+        //   filter: true,
+        //   width: 150,
+        //   cellRendererFramework: (params) => {
+        //     return params.value == "Completed" ? (
+        //       <div className="badge badge-pill badge-success">
+        //         {params.data.status}
+        //       </div>
+        //     ) : params.value == "InProcess" ? (
+        //       <div className="badge badge-pill badge-warning">
+        //         {params.data.status}
+        //       </div>
+        //     ) : params.value == "pending" ? (
+        //       <div className="badge badge-pill badge-info">Pending</div>
+        //     ) : params.value == "Cancelled" ? (
+        //       <div className="badge badge-pill badge-danger">
+        //         {params.data.status}
+        //       </div>
+        //     ) : null;
+        //   },
+        // },
+        {
+          headerName: "Product Name",
+          field: "product_name.Product_Title",
+          filter: true,
+          width: 200,
+          cellRendererFramework: (params) => {
+            return (
+              <div>
+                <span>
+                  {params.data?.product_name?.Product_Title &&
+                    params.data?.product_name?.Product_Title}
+                </span>
+              </div>
+            );
+          },
+        },
+        {
+          headerName: "Product Req",
+          field: "productItems.length",
+          filter: true,
+          width: 200,
+          cellRendererFramework: (params) => {
+            return (
+              <div>
+                <span>{params.data?.productItems?.length} Products</span>
+              </div>
+            );
+          },
+        },
+        {
+          headerName: "Product Total",
+          field: "grandTotal",
+          filter: true,
+          width: 200,
+          cellRendererFramework: (params) => {
+            return (
+              <div>
+                <span>{params.data?.grandTotal}</span>
+              </div>
+            );
+          },
+        },
+        {
+          headerName: "GST",
+          field: "gstApplied",
+          filter: true,
+          width: 200,
+          cellRendererFramework: (params) => {
+            return (
+              <div>
+                <span>{params.data?.gstApplied}</span>
+              </div>
+            );
+          },
+        },
+        {
+          headerName: "MiscellaneousExpennses",
+          field: "miscellaneousExpennses",
+          filter: true,
+          width: 200,
+          cellRendererFramework: (params) => {
+            return (
+              <div>
+                <span>{params.data?.miscellaneousExpennses}</span>
+              </div>
+            );
+          },
+        },
+        {
+          headerName: "Other Charges",
+          field: "otherCharges",
+          filter: true,
+          width: 200,
+          cellRendererFramework: (params) => {
+            return (
+              <div>
+                <span>{params.data?.otherCharges}</span>
+              </div>
+            );
+          },
+        },
+        {
+          headerName: "Discount",
+          field: "discount",
+          filter: true,
+          width: 200,
+          cellRendererFramework: (params) => {
+            return (
+              <div>
+                <span>{params.data?.discount}</span>
+              </div>
+            );
+          },
+        },
+        {
+          headerName: "grandTotal",
+          field: "grandTotal",
+          filter: true,
+          width: 200,
+          cellRendererFramework: (params) => {
+            return (
+              <div>
+                <span>{params.data?.grandTotal}</span>
+              </div>
+            );
+          },
+        },
+
+        // {
+        //   headerName: "Min Stock Alert",
+        //   field: "MinStockAlert",
+        //   filter: true,
+        //   width: 180,
+        //   valueGetter: (params) => {
+        //     if (params.data.orderItems && params.data.orderItems.length > 0) {
+        //       return params.data.fullName;
+        //     }
+        //     return null;
+        //   },
+        // },
+
+        // {
+        //   headerName: "Product Name",
+        //   field: "orderItems",
+        //   filter: true,
+        //   width: 220,
+        //   valueGetter: (params) => {
+        //     if (params.data.orderItems && params.data.orderItems.length > 0) {
+        //       return params?.data?.orderItems?.map((val) => {
+        //         return val?.product?.Product_Title;
+        //       });
+        //     }
+        //     return null;
+        //   },
+        // },
+        // {
+        //   headerName: "Price",
+        //   field: "orderItems",
+        //   filter: true,
+        //   width: 150,
+        //   valueGetter: (params) => {
+        //     if (params.data.orderItems && params.data.orderItems.length > 0) {
+        //       return params.data.orderItems[0].price;
+        //     }
+        //     return null;
+        //   },
+        // },
+        // {
+        //   headerName: "Size",
+        //   field: "orderItems",
+        //   filter: true,
+        //   width: 150,
+        //   valueGetter: (params) => {
+        //     if (params.data.orderItems && params.data.orderItems.length > 0) {
+        //       return params.data.orderItems[0].qty; // Return the price
+        //     }
+        //     return null;
+        //   },
+        // },
+        // {
+        //   headerName: "GST Rate",
+        //   field: "orderItems",
+        //   filter: true,
+        //   width: 180,
+        //   valueGetter: (params) => {
+        //     if (params.data.orderItems && params.data.orderItems.length > 0) {
+        //       return params.data.orderItems[0].product["GST Rate"]; // Return the price
+        //     }
+        //     return null; // Or handle cases where there's no price
+        //   },
+        // },
+        // {
+        //   headerName: "HSN Code",
+        //   field: "orderItems",
+        //   filter: true,
+        //   width: 180,
+        //   valueGetter: (params) => {
+        //     if (params.data.orderItems && params.data.orderItems.length > 0) {
+        //       return params.data.orderItems[0].product.HSN_Code; // Return the price
+        //     }
+        //     return null;
+        //   },
+        // },
+      ],
     };
   }
-  UpdateStock = (e) => {
-    let payload = {
-      status: e.target.value,
-    };
-    let id = this.state.ViewOneData?._id;
-
-    // console.log(this.state.ViewOneData?._id);
-    swal("Warning", "Sure You Want to Update Status", {
-      buttons: {
-        cancel: "No",
-        catch: { text: "Yes", value: "Sure" },
-      },
-    }).then((value) => {
-      switch (value) {
-        case "Sure":
-          Stockupdate(id, payload)
-            .then((res) => {
-              // console.log(res);
-              swal("success", "Status Updated Successfully");
-              this.togglemodal();
-              this.ViewStockList();
-            })
-            .catch((err) => {
-              console.log(err);
-            });
-
-          break;
-        default:
-      }
-    });
+  toggleModal = () => {
+    this.setState((prevState) => ({
+      modalone: !prevState.modalone,
+    }));
   };
   LookupviewStart = () => {
     this.setState((prevState) => ({
       modal: !prevState.modal,
     }));
   };
+
+  handleChangeView = (data, types) => {
+    let type = types;
+    if (type == "readonly") {
+      // console.log("ResponseData", data.orderItems);
+      this.setState({ ViewOneUserView: true });
+      this.setState({ ViewOneData: data });
+      let amt = 0;
+      if (data?.returnItems?.length > 0) {
+        const x = data?.returnItems?.map((val) => {
+          return val?.price * val?.qty;
+        });
+        amt = x.reduce((a, b) => a + b);
+      }
+      this.setState({ Gst: amt });
+    } else {
+      this.setState({ EditOneUserView: true });
+      this.setState({ EditOneData: data });
+    }
+  };
+
+  async componentDidMount() {
+    const userId = JSON.parse(localStorage.getItem("userData"));
+    const UserInformation = this.context?.UserInformatio;
+    const InsidePermissions = CheckPermission("Wastage Material");
+
+    this.setState({ InsiderPermissions: InsidePermissions });
+    let url = `${Get_Producton_ProcessList}/${userId?._id}/`;
+
+    await _Get(url, userId?.database)
+      .then((res) => {
+        console.log(res?.Production);
+        if (res?.Production) {
+          this.setState({ rowData: res?.Production });
+          this.setState({ AllcolumnDefs: this.state.columnDefs });
+          this.setState({ SelectedCols: this.state.columnDefs });
+
+          let userHeading = JSON.parse(
+            localStorage.getItem("ProductionProcessList")
+          );
+          if (userHeading?.length) {
+            this.setState({ columnDefs: userHeading });
+            this.gridApi.setColumnDefs(userHeading);
+            this.setState({ SelectedcolumnDefs: userHeading });
+          } else {
+            this.setState({ columnDefs: this.state.columnDefs });
+            this.setState({ SelectedcolumnDefs: this.state.columnDefs });
+          }
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+    // Get_Producton_ProcessList
+    await CreateProductList()
+      .then((res) => {
+        console.log(res.Data);
+        // this.setState({ rowData: res?.Data });
+        // this.setState({ AllcolumnDefs: this.state.columnDefs });
+        // this.setState({ SelectedCols: this.state.columnDefs });
+
+        // let userHeading = JSON.parse(localStorage.getItem("ProductionProcessList"));
+        // if (userHeading?.length) {
+        //   this.setState({ columnDefs: userHeading });
+        //   this.gridApi.setColumnDefs(userHeading);
+        //   this.setState({ SelectedcolumnDefs: userHeading });
+        // } else {
+        //   this.setState({ columnDefs: this.state.columnDefs });
+        //   this.setState({ SelectedcolumnDefs: this.state.columnDefs });
+        // }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }
+
   togglemodal = () => {
     this.setState((prevState) => ({
       modalone: !prevState.modalone,
@@ -261,48 +459,6 @@ class OverDueStockReport extends React.Component {
   handleStockTrxInvoiceShow = () => {
     this.setState({ ShowBill: true });
   };
-  handleChangeEdit = (data, types) => {
-    let type = types;
-    if (type == "readonly") {
-      this.setState({ ViewOneUserView: true });
-      this.setState({ ViewOneData: data });
-    } else {
-      this.setState({ EditOneUserView: true });
-      this.setState({ EditOneData: data });
-    }
-  };
-
-  async componentDidMount() {
-    const UserInformation = this.context?.UserInformatio;
-    const InsidePermissions = CheckPermission("OverDue Stock");
-    this.setState({ InsiderPermissions: InsidePermissions });
-    let pageparmission = JSON.parse(localStorage.getItem("userData"));
-    let URl = `${WareHouse_OverDue_Stock}/${pageparmission?._id}/`;
-    await _Get(URl, pageparmission?.database)
-      .then((res) => {
-        // let rowData = res?.Warehouse?.filter((ele) => ele?.status == "opening");
-
-        // if (rowData) {
-        this.setState({ rowData: res?.Product });
-        this.setState({ AllcolumnDefs: this.state.columnDefs });
-
-        let userHeading = JSON.parse(localStorage.getItem("OverDurStockList"));
-        if (userHeading?.length) {
-          this.setState({ columnDefs: userHeading });
-          this.gridApi.setColumnDefs(userHeading);
-          this.setState({ SelectedcolumnDefs: userHeading });
-        } else {
-          this.setState({ columnDefs: this.state.columnDefs });
-          this.setState({ SelectedcolumnDefs: this.state.columnDefs });
-        }
-        this.setState({ SelectedCols: this.state.columnDefs });
-        // }
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  }
-
   toggleDropdown = () => {
     this.setState((prevState) => ({ isOpen: !prevState.isOpen }));
   };
@@ -316,7 +472,7 @@ class OverDueStockReport extends React.Component {
     }).then((value) => {
       switch (value) {
         case "delete":
-          DeleteAccount(id)
+          Deleteproductlist(id)
             .then((res) => {
               let selectedData = this.gridApi.getSelectedRows();
               this.gridApi.updateRowData({ remove: selectedData });
@@ -417,8 +573,6 @@ class OverDueStockReport extends React.Component {
     }
   };
   processCell = (params) => {
-    // console.log(params);
-    // Customize cell content as needed
     return params.value;
   };
 
@@ -518,10 +672,6 @@ class OverDueStockReport extends React.Component {
         });
 
         xmlString += "</root>";
-
-        // setXmlData(xmlString);
-
-        // Create a download link
         const blob = new Blob([xmlString], { type: "text/xml" });
         const link = document.createElement("a");
         link.href = URL.createObjectURL(blob);
@@ -533,12 +683,13 @@ class OverDueStockReport extends React.Component {
 
   HandleSetVisibleField = (e) => {
     e.preventDefault();
+    debugger;
     this.gridApi.setColumnDefs(this.state.SelectedcolumnDefs);
     this.setState({ columnDefs: this.state.SelectedcolumnDefs });
     this.setState({ SelectedcolumnDefs: this.state.SelectedcolumnDefs });
     this.setState({ rowData: this.state.rowData });
     localStorage.setItem(
-      "OverDurStockList",
+      "ProductionProcessList",
       JSON.stringify(this.state.SelectedcolumnDefs)
     );
     this.LookupviewStart();
@@ -556,11 +707,11 @@ class OverDueStockReport extends React.Component {
     });
   };
   handleLeftShift = () => {
-    let SelectedCols = this.state.SelectedcolumnDefs.slice();
+    let SelectedCols = this.state.SelectedcolumnDefs?.slice();
     let delindex = this.state.Arrindex; /* Your delete index here */
 
     if (SelectedCols && delindex >= 0) {
-      const splicedElement = SelectedCols.splice(delindex, 1); // Remove the element
+      const splicedElement = SelectedCols?.splice(delindex, 1); // Remove the element
 
       this.setState({
         SelectedcolumnDefs: SelectedCols, // Update the state with the modified array
@@ -574,19 +725,21 @@ class OverDueStockReport extends React.Component {
       defaultColDef,
       SelectedcolumnDefs,
       isOpen,
+      InsiderPermissions,
       SelectedCols,
       AllcolumnDefs,
-      InsiderPermissions,
     } = this.state;
     return (
       <>
-        {/* <ExcelReader /> */}
-        <Row className="app-user-list">
+        <Col className="app-user-list">
           <Col sm="12">
             <Card>
-              <Row className="mt-2 ml-2 mr-2">
+              <Row className="ml-2 mt-2 mr-2">
                 <Col>
-                  <h1 className="float-left">Overdue Stock List</h1>
+                  <h1 className="float-left " style={{ fontWeight: "600" }}>
+                    {" "}
+                    Add Returns of Raw material
+                  </h1>
                 </Col>
                 {InsiderPermissions && InsiderPermissions?.View && (
                   <Col>
@@ -654,22 +807,22 @@ class OverDueStockReport extends React.Component {
                       </div>
                     </span>
                     {/* <span>
-                    <Route
-                      render={({ history }) => (
-                        <Badge
-                          style={{ cursor: "pointer" }}
-                          className="float-right mr-1"
-                          color="primary"
-                          onClick={() =>
-                            history.push(
-                              "/app/softNumen/warehouse/WareHouseStock/:id"
-                            )
-                          }>
-                          View My WareHouse
-                        </Badge>
-                      )}
-                    />
-                  </span> */}
+                      <Route
+                        render={({ history }) => (
+                          <Button
+                            style={{ cursor: "pointer" }}
+                            className="float-right mr-1"
+                            color="primary"
+                            onClick={() =>
+                              history.push(
+                                "/views/apps/freshlist/Production/productionprocesspage"
+                              )
+                            }>
+                            <FaPlus size={15} /> Production
+                          </Button>
+                        )}
+                      />
+                    </span> */}
                   </Col>
                 )}
               </Row>
@@ -740,30 +893,11 @@ class OverDueStockReport extends React.Component {
                       {(context) => (
                         <AgGridReact
                           id="myAgGrid"
-                          // gridOptions={{
-                          //   domLayout: "autoHeight",
-                          //   // or other layout options
-                          // }}
                           gridOptions={this.gridOptions}
                           rowSelection="multiple"
                           defaultColDef={defaultColDef}
                           columnDefs={columnDefs}
                           rowData={rowData}
-                          // onGridReady={(params) => {
-                          //   this.gridApi = params.api;
-                          //   this.gridColumnApi = params.columnApi;
-                          //   this.gridRef.current = params.api;
-
-                          //   this.setState({
-                          //     currenPageSize:
-                          //       this.gridApi.paginationGetCurrentPage() +
-                          //       1,
-                          //     getPageSize:
-                          //       this.gridApi.paginationGetPageSize(),
-                          //     totalPages:
-                          //       this.gridApi.paginationGetTotalPages(),
-                          //   });
-                          // }}
                           onGridReady={this.onGridReady}
                           colResizeDefault={"shift"}
                           animateRows={true}
@@ -782,7 +916,7 @@ class OverDueStockReport extends React.Component {
               </CardBody>
             </Card>
           </Col>
-        </Row>
+        </Col>
 
         <Modal
           isOpen={this.state.modal}
@@ -793,7 +927,7 @@ class OverDueStockReport extends React.Component {
           <ModalBody className="modalbodyhead">
             <Row>
               <Col lg="4" md="4" sm="12" xl="4" xs="12">
-                <h4>Avilable Columns</h4>
+                <h4>Available Columns</h4>
                 <div className="mainshffling">
                   <div class="ex1">
                     {AllcolumnDefs &&
@@ -872,9 +1006,9 @@ class OverDueStockReport extends React.Component {
                                       <IoMdRemoveCircleOutline
                                         onClick={() => {
                                           const SelectedCols =
-                                            this.state.SelectedcolumnDefs.slice();
+                                            this.state.SelectedcolumnDefs?.slice();
                                           const delindex =
-                                            SelectedCols.findIndex(
+                                            SelectedCols?.findIndex(
                                               (element) =>
                                                 element?.headerName ==
                                                 ele?.headerName
@@ -882,24 +1016,13 @@ class OverDueStockReport extends React.Component {
 
                                           if (SelectedCols && delindex >= 0) {
                                             const splicedElement =
-                                              SelectedCols.splice(delindex, 1); // Remove the element
+                                              SelectedCols?.splice(delindex, 1); // Remove the element
                                             // splicedElement contains the removed element, if needed
 
                                             this.setState({
                                               SelectedcolumnDefs: SelectedCols, // Update the state with the modified array
                                             });
                                           }
-                                          // const delindex =
-                                          //   SelectedCols.findIndex(
-                                          //     (element) =>
-                                          //       element?.headerName ==
-                                          //       ele?.headerName
-                                          //   );
-
-                                          // SelectedCols?.splice(delindex, 1);
-                                          // this.setState({
-                                          //   SelectedcolumnDefs: SelectedCols,
-                                          // });
                                         }}
                                         style={{ cursor: "pointer" }}
                                         size="25px"
@@ -941,9 +1064,17 @@ class OverDueStockReport extends React.Component {
             <Row>
               <Col>
                 <div className="d-flex justify-content-center">
-                  <Button onClick={this.HandleSetVisibleField} color="primary">
+                  {/* <Button onClick={this.HandleSetVisibleField} color="primary">
                     Submit
-                  </Button>
+                  </Button> */}
+
+                  <Badge
+                    style={{ cursor: "pointer" }}
+                    className=""
+                    color="primary"
+                    onClick={this.HandleSetVisibleField}>
+                    Submit
+                  </Badge>
                 </div>
               </Col>
             </Row>
@@ -959,50 +1090,90 @@ class OverDueStockReport extends React.Component {
           </ModalHeader>
           <ModalBody
             className={`${this.state.ShowBill ? "p-1" : "modalbodyhead"}`}>
-            {this.state.ViewOneUserView ? (
+            {this.state.ShowBill ? (
               <>
-                {this.state.ShowBill ? (
-                  <>
-                    <StockTrxInvoice ViewOneData={this.state.ViewOneData} />
-                  </>
-                ) : (
+                <StockTrxInvoice ViewOneData={this.state.ViewOneData} />
+              </>
+            ) : (
+              <>
+                {this.state.ViewOneUserView ? (
                   <>
                     <Row>
                       <Col>
-                        <Label>WareHouse Name :</Label>
-                        <div>
-                          <Badge color="primary" className="">
-                            <strong>
-                              {this.state.ViewOneData &&
-                                this.state.ViewOneData?.firstName}
-                            </strong>
-                          </Badge>
-                        </div>
+                        <Label>Product Name:</Label>
+                        <h5 className="">
+                          {this.state.ViewOneData &&
+                            this.state.ViewOneData?.product_name?.Product_Title}
+                        </h5>
                       </Col>
-
-                      {this.state.ViewOneData?.status == "closing" ? (
-                        <>
-                          <Col className="">
-                            <Label>status:</Label>
-                            <div>
-                              <Badge color="primary">
-                                {this.state.ViewOneData?.status}
-                              </Badge>
-                            </div>
-                          </Col>
-                        </>
-                      ) : (
-                        <>
-                          <Col className="">
-                            <Label>status:</Label>
-                            <div>
-                              <Badge color="primary">
-                                {this.state.ViewOneData?.status}
-                              </Badge>
-                            </div>
-                          </Col>
-                        </>
-                      )}
+                      {/* <Col>
+                        <Label>Stock trx date :</Label>
+                        <h5>
+                          {this.state.ViewOneData &&
+                            this.state.ViewOneData?.stockTransferDate}
+                        </h5>
+                      </Col> */}
+                      <Col>
+                        <Label>Grand Total :</Label>
+                        <h5>
+                          <strong>
+                            {(
+                              this.state.ViewOneData &&
+                              this.state.Gst &&
+                              this.state.Gst
+                            ).toFixed(2)}
+                          </strong>
+                          Rs/-
+                        </h5>
+                      </Col>
+                      {/* <Col>
+                        <Label>
+                          GST{" "}
+                          {this.state.ViewOneData &&
+                            this.state.ViewOneData?.gstApplied}
+                          % :
+                        </Label>
+                        <div className="d-flex justify-content-center">
+                          <h5>
+                            <strong>
+                              {this.state.Gst &&
+                                (Number(this.state.Gst) *
+                                  Number(this.state.ViewOneData?.gstApplied)) /
+                                  100}
+                            </strong>
+                          </h5>
+                        </div>
+                      </Col> */}
+                      {/* <Col>
+                        <Label>Miscellaneous Expenses :</Label>
+                        <h5>
+                          <strong>
+                            {this.state.ViewOneData &&
+                              this.state.ViewOneData?.miscellaneousExpennses}
+                          </strong>
+                          Rs/-
+                        </h5>
+                      </Col> */}
+                      {/* <Col>
+                        <Label>Other Charges :</Label>
+                        <h5>
+                          <strong>
+                            {this.state.ViewOneData &&
+                              this.state.ViewOneData?.otherCharges}
+                          </strong>
+                          Rs/-
+                        </h5>
+                      </Col> */}
+                      {/* <Col>
+                        <Label>Discount :</Label>
+                        <h5>
+                          <strong>
+                            {this.state.ViewOneData &&
+                              this.state.ViewOneData?.discount}
+                          </strong>
+                          Rs/-
+                        </h5>
+                      </Col> */}
 
                       {/* <Col>
                         <Label>Download Invoice :</Label>
@@ -1010,6 +1181,7 @@ class OverDueStockReport extends React.Component {
                           <FaDownload
                             onClick={this.handleStockTrxInvoiceShow}
                             color="#00c0e"
+                            fill="#00c0e"
                             style={{ cursor: "pointer" }}
                             size={20}
                           />
@@ -1019,7 +1191,7 @@ class OverDueStockReport extends React.Component {
                     <Row className="p-2">
                       <Col>
                         <div className="d-flex justify-content-center">
-                          <h4>Product Details</h4>
+                          <h4>Return Material List</h4>
                         </div>
                       </Col>
                     </Row>
@@ -1031,43 +1203,39 @@ class OverDueStockReport extends React.Component {
                               <th>#</th>
                               <th>Product Name</th>
                               <th>Price</th>
-                              <th>Size</th>
                               <th>Unit</th>
+                              {/* <th>HSN CODE</th> */}
+                              {/* <th>GST</th> */}
                               <th>Quantity</th>
                               <th>Total</th>
                             </tr>
                           </thead>
                           <tbody>
-                            {this.state.ViewOneData?.productItems &&
-                              this.state.ViewOneData?.productItems?.map(
-                                (ele, i) => (
-                                  <>
-                                    <tr>
-                                      <th scope="row">{i + 1}</th>
-                                      <td>{ele?.productId?.Product_Title}</td>
-                                      <td>{ele?.price}</td>
-                                      <td>{ele?.Size}</td>
-                                      <td>{ele?.unitType}</td>
-                                      <td>{ele?.transferQty}</td>
-                                      <td>
-                                        {ele?.price *
-                                          ele?.Size *
-                                          ele?.transferQty}
-                                      </td>
-                                    </tr>
-                                  </>
-                                )
+                            {this.state.ViewOneData?.returnItems &&
+                              this.state.ViewOneData?.returnItems?.map(
+                                (ele, i) => {
+                                  return (
+                                    <>
+                                      <tr>
+                                        <th scope="row">{i + 1}</th>
+                                        <td>{ele?.productId?.Product_Title}</td>
+                                        <td>{ele?.price}</td>
+                                        <td>{ele?.unitType}</td>
+                                        <td>{ele?.qty}</td>
+                                        <td>
+                                          {(ele?.price * ele?.qty).toFixed(2)}
+                                        </td>
+                                      </tr>
+                                    </>
+                                  );
+                                }
                               )}
                           </tbody>
                         </Table>
                       </Col>
                     </Row>
                   </>
-                )}
-              </>
-            ) : (
-              <>
-                <UpdateStockTrx ViewOne={this.state.ViewOneData} />
+                ) : null}
               </>
             )}
           </ModalBody>
@@ -1076,4 +1244,4 @@ class OverDueStockReport extends React.Component {
     );
   }
 }
-export default OverDueStockReport;
+export default ReturnProduct;

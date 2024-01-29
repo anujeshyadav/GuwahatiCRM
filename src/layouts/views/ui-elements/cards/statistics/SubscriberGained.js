@@ -9,12 +9,12 @@ class SubscriberGained extends React.Component {
       <StatisticsCard
         icon={<Users className="primary" size={22} />}
         stat="92.6k"
-        statTitle="Subscribers Gained"
+        statTitle="Ledger"
         options={subscribersGained}
         series={subscribersGainedSeries}
         type="area"
       />
-    )
+    );
   }
 }
 export default SubscriberGained

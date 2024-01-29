@@ -201,7 +201,7 @@ class Receipt extends React.Component {
                       color="red"
                       onClick={() => this.runthisfunction(params?.data?._id)}
                       // onClick={() =>  this.props.history.push({
-                      //     pathname: `/app/AJGroup/order/placeOrderReturn/${params.data?._id}`,
+                      //     pathname: `/app/ajgroup/order/CreateReceipt/${params.data?._id}`,
                       //     state: params.data,
                       //   })
                       // }
@@ -233,9 +233,12 @@ class Receipt extends React.Component {
                           className="mr-50"
                           size="25px"
                           color="green"
-                          // onClick={() => {
-
-                          // }}
+                          onClick={() =>
+                            this.props.history.push({
+                              pathname: `/app/ajgroup/order/CreateReceipt/${params.data?._id}`,
+                              state: params.data,
+                            })
+                          }
                         />
                       )}
                     />

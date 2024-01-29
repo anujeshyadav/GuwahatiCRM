@@ -107,7 +107,7 @@ class Itemproduct extends React.Component {
             return (
               <div className="actions cursor-pointer">
                 {this.state.InsiderPermissions &&
-                  this.state.InsiderPermissions?.Edit && (
+                  this.state.InsiderPermissions?.View && (
                     <Eye
                       className="mr-50"
                       size="25px"
@@ -133,7 +133,7 @@ class Itemproduct extends React.Component {
                     />
                   )}
                 {this.state.InsiderPermissions &&
-                  this.state.InsiderPermissions?.Edit && (
+                  this.state.InsiderPermissions?.Delete && (
                     <Trash2
                       className=""
                       size="20px"
@@ -391,8 +391,9 @@ class Itemproduct extends React.Component {
   async componentDidMount() {
     const userId = JSON.parse(localStorage.getItem("userData"));
     const UserInformation = this.context?.UserInformatio;
-    const InsidePermissions = CheckPermission("item");
+    const InsidePermissions = CheckPermission("Items");
     // console.log(InsidePermissions);
+    
     this.setState({ InsiderPermissions: InsidePermissions });
     let url = `${Get_Producton_ProcessList}/${userId?._id}/`;
 

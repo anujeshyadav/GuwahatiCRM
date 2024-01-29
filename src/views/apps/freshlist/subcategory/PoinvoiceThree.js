@@ -11,6 +11,7 @@ import {
 
 import logo from "../../../../assets/img/logo/logowithoutback.png";
 import signature from "../../../../assets/img/logo/signature.png";
+import { Image_URL } from "../../../../ApiEndPoint/Api";
 
 const styles = StyleSheet.create({
   page: {
@@ -82,7 +83,6 @@ const PoinvoiceThree = ({
   // console.log(CurrentWords);
   // console.log(AllCharges);
   // console.log("poinvoicethree");
-
   // const { items, customerName, date, total, place_supply } = invoiceData;
   const curentDate = new Date();
   console.log(curentDate.toTimeString().split(" ")[0]);
@@ -114,7 +114,7 @@ const PoinvoiceThree = ({
                       <>
                         <Image
                           style={{ width: "230px", padding: "25px 10px" }}
-                          src={`http://64.227.162.41:5000/Images/${BilData?.CompanyDetails?.logo}`}></Image>
+                          src={`${Image_URL}/Images/${BilData?.CompanyDetails?.logo}`}></Image>
                       </>
                     ) : (
                       <>
@@ -196,7 +196,7 @@ const PoinvoiceThree = ({
                       <>
                         <Image
                           style={{ width: "230px", padding: "25px 10px" }}
-                          src={`http://64.227.162.41:5000/Images/${BilData?.CompanyDetails?.logo}`}></Image>
+                          src={`${Image_URL}/Images/${BilData?.CompanyDetails?.logo}`}></Image>
                       </>
                     ) : (
                       <>
@@ -1311,7 +1311,7 @@ const PoinvoiceThree = ({
                     <>
                       <Image
                         style={{ height: "50px", marginTop: "15px" }}
-                        src={`http://64.227.162.41:5000/Images/${BilData?.CompanyDetails?.signature}`}
+                        src={`${Image_URL}/Images/${BilData?.CompanyDetails?.signature}`}
                         width="200px"
                         height="200px"></Image>
                     </>

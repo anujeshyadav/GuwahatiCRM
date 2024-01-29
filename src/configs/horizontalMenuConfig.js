@@ -537,6 +537,14 @@ const horizontalMenuConfig = [
             navLink: "/app/SoftNumen/ticket/GSTR3B",
           },
           {
+            id: "GSTR 2B",
+            title: "GSTR 2B",
+            type: "item",
+            icon: <GiCash size={22} />,
+            permissions: ["admin", "editor"],
+            navLink: "/app/SoftNumen/ticket/GSTR2B",
+          },
+          {
             id: "GSTR 9",
             title: "GSTR 9",
             type: "item",
@@ -733,7 +741,7 @@ const horizontalMenuConfig = [
         type: "item",
         icon: <BsFillCartXFill size={22} />,
         permissions: ["admin", "editor"],
-        navLink: "/app/softNumen/warranty/ClosingStock",
+        navLink: "/app/ajgroup/stock/ClosingStockList",
       },
       {
         id: "Opening Stock",
@@ -749,7 +757,8 @@ const horizontalMenuConfig = [
         type: "item",
         icon: <BsMinecart size={22} />,
         permissions: ["admin", "editor"],
-        navLink: "/app/softNumen/warranty/LowStock",
+        navLink: "/app/Ajgroup/stock/LowStockList",
+        // navLink: "/app/softNumen/warranty/LowStock",
       },
       {
         id: "Damaged Stock",
@@ -765,7 +774,8 @@ const horizontalMenuConfig = [
         type: "item",
         icon: <AiOutlineStock size={22} />,
         permissions: ["admin", "editor"],
-        navLink: "/app/Ajgroup/Stock/OverDueStockReport",
+        navLink: "/app/Ajgroup/Stock/AllOverdueStockList",
+        // navLink: "/app/Ajgroup/Stock/OverDueStockReport",
       },
 
       {
@@ -930,8 +940,8 @@ const horizontalMenuConfig = [
         icon: <FaShoppingCart size={22} />,
         children: [
           {
-            id: "item",
-            title: "Item",
+            id: "items",
+            title: "Items",
             type: "item",
             icon: <FaList size={12} />,
             permissions: ["admin", "editor"],
@@ -956,13 +966,14 @@ const horizontalMenuConfig = [
             //   "/views/apps/freshlist/Production/wastagematerialproduction",
           },
           {
-            id: "wastagestockreturn",
-            title: "Wastage Stock Return",
+            id: "Material Return",
+            title: "Material Return",
             type: "item",
             icon: <FaList size={12} />,
             permissions: ["admin", "editor"],
-            navLink:
-              "/views/apps/freshlist/Production/wastagestockreturnproduction",
+            navLink: "/views/apps/AjGroup/Production/ReturnProductionProduct",
+            // navLink:
+            //   "/views/apps/freshlist/Production/wastagestockreturnproduction",
           },
           {
             id: "pricecalculater",

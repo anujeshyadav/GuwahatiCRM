@@ -153,6 +153,7 @@ class AccounSearch extends React.Component {
             filter: true,
             sortable: true,
             headerClass: "bold-header",
+            editable: true,
           };
         });
 
@@ -914,7 +915,11 @@ class AccounSearch extends React.Component {
                                 {(context) => (
                                   <AgGridReact
                                     id="myAgGrid"
-                                    gridOptions={this.gridOptions}
+                                    gridOptions={{
+                                      enableRangeSelection: true, // Allows copying ranges of cells
+                                      enableClipboard: true, // Enables clipboard functionality
+                                    }}
+                                    // gridOptions={this.gridOptions}
                                     rowSelection="multiple"
                                     defaultColDef={defaultColDef}
                                     columnDefs={columnDefs}

@@ -29,8 +29,10 @@ import logo from "../../../assets/img/logo/mainLogo1.png";
 import { Route } from "react-router-dom";
 import HorizontalMenu from "./Myhorizontalmenu";
 import UserContext from "../../../context/Context";
+import { Image_URL } from "../../../ApiEndPoint/Api";
 // import HorizontalMenu from "../../../../src/layouts/layouts/components/menu/horizontal-menu/HorizontalMenu";
-const PhoneNo = props => {
+const PhoneNo = (props) => {
+  Image_URL;
   console.log(props);
   let phone_no = "";
   if (props.userdata !== undefined) {
@@ -49,7 +51,7 @@ const PhoneNo = props => {
 
   return phone_no;
 };
-const ThemeNavbar = props => {
+const ThemeNavbar = (props) => {
   const [screenSize, setScreenSize] = useState();
   const [screenheight, setScreenheight] = useState(false);
   const [myCustomColor, SetmyCustomColor] = useState("");
@@ -108,16 +110,14 @@ const ThemeNavbar = props => {
             "fixed-top": props.navbarType === "sticky" || props.horizontal,
             scrolling: props.horizontal && props.scrolling,
           }
-        )}
-      >
+        )}>
         <div className="navbar-wrapper">
           {/* <HorizontalMenu /> */}
 
           <div className="navbar-container content">
             <div
               className="navbar-collapse d-flex justify-content-between align-items-center"
-              id="navbar-mobile"
-            >
+              id="navbar-mobile">
               {" "}
               <Route
                 render={({ history }) => (
@@ -128,13 +128,12 @@ const ThemeNavbar = props => {
                       width: `${window.innerWidth <= 768 ? "25%" : "8%"}`,
                     }}
                     // style={{ cursor: "pointer", width: "8%" }}
-                    onClick={() => history.push("/dashboard")}
-                  >
+                    onClick={() => history.push("/dashboard")}>
                     {contextValue?.CompanyDetails?.logo &&
                     contextValue?.CompanyDetails?.logo ? (
                       <>
                         <img
-                          src={`http://64.227.162.41:5000/Images/${contextValue?.CompanyDetails?.logo}`}
+                          src={` ${Image_URL}/Images/${contextValue?.CompanyDetails?.logo}`}
                           width="100%"
                           height={35}
                           alt="logo"
@@ -226,16 +225,14 @@ const ThemeNavbar = props => {
             "fixed-top": props.navbarType === "sticky" || props.horizontal,
             scrolling: props.horizontal && props.scrolling,
           }
-        )}
-      >
+        )}>
         <div className="navbar-wrapper">
           {/* <HorizontalMenu /> */}
 
           <div className="navbar-container content">
             <div
               className="navbar-collapse d-flex justify-content-between align-items-center"
-              id="navbar-mobile"
-            >
+              id="navbar-mobile">
               {" "}
               <Route
                 render={({ history }) => (
@@ -246,13 +243,12 @@ const ThemeNavbar = props => {
                       width: `${window.innerWidth <= 768 ? "25%" : "8%"}`,
                     }}
                     // style={{ cursor: "pointer", width: "8%" }}
-                    onClick={() => history.push("/dashboard")}
-                  >
+                    onClick={() => history.push("/dashboard")}>
                     {contextValue?.CompanyDetails?.logo &&
                     contextValue?.CompanyDetails?.logo ? (
                       <>
                         <img
-                          src={`http://64.227.162.41:5000/Images/${contextValue?.CompanyDetails?.logo}`}
+                          src={`${Image_URL}/Images/${contextValue?.CompanyDetails?.logo}`}
                           width="100%"
                           height={35}
                           alt="logo"
