@@ -1,5 +1,6 @@
 // Guwahati open api EndPoints
 export const Super_Admin_List = "/master/all-super-admin-list";
+export const Image_URL = "http://174.138.68.198:5000";
 export const Get_Role = "/role/get-role";
 export const Update_Role_Globally = "/role/update-permission";
 export const Assign_Role_To_SuperAdmin = "/role/assign-role";
@@ -41,9 +42,7 @@ export const Update_Role = "/role/update-role/";
 export const Create_warehouse_xmlView = "/warehouse/get-xml";
 export const Create_warehouse_save = "/warehouse/save-warehouse";
 export const View_Wareahouse_id = "/user/view-user/";
-// export const View_Wareahouse_id = "/warehouse/view-warehouse-by-id/";
 export const Create_Warehouse_List = "/warehouse/view-warehouse/";
-// export const Create_Warehouse_List = "/warehouse/delete-warehouse/";
 export const Create_Party_XML = "/party/get-xml";
 export const Create_Party_save = "/party/save-party";
 export const Create_Sales_personXMlView = "/sales-person/get-xml";
@@ -88,10 +87,14 @@ export const create_row_material = "/raw-material/creat-rawMaterial";
 // productionProcess
 
 export const Save_Producton_Process = "/production/save-production";
+export const Save_Producton_Return = "/production/updated-return-production/";
+export const View_Production_Return =
+  "/production-return/view-production-return/";
 export const Get_Producton_ProcessList = "/production/view-production";
 export const ViewOne_Production = "/production/view-production-by-id/";
 export const UpdateOne_Production = "/production/update-production-items/";
 export const WareHouse_Closing_Stock = "/stock-updation/view-closing-stock/";
+export const WareHouse_Opening_Stock = "/stock-updation/view-closing-stock/";
 export const WareHouse_OverDue_Stock = "/stock-updation/view-over-due-stock";
 export const WareHouse_Current_Stock = "/product/view-current-stock/";
 
@@ -185,14 +188,12 @@ export const View_Receipt_By_Id = "/receipt/view-receipt-by-id/";
 export const Delete_Receipt_By_Id = "/receipt/delete-receipt/";
 export const Update_Receipt_By_Id = "/receipt/update-receipt/";
 
-
 // end receipt
 // Guwahati close
 
-
 // ledger
 
-export const View_Ledger_by_id = "/ledger/view-ledger/";
+export const View_Ledger_by_id = "/ledger/view-ledger-party/";
 
 // end ledger
 

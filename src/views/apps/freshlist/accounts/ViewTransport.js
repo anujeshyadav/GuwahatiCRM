@@ -38,7 +38,10 @@ import { CloudLightning } from "react-feather";
 import { FaPlus } from "react-icons/fa";
 import Multiselect from "multiselect-react-dropdown";
 
-import { Create_transporter_xmlView } from "../../../../ApiEndPoint/Api";
+import {
+  Create_transporter_xmlView,
+  Image_URL,
+} from "../../../../ApiEndPoint/Api";
 
 const CreateCustomer = ({ ViewOneData }) => {
   const [CreatAccountView, setCreatAccountView] = useState([]);
@@ -780,7 +783,7 @@ const CreateCustomer = ({ ViewOneData }) => {
                             style={{ borderRadius: "12px" }}
                             width={220}
                             height={280}
-                            src={`http://64.227.162.41:5000/Images/${ele}`}
+                            src={`${Image_URL}/Images/${ele}`}
                             alt="Img"
                           />
                         </Col>
@@ -797,7 +800,7 @@ const CreateCustomer = ({ ViewOneData }) => {
                             style={{ borderRadius: "12px" }}
                             width={220}
                             height={280}
-                            src={`http://64.227.162.41:5000/Images/${ele}`}
+                            src={`${Image_URL}/Images/${ele}`}
                             alt="Img"
                           />
                         </Col>

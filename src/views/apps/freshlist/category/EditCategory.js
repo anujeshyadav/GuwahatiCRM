@@ -303,6 +303,7 @@ import axiosConfig from "../../../../axiosConfig";
 import { Route } from "react-router-dom";
 import swal from "sweetalert";
 import { CreateCategory, UpdateCategory, View_Catby_id } from "../../../../ApiEndPoint/ApiCalling";
+import { Image_URL } from "../../../../ApiEndPoint/Api";
 
 export class AddCategory extends Component {
   constructor(props) {
@@ -351,29 +352,28 @@ export class AddCategory extends Component {
   changeHandler = (e) => {
     this.setState({ [e.target.name]: e.target.value });
   };
-  componentDidMount(){
-    let {id}=this.props.match.params
-  
-    View_Catby_id(id).then((res)=>{
-    console.log(res?.Category)
-    let response=res?.Category;
-    console.log(response?.image)
-    this.setState(
-    {
-    category_name:response?.name,
-    feature:response?.description,
-    status:response?.status,
-    file:response?.image
+  componentDidMount() {
+    let { id } = this.props.match.params;
 
-  })
-  
-  }).catch((err)=>{
-      console.log(err)
-    })
+    View_Catby_id(id)
+      .then((res) => {
+        console.log(res?.Category);
+        let response = res?.Category;
+        console.log(response?.image);
+        this.setState({
+          category_name: response?.name,
+          feature: response?.description,
+          status: response?.status,
+          file: response?.image,
+        });
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   }
   submitHandler = (e) => {
     e.preventDefault();
-    let {id}=this.props.match.params
+    let { id } = this.props.match.params;
     let pageparmission = JSON.parse(localStorage.getItem("userData"));
     const data = new FormData();
     // data.append("user_id", pageparmission?.Userinfo?.id);
@@ -383,16 +383,16 @@ export class AddCategory extends Component {
     if (this.state.selectedFile1) {
       data.append("file", this.state.selectedFile1);
     }
-    
-    UpdateCategory(id,data)
-    .then((res) => {
-        debugger
+
+    UpdateCategory(id, data)
+      .then((res) => {
+        debugger;
         this.props.history.push("/app/freshlist/category/categoryList");
         swal("Success!", "Category Updated", "Success");
       })
       .catch((err) => {
         console.log(err);
-        swal("Something went Wrong")
+        swal("Something went Wrong");
       });
   };
   render() {
@@ -412,8 +412,7 @@ export class AddCategory extends Component {
                     className=" btn btn-danger float-right"
                     onClick={() =>
                       history.push("/app/freshlist/category/categoryList")
-                    }
-                  >
+                    }>
                     Back
                   </Button>
                 )}
@@ -490,23 +489,24 @@ export class AddCategory extends Component {
                 </Col>
 
                 <Col lg="4" md="4" className="mb-2">
-                 {this.state.file &&
-                  <img 
-                     style={{borderRadius:"8px"}}
-                   src={`http://64.227.162.41:5000/Images/${this.state.file}`} alt=""   height="100"
-                  width="100" />
-                 }
-
+                  {this.state.file && (
+                    <img
+                      style={{ borderRadius: "8px" }}
+                      src={`${Image_URL}/Images/${this.state.file}`}
+                      alt=""
+                      height="100"
+                      width="100"
+                    />
+                  )}
                 </Col>
 
                 <Col lg="12" md="12" sm="12" className="mb-2 mt-1">
                   <Label className="mb-0">Status</Label>
                   <div
                     className="form-label-group"
-                    onChange={this.changeHandler1}
-                  >
+                    onChange={this.changeHandler1}>
                     <input
-                    checked={this.state.status=="Active"}
+                      checked={this.state.status == "Active"}
                       style={{ marginRight: "3px" }}
                       type="radio"
                       name="status"
@@ -515,7 +515,7 @@ export class AddCategory extends Component {
                     <span style={{ marginRight: "20px" }}>Active</span>
 
                     <input
-                    checked={this.state.status=="Deactive"}
+                      checked={this.state.status == "Deactive"}
                       style={{ marginRight: "3px" }}
                       type="radio"
                       name="status"

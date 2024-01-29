@@ -458,7 +458,7 @@ class PurchaseCompleted extends React.Component {
     this.setState({ Loading: true });
     await _Get(View_Receipt, db)
       .then((res) => {
-        debugger;
+        
         let Payment = res?.Receipt?.filter((ele) => ele?.type == "Payment");
         this.setState({ Loading: false });
         if (Payment?.length) {
@@ -719,7 +719,7 @@ class PurchaseCompleted extends React.Component {
 
   HandleSetVisibleField = (e) => {
     e.preventDefault();
-    debugger;
+    
     this.gridApi.setColumnDefs(this.state.SelectedcolumnDefs);
     this.setState({ columnDefs: this.state.SelectedcolumnDefs });
     this.setState({ SelectedcolumnDefs: this.state.SelectedcolumnDefs });

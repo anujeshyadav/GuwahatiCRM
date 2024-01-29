@@ -1,5 +1,8 @@
 import React, { useRef } from "react";
 import { ImDownload } from "react-icons/im";
+
+import { Route } from "react-router-dom";
+import xmlJs from "xml-js";
 import {
   Card,
   CardBody,
@@ -39,16 +42,22 @@ import {
   FaArrowAltCircleRight,
   FaDownload,
   FaFilter,
+  FaPencilAlt,
   FaPlus,
 } from "react-icons/fa";
 import moment from "moment-timezone";
 import swal from "sweetalert";
 import {
+  CreateAccountView,
   DeleteAccount,
   Stockupdate,
+  ViewFactoryStock,
+  ViewOneWarehouseStock,
+  WarehouseOutwardStocklist,
   _Get,
 } from "../../../../../ApiEndPoint/ApiCalling";
 import {
+  BsCloudDownloadFill,
   BsFillArrowDownSquareFill,
   BsFillArrowUpSquareFill,
 } from "react-icons/bs";
@@ -58,13 +67,14 @@ import UpdateStockTrx from "../../accounts/UpdateStockTrx";
 import StockTrxInvoice from "../../subcategory/OutWardStockPO";
 import { CheckPermission } from "../../house/CheckPermission";
 import {
+  Create_Account_List,
   WareHouse_Closing_Stock,
-  WareHouse_OverDue_Stock,
+  WareHouse_Opening_Stock,
 } from "../../../../../ApiEndPoint/Api";
 
 const SelectedColums = [];
 
-class OverDueStockReport extends React.Component {
+class ClosingStockList extends React.Component {
   static contextType = UserContext;
   constructor(props) {
     super(props);
@@ -74,6 +84,7 @@ class OverDueStockReport extends React.Component {
       isOpen: false,
       ShowBill: false,
       InsiderPermissions: {},
+
       Arrindex: "",
       rowData: [],
       setMySelectedarr: [],
@@ -83,128 +94,180 @@ class OverDueStockReport extends React.Component {
       currenPageSize: "",
       getPageSize: "",
 
-      columnDefs: [
-        {
-          headerName: "S.No",
-          valueGetter: "node.rowIndex + 1",
-          field: "node.rowIndex + 1",
-          width: 150,
-          filter: true,
-        },
-        // {
-        //   headerName: "Actions",
-        //   field: "sortorder",
-        //   field: "transactions",
-        //   width: 150,
-        //   cellRendererFramework: (params) => {
-        //     return (
-        //       <div className="actions cursor-pointer">
-        //         {this.state.InsiderPermissions &&
-        //           this.state.InsiderPermissions?.View && (
-        //             <Eye
-        //               className="mr-50"
-        //               size="25px"
-        //               color="green"
-        //               // onClick={() =>
-        //               //   history.push(
-        //               //     `/app/freshlist/customer/viewCustomer/${params.data?._id}`
-        //               //   )
-        //               // }
-        //               onClick={(e) => {
-        //                 this.togglemodal();
-        //                 this.setState({ ViewOneData: params?.data });
-        //                 this.setState({ ViewOneUserView: true });
-        //                 this.setState({ EditOneUserView: false });
+      // columnDefs: [
+      //   {
+      //     headerName: "S.No",
+      //     valueGetter: "node.rowIndex + 1",
+      //     field: "node.rowIndex + 1",
+      //     width: 150,
+      //     filter: true,
+      //   },
+      //   {
+      //     headerName: "Actions",
+      //     field: "sortorder",
+      //     field: "transactions",
+      //     width: 150,
+      //     cellRendererFramework: (params) => {
+      //       return (
+      //         <div className="actions cursor-pointer">
+      //           {this.state.InsiderPermissions &&
+      //             this.state.InsiderPermissions?.View && (
+      //               <Eye
+      //                 className="mr-50"
+      //                 size="25px"
+      //                 color="green"
+      //                 // onClick={() =>
+      //                 //   history.push(
+      //                 //     `/app/freshlist/customer/viewCustomer/${params.data?._id}`
+      //                 //   )
+      //                 // }
+      //                 onClick={(e) => {
+      //                   this.togglemodal();
+      //                   this.setState({ ViewOneData: params?.data });
+      //                   this.setState({ ViewOneUserView: true });
+      //                   this.setState({ EditOneUserView: false });
 
-        //                 // console.log(params?.data);
-        //               }}
-        //             />
-        //           )}
+      //                   // console.log(params?.data);
+      //                 }}
+      //               />
+      //             )}
 
-        //         {/* {this.state.InsiderPermissions &&
-        //           this.state.InsiderPermissions?.Delete && (
-        //             <Trash2
-        //               className="mr-50"
-        //               size="25px"
-        //               color="red"
-        //               onClick={() => {
-        //                 let selectedData = this.gridApi.getSelectedRows();
-        //                 this.runthisfunction(params.data._id);
-        //                 this.gridApi.updateRowData({ remove: selectedData });
-        //               }}
-        //             />
-        //           )} */}
-        //       </div>
-        //     );
-        //   },
-        // },
-        {
-          headerName: "Status",
-          field: "status",
-          filter: true,
-          width: 150,
-          cellRendererFramework: (params) => {
-            return params.data?.status === "Active" ? (
-              <div className="badge badge-pill badge-success">
-                {params.data?.status}
-              </div>
-            ) : params.data?.status === "InProcess" ? (
-              <div className="badge badge-pill badge-warning">
-                {params.data?.status}
-              </div>
-            ) : params.data?.status === "Hold" ? (
-              <div className="badge badge-pill badge-danger">
-                {params.data?.status}
-              </div>
-            ) : params.data?.status === "opening" ? (
-              <div className="badge badge-pill badge-warning">
-                {params.data?.status}
-              </div>
-            ) : (
-              <>{params?.data?.status}</>
-            );
-          },
-        },
-        {
-          headerName: "Product_MRP",
-          field: "Product_MRP",
-          filter: true,
-          width: 200,
-          cellRendererFramework: (params) => {
-            return (
-              <div>
-                <span>{params.data?.Product_MRP}</span>
-              </div>
-            );
-          },
-        },
-        {
-          headerName: "Product_Title",
-          field: "Product_Title",
-          filter: true,
-          width: 200,
-          cellRendererFramework: (params) => {
-            return (
-              <div>
-                <span>{params.data?.Product_Title}</span>
-              </div>
-            );
-          },
-        },
-        {
-          headerName: "HSN_Code",
-          field: "HSN_Code",
-          filter: true,
-          width: 200,
-          cellRendererFramework: (params) => {
-            return (
-              <div>
-                <span>{params.data?.HSN_Code} Products</span>
-              </div>
-            );
-          },
-        },
-      ],
+      //           {/* {this.state.InsiderPermissions &&
+      //             this.state.InsiderPermissions?.Delete && (
+      //               <Trash2
+      //                 className="mr-50"
+      //                 size="25px"
+      //                 color="red"
+      //                 onClick={() => {
+      //                   let selectedData = this.gridApi.getSelectedRows();
+      //                   this.runthisfunction(params.data._id);
+      //                   this.gridApi.updateRowData({ remove: selectedData });
+      //                 }}
+      //               />
+      //             )} */}
+      //         </div>
+      //       );
+      //     },
+      //   },
+      //   {
+      //     headerName: "Status",
+      //     field: "status",
+      //     filter: true,
+      //     width: 150,
+      //     cellRendererFramework: (params) => {
+      //       return params.data?.status === "closing" ? (
+      //         <div className="badge badge-pill badge-success">
+      //           {params.data?.status}
+      //         </div>
+      //       ) : params.data?.status === "InProcess" ? (
+      //         <div className="badge badge-pill badge-warning">
+      //           {params.data?.status}
+      //         </div>
+      //       ) : params.data?.status === "Hold" ? (
+      //         <div className="badge badge-pill badge-danger">
+      //           {params.data?.status}
+      //         </div>
+      //       ) : params.data?.status === "opening" ? (
+      //         <div className="badge badge-pill badge-warning">
+      //           {params.data?.status}
+      //         </div>
+      //       ) : null;
+      //     },
+      //   },
+      //   {
+      //     headerName: "Date",
+      //     field: "Openingdate",
+      //     filter: true,
+      //     width: 200,
+      //     cellRendererFramework: (params) => {
+      //       return (
+      //         <div>
+      //           <span>{params.data?.Openingdate?.split("T")[0]}</span>
+      //         </div>
+      //       );
+      //     },
+      //   },
+      //   {
+      //     headerName: "email",
+      //     field: "email",
+      //     filter: true,
+      //     width: 200,
+      //     cellRendererFramework: (params) => {
+      //       return (
+      //         <div>
+      //           <span>{params.data?.email} Products</span>
+      //         </div>
+      //       );
+      //     },
+      //   },
+      //   {
+      //     headerName: "Warehouse Name",
+      //     field: "firstName",
+      //     filter: true,
+      //     width: 200,
+      //     cellRendererFramework: (params) => {
+      //       return <div>{<span>{params.data?.firstName}</span>}</div>;
+      //     },
+      //   },
+      //   {
+      //     headerName: "Mobile Number",
+      //     field: "mobileNumber",
+      //     filter: true,
+      //     width: 200,
+      //     cellRendererFramework: (params) => {
+      //       return <div>{<span>{params.data?.mobileNumber}</span>}</div>;
+      //     },
+      //   },
+      //   {
+      //     headerName: "City",
+      //     field: "City",
+      //     filter: true,
+      //     width: 200,
+      //     cellRendererFramework: (params) => {
+      //       return <div>{<span>{params.data?.City}</span>}</div>;
+      //     },
+      //   },
+      //   {
+      //     headerName: "State",
+      //     field: "State",
+      //     filter: true,
+      //     width: 200,
+      //     cellRendererFramework: (params) => {
+      //       return <div>{<span>{params.data?.State}</span>}</div>;
+      //     },
+      //   },
+
+      //   {
+      //     headerName: "Created date",
+      //     field: "Closingdate",
+      //     filter: true,
+      //     sortable: true,
+      //     cellRendererFramework: (params) => {
+      //       return (
+      //         <>
+      //           <div className="actions cursor-pointer">
+      //             <span>{params?.data?.Closingdate?.split("T")[0]}</span>
+      //           </div>
+      //         </>
+      //       );
+      //     },
+      //   },
+      //   {
+      //     headerName: "updatedAt",
+      //     field: "updatedAt",
+      //     filter: true,
+      //     sortable: true,
+      //     cellRendererFramework: (params) => {
+      //       return (
+      //         <>
+      //           <div className="actions cursor-pointer">
+      //             <span>{params?.data?.updatedAt?.split("T")[0]}</span>
+      //           </div>
+      //         </>
+      //       );
+      //     },
+      //   },
+      // ],
       AllcolumnDefs: [],
       SelectedcolumnDefs: [],
       defaultColDef: {
@@ -222,7 +285,6 @@ class OverDueStockReport extends React.Component {
     };
     let id = this.state.ViewOneData?._id;
 
-    // console.log(this.state.ViewOneData?._id);
     swal("Warning", "Sure You Want to Update Status", {
       buttons: {
         cancel: "No",
@@ -274,33 +336,258 @@ class OverDueStockReport extends React.Component {
 
   async componentDidMount() {
     const UserInformation = this.context?.UserInformatio;
-    const InsidePermissions = CheckPermission("OverDue Stock");
+    const InsidePermissions = CheckPermission("Closing Stock");
     this.setState({ InsiderPermissions: InsidePermissions });
     let pageparmission = JSON.parse(localStorage.getItem("userData"));
-    let URl = `${WareHouse_OverDue_Stock}/${pageparmission?._id}/`;
+
+    let URl = `${Create_Account_List}${pageparmission?._id}/`;
     await _Get(URl, pageparmission?.database)
       .then((res) => {
-        // let rowData = res?.Warehouse?.filter((ele) => ele?.status == "opening");
+        let incharge = res?.adminDetails?.filter(
+          (ele) => ele?.rolename?.roleName == "WareHouse Incharge"
+        );
+        if (incharge?.length) {
+          this.setState({ rowData: incharge });
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+    await CreateAccountView()
+      .then((res) => {
+        const jsonData = xmlJs.xml2json(res.data, {
+          compact: true,
+          spaces: 2,
+        });
+        console.log(JSON.parse(jsonData)?.CreateUser);
+        const inputs = JSON.parse(jsonData)?.CreateUser?.input?.map((ele) => {
+          return {
+            headerName: ele?.label._text,
+            field: ele?.name._text,
+            filter: true,
+            sortable: true,
+            headerClass: "bold-header",
+            editable: true,
+          };
+        });
 
-        // if (rowData) {
-        this.setState({ rowData: res?.Product });
-        this.setState({ AllcolumnDefs: this.state.columnDefs });
+        let myHeadings = [...inputs];
+        let Product = [
+          {
+            headerName: "Actions",
+            field: "sortorder",
+            field: "transactions",
+            width: 190,
+            cellRendererFramework: (params) => {
+              return (
+                <div className="actions cursor-pointer">
+                  {this.state.InsiderPermissions &&
+                    this.state.InsiderPermissions?.View && (
+                      <Route
+                        render={({ history }) => (
+                          <span
+                            style={{
+                              border: "1px solid white",
+                              padding: "10px",
+                              borderRadius: "30px",
+                              backgroundColor: "#39cccc",
+                            }}>
+                            <Eye
+                              className=""
+                              size="20px"
+                              color="white"
+                              onClick={() =>
+                                history.push(
+                                  `/app/Ajgroup/stock/ClosingStock/${params?.data?._id}`
+                                )
+                              }
+                            />
+                          </span>
+                        )}
+                      />
+                    )}
+                  {/* {this.state.InsiderPermissions &&
+                    this.state.InsiderPermissions?.Edit && (
+                      <Route
+                        render={({ history }) => (
+                          <span
+                            style={{
+                              border: "1px solid white",
+                              padding: "10px",
+                              borderRadius: "30px",
+                              backgroundColor: "rgb(212, 111, 16)",
+                              marginLeft: "3px",
+                            }}>
+                            <FaPencilAlt
+                              className=""
+                              size="20px"
+                              color="white"
+                              // onClick={() => {
+                              //   this.handleChangeEdit(
+                              //     params?.data,
+                              //     "Editable"
+                              //   );
+                              // }}
+                            />
+                          </span>
+                        )}
+                      />
+                    )} */}
+                  {/* {this.state.InsiderPermissions &&
+                    this.state.InsiderPermissions?.Delete && (
+                      <Route
+                        render={() => (
+                          <span
+                            style={{
+                              border: "1px solid white",
+                              padding: "10px",
+                              borderRadius: "30px",
+                              backgroundColor: "rgb(236, 24, 9)",
+                              marginLeft: "3px",
+                            }}>
+                            <Trash2
+                              className=""
+                              size="20px"
+                              color="white"
+                              onClick={() => {
+                                this.runthisfunction(params?.data?._id);
+                              }}
+                            />
+                          </span>
+                        )}
+                      />
+                    )} */}
+                </div>
+              );
+            },
+          },
+          {
+            headerName: "Status",
+            field: "status",
+            filter: true,
+            width: 150,
+            cellRendererFramework: (params) => {
+              return params.data?.status === "Active" ? (
+                <div className="badge badge-pill badge-success">
+                  {params.data?.status}
+                </div>
+              ) : params.data?.status === "Deactive" ? (
+                <div className="badge badge-pill badge-warning">
+                  {params.data?.status}
+                </div>
+              ) : null;
+            },
+          },
 
-        let userHeading = JSON.parse(localStorage.getItem("OverDurStockList"));
+          // {
+          //   headerName: "Created by",
+          //   field: "created_by.firstName",
+          //   filter: true,
+          //   sortable: true,
+          //   cellRendererFramework: (params) => {
+          //     // console.log(params?.data);
+          //     return (
+          //       <>
+          //         <div className="actions cursor-pointer">
+          //           <span>{params?.data?.created_by?.firstName}</span>
+          //         </div>
+          //       </>
+          //     );
+          //   },
+          // },
+          // {
+          //   headerName: "Rolename",
+          //   field: "rolename.roleName",
+          //   filter: true,
+          //   sortable: true,
+          //   cellRendererFramework: (params) => {
+          //     console.log(params.data);
+          //     return (
+          //       <>
+          //         <div className="actions cursor-pointer">
+          //           <span>{params?.data?.rolename?.roleName}</span>
+          //         </div>
+          //       </>
+          //     );
+          //   },
+          // },
+          ...myHeadings,
+          // {
+          //   headerName: "Created date",
+          //   field: "createdAt",
+          //   filter: true,
+          //   sortable: true,
+          //   cellRendererFramework: (params) => {
+          //     return (
+          //       <>
+          //         <div className="actions cursor-pointer">
+          //           <span>{params?.data?.createdAt}</span>
+          //         </div>
+          //       </>
+          //     );
+          //   },
+          // },
+          {
+            headerName: "Updated date",
+            field: "updatedAt",
+            filter: true,
+            sortable: true,
+            cellRendererFramework: (params) => {
+              return (
+                <>
+                  <div className="actions cursor-pointer">
+                    <div className="actions cursor-pointer">
+                      <span>{params?.data?.updatedAt}</span>
+                    </div>
+                  </div>
+                </>
+              );
+            },
+          },
+        ];
+
+        this.setState({ AllcolumnDefs: Product });
+
+        let userHeading = JSON.parse(localStorage.getItem("ClosingStockList"));
         if (userHeading?.length) {
           this.setState({ columnDefs: userHeading });
           this.gridApi.setColumnDefs(userHeading);
           this.setState({ SelectedcolumnDefs: userHeading });
         } else {
-          this.setState({ columnDefs: this.state.columnDefs });
-          this.setState({ SelectedcolumnDefs: this.state.columnDefs });
+          this.setState({ columnDefs: Product });
+          this.setState({ SelectedcolumnDefs: Product });
         }
-        this.setState({ SelectedCols: this.state.columnDefs });
-        // }
+        this.setState({ SelectedCols: Product });
       })
       .catch((err) => {
         console.log(err);
+        swal("Error", "something went wrong try again");
       });
+    // await _Get(WareHouse_Opening_Stock, pageparmission?._id)
+    //   .then((res) => {
+    //     let rowData = res?.Warehouse?.filter((ele) => ele?.status == "opening");
+
+    //     if (rowData) {
+    //       this.setState({ rowData: rowData });
+    //       this.setState({ AllcolumnDefs: this.state.columnDefs });
+
+    //       let userHeading = JSON.parse(
+    //         localStorage.getItem("OpeningStockList")
+    //       );
+    //       if (userHeading?.length) {
+    //         this.setState({ columnDefs: userHeading });
+    //         this.gridApi.setColumnDefs(userHeading);
+    //         this.setState({ SelectedcolumnDefs: userHeading });
+    //       } else {
+    //         this.setState({ columnDefs: this.state.columnDefs });
+    //         this.setState({ SelectedcolumnDefs: this.state.columnDefs });
+    //       }
+    //       this.setState({ SelectedCols: this.state.columnDefs });
+    //     }
+    //   })
+    //   .catch((err) => {
+    //     console.log(err);
+    //   });
   }
 
   toggleDropdown = () => {
@@ -538,7 +825,7 @@ class OverDueStockReport extends React.Component {
     this.setState({ SelectedcolumnDefs: this.state.SelectedcolumnDefs });
     this.setState({ rowData: this.state.rowData });
     localStorage.setItem(
-      "OverDurStockList",
+      "ClosingStockList",
       JSON.stringify(this.state.SelectedcolumnDefs)
     );
     this.LookupviewStart();
@@ -586,7 +873,7 @@ class OverDueStockReport extends React.Component {
             <Card>
               <Row className="mt-2 ml-2 mr-2">
                 <Col>
-                  <h1 className="float-left">Overdue Stock List</h1>
+                  <h1 className="float-left">Closing Stock</h1>
                 </Col>
                 {InsiderPermissions && InsiderPermissions?.View && (
                   <Col>
@@ -654,22 +941,22 @@ class OverDueStockReport extends React.Component {
                       </div>
                     </span>
                     {/* <span>
-                    <Route
-                      render={({ history }) => (
-                        <Badge
-                          style={{ cursor: "pointer" }}
-                          className="float-right mr-1"
-                          color="primary"
-                          onClick={() =>
-                            history.push(
-                              "/app/softNumen/warehouse/WareHouseStock/:id"
-                            )
-                          }>
-                          View My WareHouse
-                        </Badge>
-                      )}
-                    />
-                  </span> */}
+                      <Route
+                        render={({ history }) => (
+                          <Badge
+                            style={{ cursor: "pointer" }}
+                            className="float-right mr-1"
+                            color="primary"
+                            onClick={() =>
+                              history.push(
+                                "/app/softNumen/warehouse/WareHouseStock"
+                              )
+                            }>
+                            View My WareHouse
+                          </Badge>
+                        )}
+                      />
+                    </span> */}
                   </Col>
                 )}
               </Row>
@@ -1076,4 +1363,4 @@ class OverDueStockReport extends React.Component {
     );
   }
 }
-export default OverDueStockReport;
+export default ClosingStockList;

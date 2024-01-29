@@ -232,6 +232,10 @@ export const Roles = [
         permission: ["View", "Create", "Edit", "Delete", "Download"],
       },
       {
+        title: "GSTR 2B",
+        permission: ["View", "Create", "Edit", "Delete", "Download"],
+      },
+      {
         title: "GSTR 9",
         permission: ["View", "Create", "Edit", "Delete", "Download"],
       },
@@ -367,7 +371,7 @@ export const Roles = [
     title: "Production",
     TabName: [
       {
-        title: "Item",
+        title: "Items",
         permission: ["View", "Create", "Edit", "Delete", "Download"],
       },
       {
@@ -379,7 +383,7 @@ export const Roles = [
         permission: ["View", "Create", "Edit", "Delete", "Download"],
       },
       {
-        title: "Wastage Stock Return",
+        title: "Material Return",
         permission: ["View", "Create", "Edit", "Delete", "Download"],
       },
       {
@@ -836,7 +840,7 @@ export const NormalRoles = [
     title: "Production",
     TabName: [
       {
-        title: "Item",
+        title: "Items",
         permission: ["View", "Create", "Edit", "Delete"],
       },
       {
@@ -848,7 +852,7 @@ export const NormalRoles = [
         permission: ["View", "Create", "Edit", "Delete"],
       },
       {
-        title: "Wastage Stock Return",
+        title: "Material Return",
         permission: ["View", "Create", "Edit", "Delete"],
       },
       {

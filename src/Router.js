@@ -236,6 +236,9 @@ const EditOrder = lazy(() => import("./views/apps/freshlist/order/EditOrder"));
 const EditProductionProcess = lazy(() =>
   import("./views/apps/freshlist/order/EditProductionProcess")
 );
+const AddReturnProductionProduct = lazy(() =>
+  import("./views/apps/freshlist/order/AddReturnProductionProduct")
+);
 const ViewAll = lazy(() => import("./views/apps/freshlist/order/ViewAll"));
 const ViewPending = lazy(() =>
   import("./views/apps/freshlist/order/ViewPending")
@@ -462,6 +465,9 @@ const ClosingStock = lazy(() =>
 );
 const LowStock = lazy(() =>
   import("./views/apps/freshlist/customer/ProductWIKI/LowStock")
+);
+const LowStockList = lazy(() =>
+  import("./views/apps/freshlist/customer/ProductWIKI/LowStockList")
 );
 const DamagedStock = lazy(() =>
   import("./views/apps/freshlist/customer/ProductWIKI/DamagedStock")
@@ -900,6 +906,9 @@ const GSTR9 = lazy(() =>
 const GSTR3B = lazy(() =>
   import("./views/apps/freshlist/customer/Ticketing/GSTR3B")
 );
+const GSTR2B = lazy(() =>
+  import("./views/apps/freshlist/customer/Ticketing/GSTR2B")
+);
 const TeamandtargerReport = lazy(() =>
   import("./views/apps/freshlist/customer/Ticketing/TeamandtargerReport")
 );
@@ -912,11 +921,17 @@ const DeadParty = lazy(() =>
 const OpeningStock = lazy(() =>
   import("./views/apps/freshlist/customer/ProductWIKI/OpeningStock")
 );
+const ClosingStockList = lazy(() =>
+  import("./views/apps/freshlist/customer/ProductWIKI/ClosingStockList")
+);
 const WarehouseDispatchlist = lazy(() =>
   import("./views/apps/freshlist/accounts/WarehouseDispatchlist")
 );
 const OverDueStockReport = lazy(() =>
   import("./views/apps/freshlist/customer/ProductWIKI/OverDueStockReport")
+);
+const AllOverdueStockList = lazy(() =>
+  import("./views/apps/freshlist/customer/ProductWIKI/AllOverdueStockList")
 );
 const Orderreport = lazy(() =>
   import("./views/apps/freshlist/customer/Ticketing/Orderreport")
@@ -1025,6 +1040,9 @@ const Productionitem = lazy(() =>
 );
 const Wastageproduction = lazy(() =>
   import("./views/apps/freshlist/Production/Wastageproduction")
+);
+const ReturnProductionProduct = lazy(() =>
+  import("./views/apps/freshlist/Production/ReturnProduct")
 );
 const TargetCreationList = lazy(() =>
   import("./views/apps/freshlist/house/TargetCreation")
@@ -1745,6 +1763,10 @@ class AppRouter extends React.Component {
             component={EditProductionProcess}
           />
           <AppRoute
+            path="/app/freshlist/order/AddReturnProductionProduct/:id"
+            component={AddReturnProductionProduct}
+          />
+          <AppRoute
             path="/app/freshlist/order/viewAll/:id"
             component={ViewAll}
           />
@@ -1994,12 +2016,20 @@ class AppRouter extends React.Component {
             component={OpeningStock}
           />
           <AppRoute
+            path="/app/ajgroup/stock/ClosingStockList"
+            component={ClosingStockList}
+          />
+          <AppRoute
             path="/app/AjGroup/dispatch/WarehouseDispatchlist"
             component={WarehouseDispatchlist}
           />
           <AppRoute
-            path="/app/Ajgroup/Stock/OverDueStockReport"
+            path="/app/Ajgroup/Stock/OverDueStockReport/:id"
             component={OverDueStockReport}
+          />
+          <AppRoute
+            path="/app/Ajgroup/Stock/AllOverdueStockList"
+            component={AllOverdueStockList}
           />
           <AppRoute
             path="/app/softNumen/report/EarningReport"
@@ -2059,6 +2089,7 @@ class AppRouter extends React.Component {
           />
           <AppRoute path="/app/SoftNumen/ticket/GSTR1" component={GSTR1} />
           <AppRoute path="/app/SoftNumen/ticket/GSTR3B" component={GSTR3B} />
+          <AppRoute path="/app/SoftNumen/ticket/GSTR2B" component={GSTR2B} />
           <AppRoute path="/app/SoftNumen/ticket/GSTR9" component={GSTR9} />
           <AppRoute
             path="/app/SoftNumen/ticket/HSNWisesaleReport"
@@ -2137,12 +2168,16 @@ class AppRouter extends React.Component {
             component={Campaignlist}
           />
           <AppRoute
-            path="/app/softNumen/warranty/ClosingStock"
+            path="/app/Ajgroup/stock/ClosingStock/:id"
             component={ClosingStock}
           />
           <AppRoute
-            path="/app/softNumen/warranty/LowStock"
+            path="/app/ajgroup/stock/LowStock/:id"
             component={LowStock}
+          />
+          <AppRoute
+            path="/app/Ajgroup/stock/LowStockList"
+            component={LowStockList}
           />
           <AppRoute
             path="/app/softNumen/warranty/DamagedStock"
@@ -2225,7 +2260,7 @@ class AppRouter extends React.Component {
             component={OutwardStock}
           />
           <AppRoute
-            path="/app/softNumen/warehouse/WareHouseStock"
+            path="/app/softNumen/warehouse/WareHouseStock/:id"
             component={WareHouseStock}
           />
           <AppRoute
@@ -2645,6 +2680,10 @@ class AppRouter extends React.Component {
           <AppRoute
             path="/views/apps/AjGroup/Production/Wastageproduction"
             component={Wastageproduction}
+          />
+          <AppRoute
+            path="/views/apps/AjGroup/Production/ReturnProductionProduct"
+            component={ReturnProductionProduct}
           />
           <AppRoute
             path="/views/apps/freshlist/Production/Createitemforproduction"

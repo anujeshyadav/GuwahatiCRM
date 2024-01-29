@@ -10,12 +10,12 @@ class QuaterlySales extends React.Component {
         icon={<ShoppingCart className="danger" size={22} />}
         iconBg="danger"
         stat="36%"
-        statTitle="Quarterly Sales"
+        statTitle="Purchase"
         options={quaterlySales}
         series={quaterlySalesSeries}
         type="area"
       />
-    )
+    );
   }
 }
 export default QuaterlySales

@@ -144,21 +144,21 @@ class DebitNoteList extends React.Component {
             );
           },
         },
-        {
-          headerName: "Order Id",
-          field: "purchaseOrderId",
-          filter: true,
-          width: 220,
-          cellRendererFramework: (params) => {
-            return (
-              <div>
-                <span>
-                  {params.data?.purchaseOrderId && params.data?.purchaseOrderId}{" "}
-                </span>
-              </div>
-            );
-          },
-        },
+        // {
+        //   headerName: "Order Id",
+        //   field: "purchaseOrderId",
+        //   filter: true,
+        //   width: 220,
+        //   cellRendererFramework: (params) => {
+        //     return (
+        //       <div>
+        //         <span>
+        //           {params.data?.purchaseOrderId && params.data?.purchaseOrderId}{" "}
+        //         </span>
+        //       </div>
+        //     );
+        //   },
+        // },
 
         {
           headerName: "Total Amount",

@@ -10,12 +10,12 @@ class OrdersReceived extends React.Component {
         icon={<Package className="warning" size={22} />}
         iconBg="warning"
         stat="97.5K"
-        statTitle="Orders Received"
+        statTitle="Transaction"
         options={ordersReceived}
         series={ordersReceivedSeries}
         type="area"
       />
-    )
+    );
   }
 }
 export default OrdersReceived

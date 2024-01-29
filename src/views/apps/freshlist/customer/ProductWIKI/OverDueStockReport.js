@@ -77,8 +77,7 @@ class OverDueStockReport extends React.Component {
       isOpen: false,
       ShowBill: false,
       InsiderPermissions: {},
-      wareHouseViewOne: [],
-      Show: false,
+     
       Arrindex: "",
       rowData: [],
       setMySelectedarr: [],
@@ -355,54 +354,36 @@ class OverDueStockReport extends React.Component {
   };
 
   async componentDidMount() {
+    let { id } = this.props.match.params;
     const InsidePermissions = CheckPermission("OverDue Stock");
     this.setState({ InsiderPermissions: InsidePermissions });
     let userData = JSON.parse(localStorage.getItem("userData"));
-    await CreateAccountList(userData?._id, userData?.database)
-      .then(res => {
-        let value = res?.adminDetails;
-        if (value.length) {
-          this.setState({ wareHouseViewOne: value });
+    const URl = `${WareHouse_OverDue_Stock}/${id}/`;
+    this.setState({ AllcolumnDefs: this.state.columnDefs });
+
+    let userHeading = JSON.parse(localStorage.getItem("OverDurStockList"));
+    if (userHeading?.length) {
+      this.setState({ columnDefs: userHeading });
+      this.gridApi.setColumnDefs(userHeading);
+      this.setState({ SelectedcolumnDefs: userHeading });
+    } else {
+      this.setState({ columnDefs: this.state.columnDefs });
+      this.setState({ SelectedcolumnDefs: this.state.columnDefs });
+    }
+    this.setState({ SelectedCols: this.state.columnDefs });
+  
+    await _Get(URl, userData?.database)
+      .then((res) => {
+        if (res?.Product) {
+          this.setState({ rowData: res?.Product });
         }
       })
-      .catch(err => {
+      .catch((err) => {
         console.log(err);
       });
   }
-  changeHandler = e => {
-    this.setState({ [e.target.name]: e.target.value });
-  };
-  handleShowWarehouse = async e => {
-    e.preventDefault();
-    if (this.state.warehouse != "NA") {
-      this.setState({ Show: true });
-      let userData = JSON.parse(localStorage.getItem("userData"));
-      let URl = `${WareHouse_OverDue_Stock}/${this.state.warehouse}/`;
-      await _Get(URl, userData?.database)
-        .then(res => {
-          this.setState({ rowData: res?.Product });
-          this.setState({ AllcolumnDefs: this.state.columnDefs });
+ 
 
-          let userHeading = JSON.parse(
-            localStorage.getItem("OverDurStockList")
-          );
-          if (userHeading?.length) {
-            this.setState({ columnDefs: userHeading });
-            this.gridApi.setColumnDefs(userHeading);
-            this.setState({ SelectedcolumnDefs: userHeading });
-          } else {
-            this.setState({ columnDefs: this.state.columnDefs });
-            this.setState({ SelectedcolumnDefs: this.state.columnDefs });
-          }
-          this.setState({ SelectedCols: this.state.columnDefs });
-        })
-        .catch(err => {
-          console.log(err);
-        });
-    } else {
-      swal("You did not select Any Warehouse");
-    }
-  };
   toggleDropdown = () => {
     this.setState(prevState => ({ isOpen: !prevState.isOpen }));
   };
@@ -677,7 +658,7 @@ class OverDueStockReport extends React.Component {
       SelectedCols,
       AllcolumnDefs,
       InsiderPermissions,
-      Show,
+      
     } = this.state;
     return (
       <>
@@ -688,40 +669,22 @@ class OverDueStockReport extends React.Component {
                 <Col>
                   <h1 className="float-left">Overdue Stock List</h1>
                 </Col>
-                <Col>
-                  <FormGroup>
-                    <Label>Select Warehouse</Label>
-                    <CustomInput
-                      type="select"
-                      placeholder="Select Warehouse"
-                      name="warehouse"
-                      value={this.state.warehouse}
-                      onChange={this.changeHandler}>
-                      <option value="">--Select WareHouse--</option>
-                      {this.state.wareHouseViewOne?.map((cat) => (
-                        <option value={cat?._id} key={cat?._id}>
-                          {cat?.firstName}
-                        </option>
-                      ))}
-                    </CustomInput>
-                  </FormGroup>
+                <Col lg="2" md="2" sm="6">
+                  <Route
+                    render={({ history }) => (
+                      <Button
+                        style={{ cursor: "pointer" }}
+                        className="float-right mr-1"
+                        color="primary"
+                        onClick={() => history.goBack()}>
+                        Back
+                      </Button>
+                    )}
+                  />
                 </Col>
-                <Col className="mb-2">
-                  <Button
-                    style={{
-                      cursor: "pointer",
-                      backgroundColor: "#39cccc",
-                      color: "white",
-                      fontWeight: "600",
-                    }}
-                    className="mt-2"
-                    color="#39cccc"
-                    onClick={this.handleShowWarehouse}>
-                    Submit
-                  </Button>
-                </Col>
+
                 {InsiderPermissions && InsiderPermissions?.View && (
-                  <Col>
+                  <Col lg="2" md="2" sm="6">
                     <span className="mx-1">
                       <FaFilter
                         style={{ cursor: "pointer" }}
@@ -794,7 +757,7 @@ class OverDueStockReport extends React.Component {
                           color="primary"
                           onClick={() =>
                             history.push(
-                              "/app/softNumen/warehouse/WareHouseStock"
+                              "/app/softNumen/warehouse/WareHouseStock/:id"
                             )
                           }>
                           View My WareHouse
@@ -805,117 +768,113 @@ class OverDueStockReport extends React.Component {
                   </Col>
                 )}
               </Row>
-              {Show ? (
-                <>
-                  <CardBody style={{ marginTop: "-1.5rem" }}>
-                    {this.state.rowData === null ? null : (
-                      <div className="ag-theme-material w-100 my-2 ag-grid-table">
-                        <div className="d-flex flex-wrap justify-content-between align-items-center">
-                          <div className="mb-1">
-                            <UncontrolledDropdown className="p-1 ag-dropdown">
-                              <DropdownToggle tag="div">
-                                {this.gridApi
-                                  ? this.state.currenPageSize
-                                  : "" * this.state.getPageSize -
-                                    (this.state.getPageSize - 1)}{" "}
-                                -{" "}
-                                {this.state.rowData.length -
-                                  this.state.currenPageSize *
-                                    this.state.getPageSize >
-                                0
-                                  ? this.state.currenPageSize *
-                                    this.state.getPageSize
-                                  : this.state.rowData.length}{" "}
-                                of {this.state.rowData.length}
-                                <ChevronDown className="ml-50" size={15} />
-                              </DropdownToggle>
-                              <DropdownMenu right>
-                                <DropdownItem
-                                  tag="div"
-                                  onClick={() => this.filterSize(5)}>
-                                  5
-                                </DropdownItem>
-                                <DropdownItem
-                                  tag="div"
-                                  onClick={() => this.filterSize(20)}>
-                                  20
-                                </DropdownItem>
-                                <DropdownItem
-                                  tag="div"
-                                  onClick={() => this.filterSize(50)}>
-                                  50
-                                </DropdownItem>
-                                <DropdownItem
-                                  tag="div"
-                                  onClick={() => this.filterSize(100)}>
-                                  100
-                                </DropdownItem>
-                                <DropdownItem
-                                  tag="div"
-                                  onClick={() => this.filterSize(134)}>
-                                  134
-                                </DropdownItem>
-                              </DropdownMenu>
-                            </UncontrolledDropdown>
-                          </div>
-                          <div className="d-flex flex-wrap justify-content-end mb-1">
-                            <div className="table-input mr-1">
-                              <Input
-                                placeholder="search Item here..."
-                                onChange={(e) =>
-                                  this.updateSearchQuery(e.target.value)
-                                }
-                                value={this.state.value}
-                              />
-                            </div>
-                          </div>
-                        </div>
-                        <ContextLayout.Consumer className="ag-theme-alpine">
-                          {(context) => (
-                            <AgGridReact
-                              id="myAgGrid"
-                              // gridOptions={{
-                              //   domLayout: "autoHeight",
-                              //   // or other layout options
-                              // }}
-                              gridOptions={this.gridOptions}
-                              rowSelection="multiple"
-                              defaultColDef={defaultColDef}
-                              columnDefs={columnDefs}
-                              rowData={rowData}
-                              // onGridReady={(params) => {
-                              //   this.gridApi = params.api;
-                              //   this.gridColumnApi = params.columnApi;
-                              //   this.gridRef.current = params.api;
-
-                              //   this.setState({
-                              //     currenPageSize:
-                              //       this.gridApi.paginationGetCurrentPage() +
-                              //       1,
-                              //     getPageSize:
-                              //       this.gridApi.paginationGetPageSize(),
-                              //     totalPages:
-                              //       this.gridApi.paginationGetTotalPages(),
-                              //   });
-                              // }}
-                              onGridReady={this.onGridReady}
-                              colResizeDefault={"shift"}
-                              animateRows={true}
-                              floatingFilter={false}
-                              pagination={true}
-                              paginationPageSize={this.state.paginationPageSize}
-                              pivotPanelShow="always"
-                              enableRtl={context.state.direction === "rtl"}
-                              ref={this.gridRef} // Attach the ref to the grid
-                              domLayout="autoHeight" // Adjust layout as needed
-                            />
-                          )}
-                        </ContextLayout.Consumer>
+              <CardBody style={{ marginTop: "-1.5rem" }}>
+                {this.state.rowData === null ? null : (
+                  <div className="ag-theme-material w-100 my-2 ag-grid-table">
+                    <div className="d-flex flex-wrap justify-content-between align-items-center">
+                      <div className="mb-1">
+                        <UncontrolledDropdown className="p-1 ag-dropdown">
+                          <DropdownToggle tag="div">
+                            {this.gridApi
+                              ? this.state.currenPageSize
+                              : "" * this.state.getPageSize -
+                                (this.state.getPageSize - 1)}{" "}
+                            -{" "}
+                            {this.state.rowData.length -
+                              this.state.currenPageSize *
+                                this.state.getPageSize >
+                            0
+                              ? this.state.currenPageSize *
+                                this.state.getPageSize
+                              : this.state.rowData.length}{" "}
+                            of {this.state.rowData.length}
+                            <ChevronDown className="ml-50" size={15} />
+                          </DropdownToggle>
+                          <DropdownMenu right>
+                            <DropdownItem
+                              tag="div"
+                              onClick={() => this.filterSize(5)}>
+                              5
+                            </DropdownItem>
+                            <DropdownItem
+                              tag="div"
+                              onClick={() => this.filterSize(20)}>
+                              20
+                            </DropdownItem>
+                            <DropdownItem
+                              tag="div"
+                              onClick={() => this.filterSize(50)}>
+                              50
+                            </DropdownItem>
+                            <DropdownItem
+                              tag="div"
+                              onClick={() => this.filterSize(100)}>
+                              100
+                            </DropdownItem>
+                            <DropdownItem
+                              tag="div"
+                              onClick={() => this.filterSize(134)}>
+                              134
+                            </DropdownItem>
+                          </DropdownMenu>
+                        </UncontrolledDropdown>
                       </div>
-                    )}
-                  </CardBody>
-                </>
-              ) : null}
+                      <div className="d-flex flex-wrap justify-content-end mb-1">
+                        <div className="table-input mr-1">
+                          <Input
+                            placeholder="search Item here..."
+                            onChange={(e) =>
+                              this.updateSearchQuery(e.target.value)
+                            }
+                            value={this.state.value}
+                          />
+                        </div>
+                      </div>
+                    </div>
+                    <ContextLayout.Consumer className="ag-theme-alpine">
+                      {(context) => (
+                        <AgGridReact
+                          id="myAgGrid"
+                          // gridOptions={{
+                          //   domLayout: "autoHeight",
+                          //   // or other layout options
+                          // }}
+                          gridOptions={this.gridOptions}
+                          rowSelection="multiple"
+                          defaultColDef={defaultColDef}
+                          columnDefs={columnDefs}
+                          rowData={rowData}
+                          // onGridReady={(params) => {
+                          //   this.gridApi = params.api;
+                          //   this.gridColumnApi = params.columnApi;
+                          //   this.gridRef.current = params.api;
+
+                          //   this.setState({
+                          //     currenPageSize:
+                          //       this.gridApi.paginationGetCurrentPage() +
+                          //       1,
+                          //     getPageSize:
+                          //       this.gridApi.paginationGetPageSize(),
+                          //     totalPages:
+                          //       this.gridApi.paginationGetTotalPages(),
+                          //   });
+                          // }}
+                          onGridReady={this.onGridReady}
+                          colResizeDefault={"shift"}
+                          animateRows={true}
+                          floatingFilter={false}
+                          pagination={true}
+                          paginationPageSize={this.state.paginationPageSize}
+                          pivotPanelShow="always"
+                          enableRtl={context.state.direction === "rtl"}
+                          ref={this.gridRef} // Attach the ref to the grid
+                          domLayout="autoHeight" // Adjust layout as needed
+                        />
+                      )}
+                    </ContextLayout.Consumer>
+                  </div>
+                )}
+              </CardBody>
             </Card>
           </Col>
         </Row>

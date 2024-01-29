@@ -27,6 +27,7 @@ import {
   Delete_SubCategory,
 } from "../../../../ApiEndPoint/ApiCalling";
 import swal from "sweetalert";
+import { Image_URL } from "../../../../ApiEndPoint/Api";
 
 class SubCategoryList extends React.Component {
   state = {
@@ -62,7 +63,7 @@ class SubCategoryList extends React.Component {
               {params.data?.image && (
                 <img
                   className="rounded-circle mr-50"
-                  src={`http://64.227.162.41:5000/Images/${params.data?.image}`}
+                  src={`${Image_URL}/Images/${params.data?.image}`}
                   alt="user avatar"
                   height="40"
                   width="40"

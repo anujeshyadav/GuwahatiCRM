@@ -23,9 +23,14 @@ import {
   _Get,
   _Post,
   _PostSave,
+  _Put,
 } from "../../../../ApiEndPoint/ApiCalling";
 import "../../../../assets/scss/pages/users.scss";
-import { Create_Receipt } from "../../../../ApiEndPoint/Api";
+import {
+  Create_Receipt,
+  Update_Receipt_By_Id,
+  View_Receipt_By_Id,
+} from "../../../../ApiEndPoint/Api";
 import swal from "sweetalert";
 let GrandTotal = [];
 let SelectedITems = [];
@@ -34,6 +39,8 @@ const CreatePayment = (args) => {
   const [error, setError] = useState("");
   const [PaymentType, setPaymentType] = useState("");
   const [PartyList, setPartyList] = useState([]);
+  const [Mode, setMode] = useState("Create");
+  const [SelectedParty, setSelectedParty] = useState({});
   const [PartyId, setPartyId] = useState("");
   const [grandTotalAmt, setGrandTotalAmt] = useState(0);
   const [UserInfo, setUserInfo] = useState({});
@@ -58,6 +65,32 @@ const CreatePayment = (args) => {
 
   useEffect(() => {
     console.log(Params?.id);
+    let id = Params?.id;
+    if (id == 0) {
+      setMode("Create");
+    } else {
+      setMode("Edit");
+      _Get(View_Receipt_By_Id, id)
+        .then((res) => {
+          let data = res?.Product;
+          setSelectedParty(data?.partyId);
+          setPartyId(data?.partyId?._id);
+          let payload = {
+            Paymentmode: data?.paymentMode,
+            PaymentType: data?.paymentType,
+            Amount: data?.amount,
+            Date: data?.createdAt?.split("T")[0],
+            Note: data?.note,
+            Title: data?.title,
+            InstrumentNumber: data?.instrumentNo,
+          };
+          setPaymentType(data?.paymentType);
+          setAllData(payload);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }
     let userdata = JSON.parse(localStorage.getItem("userData"));
 
     CreateCustomerList(userdata?._id, userdata?.database)
@@ -78,14 +111,14 @@ const CreatePayment = (args) => {
 
   const submitHandler = (e) => {
     e.preventDefault();
-    console.log(AllData);
-
+    // console.log(AllData);
+    let id = Params?.id;
     const payload = {
       created_by: UserInfo?._id,
       paymentType: AllData?.PaymentType,
       paymentMode: AllData?.Paymentmode,
       partyId: PartyId ? PartyId : null,
-      amount: AllData?.Amount ? AllData?.Amount : null,
+      amount: AllData?.Amount ? Number(AllData?.Amount) : null,
       instrumentNo: AllData?.InstrumentNumber
         ? AllData?.InstrumentNumber
         : null,
@@ -94,28 +127,31 @@ const CreatePayment = (args) => {
       database: UserInfo?.database,
       type: "Payment",
     };
-    if (error) {
-      swal("Error occured while Entering Details");
+    if (id == 0) {
+      if (error) {
+        swal("Error occured while Entering Details");
+      } else {
+        _PostSave(Create_Receipt, payload)
+          .then((res) => {
+            swal("Added Successfully");
+            History.goBack();
+          })
+          .catch((err) => {
+            swal("Somthing went Wrong");
+            console.log(err);
+          });
+      }
     } else {
-      _PostSave(Create_Receipt, payload)
+      _Put(Update_Receipt_By_Id, id, payload)
         .then((res) => {
-          swal("Added Successfully");
+          console.log(res);
           History.goBack();
+          swal("Updated Successfully");
         })
         .catch((err) => {
-          swal("Somthing went Wrong");
           console.log(err);
+          swal("Something Went Wrong");
         });
-      //   SaveOrder(payload)
-      //     .then((res) => {
-      //       console.log(res);
-      //       swal("Order Created Successfully");
-      //       history.goBack();
-      //       //  history.push("/app/softnumen/order/orderList")
-      //     })
-      //     .catch((err) => {
-      //       console.log(err);
-      //     });
     }
   };
 
@@ -135,7 +171,7 @@ const CreatePayment = (args) => {
           <Row className="m-2">
             <Col className="">
               <div>
-                <h1 className="">Create Payment</h1>
+                <h1 className="">{Mode && Mode} Payment</h1>
               </div>
             </Col>
             <Col>
@@ -193,6 +229,7 @@ const CreatePayment = (args) => {
                       <Label>Choose Party</Label>
                       <Multiselect
                         required
+                        selectedValues={[SelectedParty]}
                         selectionLimit={1}
                         isObject="false"
                         options={PartyList}

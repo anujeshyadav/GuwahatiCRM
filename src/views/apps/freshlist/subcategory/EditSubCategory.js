@@ -330,6 +330,7 @@ import {
   CreateSubCategory,
   Update_SubCategory,
 } from "../../../../ApiEndPoint/ApiCalling";
+import { Image_URL } from "../../../../ApiEndPoint/Api";
 
 export class EditSubCategory extends Component {
   constructor(props) {
@@ -385,40 +386,40 @@ export class EditSubCategory extends Component {
   // All Category Api
 
   async componentDidMount() {
-    let {cid,sid}=this.props.match.params
+    let { cid, sid } = this.props.match.params;
     let pageparmission = JSON.parse(localStorage.getItem("userData"));
 
-   let userData = JSON.parse(localStorage.getItem("userData"));
-   await AllCategoryList(userData?._id, userData?.database)
-     .then((res) => {
-       console.log(res);
-       if (res?.Category) {
-         this.setState({ CatList: res?.Category });
-         let Cat = res?.Category?.filter((ele, i) => ele?._id == cid);
-         console.log(Cat);
-         this.setState({ category: cid });
-         let subcat = Cat[0]?.subcategories?.filter(
-           (ele, i) => ele?._id == sid
-         );
-         console.log(subcat);
-         let mysubcat = subcat[0];
-         this.setState({
-           subcategory_name: mysubcat?.name,
-           Description: mysubcat?.description,
-           status: mysubcat?.status,
-           file: mysubcat?.image,
-         });
-       }
-     })
-     .catch((err) => {
-       console.log(err);
-     });
+    let userData = JSON.parse(localStorage.getItem("userData"));
+    await AllCategoryList(userData?._id, userData?.database)
+      .then((res) => {
+        console.log(res);
+        if (res?.Category) {
+          this.setState({ CatList: res?.Category });
+          let Cat = res?.Category?.filter((ele, i) => ele?._id == cid);
+          console.log(Cat);
+          this.setState({ category: cid });
+          let subcat = Cat[0]?.subcategories?.filter(
+            (ele, i) => ele?._id == sid
+          );
+          console.log(subcat);
+          let mysubcat = subcat[0];
+          this.setState({
+            subcategory_name: mysubcat?.name,
+            Description: mysubcat?.description,
+            status: mysubcat?.status,
+            file: mysubcat?.image,
+          });
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   }
 
   // Submit Sub-Category Api
   submitHandler = async (e) => {
     e.preventDefault();
-    let {cid,sid}=this.props.match.params
+    let { cid, sid } = this.props.match.params;
     const data = new FormData();
     data.append("name", this.state.subcategory_name);
     data.append("category", this.state.category);
@@ -427,14 +428,16 @@ export class EditSubCategory extends Component {
     if (this.state.selectedFile1) {
       data.append("file", this.state.selectedFile1);
     }
-    
-    Update_SubCategory(cid,sid,data).then((res)=>{
-      swal("Success!", "Your Subcategory has been Updated", "success");
-      this.props.history.push("/app/freshlist/subcategory/subCategoryList");
-      console.log(res)
-    }).catch((err)=>{
-      console.log(err)
-    })
+
+    Update_SubCategory(cid, sid, data)
+      .then((res) => {
+        swal("Success!", "Your Subcategory has been Updated", "success");
+        this.props.history.push("/app/freshlist/subcategory/subCategoryList");
+        console.log(res);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
 
     // await CreateSubCategory(data)
     //   .then((res) => {
@@ -466,8 +469,7 @@ export class EditSubCategory extends Component {
                     className=" btn btn-danger float-right"
                     onClick={() =>
                       history.push("/app/freshlist/subcategory/subCategoryList")
-                    }
-                  >
+                    }>
                     Back
                   </Button>
                 )}
@@ -485,8 +487,7 @@ export class EditSubCategory extends Component {
                     placeholder="Select Category"
                     name="category"
                     value={this.state.category}
-                    onChange={this.changeHandler}
-                  >
+                    onChange={this.changeHandler}>
                     <option>--Select Category--</option>
                     {this.state.CatList?.map((cat) => (
                       <option value={cat?._id} key={cat?._id}>
@@ -545,12 +546,15 @@ export class EditSubCategory extends Component {
                   </FormGroup>
                 </Col>
                 <Col lg="4" md="4">
-                {this.state.file &&
-                  <img 
-                     style={{borderRadius:"8px"}}
-                   src={`http://64.227.162.41:5000/Images/${this.state.file}`} alt=""   height="100"
-                  width="100" />
-                 }
+                  {this.state.file && (
+                    <img
+                      style={{ borderRadius: "8px" }}
+                      src={`${Image_URL}/Images/${this.state.file}`}
+                      alt=""
+                      height="100"
+                      width="100"
+                    />
+                  )}
                 </Col>
 
                 {/* <Col lg="4" md="4">
@@ -592,10 +596,9 @@ export class EditSubCategory extends Component {
                   <Label className="mb-0">Status</Label>
                   <div
                     className="form-label-group"
-                    onChange={this.changeHandler1}
-                  >
+                    onChange={this.changeHandler1}>
                     <input
-                    checked={this.state.status=="Active"}
+                      checked={this.state.status == "Active"}
                       style={{ marginRight: "3px" }}
                       type="radio"
                       name="status"
@@ -604,7 +607,7 @@ export class EditSubCategory extends Component {
                     <span style={{ marginRight: "20px" }}>Active</span>
 
                     <input
-                    checked={this.state.status=="Deactive"}
+                      checked={this.state.status == "Deactive"}
                       style={{ marginRight: "3px" }}
                       type="radio"
                       name="status"
@@ -619,8 +622,7 @@ export class EditSubCategory extends Component {
                 <Button.Ripple
                   color="primary"
                   type="submit"
-                  className="mr-1 mb-1"
-                >
+                  className="mr-1 mb-1">
                   + Add
                 </Button.Ripple>
               </Row>

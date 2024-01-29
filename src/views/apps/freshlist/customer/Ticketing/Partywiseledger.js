@@ -66,6 +66,7 @@ class Partywiseledger extends React.Component {
     this.state = {
       isOpen: false,
       MasterShow: false,
+    UserInfo:{},
       Arrindex: "",
       rowData: [],
       InsiderPermissions: {},
@@ -125,6 +126,7 @@ class Partywiseledger extends React.Component {
     const InsidePermissions = CheckPermission("Partywise ledger");
     this.setState({ InsiderPermissions: InsidePermissions });
     let userData = JSON.parse(localStorage.getItem("userData"));
+    this.setState({ UserInfo: userData });
     if (userData?.rolename?.roleName === "MASTER") {
       this.setState({ MasterShow: true });
     }
@@ -625,6 +627,7 @@ class Partywiseledger extends React.Component {
       SelectedCols,
       AllcolumnDefs,
       InsiderPermissions,
+      UserInfo,
     } = this.state;
     return (
       <>
@@ -689,10 +692,29 @@ class Partywiseledger extends React.Component {
                             />
                           </Col>
                         )}
-                        <Col>
+                        <Col
+                          lg="2"
+                          md="2"
+                          className=" d-flex justify-content-end">
+                          <Route
+                            render={({ history }) => (
+                              <Button
+                                onClick={() =>
+                                  history.push(
+                                    `/app/ajgroup/Ledger/ViewLedger/${UserInfo?._id}`
+                                  )
+                                }
+                                color="primary"
+                                style={{ fontWeight: "600" }}>
+                                My ledger
+                              </Button>
+                            )}
+                          />
+                        </Col>
+                        <Col lg="1" md="1" sm="6">
                           {InsiderPermissions && InsiderPermissions?.View && (
                             <>
-                              <span className="mx-1">
+                              <span className="">
                                 <FaFilter
                                   style={{ cursor: "pointer" }}
                                   title="filter coloumn"
@@ -706,7 +728,7 @@ class Partywiseledger extends React.Component {
                           )}
                           {InsiderPermissions &&
                             InsiderPermissions?.Download && (
-                              <span className="mx-1">
+                              <span className="">
                                 <div className="dropdown-container float-right">
                                   <ImDownload
                                     style={{ cursor: "pointer" }}

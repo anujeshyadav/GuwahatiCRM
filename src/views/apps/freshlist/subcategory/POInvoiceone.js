@@ -11,6 +11,7 @@ import {
 
 import logo from "../../../../assets/img/logo/logowithoutback.png";
 import signature from "../../../../assets/img/logo/signature.png";
+import { Image_URL } from "../../../../ApiEndPoint/Api";
 
 const styles = StyleSheet.create({
   page: {
@@ -112,7 +113,7 @@ const POInvoiceone = ({
                       <>
                         <Image
                           style={{ width: "230px", padding: "25px 10px" }}
-                          src={`http://64.227.162.41:5000/Images/${BilData?.CompanyDetails?.logo}`}></Image>
+                          src={`${Image_URL}/Images/${BilData?.CompanyDetails?.logo}`}></Image>
                       </>
                     ) : (
                       <>
@@ -194,7 +195,7 @@ const POInvoiceone = ({
                       <>
                         <Image
                           style={{ width: "230px", padding: "25px 10px" }}
-                          src={`http://64.227.162.41:5000/Images/${BilData?.CompanyDetails?.logo}`}></Image>
+                          src={`${Image_URL}/Images/${BilData?.CompanyDetails?.logo}`}></Image>
                       </>
                     ) : (
                       <>

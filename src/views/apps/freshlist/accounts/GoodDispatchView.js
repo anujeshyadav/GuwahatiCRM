@@ -21,6 +21,7 @@ import {
 } from "../../../../ApiEndPoint/ApiCalling";
 import "../../../../assets/scss/pages/users.scss";
 import UserContext from "../../../../context/Context";
+import { Image_URL } from "../../../../ApiEndPoint/Api";
 
 const GoodDispatchView = ({ ViewOneData }) => {
   const [CreatAccountView, setCreatAccountView] = useState([]);
@@ -86,13 +87,13 @@ const GoodDispatchView = ({ ViewOneData }) => {
   }, []);
   useEffect(() => {
     GoodDispatchxmlView()
-      .then(res => {
+      .then((res) => {
         const jsonData = xmlJs.xml2json(res.data, { compact: true, spaces: 2 });
         // console.log(JSON.parse(jsonData)?.GoodDispatch?.input);
         setCreatAccountView(JSON.parse(jsonData)?.GoodDispatch?.input);
         setdropdownValue(JSON.parse(jsonData)?.GoodDispatch);
       })
-      .catch(err => {
+      .catch((err) => {
         console.log(err);
       });
   }, []);
@@ -136,7 +137,7 @@ const GoodDispatchView = ({ ViewOneData }) => {
                           <Label className="m-2">{ele?.label?._text}</Label>
                           <img
                             // className="form-control"
-                            src={`http://64.227.162.41:5000/Images/${
+                            src={`${Image_URL}/Images/${
                               formData[ele?.name?._text]
                             }`}
                             alt="image"
@@ -194,8 +195,7 @@ const GoodDispatchView = ({ ViewOneData }) => {
                       formData[dropdownValue?.MyDropdown?.dropdown?.name?._text]
                     }
                     disabled
-                    onChange={handleInputChange}
-                  >
+                    onChange={handleInputChange}>
                     <option value="">{formData.AssignDeliveryBoy}</option>
                     {/* <option value="">--DeliveryAuthentication--</option> */}
                     {/* {dropdownValue?.MyDropdown?.dropdown?.option.map(

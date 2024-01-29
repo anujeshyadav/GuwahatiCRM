@@ -59,6 +59,7 @@ import SuperAdminUI from "../../../SuperAdminUi/SuperAdminUI";
 import {
   Create_Transporter_List,
   Create_transporter_xmlView,
+  Image_URL,
 } from "../../../../ApiEndPoint/Api";
 
 const SelectedColums = [];
@@ -332,7 +333,7 @@ class CreateTransportList extends React.Component {
                       <img
                         width={40}
                         height={40}
-                        src={`http://64.227.162.41:5000/Images/${params?.data?.Shopphoto[0]}`}
+                        src={`${Image_URL}/Images/${params?.data?.Shopphoto[0]}`}
                         alt="Img"
                       />
                     )}
@@ -354,7 +355,7 @@ class CreateTransportList extends React.Component {
                       <img
                         width={40}
                         height={40}
-                        src={`http://64.227.162.41:5000/Images/${params?.data?.photo[0]}`}
+                        src={`${Image_URL}/Images/${params?.data?.photo[0]}`}
                         alt="img"
                       />
                     )}

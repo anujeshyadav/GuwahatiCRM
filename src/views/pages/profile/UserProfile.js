@@ -29,6 +29,7 @@ import {
 import "../../../assets/scss/pages/users-profile.scss";
 import UserContext from "../../../context/Context";
 import moment from "moment-timezone";
+import { Image_URL } from "../../../ApiEndPoint/Api";
 
 class UserProfile extends React.Component {
   static contextType = UserContext;
@@ -546,7 +547,7 @@ class UserProfile extends React.Component {
                       width={100}
                       className="mx-1"
                       height={80}
-                      src={`http://64.227.162.41:5000/Images/${this.state.CompanyDetails?.logo}`}
+                      src={`${Image_URL}/Images/${this.state.CompanyDetails?.logo}`}
                       alt="NA"
                     />
                   )}
@@ -559,7 +560,7 @@ class UserProfile extends React.Component {
                         className="mx-1"
                         width={60}
                         height={60}
-                        src={`http://64.227.162.41:5000/Images/${this.state.CompanyDetails?.signature}`}
+                        src={`${Image_URL}/Images/${this.state.CompanyDetails?.signature}`}
                         alt="NA"
                       />
                     )}

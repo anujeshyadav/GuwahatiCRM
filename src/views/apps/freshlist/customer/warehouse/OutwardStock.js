@@ -760,7 +760,7 @@ class OutwardStock extends React.Component {
                           color="primary"
                           onClick={() =>
                             history.push(
-                              "/app/softNumen/warehouse/WareHouseStock"
+                              "/app/softNumen/warehouse/WareHouseStock/:id"
                             )
                           }>
                           View My WareHouse
