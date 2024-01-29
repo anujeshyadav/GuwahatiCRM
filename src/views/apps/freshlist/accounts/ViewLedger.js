@@ -90,8 +90,8 @@ const ViewLedger = () => {
           {/* <hr /> */}
 
           <CardBody>
-            {/* <div className="p-4"> */}
-            {/* <Table bordered hover responsive size="sm">
+            <div className="p-4">
+              <Table bordered hover responsive size="sm">
                 {Ledger?.length > 0 && Ledger && (
                   <thead>
                     <tr>
@@ -225,8 +225,8 @@ const ViewLedger = () => {
                     </>
                   )}
                 </tbody>
-              </Table> */}
-            {/* </div> */}
+              </Table>
+            </div>
             <Row>
               {Ledger && Ledger?.length > 0 && (
                 <Col>

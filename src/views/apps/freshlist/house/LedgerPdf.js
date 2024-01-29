@@ -73,7 +73,10 @@ const GenericPdfDownloader = ({ rootElementId, downloadFileName }) => {
   // };
 
   return (
-    <Button color="primary" onClick={downloadPdfDocument}>
+    <Button
+      color="primary"
+      className="downloadledger"
+      onClick={downloadPdfDocument}>
       {Loader && Loader ? <>Downloading.</> : <>Download Pdf</>}
     </Button>
   );
