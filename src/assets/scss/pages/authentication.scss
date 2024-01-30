@@ -57,3 +57,9 @@ span.eyeviewpassword {
   top: 4px;
   right: 3px;
 }
+
+@media only screen and (max-width: 768px) {
+  .cssformobileveiwcrm {
+    font-size: 11px;
+  }
+}

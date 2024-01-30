@@ -85,6 +85,14 @@ export const create_row_material = "/raw-material/creat-rawMaterial";
 //productionapk
 
 // productionProcess
+// tab show on edit button
+export const Save_Tabs = "/role/save-tab";
+export const View_Tabs = "/role/view-tab/";
+export const Save_dashboard_Tabs = "/role/save--dashboard-tab";
+export const View_dashboard_Tabs = "/role/view-dashboard-tab/";
+
+
+// end tab show on edit button
 
 export const Save_Producton_Process = "/production/save-production";
 export const Save_Producton_Return = "/production/updated-return-production/";

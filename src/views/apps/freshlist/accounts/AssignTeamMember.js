@@ -365,7 +365,6 @@ const AssignTeamMember = () => {
                                 return (
                                   <tr key={ele?._id}>
                                     <th scope="row">
-                                      {/* {i + 1}{" "} */}
                                       <input
                                         name="Parent"
                                         value="checkbox1"

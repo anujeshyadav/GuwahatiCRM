@@ -135,13 +135,13 @@ const ThemeNavbar = (props) => {
                         <img
                           src={` ${Image_URL}/Images/${contextValue?.CompanyDetails?.logo}`}
                           width="100%"
-                          height={35}
+                          height={54}
                           alt="logo"
                         />
                       </>
                     ) : (
                       <>
-                        <img src={logo} width="100%" height={35} alt="logo" />
+                        <img src={logo} width="100%" height={54} alt="logo" />
                       </>
                     )}
                   </div>
@@ -250,13 +250,13 @@ const ThemeNavbar = (props) => {
                         <img
                           src={`${Image_URL}/Images/${contextValue?.CompanyDetails?.logo}`}
                           width="100%"
-                          height={35}
+                          height={55}
                           alt="logo"
                         />
                       </>
                     ) : (
                       <>
-                        <img src={logo} width="100%" height={35} alt="logo" />
+                        <img src={logo} width="100%" height={55} alt="logo" />
                       </>
                     )}
                   </div>
