@@ -17,7 +17,7 @@ const LedgerEntryList = (props) => {
     <div className="mx-1">
       <Row>
         <Col className="d-flex justify-content-end">
-          <LedgerPdf downloadFileName="CustomPdf" rootElementId="testId" />
+          <LedgerPdf downloadFileName="Cashbook" rootElementId="testId" />
         </Col>
       </Row>
       <div id="testId" className="ledger-entry-list  ">

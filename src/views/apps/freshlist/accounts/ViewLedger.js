@@ -23,6 +23,7 @@ import Select from "react-select";
 import moment from "moment-timezone";
 import { Route, useParams } from "react-router-dom";
 // import LedgerPdf from "../house/LedgerPdf";
+import LedgerPdf from "../house/LedgerPdf";
 
 import swal from "sweetalert";
 import "../../../../../src/layouts/assets/scss/pages/users.scss";
@@ -70,7 +71,12 @@ const ViewLedger = () => {
             <Col>
               <h1 className="float-left">Party Ledger</h1>
             </Col>
-            <Col>
+            <Col lg="1" md="1" sm="1">
+              <div className="float-right">
+                <LedgerPdf downloadFileName="Ledger" rootElementId="testId" />
+              </div>
+            </Col>
+            <Col lg="1" md="1" sm="1">
               <div className="float-right">
                 <Route
                   render={({ history }) => (
@@ -90,8 +96,8 @@ const ViewLedger = () => {
           {/* <hr /> */}
 
           <CardBody>
-            {/* <div className="p-4"> */}
-            {/* <Table bordered hover responsive size="sm">
+            <div className="p-4">
+              <Table id="testId" bordered hover responsive size="sm">
                 {Ledger?.length > 0 && Ledger && (
                   <thead>
                     <tr>
@@ -225,8 +231,8 @@ const ViewLedger = () => {
                     </>
                   )}
                 </tbody>
-              </Table> */}
-            {/* </div> */}
+              </Table>
+            </div>
             <Row>
               {Ledger && Ledger?.length > 0 && (
                 <Col>

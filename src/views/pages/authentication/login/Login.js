@@ -17,7 +17,7 @@ import {
   InputGroupAddon,
 } from "reactstrap";
 import { FaBeer } from "react-icons/fa";
-import logo from "../../../../assets/img/logo/mainLogo1.png";
+import logo from "../../../../assets/img/logo/Rupiologo.jpeg";
 import "../../../../assets/scss/pages/authentication.scss";
 import { history } from "../../../../history";
 import LoginAuth0 from "./LoginAuth0";
