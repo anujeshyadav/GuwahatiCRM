@@ -12,6 +12,7 @@ import {
   Label,
   Button,
   CustomInput,
+  FormGroup,
 } from "reactstrap";
 import "react-phone-input-2/lib/style.css";
 import Multiselect from "multiselect-react-dropdown";
@@ -24,9 +25,11 @@ import {
   _Post,
   _PostSave,
   _Put,
+  _BulkUpload,
 } from "../../../../ApiEndPoint/ApiCalling";
 import "../../../../assets/scss/pages/users.scss";
 import {
+  Bulk_Upload_User,
   Create_Receipt,
   Update_Receipt_By_Id,
   View_Receipt_By_Id,
@@ -39,6 +42,8 @@ const CreatePayment = (args) => {
   const [error, setError] = useState("");
   const [PaymentType, setPaymentType] = useState("");
   const [PartyList, setPartyList] = useState([]);
+  const [BulkImport, setBulkImport] = useState(null);
+
   const [Mode, setMode] = useState("Create");
   const [SelectedParty, setSelectedParty] = useState({});
   const [PartyId, setPartyId] = useState("");
@@ -109,49 +114,62 @@ const CreatePayment = (args) => {
     setUserInfo(userInfo);
   }, []);
 
-  const submitHandler = (e) => {
+  const submitHandler = async (e) => {
     e.preventDefault();
-    // console.log(AllData);
-    let id = Params?.id;
-    const payload = {
-      created_by: UserInfo?._id,
-      paymentType: AllData?.PaymentType,
-      paymentMode: AllData?.Paymentmode,
-      partyId: PartyId ? PartyId : null,
-      amount: AllData?.Amount ? Number(AllData?.Amount) : null,
-      instrumentNo: AllData?.InstrumentNumber
-        ? AllData?.InstrumentNumber
-        : null,
-      note: AllData?.Note ? AllData?.Note : null,
-      title: AllData?.Title ? AllData?.Title : null,
-      database: UserInfo?.database,
-      type: "Payment",
-    };
-    if (id == 0) {
-      if (error) {
-        swal("Error occured while Entering Details");
-      } else {
-        _PostSave(Create_Receipt, payload)
-          .then((res) => {
-            swal("Added Successfully");
-            History.goBack();
-          })
-          .catch((err) => {
-            swal("Somthing went Wrong");
-            console.log(err);
-          });
-      }
-    } else {
-      _Put(Update_Receipt_By_Id, id, payload)
+    if (BulkImport !== null || BulkImport != undefined) {
+      let formdata = new FormData();
+      formdata.append("file", BulkImport);
+
+      await _BulkUpload(Bulk_Upload_User, formdata)
         .then((res) => {
-          console.log(res);
-          History.goBack();
-          swal("Updated Successfully");
+          swal(`${res?.message}`);
         })
         .catch((err) => {
           console.log(err);
           swal("Something Went Wrong");
         });
+    } else {
+      let id = Params?.id;
+      const payload = {
+        created_by: UserInfo?._id,
+        paymentType: AllData?.PaymentType,
+        paymentMode: AllData?.Paymentmode,
+        partyId: PartyId ? PartyId : null,
+        amount: AllData?.Amount ? Number(AllData?.Amount) : null,
+        instrumentNo: AllData?.InstrumentNumber
+          ? AllData?.InstrumentNumber
+          : null,
+        note: AllData?.Note ? AllData?.Note : null,
+        title: AllData?.Title ? AllData?.Title : null,
+        database: UserInfo?.database,
+        type: "Payment",
+      };
+      if (id == 0) {
+        if (error) {
+          swal("Error occured while Entering Details");
+        } else {
+          _PostSave(Create_Receipt, payload)
+            .then((res) => {
+              swal("Added Successfully");
+              History.goBack();
+            })
+            .catch((err) => {
+              swal("Somthing went Wrong");
+              console.log(err);
+            });
+        }
+      } else {
+        _Put(Update_Receipt_By_Id, id, payload)
+          .then((res) => {
+            console.log(res);
+            History.goBack();
+            swal("Updated Successfully");
+          })
+          .catch((err) => {
+            console.log(err);
+            swal("Something Went Wrong");
+          });
+      }
     }
   };
 
@@ -352,7 +370,27 @@ const CreatePayment = (args) => {
                   </Row>
                 </>
               )}
+              <hr />
+              <Row>
+                <Col lg="12" md="12" sm="12">
+                  <Label>OR</Label>
+                </Col>
+                <Col lg="4" md="4" sm="12">
+                  <FormGroup>
+                    <Label>Bulk Import</Label>
 
+                    <Input
+                      className="form-control"
+                      type="file"
+                      placeholder=""
+                      name="BulkImport"
+                      onChange={(e) => {
+                        setBulkImport(e.target.files[0]);
+                      }}
+                    />
+                  </FormGroup>
+                </Col>
+              </Row>
               <Row>
                 <Col>
                   <div className="d-flex justify-content-center">

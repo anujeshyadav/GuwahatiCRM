@@ -118,9 +118,9 @@ const CreateAccount = () => {
     }
   };
 
-  useEffect(() => {
-    // console.log(formData);
-  }, [formData]);
+  // useEffect(() => {
+  // console.log(formData);
+  // }, [formData]);
   useEffect(() => {
     const getLocation = () => {
       if (navigator.geolocation) {
@@ -163,7 +163,6 @@ const CreateAccount = () => {
   //   );
   // }
   useEffect(() => {
-    
     let userdata = JSON.parse(localStorage.getItem("userData"));
     _GetList(country_state_City_List)
       .then((res) => {
