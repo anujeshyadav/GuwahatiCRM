@@ -153,7 +153,6 @@ class HorizontalSidebar extends React.Component {
           },
         }}>
         {submenu.map((child) => {
-          console.log(child?.icon);
           if (child.hidden) {
             return null; // Skip rendering the hidden tab
           }

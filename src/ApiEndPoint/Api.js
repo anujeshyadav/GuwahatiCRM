@@ -1,6 +1,6 @@
 // Guwahati open api EndPoints
 export const Super_Admin_List = "/master/all-super-admin-list";
-export const Image_URL = "http://174.138.68.198:5000";
+export const Image_URL = "https://node.rupioo.com";
 export const Get_Role = "/role/get-role";
 export const Update_Role_Globally = "/role/update-permission";
 export const Assign_Role_To_SuperAdmin = "/role/assign-role";
@@ -88,7 +88,7 @@ export const create_row_material = "/raw-material/creat-rawMaterial";
 // tab show on edit button
 export const Save_Tabs = "/role/save-tab";
 export const View_Tabs = "/role/view-tab/";
-export const Save_dashboard_Tabs = "/role/save--dashboard-tab";
+export const Save_dashboard_Tabs = "/role/save-dashboard-tab";
 export const View_dashboard_Tabs = "/role/view-dashboard-tab/";
 
 

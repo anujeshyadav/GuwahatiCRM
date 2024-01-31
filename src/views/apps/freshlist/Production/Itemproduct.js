@@ -58,6 +58,7 @@ import * as XLSX from "xlsx";
 import UserContext from "../../../../context/Context";
 import { CheckPermission } from "../house/CheckPermission";
 import { Get_Producton_ProcessList } from "../../../../ApiEndPoint/Api";
+import SuperAdminUI from "../../../SuperAdminUi/SuperAdminUI";
 
 const SelectedColums = [];
 
@@ -69,6 +70,7 @@ class Itemproduct extends React.Component {
     this.gridApi = null;
     this.state = {
       isOpen: false,
+      MasterShow: false,
       Arrindex: "",
       rowData: [],
       ShowBill: false,
@@ -388,16 +390,9 @@ class Itemproduct extends React.Component {
     }
   };
 
-  async componentDidMount() {
-    const userId = JSON.parse(localStorage.getItem("userData"));
-    const UserInformation = this.context?.UserInformatio;
-    const InsidePermissions = CheckPermission("Items");
-    // console.log(InsidePermissions);
-    
-    this.setState({ InsiderPermissions: InsidePermissions });
-    let url = `${Get_Producton_ProcessList}/${userId?._id}/`;
-
-    await _Get(url, userId?.database)
+  async Apicalling(id, db) {
+    let url = `${Get_Producton_ProcessList}/${id}/`;
+    await _Get(url, db)
       .then((res) => {
         console.log(res?.Production);
         if (res?.Production) {
@@ -421,27 +416,65 @@ class Itemproduct extends React.Component {
       .catch((err) => {
         console.log(err);
       });
-    // Get_Producton_ProcessList
-    await CreateProductList()
-      .then((res) => {
-        console.log(res.Data);
-        // this.setState({ rowData: res?.Data });
-        // this.setState({ AllcolumnDefs: this.state.columnDefs });
-        // this.setState({ SelectedCols: this.state.columnDefs });
+  }
+  async componentDidMount() {
+    // const userId = JSON.parse(localStorage.getItem("userData"));
+    const UserInformation = this.context?.UserInformatio;
+    const InsidePermissions = CheckPermission("Items");
+    // console.log(InsidePermissions);
+    let userData = JSON.parse(localStorage.getItem("userData"));
+    if (userData?.rolename?.roleName === "MASTER") {
+      this.setState({ MasterShow: true });
+    }
+    this.setState({ InsiderPermissions: InsidePermissions });
+    await this.Apicalling(userData?._id, userData?.database);
 
-        // let userHeading = JSON.parse(localStorage.getItem("ProductionProcessList"));
-        // if (userHeading?.length) {
-        //   this.setState({ columnDefs: userHeading });
-        //   this.gridApi.setColumnDefs(userHeading);
-        //   this.setState({ SelectedcolumnDefs: userHeading });
-        // } else {
-        //   this.setState({ columnDefs: this.state.columnDefs });
-        //   this.setState({ SelectedcolumnDefs: this.state.columnDefs });
-        // }
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+    // let url = `${Get_Producton_ProcessList}/${userId?._id}/`;
+    // await _Get(url, userId?.database)
+    //   .then((res) => {
+    //     console.log(res?.Production);
+    //     if (res?.Production) {
+    //       this.setState({ rowData: res?.Production });
+    //       this.setState({ AllcolumnDefs: this.state.columnDefs });
+    //       this.setState({ SelectedCols: this.state.columnDefs });
+
+    //       let userHeading = JSON.parse(
+    //         localStorage.getItem("ProductionProcessList")
+    //       );
+    //       if (userHeading?.length) {
+    //         this.setState({ columnDefs: userHeading });
+    //         this.gridApi.setColumnDefs(userHeading);
+    //         this.setState({ SelectedcolumnDefs: userHeading });
+    //       } else {
+    //         this.setState({ columnDefs: this.state.columnDefs });
+    //         this.setState({ SelectedcolumnDefs: this.state.columnDefs });
+    //       }
+    //     }
+    //   })
+    //   .catch((err) => {
+    //     console.log(err);
+    //   });
+
+    // await CreateProductList()
+    //   .then((res) => {
+    //     console.log(res.Data);
+    //     // this.setState({ rowData: res?.Data });
+    //     // this.setState({ AllcolumnDefs: this.state.columnDefs });
+    //     // this.setState({ SelectedCols: this.state.columnDefs });
+
+    //     // let userHeading = JSON.parse(localStorage.getItem("ProductionProcessList"));
+    //     // if (userHeading?.length) {
+    //     //   this.setState({ columnDefs: userHeading });
+    //     //   this.gridApi.setColumnDefs(userHeading);
+    //     //   this.setState({ SelectedcolumnDefs: userHeading });
+    //     // } else {
+    //     //   this.setState({ columnDefs: this.state.columnDefs });
+    //     //   this.setState({ SelectedcolumnDefs: this.state.columnDefs });
+    //     // }
+    //   })
+    //   .catch((err) => {
+    //     console.log(err);
+    //   });
   }
 
   togglemodal = () => {
@@ -624,6 +657,52 @@ class Itemproduct extends React.Component {
       },
     });
   };
+  HandleSampleDownload = () => {
+    let headings;
+    let maxKeys = 0;
+
+    let elementWithMaxKeys = null;
+
+    for (const element of this.state.rowData) {
+      const numKeys = Object.keys(element).length; // Get the number of keys in the current element
+      if (numKeys > maxKeys) {
+        maxKeys = numKeys; // Update the maximum number of keys
+        elementWithMaxKeys = element; // Update the element with maximum keys
+      }
+    }
+    let findheading = Object.keys(elementWithMaxKeys);
+    let index = findheading.indexOf("_id");
+    if (index > -1) {
+      findheading.splice(index, 1);
+    }
+    let index1 = findheading.indexOf("__v");
+    if (index1 > -1) {
+      findheading.splice(index1, 1);
+    }
+    headings = findheading?.map((ele) => {
+      return {
+        headerName: ele,
+        field: ele,
+        filter: true,
+        sortable: true,
+      };
+    });
+
+    let CCvData = headings?.map((ele, i) => {
+      return ele?.field;
+    });
+    const formattedHeaders = CCvData.join(",");
+
+    Papa.parse(formattedHeaders, {
+      complete: (result) => {
+        const ws = XLSX.utils.json_to_sheet(result.data);
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, "Sheet1");
+        const excelType = "xls";
+        XLSX.writeFile(wb, `ProductsSample.${excelType}`);
+      },
+    });
+  };
 
   shiftElementUp = () => {
     let currentIndex = this.state.Arrindex;
@@ -712,6 +791,16 @@ class Itemproduct extends React.Component {
       });
     }
   };
+  handleParentSubmit = (e) => {
+    e.preventDefault();
+    let SuperAdmin = JSON.parse(localStorage.getItem("SuperadminIdByMaster"));
+    let id = SuperAdmin.split(" ")[0];
+    let db = SuperAdmin.split(" ")[1];
+    this.Apicalling(id, db);
+  };
+  handleDropdownChange = (selectedValue) => {
+    localStorage.setItem("SuperadminIdByMaster", JSON.stringify(selectedValue));
+  };
   render() {
     const {
       rowData,
@@ -735,6 +824,14 @@ class Itemproduct extends React.Component {
                     Product List
                   </h1>
                 </Col>
+                {this.state.MasterShow && (
+                  <Col>
+                    <SuperAdminUI
+                      onDropdownChange={this.handleDropdownChange}
+                      onSubmit={this.handleParentSubmit}
+                    />
+                  </Col>
+                )}
                 {InsiderPermissions && InsiderPermissions?.View && (
                   <Col>
                     <span className="mx-1">
@@ -796,6 +893,14 @@ class Itemproduct extends React.Component {
                               className=" mx-1 myactive">
                               .XML
                             </h5>
+                            {this.state.MasterShow && (
+                              <h5
+                                onClick={this.HandleSampleDownload}
+                                style={{ cursor: "pointer" }}
+                                className=" mx-1 myactive">
+                                Format
+                              </h5>
+                            )}
                           </div>
                         )}
                       </div>

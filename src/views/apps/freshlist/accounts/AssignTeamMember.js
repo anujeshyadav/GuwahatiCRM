@@ -453,6 +453,7 @@ const AssignTeamMember = () => {
                                   ele?.created_by?.firstName ? null : (
                                     <>
                                       <Input
+                                        style={{ position: "unset", margin: 0 }}
                                         value="checkbox1"
                                         type="checkbox"
                                         onClick={(e) => handleSaveChild(ele, e)}

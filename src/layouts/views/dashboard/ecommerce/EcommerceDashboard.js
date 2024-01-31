@@ -52,46 +52,50 @@ class EcommerceDashboard extends React.Component {
       basicList: [
         {
           key: 1,
+          NavLink: "/app/SoftNumen/ticket/Partywiseledger",
           value: <SubscribersGained />,
           Name: "Ledger",
           Show: true,
         },
         {
           key: 2,
+          NavLink: "/app/SoftNumen/ticket/Partywiseledger",
           value: <RevenueGenerated />,
           Name: "Sales",
           Show: true,
         },
         {
           key: 3,
+          NavLink: "/app/SoftNumen/ticket/Partywiseledger",
           value: <QuaterlySales />,
           Name: "Purchase",
           Show: true,
         },
         {
           key: 4,
+          NavLink: "/app/SoftNumen/ticket/Partywiseledger",
           value: <OrdersReceived />,
           Name: "Transaction ",
           Show: true,
         },
-        ,
       ],
     };
   }
   async componentDidMount() {
     let userData = JSON.parse(localStorage.getItem("userData"));
-
     await _Get(View_dashboard_Tabs, userData?._id)
       .then((res) => {
         let AllTab = [];
         let SelectedTab = res?.Tab?.tab;
         let mytab = this.state.basicList?.map((ele, index) => {
-          SelectedTab?.forEach((val, i) => {
+          SelectedTab?.map((val, i) => {
             if (ele?.Name == val?.Name) {
+              ele["Show"] = val?.show;
               AllTab.push(ele);
             }
           });
         });
+
         this.setState({ List: AllTab });
       })
       .catch((err) => {
@@ -104,7 +108,7 @@ class EcommerceDashboard extends React.Component {
     }));
   };
   hanldeSetBox = (e, ele, i) => {
-    let allList = this.state.List;
+    let allList = this.state.basicList;
     if (e.target.checked) {
       allList[i]["Show"] = e.target.checked;
     } else {
@@ -112,15 +116,15 @@ class EcommerceDashboard extends React.Component {
     }
     this.setState({ List: allList });
   };
+
   handleTogglemodal = () => {
     this.LookupviewStart();
   };
+
   handleSubmitBottomData = async (e) => {
     e.preventDefault();
 
-    console.log(this.state.List);
     let userData = JSON.parse(localStorage.getItem("userData"));
-
     let tabs = this.state.List?.map((ele) => {
       return {
         key: ele?.key,
@@ -152,7 +156,11 @@ class EcommerceDashboard extends React.Component {
             this.state.basicList?.map((ele) => (
               <>
                 {ele?.Show && ele?.Show && (
-                  <Col lg="3" md="6" sm="6">
+                  <Col
+                    onClick={() => this.props.history.push(ele?.NavLink)}
+                    lg="3"
+                    md="6"
+                    sm="6">
                     {ele.value}
                   </Col>
                 )}

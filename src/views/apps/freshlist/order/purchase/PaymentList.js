@@ -437,7 +437,7 @@ class PurchaseCompleted extends React.Component {
   //       this.setState({ AllcolumnDefs: this.state.columnDefs });
   //       this.setState({ SelectedCols: this.state.columnDefs });
 
-  //       let userHeading = JSON.parse(localStorage.getItem("TargetList"));
+  //       let userHeading = JSON.parse(localStorage.getItem("PaymentList"));
   //       if (userHeading?.length) {
   //         this.setState({ columnDefs: userHeading });
   //         this.gridApi.setColumnDefs(userHeading);
@@ -466,11 +466,11 @@ class PurchaseCompleted extends React.Component {
         }
         this.setState({ AllcolumnDefs: this.state.columnDefs });
 
-        let userHeading = JSON.parse(localStorage.getItem("ReceiptList"));
+        let userHeading = JSON.parse(localStorage.getItem("PaymentList"));
         if (userHeading?.length) {
           this.setState({ columnDefs: userHeading });
-          this.gridApi.setColumnDefs(userHeading);
           this.setState({ SelectedcolumnDefs: userHeading });
+          this.gridApi.setColumnDefs(userHeading);
         } else {
           this.setState({ columnDefs: this.state.columnDefs });
           this.setState({ SelectedcolumnDefs: this.state.columnDefs });
@@ -666,7 +666,52 @@ class PurchaseCompleted extends React.Component {
       },
     });
   };
+  HandleSampleDownload = () => {
+    let headings;
+    let maxKeys = 0;
 
+    let elementWithMaxKeys = null;
+
+    for (const element of this.state.rowData) {
+      const numKeys = Object.keys(element).length; // Get the number of keys in the current element
+      if (numKeys > maxKeys) {
+        maxKeys = numKeys; // Update the maximum number of keys
+        elementWithMaxKeys = element; // Update the element with maximum keys
+      }
+    }
+    let findheading = Object.keys(elementWithMaxKeys);
+    let index = findheading.indexOf("_id");
+    if (index > -1) {
+      findheading.splice(index, 1);
+    }
+    let index1 = findheading.indexOf("__v");
+    if (index1 > -1) {
+      findheading.splice(index1, 1);
+    }
+    headings = findheading?.map((ele) => {
+      return {
+        headerName: ele,
+        field: ele,
+        filter: true,
+        sortable: true,
+      };
+    });
+
+    let CCvData = headings?.map((ele, i) => {
+      return ele?.field;
+    });
+    const formattedHeaders = CCvData.join(",");
+
+    Papa.parse(formattedHeaders, {
+      complete: (result) => {
+        const ws = XLSX.utils.json_to_sheet(result.data);
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, "Sheet1");
+        const excelType = "xls";
+        XLSX.writeFile(wb, `PaymentSample.${excelType}`);
+      },
+    });
+  };
   shiftElementUp = () => {
     let currentIndex = this.state.Arrindex;
     if (currentIndex > 0) {
@@ -719,13 +764,13 @@ class PurchaseCompleted extends React.Component {
 
   HandleSetVisibleField = (e) => {
     e.preventDefault();
-    
+
     this.gridApi.setColumnDefs(this.state.SelectedcolumnDefs);
     this.setState({ columnDefs: this.state.SelectedcolumnDefs });
     this.setState({ SelectedcolumnDefs: this.state.SelectedcolumnDefs });
     this.setState({ rowData: this.state.rowData });
     localStorage.setItem(
-      "TargetList",
+      "PaymentList",
       JSON.stringify(this.state.SelectedcolumnDefs)
     );
     this.LookupviewStart();
@@ -900,6 +945,14 @@ class PurchaseCompleted extends React.Component {
                               className=" mx-1 myactive">
                               .XML
                             </h5>
+                            {this.state.MasterShow && (
+                              <h5
+                                onClick={this.HandleSampleDownload}
+                                style={{ cursor: "pointer" }}
+                                className=" mx-1 myactive">
+                                Format
+                              </h5>
+                            )}
                           </div>
                         )}
                       </div>

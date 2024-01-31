@@ -79,9 +79,7 @@ const CreateCustomer = () => {
       [name]: allimages,
     });
   };
-  const handleChange = () => {
-    console.log("object");
-  };
+
   const handleInputChange = (e, type, i) => {
     const { name, value, checked } = e.target;
     setindex(i);

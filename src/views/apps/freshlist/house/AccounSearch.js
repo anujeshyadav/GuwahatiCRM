@@ -92,7 +92,7 @@ class AccounSearch extends React.Component {
   }
 
   LookupviewStart = () => {
-    this.setState(prevState => ({
+    this.setState((prevState) => ({
       modal: !prevState.modal,
     }));
   };
@@ -110,9 +110,9 @@ class AccounSearch extends React.Component {
 
   async Apicalling(id, db) {
     this.setState({ Loading: true });
-    
+
     await CreateAccountList(id, db)
-      .then(res => {
+      .then((res) => {
         this.setState({ Loading: false });
 
         let value = res?.adminDetails;
@@ -120,9 +120,9 @@ class AccounSearch extends React.Component {
           this.setState({ rowData: value });
         }
       })
-      .catch(err => {
+      .catch((err) => {
         this.setState({ Loading: false });
-          this.setState({ rowData: [] });
+        this.setState({ rowData: [] });
 
         console.log(err);
       });
@@ -140,13 +140,13 @@ class AccounSearch extends React.Component {
     await this.Apicalling(pageparmission?._id, pageparmission?.database);
 
     await CreateAccountView()
-      .then(res => {
+      .then((res) => {
         const jsonData = xmlJs.xml2json(res.data, {
           compact: true,
           spaces: 2,
         });
-        console.log(JSON.parse(jsonData)?.CreateUser);
-        const inputs = JSON.parse(jsonData)?.CreateUser?.input?.map(ele => {
+        // console.log(JSON.parse(jsonData)?.CreateUser);
+        const inputs = JSON.parse(jsonData)?.CreateUser?.input?.map((ele) => {
           return {
             headerName: ele?.label._text,
             field: ele?.name._text,
@@ -164,7 +164,7 @@ class AccounSearch extends React.Component {
             field: "sortorder",
             field: "transactions",
             width: 190,
-            cellRendererFramework: params => {
+            cellRendererFramework: (params) => {
               return (
                 <div className="actions cursor-pointer">
                   {this.state.InsiderPermissions &&
@@ -177,8 +177,7 @@ class AccounSearch extends React.Component {
                               padding: "10px",
                               borderRadius: "30px",
                               backgroundColor: "#39cccc",
-                            }}
-                          >
+                            }}>
                             <Eye
                               className=""
                               size="20px"
@@ -202,8 +201,7 @@ class AccounSearch extends React.Component {
                               borderRadius: "30px",
                               backgroundColor: "rgb(212, 111, 16)",
                               marginLeft: "3px",
-                            }}
-                          >
+                            }}>
                             <FaPencilAlt
                               className=""
                               size="20px"
@@ -227,8 +225,7 @@ class AccounSearch extends React.Component {
                               borderRadius: "30px",
                               backgroundColor: "rgb(236, 24, 9)",
                               marginLeft: "3px",
-                            }}
-                          >
+                            }}>
                             <Trash2
                               className=""
                               size="20px"
@@ -250,7 +247,7 @@ class AccounSearch extends React.Component {
             field: "status",
             filter: true,
             width: 150,
-            cellRendererFramework: params => {
+            cellRendererFramework: (params) => {
               return params.data?.status === "Active" ? (
                 <div className="badge badge-pill badge-success">
                   {params.data?.status}
@@ -268,7 +265,7 @@ class AccounSearch extends React.Component {
             field: "created_by.firstName",
             filter: true,
             sortable: true,
-            cellRendererFramework: params => {
+            cellRendererFramework: (params) => {
               // console.log(params?.data);
               return (
                 <>
@@ -284,12 +281,29 @@ class AccounSearch extends React.Component {
             field: "rolename.roleName",
             filter: true,
             sortable: true,
-            cellRendererFramework: params => {
+            cellRendererFramework: (params) => {
               console.log(params.data);
               return (
                 <>
                   <div className="actions cursor-pointer">
                     <span>{params?.data?.rolename?.roleName}</span>
+                  </div>
+                </>
+              );
+            },
+          },
+          {
+            headerName: "Role Id",
+            field: "rolename._id",
+            filter: true,
+            sortable: true,
+            editable: true,
+
+            cellRendererFramework: (params) => {
+              return (
+                <>
+                  <div className="actions cursor-pointer">
+                    <span>{params?.data?.rolename?._id}</span>
                   </div>
                 </>
               );
@@ -301,7 +315,7 @@ class AccounSearch extends React.Component {
             field: "createdAt",
             filter: true,
             sortable: true,
-            cellRendererFramework: params => {
+            cellRendererFramework: (params) => {
               return (
                 <>
                   <div className="actions cursor-pointer">
@@ -316,7 +330,7 @@ class AccounSearch extends React.Component {
             field: "updatedAt",
             filter: true,
             sortable: true,
-            cellRendererFramework: params => {
+            cellRendererFramework: (params) => {
               return (
                 <>
                   <div className="actions cursor-pointer">
@@ -343,14 +357,14 @@ class AccounSearch extends React.Component {
         }
         this.setState({ SelectedCols: Product });
       })
-      .catch(err => {
+      .catch((err) => {
         console.log(err);
         swal("Error", "something went wrong try again");
       });
   }
 
   toggleDropdown = () => {
-    this.setState(prevState => ({ isOpen: !prevState.isOpen }));
+    this.setState((prevState) => ({ isOpen: !prevState.isOpen }));
   };
 
   runthisfunction(id) {
@@ -359,15 +373,15 @@ class AccounSearch extends React.Component {
         cancel: "cancel",
         catch: { text: "Delete ", value: "delete" },
       },
-    }).then(value => {
+    }).then((value) => {
       switch (value) {
         case "delete":
           DeleteAccount(id)
-            .then(res => {
+            .then((res) => {
               let selectedData = this.gridApi.getSelectedRows();
               this.gridApi.updateRowData({ remove: selectedData });
             })
-            .catch(err => {
+            .catch((err) => {
               console.log(err);
             });
           break;
@@ -376,7 +390,7 @@ class AccounSearch extends React.Component {
     });
   }
 
-  onGridReady = params => {
+  onGridReady = (params) => {
     this.gridApi = params.api;
     this.gridColumnApi = params.columnApi;
     this.gridRef.current = params.api;
@@ -388,11 +402,11 @@ class AccounSearch extends React.Component {
     });
   };
 
-  updateSearchQuery = val => {
+  updateSearchQuery = (val) => {
     this.gridApi.setQuickFilter(val);
   };
 
-  filterSize = val => {
+  filterSize = (val) => {
     if (this.gridApi) {
       this.gridApi.paginationSetPageSize(Number(val));
       this.setState({
@@ -407,7 +421,7 @@ class AccounSearch extends React.Component {
       SelectedColums?.push(value);
     } else {
       const delindex = SelectedColums?.findIndex(
-        ele => ele?.headerName === value?.headerName
+        (ele) => ele?.headerName === value?.headerName
       );
 
       SelectedColums?.splice(delindex, 1);
@@ -418,14 +432,14 @@ class AccounSearch extends React.Component {
       Papa.parse(csvData, {
         header: true,
         skipEmptyLines: true,
-        complete: result => {
+        complete: (result) => {
           if (result.data && result.data.length > 0) {
             resolve(result.data);
           } else {
             reject(new Error("No data found in the CSV"));
           }
         },
-        error: error => {
+        error: (error) => {
           reject(error);
         },
       });
@@ -437,7 +451,7 @@ class AccounSearch extends React.Component {
 
     const doc = new jsPDF("landscape", "mm", size, false);
     doc.setTextColor(5, 87, 97);
-    const tableData = parsedData.map(row => Object.values(row));
+    const tableData = parsedData.map((row) => Object.values(row));
     doc.addImage(Logo, "JPEG", 10, 10, 50, 30);
     let date = new Date();
     doc.setCreationDate(date);
@@ -462,14 +476,14 @@ class AccounSearch extends React.Component {
       console.error("Error parsing CSV:", error);
     }
   };
-  processCell = params => {
+  processCell = (params) => {
     // console.log(params);
     // Customize cell content as needed
     return params.value;
   };
 
   convertCsvToExcel(csvData) {
-    return new Promise(resolve => {
+    return new Promise((resolve) => {
       Papa.parse(csvData, {
         header: true,
         dynamicTyping: true,
@@ -500,7 +514,8 @@ class AccounSearch extends React.Component {
     window.URL.revokeObjectURL(url);
   }
 
-  exportToExcel = async e => {
+  exportToExcel = async (e) => {
+    // console.log(this.state.columnDefs);
     const CsvData = this.gridApi.getDataAsCsv({
       processCellCallback: this.processCell,
     });
@@ -508,17 +523,69 @@ class AccounSearch extends React.Component {
     this.downloadExcelFile(blob);
   };
 
+  formatHeader = (propertyPath) => {
+    return propertyPath
+      .split(".")
+      .pop()
+      .split(/(?=[A-Z])/)
+      .join(" ");
+  };
+
   convertCSVtoExcel = () => {
     const CsvData = this.gridApi.getDataAsCsv({
       processCellCallback: this.processCell,
     });
     Papa.parse(CsvData, {
-      complete: result => {
+      complete: (result) => {
         const ws = XLSX.utils.json_to_sheet(result.data);
         const wb = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(wb, ws, "Sheet1");
         const excelType = "xls";
         XLSX.writeFile(wb, `UserList.${excelType}`);
+      },
+    });
+  };
+
+  HandleSampleDownload = () => {
+    let headings;
+    let maxKeys = 0;
+    let elementWithMaxKeys = null;
+    for (const element of this.state.rowData) {
+      const numKeys = Object.keys(element).length; // Get the number of keys in the current element
+      if (numKeys > maxKeys) {
+        maxKeys = numKeys; // Update the maximum number of keys
+        elementWithMaxKeys = element; // Update the element with maximum keys
+      }
+    }
+    let findheading = Object.keys(elementWithMaxKeys);
+    let index = findheading.indexOf("_id");
+    if (index > -1) {
+      findheading.splice(index, 1);
+    }
+    let index1 = findheading.indexOf("__v");
+    if (index1 > -1) {
+      findheading.splice(index1, 1);
+    }
+    headings = findheading?.map((ele) => {
+      return {
+        headerName: ele,
+        field: ele,
+        filter: true,
+        sortable: true,
+      };
+    });
+
+    let CCvData = headings?.map((ele, i) => {
+      return ele?.field;
+    });
+    const formattedHeaders = CCvData.join(",");
+    Papa.parse(formattedHeaders, {
+      complete: (result) => {
+        const ws = XLSX.utils.json_to_sheet(result.data);
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, "Sheet1");
+        const excelType = "xls";
+        XLSX.writeFile(wb, `UserListSample.${excelType}`);
       },
     });
   };
@@ -549,13 +616,13 @@ class AccounSearch extends React.Component {
       processCellCallback: this.processCell,
     });
     Papa.parse(CsvData, {
-      complete: result => {
+      complete: (result) => {
         const rows = result.data;
 
         // Create XML
         let xmlString = "<root>\n";
 
-        rows.forEach(row => {
+        rows.forEach((row) => {
           xmlString += "  <row>\n";
           row.forEach((cell, index) => {
             xmlString += `    <field${index + 1}>${cell}</field${index + 1}>\n`;
@@ -577,7 +644,7 @@ class AccounSearch extends React.Component {
     });
   };
 
-  HandleSetVisibleField = e => {
+  HandleSetVisibleField = (e) => {
     e.preventDefault();
     this.gridApi.setColumnDefs(this.state.SelectedcolumnDefs);
     this.setState({ columnDefs: this.state.SelectedcolumnDefs });
@@ -593,10 +660,10 @@ class AccounSearch extends React.Component {
   HeadingRightShift = () => {
     const updatedSelectedColumnDefs = [
       ...new Set([
-        ...this.state.SelectedcolumnDefs.map(item => JSON.stringify(item)),
-        ...SelectedColums.map(item => JSON.stringify(item)),
+        ...this.state.SelectedcolumnDefs.map((item) => JSON.stringify(item)),
+        ...SelectedColums.map((item) => JSON.stringify(item)),
       ]),
-    ].map(item => JSON.parse(item));
+    ].map((item) => JSON.parse(item));
     this.setState({
       SelectedcolumnDefs: [...new Set(updatedSelectedColumnDefs)], // Update the state with the combined array
     });
@@ -613,14 +680,14 @@ class AccounSearch extends React.Component {
       });
     }
   };
-  handleParentSubmit = e => {
+  handleParentSubmit = (e) => {
     e.preventDefault();
     let SuperAdmin = JSON.parse(localStorage.getItem("SuperadminIdByMaster"));
     let id = SuperAdmin.split(" ")[0];
     let db = SuperAdmin.split(" ")[1];
     this.Apicalling(id, db);
   };
-  handleDropdownChange = selectedValue => {
+  handleDropdownChange = (selectedValue) => {
     localStorage.setItem("SuperadminIdByMaster", JSON.stringify(selectedValue));
   };
   render() {
@@ -631,15 +698,13 @@ class AccounSearch extends React.Component {
             display: "flex",
             justifyContent: "center",
             marginTop: "20rem",
-          }}
-        >
+          }}>
           <Spinner
             style={{
               height: "4rem",
               width: "4rem",
             }}
-            color="primary"
-          >
+            color="primary">
             Loading...
           </Spinner>
         </div>
@@ -774,6 +839,14 @@ class AccounSearch extends React.Component {
                                           className=" mx-1 myactive">
                                           .XML
                                         </h5>
+                                        {this.state.MasterShow && (
+                                          <h5
+                                            onClick={this.HandleSampleDownload}
+                                            style={{ cursor: "pointer" }}
+                                            className=" mx-1 myactive">
+                                            Format
+                                          </h5>
+                                        )}
                                       </div>
                                     )}
                                   </div>

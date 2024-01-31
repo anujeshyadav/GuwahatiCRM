@@ -32,8 +32,6 @@ import UserContext from "../../../context/Context";
 import { Image_URL } from "../../../ApiEndPoint/Api";
 // import HorizontalMenu from "../../../../src/layouts/layouts/components/menu/horizontal-menu/HorizontalMenu";
 const PhoneNo = (props) => {
-  Image_URL;
-  console.log(props);
   let phone_no = "";
   if (props.userdata !== undefined) {
     phone_no = props.userdata.number;

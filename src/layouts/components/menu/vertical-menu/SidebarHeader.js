@@ -5,8 +5,20 @@ import classnames from "classnames";
 // import logo from "../../../../assets/img/logo/logomain.png";
 import logo from "../../../../assets/img/logo/logowithoutback.png";
 import { AiFillLeftCircle } from "react-icons/ai";
+import UserContext from "../../../../context/Context";
+import { Image_URL } from "../../../../ApiEndPoint/Api";
 
 class SidebarHeader extends Component {
+  state = {
+    CompanyDetails: {},
+  };
+  static contextType = UserContext;
+
+  async componentDidMount() {
+    const user = this.context;
+    this.setState({ CompanyDetails: user?.CompanyDetails });
+    console.log(user);
+  }
   render() {
     let {
       toggleSidebarMenu,
@@ -22,8 +34,21 @@ class SidebarHeader extends Component {
           <li className="nav-item">
             <NavLink to="/" className="navbar-brand">
               <div className="brand-logo mb-2 " />
-
-              <img src={logo} alt="logo" width="160px" />
+              {this.state.CompanyDetails?.logo &&
+              this.state.CompanyDetails?.logo ? (
+                <>
+                  <img
+                    src={` ${Image_URL}/Images/${this.state.CompanyDetails?.logo}`}
+                    width="160px"
+                    height={54}
+                    alt={logo}
+                  />
+                </>
+              ) : (
+                <>
+                  <img src={logo} alt={logo} width="160px" />
+                </>
+              )}
             </NavLink>
           </li>
           <li className="nav-item nav-toggle ">

@@ -11,8 +11,6 @@ const SuperAdminUI = ({ onDropdownChange, onSubmit }) => {
     let List = localStorage.getItem("AllSuper");
 
     useEffect(() => {
-      // Super_Admin_List;
-      console.log("a");
       let Userinfo = JSON.parse(localStorage.getItem("userData"));
       setUserInfo(Userinfo);
       let List = JSON.parse(localStorage.getItem("AllSuper"));
@@ -46,7 +44,7 @@ const SuperAdminUI = ({ onDropdownChange, onSubmit }) => {
       setSelectedSuperAdminName(selectedName);
       onDropdownChange(selectedValue);
     };
-    console.log(selectedSuperAdmin);
+    
     return (
       <div>
         <Row>
