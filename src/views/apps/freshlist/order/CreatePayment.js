@@ -29,6 +29,7 @@ import {
 } from "../../../../ApiEndPoint/ApiCalling";
 import "../../../../assets/scss/pages/users.scss";
 import {
+  Bulk_Upload_Receipt,
   Bulk_Upload_User,
   Create_Receipt,
   Update_Receipt_By_Id,
@@ -119,8 +120,9 @@ const CreatePayment = (args) => {
     if (BulkImport !== null || BulkImport != undefined) {
       let formdata = new FormData();
       formdata.append("file", BulkImport);
+      formdata.append("type", "Payment");
 
-      await _BulkUpload(Bulk_Upload_User, formdata)
+      await _BulkUpload(Bulk_Upload_Receipt, formdata)
         .then((res) => {
           swal(`${res?.message}`);
         })

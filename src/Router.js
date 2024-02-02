@@ -591,6 +591,9 @@ const CreateQuote = lazy(() =>
 const WareHouseListSoft = lazy(() =>
   import("./views/apps/freshlist/customer/warehouse/WareHouseList")
 );
+const SettingTab = lazy(() =>
+  import("./views/apps/freshlist/customer/warehouse/SettingTab")
+);
 
 const CreateWareHouse = lazy(() =>
   import("./views/apps/freshlist/customer/warehouse/CreateWareHouse")
@@ -2230,6 +2233,10 @@ class AppRouter extends React.Component {
           <AppRoute
             path="/app/softNumen/system/WareHouseListSoft"
             component={WareHouseListSoft}
+          />
+          <AppRoute
+            path="/app/softNumen/system/SettingTab"
+            component={SettingTab}
           />
           <AppRoute
             path="/app/softNumen/warehouse/CreateWareHouse"

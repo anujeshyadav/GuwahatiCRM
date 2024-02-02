@@ -38,6 +38,7 @@ export const View_Company_Details = "/company-detail/view-company-details/";
 export const Bulk_Upload_Customer = "/customer/party-data";
 export const Bulk_Upload_User = "/user/import-user-data";
 export const Bulk_Upload_Product = "/product/import-item-data";
+export const Bulk_Upload_Receipt = "/receipt/reciept-data";
 export const Update_Role = "/role/update-role/";
 export const Create_warehouse_xmlView = "/warehouse/get-xml";
 export const Create_warehouse_save = "/warehouse/save-warehouse";

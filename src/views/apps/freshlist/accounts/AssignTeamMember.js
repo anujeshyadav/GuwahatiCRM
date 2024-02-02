@@ -25,6 +25,7 @@ let SetAllHeadOfdepartment = [];
 const AssignTeamMember = () => {
   const [DepartmentWithRole, setDepartmentWithRole] = useState([]);
   const [SelectedDepartment, setSelectedDepartment] = useState([]);
+  const [SelectedDepartments, setSelectedDepartments] = useState([]);
   const [ShowParentList, setShowParentList] = useState([]);
   const [ALLheadsofDept, setALLheadsofDept] = useState([]);
   const [ShowChildList, setShowChildList] = useState([]);
@@ -157,12 +158,22 @@ const AssignTeamMember = () => {
               <Col lg="3" md="3">
                 <Label>Select Department</Label>
                 <CustomInput
-                  value={SelectedDepartment}
+                  value={SelectedDepartments}
                   onChange={(e) => {
+                    setChild(false);
+
+                    setSelectedDepartments(e.target.value);
+                    if (e.target.value == 0) {
+                      setShow(false);
+                    }
                     e.target.value ? setShow(true) : setShow(false);
+                    if (e.target.value == 0) {
+                      setShow(false);
+                    }
                     if (e.target.value == "All_Dept_Heads") {
                       SetAllHeadOfdepartment = [];
                       setShow(false);
+
                       DepartmentWithRole?.map((ele, i) => {
                         ele?.roles?.forEach((val, index) => {
                           if (val?.rolePosition == 1) {
@@ -179,11 +190,11 @@ const AssignTeamMember = () => {
                           }
                         });
                       });
-                      setSelectedDepartment(e.target.value);
+
                       setShowChildList(allHeadUsers);
-                      if (allHeadUsers?.length) {
-                        setChild(true);
-                      }
+                      // if (allHeadUsers?.length) {
+                      //   setChild(true);
+                      // }
                       let userData = JSON.parse(
                         localStorage.getItem("userData")
                       );
@@ -199,7 +210,7 @@ const AssignTeamMember = () => {
                     }
                   }}
                   type="select">
-                  <option value="">--Select Department--</option>
+                  <option value="0">--Select Department--</option>
                   <option value="All_Dept_Heads">All Department Head</option>
                   {DepartmentWithRole &&
                     DepartmentWithRole?.map((ele, i) => (
@@ -217,61 +228,71 @@ const AssignTeamMember = () => {
                   <CustomInput
                     value={Parent}
                     onChange={(e) => {
-                      const selected = e.target.options[e.target.selectedIndex]
-                        .getAttribute("data-name")
-                        ?.split(" ");
-                      if (selected[0] === 1) {
-                        // pass created by
-                        setHeadOfDepartment(true);
-                      }
-                      const name = selected.slice(2).join(" ");
-                      let child = [];
-                      if (name == "Sales Person") {
-                        child = AllUsersList?.filter(
-                          (ele) => ele?.rolename?.roleName == "Customer"
-                        );
-                      } else {
-                        child = SelectedDepartment?.filter(
-                          (ele) => ele?.rolePosition == Number(selected[0]) + 1
-                        );
-                      }
-
-                      let ParentList = AllUsersList?.filter(
-                        (ele) => ele?.rolename?._id == selected[1]
-                      );
-
-                      setShowParentList(ParentList);
-                      setParent(e.target.value);
-                      setParentName(name);
-                      setSelectedRoleId(selected[1]);
-
-                      if (child?.length) {
-                        let ChildList = [];
-                        if (name == "Sales Person") {
-                          setShowChildList(child);
-                          setParty(true);
-                          // setShowChildList(ChildList);
-                          setChild(true);
-                          setChildList(child);
-                        } else {
-                          ChildList = AllUsersList?.filter(
-                            (ele) => ele?.rolename?._id == child[0]?.roleId?._id
-                          );
-                          setShowChildList(ChildList);
-                          setChild(true);
-                          setParty(false);
-
-                          setChildList(child);
-                        }
-                      } else {
-                        setChildList([]);
-                        setShowChildList([]);
-                        setNoChild(true);
+                      if (e.target.value == "NA") {
                         setChild(false);
+                        setParent(e.target.value);
+                      } else {
+                        const selected = e.target.options[
+                          e.target.selectedIndex
+                        ]
+                          .getAttribute("data-name")
+                          ?.split(" ");
+
+                        if (selected[0] === 1) {
+                          // pass created by
+                          setHeadOfDepartment(true);
+                        }
+                        const name = selected.slice(2).join(" ");
+                        let child = [];
+                        if (name == "Sales Person") {
+                          child = AllUsersList?.filter(
+                            (ele) => ele?.rolename?.roleName == "Customer"
+                          );
+                        } else {
+                          debugger;
+                          child = SelectedDepartment?.filter(
+                            (ele) =>
+                              ele?.rolePosition == Number(selected[0]) + 1
+                          );
+                        }
+
+                        let ParentList = AllUsersList?.filter(
+                          (ele) => ele?.rolename?._id == selected[1]
+                        );
+                        setShowParentList(ParentList);
+                        setParent(e.target.value);
+                        setParentName(name);
+                        setSelectedRoleId(selected[1]);
+
+                        if (child?.length) {
+                          let ChildList = [];
+                          if (name == "Sales Person") {
+                            setShowChildList(child);
+                            setParty(true);
+                            // setShowChildList(ChildList);
+                            setChild(true);
+                            setChildList(child);
+                          } else {
+                            ChildList = AllUsersList?.filter(
+                              (ele) =>
+                                ele?.rolename?._id == child[0]?.roleId?._id
+                            );
+                            setShowChildList(ChildList);
+                            setChild(true);
+                            setParty(false);
+
+                            setChildList(child);
+                          }
+                        } else {
+                          setChildList([]);
+                          setShowChildList([]);
+                          setNoChild(true);
+                          setChild(false);
+                        }
                       }
                     }}
                     type="select">
-                    <option value="">--Select Role--</option>
+                    <option value="NA">--Select Role--</option>
                     {SelectedDepartment &&
                       SelectedDepartment?.map((ele, i) => (
                         <option

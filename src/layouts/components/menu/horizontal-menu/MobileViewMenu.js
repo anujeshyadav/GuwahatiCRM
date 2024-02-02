@@ -499,10 +499,18 @@ class HorizontalSidebar extends React.Component {
                             <span
                               title={ele?.title}
                               className="menu-icon align-bottom mr-1">
-                              <span className="mr-1">{ele?.icon}</span>
+                              <span className="mr-1 bottomicone">
+                                {ele?.icon}
+                              </span>
                               {/* </span>
                   <span style={{ color: "white" }} className="p-1"> */}
-                              {ele?.title}
+                              <span style={{ fontWeight: "bolder" }}>
+                                {ele?.title && ele?.title?.length > 8 ? (
+                                  <>{ele.title?.substring(0, 8)}</>
+                                ) : (
+                                  <>{ele.title}</>
+                                )}
+                              </span>
                             </span>
                           </span>
                         </>

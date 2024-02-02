@@ -339,8 +339,8 @@ class OrderList extends React.Component {
       .catch(err => {
         this.setState({ rowData: [] });
         this.setState({ Loading: false });
-        swal("Error", `${err.response?.data?.message}`);
-        console.log(err.response?.data);
+        // swal("Error", `${err.response?.data?.message}`);
+        // console.log(err.response?.data);
       });
   }
   async componentDidMount() {
@@ -777,7 +777,7 @@ class OrderList extends React.Component {
                   )}
                 </Col>
               </Row>
-              {InsiderPermissions && InsiderPermissions?.Download && (
+              {InsiderPermissions && InsiderPermissions?.View && (
                 <CardBody style={{ marginTop: "-1.5rem" }}>
                   {this.state.rowData === null ? null : (
                     <div className="ag-theme-material w-100 my-2 ag-grid-table">

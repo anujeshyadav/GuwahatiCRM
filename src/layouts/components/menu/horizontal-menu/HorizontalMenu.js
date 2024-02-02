@@ -80,7 +80,7 @@ class HorizontalSidebar extends React.Component {
         SelectedcolumnDefs: [...new Set(updatedSelectedColumnDefs)], // Update the state with the combined array
       });
     } else {
-      swal("Select only 11 headings");
+      swal("Select only 06 headings");
     }
   };
   handleLeftShift = () => {
@@ -379,7 +379,7 @@ class HorizontalSidebar extends React.Component {
             }
           });
         });
-        this.setState({ SelectedcolumnDefs: AllTab, AllAvailableCol: AllTab });
+        this.setState({ SelectedcolumnDefs: AllTab });
       })
       .catch((err) => {
         console.log(err);
@@ -427,7 +427,7 @@ class HorizontalSidebar extends React.Component {
       //   JSON.stringify(this.state.SelectedcolumnDefs)
       // );
     }
-    return myownlink?.map((ele, i) => {
+    return myownlink?.slice(0, 7)?.map((ele, i) => {
       // debugger;
       // console.log(ele.icon);
       return (

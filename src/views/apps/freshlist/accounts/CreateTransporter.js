@@ -940,27 +940,6 @@ const CreateCustomer = () => {
                   })}
               </Row>
 
-              <hr />
-              <Row>
-                <Col lg="12" md="12" sm="12">
-                  <Label>OR</Label>
-                </Col>
-                <Col lg="4" md="4" sm="12">
-                  <FormGroup>
-                    <Label>Bulk Import</Label>
-
-                    <Input
-                      className="form-control"
-                      type="file"
-                      placeholder=""
-                      name="BulkImport"
-                      onChange={(e) => {
-                        setBulkImport(e.target.files[0]);
-                      }}
-                    />
-                  </FormGroup>
-                </Col>
-              </Row>
               <Row className="mt-2">
                 <Col lg="6" md="6" sm="6" className="mb-2 mt-1">
                   <Label className="mb-0">Status</Label>
@@ -999,6 +978,37 @@ const CreateCustomer = () => {
                   type="submit"
                   className="mr-1 mt-2 mx-2">
                   Submit
+                </Button.Ripple>
+              </Row>
+            </Form>
+            <Form className="m-1" onSubmit={submitHandler}>
+              <hr />
+              <Row>
+                <Col lg="12" md="12" sm="12">
+                  <Label>OR</Label>
+                </Col>
+                <Col lg="4" md="4" sm="12">
+                  <FormGroup>
+                    <Label>Bulk Import</Label>
+
+                    <Input
+                      className="form-control"
+                      type="file"
+                      placeholder=""
+                      name="BulkImport"
+                      onChange={(e) => {
+                        setBulkImport(e.target.files[0]);
+                      }}
+                    />
+                  </FormGroup>
+                </Col>
+              </Row>
+              <Row>
+                <Button.Ripple
+                  color="primary"
+                  type="submit"
+                  className="mr-1 mt-2 mx-2">
+                  Import
                 </Button.Ripple>
               </Row>
             </Form>

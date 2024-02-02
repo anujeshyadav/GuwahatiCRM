@@ -485,17 +485,16 @@ class InvoiceGenerator extends React.Component {
   };
 
   MergeBillNow = async (data) => {
-
     let billnum = localStorage.getItem("billnumber");
-    console.log("Bill", data);
+
     // console.log("grandTotal", data.grandTotal);
-    console.log(this.state.CompanyDetails);
-    this.setState({ ShowBill: false });
-    this.setState({ PrintData: data });
-    const toWords = new ToWords();
-    let words = toWords.convert(Number(data?.grandTotal), { currency: true });
-    this.setState({ wordsNumber: words });
-    this.toggleModalOne();
+    // console.log(this.state.CompanyDetails);
+    // this.setState({ ShowBill: false });
+    // this.setState({ PrintData: data });
+    // const toWords = new ToWords();
+    // let words = toWords.convert(Number(data?.grandTotal), { currency: true });
+    // this.setState({ wordsNumber: words });
+    // this.toggleModalOne();
     if (billnum) {
       await Sales_OrderToDispatchList(data?._id)
         .then((res) => {
@@ -516,9 +515,9 @@ class InvoiceGenerator extends React.Component {
           swal("Error", `${err?.response?.data?.message}`);
         });
     } else {
-      swal("Select Bill Template");
-      this.setState({ ShowBill: true });
-      this.toggleModalOne();
+      swal("Select Bill Template from setting Tab");
+      // this.setState({ ShowBill: true });
+      // this.toggleModalOne();
     }
     console.log(data);
   };
@@ -549,12 +548,8 @@ class InvoiceGenerator extends React.Component {
     this.setState({ [e.target.name]: e.target.value });
   };
   toggleModalclose = () => {
-    // debugger;
     this.setState({ modalOne: false });
     this.setState({ ShowMyBill: false });
-    // window.location.reload();
-    // AddedBill = [];
-    // console.log(AddedBill);
   };
   toggleModalcloseTwo = () => {
     this.setState({ modalTwo: false });

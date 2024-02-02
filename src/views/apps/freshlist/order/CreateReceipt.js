@@ -29,6 +29,7 @@ import {
 } from "../../../../ApiEndPoint/ApiCalling";
 import "../../../../assets/scss/pages/users.scss";
 import {
+  Bulk_Upload_Receipt,
   Bulk_Upload_User,
   Create_Receipt,
   Update_Receipt_By_Id,
@@ -121,8 +122,9 @@ const CreateReceipt = (args) => {
     if (BulkImport !== null || BulkImport != undefined) {
       let formdata = new FormData();
       formdata.append("file", BulkImport);
+      formdata.append("type", "Received");
 
-      await _BulkUpload(Bulk_Upload_User, formdata)
+      await _BulkUpload(Bulk_Upload_Receipt, formdata)
         .then((res) => {
           swal(`${res?.message}`);
         })
@@ -377,18 +379,6 @@ const CreateReceipt = (args) => {
                 </>
               )}
 
-              <Row>
-                <Col>
-                  <div className="d-flex justify-content-center">
-                    <Button.Ripple
-                      color="primary"
-                      type="submit"
-                      className="mt-2">
-                      Submit
-                    </Button.Ripple>
-                  </div>
-                </Col>
-              </Row>
               <hr />
               <Row>
                 <Col lg="12" md="12" sm="12">
@@ -408,6 +398,18 @@ const CreateReceipt = (args) => {
                       }}
                     />
                   </FormGroup>
+                </Col>
+              </Row>
+              <Row>
+                <Col>
+                  <div className="d-flex justify-content-center">
+                    <Button.Ripple
+                      color="primary"
+                      type="submit"
+                      className="mt-2">
+                      Submit
+                    </Button.Ripple>
+                  </div>
                 </Col>
               </Row>
             </Form>

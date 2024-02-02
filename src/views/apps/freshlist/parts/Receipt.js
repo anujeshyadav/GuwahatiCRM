@@ -561,12 +561,10 @@ class Receipt extends React.Component {
     this.setState({ [e.target.name]: e.target.value });
   };
   toggleModalclose = () => {
-    // debugger;
+    
     this.setState({ modalOne: false });
     this.setState({ ShowMyBill: false });
-    // window.location.reload();
-    // AddedBill = [];
-    // console.log(AddedBill);
+    
   };
   toggleModalcloseTwo = () => {
     this.setState({ modalTwo: false });
@@ -602,7 +600,7 @@ class Receipt extends React.Component {
     this.setState({ Loading: true });
     await _Get(View_Receipt, db)
       .then((res) => {
-        debugger;
+      
         let Received = res?.Receipt?.filter((ele) => ele?.type == "Received");
         this.setState({ Loading: false });
         if (Received?.length) {
@@ -854,7 +852,7 @@ class Receipt extends React.Component {
     let maxKeys = 0;
 
     let elementWithMaxKeys = null;
-
+  
     for (const element of this.state.rowData) {
       const numKeys = Object.keys(element).length; // Get the number of keys in the current element
       if (numKeys > maxKeys) {
@@ -890,7 +888,7 @@ class Receipt extends React.Component {
         const ws = XLSX.utils.json_to_sheet(result.data);
         const wb = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(wb, ws, "Sheet1");
-        const excelType = "xls";
+        const excelType = "xlsx";
         XLSX.writeFile(wb, `ReceiptSample.${excelType}`);
       },
     });
@@ -1130,7 +1128,10 @@ class Receipt extends React.Component {
                           )}
                           {InsiderPermissions &&
                             InsiderPermissions?.Download && (
-                              <span className="">
+                              <span
+                                onMouseEnter={this.toggleDropdown}
+                                onMouseLeave={this.toggleDropdown}
+                                className="">
                                 <div className="dropdown-container float-right">
                                   <ImDownload
                                     style={{ cursor: "pointer" }}
@@ -1138,7 +1139,6 @@ class Receipt extends React.Component {
                                     size="35px"
                                     className="dropdown-button "
                                     color="#39cccc"
-                                    onClick={this.toggleDropdown}
                                   />
                                   {isOpen && (
                                     <div

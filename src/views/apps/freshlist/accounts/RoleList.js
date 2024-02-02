@@ -536,13 +536,17 @@ class RoleList extends React.Component {
                   Role List
                 </h3>
               </Col>
-              {this.state.MasterShow && (
+              {this.state.MasterShow ? (
                 <Col>
                   <SuperAdminUI
                     onDropdownChange={this.handleDropdownChange}
                     onSubmit={this.handleParentSubmit}
                   />
                 </Col>
+              ) : (
+                <>
+                  <Col></Col>
+                </>
               )}
               {this.state.InsiderPermissions &&
                 this.state.InsiderPermissions?.Create && (

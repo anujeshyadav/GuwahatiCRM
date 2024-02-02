@@ -18,6 +18,7 @@ import {
   ModalHeader,
   ModalBody,
   Badge,
+  Spinner,
 } from "reactstrap";
 import { ContextLayout } from "../../../../utility/context/Layout";
 import { AgGridReact } from "ag-grid-react";
@@ -58,6 +59,8 @@ import * as XLSX from "xlsx";
 import UserContext from "../../../../context/Context";
 import EditAddProduct from "./EditAddProduct";
 import { Delete_Product, Image_URL } from "../../../../ApiEndPoint/Api";
+import { CheckPermission } from "./CheckPermission";
+import SuperAdminUI from "../../../SuperAdminUi/SuperAdminUI";
 
 const SelectedColums = [];
 
@@ -74,9 +77,11 @@ class HouseProductList extends React.Component {
       setMySelectedarr: [],
       SelectedCols: [],
       paginationPageSize: 5,
+      MasterShow: false,
       currenPageSize: "",
       getPageSize: "",
       columnDefs: [],
+      InsiderPermissions: {},
       AllcolumnDefs: [],
       SelectedcolumnDefs: [],
       defaultColDef: {
@@ -105,9 +110,34 @@ class HouseProductList extends React.Component {
       this.setState({ EditOneData: data });
     }
   };
+  async Apicalling(id, db) {
+    this.setState({ Loading: true });
+    await ProductListView(id, db)
+      .then((res) => {
+        console.log(res?.Product);
+        this.setState({ Loading: false });
+
+        this.setState({ rowData: res?.Product });
+      })
+      .catch((err) => {
+        this.setState({ Loading: false });
+        this.setState({ rowData: [] });
+
+        console.log(err);
+      });
+  }
 
   async componentDidMount() {
     const UserInformation = this.context?.UserInformatio;
+    let pageparmission = JSON.parse(localStorage.getItem("userData"));
+
+    if (pageparmission?.rolename?.roleName === "MASTER") {
+      this.setState({ MasterShow: true });
+    }
+    const InsidePermissions = CheckPermission("Product Creation");
+    this.setState({ InsiderPermissions: InsidePermissions });
+
+    await this.Apicalling(pageparmission?._id, pageparmission?.database);
     CreateProductXMLView()
       .then((res) => {
         const jsonData = xmlJs.xml2json(res.data, { compact: true, spaces: 2 });
@@ -207,35 +237,57 @@ class HouseProductList extends React.Component {
                       />
                     )}
                   /> */}
-                  <Route
-                    render={({ history }) => (
-                      <Edit
-                        className="mr-50"
-                        size="25px"
-                        color="blue"
-                        onClick={() => {
-                          history.push(
-                            `/app/freshlist/house/EditAddProduct/${params?.data?._id}`
-                          );
-                          // this.handleChangeEdit(params.data, "Editable");
-                        }}
+                  {this.state.InsiderPermissions &&
+                    this.state.InsiderPermissions?.Edit && (
+                      <Route
+                        render={({ history }) => (
+                          <Edit
+                            className="mr-50"
+                            size="25px"
+                            color="blue"
+                            onClick={() => {
+                              history.push(
+                                `/app/freshlist/house/EditAddProduct/${params?.data?._id}`
+                              );
+                              // this.handleChangeEdit(params.data, "Editable");
+                            }}
+                          />
+                        )}
                       />
                     )}
-                  />
 
-                  <Route
-                    render={() => (
-                      <Trash2
-                        className="mr-50"
-                        size="25px"
-                        color="red"
-                        onClick={() => {
-                          this.runthisfunction(params?.data?._id);
-                        }}
+                  {this.state.InsiderPermissions &&
+                    this.state.InsiderPermissions?.Delete && (
+                      <Route
+                        render={() => (
+                          <Trash2
+                            className="mr-50"
+                            size="25px"
+                            color="red"
+                            onClick={() => {
+                              this.runthisfunction(params?.data?._id);
+                            }}
+                          />
+                        )}
                       />
                     )}
-                  />
                 </div>
+              );
+            },
+          },
+          {
+            headerName: "WareHouseId",
+            field: "createdAt",
+            filter: true,
+            sortable: true,
+            cellRendererFramework: (params) => {
+              console.log(params.data);
+              return (
+                <>
+                  <div className="actions cursor-pointer">
+                    <span>{params?.data?.createdAt}</span>
+                  </div>
+                </>
               );
             },
           },
@@ -294,14 +346,14 @@ class HouseProductList extends React.Component {
       });
     let userdata = JSON.parse(localStorage.getItem("userData"));
 
-    await ProductListView(userdata?._id, userdata?.database)
-      .then((res) => {
-        console.log(res?.Product);
-        this.setState({ rowData: res?.Product });
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+    // await ProductListView(userdata?._id, userdata?.database)
+    //   .then((res) => {
+    //     console.log(res?.Product);
+    //     this.setState({ rowData: res?.Product });
+    //   })
+    //   .catch((err) => {
+    //     console.log(err);
+    //   });
   }
   toggleDropdown = () => {
     this.setState((prevState) => ({ isOpen: !prevState.isOpen }));
@@ -476,6 +528,49 @@ class HouseProductList extends React.Component {
       },
     });
   };
+  HandleSampleDownload = () => {
+    let headings;
+    let maxKeys = 0;
+    let elementWithMaxKeys = null;
+    for (const element of this.state.rowData) {
+      const numKeys = Object.keys(element).length; // Get the number of keys in the current element
+      if (numKeys > maxKeys) {
+        maxKeys = numKeys; // Update the maximum number of keys
+        elementWithMaxKeys = element; // Update the element with maximum keys
+      }
+    }
+    let findheading = Object.keys(elementWithMaxKeys);
+    let index = findheading.indexOf("_id");
+    if (index > -1) {
+      findheading.splice(index, 1);
+    }
+    let index1 = findheading.indexOf("__v");
+    if (index1 > -1) {
+      findheading.splice(index1, 1);
+    }
+    headings = findheading?.map((ele) => {
+      return {
+        headerName: ele,
+        field: ele,
+        filter: true,
+        sortable: true,
+      };
+    });
+
+    let CCvData = headings?.map((ele, i) => {
+      return ele?.field;
+    });
+    const formattedHeaders = CCvData.join(",");
+    Papa.parse(formattedHeaders, {
+      complete: (result) => {
+        const ws = XLSX.utils.json_to_sheet(result.data);
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, "Sheet1");
+        const excelType = "xlsx";
+        XLSX.writeFile(wb, `UploadProductSample.${excelType}`);
+      },
+    });
+  };
 
   shiftElementUp = () => {
     let currentIndex = this.state.Arrindex;
@@ -567,7 +662,36 @@ class HouseProductList extends React.Component {
       });
     }
   };
+  handleParentSubmit = (e) => {
+    e.preventDefault();
+    let SuperAdmin = JSON.parse(localStorage.getItem("SuperadminIdByMaster"));
+    let id = SuperAdmin.split(" ")[0];
+    let db = SuperAdmin.split(" ")[1];
+    this.Apicalling(id, db);
+  };
+  handleDropdownChange = (selectedValue) => {
+    localStorage.setItem("SuperadminIdByMaster", JSON.stringify(selectedValue));
+  };
   render() {
+    if (this.state.Loading) {
+      return (
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            marginTop: "20rem",
+          }}>
+          <Spinner
+            style={{
+              height: "4rem",
+              width: "4rem",
+            }}
+            color="primary">
+            Loading...
+          </Spinner>
+        </div>
+      );
+    }
     const {
       rowData,
       columnDefs,
@@ -575,6 +699,7 @@ class HouseProductList extends React.Component {
       SelectedcolumnDefs,
       isOpen,
       SelectedCols,
+      InsiderPermissions,
       AllcolumnDefs,
     } = this.state;
     return (
@@ -583,31 +708,31 @@ class HouseProductList extends React.Component {
           <Col sm="12">
             <Card>
               <Row className="mt-2 ml-2 mr-2">
-                <Col>
+                <Col lg="2" md="2" sm="12">
                   <h1 className="float-left" style={{ fontWeight: "600" }}>
                     Product List
                   </h1>
                 </Col>
-                <Col>
-                  <span className="mx-1">
-                    <FaFilter
-                      style={{ cursor: "pointer" }}
-                      title="filter coloumn"
-                      size="35px"
-                      onClick={this.LookupviewStart}
-                      color="#39cccc"
-                      className="float-right"
+                {this.state.MasterShow && (
+                  <Col lg="5" md="5" sm="12">
+                    <SuperAdminUI
+                      onDropdownChange={this.handleDropdownChange}
+                      onSubmit={this.handleParentSubmit}
                     />
-                  </span>
-                  <span className="mx-1">
-                    <div className="dropdown-container float-right">
+                  </Col>
+                )}
+                <Col>
+                  {InsiderPermissions && InsiderPermissions.Download && (
+                    <div
+                      onMouseEnter={this.toggleDropdown}
+                      onMouseLeave={this.toggleDropdown}
+                      className="dropdown-container float-right">
                       <ImDownload
                         style={{ cursor: "pointer" }}
                         title="download file"
                         size="35px"
-                        className="dropdown-button "
+                        className="dropdown-button"
                         color="#39cccc"
-                        onClick={this.toggleDropdown}
                       />
                       {isOpen && (
                         <div
@@ -648,30 +773,52 @@ class HouseProductList extends React.Component {
                             className=" mx-1 myactive">
                             .XML
                           </h5>
+                          {this.state.MasterShow && (
+                            <h5
+                              onClick={this.HandleSampleDownload}
+                              style={{ cursor: "pointer" }}
+                              className=" mx-1 myactive">
+                              Format
+                            </h5>
+                          )}
                         </div>
                       )}
                     </div>
-                  </span>
-                  <span>
-                    <Route
-                      render={({ history }) => (
-                        <Button
-                          style={{
-                            cursor: "pointer",
-                            backgroundColor: "#39cccc",
-                            color: "white",
-                            fontWeight: "600",
-                          }}
-                          className="btn  float-right mr-1"
-                          color="#39cccc"
-                          onClick={() =>
-                            history.push("/app/freshlist/house/AddProduct")
-                          }>
-                          Add Product
-                        </Button>
-                      )}
-                    />
-                  </span>
+                  )}
+                  {InsiderPermissions && InsiderPermissions.View && (
+                    <span className="mx-1">
+                      <FaFilter
+                        style={{ cursor: "pointer" }}
+                        title="filter coloumn"
+                        size="35px"
+                        onClick={this.LookupviewStart}
+                        color="#39cccc"
+                        className="float-right mx-1"
+                      />
+                    </span>
+                  )}
+                  {InsiderPermissions && InsiderPermissions.Create && (
+                    <span className="mx-1 mr-1">
+                      <Route
+                        render={({ history }) => (
+                          <Button
+                            style={{
+                              cursor: "pointer",
+                              backgroundColor: "#39cccc",
+                              color: "white",
+                              fontWeight: "600",
+                            }}
+                            className="btn float-right"
+                            color="#39cccc"
+                            onClick={() =>
+                              history.push("/app/freshlist/house/AddProduct")
+                            }>
+                            Add Product
+                          </Button>
+                        )}
+                      />
+                    </span>
+                  )}
                 </Col>
               </Row>
               <CardBody style={{ marginTop: "-1.5rem" }}>

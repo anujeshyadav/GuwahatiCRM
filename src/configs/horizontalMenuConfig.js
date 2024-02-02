@@ -1002,7 +1002,7 @@ const horizontalMenuConfig = [
         type: "item",
         icon: <MdOutlineSettings size={22} />,
         permissions: ["admin", "editor"],
-        navLink: "/app/softNumen/system/WareHouseListSoft",
+        navLink: "/app/softNumen/system/SettingTab",
       },
       {
         id: "Pricecalculation",

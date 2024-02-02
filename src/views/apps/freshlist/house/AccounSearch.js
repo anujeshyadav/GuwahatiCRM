@@ -584,8 +584,8 @@ class AccounSearch extends React.Component {
         const ws = XLSX.utils.json_to_sheet(result.data);
         const wb = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(wb, ws, "Sheet1");
-        const excelType = "xls";
-        XLSX.writeFile(wb, `UserListSample.${excelType}`);
+        const excelType = "xlsx";
+        XLSX.writeFile(wb, `CreateUserSample.${excelType}`);
       },
     });
   };
@@ -788,7 +788,10 @@ class AccounSearch extends React.Component {
                           {InsiderPermissions &&
                             InsiderPermissions.Download && (
                               <>
-                                <span className="mx-1">
+                                <span
+                                  onMouseEnter={this.toggleDropdown}
+                                  onMouseLeave={this.toggleDropdown}
+                                  className="mx-1">
                                   <div className="dropdown-container float-right">
                                     <ImDownload
                                       style={{ cursor: "pointer" }}
@@ -796,7 +799,8 @@ class AccounSearch extends React.Component {
                                       size="35px"
                                       className="dropdown-button mb-1"
                                       color="#39cccc"
-                                      onClick={this.toggleDropdown}
+
+                                      // onClick={this.toggleDropdown}
                                     />
                                     {isOpen && (
                                       <div
