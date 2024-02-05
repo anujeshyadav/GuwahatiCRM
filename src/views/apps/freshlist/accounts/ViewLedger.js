@@ -71,8 +71,8 @@ const ViewLedger = () => {
             <Col>
               <h1 className="float-left">Party Ledger</h1>
             </Col>
-            <Col lg="1" md="1" sm="1">
-              <div className="float-right">
+            <Col lg="2" md="2" sm="2">
+              <div className="d-flex justify-content-end mr-1">
                 <LedgerPdf downloadFileName="Ledger" rootElementId="testId" />
               </div>
             </Col>

@@ -45,6 +45,7 @@ import {
   CreateAccountList,
   Create_TargetList,
   Delete_targetINlist,
+  _Get,
 } from "../../../../ApiEndPoint/ApiCalling";
 import {
   BsCloudDownloadFill,
@@ -56,6 +57,7 @@ import UserContext from "../../../../context/Context";
 import TargetAssignedOne from "./TargetAssignedOne";
 import { CheckPermission } from "./CheckPermission";
 import SuperAdminUI from "../../../SuperAdminUi/SuperAdminUI";
+import { Heirarchy_Created_Target_List } from "../../../../ApiEndPoint/Api";
 
 const SelectedColums = [];
 
@@ -95,38 +97,9 @@ class TargetCreation extends React.Component {
           headerName: "UID",
           valueGetter: "node.rowIndex + 1",
           field: "node.rowIndex + 1",
-          // checkboxSelection: true,
+
           width: 80,
           filter: true,
-          // cellRendererFramework: (params) => {
-          //   return (
-          //     <div className="d-flex align-items-center cursor-pointer">
-          //       <div className="">
-          //         <input
-          //           className="addinarray"
-          //           onClick={(e) => {
-          //             console.log(e.target.checked);
-          //             if (e.target.checked) {
-          //               console.log(this.state.SelectedProduct);
-          //               this.setState({
-          //                 SelectedProduct: this.state.SelectedProduct.concat(
-          //                   params?.data
-          //                 ),
-          //               });
-          //             } else {
-          //               let data = this.state.SelectedProduct.filter((ele, i) => {
-          //                 if (ele?.id === params?.data?.id) {
-          //                   this.state.SelectedProduct.splice(i, 1);
-          //                 }
-          //               });
-          //             }
-          //           }}
-          //           type="checkbox"
-          //         />
-          //       </div>
-          //     </div>
-          //   );
-          // },
         },
 
         {
@@ -144,6 +117,7 @@ class TargetCreation extends React.Component {
                       size="25px"
                       color="green"
                       onClick={() => {
+                        debugger
                         this.setState({ ViewData: params?.data });
                         this.toggleModal();
                       }}
@@ -184,9 +158,26 @@ class TargetCreation extends React.Component {
           },
         },
         {
+          headerName: "Total Target",
+          field: "grandTotal",
+          filter: true,
+          width: 200,
+          cellRendererFramework: (params) => {
+            return (
+              <div className="d-flex align-items-center cursor-pointer">
+                <div className="">
+                  <Badge color="primary">
+                    {params?.data?.grandTotal && params?.data?.grandTotal}{" "}
+                  </Badge>
+                </div>
+              </div>
+            );
+          },
+        },
+        {
           headerName: "FullName",
           field: "partyId.firstName",
-          filter: "agSetColumnFilter",
+          filter: true,
           width: 200,
           cellRendererFramework: (params) => {
             return (
@@ -204,7 +195,7 @@ class TargetCreation extends React.Component {
         {
           headerName: "Product Assigned",
           field: "Product Name",
-          filter: "agSetColumnFilter",
+          filter: true,
           width: 200,
           cellRendererFramework: (params) => {
             return (
@@ -220,47 +211,47 @@ class TargetCreation extends React.Component {
             );
           },
         },
-        {
-          headerName: "Target Start Date",
-          field: "startDate",
-          filter: "agSetColumnFilter",
-          width: 200,
-          cellRendererFramework: (params) => {
-            return (
-              <div className="d-flex align-items-center cursor-pointer">
-                <div className="">
-                  <span>{params.data?.startDate?.split("T")[0]}</span>
-                </div>
-              </div>
-            );
-          },
-        },
-        {
-          headerName: "Target End Date",
-          field: "endDate",
-          filter: "agSetColumnFilter",
-          width: 200,
-          cellRendererFramework: (params) => {
-            // console.log(params.data);
-            return (
-              <div className="d-flex align-items-center cursor-pointer">
-                <div className="">
-                  <span>{params.data?.endDate?.split("T")[0]}</span>
-                </div>
-              </div>
-            );
-          },
-        },
+        // {
+        //   headerName: "Target Start Date",
+        //   field: "startDate",
+        //   filter: "agSetColumnFilter",
+        //   width: 200,
+        //   cellRendererFramework: (params) => {
+        //     return (
+        //       <div className="d-flex align-items-center cursor-pointer">
+        //         <div className="">
+        //           <span>{params.data?.startDate?.split("T")[0]}</span>
+        //         </div>
+        //       </div>
+        //     );
+        //   },
+        // },
+        // {
+        //   headerName: "Target End Date",
+        //   field: "endDate",
+        //   filter: "agSetColumnFilter",
+        //   width: 200,
+        //   cellRendererFramework: (params) => {
+        //     // console.log(params.data);
+        //     return (
+        //       <div className="d-flex align-items-center cursor-pointer">
+        //         <div className="">
+        //           <span>{params.data?.endDate?.split("T")[0]}</span>
+        //         </div>
+        //       </div>
+        //     );
+        //   },
+        // },
         {
           headerName: "Created at",
           field: "createdAt",
-          filter: "agSetColumnFilter",
+          filter: true,
           width: 200,
           cellRendererFramework: (params) => {
             return (
               <div className="d-flex align-items-center cursor-pointer">
                 <div className="">
-                  <span>{params.data?.createdAt?.split(" ")[0]}</span>
+                  <span>{params.data?.createdAt?.split("T")[0]}</span>
                 </div>
               </div>
             );
@@ -269,13 +260,13 @@ class TargetCreation extends React.Component {
         {
           headerName: "updatedAt",
           field: "updatedAt",
-          filter: "agSetColumnFilter",
+          filter: true,
           width: 200,
           cellRendererFramework: (params) => {
             return (
               <div className="d-flex align-items-center cursor-pointer">
                 <div className="">
-                  <span>{params.data?.updatedAt?.split(" ")[0]}</span>
+                  <span>{params.data?.updatedAt?.split("T")[0]}</span>
                 </div>
               </div>
             );
@@ -312,7 +303,7 @@ class TargetCreation extends React.Component {
         console.log(res.TargetCreation);
         this.setState({ Loading: false });
 
-        this.setState({ rowData: res?.TargetCreation });
+        // this.setState({ rowData: res?.TargetCreation });
         this.setState({ AllcolumnDefs: this.state.columnDefs });
         this.setState({ SelectedCols: this.state.columnDefs });
 
@@ -334,13 +325,38 @@ class TargetCreation extends React.Component {
       });
   }
   async componentDidMount() {
+    let Partydata = this.props?.ViewOneData;
+    console.log(Partydata);
+   
+
     let userId = JSON.parse(localStorage.getItem("userData"));
     const InsidePermissions = CheckPermission("Target Creation");
     this.setState({ InsiderPermissions: InsidePermissions });
     if (userId?.rolename?.roleName === "MASTER") {
       this.setState({ MasterShow: true });
     }
-    await this.Apicalling(userId?._id, userId?.database);
+    if (Partydata?.length) {
+      this.setState({
+        rowData: Partydata,
+      });
+      this.setState({ AllcolumnDefs: this.state.columnDefs });
+      this.setState({ SelectedCols: this.state.columnDefs });
+
+      let userHeading = JSON.parse(localStorage.getItem("TargetofParty"));
+      if (userHeading?.length) {
+        this.setState({ columnDefs: userHeading });
+        this.gridApi.setColumnDefs(userHeading);
+        this.setState({ SelectedcolumnDefs: userHeading });
+      } else {
+        this.setState({ columnDefs: this.state.columnDefs });
+        this.setState({ SelectedcolumnDefs: this.state.columnDefs });
+      }
+    } else {
+      this.setState({
+        rowData: [],
+      });
+    }
+    // await this.Apicalling(userId?._id, userId?.database);
   }
   toggleDropdown = () => {
     this.setState((prevState) => ({ isOpen: !prevState.isOpen }));
@@ -572,13 +588,13 @@ class TargetCreation extends React.Component {
 
   HandleSetVisibleField = (e) => {
     e.preventDefault();
-    debugger;
+    
     this.gridApi.setColumnDefs(this.state.SelectedcolumnDefs);
     this.setState({ columnDefs: this.state.SelectedcolumnDefs });
     this.setState({ SelectedcolumnDefs: this.state.SelectedcolumnDefs });
     this.setState({ rowData: this.state.rowData });
     localStorage.setItem(
-      "TargetList",
+      "TargetofParty",
       JSON.stringify(this.state.SelectedcolumnDefs)
     );
     this.LookupviewStart();
@@ -618,25 +634,25 @@ class TargetCreation extends React.Component {
     localStorage.setItem("SuperadminIdByMaster", JSON.stringify(selectedValue));
   };
   render() {
-     if (this.state.Loading) {
-       return (
-         <div
-           style={{
-             display: "flex",
-             justifyContent: "center",
-             marginTop: "20rem",
-           }}>
-           <Spinner
-             style={{
-               height: "4rem",
-               width: "4rem",
-             }}
-             color="primary">
-             Loading...
-           </Spinner>
-         </div>
-       );
-     }
+    if (this.state.Loading) {
+      return (
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            marginTop: "20rem",
+          }}>
+          <Spinner
+            style={{
+              height: "4rem",
+              width: "4rem",
+            }}
+            color="primary">
+            Loading...
+          </Spinner>
+        </div>
+      );
+    }
     const {
       rowData,
       columnDefs,
@@ -684,7 +700,7 @@ class TargetCreation extends React.Component {
                         </Button>
                       </div>
                     </Col>
-                    <ViewAccount ViewOneData={this.state.ViewOneData} />
+                    <TargetCreation ViewOneData={this.state.ViewOneData} />
                   </Row>
                 </>
               ) : (

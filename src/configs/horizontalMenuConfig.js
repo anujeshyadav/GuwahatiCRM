@@ -252,7 +252,7 @@ const horizontalMenuConfig = [
         type: "item",
         icon: <GiDiceTarget size={22} />,
         permissions: ["admin", "editor"],
-        navLink: "/app/SoftNumen/TargetCreationList",
+        navLink: "/app/rupioo/HeadtargetingList/0",
       },
       {
         id: "Promotional Activity",
@@ -1002,7 +1002,7 @@ const horizontalMenuConfig = [
         type: "item",
         icon: <MdOutlineSettings size={22} />,
         permissions: ["admin", "editor"],
-        navLink: "/app/softNumen/system/WareHouseListSoft",
+        navLink: "/app/softNumen/system/SettingTab",
       },
       {
         id: "Pricecalculation",

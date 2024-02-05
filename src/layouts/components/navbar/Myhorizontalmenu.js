@@ -13,6 +13,8 @@ import { FormattedMessage } from "react-intl";
 import { history } from "../../../history";
 import navigationConfig from "../../../configs/horizontalMenuConfig";
 import "../../assets/scss/core/menu/horizontal-menu.scss";
+
+
 class HorizontalSidebar extends React.Component {
   constructor(props) {
     super(props);
@@ -38,7 +40,7 @@ class HorizontalSidebar extends React.Component {
     };
   }
 
-  openDropdown = id => {
+  openDropdown = (id) => {
     let arr = this.state.openDropdown;
     if (!arr.includes(id)) arr.push(id);
     if (id) {
@@ -51,7 +53,7 @@ class HorizontalSidebar extends React.Component {
     });
   };
 
-  closeDropdown = id => {
+  closeDropdown = (id) => {
     let arr = this.state.openDropdown;
     arr.splice(arr.indexOf(id), 1);
     return this.setState({
@@ -59,13 +61,13 @@ class HorizontalSidebar extends React.Component {
     });
   };
 
-  handleItemHover = id => {
+  handleItemHover = (id) => {
     this.setState({
       itemHover: id,
     });
   };
 
-  handleParentHover = id => {
+  handleParentHover = (id) => {
     this.setState({
       parentHover: id,
     });
@@ -73,7 +75,7 @@ class HorizontalSidebar extends React.Component {
   handleshow = () => {
     let userCredentials = JSON.parse(localStorage.getItem("userData"));
     let TabparMission = userCredentials?.rolename?.rolePermission?.map(
-      value => value?.pagename
+      (value) => value?.pagename
     );
     // console.log(TabparMission);
     this.setState({ showpage: TabparMission });
@@ -107,7 +109,7 @@ class HorizontalSidebar extends React.Component {
     }
   };
 
-  handleActiveParent = arr => {
+  handleActiveParent = (arr) => {
     this.setState({
       activeParents: arr,
     });
@@ -121,11 +123,11 @@ class HorizontalSidebar extends React.Component {
         hidden=""
         // className="mt-50"
         style={{ marginTop: "-2px", marginLeft: "0px" }}
-        onMouseEnter={e => e.preventDefault()}
+        onMouseEnter={(e) => e.preventDefault()}
         modifiers={{
           setMaxHeight: {
             enabled: true,
-            fn: data => {
+            fn: (data) => {
               let pageHeight = window.innerHeight,
                 ddTop = data.instance.reference.getBoundingClientRect().top,
                 ddHeight = data.popper.height,
@@ -149,9 +151,8 @@ class HorizontalSidebar extends React.Component {
               };
             },
           },
-        }}
-      >
-        {submenu.map(child => {
+        }}>
+        {submenu.map((child) => {
           if (child.hidden) {
             return null; // Skip rendering the hidden tab
           }
@@ -167,8 +168,7 @@ class HorizontalSidebar extends React.Component {
                 hidden=""
                 className={classnames({
                   active: this.state.activeParents.includes(child.id),
-                })}
-              >
+                })}>
                 <DropdownItem
                   className={classnames("w-120", {
                     hover: this.state.itemHover === child.id,
@@ -197,8 +197,7 @@ class HorizontalSidebar extends React.Component {
                   target={child.newTab ? "_blank" : undefined}
                   onClick={() => this.handleItemHover(child.id)}
                   // onMouseEnter={() => this.handleItemHover(child.id)}
-                  onMouseLeave={() => this.handleItemHover(null)}
-                >
+                  onMouseLeave={() => this.handleItemHover(null)}>
                   {child.children ? (
                     <Dropdown
                       hidden=""
@@ -208,13 +207,11 @@ class HorizontalSidebar extends React.Component {
                       toggle={() => true}
                       // onClick={() => this.openDropdown(child.id)}
                       onMouseEnter={() => this.openDropdown(child.id)}
-                      onMouseLeave={() => this.closeDropdown(child.id)}
-                    >
+                      onMouseLeave={() => this.closeDropdown(child.id)}>
                       <DropdownToggle
                         className="d-flex justify-content-between align-items-center item-content mydropdowntoggle"
                         tag={"div"}
-                        onClick={() => this.closeDropdown(child.id)}
-                      >
+                        onClick={() => this.closeDropdown(child.id)}>
                         <div className="dropdown-toggle-sub text-truncate mytruncate">
                           <span className="menu-icon align-bottom mr-1">
                             {child.icon}
@@ -242,8 +239,7 @@ class HorizontalSidebar extends React.Component {
                       </span>
                       <span
                         className="menu-title align-middle"
-                        style={{ fontWeight: "600" }}
-                      >
+                        style={{ fontWeight: "600" }}>
                         <FormattedMessage id={child.title} />
                       </span>
                     </div>
@@ -275,12 +271,12 @@ class HorizontalSidebar extends React.Component {
     );
   };
 
-  renderDropdown = arr => {
-    console.log(arr);
+  renderDropdown = (arr) => {
+    // console.log(arr);
     return arr?.map((item, i) => {
-      arr[i].children?.forEach(tab => {
+      arr[i].children?.forEach((tab) => {
         if (tab.children) {
-          tab?.children?.forEach(tab1 => {
+          tab?.children?.forEach((tab1) => {
             // console.log(tab1, 111);
             if (this.state.showpage?.includes(tab1?.title)) {
               tab1.hidden = false;
@@ -295,7 +291,7 @@ class HorizontalSidebar extends React.Component {
           tab.hidden = true;
         }
       });
-      arr?.forEach(tab => {
+      arr?.forEach((tab) => {
         if (this.state.showpage?.includes(tab?.title)) {
           tab.hidden = false;
         } else {
@@ -323,8 +319,7 @@ class HorizontalSidebar extends React.Component {
             hover: this.state.parentHover === item.id,
           })}
           key={item.id}
-          ref={el => (this.menuDrodpown = el)}
-        >
+          ref={(el) => (this.menuDrodpown = el)}>
           <div
             hidden=""
             className={classnames(
@@ -344,16 +339,14 @@ class HorizontalSidebar extends React.Component {
             onMouseLeave={() => {
               this.closeDropdown(item.id);
               this.handleParentHover(null);
-            }}
-          >
+            }}>
             {item.children ? (
               <Dropdown
                 hidden=""
                 isOpen={this.state.openDropdown.includes(item.id)}
                 className="nav-link"
                 id="showlist"
-                toggle={() => this.openDropdown(item.id)}
-              >
+                toggle={() => this.openDropdown(item.id)}>
                 <DropdownToggle className="d-flex align-items-center" tag="div">
                   <div className="dropdown-text">
                     <span className="menu-icon align-middle mr-50">
@@ -361,8 +354,7 @@ class HorizontalSidebar extends React.Component {
                     </span>
                     <span
                       className="menu-title align-middle"
-                      style={{ fontWeight: "600" }}
-                    >
+                      style={{ fontWeight: "600" }}>
                       <FormattedMessage
                         className="menu-title align-middle"
                         id={item.title}
@@ -391,8 +383,7 @@ class HorizontalSidebar extends React.Component {
                     : "#"
                 }
                 href={item.type === "external-link" ? item.navLink : undefined}
-                target={item.newTab ? "_blank" : undefined}
-              >
+                target={item.newTab ? "_blank" : undefined}>
                 <span className="menu-icon align-middle mr-75">
                   {item.icon}
                 </span>
@@ -431,8 +422,7 @@ class HorizontalSidebar extends React.Component {
             //       this.props.navbarType
             //     ),
             // }
-          )}
-        >
+          )}>
           <div className="navbar-container main-menu-content mycustomcontent">
             <ul className="nav" id="main-menu-navigation mycustomnavigation">
               {this.renderDropdown(navigationConfig)}

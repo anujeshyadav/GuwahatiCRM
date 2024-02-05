@@ -1,6 +1,6 @@
 // Guwahati open api EndPoints
 export const Super_Admin_List = "/master/all-super-admin-list";
-export const Image_URL = "http://174.138.68.198:5000";
+export const Image_URL = "https://node.rupioo.com";
 export const Get_Role = "/role/get-role";
 export const Update_Role_Globally = "/role/update-permission";
 export const Assign_Role_To_SuperAdmin = "/role/assign-role";
@@ -38,6 +38,7 @@ export const View_Company_Details = "/company-detail/view-company-details/";
 export const Bulk_Upload_Customer = "/customer/party-data";
 export const Bulk_Upload_User = "/user/import-user-data";
 export const Bulk_Upload_Product = "/product/import-item-data";
+export const Bulk_Upload_Receipt = "/receipt/reciept-data";
 export const Update_Role = "/role/update-role/";
 export const Create_warehouse_xmlView = "/warehouse/get-xml";
 export const Create_warehouse_save = "/warehouse/save-warehouse";
@@ -85,6 +86,14 @@ export const create_row_material = "/raw-material/creat-rawMaterial";
 //productionapk
 
 // productionProcess
+// tab show on edit button
+export const Save_Tabs = "/role/save-tab";
+export const View_Tabs = "/role/view-tab/";
+export const Save_dashboard_Tabs = "/role/save-dashboard-tab";
+export const View_dashboard_Tabs = "/role/view-dashboard-tab/";
+
+
+// end tab show on edit button
 
 export const Save_Producton_Process = "/production/save-production";
 export const Save_Producton_Return = "/production/updated-return-production/";
@@ -211,6 +220,7 @@ export const Delete_target_INlist = "/target-creation/delete-target-creation/";
 export const Update_target_INlist = "/target-creation/update-target-creation/";
 export const Delete_individual_Target = "/target-creation/";
 
+export const Heirarchy_Created_Target_List = "/target-creation/view-target/";
 export const Create_Target_save = "/target-creation/save-target-creation";
 export const Create_Customer_save = "/customer/save-customer";
 export const View_Customer_ById = "/customer/view-customer-by-id/";

@@ -17,8 +17,9 @@ import {
   InputGroupAddon,
 } from "reactstrap";
 import { FaBeer } from "react-icons/fa";
-import logo from "../../../../assets/img/logo/Rupiologo.jpeg";
+import logo from "../../../../assets/img/logo/Rupiologo.png";
 import "../../../../assets/scss/pages/authentication.scss";
+// import '../../../../../node_modules/bootstrap/dist/css/bootstrap.min.css';
 import { history } from "../../../../history";
 import LoginAuth0 from "./LoginAuth0";
 import LoginFirebase from "./LoginFirebase";
@@ -601,24 +602,38 @@ class Login extends React.Component {
                             </>
                           ) : (
                             <>
-                              <CardHeader className="pb-1">
+                              <CardHeader
+                                style={{
+                                  justifyContent: "center",
+                                  display: "flex",
+                                  marginTop: "-20px",
+                                }}>
                                 <CardTitle>
-                                  <h4 className="mb-0">
-                                    <strong>Login</strong>
-                                  </h4>
+                                  <h4 className="mb-0 text-center">Login</h4>
                                 </CardTitle>
                               </CardHeader>
-                              <p className="px-2 auth-title mb-2">
-                                Welcome back, Please login to your account.
-                              </p>
+                              <div
+                                style={{
+                                  justifyContent: "center",
+                                  display: "flex",
+                                }}>
+                                <p className=" auth-title mb-2 cssformobileveiwcrm">
+                                  Welcome back, Please login to your account.
+                                </p>
+                              </div>
+
                               <Form onSubmit={this.loginHandler}>
                                 {/* <Label>UserName</Label> */}
-                                <FormGroup className="form-label-group position-relative has-icon-left">
+                                <Label style={{ marginBottom: "5px" }}>
+                                  User Name
+                                </Label>
+                                <FormGroup className="form-label-group position-relative ">
+                                  {/* <InputGroupAddon addonType="prepend">
+                                  Password
+                          </InputGroupAddon> */}
                                   <InputGroup>
-                                    <InputGroupAddon addonType="prepend">
-                                      username
-                                    </InputGroupAddon>
                                     <Input
+                                      style={{ border: "none" }}
                                       type="text"
                                       name="email"
                                       placeholder="User Name"
@@ -630,11 +645,14 @@ class Login extends React.Component {
                                 </FormGroup>
 
                                 {/* <Label>Password</Label> */}
-                                <FormGroup className="passwordlogin form-label-group position-relative has-icon-left">
+                                <Label style={{ marginBottom: "5px" }}>
+                                  Password
+                                </Label>
+                                <FormGroup className="passwordlogin form-label-group position-relative ">
                                   <InputGroup>
-                                    <InputGroupAddon addonType="prepend">
-                                      Password
-                                    </InputGroupAddon>
+                                    {/*  <InputGroupAddon addonType="prepend">
+                                       Password
+                        </InputGroupAddon> */}
                                     <Input
                                       type={this.state.type}
                                       name="password"
@@ -643,46 +661,6 @@ class Login extends React.Component {
                                       onChange={this.handlechange}
                                       required
                                     />
-                                    <button
-                                      style={{ width: "34px", border: "none" }}
-                                      className="viewbuttonheading">
-                                      <span
-                                        className="eyeviewpassword"
-                                        style={{
-                                          position: "absolute",
-                                          cursor: "pointer",
-                                        }}>
-                                        {this.state.type == "text" ? (
-                                          <>
-                                            <AiFillEyeInvisible
-                                              onClick={(e) => {
-                                                e.preventDefault();
-                                                this.setState({
-                                                  type: "password",
-                                                });
-                                              }}
-                                              size="25px"
-                                              style={{
-                                                color: "#00c0ef",
-                                              }}
-                                            />
-                                          </>
-                                        ) : (
-                                          <>
-                                            <AiFillEye
-                                              onClick={(e) => {
-                                                e.preventDefault();
-                                                this.setState({ type: "text" });
-                                              }}
-                                              size="25px"
-                                              style={{
-                                                color: "#00c0ef",
-                                              }}
-                                            />
-                                          </>
-                                        )}
-                                      </span>
-                                    </button>
                                   </InputGroup>
                                   {/* <InputGroup>
                                     <InputGroupAddon addonType="prepend">
@@ -730,9 +708,14 @@ class Login extends React.Component {
                                     </span>
                                   </InputGroup> */}
                                 </FormGroup>
-
-                                <div className="d-flex justify-content-between">
-                                  <Button.Ripple
+                                <div
+                                  style={{
+                                    display: "flex",
+                                    justifyContent: "right",
+                                    marginTop: "-15px",
+                                  }}>
+                                  <Button
+                                    style={{ border: "none" }}
                                     color="primary"
                                     outline
                                     onClick={(e) => {
@@ -744,10 +727,18 @@ class Login extends React.Component {
                                     // }}
                                   >
                                     Forget Password
-                                  </Button.Ripple>
-                                  <Button.Ripple color="primary" type="submit">
+                                  </Button>
+                                </div>
+
+                                <div
+                                  style={{
+                                    justifyContent: "center",
+                                    display: "flex",
+                                    marginTop: "20px",
+                                  }}>
+                                  <Button color="primary" type="submit">
                                     Login
-                                  </Button.Ripple>
+                                  </Button>
                                   <TabContent activeTab={this.state.activeTab}>
                                     <TabPane tabId="1">
                                       <LoginJWT />

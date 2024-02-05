@@ -26,6 +26,12 @@ import CustomersChart from "../../ui-elements/cards/analytics/Customers";
 import ChatWidget from "../../../components/@vuexy/chatWidget/ChatWidget";
 import { ChevronDown, ChevronRight, Edit, Trash2 } from "react-feather";
 import "../../../assets/scss/plugins/charts/apex-charts.scss";
+import { _Get, _PostSave } from "../../../../ApiEndPoint/ApiCalling";
+import {
+  Save_dashboard_Tabs,
+  View_dashboard_Tabs,
+} from "../../../../ApiEndPoint/Api";
+import swal from "sweetalert";
 
 let $primary = "#7367F0",
   $success = "#28C76F",
@@ -46,34 +52,55 @@ class EcommerceDashboard extends React.Component {
       basicList: [
         {
           key: 1,
+          NavLink: "/app/SoftNumen/ticket/Partywiseledger",
           value: <SubscribersGained />,
           Name: "Ledger",
           Show: true,
         },
         {
           key: 2,
+          NavLink: "/app/SoftNumen/ticket/Partywiseledger",
           value: <RevenueGenerated />,
           Name: "Sales",
           Show: true,
         },
         {
           key: 3,
+          NavLink: "/app/SoftNumen/ticket/Partywiseledger",
           value: <QuaterlySales />,
           Name: "Purchase",
           Show: true,
         },
         {
           key: 4,
+          NavLink: "/app/SoftNumen/ticket/Partywiseledger",
           value: <OrdersReceived />,
           Name: "Transaction ",
           Show: true,
         },
-        ,
       ],
     };
   }
-  componentDidMount() {
-    this.setState({ List: this.state.basicList });
+  async componentDidMount() {
+    let userData = JSON.parse(localStorage.getItem("userData"));
+    await _Get(View_dashboard_Tabs, userData?._id)
+      .then((res) => {
+        let AllTab = [];
+        let SelectedTab = res?.Tab?.tab;
+        let mytab = this.state.basicList?.map((ele, index) => {
+          SelectedTab?.map((val, i) => {
+            if (ele?.Name == val?.Name) {
+              ele["Show"] = val?.show;
+              AllTab.push(ele);
+            }
+          });
+        });
+
+        this.setState({ List: AllTab });
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   }
   LookupviewStart = () => {
     this.setState((prevState) => ({
@@ -81,7 +108,7 @@ class EcommerceDashboard extends React.Component {
     }));
   };
   hanldeSetBox = (e, ele, i) => {
-    let allList = this.state.List;
+    let allList = this.state.basicList;
     if (e.target.checked) {
       allList[i]["Show"] = e.target.checked;
     } else {
@@ -89,9 +116,38 @@ class EcommerceDashboard extends React.Component {
     }
     this.setState({ List: allList });
   };
+
   handleTogglemodal = () => {
     this.LookupviewStart();
   };
+
+  handleSubmitBottomData = async (e) => {
+    e.preventDefault();
+
+    let userData = JSON.parse(localStorage.getItem("userData"));
+    let tabs = this.state.List?.map((ele) => {
+      return {
+        key: ele?.key,
+        Name: ele?.Name,
+        show: ele?.Show,
+      };
+    });
+    let payload = {
+      userId: userData?._id,
+      tab: tabs,
+    };
+
+    await _PostSave(Save_dashboard_Tabs, payload)
+      .then((res) => {
+        console.log(res);
+        this.LookupviewStart();
+      })
+      .catch((err) => {
+        console.log(err);
+        swal("Somthing Went Wrong");
+      });
+  };
+
   render() {
     return (
       <React.Fragment>
@@ -100,7 +156,11 @@ class EcommerceDashboard extends React.Component {
             this.state.basicList?.map((ele) => (
               <>
                 {ele?.Show && ele?.Show && (
-                  <Col lg="3" md="6" sm="6">
+                  <Col
+                    onClick={() => this.props.history.push(ele?.NavLink)}
+                    lg="3"
+                    md="6"
+                    sm="6">
                     {ele.value}
                   </Col>
                 )}
@@ -168,7 +228,7 @@ class EcommerceDashboard extends React.Component {
           </Col>
         </Row> */}
         <Row>
-          <Col lg="4" md="12">
+          {/* <Col lg="4" md="12">
             <SessionByDevice
               primary={$primary}
               warning={$warning}
@@ -177,8 +237,8 @@ class EcommerceDashboard extends React.Component {
               warningLight={$warning_light}
               dangerLight={$danger_light}
             />
-          </Col>
-          <Col lg="4" md="12">
+          </Col> */}
+          {/* <Col lg="4" md="12">
             <SessionByDevice
               primary={$primary}
               warning={$warning}
@@ -187,9 +247,9 @@ class EcommerceDashboard extends React.Component {
               warningLight={$warning_light}
               dangerLight={$danger_light}
             />
-          </Col>
+          </Col> */}
 
-          <Col lg="4" md="12" className="text-center align-middle">
+          {/* <Col lg="4" md="12" className="text-center align-middle">
             <CustomersChart
               primary={$primary}
               warning={$warning}
@@ -198,7 +258,7 @@ class EcommerceDashboard extends React.Component {
               warningLight={$warning_light}
               dangerLight={$danger_light}
             />
-          </Col>
+          </Col> */}
         </Row>
         <Modal
           isOpen={this.state.modal}
@@ -233,14 +293,7 @@ class EcommerceDashboard extends React.Component {
                   ))}
 
                 <div className="d-flex justify-content-center">
-                  <Button
-                    color="primary"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      this.setState({ basicList: this.state.List });
-
-                      this.LookupviewStart();
-                    }}>
+                  <Button color="primary" onClick={this.handleSubmitBottomData}>
                     Submit
                   </Button>
                 </div>

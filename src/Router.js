@@ -591,6 +591,9 @@ const CreateQuote = lazy(() =>
 const WareHouseListSoft = lazy(() =>
   import("./views/apps/freshlist/customer/warehouse/WareHouseList")
 );
+const SettingTab = lazy(() =>
+  import("./views/apps/freshlist/customer/warehouse/SettingTab")
+);
 
 const CreateWareHouse = lazy(() =>
   import("./views/apps/freshlist/customer/warehouse/CreateWareHouse")
@@ -1046,6 +1049,9 @@ const ReturnProductionProduct = lazy(() =>
 );
 const TargetCreationList = lazy(() =>
   import("./views/apps/freshlist/house/TargetCreation")
+);
+const HeadtargetingList = lazy(() =>
+  import("./views/apps/freshlist/house/HeadtargetingList")
 );
 const SalesOrderReturn = lazy(() =>
   import("./views/apps/freshlist/house/SalesOrderReturn")
@@ -2232,6 +2238,10 @@ class AppRouter extends React.Component {
             component={WareHouseListSoft}
           />
           <AppRoute
+            path="/app/softNumen/system/SettingTab"
+            component={SettingTab}
+          />
+          <AppRoute
             path="/app/softNumen/warehouse/CreateWareHouse"
             component={CreateWareHouse}
           />
@@ -2706,8 +2716,12 @@ class AppRouter extends React.Component {
             component={wastagestockreturnproduction}
           />
           <AppRoute
-            path="/app/SoftNumen/TargetCreationList"
+            path="/app/rupioo/TargetCreationList/:id"
             component={TargetCreationList}
+          />
+          <AppRoute
+            path="/app/rupioo/HeadtargetingList/:id"
+            component={HeadtargetingList}
           />
           <AppRoute
             path="/app/SoftNumen/SalesOrderReturnList"

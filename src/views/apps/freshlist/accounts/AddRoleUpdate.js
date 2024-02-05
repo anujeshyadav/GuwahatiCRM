@@ -304,30 +304,38 @@ export default function AddRoleNew(args) {
                             className="roleheading">
                             <Col className="gy-2" lg="2" sm="2" md="2">
                               <div className="align-item-center">
-                                <input
-                                  className="mt-1 permissioncheckbox"
-                                  name="check"
-                                  id={`head_${value?.title}`}
-                                  onClick={(e) => {
-                                    handleSelectAll(index, e.target.checked);
-                                    handlesetparent(e.target.checked, index);
-                                    handleSelectPage(
-                                      e.target.value,
-                                      e.target.checked,
-                                      "parentPermit",
-                                      value?.title,
-                                      index
-                                    );
-                                  }}
-                                  style={{
-                                    height: "19px",
-                                    width: "26px",
-                                  }}
-                                  type="checkbox"
-                                />
+                                <span>
+                                  <input
+                                    className="mt-1 permissioncheckbox"
+                                    name="check"
+                                    id={`head_${value?.title}`}
+                                    onClick={(e) => {
+                                      handleSelectAll(index, e.target.checked);
+                                      handlesetparent(e.target.checked, index);
+                                      handleSelectPage(
+                                        e.target.value,
+                                        e.target.checked,
+                                        "parentPermit",
+                                        value?.title,
+                                        index
+                                      );
+                                    }}
+                                    style={{
+                                      height: "19px",
+                                      width: "26px",
+                                    }}
+                                    type="checkbox"
+                                  />
+                                </span>
 
-                                <span className="mx-3 gy-0">
-                                  {value?.title}
+                                <span className="mx-1 gy-0">
+                                  {value?.title?.length > 12 ? (
+                                    <>
+                                      {value?.title?.substring(0, 12) + "..."}
+                                    </>
+                                  ) : (
+                                    <>{value?.title}</>
+                                  )}
                                 </span>
                               </div>
                             </Col>

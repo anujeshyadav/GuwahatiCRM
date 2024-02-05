@@ -208,7 +208,23 @@ class CreateTransportList extends React.Component {
         }
 
         let myHeadings = [
-          // ...checkboxinput,
+          {
+            headerName: "Role Id",
+            field: "rolename",
+            filter: true,
+            sortable: true,
+            editable: true,
+
+            cellRendererFramework: (params) => {
+              return (
+                <>
+                  <div className="actions cursor-pointer">
+                    <span>{params?.data?.rolename}</span>
+                  </div>
+                </>
+              );
+            },
+          },
           ...inputs,
           ...adddropdown,
           //   ...addRadio,
@@ -558,11 +574,12 @@ class CreateTransportList extends React.Component {
       });
     });
   }
+
   downloadExcelFile(blob) {
     const url = window.URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = "Userlist.xlsx";
+    a.download = "Transporter.xlsx";
     document.body.appendChild(a);
     a.click();
     window.URL.revokeObjectURL(url);
@@ -586,7 +603,53 @@ class CreateTransportList extends React.Component {
         const wb = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(wb, ws, "Sheet1");
         const excelType = "xls";
-        XLSX.writeFile(wb, `UserList.${excelType}`);
+        XLSX.writeFile(wb, `Transporter.${excelType}`);
+      },
+    });
+  };
+  HandleSampleDownload = () => {
+    let headings;
+    let maxKeys = 0;
+
+    let elementWithMaxKeys = null;
+
+    for (const element of this.state.rowData) {
+      const numKeys = Object.keys(element).length; // Get the number of keys in the current element
+      if (numKeys > maxKeys) {
+        maxKeys = numKeys; // Update the maximum number of keys
+        elementWithMaxKeys = element; // Update the element with maximum keys
+      }
+    }
+    let findheading = Object.keys(elementWithMaxKeys);
+    let index = findheading.indexOf("_id");
+    if (index > -1) {
+      findheading.splice(index, 1);
+    }
+    let index1 = findheading.indexOf("__v");
+    if (index1 > -1) {
+      findheading.splice(index1, 1);
+    }
+    headings = findheading?.map((ele) => {
+      return {
+        headerName: ele,
+        field: ele,
+        filter: true,
+        sortable: true,
+      };
+    });
+
+    let CCvData = headings?.map((ele, i) => {
+      return ele?.field;
+    });
+    const formattedHeaders = CCvData.join(",");
+
+    Papa.parse(formattedHeaders, {
+      complete: (result) => {
+        const ws = XLSX.utils.json_to_sheet(result.data);
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, "Sheet1");
+        const excelType = "xlsx";
+        XLSX.writeFile(wb, `TransporterSample.${excelType}`);
       },
     });
   };
@@ -800,7 +863,10 @@ class CreateTransportList extends React.Component {
                           )}
                           {InsiderPermissions &&
                             InsiderPermissions?.Download && (
-                              <span className="mx-1">
+                              <span
+                                onMouseEnter={this.toggleDropdown}
+                                onMouseLeave={this.toggleDropdown}
+                                className="mx-1">
                                 <div className="dropdown-container float-right">
                                   <ImDownload
                                     style={{ cursor: "pointer" }}
@@ -808,7 +874,6 @@ class CreateTransportList extends React.Component {
                                     size="35px"
                                     className="dropdown-button "
                                     color="#39cccc"
-                                    onClick={this.toggleDropdown}
                                   />
                                   {isOpen && (
                                     <div
@@ -852,6 +917,14 @@ class CreateTransportList extends React.Component {
                                         className=" mx-1 myactive">
                                         . XML
                                       </h5>
+                                      {this.state.MasterShow && (
+                                        <h5
+                                          onClick={this.HandleSampleDownload}
+                                          style={{ cursor: "pointer" }}
+                                          className=" mx-1 myactive">
+                                          Format
+                                        </h5>
+                                      )}
                                     </div>
                                   )}
                                 </div>

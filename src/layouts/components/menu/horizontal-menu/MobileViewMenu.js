@@ -32,6 +32,8 @@ import {
 } from "react-icons/bs";
 import { IoMdRemoveCircleOutline } from "react-icons/io";
 import swal from "sweetalert";
+import { Save_Tabs, View_Tabs } from "../../../../ApiEndPoint/Api";
+import { _Get, _Post, _PostSave } from "../../../../ApiEndPoint/ApiCalling";
 let allList = [];
 const SelectedColums = [];
 class HorizontalSidebar extends React.Component {
@@ -67,10 +69,10 @@ class HorizontalSidebar extends React.Component {
   HeadingRightShift = () => {
     const updatedSelectedColumnDefs = [
       ...new Set([
-        ...this.state.SelectedcolumnDefs?.map((item) => JSON.stringify(item)),
-        ...SelectedColums.map((item) => JSON.stringify(item)),
+        ...this.state.SelectedcolumnDefs?.map((item) => item),
+        ...SelectedColums.map((item) => item),
       ]),
-    ].map((item) => JSON.parse(item));
+    ].map((item) => item);
     let myArr = [...new Set(updatedSelectedColumnDefs)];
     if (myArr.length < 12) {
       this.setState({
@@ -122,7 +124,7 @@ class HorizontalSidebar extends React.Component {
     });
   };
   handleChangeHeader = (e, value, index) => {
-    console.log(value);
+    // console.log(value);
     let check = e.target.checked;
     if (check) {
       if (SelectedColums?.length < 12) {
@@ -343,7 +345,7 @@ class HorizontalSidebar extends React.Component {
     );
   };
 
-  componentDidMount() {
+  async componentDidMount() {
     let userCredentials = JSON.parse(localStorage.getItem("userData"));
     let TabparMission = userCredentials?.rolename?.rolePermission?.map(
       (value) => value?.pagename
@@ -361,23 +363,39 @@ class HorizontalSidebar extends React.Component {
       } else {
       }
     });
-    // console.log(allList.flat());
+
     let myallList = allList?.flat();
     this.setState({ AllAvailableCol: myallList });
+    let userData = JSON.parse(localStorage.getItem("userData"));
+
+    await _Get(View_Tabs, userData?._id)
+      .then((res) => {
+        console.log(res?.Tab);
+        let AllTab = [];
+        let SelectedTab = res?.Tab?.tab;
+        let mytab = myallList?.map((ele, index) => {
+          SelectedTab?.forEach((val, i) => {
+            if (ele?.title == val?.title) {
+              AllTab.push(ele);
+            }
+          });
+        });
+        this.setState({ SelectedcolumnDefs: AllTab, AllAvailableCol: AllTab });
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   }
 
+  //
   renderDropdown = (arr) => {
-    // console.log(this.state.SelectedcolumnDefs);
     let myownlink = this.state.SelectedcolumnDefs;
-    if (this.state.SelectedcolumnDefs?.length) {
-      localStorage.setItem(
-        "myHeadings",
-        JSON.stringify(this.state.SelectedcolumnDefs)
-      );
-    }
+
     return myownlink?.slice(0, 3)?.map((ele, i) => {
       return (
         <>
+          <div>1</div>
+          <div>hello</div>
           <Route
             render={({ history }) => (
               <>
@@ -385,16 +403,21 @@ class HorizontalSidebar extends React.Component {
                   className="mr-1 d-flex justify-content-center"
                   style={{
                     cursor: "pointer",
-                    backgroundColor: "#39cccc",
+                    // backgroundColor: "#39cccc",
                     height: "100%",
                     borderRadius: "8px",
                   }}
                   size="25px"
-                  color="primary"
+                  // color="primary"
                   onClick={() => {
                     history.push(ele?.navLink);
                   }}>
-                  <span style={{ color: "white" }} className="p-1">
+                  <span
+                    title={ele?.title}
+                    className="menu-icon align-bottom mr-1">
+                    {ele?.icon}
+                    {/* </span>
+                  <span style={{ color: "white" }} className="p-1"> */}
                     {ele?.title}
                   </span>
                 </span>
@@ -406,8 +429,36 @@ class HorizontalSidebar extends React.Component {
     });
   };
 
+  handleSubmitBottomData = async (e) => {
+    e.preventDefault();
+
+    let userData = JSON.parse(localStorage.getItem("userData"));
+
+    let tabs = this.state.SelectedcolumnDefs?.map((ele) => {
+      return {
+        id: ele?.id,
+        title: ele?.title,
+        type: ele?.type,
+        // icon: ele?.icon,
+        navLink: ele?.navLink,
+      };
+    });
+    let payload = {
+      userId: userData?._id,
+      tab: tabs,
+    };
+
+    await _PostSave(Save_Tabs, payload)
+      .then((res) => {
+        console.log(res);
+        this.LookupviewStart();
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
   render() {
-    console.log(this.state.SelectedcolumnDefs);
+    // console.log(this.state.SelectedcolumnDefs);
     const {
       rowData,
       columnDefs,
@@ -424,7 +475,50 @@ class HorizontalSidebar extends React.Component {
         <div className="d-flex">
           <div className="d-flex float-left">
             {/* <ul className="nav navbar-nav" id="main-menu-navigation"> */}
-            {this.renderDropdown(this.state.SelectedcolumnDefs)}
+            {/* {this.renderDropdown(this.state.SelectedcolumnDefs)} */}
+            {this.state.SelectedcolumnDefs &&
+              this.state.SelectedcolumnDefs?.slice(0, 3)?.map((ele, i) => {
+                return (
+                  <>
+                    <Route
+                      render={({ history }) => (
+                        <>
+                          <span
+                            className="mr-1 d-flex justify-content-center"
+                            style={{
+                              cursor: "pointer",
+                              // backgroundColor: "#39cccc",
+                              height: "100%",
+                              borderRadius: "8px",
+                            }}
+                            size="25px"
+                            // color="primary"
+                            onClick={() => {
+                              history.push(ele?.navLink);
+                            }}>
+                            <span
+                              title={ele?.title}
+                              className="menu-icon align-bottom mr-1">
+                              <span className="mr-1 bottomicone">
+                                {ele?.icon}
+                              </span>
+                              {/* </span>
+                  <span style={{ color: "white" }} className="p-1"> */}
+                              <span style={{ fontWeight: "bolder" }}>
+                                {ele?.title && ele?.title?.length > 8 ? (
+                                  <>{ele.title?.substring(0, 8)}</>
+                                ) : (
+                                  <>{ele.title}</>
+                                )}
+                              </span>
+                            </span>
+                          </span>
+                        </>
+                      )}
+                    />
+                  </>
+                );
+              })}
             {/* </ul> */}
           </div>
           <span className="float-right">
@@ -615,10 +709,7 @@ class HorizontalSidebar extends React.Component {
                   <div className="d-flex justify-content-center">
                     <Button
                       color="primary"
-                      onClick={(e) => {
-                        e.preventDefault();
-                        this.LookupviewStart();
-                      }}>
+                      onClick={this.handleSubmitBottomData}>
                       Submit
                     </Button>
                   </div>

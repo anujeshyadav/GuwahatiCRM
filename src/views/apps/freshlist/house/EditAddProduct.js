@@ -30,10 +30,12 @@ import {
   UnitListView,
   CreateWarehouseList,
   _Get,
+  CreateAccountList,
+  _Put,
 } from "../../../../ApiEndPoint/ApiCalling";
 import "../../../../assets/scss/pages/users.scss";
 import UserContext from "../../../../context/Context";
-import { ViewOne_Product } from "../../../../ApiEndPoint/Api";
+import { Update_Product, ViewOne_Product } from "../../../../ApiEndPoint/Api";
 
 const EditAddProduct = () => {
   const [CreatAccountView, setCreatAccountView] = useState([]);
@@ -129,22 +131,78 @@ const EditAddProduct = () => {
       ["ProductType"]: e.target.value,
     });
   };
+
   useEffect(() => {
     let userData = JSON.parse(localStorage.getItem("userData"));
+
     _Get(ViewOne_Product, Params?.id)
       .then((res) => {
-        debugger;
-        console.log(res?.Product);
-        console.log(res?.Product?.addProductType);
         setFormData({
-          ...formData,
+          ...res?.Product,
           ["ProductType"]: res?.Product?.addProductType,
         });
+        AllCategoryList(userData?._id, userData?.database)
+          .then((resp) => {
+            console.log(resp);
+            if (resp?.Category) {
+              let selectedcat = resp?.Category?.filter(
+                (ele) => ele?.name == res?.Product?.category
+              );
+              let AllSubCategoried = selectedcat[0]?.subcategories;
+              let selectedSubCat = AllSubCategoried?.filter(
+                (ele) => ele?.name == res?.Product?.SubCategory
+              );
+              setcategoryList(resp.Category);
+              setsubcatlist(AllSubCategoried);
+              // setFormData({
+              //   ...formData,
+              //   ["category"]: selectedcat[0]?.name,
+              //   ["SubCategory"]: selectedSubCat[0]?.name,
+              // });
+            }
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+
+        UnitListView(userData?._id, userData?.database)
+          .then((response) => {
+            let selectedunit = response?.Unit?.filter(
+              (ele) => ele.primaryUnit == res?.Product?.unitType
+            );
+            // setFormData({
+            //   ...formData,
+            //   ["Unit"]: selectedunit[0]?.unitQty,
+            // });
+            setUnitList(response?.Unit);
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+
+        CreateAccountList(userData?._id, userData?.database)
+          .then((warehouse) => {
+            let value = warehouse?.adminDetails;
+            let selectewarehouse = value?.filter(
+              (ele) => ele?._id == res?.Product?.warehouse
+            );
+            // setFormData({
+            //   ...formData,
+            //   ["warehouse"]: selectewarehouse[0]?._id,
+            // });
+            if (value) {
+              setWareHouseList(value);
+            }
+          })
+          .catch((err) => {
+            console.log(err);
+          });
       })
       .catch((err) => {
         console.log(err);
       });
   }, []);
+
   useEffect(() => {
     CreateProductXMLView()
       .then((res) => {
@@ -156,37 +214,8 @@ const EditAddProduct = () => {
       .catch((err) => {
         console.log(err);
       });
-    let pageparmission = JSON.parse(localStorage.getItem("userData"));
-
-    let userData = JSON.parse(localStorage.getItem("userData"));
-    AllCategoryList(userData?._id, userData?.database)
-      .then((res) => {
-        console.log(res);
-        if (res?.Category) {
-          setcategoryList(res.Category);
-        }
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-
-    UnitListView(userData?._id, userData?.database)
-      .then((res) => {
-        console.log(res?.Unit);
-        setUnitList(res?.Unit);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-    CreateWarehouseList(userData?._id)
-      .then((res) => {
-        console.log(res?.Warehouse);
-        setWareHouseList(res?.Warehouse);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
   }, []);
+
   const handleFileChange = (e, type, i) => {
     const { name } = e.target;
     setindex(i);
@@ -195,10 +224,11 @@ const EditAddProduct = () => {
       [name]: e.target.files[0],
     });
   };
-
+  console.log(formData);
   const submitHandler = (e) => {
     e.preventDefault();
-
+    debugger;
+    console.log(formData);
     let formdata = new FormData();
     let userData = JSON.parse(localStorage.getItem("userData"));
     formdata.append("created_by", userData._id);
@@ -213,27 +243,32 @@ const EditAddProduct = () => {
     });
 
     formdata.append("unitType", formData?.unitType);
+
+    formdata.append("addProductType", formData?.ProductType);
     CreatAccountView?.MyDropDown?.map((ele, i) => {
       formdata.append(
         `${ele?.dropdown?.name?._text}`,
         formData[ele?.dropdown?.name?._text]
       );
     });
+    for (const value of formdata.values()) {
+      console.log(value);
+    }
+    debugger;
     if (error) {
       swal("Error occured while Entering Details");
     } else {
-      SaveProduct(formdata)
+      _Put(Update_Product, Params?.id, formdata)
         .then((res) => {
           console.log(res);
           setFormData({});
           if (res.status) {
-            // window.location.reload();
-            swal("Product Created Successfully");
+            swal("Product Details Updated Successfully");
           }
         })
         .catch((err) => {
           console.log(err);
-          swal("Enter All Details");
+          swal("Please Fill All Details");
         });
     }
   };
@@ -261,14 +296,14 @@ const EditAddProduct = () => {
                 <div className="form-label-group" onChange={changeHandler2}>
                   {formData?.ProductType == "Product" && (
                     <>
-                      <input
+                      {/* <input
                         style={{ marginRight: "3px" }}
                         type="radio"
                         // value={formData["status"]}
                         name="ProductType"
                         className="ml-1"
                         value="Product"
-                      />
+                      /> */}
                       <span style={{ marginRight: "20px", fontSize: "18px" }}>
                         <strong>Edit Product</strong>
                       </span>
@@ -277,13 +312,13 @@ const EditAddProduct = () => {
 
                   {formData?.ProductType == "Item" && (
                     <>
-                      <input
+                      {/* <input
                         style={{ marginRight: "3px" }}
                         type="radio"
                         name="ProductType"
                         className="ml-1"
                         value="Item"
-                      />
+                      /> */}
                       <span style={{ marginRight: "20px", fontSize: "18px" }}>
                         <strong>Edit Item</strong>
                       </span>
@@ -370,13 +405,21 @@ const EditAddProduct = () => {
                               onChange={handleInputChange}>
                               <option value="NA">--Select WareHouse--</option>
 
-                              {wareHouseList?.map((whList) => (
-                                <option
-                                  value={whList?.WarehouseName}
-                                  key={whList?._id}>
-                                  {whList?.WarehouseName}
-                                </option>
-                              ))}
+                              {wareHouseList &&
+                                wareHouseList?.map((whList) => {
+                                  if (
+                                    whList?.rolename?.roleName ==
+                                    "WareHouse Incharge"
+                                  ) {
+                                    return (
+                                      <option
+                                        value={whList?._id}
+                                        key={whList?._id}>
+                                        {whList?.firstName}
+                                      </option>
+                                    );
+                                  }
+                                })}
                             </CustomInput>
                           </Col>
                         </>
@@ -397,7 +440,7 @@ const EditAddProduct = () => {
                                     className="form-control"
                                     name="Unit"
                                     placeholder="selecetedUnit"
-                                    // value={product?.selecetedUnit}
+                                    value={formData[ele?.dropdown?.name?._text]}
                                     onChange={handleInputChange}>
                                     <option value="">--select Unit--</option>
                                     <option value="kg">Kilogram (kg)</option>
@@ -445,7 +488,7 @@ const EditAddProduct = () => {
                                   required
                                   id="unitType"
                                   type="select"
-                                  placeholder="Select Category"
+                                  placeholder="Select UnitType"
                                   name={ele?.dropdown?.name?._text}
                                   value={formData[ele?.dropdown?.name?._text]}
                                   onChange={handleInputChange}>
@@ -1013,9 +1056,9 @@ const EditAddProduct = () => {
                   <Label className="mb-0">Status</Label>
                   <div className="form-label-group" onChange={changeHandler1}>
                     <input
+                      checked={formData["status"] == "Active"}
                       style={{ marginRight: "3px" }}
                       type="radio"
-                      // value={formData["status"]}
                       name="status"
                       value="Active"
                     />
@@ -1023,6 +1066,7 @@ const EditAddProduct = () => {
 
                     <input
                       style={{ marginRight: "3px" }}
+                      checked={formData["status"] == "Deactive"}
                       type="radio"
                       name="status"
                       value="Deactive"
