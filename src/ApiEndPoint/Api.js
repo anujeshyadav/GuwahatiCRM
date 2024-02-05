@@ -220,6 +220,7 @@ export const Delete_target_INlist = "/target-creation/delete-target-creation/";
 export const Update_target_INlist = "/target-creation/update-target-creation/";
 export const Delete_individual_Target = "/target-creation/";
 
+export const Heirarchy_Created_Target_List = "/target-creation/view-target/";
 export const Create_Target_save = "/target-creation/save-target-creation";
 export const Create_Customer_save = "/customer/save-customer";
 export const View_Customer_ById = "/customer/view-customer-by-id/";

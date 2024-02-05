@@ -892,8 +892,7 @@ class TargetAssignedOne extends React.Component {
                       e.preventDefault();
                       this.setState({ EditOneUserView: false });
                     }}
-                    color="danger"
-                  >
+                    color="danger">
                     Back
                   </Button>
                 </div>
@@ -913,8 +912,7 @@ class TargetAssignedOne extends React.Component {
                             e.preventDefault();
                             this.setState({ ViewOneUserView: false });
                           }}
-                          color="danger"
-                        >
+                          color="danger">
                           Back
                         </Button>
                       </div>
@@ -957,13 +955,11 @@ class TargetAssignedOne extends React.Component {
                                     position: "absolute",
                                     zIndex: "1",
                                   }}
-                                  className="dropdown-content dropdownmy"
-                                >
+                                  className="dropdown-content dropdownmy">
                                   <h5
                                     onClick={() => this.exportToPDF()}
                                     style={{ cursor: "pointer" }}
-                                    className=" mx-1 myactive mt-1"
-                                  >
+                                    className=" mx-1 myactive mt-1">
                                     .PDF
                                   </h5>
                                   <h5
@@ -971,29 +967,25 @@ class TargetAssignedOne extends React.Component {
                                       this.gridApi.exportDataAsCsv()
                                     }
                                     style={{ cursor: "pointer" }}
-                                    className=" mx-1 myactive"
-                                  >
+                                    className=" mx-1 myactive">
                                     .CSV
                                   </h5>
                                   <h5
                                     onClick={this.convertCSVtoExcel}
                                     style={{ cursor: "pointer" }}
-                                    className=" mx-1 myactive"
-                                  >
+                                    className=" mx-1 myactive">
                                     .XLS
                                   </h5>
                                   <h5
                                     onClick={this.exportToExcel}
                                     style={{ cursor: "pointer" }}
-                                    className=" mx-1 myactive"
-                                  >
+                                    className=" mx-1 myactive">
                                     .XLSX
                                   </h5>
                                   <h5
                                     onClick={() => this.convertCsvToXml()}
                                     style={{ cursor: "pointer" }}
-                                    className=" mx-1 myactive"
-                                  >
+                                    className=" mx-1 myactive">
                                     .XML
                                   </h5>
                                 </div>
@@ -1011,8 +1003,7 @@ class TargetAssignedOne extends React.Component {
                                     history.push(
                                       "/app/SoftNumen/account/CreateTarget"
                                     )
-                                  }
-                                >
+                                  }>
                                   <FaPlus size={15} /> Create Target
                                 </Badge>
                               )}
@@ -1074,32 +1065,27 @@ class TargetAssignedOne extends React.Component {
                                   <DropdownMenu right>
                                     <DropdownItem
                                       tag="div"
-                                      onClick={() => this.filterSize(5)}
-                                    >
+                                      onClick={() => this.filterSize(5)}>
                                       5
                                     </DropdownItem>
                                     <DropdownItem
                                       tag="div"
-                                      onClick={() => this.filterSize(20)}
-                                    >
+                                      onClick={() => this.filterSize(20)}>
                                       20
                                     </DropdownItem>
                                     <DropdownItem
                                       tag="div"
-                                      onClick={() => this.filterSize(50)}
-                                    >
+                                      onClick={() => this.filterSize(50)}>
                                       50
                                     </DropdownItem>
                                     <DropdownItem
                                       tag="div"
-                                      onClick={() => this.filterSize(100)}
-                                    >
+                                      onClick={() => this.filterSize(100)}>
                                       100
                                     </DropdownItem>
                                     <DropdownItem
                                       tag="div"
-                                      onClick={() => this.filterSize(134)}
-                                    >
+                                      onClick={() => this.filterSize(134)}>
                                       134
                                     </DropdownItem>
                                   </DropdownMenu>
@@ -1175,8 +1161,7 @@ class TargetAssignedOne extends React.Component {
           isOpen={this.state.modal}
           toggle={this.LookupviewStart}
           className={this.props.className}
-          style={{ maxWidth: "1050px" }}
-        >
+          style={{ maxWidth: "1050px" }}>
           <ModalHeader toggle={this.LookupviewStart}>Change Fileds</ModalHeader>
           <ModalBody className="modalbodyhead">
             <Row>
@@ -1193,13 +1178,11 @@ class TargetAssignedOne extends React.Component {
                                 this.handleChangeHeader(e, ele, i)
                               }
                               key={i}
-                              className="mycustomtag mt-1"
-                            >
+                              className="mycustomtag mt-1">
                               <span className="mt-1">
                                 <h5
                                   style={{ cursor: "pointer" }}
-                                  className="allfields"
-                                >
+                                  className="allfields">
                                   <input
                                     type="checkbox"
                                     // checked={check && check}
@@ -1258,8 +1241,7 @@ class TargetAssignedOne extends React.Component {
                                             : ""
                                         }`,
                                       }}
-                                      className="allfields"
-                                    >
+                                      className="allfields">
                                       <IoMdRemoveCircleOutline
                                         onClick={() => {
                                           const SelectedCols =
@@ -1347,8 +1329,7 @@ class TargetAssignedOne extends React.Component {
           // className="modal-dialog modal-lg"
           size="lg"
           backdrop={true}
-          fullscreen={true}
-        >
+          fullscreen={true}>
           <ModalHeader toggle={this.toggleModal}>View Details</ModalHeader>
           <ModalBody className="myproducttable">
             <h2>Assigned Product List</h2>

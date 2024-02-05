@@ -190,68 +190,68 @@ const AddProduct = () => {
       [name]: e.target.files[0],
     });
   };
-
-  const submitHandler = async (e) => {
-    debugger;
     console.log(formData);
-    e.preventDefault();
-    if (BulkImport !== null || BulkImport != undefined) {
-      let formdata = new FormData();
-      formdata.append("file", BulkImport);
-      await _BulkUpload(Bulk_Upload_Product, formdata)
-        .then((res) => {
-          history.push("/app/freshlist/house/houseProductList");
-          swal(`${res?.message}`);
-        })
-        .catch((err) => {
-          console.log(err);
-          swal("Something Went Wrong");
-        });
-    } else {
-      let formdata = new FormData();
-      let userData = JSON.parse(localStorage.getItem("userData"));
-      formdata.append("created_by", userData?._id);
-      CreatAccountView?.input?.map((ele, i) => {
-        if (ele?.type?._attributes?.type == "text") {
-          formdata.append(`${ele?.name._text}`, formData[ele?.name?._text]);
-        } else if (ele?.type?._attributes?.type == "file") {
-          formdata.append("file", formData[ele?.name?._text]);
-        } else {
-          formdata.append(`${ele?.name._text}`, formData[ele?.name?._text]);
-        }
-      });
 
-      formdata.append("unitType", formData?.unitType);
-      formdata.append("addProductType", formData?.ProductType);
-      CreatAccountView?.MyDropDown?.map((ele, i) => {
-        formdata.append(
-          `${ele?.dropdown?.name?._text}`,
-          formData[ele?.dropdown?.name?._text]
-        );
-      });
-      if (error) {
-        swal("Error occured while Entering Details");
+    const submitHandler = async (e) => {
+      e.preventDefault();
+      if (BulkImport !== null || BulkImport != undefined) {
+        let formdata = new FormData();
+        formdata.append("file", BulkImport);
+        await _BulkUpload(Bulk_Upload_Product, formdata)
+          .then((res) => {
+            history.push("/app/freshlist/house/houseProductList");
+            swal(`${res?.message}`);
+          })
+          .catch((err) => {
+            console.log(err.response);
+            swal("Something Went Wrong");
+          });
       } else {
-        if (formData?.ProductType) {
-          SaveProduct(formdata)
-            .then((res) => {
-              console.log(res);
-              setFormData({});
-              if (res.status) {
-                // window.location.reload();
-                swal("Product Created Successfully");
-              }
-            })
-            .catch((err) => {
-              console.log(err);
-              swal("Enter All Details");
-            });
+        let formdata = new FormData();
+        let userData = JSON.parse(localStorage.getItem("userData"));
+        formdata.append("created_by", userData?._id);
+        CreatAccountView?.input?.map((ele, i) => {
+          if (ele?.type?._attributes?.type == "text") {
+            formdata.append(`${ele?.name._text}`, formData[ele?.name?._text]);
+          } else if (ele?.type?._attributes?.type == "file") {
+            formdata.append("file", formData[ele?.name?._text]);
+          } else {
+            formdata.append(`${ele?.name._text}`, formData[ele?.name?._text]);
+          }
+        });
+
+        formdata.append("unitType", formData?.unitType);
+        formdata.append("addProductType", formData?.ProductType);
+        CreatAccountView?.MyDropDown?.map((ele, i) => {
+          formdata.append(
+            `${ele?.dropdown?.name?._text}`,
+            formData[ele?.dropdown?.name?._text]
+          );
+        });
+        if (error) {
+          swal("Error occured while Entering Details");
         } else {
-          swal("error", "Choose Product Type");
+          if (formData?.ProductType) {
+            SaveProduct(formdata)
+              .then((res) => {
+                console.log(res);
+                setFormData({});
+                if (res.status) {
+                  history.push("/app/freshlist/house/houseProductList");
+
+                  swal("Product Created Successfully");
+                }
+              })
+              .catch((err) => {
+                console.log(err);
+                swal("Enter All Details");
+              });
+          } else {
+            swal("error", "Choose Product Type");
+          }
         }
       }
-    }
-  };
+    };
   const handlechangeSubcat = (e) => {
     console.log(e.target.value);
     if (e.target.value != "NA") {

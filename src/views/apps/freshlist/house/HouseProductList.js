@@ -115,6 +115,7 @@ class HouseProductList extends React.Component {
     await ProductListView(id, db)
       .then((res) => {
         console.log(res?.Product);
+
         this.setState({ Loading: false });
 
         this.setState({ rowData: res?.Product });
@@ -276,16 +277,15 @@ class HouseProductList extends React.Component {
             },
           },
           {
-            headerName: "WareHouseId",
-            field: "createdAt",
+            headerName: "unitType",
+            field: "unitType",
             filter: true,
             sortable: true,
             cellRendererFramework: (params) => {
-              console.log(params.data);
               return (
                 <>
                   <div className="actions cursor-pointer">
-                    <span>{params?.data?.createdAt}</span>
+                    <span>{params?.data?.unitType}</span>
                   </div>
                 </>
               );

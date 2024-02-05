@@ -252,7 +252,7 @@ const horizontalMenuConfig = [
         type: "item",
         icon: <GiDiceTarget size={22} />,
         permissions: ["admin", "editor"],
-        navLink: "/app/SoftNumen/TargetCreationList",
+        navLink: "/app/rupioo/HeadtargetingList/0",
       },
       {
         id: "Promotional Activity",

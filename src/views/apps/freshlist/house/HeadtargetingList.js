@@ -58,10 +58,11 @@ import TargetAssignedOne from "./TargetAssignedOne";
 import { CheckPermission } from "./CheckPermission";
 import SuperAdminUI from "../../../SuperAdminUi/SuperAdminUI";
 import { Heirarchy_Created_Target_List } from "../../../../ApiEndPoint/Api";
+import TargetCreation from "./TargetCreation";
 
 const SelectedColums = [];
 
-class TargetCreation extends React.Component {
+class HeadtargetingList extends React.Component {
   static contextType = UserContext;
   constructor(props) {
     super(props);
@@ -69,10 +70,12 @@ class TargetCreation extends React.Component {
     this.gridApi = null;
     this.state = {
       isOpen: false,
+      PartyShow: false,
       MasterShow: false,
 
       Arrindex: "",
       rowData: [],
+      ViewOneData: [],
       modal: false,
       modalone: false,
       ViewData: {},
@@ -109,7 +112,6 @@ class TargetCreation extends React.Component {
           cellRendererFramework: (params) => {
             return (
               <div className="actions cursor-pointer">
-                {/* {this.state.Viewpermisson && ( */}
                 {this.state.InsiderPermissions &&
                   this.state.InsiderPermissions?.View && (
                     <Eye
@@ -117,15 +119,19 @@ class TargetCreation extends React.Component {
                       size="25px"
                       color="green"
                       onClick={() => {
-                        debugger
-                        this.setState({ ViewData: params?.data });
-                        this.toggleModal();
+                        this.Apicalling(
+                          params?.data?.userId?._id,
+                          params?.data?.userId?.database
+                        );
                       }}
+                      //   onClick={() => {
+                      //     this.setState({ ViewData: params?.data });
+                      //     this.toggleModal();
+                      //   }}
                     />
                   )}
-                {/* )} */}
-                {/* {this.state.Editpermisson && ( */}
-                {this.state.InsiderPermissions &&
+
+                {/* {this.state.InsiderPermissions &&
                   this.state.InsiderPermissions?.Edit && (
                     <Edit
                       className="mr-50"
@@ -138,10 +144,9 @@ class TargetCreation extends React.Component {
                         })
                       }
                     />
-                  )}
-                {/* )} */}
-                {/* {this.state.Deletepermisson && ( */}
-                {this.state.InsiderPermissions &&
+                  )} */}
+
+                {/* {this.state.InsiderPermissions &&
                   this.state.InsiderPermissions?.Delete && (
                     <Trash2
                       className="mr-50"
@@ -151,12 +156,12 @@ class TargetCreation extends React.Component {
                         this.runthisfunction(params?.data?._id);
                       }}
                     />
-                  )}
-                {/* )} */}
+                  )} */}
               </div>
             );
           },
         },
+
         {
           headerName: "Total Target",
           field: "grandTotal",
@@ -175,8 +180,8 @@ class TargetCreation extends React.Component {
           },
         },
         {
-          headerName: "FullName",
-          field: "partyId.firstName",
+          headerName: "User Code",
+          field: "userId.code",
           filter: true,
           width: 200,
           cellRendererFramework: (params) => {
@@ -184,8 +189,7 @@ class TargetCreation extends React.Component {
               <div className="d-flex align-items-center cursor-pointer">
                 <div className="">
                   <span>
-                    {params.data?.partyId?.OwnerName &&
-                      params.data?.partyId?.OwnerName}
+                    {params?.data?.userId?.code && params?.data?.userId?.code}{" "}
                   </span>
                 </div>
               </div>
@@ -193,8 +197,8 @@ class TargetCreation extends React.Component {
           },
         },
         {
-          headerName: "Product Assigned",
-          field: "Product Name",
+          headerName: "firstName",
+          field: "userId.firstName",
           filter: true,
           width: 200,
           cellRendererFramework: (params) => {
@@ -202,50 +206,88 @@ class TargetCreation extends React.Component {
               <div className="d-flex align-items-center cursor-pointer">
                 <div className="">
                   <span>
-                    {params?.data?.products?.length &&
-                      params?.data?.products?.length}{" "}
-                    Product
+                    {params?.data?.userId?.firstName &&
+                      params?.data?.userId?.firstName}{" "}
                   </span>
                 </div>
               </div>
             );
           },
         },
-        // {
-        //   headerName: "Target Start Date",
-        //   field: "startDate",
-        //   filter: "agSetColumnFilter",
-        //   width: 200,
-        //   cellRendererFramework: (params) => {
-        //     return (
-        //       <div className="d-flex align-items-center cursor-pointer">
-        //         <div className="">
-        //           <span>{params.data?.startDate?.split("T")[0]}</span>
-        //         </div>
-        //       </div>
-        //     );
-        //   },
-        // },
-        // {
-        //   headerName: "Target End Date",
-        //   field: "endDate",
-        //   filter: "agSetColumnFilter",
-        //   width: 200,
-        //   cellRendererFramework: (params) => {
-        //     // console.log(params.data);
-        //     return (
-        //       <div className="d-flex align-items-center cursor-pointer">
-        //         <div className="">
-        //           <span>{params.data?.endDate?.split("T")[0]}</span>
-        //         </div>
-        //       </div>
-        //     );
-        //   },
-        // },
+        {
+          headerName: "lastName",
+          field: "userId.lastName",
+          filter: true,
+          width: 200,
+          cellRendererFramework: (params) => {
+            return (
+              <div className="d-flex align-items-center cursor-pointer">
+                <div className="">
+                  <span>
+                    {params?.data?.userId?.lastName &&
+                      params?.data?.userId?.lastName}{" "}
+                  </span>
+                </div>
+              </div>
+            );
+          },
+        },
+        {
+          headerName: "email",
+          field: "userId.email",
+          filter: true,
+          width: 200,
+          cellRendererFramework: (params) => {
+            return (
+              <div className="d-flex align-items-center cursor-pointer">
+                <div className="">
+                  <span>
+                    {params?.data?.userId?.email && params?.data?.userId?.email}{" "}
+                  </span>
+                </div>
+              </div>
+            );
+          },
+        },
+        {
+          headerName: "City",
+          field: "userId.City",
+          filter: true,
+          width: 200,
+          cellRendererFramework: (params) => {
+            return (
+              <div className="d-flex align-items-center cursor-pointer">
+                <div className="">
+                  <span>
+                    {params?.data?.userId?.City && params?.data?.userId?.City}{" "}
+                  </span>
+                </div>
+              </div>
+            );
+          },
+        },
+        {
+          headerName: "State",
+          field: "userId.State",
+          filter: true,
+          width: 200,
+          cellRendererFramework: (params) => {
+            return (
+              <div className="d-flex align-items-center cursor-pointer">
+                <div className="">
+                  <span>
+                    {params?.data?.userId?.State && params?.data?.userId?.State}{" "}
+                  </span>
+                </div>
+              </div>
+            );
+          },
+        },
+
         {
           headerName: "Created at",
           field: "createdAt",
-          filter: true,
+          filter: "agSetColumnFilter",
           width: 200,
           cellRendererFramework: (params) => {
             return (
@@ -260,7 +302,7 @@ class TargetCreation extends React.Component {
         {
           headerName: "updatedAt",
           field: "updatedAt",
-          filter: true,
+          filter: "agSetColumnFilter",
           width: 200,
           cellRendererFramework: (params) => {
             return (
@@ -298,65 +340,54 @@ class TargetCreation extends React.Component {
   };
   async Apicalling(id, db) {
     this.setState({ Loading: true });
-    await Create_TargetList(id, db)
+
+    await _Get(Heirarchy_Created_Target_List, id)
       .then((res) => {
-        console.log(res.TargetCreation);
-        this.setState({ Loading: false });
+        console.log(res?.Target);
+        let Party = false;
+        let checkpartyStatus = !!res?.Target[0]?.partyId;
 
-        // this.setState({ rowData: res?.TargetCreation });
-        this.setState({ AllcolumnDefs: this.state.columnDefs });
-        this.setState({ SelectedCols: this.state.columnDefs });
+        if (checkpartyStatus) {
+          this.setState({ ViewOneData: res?.Target });
+          this.setState({ Loading: false });
+          this.setState({ PartyShow: true });
+          //   this.setState({ EditOneUserView: false });
+          this.setState({ ViewOneUserView: true });
 
-        let userHeading = JSON.parse(localStorage.getItem("TargetList"));
-        if (userHeading?.length) {
-          this.setState({ columnDefs: userHeading });
-          this.gridApi.setColumnDefs(userHeading);
-          this.setState({ SelectedcolumnDefs: userHeading });
+          //   this.props.history.push("/app/rupioo/TargetCreationList/0");
         } else {
-          this.setState({ columnDefs: this.state.columnDefs });
-          this.setState({ SelectedcolumnDefs: this.state.columnDefs });
+          this.setState({ PartyShow: false });
+
+          this.setState({ rowData: res?.Target });
+          this.setState({ Loading: false });
+          this.setState({ AllcolumnDefs: this.state.columnDefs });
+          this.setState({ SelectedCols: this.state.columnDefs });
+
+          let userHeading = JSON.parse(localStorage.getItem("TargetList"));
+          if (userHeading?.length) {
+            this.setState({ columnDefs: userHeading });
+            this.gridApi.setColumnDefs(userHeading);
+            this.setState({ SelectedcolumnDefs: userHeading });
+          } else {
+            this.setState({ columnDefs: this.state.columnDefs });
+            this.setState({ SelectedcolumnDefs: this.state.columnDefs });
+          }
         }
       })
       .catch((err) => {
-        console.log(err);
         this.setState({ rowData: [] });
-
         this.setState({ Loading: false });
+        console.log(err);
       });
   }
   async componentDidMount() {
-    let Partydata = this.props?.ViewOneData;
-    console.log(Partydata);
-   
-
     let userId = JSON.parse(localStorage.getItem("userData"));
     const InsidePermissions = CheckPermission("Target Creation");
     this.setState({ InsiderPermissions: InsidePermissions });
     if (userId?.rolename?.roleName === "MASTER") {
       this.setState({ MasterShow: true });
     }
-    if (Partydata?.length) {
-      this.setState({
-        rowData: Partydata,
-      });
-      this.setState({ AllcolumnDefs: this.state.columnDefs });
-      this.setState({ SelectedCols: this.state.columnDefs });
-
-      let userHeading = JSON.parse(localStorage.getItem("TargetofParty"));
-      if (userHeading?.length) {
-        this.setState({ columnDefs: userHeading });
-        this.gridApi.setColumnDefs(userHeading);
-        this.setState({ SelectedcolumnDefs: userHeading });
-      } else {
-        this.setState({ columnDefs: this.state.columnDefs });
-        this.setState({ SelectedcolumnDefs: this.state.columnDefs });
-      }
-    } else {
-      this.setState({
-        rowData: [],
-      });
-    }
-    // await this.Apicalling(userId?._id, userId?.database);
+    await this.Apicalling(userId?._id, userId?.database);
   }
   toggleDropdown = () => {
     this.setState((prevState) => ({ isOpen: !prevState.isOpen }));
@@ -588,13 +619,13 @@ class TargetCreation extends React.Component {
 
   HandleSetVisibleField = (e) => {
     e.preventDefault();
-    
+    debugger;
     this.gridApi.setColumnDefs(this.state.SelectedcolumnDefs);
     this.setState({ columnDefs: this.state.SelectedcolumnDefs });
     this.setState({ SelectedcolumnDefs: this.state.SelectedcolumnDefs });
     this.setState({ rowData: this.state.rowData });
     localStorage.setItem(
-      "TargetofParty",
+      "TargetList",
       JSON.stringify(this.state.SelectedcolumnDefs)
     );
     this.LookupviewStart();
@@ -661,6 +692,7 @@ class TargetCreation extends React.Component {
       isOpen,
       SelectedCols,
       AllcolumnDefs,
+      ViewOneData,
     } = this.state;
     return (
       <>
@@ -687,21 +719,21 @@ class TargetCreation extends React.Component {
             <>
               {this.state.ViewOneUserView && this.state.ViewOneUserView ? (
                 <>
-                  <Row className="card">
-                    <Col>
-                      <div className="d-flex justify-content-end p-1">
-                        <Button
-                          onClick={(e) => {
-                            e.preventDefault();
-                            this.setState({ ViewOneUserView: false });
-                          }}
-                          color="danger">
-                          Back
-                        </Button>
-                      </div>
-                    </Col>
-                    <TargetCreation ViewOneData={this.state.ViewOneData} />
-                  </Row>
+                  <Col sm="12" lg="12" md="12">
+                    <div className="d-flex justify-content-end p-1">
+                      <Button
+                        onClick={(e) => {
+                          e.preventDefault();
+                          this.setState({ ViewOneUserView: false });
+                        }}
+                        color="danger">
+                        Back
+                      </Button>
+                    </div>
+                  </Col>
+                  <Col sm="12" lg="12" md="12">
+                    <TargetCreation ViewOneData={ViewOneData} />
+                  </Col>
                 </>
               ) : (
                 <>
@@ -1125,4 +1157,4 @@ class TargetCreation extends React.Component {
     );
   }
 }
-export default TargetCreation;
+export default HeadtargetingList;

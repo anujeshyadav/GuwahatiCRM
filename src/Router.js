@@ -1050,6 +1050,9 @@ const ReturnProductionProduct = lazy(() =>
 const TargetCreationList = lazy(() =>
   import("./views/apps/freshlist/house/TargetCreation")
 );
+const HeadtargetingList = lazy(() =>
+  import("./views/apps/freshlist/house/HeadtargetingList")
+);
 const SalesOrderReturn = lazy(() =>
   import("./views/apps/freshlist/house/SalesOrderReturn")
 );
@@ -2713,8 +2716,12 @@ class AppRouter extends React.Component {
             component={wastagestockreturnproduction}
           />
           <AppRoute
-            path="/app/SoftNumen/TargetCreationList"
+            path="/app/rupioo/TargetCreationList/:id"
             component={TargetCreationList}
+          />
+          <AppRoute
+            path="/app/rupioo/HeadtargetingList/:id"
+            component={HeadtargetingList}
           />
           <AppRoute
             path="/app/SoftNumen/SalesOrderReturnList"
