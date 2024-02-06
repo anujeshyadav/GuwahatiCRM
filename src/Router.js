@@ -2242,7 +2242,7 @@ class AppRouter extends React.Component {
             component={SettingTab}
           />
           <AppRoute
-            path="/app/softNumen/warehouse/CreateWareHouse"
+            path="/app/softNumen/warehouse/CreateWareHouse/:id"
             component={CreateWareHouse}
           />
           <AppRoute

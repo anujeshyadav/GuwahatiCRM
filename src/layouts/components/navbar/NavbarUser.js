@@ -462,27 +462,27 @@ class NavbarUser extends React.PureComponent {
   handleShowCart = async () => {
     let userData = JSON.parse(localStorage.getItem("userData")); //forgot to close
 
-    await AddToCartGet(userData?._id)
-      .then((res) => {
-        // console.log(res?.cart);
-        const user = this.context;
-        user?.setPartsCatalougueCart(res?.cart);
-        this.setState({ myCart: res?.cart });
+    // await AddToCartGet(userData?._id)
+    //   .then((res) => {
+    //     // console.log(res?.cart);
+    //     const user = this.context;
+    //     user?.setPartsCatalougueCart(res?.cart);
+    //     this.setState({ myCart: res?.cart });
 
-        let total = res?.cart?.map(
-          (val, i) => val?.quantity * val?.product?.Part_Price
-        );
-        let qty = res?.cart?.map((val, i) => val?.quantity);
-        this.setState({ Quantity: qty });
-        this.setState({ SetTotal: total });
+    //     let total = res?.cart?.map(
+    //       (val, i) => val?.quantity * val?.product?.Part_Price
+    //     );
+    //     let qty = res?.cart?.map((val, i) => val?.quantity);
+    //     this.setState({ Quantity: qty });
+    //     this.setState({ SetTotal: total });
 
-        let findtotal = total?.reduce((a, b) => a + b, 0);
-        // console.log(findtotal);
-        this.setState({ Total: findtotal });
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+    //     let findtotal = total?.reduce((a, b) => a + b, 0);
+    //     // console.log(findtotal);
+    //     this.setState({ Total: findtotal });
+    //   })
+    //   .catch((err) => {
+    //     console.log(err);
+    //   });
   };
   // handleNavbarSearch = () => {
   //   this.setState({

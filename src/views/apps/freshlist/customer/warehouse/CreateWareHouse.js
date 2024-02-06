@@ -13,28 +13,57 @@ import {
   CustomInput,
 } from "reactstrap";
 import swal from "sweetalert";
-import { Route } from "react-router-dom";
+import { Route, useParams } from "react-router-dom";
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
 import "../../../../../../src/layouts/assets/scss/pages/users.scss";
 
 import {
-  Createwarehousexml,
   CreateWarehousesave,
+  _Get,
+  _Put,
 } from "../../../../../ApiEndPoint/ApiCalling";
 
 import "../../../../../assets/scss/pages/users.scss";
+import {
+  Update_Wareahouse_Byid,
+  View_Wareahouse_Byid,
+} from "../../../../../ApiEndPoint/Api";
 // import UserContext from "../../../../../context/Context";
 
 const CreateWareHouse = () => {
   const [CreatWarehouseView, setCreatWarehouseView] = useState({});
   const [formData, setFormData] = useState({});
-  const [index, setindex] = useState("");
   const [error, setError] = useState("");
-  const [permissions, setpermissions] = useState({});
+  const [Heading, setHeading] = useState("Create");
 
-  const handleInputChange = (e, type, i) => {
-    const { name, value } = e.target;
+  let Params = useParams();
+  useEffect(() => {
+    const userInfor = JSON.parse(localStorage.getItem("userData"));
+
+    if (Params?.id == 0) {
+      setHeading("Create");
+    } else {
+      setHeading("Update");
+      _Get(View_Wareahouse_Byid, Params?.id)
+        .then((res) => {
+          let warehoue = res?.Warehouse;
+          setFormData({
+            warehouseName: warehoue?.warehouseName,
+            warehouseAddress: warehoue?.address,
+            warehouseMobile: warehoue?.mobileNo,
+            landlineNumber: warehoue?.landlineNumber,
+            status: warehoue?.status,
+          });
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }
+  }, []);
+
+  const handleInputChange = (e) => {
+    const { name, value, type } = e.target;
     if (type == "number") {
       if (/^\d{0,10}$/.test(value)) {
         setFormData({
@@ -52,43 +81,51 @@ const CreateWareHouse = () => {
         ...formData,
         [name]: value,
       });
-      console.log(formData);
     }
   };
-  useEffect(() => {
-    Createwarehousexml()
-      .then(res => {
-        const jsonData = xmlJs.xml2json(res.data, { compact: true, spaces: 2 });
-        console.log(JSON.parse(jsonData).AddWareHouse.input);
-        setCreatWarehouseView(JSON.parse(jsonData).AddWareHouse);
-      })
-      .catch(err => {
-        console.log(err);
-      });
-  }, []);
 
-  const submitHandler = e => {
+  const submitHandler = (e) => {
     e.preventDefault();
-    const userId = JSON.parse(localStorage.getItem("userData"))._id;
-    formData["created_by"] = userId;
-
-    if (error) {
-      swal("Error occured while Entering Details");
-    } else {
-      CreateWarehousesave(formData)
-        .then(res => {
-          if (res.status) {
+    const userInfor = JSON.parse(localStorage.getItem("userData"));
+    debugger;
+    let payload = {
+      warehouseName: formData?.warehouseName,
+      mobileNo: formData?.warehouseMobile,
+      address: formData?.warehouseAddress,
+      landlineNumber: formData?.landlineNumber,
+      database: userInfor?.database,
+      status: formData?.status,
+    };
+    if (Params?.id == 0) {
+      if (error) {
+        swal("Error occured while Entering Details");
+      } else {
+        CreateWarehousesave(payload)
+          .then((res) => {
             setFormData({
-              WarehouseName: "",
-              mobileno: "",
-              email: "",
-              locaton: "",
+              warehouseName: "",
+              warehouseMobile: "",
+              address: "",
+              landlineNumber: "",
+              status: "",
             });
             swal(`Warehouse  ${res.message}`);
-          }
+          })
+          .catch((err) => {
+            console.log(err);
+            swal("Somthing Went Wrong");
+          });
+      }
+    } else {
+      _Put(Update_Wareahouse_Byid, Params?.id, payload)
+        .then((res) => {
+          console.log(res);
+
+          swal("Updated Successfully");
         })
-        .catch(err => {
+        .catch((err) => {
           console.log(err);
+          swal("Somthing Went Wrong");
         });
     }
   };
@@ -99,7 +136,7 @@ const CreateWareHouse = () => {
         <Card>
           <Row className="m-2">
             <Col>
-              <h1 className="float-left">Create WareHouse</h1>
+              <h1 className="float-left">{Heading && Heading} WareHouse</h1>
             </Col>
             <Col>
               <Route
@@ -108,8 +145,7 @@ const CreateWareHouse = () => {
                     className=" btn btn-danger float-right"
                     onClick={() =>
                       history.push("/app/softNumen/system/WareHouseListSoft")
-                    }
-                  >
+                    }>
                     Back
                   </Button>
                 )}
@@ -119,8 +155,62 @@ const CreateWareHouse = () => {
 
           <CardBody>
             <Form className="m-1" onSubmit={submitHandler}>
+              <Row>
+                <Col lg="3" md="3" sm="12">
+                  <FormGroup>
+                    <Label>WareHouse Name</Label>
+                    <Input
+                      required
+                      type="text"
+                      placeholder="Enter Name"
+                      name="warehouseName"
+                      value={formData["warehouseName"]}
+                      onChange={handleInputChange}
+                    />
+                  </FormGroup>
+                </Col>
+                <Col lg="3" md="3" sm="12">
+                  <FormGroup>
+                    <Label>WareHouse Address</Label>
+                    <Input
+                      required
+                      type="text"
+                      placeholder="Enter Address"
+                      name="warehouseAddress"
+                      value={formData["warehouseAddress"]}
+                      onChange={handleInputChange}
+                    />
+                  </FormGroup>
+                </Col>
+                <Col lg="3" md="3" sm="12">
+                  <FormGroup>
+                    <Label>WareHouse Mobile </Label>
+                    <Input
+                      required
+                      type="number"
+                      placeholder="Enter Mobile No."
+                      name="warehouseMobile"
+                      value={formData["warehouseMobile"]}
+                      onChange={handleInputChange}
+                    />
+                  </FormGroup>
+                </Col>
+                <Col lg="3" md="3" sm="12">
+                  <FormGroup>
+                    <Label>WareHouse LandLine Number</Label>
+                    <Input
+                      required
+                      type="number"
+                      placeholder="Enter LandLine Number"
+                      name="landlineNumber"
+                      value={formData["landlineNumber"]}
+                      onChange={handleInputChange}
+                    />
+                  </FormGroup>
+                </Col>
+              </Row>
               <Row className="mb-2">
-                {CreatWarehouseView &&
+                {/* {CreatWarehouseView &&
                   CreatWarehouseView?.input?.map((ele, i) => {
                     if (!!ele?.phoneinput) {
                       return (
@@ -132,7 +222,7 @@ const CreateWareHouse = () => {
                                 <PhoneInput
                                   inputClass="myphoneinput"
                                   country={"us"}
-                                  onKeyDown={e => {
+                                  onKeyDown={(e) => {
                                     if (
                                       ele?.type?._attributes?.type == "number"
                                     ) {
@@ -143,7 +233,7 @@ const CreateWareHouse = () => {
                                   countryCodeEditable={false}
                                   name={ele?.name?._text}
                                   value={formData[ele?.name?._text]}
-                                  onChange={phone => {
+                                  onChange={(phone) => {
                                     console.log(phone);
                                     setFormData({
                                       ...formData,
@@ -178,7 +268,7 @@ const CreateWareHouse = () => {
                               placeholder={ele?.placeholder?._text}
                               name={ele?.name?._text}
                               value={formData[ele?.name?._text]}
-                              onChange={e => {
+                              onChange={(e) => {
                                 handleInputChange(
                                   e,
                                   ele?.type?._attributes?.type,
@@ -208,7 +298,7 @@ const CreateWareHouse = () => {
                               placeholder={ele?.placeholder?._text}
                               name={ele?.name?._text}
                               value={formData[ele?.name?._text]}
-                              onChange={e => {
+                              onChange={(e) => {
                                 handleInputChange(
                                   e,
                                   ele?.type?._attributes?.type,
@@ -229,18 +319,17 @@ const CreateWareHouse = () => {
                         </Col>
                       );
                     }
-                  })}
+                  })} */}
                 <Col lg="6" md="6" sm="6" className="mb-2 mt-1">
                   <Label className="mb-0">Status</Label>
                   <div
                     className="form-label-group"
-                    onChange={e => {
+                    onChange={(e) => {
                       setFormData({
                         ...formData,
                         ["status"]: e.target.value,
                       });
-                    }}
-                  >
+                    }}>
                     <input
                       checked={formData["status"] == "Active"}
                       style={{ marginRight: "3px" }}
@@ -265,9 +354,8 @@ const CreateWareHouse = () => {
                 <Button.Ripple
                   color="primary"
                   type="submit"
-                  className="mr-1 mt-2 mx-2"
-                >
-                  Submit
+                  className="mr-1 mt-2 mx-2">
+                  {Heading && Heading}
                 </Button.Ripple>
               </Row>
             </Form>

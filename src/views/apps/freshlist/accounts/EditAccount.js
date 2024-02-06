@@ -29,6 +29,7 @@ import {
   CreateAccountUpdate,
   CreateAccountView,
   Get_RoleList,
+  _Get,
 } from "../../../../ApiEndPoint/ApiCalling";
 import { BiEnvelope } from "react-icons/bi";
 import { FcPhoneAndroid } from "react-icons/fc";
@@ -37,9 +38,19 @@ import "../../../../assets/scss/pages/users.scss";
 import UserContext from "../../../../context/Context";
 import { CloudLightning } from "react-feather";
 import { FaPlus } from "react-icons/fa";
+import {
+  Created_Warehouse,
+  WareahouseList_For_addProduct,
+} from "../../../../ApiEndPoint/Api";
+import Multiselect from "multiselect-react-dropdown";
 
 const EditAccount = ({ EditOneData }) => {
   const [CreatAccountView, setCreatAccountView] = useState([]);
+  const [WareHouseList, setWareHouseList] = useState([]);
+  const [SelectedWareHouse, setSelectedWareHouse] = useState([]);
+  const [Master, setMaster] = useState(false);
+  const [WareHouseIncharge, setWareHouseIncharge] = useState(false);
+
   const [Countries, setCountry] = useState({});
   const [States, setState] = useState({});
   const [Cities, setCities] = useState({});
@@ -101,9 +112,17 @@ const EditAccount = ({ EditOneData }) => {
     console.log(formData);
   }, [formData]);
   useEffect(() => {
-    // debugger;
     setFormData(EditOneData);
-    // console.log(EditOneData);
+    if (!!EditOneData?.warehouse) {
+      //
+      let selectedWareHouse = EditOneData?.warehouse?.map((ele) => {
+        return ele?.id;
+      });
+      debugger;
+
+      setSelectedWareHouse(selectedWareHouse);
+    }
+
     let userdata = JSON.parse(localStorage.getItem("userData"));
     Get_RoleList(userdata?._id, userdata?.database)
       .then((res) => {
@@ -138,7 +157,6 @@ const EditAccount = ({ EditOneData }) => {
     CreateAccountView()
       .then((res) => {
         const jsonData = xmlJs.xml2json(res.data, { compact: true, spaces: 2 });
-        // console.log(JSON.parse(jsonData)?.CreateUser?.input);
 
         setCreatAccountView(JSON.parse(jsonData)?.CreateUser?.input);
 
@@ -147,12 +165,24 @@ const EditAccount = ({ EditOneData }) => {
       .catch((err) => {
         console.log(err);
       });
+    _Get(WareahouseList_For_addProduct, userdata?.database)
+      .then((res) => {
+        setWareHouseList(res?.Warehouse);
+        console.log(res?.Warehouse);
+        if (!!EditOneData?.warehouse) {
+          setWareHouseIncharge(true);
+        } else {
+          setWareHouseIncharge(false);
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   }, []);
 
   const submitHandler = (e) => {
     e.preventDefault();
-    // console.log(EditOneData);
-    // console.log(formData);
+
     if (error) {
       swal("Error occured while Entering Details");
     } else {
@@ -160,7 +190,6 @@ const EditAccount = ({ EditOneData }) => {
         .then((res) => {
           setFormData({});
           if (res.status) {
-            // window.location.reload();
             swal("User Updated Successfully");
           }
         })
@@ -257,6 +286,25 @@ const EditAccount = ({ EditOneData }) => {
                   />
                 </FormGroup>
               </Col>
+              {WareHouseIncharge && WareHouseIncharge && (
+                <Col className="mb-1" lg="4" md="4">
+                  <Label>Select WareHouse to Assign * </Label>
+                  <Multiselect
+                    required
+                    showCheckbox="true"
+                    isObject="false"
+                    options={WareHouseList} // Options to display in the dropdown
+                    selectedValues={SelectedWareHouse} // Preselected value to persist in dropdown
+                    onSelect={(selectedList, selectedItem) => {
+                      setSelectedWareHouse(selectedList);
+                    }} // Function will trigger on select event
+                    onRemove={(selectedList, removedItem) => {
+                      setSelectedWareHouse(selectedList);
+                    }} // Function will trigger on remove event
+                    displayValue="warehouseName" // Property name to display in the dropdown options
+                  />
+                </Col>
+              )}
               {CreatAccountView &&
                 CreatAccountView?.map((ele, i) => {
                   {
@@ -308,7 +356,6 @@ const EditAccount = ({ EditOneData }) => {
                     );
                   } else if (!!ele?.library) {
                     if (ele?.label._text?.includes("ountry")) {
-                      console.log(ele);
                       return (
                         <Col key={i} lg="4" md="4" sm="12">
                           <FormGroup>

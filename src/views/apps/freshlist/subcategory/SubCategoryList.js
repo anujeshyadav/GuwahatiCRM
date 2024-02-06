@@ -12,6 +12,7 @@ import {
   DropdownToggle,
   Label,
   CustomInput,
+  Spinner,
 } from "reactstrap";
 import axiosConfig from "../../../../axiosConfig";
 import axios from "axios";
@@ -28,6 +29,8 @@ import {
 } from "../../../../ApiEndPoint/ApiCalling";
 import swal from "sweetalert";
 import { Image_URL } from "../../../../ApiEndPoint/Api";
+import { CheckPermission } from "../house/CheckPermission";
+import SuperAdminUI from "../../../SuperAdminUi/SuperAdminUI";
 
 class SubCategoryList extends React.Component {
   state = {
@@ -35,6 +38,8 @@ class SubCategoryList extends React.Component {
     CatList: [],
     paginationPageSize: 20,
     currenPageSize: "",
+    MasterShow: false,
+    InsiderPermissions: {},
     category: "NA",
     Show: false,
     getPageSize: "",
@@ -57,7 +62,7 @@ class SubCategoryList extends React.Component {
         field: "image",
         filter: true,
         width: 100,
-        cellRendererFramework: params => {
+        cellRendererFramework: (params) => {
           return (
             <>
               {params.data?.image && (
@@ -78,7 +83,7 @@ class SubCategoryList extends React.Component {
         field: "name",
         filter: true,
         width: 200,
-        cellRendererFramework: params => {
+        cellRendererFramework: (params) => {
           return (
             <div className="d-flex align-items-center">
               <span>{params.data?.name}</span>
@@ -92,7 +97,7 @@ class SubCategoryList extends React.Component {
         field: "description",
         filter: true,
         width: 200,
-        cellRendererFramework: params => {
+        cellRendererFramework: (params) => {
           return (
             <div className="d-flex align-items-center">
               <span>{params.data?.description}</span>
@@ -132,7 +137,7 @@ class SubCategoryList extends React.Component {
         field: "status",
         filter: true,
         width: 150,
-        cellRendererFramework: params => {
+        cellRendererFramework: (params) => {
           return params.data?.status === "Active" ? (
             <div className="badge badge-pill badge-success">
               {params.data?.status}
@@ -149,7 +154,7 @@ class SubCategoryList extends React.Component {
         field: "sortorder",
         field: "transactions",
         width: 150,
-        cellRendererFramework: params => {
+        cellRendererFramework: (params) => {
           return (
             <div className="actions cursor-pointer">
               {/* <Eye
@@ -192,51 +197,50 @@ class SubCategoryList extends React.Component {
     ],
   };
 
+  async Apicalling(id, db) {
+    this.setState({ Loading: true });
+
+    await AllCategoryList(id, db)
+      .then((res) => {
+        this.setState({ Loading: false });
+        debugger;
+        if (res?.Category?.length) {
+          this.setState({ CatList: res?.Category });
+        }
+      })
+      .catch((err) => {
+        this.setState({ Loading: false });
+        this.setState({ rowData: [] });
+
+        console.log(err);
+      });
+  }
+
   async componentDidMount() {
     let pageparmission = JSON.parse(localStorage.getItem("userData"));
 
-    let newparmisson = pageparmission?.role?.find(
-      value => value?.pageName === "Category List"
-    );
-
-    this.setState({ Viewpermisson: newparmisson?.permission.includes("View") });
-    this.setState({
-      Createpermisson: newparmisson?.permission.includes("Create"),
-    });
-    this.setState({
-      Editpermisson: newparmisson?.permission.includes("Edit"),
-    });
-    this.setState({
-      Deletepermisson: newparmisson?.permission.includes("Delete"),
-    });
-
-   let userData = JSON.parse(localStorage.getItem("userData"));
-   await AllCategoryList(userData?._id, userData?.database)
-     .then((res) => {
-       console.log(res);
-       if (res?.Category?.length) {
-         this.setState({ CatList: res?.Category });
-       }
-     })
-     .catch((err) => {
-       console.log(err);
-     });
+    if (pageparmission?.rolename?.roleName === "MASTER") {
+      this.setState({ MasterShow: true });
+    }
+    const InsidePermissions = CheckPermission("subCategory List");
+    this.setState({ InsiderPermissions: InsidePermissions });
+    await this.Apicalling(pageparmission?._id, pageparmission?.database);
   }
   async runthisfunction(id) {
     console.log(id);
 
     Delete_SubCategory(this.state.category, id)
-      .then(res => {
+      .then((res) => {
         let selectedData = this.gridApi.getSelectedRows();
         this.gridApi.updateRowData({ remove: selectedData });
         swal("SubCategory Deleted Successfully");
       })
-      .catch(err => {
+      .catch((err) => {
         console.log(err);
         swal("Something went wrong");
       });
   }
-  onGridReady = params => {
+  onGridReady = (params) => {
     this.gridApi = params.api;
     this.gridColumnApi = params.columnApi;
     this.setState({
@@ -245,10 +249,10 @@ class SubCategoryList extends React.Component {
       totalPages: this.gridApi.paginationGetTotalPages(),
     });
   };
-  updateSearchQuery = val => {
+  updateSearchQuery = (val) => {
     this.gridApi.setQuickFilter(val);
   };
-  filterSize = val => {
+  filterSize = (val) => {
     if (this.gridApi) {
       this.gridApi.paginationSetPageSize(Number(val));
       this.setState({
@@ -257,23 +261,54 @@ class SubCategoryList extends React.Component {
       });
     }
   };
-  handleShowSubCat = e => {
+  handleShowSubCat = (e) => {
     e.preventDefault();
-    if (this.state.category != "NA") {
+  };
+  changeHandler = (e) => {
+    this.setState({ Loading: true });
+    this.setState({ [e.target.name]: e.target.value });
+    if (e.target.value != "NA") {
       let selecteddata = this.state.CatList?.filter(
-        (ele, i) => ele?._id == this.state.category
+        (ele, i) => ele?._id == e.target.value
       );
-      console.log(selecteddata[0]?.subcategories);
+
       this.setState({ rowData: selecteddata[0]?.subcategories });
       this.setState({ Show: true });
+      this.setState({ Loading: false });
     } else {
       swal("Select Category");
     }
   };
-  changeHandler = e => {
-    this.setState({ [e.target.name]: e.target.value });
+  handleParentSubmit = (e) => {
+    e.preventDefault();
+    let SuperAdmin = JSON.parse(localStorage.getItem("SuperadminIdByMaster"));
+    let id = SuperAdmin.split(" ")[0];
+    let db = SuperAdmin.split(" ")[1];
+    this.Apicalling(id, db);
+  };
+  handleDropdownChange = (selectedValue) => {
+    localStorage.setItem("SuperadminIdByMaster", JSON.stringify(selectedValue));
   };
   render() {
+    if (this.state.Loading) {
+      return (
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            marginTop: "20rem",
+          }}>
+          <Spinner
+            style={{
+              height: "4rem",
+              width: "4rem",
+            }}
+            color="primary">
+            Loading...
+          </Spinner>
+        </div>
+      );
+    }
     const { rowData, columnDefs, defaultColDef, Show } = this.state;
     return (
       <Row className="app-user-list">
@@ -281,23 +316,24 @@ class SubCategoryList extends React.Component {
         <Col sm="12">
           <Card>
             <Row className="mt-2 ml-2 mr-2">
-              <Col lg="5" md="5" xs="12">
-                <h1 sm="6" className="float-left" style={{ fontWeight: "600" }}>
+              <Col lg="3" md="3" xs="12">
+                <h4 sm="6" className="float-left" style={{ fontWeight: "600" }}>
                   SubCategory List
-                </h1>
+                </h4>
               </Col>
-              {/* <Col>
-                  <Button
-                    style={{ marginRight: "-22rem" }}
-                    className=" btn btn-danger float-right"
-                    onClick={() =>
-                      history.push("/app/freshlist/subcategory/SubCategoryList")
-                    }
-                  >
-                    Back
-                  </Button>
-                </Col> */}
-              <Col lg="3" md="3" className="mb-2">
+              {this.state.MasterShow &&
+                this.state.MasterShow ? (
+                  <Col>
+                    <SuperAdminUI
+                      onDropdownChange={this.handleDropdownChange}
+                      onSubmit={this.handleParentSubmit}
+                    />
+                  </Col>
+                ) :(<>
+                  <Col></Col>
+                </>)}
+
+              <Col lg="2" md="2" className="mb-2">
                 <Label> Select Category *</Label>
                 <CustomInput
                   required
@@ -305,32 +341,17 @@ class SubCategoryList extends React.Component {
                   placeholder="Select Category"
                   name="category"
                   value={this.state.category}
-                  onChange={this.changeHandler}
-                >
+                  onChange={this.changeHandler}>
                   <option value="NA">--Select Category--</option>
-                  {this.state.CatList?.map(cat => (
+                  {this.state.CatList?.map((cat) => (
                     <option value={cat?._id} key={cat?._id}>
                       {cat?.name}
                     </option>
                   ))}
                 </CustomInput>
               </Col>
-              <Col lg="2" md="2" className="mb-2">
-                <Button
-                  style={{
-                    cursor: "pointer",
-                    backgroundColor: "#39cccc",
-                    color: "white",
-                    fontWeight: "600",
-                  }}
-                  className="btn float-right mt-1"
-                  color="#39cccc"
-                  onClick={this.handleShowSubCat}
-                >
-                  Submit
-                </Button>
-              </Col>
-              <Col>
+
+              <Col lg="2" md="2" sm="2">
                 <Route
                   render={({ history }) => (
                     <Button
@@ -346,8 +367,7 @@ class SubCategoryList extends React.Component {
                         history.push(
                           "/app/freshlist/subcategory/addSubCategory"
                         )
-                      }
-                    >
+                      }>
                       + SubCategory
                     </Button>
                   )}
@@ -381,26 +401,22 @@ class SubCategoryList extends React.Component {
                             <DropdownMenu right>
                               <DropdownItem
                                 tag="div"
-                                onClick={() => this.filterSize(20)}
-                              >
+                                onClick={() => this.filterSize(20)}>
                                 20
                               </DropdownItem>
                               <DropdownItem
                                 tag="div"
-                                onClick={() => this.filterSize(50)}
-                              >
+                                onClick={() => this.filterSize(50)}>
                                 50
                               </DropdownItem>
                               <DropdownItem
                                 tag="div"
-                                onClick={() => this.filterSize(100)}
-                              >
+                                onClick={() => this.filterSize(100)}>
                                 100
                               </DropdownItem>
                               <DropdownItem
                                 tag="div"
-                                onClick={() => this.filterSize(134)}
-                              >
+                                onClick={() => this.filterSize(134)}>
                                 134
                               </DropdownItem>
                             </DropdownMenu>
@@ -410,7 +426,7 @@ class SubCategoryList extends React.Component {
                           <div className="table-input mr-1">
                             <Input
                               placeholder="search..."
-                              onChange={e =>
+                              onChange={(e) =>
                                 this.updateSearchQuery(e.target.value)
                               }
                               value={this.state.value}
@@ -419,17 +435,21 @@ class SubCategoryList extends React.Component {
                           <div className="export-btn">
                             <Button.Ripple
                               color="primary"
-                              onClick={() => this.gridApi.exportDataAsCsv()}
-                            >
+                              onClick={() => this.gridApi.exportDataAsCsv()}>
                               Export as CSV
                             </Button.Ripple>
                           </div>
                         </div>
                       </div>
-                      <ContextLayout.Consumer>
-                        {context => (
+                      <ContextLayout.Consumer className="ag-theme-alpine">
+                        {(context) => (
                           <AgGridReact
-                            gridOptions={{}}
+                            id="myAgGrid"
+                            gridOptions={{
+                              enableRangeSelection: true, // Allows copying ranges of cells
+                              enableClipboard: true, // Enables clipboard functionality
+                            }}
+                            // gridOptions={this.gridOptions}
                             rowSelection="multiple"
                             defaultColDef={defaultColDef}
                             columnDefs={columnDefs}
@@ -442,6 +462,8 @@ class SubCategoryList extends React.Component {
                             paginationPageSize={this.state.paginationPageSize}
                             pivotPanelShow="always"
                             enableRtl={context.state.direction === "rtl"}
+                            ref={this.gridRef} // Attach the ref to the grid
+                            domLayout="autoHeight" // Adjust layout as needed
                           />
                         )}
                       </ContextLayout.Consumer>

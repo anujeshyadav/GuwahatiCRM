@@ -13,7 +13,6 @@ import {
   FormGroup,
   CustomInput,
   Badge,
-  Spinner,
 } from "reactstrap";
 import { history } from "../../../../history";
 import PhoneInput from "react-phone-input-2";
@@ -35,17 +34,14 @@ import {
   _GetList,
   _PostSave,
 } from "../../../../ApiEndPoint/ApiCalling";
-import { BiEnvelope } from "react-icons/bi";
-import { FcPhoneAndroid } from "react-icons/fc";
-import { BsWhatsapp } from "react-icons/bs";
+
 import "../../../../assets/scss/pages/users.scss";
 import UserContext from "../../../../context/Context";
-import { CloudLightning } from "react-feather";
-import { FaPlus } from "react-icons/fa";
+
 import {
   Assign_Role_To_SuperAdmin,
-  Bulk_Upload_Customer,
   Bulk_Upload_User,
+  Created_Warehouse,
   Role_list_by_Master,
   Super_Admin_List,
   country_state_City_List,
@@ -53,9 +49,9 @@ import {
 
 const CreateAccount = () => {
   const [CreatAccountView, setCreatAccountView] = useState([]);
-  const [Countries, setCountry] = useState({});
-  const [States, setState] = useState({});
-  const [Cities, setCities] = useState({});
+  const [WareHouseList, setWareHouseList] = useState([]);
+  const [SelectedWareHouse, setSelectedWareHouse] = useState([]);
+
   const [BulkImport, setBulkImport] = useState(null);
   const [Master, setMaster] = useState(false);
   const [formData, setFormData] = useState({});
@@ -65,7 +61,8 @@ const CreateAccount = () => {
   const [SelectedRoleToAssign, setSelectedRoleToAssign] = useState([]);
   const [index, setindex] = useState("");
   const [error, setError] = useState("");
-  const [Loader, setLoader] = useState(false);
+
+  const [WareHouseIncharge, setWareHouseIncharge] = useState(false);
   const [permissions, setpermissions] = useState({});
 
   const Context = useContext(UserContext);
@@ -122,6 +119,7 @@ const CreateAccount = () => {
   // console.log(formData);
   // }, [formData]);
   useEffect(() => {
+    let userInfo = JSON.parse(localStorage.getItem("userData"));
     const getLocation = () => {
       if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(
@@ -138,30 +136,18 @@ const CreateAccount = () => {
       } else {
         swal("Your Browser does not support Location");
       }
+      _Get(Created_Warehouse, userInfo?.database)
+        .then((res) => {
+          setWareHouseList(res?.Warehouse);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
     };
 
     getLocation();
   }, []);
 
-  // if (Loader) {
-  //   return (
-  //     <div
-  //       style={{
-  //         display: "flex",
-  //         justifyContent: "center",
-  //         marginTop: "20rem",
-  //       }}>
-  //       <Spinner
-  //         style={{
-  //           height: "4rem",
-  //           width: "4rem",
-  //         }}
-  //         color="primary">
-  //         Loading...
-  //       </Spinner>
-  //     </div>
-  //   );
-  // }
   useEffect(() => {
     let userdata = JSON.parse(localStorage.getItem("userData"));
     _GetList(country_state_City_List)
@@ -188,7 +174,6 @@ const CreateAccount = () => {
           if (WithoutSuperadmin) {
             setAllAssignRoleList(res?.Role);
           }
-          // console.log(ShowList);
         })
         .catch((err) => {
           console.log(err);
@@ -225,6 +210,14 @@ const CreateAccount = () => {
   // console.log(BulkImport);
   const submitHandler = async (e) => {
     e.preventDefault();
+
+    if (WareHouseIncharge) {
+      let wareHouse = SelectedWareHouse?.map((ele) => {
+        return { id: ele?._id };
+      });
+      formData["warehouse"] = wareHouse;
+    }
+
     if (Master) {
       formData["position"] = 1;
     }
@@ -297,7 +290,8 @@ const CreateAccount = () => {
               }
             })
             .catch((err) => {
-              console.log(err);
+              console.log(err.response?.data?.message);
+              swal(`${err.response?.data?.message}`);
             });
         }
       } else {
@@ -366,7 +360,11 @@ const CreateAccount = () => {
                           e.target.options[e.target.selectedIndex].getAttribute(
                             "data-id"
                           );
-
+                        if (selectedPosition == "WareHouse Incharge") {
+                          setWareHouseIncharge(true);
+                        } else {
+                          setWareHouseIncharge(false);
+                        }
                         if (
                           selectedPosition?.toLowerCase()?.includes("admin") ||
                           selectedPosition
@@ -379,8 +377,7 @@ const CreateAccount = () => {
 
                           formData["created_by"] = userdata?._id;
                         }
-                        // console.log(dropdownValue);
-                        // console.log(formData["created_by"] = userdata?._id;)
+
                         setFormData({
                           ...formData,
                           ["rolename"]: e.target.value,
@@ -403,6 +400,27 @@ const CreateAccount = () => {
                     </CustomInput>
                   </FormGroup>
                 </Col>
+                {WareHouseIncharge && WareHouseIncharge && (
+                  <>
+                    <Col className="mb-1" lg="4" md="4">
+                      <Label>Selected WareHouse </Label>
+                      <Multiselect
+                        required
+                        showCheckbox="true"
+                        isObject="false"
+                        options={WareHouseList} // Options to display in the dropdown
+                        // selectedValues={selectedValue}   // Preselected value to persist in dropdown
+                        onSelect={(selectedList, selectedItem) => {
+                          setSelectedWareHouse(selectedList);
+                        }} // Function will trigger on select event
+                        onRemove={(selectedList, removedItem) => {
+                          setSelectedWareHouse(selectedList);
+                        }} // Function will trigger on remove event
+                        displayValue="warehouseName" // Property name to display in the dropdown options
+                      />
+                    </Col>
+                  </>
+                )}
                 {Master && Master && (
                   <>
                     <Col className="mb-1" lg="4" md="4">

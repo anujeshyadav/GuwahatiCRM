@@ -35,7 +35,11 @@ import {
 } from "../../../../ApiEndPoint/ApiCalling";
 import "../../../../assets/scss/pages/users.scss";
 import UserContext from "../../../../context/Context";
-import { Update_Product, ViewOne_Product } from "../../../../ApiEndPoint/Api";
+import {
+  Update_Product,
+  ViewOne_Product,
+  WareahouseList_For_addProduct,
+} from "../../../../ApiEndPoint/Api";
 
 const EditAddProduct = () => {
   const [CreatAccountView, setCreatAccountView] = useState([]);
@@ -143,7 +147,7 @@ const EditAddProduct = () => {
         });
         AllCategoryList(userData?._id, userData?.database)
           .then((resp) => {
-            console.log(resp);
+            // console.log(resp);
             if (resp?.Category) {
               let selectedcat = resp?.Category?.filter(
                 (ele) => ele?.name == res?.Product?.category
@@ -180,16 +184,11 @@ const EditAddProduct = () => {
             console.log(err);
           });
 
-        CreateAccountList(userData?._id, userData?.database)
-          .then((warehouse) => {
-            let value = warehouse?.adminDetails;
-            let selectewarehouse = value?.filter(
-              (ele) => ele?._id == res?.Product?.warehouse
-            );
-            // setFormData({
-            //   ...formData,
-            //   ["warehouse"]: selectewarehouse[0]?._id,
-            // });
+        _Get(WareahouseList_For_addProduct, userData?.database)
+          .then((values) => {
+            // console.log(res?.Product);
+            // warehouse;
+            let value = values?.Warehouse;
             if (value) {
               setWareHouseList(value);
             }
@@ -207,7 +206,7 @@ const EditAddProduct = () => {
     CreateProductXMLView()
       .then((res) => {
         const jsonData = xmlJs.xml2json(res.data, { compact: true, spaces: 2 });
-        console.log(JSON.parse(jsonData).createProduct);
+        // console.log(JSON.parse(jsonData).createProduct);
         setCreatAccountView(JSON.parse(jsonData)?.createProduct);
         setdropdownValue(JSON.parse(jsonData)?.createProduct);
       })
@@ -224,11 +223,10 @@ const EditAddProduct = () => {
       [name]: e.target.files[0],
     });
   };
-  console.log(formData);
+
   const submitHandler = (e) => {
     e.preventDefault();
-    debugger;
-    console.log(formData);
+
     let formdata = new FormData();
     let userData = JSON.parse(localStorage.getItem("userData"));
     formdata.append("created_by", userData._id);
@@ -254,7 +252,7 @@ const EditAddProduct = () => {
     for (const value of formdata.values()) {
       console.log(value);
     }
-    debugger;
+
     if (error) {
       swal("Error occured while Entering Details");
     } else {
@@ -407,18 +405,13 @@ const EditAddProduct = () => {
 
                               {wareHouseList &&
                                 wareHouseList?.map((whList) => {
-                                  if (
-                                    whList?.rolename?.roleName ==
-                                    "WareHouse Incharge"
-                                  ) {
-                                    return (
-                                      <option
-                                        value={whList?._id}
-                                        key={whList?._id}>
-                                        {whList?.firstName}
-                                      </option>
-                                    );
-                                  }
+                                  return (
+                                    <option
+                                      value={whList?._id}
+                                      key={whList?._id}>
+                                      {whList?.warehouseName}
+                                    </option>
+                                  );
                                 })}
                             </CustomInput>
                           </Col>

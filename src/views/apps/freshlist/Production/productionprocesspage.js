@@ -13,6 +13,7 @@ import {
   CustomInput,
   InputGroup,
   Badge,
+  Table,
 } from "reactstrap";
 import { Modal, ModalHeader, ModalBody, ModalFooter } from "reactstrap";
 
@@ -631,6 +632,41 @@ const ProductionProcess = (args) => {
                 </div>
               </Col>
             </Row>
+            {/* <div className="px-2">
+              <Table bordered hover responsive>
+                <thead>
+                  <tr>
+                    <th>#</th>
+                    <th>Choose Items</th>
+                    <th>Select Unit</th>
+                    <th>Price</th>
+                    <th>Required Quantity</th>
+                    <th>Total Price</th>
+                    <th>Waste Unit</th>
+                    <th>Waste Quantity</th>
+                    <th>Waste Total</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {product &&
+                    product?.map((product, index) => {
+                      return (
+                        <tr key={index}>
+                          <th>#</th>
+                          <th>Choose Items</th>
+                          <th>Select Unit</th>
+                          <th>Price</th>
+                          <th>Required Quantity</th>
+                          <th>Total Price</th>
+                          <th>Waste Unit</th>
+                          <th>Waste Quantity</th>
+                          <th>Waste Total</th>
+                        </tr>
+                      );
+                    })}
+                </tbody>
+              </Table>
+            </div> */}
             {product &&
               product?.map((product, index) => (
                 <Row className="" key={index}>

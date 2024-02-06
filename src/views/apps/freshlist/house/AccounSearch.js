@@ -70,12 +70,13 @@ class AccounSearch extends React.Component {
     this.state = {
       isOpen: false,
       MasterShow: false,
+      InsiderPermissions: {},
       Arrindex: "",
       rowData: [],
       setMySelectedarr: [],
       SelectedCols: [],
       paginationPageSize: 5,
-      InsiderPermissions: {},
+
       currenPageSize: "",
       getPageSize: "",
       columnDefs: [],
@@ -792,26 +793,6 @@ class AccounSearch extends React.Component {
                                   onMouseEnter={this.toggleDropdown}
                                   onMouseLeave={this.toggleDropdown}
                                   className="mx-1">
-                                  {/* <UncontrolledDropdown
-                                    className="me-2"
-                                    direction="down">
-                                    <DropdownToggle caret color="primary">
-                                      Dropdown
-                                    </DropdownToggle>
-                                    <DropdownMenu>
-                                      <DropdownItem header>Header</DropdownItem>
-                                      <DropdownItem disabled>
-                                        Action
-                                      </DropdownItem>
-                                      <DropdownItem>
-                                        Another Action
-                                      </DropdownItem>
-                                      <DropdownItem divider />
-                                      <DropdownItem>
-                                        Another Action
-                                      </DropdownItem>
-                                    </DropdownMenu>
-                                  </UncontrolledDropdown> */}
                                   <div className="dropdown-container float-right">
                                     <ImDownload
                                       style={{ cursor: "pointer" }}
@@ -819,8 +800,6 @@ class AccounSearch extends React.Component {
                                       size="35px"
                                       className="dropdown-button mb-1"
                                       color="#39cccc"
-
-                                      // onClick={this.toggleDropdown}
                                     />
                                     {isOpen && (
                                       <div
