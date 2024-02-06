@@ -337,6 +337,222 @@ const CreateAttribute = lazy(() =>
 // const StockReport = lazy(() =>
 //   import("./views/apps/freshlist/report/StockReport")
 // );
+
+
+// import HRM
+
+
+
+// hrm start by jayesh adsule
+const Recruitmentandplacement = lazy(() =>
+  import("./views/apps/freshlist/customer/HRM/HRMList")
+);
+
+const jobcreate = lazy(() =>
+  import("./views/apps/freshlist/customer/HRM/jobcreate")
+)
+const JobList = lazy(() =>
+  import("./views/apps/freshlist/customer/HRM/JobList")
+)
+
+
+const JobViewform = lazy(() =>
+  import("./views/apps/freshlist/customer/HRM/ViewHrm/JobviewList")
+)
+
+const JobApView = lazy(() =>
+  import("./views/apps/freshlist/customer/HRM/HrmjpbApp/JobapView")
+)
+
+const InterView_viewList = lazy(() =>
+  import("./views/apps/freshlist/customer/HRM/HrminterView/InterView")
+)
+
+
+const JobeditList = lazy(() =>
+  import("./views/apps/freshlist/customer/HRM/ViewHrm/JobeditList")
+)
+
+const IntereditList = lazy(() =>
+  import("./views/apps/freshlist/customer/HRM/HrminterView/InterViewedit")
+)
+
+const JobapEdList = lazy(() =>
+  import("./views/apps/freshlist/customer/HRM/HrmjpbApp/JobapeditList")
+)
+
+const JobappList = lazy(() =>
+  import("./views/apps/freshlist/customer/HRM/jobappList")
+)
+
+const practiceList = lazy(() =>
+  import("./views/apps/freshlist/customer/HRM/practiceList")
+)
+
+const InterviewList = lazy(() =>
+  import("./views/apps/freshlist/customer/HRM/interviewList")
+)
+const offerList = lazy(() =>
+  import("./views/apps/freshlist/customer/HRM/offerList")
+)
+
+const CreateemployeList = lazy(() =>
+  import("./views/apps/freshlist/customer/HRM/empList")
+)
+const TrainingList = lazy(() =>
+  import("./views/apps/freshlist/customer/HRM/trainList")
+)
+
+const AttendList = lazy(() =>
+  import("./views/apps/freshlist/customer/HRM/attenList")
+)
+const RuleList = lazy(() =>
+  import("./views/apps/freshlist/customer/HRM/ruleList")
+);
+
+const LeaveList = lazy(() =>
+  import("./views/apps/freshlist/customer/HRM/leaveList")
+)
+const IndicList = lazy(() =>
+  import("./views/apps/freshlist/customer/HRM/indicatList")
+)
+
+const IncenList = lazy(() =>
+  import("./views/apps/freshlist/customer/HRM/incentList")
+)
+const BonusList = lazy(() =>
+  import("./views/apps/freshlist/customer/HRM/bonusList")
+)
+const GoalList = lazy(() =>
+  import("./views/apps/freshlist/customer/HRM/goalList")
+)
+const TermList = lazy(() =>
+  import("./views/apps/freshlist/customer/HRM/termList")
+)
+const AdvanceList = lazy(() =>
+  import("./views/apps/freshlist/customer/HRM/advanceList")
+)
+const OvertList = lazy(() =>
+  import("./views/apps/freshlist/customer/HRM/overtList")
+)
+
+const Pflist = lazy(() =>
+  import("./views/apps/freshlist/customer/HRM/pfList")
+);
+const Esilist = lazy(() =>
+  import("./views/apps/freshlist/customer/HRM/esiList")
+);
+
+const Lonelist = lazy(() =>
+  import("./views/apps/freshlist/customer/HRM/loneList")
+);
+const Talist = lazy(() =>
+  import("./views/apps/freshlist/customer/HRM/taList")
+);
+const Dalist = lazy(() =>
+  import("./views/apps/freshlist/customer/HRM/daList")
+);
+const Travllinglist = lazy(() =>
+  import("./views/apps/freshlist/customer/HRM/travlingList")
+);
+const Insurancelist = lazy(() =>
+  import("./views/apps/freshlist/customer/HRM/insuranceList")
+);
+
+const Setsalarlist = lazy(() =>
+  import("./views/apps/freshlist/customer/HRM/setsalarList")
+)
+
+const AttenForm = lazy(() =>
+  import("./views/apps/freshlist/customer/HRM/Time-sheet/attenform")
+);
+const LeaveForm = lazy(() =>
+  import("./views/apps/freshlist/customer/HRM/Time-sheet/leaveform")
+);
+const IncenForm = lazy(() =>
+  import("./views/apps/freshlist/customer/HRM/TCPA/incenform")
+);
+
+const BonusForm = lazy(() =>
+  import("./views/apps/freshlist/customer/HRM/TCPA/bonusform")
+);
+
+const GoalForm = lazy(() =>
+  import("./views/apps/freshlist/customer/HRM/TCPA/goltrackform")
+);
+
+const Indicatform = lazy(() =>
+  import("./views/apps/freshlist/customer/HRM/Perfomence/indicatform")
+);
+
+const JobbForm = lazy(() =>
+  import("./views/apps/freshlist/customer/HRM/RecPLace/jobForm")
+);
+const AppResultForm = lazy(() =>
+  import("./views/apps/freshlist/customer/HRM/RecPLace/applresultForm")
+);
+const MockTestForm = lazy(() =>
+  import("./views/apps/freshlist/customer/HRM/RecPLace/practskillform")
+);
+const InterviewForm = lazy(() =>
+  import("./views/apps/freshlist/customer/HRM/RecPLace/interviewForm")
+);
+
+const OfferLetterForm = lazy(() =>
+  import("./views/apps/freshlist/customer/HRM/RecPLace/offerletterForm")
+);
+
+const EmployeeProfileForm = lazy(() =>
+  import("./views/apps/freshlist/customer/HRM/RecPLace/createempForm")
+);
+
+const TerminationForm = lazy(() =>
+  import("./views/apps/freshlist/customer/HRM/termiForm")
+);
+const PayslipForm = lazy(() =>
+  import("./views/apps/freshlist/customer/HRM/RecPLace/setsalaryForm")
+)
+const TrainingForm = lazy(() =>
+  import("./views/apps/freshlist/customer/HRM/RecPLace/trainingForm")
+)
+
+const Ruleform = lazy(() =>
+  import("./views/apps/freshlist/customer/HRM/Setrule/ruleForm")
+);
+const Taform = lazy(() =>
+  import("./views/apps/freshlist/customer/HRM/payrollsheet/taform")
+);
+const Daform = lazy(() =>
+  import("./views/apps/freshlist/customer/HRM/payrollsheet/daform")
+);
+const Pfform = lazy(() =>
+  import("./views/apps/freshlist/customer/HRM/payrollsheet/pfform")
+);
+const Esiform = lazy(() =>
+  import("./views/apps/freshlist/customer/HRM/payrollsheet/esiform")
+);
+const Loanform = lazy(() =>
+  import("./views/apps/freshlist/customer/HRM/payrollsheet/loanform")
+);
+
+const Travellingform = lazy(() =>
+  import("./views/apps/freshlist/customer/HRM/payrollsheet/travellingform")
+);
+
+const Insurance = lazy(() =>
+  import("./views/apps/freshlist/customer/HRM/payrollsheet/Insurance")
+);
+
+const Over = lazy(() =>
+  import("./views/apps/freshlist/customer/HRM/payrollsheet/Over")
+);
+
+const AdvanceComponente = lazy(() =>
+  import("./views/apps/freshlist/customer/HRM/payrollsheet/Advance")
+);
+
+// hrm end by jayesh adsule
+// end import hrm
 const ProductReport = lazy(() =>
   import("./views/apps/freshlist/report/ProductReport")
 );
@@ -1649,6 +1865,183 @@ class AppRouter extends React.Component {
             path="/app/freshlist/gallery/addGallery"
             component={AddGallery}
           />
+          {/* hrm links start */}
+          <AppRoute
+            path="/app/ajgroup/HRM/Recruitmentandplacement"
+            component={Recruitmentandplacement}
+          />
+          <AppRoute path="/app/ajgroup/HRM/jobcreate" component={jobcreate} />
+          <AppRoute path="/app/ajgroup/HRM/jobappList" component={JobappList} />
+          <AppRoute
+            path="/app/ajgroup/HRM/practiceList"
+            component={practiceList}
+          />
+          <AppRoute path="/app/ajgroup/HRM/JobList" component={JobList} />
+          <AppRoute
+            path="/app/ajgroup/HRM/ViewHrm/JobeditList/:id"
+            component={JobeditList}
+          />
+          <AppRoute
+            path="/app/ajgroup/HRM/ViewHrm/JobviewList/:id"
+            component={JobViewform}
+          />
+          <AppRoute
+            path="/app/ajgroup/HRM/HrmjpbApp/JobapView/:id"
+            component={JobApView}
+          />
+          <AppRoute
+            path="/app/ajgroup/HRM/HrminterView/InterView/:id"
+            component={InterView_viewList}
+          />
+          <AppRoute
+            path="/app/ajgroup/HRM/HrmjpbApp/JobapeditList/:id"
+            component={JobapEdList}
+          />
+          <AppRoute
+            path="/app/ajgroup/HRM/HrminterView/InterViewedit/:id"
+            component={IntereditList}
+          />
+          <AppRoute
+            path="/app/ajgroup/HRM/interviewList"
+            component={InterviewList}
+          />
+          <AppRoute path="/app/ajgroup/HRM/offerList" component={offerList} />
+          <AppRoute
+            path="/app/ajgroup/HRM/empList"
+            component={CreateemployeList}
+          />
+          <AppRoute
+            path="/app/ajgroup/HRM/trainList"
+            component={TrainingList}
+          />
+          <AppRoute path="/app/ajgroup/HRM/attenList" component={AttendList} />
+          <AppRoute path="/app/ajgroup/HRM/leaveList" component={LeaveList} />
+          <AppRoute path="/app/ajgroup/HRM/indicatList" component={IndicList} />
+          <AppRoute path="/app/ajgroup/HRM/incentList" component={IncenList} />
+          <AppRoute path="/app/ajgroup/HRM/bonusList" component={BonusList} />
+          <AppRoute path="/app/ajgroup/HRM/goalList" component={GoalList} />
+          <AppRoute path="/app/ajgroup/HRM/termList" component={TermList} />
+          <AppRoute
+            path="/app/ajgroup/HRM/advanceList"
+            component={AdvanceList}
+          />
+          <AppRoute path="/app/ajgroup/HRM/overtList" component={OvertList} />
+          <AppRoute path="/app/ajgroup/HRM/ruleList" component={RuleList} />
+          <AppRoute path="/app/ajgroup/HRM/pfList" component={Pflist} />
+          <AppRoute path="/app/ajgroup/HRM/esiList" component={Esilist} />
+          <AppRoute path="/app/ajgroup/HRM/loneList" component={Lonelist} />
+          <AppRoute path="/app/ajgroup/HRM/taList" component={Talist} />
+          <AppRoute path="/app/ajgroup/HRM/daList" component={Dalist} />
+          <AppRoute
+            path="/app/ajgroup/HRM/travlingList"
+            component={Travllinglist}
+          />
+          <AppRoute
+            path="/app/ajgroup/HRM/insuranceList"
+            component={Insurancelist}
+          />
+          <AppRoute
+            path="/app/ajgroup/HRM/setsalarList"
+            component={Setsalarlist}
+          />
+          <AppRoute
+            path="/app/ajgroup/HRM/Time-sheet/attenform"
+            component={AttenForm}
+          />
+          <AppRoute
+            path="/app/ajgroup/HRM/Time-sheet/leaveform"
+            component={LeaveForm}
+          />
+          <AppRoute
+            path="/app/ajgroup/HRM/TCPA/incenform"
+            component={IncenForm}
+          />
+          <AppRoute
+            path="/app/ajgroup/HRM/TCPA/bonusform"
+            component={BonusForm}
+          />
+          <AppRoute
+            path="/app/ajgroup/HRM/TCPA/goltrackform"
+            component={GoalForm}
+          />
+          <AppRoute
+            path="/app/ajgroup/HRM/Perfomence/indicatform"
+            component={Indicatform}
+          />
+          <AppRoute
+            path="/app/ajgroup/HRM/RecPlace/jobForm"
+            component={JobbForm}
+          />
+          <AppRoute
+            path="/app/ajgroup/HRM/RecPlace/applresultForm"
+            component={AppResultForm}
+          />
+          <AppRoute
+            path="/app/ajgroup/HRM/RecPlace/practskillform"
+            component={MockTestForm}
+          />
+          <AppRoute
+            path="/app/ajgroup/HRM/RecPlace/interviewForm"
+            component={InterviewForm}
+          />
+          <AppRoute
+            path="/app/ajgroup/HRM/RecPlace/offerletterForm"
+            component={OfferLetterForm}
+          />
+          <AppRoute
+            path="/app/ajgroup/HRM/RecPlace/createempForm"
+            component={EmployeeProfileForm}
+          />
+          <AppRoute
+            path="/app/ajgroup/HRM/termiForm"
+            component={TerminationForm}
+          />
+          <AppRoute
+            path="/app/ajgroup/HRM/RecPlace/setsalaryForm"
+            component={PayslipForm}
+          />
+          <AppRoute
+            path="/app/ajgroup/HRM/RecPlace/trainingForm"
+            component={TrainingForm}
+          />
+          <AppRoute
+            path="/app/ajgroup/HRM/Setrule/ruleForm"
+            component={Ruleform}
+          />
+          <AppRoute
+            path="/app/ajgroup/HRM/payrollsheet/taform"
+            component={Taform}
+          />
+          <AppRoute
+            path="/app/ajgroup/HRM/payrollsheet/daform"
+            component={Daform}
+          />
+          <AppRoute
+            path="/app/ajgroup/HRM/payrollsheet/pfform"
+            component={Pfform}
+          />
+          <AppRoute
+            path="/app/ajgroup/HRM/payrollsheet/esiform"
+            component={Esiform}
+          />
+          <AppRoute
+            path="/app/ajgroup/HRM/payrollsheet/travellingform"
+            component={Travellingform}
+          />
+          <AppRoute
+            path="/app/ajgroup/HRM/payrollsheet/loanform"
+            component={Loanform}
+          />
+          <AppRoute
+            path="/app/ajgroup/HRM/payrollsheet/Over"
+            component={Over}
+          />
+          <AppRoute path="/app/ajgroup/HRM/Insurance" component={Insurance} />
+          <AppRoute
+            path="/app/ajgroup/HRM/Advance"
+            component={AdvanceComponente}
+          />
+          {/* hrm link */}
           {/* order */}
           <AppRoute
             path="/app/softnumen/order/createorder"
