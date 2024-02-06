@@ -115,6 +115,7 @@ class CreateTransportList extends React.Component {
 
     await _Get(Create_Transporter_List, db)
       .then((res) => {
+        
         this.setState({ Loading: false });
 
         let value = res?.Transporter;
@@ -153,12 +154,35 @@ class CreateTransportList extends React.Component {
         );
 
         const inputs = allinput?.map((ele) => {
-          return {
-            headerName: ele?.label._text,
-            field: ele?.name._text,
-            filter: true,
-            sortable: true,
-          };
+          
+          if (ele?.label._text == "City") {
+            return {
+              headerName: "City",
+              field: "City.name",
+              filter: true,
+              width: 200,
+              cellRendererFramework: (params) => {
+                return (
+                  <>
+                    <div className="actions cursor-pointer">
+                      {params?.data?.City?.length > 0 &&
+                        params?.data?.City?.map((ele) => (
+                          <span>{ele?.name && ele?.name} </span>
+                        ))}
+                      {","}
+                    </div>
+                  </>
+                );
+              },
+            };
+          } else {
+            return {
+              headerName: ele?.label._text,
+              field: ele?.name._text,
+              filter: true,
+              sortable: true,
+            };
+          }
         });
         // let Radioinput =
         //   JSON.parse(jsonData).CreateAccount?.Radiobutton?.input[0]?.name

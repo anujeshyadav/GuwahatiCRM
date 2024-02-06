@@ -42,11 +42,13 @@ import {
   WarehousetoWareHouseTrx,
   Warehouse_Temporarlylist,
   CreateAccountList,
+  _Get,
 } from "../../../../ApiEndPoint/ApiCalling";
 import "../../../../assets/scss/pages/users.scss";
 import Timepickers from "../../../forms/form-elements/datepicker/Timepicker";
 import Pickers from "../../../forms/form-elements/datepicker/Pickers";
 import { Route } from "react-router-dom";
+import { WareahouseList_For_addProduct } from "../../../../ApiEndPoint/Api";
 
 let GrandTotal = [];
 let SelectedITems = [];
@@ -306,13 +308,12 @@ const CreateTarget = (args) => {
 
   useEffect(() => {
     let userData = JSON.parse(localStorage.getItem("userData"));
-    CreateAccountList(userData?._id, userData?.database)
-      .then((res) => {
-        let value = res?.adminDetails?.filter(
-          (ele) => ele?.rolename?.roleName == "WareHouse Incharge"
-        );
-        console.log(value);
-        if (value.length) {
+    _Get(WareahouseList_For_addProduct, userData?.database)
+      .then((values) => {
+        // console.log(res?.Product);
+        // warehouse;
+        let value = values?.Warehouse;
+        if (value) {
           setWarehouseList(value);
         }
       })
@@ -343,8 +344,8 @@ const CreateTarget = (args) => {
         let AllProduct = res?.Product?.filter(
           (ele) => ele?.addProductType == "Product"
         );
-        debugger;
-        setProductList(AllProduct);
+        // debugger;
+        setProductList(res.Product);
       })
       .catch((err) => {
         console.log(err);
@@ -619,7 +620,7 @@ const CreateTarget = (args) => {
                       // selectedValues={selectedValue}   // Preselected value to persist in dropdown
                       onSelect={onSelectone} // Function will trigger on select event
                       onRemove={onRemoveone} // Function will trigger on remove event
-                      displayValue="firstName" // Property name to display in the dropdown options
+                      displayValue="warehouseName" // Property name to display in the dropdown options
                     />
                   </div>
                 </Col>
@@ -636,7 +637,7 @@ const CreateTarget = (args) => {
                       // selectedValues={selectedValue}   // Preselected value to persist in dropdown
                       onSelect={onSelect2} // Function will trigger on select event
                       onRemove={onRemove2} // Function will trigger on remove event
-                      displayValue="firstName" // Property name to display in the dropdown options
+                      displayValue="warehouseName" // Property name to display in the dropdown options
                     />
                   </div>
                 </Col>
@@ -853,7 +854,7 @@ const CreateTarget = (args) => {
                       // selectedValues={selectedValue}   // Preselected value to persist in dropdown
                       onSelect={onSelect1} // Function will trigger on select event
                       onRemove={onRemove1} // Function will trigger on remove event
-                      displayValue="firstName" // Property name to display in the dropdown options
+                      displayValue="warehouseName" // Property name to display in the dropdown options
                     />
                   </div>
                 </Col>

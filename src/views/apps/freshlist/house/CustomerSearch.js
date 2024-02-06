@@ -59,6 +59,7 @@ import UserContext from "../../../../context/Context";
 import { CheckPermission } from "./CheckPermission";
 import SuperAdminUI from "../../../SuperAdminUi/SuperAdminUI";
 import { Image_URL } from "../../../../ApiEndPoint/Api";
+import { param } from "jquery";
 
 const SelectedColums = [];
 
@@ -129,6 +130,7 @@ class CustomerSearch extends React.Component {
     const UserInformation = this.context?.UserInformatio;
     const InsidePermissions = CheckPermission("Create Customer");
     this.setState({ InsiderPermissions: InsidePermissions });
+    debugger;
     let userData = JSON.parse(localStorage.getItem("userData"));
     if (userData?.rolename?.roleName === "MASTER") {
       this.setState({ MasterShow: true });
@@ -648,7 +650,7 @@ class CustomerSearch extends React.Component {
         const ws = XLSX.utils.json_to_sheet(result.data);
         const wb = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(wb, ws, "Sheet1");
-         const excelType = "xlsx";
+        const excelType = "xlsx";
         XLSX.writeFile(wb, `CreateCustomerSample.${excelType}`);
       },
     });
@@ -1026,30 +1028,15 @@ class CustomerSearch extends React.Component {
                                 {(context) => (
                                   <AgGridReact
                                     id="myAgGrid"
-                                    // gridOptions={{
-                                    //   domLayout: "autoHeight",
-                                    //   // or other layout options
-                                    // }}
-                                    gridOptions={this.gridOptions}
+                                    gridOptions={{
+                                      enableRangeSelection: true, // Allows copying ranges of cells
+                                      enableClipboard: true, // Enables clipboard functionality
+                                    }}
+                                    // gridOptions={this.gridOptions}
                                     rowSelection="multiple"
                                     defaultColDef={defaultColDef}
                                     columnDefs={columnDefs}
                                     rowData={rowData}
-                                    // onGridReady={(params) => {
-                                    //   this.gridApi = params.api;
-                                    //   this.gridColumnApi = params.columnApi;
-                                    //   this.gridRef.current = params.api;
-
-                                    //   this.setState({
-                                    //     currenPageSize:
-                                    //       this.gridApi.paginationGetCurrentPage() +
-                                    //       1,
-                                    //     getPageSize:
-                                    //       this.gridApi.paginationGetPageSize(),
-                                    //     totalPages:
-                                    //       this.gridApi.paginationGetTotalPages(),
-                                    //   });
-                                    // }}
                                     onGridReady={this.onGridReady}
                                     colResizeDefault={"shift"}
                                     animateRows={true}

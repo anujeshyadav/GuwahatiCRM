@@ -18,17 +18,22 @@ import {
   All_Users_List,
   Deptartment_with_Role,
   User_Assign_User,
+  User_UnLink_User,
 } from "../../../../ApiEndPoint/Api";
 import swal from "sweetalert";
 let SelectedChild = [];
+let SelectedChildForUnlink = [];
 let SetAllHeadOfdepartment = [];
 const AssignTeamMember = () => {
   const [DepartmentWithRole, setDepartmentWithRole] = useState([]);
   const [SelectedDepartment, setSelectedDepartment] = useState([]);
   const [SelectedDepartments, setSelectedDepartments] = useState([]);
   const [ShowParentList, setShowParentList] = useState([]);
+  const [GetParentList, setGetParentList] = useState([]);
+  const [ShowChildUnlink, setShowChildUnlink] = useState([]);
   const [ALLheadsofDept, setALLheadsofDept] = useState([]);
   const [ShowChildList, setShowChildList] = useState([]);
+  const [GetChildList, setGetChildList] = useState([]);
   const [Show, setShow] = useState(false);
   const [Child, setChild] = useState(false);
   const [SelectedParentForHeirarchy, setSelectedParentForHeirarchy] = useState(
@@ -79,6 +84,20 @@ const AssignTeamMember = () => {
   const handleSaveParent = (parent) => {
     setSelectedParentForHeirarchy(parent);
   };
+  const handleUnLinkChild = (ele, e) => {
+    if (e.target.checked) {
+      SelectedChildForUnlink.push(ele);
+      setShowChildUnlink(SelectedChildForUnlink);
+    } else {
+      let index = SelectedChildForUnlink?.indexOf(ele);
+      SelectedChildForUnlink.splice(index, 1);
+      if (SelectedChildForUnlink?.length > 0) {
+        setShowChildUnlink(SelectedChildForUnlink);
+      } else {
+        setShowChildUnlink([]);
+      }
+    }
+  };
   const handleSaveChild = (child, e) => {
     if (e.target.checked) {
       SelectedChild.push(child);
@@ -88,6 +107,36 @@ const AssignTeamMember = () => {
       let index = SelectedChild?.indexOf(child);
       setSelectedChildForHeirarchy(SelectedChild.splice(index, 1));
     }
+  };
+
+  const handleSubmitUnLinkChild = async (e) => {
+    e.preventDefault();
+
+    let child = SelectedChildForUnlink?.map((ele, i) => {
+      return {
+        id: ele?._id,
+      };
+    });
+    let payload = {
+      childs: child,
+    };
+
+    await _PostSave(User_UnLink_User, payload)
+      .then((res) => {
+        UserList();
+        setSelectedDepartment([]);
+        setShowParentList([]);
+        setParent("");
+        setShowChildList([]);
+        setChild(false);
+        setChildList([]);
+        SelectedChildForUnlink = [];
+        swal("UnLink Successfully");
+      })
+      .catch((err) => {
+        swal("Something Went Wrong");
+        console.log(err);
+      });
   };
 
   const handleSubmit = async (e) => {
@@ -192,6 +241,7 @@ const AssignTeamMember = () => {
                       });
 
                       setShowChildList(allHeadUsers);
+                      setGetChildList(allHeadUsers);
                       // if (allHeadUsers?.length) {
                       //   setChild(true);
                       // }
@@ -249,7 +299,6 @@ const AssignTeamMember = () => {
                             (ele) => ele?.rolename?.roleName == "Customer"
                           );
                         } else {
-                          debugger;
                           child = SelectedDepartment?.filter(
                             (ele) =>
                               ele?.rolePosition == Number(selected[0]) + 1
@@ -260,6 +309,7 @@ const AssignTeamMember = () => {
                           (ele) => ele?.rolename?._id == selected[1]
                         );
                         setShowParentList(ParentList);
+                        setGetParentList(ParentList);
                         setParent(e.target.value);
                         setParentName(name);
                         setSelectedRoleId(selected[1]);
@@ -268,6 +318,7 @@ const AssignTeamMember = () => {
                           let ChildList = [];
                           if (name == "Sales Person") {
                             setShowChildList(child);
+                            setGetChildList(child);
                             setParty(true);
                             // setShowChildList(ChildList);
                             setChild(true);
@@ -278,6 +329,7 @@ const AssignTeamMember = () => {
                                 ele?.rolename?._id == child[0]?.roleId?._id
                             );
                             setShowChildList(ChildList);
+                            setGetChildList(ChildList);
                             setChild(true);
                             setParty(false);
 
@@ -338,6 +390,17 @@ const AssignTeamMember = () => {
                   )}
                 </>
               )}
+
+              {ShowChildUnlink && ShowChildUnlink?.length > 0 && (
+                <Col lg="3" md="3">
+                  <Button
+                    color="primary"
+                    onClick={(e) => handleSubmitUnLinkChild(e)}
+                    className="mt-2">
+                    UnLink
+                  </Button>
+                </Col>
+              )}
             </Row>
           </div>
           <hr />
@@ -345,18 +408,48 @@ const AssignTeamMember = () => {
             <Row>
               {ShowParentList && ShowParentList?.length > 0 && (
                 <Col lg="6" md="6" sm="6">
-                  <div className="d-flex justify-content-center">
-                    <h2>
-                      <strong>
-                        {ParentName && ParentName ? (
-                          <> {ParentName} (Parent)</>
-                        ) : (
-                          "Head"
-                        )}{" "}
-                        Users List
-                      </strong>
-                    </h2>
-                  </div>
+                  <Row>
+                    <Col lg="4" mg="4" sm="6">
+                      <h5>
+                        <strong>
+                          {ParentName && ParentName ? (
+                            <> {ParentName} (Parent)</>
+                          ) : (
+                            "Head"
+                          )}{" "}
+                          List
+                        </strong>
+                      </h5>
+                    </Col>
+                    <Col></Col>
+                    <Col lg="4" mg="4" sm="6">
+                      <div className="mr-2 pr-1">
+                        <Input
+                          type="text"
+                          className=""
+                          name="search"
+                          placeholder="Search Here..."
+                          onChange={(e) => {
+                            let list = [...ShowParentList];
+                            let fiterData = list?.filter(
+                              (ele) =>
+                                ele?.firstName?.includes(e.target.value) ||
+                                ele?.lastName?.includes(e.target.value)
+                            );
+
+                            if (e.target.value) {
+                              if (fiterData?.length) {
+                                setShowParentList(fiterData);
+                              }
+                            } else {
+                              let list = [...GetParentList];
+                              setShowParentList(list);
+                            }
+                          }}
+                        />
+                      </div>
+                    </Col>
+                  </Row>
                   <div
                     className="p-1"
                     style={{
@@ -423,22 +516,54 @@ const AssignTeamMember = () => {
 
               {ShowChildList && ShowChildList?.length > 0 && (
                 <Col lg="6" md="6" sm="6">
-                  <div className="d-flex justify-content-center">
-                    <h2>
-                      <strong>
-                        {ChildList[0]?.roleName && ChildList[0]?.roleName ? (
-                          <>
-                            {" "}
-                            {ChildList[0]?.roleName && ChildList[0]?.roleName}
-                            (child)
-                          </>
-                        ) : (
-                          <>{Party && Party ? "Party" : "All Dept Head"}</>
-                        )}{" "}
-                        Users List
-                      </strong>
-                    </h2>
-                  </div>
+                  <Row>
+                    <Col lg="4" mg="4" sm="6">
+                      <h5>
+                        <strong>
+                          {ChildList[0]?.roleName && ChildList[0]?.roleName ? (
+                            <>
+                              {" "}
+                              {ChildList[0]?.roleName && ChildList[0]?.roleName}
+                              (child)
+                            </>
+                          ) : (
+                            <>{Party && Party ? "Party" : "All Dept Head"}</>
+                          )}{" "}
+                          Users List
+                        </strong>
+                      </h5>
+                    </Col>
+                    <Col></Col>
+                    <Col lg="4" mg="4" sm="6">
+                      <div className="mr-2 pr-1">
+                        <Input
+                          type="text"
+                          className=""
+                          name="search"
+                          placeholder="Search Here..."
+                          onChange={(e) => {
+                            let Mylist = [...ShowChildList];
+
+                            let fiterData = Mylist?.filter(
+                              (ele) =>
+                                ele?.firstName?.includes(e.target.value) ||
+                                ele?.lastName?.includes(e.target.value)
+                            );
+
+                            if (e.target.value) {
+                              if (fiterData?.length) {
+                                setShowChildList(fiterData);
+                              }
+                            } else {
+                              let list = [...GetChildList];
+                              setShowChildList(list);
+                            }
+                          }}
+                        />
+                      </div>
+                    </Col>
+                  </Row>
+
                   <div className="p-1">
                     <Table
                       className="table_heading"
@@ -453,6 +578,7 @@ const AssignTeamMember = () => {
                           <th>First Name</th>
 
                           <th>Last Name</th>
+                          <th>UnLink Child</th>
                           {/* <th>Mobile Number</th>
                           <th>email</th>
                           <th>State</th>
@@ -474,6 +600,7 @@ const AssignTeamMember = () => {
                                   ele?.created_by?.firstName ? null : (
                                     <>
                                       <Input
+                                        title="Link to Parent"
                                         style={{ position: "unset", margin: 0 }}
                                         value="checkbox1"
                                         type="checkbox"
@@ -501,6 +628,19 @@ const AssignTeamMember = () => {
                                 </td>
                                 <td>{ele?.firstName}</td>
                                 <td>{ele?.lastName}</td>
+                                <td>
+                                  {" "}
+                                  {ele?.created_by?.firstName &&
+                                  ele?.created_by?.firstName ? (
+                                    <Input
+                                      title="UnLink to Parent"
+                                      style={{ position: "unset", margin: 0 }}
+                                      value="checkbox1"
+                                      type="checkbox"
+                                      onClick={(e) => handleUnLinkChild(ele, e)}
+                                    />
+                                  ) : null}
+                                </td>
                                 {/* <td>{ele?.mobileNumber}</td>
                                 <td>{ele?.email}</td>
                                 <td>{ele?.State}</td>

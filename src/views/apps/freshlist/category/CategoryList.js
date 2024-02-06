@@ -11,6 +11,7 @@ import {
   DropdownItem,
   DropdownToggle,
   Badge,
+  Spinner,
 } from "reactstrap";
 import axiosConfig from "../../../../axiosConfig";
 
@@ -27,13 +28,17 @@ import {
   DeleteCategory,
 } from "../../../../ApiEndPoint/ApiCalling";
 import { Image_URL } from "../../../../ApiEndPoint/Api";
+import { CheckPermission } from "../house/CheckPermission";
+import SuperAdminUI from "../../../SuperAdminUi/SuperAdminUI";
 
 class CategoryList extends React.Component {
   state = {
     rowData: [],
     Viewpermisson: null,
     Editpermisson: null,
+    InsiderPermissions: {},
     Createpermisson: null,
+    MasterShow: false,
     Deletepermisson: null,
     paginationPageSize: 20,
     currenPageSize: "",
@@ -215,50 +220,36 @@ class CategoryList extends React.Component {
       },
     ],
   };
+  async Apicalling(id, db) {
+    this.setState({ Loading: true });
 
-  async componentDidMount() {
-    let pageparmission = JSON.parse(localStorage.getItem("userData"));
-
-    let newparmisson = pageparmission?.role?.find(
-      (value) => value?.pageName === "Category List"
-    );
-
-    this.setState({ Viewpermisson: newparmisson?.permission.includes("View") });
-    this.setState({
-      Createpermisson: newparmisson?.permission.includes("Create"),
-    });
-    this.setState({
-      Editpermisson: newparmisson?.permission.includes("Edit"),
-    });
-    this.setState({
-      Deletepermisson: newparmisson?.permission.includes("Delete"),
-    });
-
-    const data = new FormData();
-
-    data.append("user_id", pageparmission?._id);
-    let userData = JSON.parse(localStorage.getItem("userData"));
-    await AllCategoryList(userData?._id, userData?.database)
+    await AllCategoryList(id, db)
       .then((res) => {
+        this.setState({ Loading: false });
+
         console.log(res?.Category);
         if (res?.Category) {
           this.setState({ rowData: res?.Category });
         }
       })
       .catch((err) => {
+        this.setState({ Loading: false });
         console.log(err);
+        this.setState({ rowData: [] });
       });
-    // await axiosConfig.post("/getcategory", data).then((response) => {
-    //   let rowData = response.data.data?.category;
-    //   console.log(rowData);
-    //   if (rowData) {
-    //     this.setState({ rowData });
-    //   }
-    // });
+  }
+  async componentDidMount() {
+    let pageparmission = JSON.parse(localStorage.getItem("userData"));
+    if (pageparmission?.rolename?.roleName === "MASTER") {
+      this.setState({ MasterShow: true });
+    }
+
+    const InsidePermissions = CheckPermission("Category List");
+    this.setState({ InsiderPermissions: InsidePermissions });
+    await this.Apicalling(pageparmission?._id, pageparmission?.database);
   }
 
   async runthisfunction(id) {
-    console.log(id);
     let selectedData = this.gridApi.getSelectedRows();
 
     swal("Warning", "Sure You Want to Delete it", {
@@ -274,7 +265,6 @@ class CategoryList extends React.Component {
 
           DeleteCategory(id)
             .then((res) => {
-              console.log(res);
               this.gridApi.updateRowData({ remove: selectedData });
               swal("Success", "Category Deleted Successfully");
             })
@@ -309,7 +299,36 @@ class CategoryList extends React.Component {
       });
     }
   };
+  handleParentSubmit = (e) => {
+    e.preventDefault();
+    let SuperAdmin = JSON.parse(localStorage.getItem("SuperadminIdByMaster"));
+    let id = SuperAdmin.split(" ")[0];
+    let db = SuperAdmin.split(" ")[1];
+    this.Apicalling(id, db);
+  };
+  handleDropdownChange = (selectedValue) => {
+    localStorage.setItem("SuperadminIdByMaster", JSON.stringify(selectedValue));
+  };
   render() {
+    if (this.state.Loading) {
+      return (
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            marginTop: "20rem",
+          }}>
+          <Spinner
+            style={{
+              height: "4rem",
+              width: "4rem",
+            }}
+            color="primary">
+            Loading...
+          </Spinner>
+        </div>
+      );
+    }
     const { rowData, columnDefs, defaultColDef } = this.state;
     return (
       // console.log(rowData),
@@ -323,6 +342,14 @@ class CategoryList extends React.Component {
                   Category List
                 </h1>
               </Col>
+              {this.state.MasterShow && (
+                <Col>
+                  <SuperAdminUI
+                    onDropdownChange={this.handleDropdownChange}
+                    onSubmit={this.handleParentSubmit}
+                  />
+                </Col>
+              )}
               <Col>
                 <Button
                   style={{ cursor: "pointer" }}
@@ -353,7 +380,7 @@ class CategoryList extends React.Component {
                 )}
               </Col> */}
             </Row>
-            <CardBody style={{ marginTop: "-1.5rem" }}>
+            <CardBody style={{}}>
               {this.state.rowData === null ? null : (
                 <div className="ag-theme-material w-100 my-2 ag-grid-table">
                   <div className="d-flex flex-wrap justify-content-between align-items-center">
@@ -416,10 +443,15 @@ class CategoryList extends React.Component {
                       </div>
                     </div>
                   </div>
-                  <ContextLayout.Consumer>
+                  <ContextLayout.Consumer className="ag-theme-alpine">
                     {(context) => (
                       <AgGridReact
-                        gridOptions={{}}
+                        id="myAgGrid"
+                        gridOptions={{
+                          enableRangeSelection: true, // Allows copying ranges of cells
+                          enableClipboard: true, // Enables clipboard functionality
+                        }}
+                        // gridOptions={this.gridOptions}
                         rowSelection="multiple"
                         defaultColDef={defaultColDef}
                         columnDefs={columnDefs}
@@ -432,6 +464,8 @@ class CategoryList extends React.Component {
                         paginationPageSize={this.state.paginationPageSize}
                         pivotPanelShow="always"
                         enableRtl={context.state.direction === "rtl"}
+                        ref={this.gridRef} // Attach the ref to the grid
+                        domLayout="autoHeight" // Adjust layout as needed
                       />
                     )}
                   </ContextLayout.Consumer>

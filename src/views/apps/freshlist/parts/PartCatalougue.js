@@ -76,28 +76,28 @@ function PartCatalougue() {
 
   useEffect(() => {
     let userData = JSON.parse(localStorage.getItem("userData"));
-    AddToCartGet(userData?._id)
-      .then((res) => {
-        console.log(res?.cart);
-        setSelectedCart(res?.cart);
-        const initialQuantities = ListData?.map((product) => {
-          const cartItem = res?.cart?.find(
-            (item) => item?.product?._id === product._id
-          );
-          return cartItem ? cartItem?.quantity : 0;
-        });
-        console.log(initialQuantities);
+    // AddToCartGet(userData?._id)
+    //   .then((res) => {
+    //     console.log(res?.cart);
+    //     setSelectedCart(res?.cart);
+    //     const initialQuantities = ListData?.map((product) => {
+    //       const cartItem = res?.cart?.find(
+    //         (item) => item?.product?._id === product._id
+    //       );
+    //       return cartItem ? cartItem?.quantity : 0;
+    //     });
+    //     console.log(initialQuantities);
 
-        setQuantities(initialQuantities);
-      })
-      .catch((err) => {
-        console.log(err.response);
-        if (err?.response.data?.message) {
-          const initialQuantities = new Array(ListData?.length).fill(0);
-          setQuantities(initialQuantities);
-        }
-      });
-  }, [ListData]);
+    //     setQuantities(initialQuantities);
+    //   })
+    //   .catch((err) => {
+    //     console.log(err.response);
+    //     if (err?.response.data?.message) {
+    //       const initialQuantities = new Array(ListData?.length).fill(0);
+    //       setQuantities(initialQuantities);
+    //     }
+    //   });
+  }, []);
 
   const handleIncreaseCount = (index) => {
     setQuantities((prevQuantities) => {
@@ -143,13 +143,13 @@ function PartCatalougue() {
             setLoader(false);
             // toast.success("Added To Cart");
             let userData = JSON.parse(localStorage.getItem("userData")); //forgot to close
-            AddToCartGet(userData?._id)
-              .then((res) => {
-                context?.setPartsCatalougueCart(res?.cart);
-              })
-              .catch((err) => {
-                console.log(err.response);
-              });
+            // AddToCartGet(userData?._id)
+            //   .then((res) => {
+            //     context?.setPartsCatalougueCart(res?.cart);
+            //   })
+            //   .catch((err) => {
+            //     console.log(err.response);
+            //   });
           })
           .catch((err) => {
             console.log(err.response);

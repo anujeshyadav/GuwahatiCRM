@@ -31,10 +31,14 @@ import {
   CreateWarehouseList,
   CreateAccountList,
   _BulkUpload,
+  _Get,
 } from "../../../../ApiEndPoint/ApiCalling";
 import "../../../../assets/scss/pages/users.scss";
 import UserContext from "../../../../context/Context";
-import { Bulk_Upload_Product } from "../../../../ApiEndPoint/Api";
+import {
+  Bulk_Upload_Product,
+  WareahouseList_For_addProduct,
+} from "../../../../ApiEndPoint/Api";
 
 const AddProduct = () => {
   const [CreatAccountView, setCreatAccountView] = useState([]);
@@ -121,6 +125,7 @@ const AddProduct = () => {
       }
     }
   };
+  console.log(formData);
 
   const changeHandler1 = (e) => {
     setFormData({
@@ -171,12 +176,14 @@ const AddProduct = () => {
       .catch((err) => {
         console.log(err);
       });
-    CreateAccountList(userData?._id, userData?.database)
+
+    _Get(WareahouseList_For_addProduct, userData?.database)
       .then((res) => {
-        let value = res?.adminDetails;
+        let value = res?.Warehouse;
         if (value) {
           setWareHouseList(value);
         }
+        console.log(res?.Warehouse);
       })
       .catch((err) => {
         console.log(err);
@@ -190,68 +197,67 @@ const AddProduct = () => {
       [name]: e.target.files[0],
     });
   };
-    console.log(formData);
 
-    const submitHandler = async (e) => {
-      e.preventDefault();
-      if (BulkImport !== null || BulkImport != undefined) {
-        let formdata = new FormData();
-        formdata.append("file", BulkImport);
-        await _BulkUpload(Bulk_Upload_Product, formdata)
-          .then((res) => {
-            history.push("/app/freshlist/house/houseProductList");
-            swal(`${res?.message}`);
-          })
-          .catch((err) => {
-            console.log(err.response);
-            swal("Something Went Wrong");
-          });
-      } else {
-        let formdata = new FormData();
-        let userData = JSON.parse(localStorage.getItem("userData"));
-        formdata.append("created_by", userData?._id);
-        CreatAccountView?.input?.map((ele, i) => {
-          if (ele?.type?._attributes?.type == "text") {
-            formdata.append(`${ele?.name._text}`, formData[ele?.name?._text]);
-          } else if (ele?.type?._attributes?.type == "file") {
-            formdata.append("file", formData[ele?.name?._text]);
-          } else {
-            formdata.append(`${ele?.name._text}`, formData[ele?.name?._text]);
-          }
+  const submitHandler = async (e) => {
+    e.preventDefault();
+    if (BulkImport !== null || BulkImport != undefined) {
+      let formdata = new FormData();
+      formdata.append("file", BulkImport);
+      await _BulkUpload(Bulk_Upload_Product, formdata)
+        .then((res) => {
+          history.push("/app/freshlist/house/houseProductList");
+          swal(`${res?.message}`);
+        })
+        .catch((err) => {
+          console.log(err.response);
+          swal("Something Went Wrong");
         });
-
-        formdata.append("unitType", formData?.unitType);
-        formdata.append("addProductType", formData?.ProductType);
-        CreatAccountView?.MyDropDown?.map((ele, i) => {
-          formdata.append(
-            `${ele?.dropdown?.name?._text}`,
-            formData[ele?.dropdown?.name?._text]
-          );
-        });
-        if (error) {
-          swal("Error occured while Entering Details");
+    } else {
+      let formdata = new FormData();
+      let userData = JSON.parse(localStorage.getItem("userData"));
+      formdata.append("created_by", userData?._id);
+      CreatAccountView?.input?.map((ele, i) => {
+        if (ele?.type?._attributes?.type == "text") {
+          formdata.append(`${ele?.name._text}`, formData[ele?.name?._text]);
+        } else if (ele?.type?._attributes?.type == "file") {
+          formdata.append("file", formData[ele?.name?._text]);
         } else {
-          if (formData?.ProductType) {
-            SaveProduct(formdata)
-              .then((res) => {
-                console.log(res);
-                setFormData({});
-                if (res.status) {
-                  history.push("/app/freshlist/house/houseProductList");
+          formdata.append(`${ele?.name._text}`, formData[ele?.name?._text]);
+        }
+      });
 
-                  swal("Product Created Successfully");
-                }
-              })
-              .catch((err) => {
-                console.log(err);
-                swal("Enter All Details");
-              });
-          } else {
-            swal("error", "Choose Product Type");
-          }
+      formdata.append("unitType", formData?.unitType);
+      formdata.append("addProductType", formData?.ProductType);
+      CreatAccountView?.MyDropDown?.map((ele, i) => {
+        formdata.append(
+          `${ele?.dropdown?.name?._text}`,
+          formData[ele?.dropdown?.name?._text]
+        );
+      });
+      if (error) {
+        swal("Error occured while Entering Details");
+      } else {
+        if (formData?.ProductType) {
+          SaveProduct(formdata)
+            .then((res) => {
+              console.log(res);
+              setFormData({});
+              if (res.status) {
+                history.push("/app/freshlist/house/houseProductList");
+
+                swal("Product Created Successfully");
+              }
+            })
+            .catch((err) => {
+              console.log(err);
+              swal("Enter All Details");
+            });
+        } else {
+          swal("error", "Choose Product Type");
         }
       }
-    };
+    }
+  };
   const handlechangeSubcat = (e) => {
     console.log(e.target.value);
     if (e.target.value != "NA") {
@@ -403,18 +409,13 @@ const AddProduct = () => {
 
                                 {wareHouseList &&
                                   wareHouseList?.map((whList) => {
-                                    if (
-                                      whList?.rolename?.roleName ==
-                                      "WareHouse Incharge"
-                                    ) {
-                                      return (
-                                        <option
-                                          value={whList?._id}
-                                          key={whList?._id}>
-                                          {whList?.firstName}
-                                        </option>
-                                      );
-                                    }
+                                    return (
+                                      <option
+                                        value={whList?._id}
+                                        key={whList?._id}>
+                                        {whList?.warehouseName}
+                                      </option>
+                                    );
                                   })}
                               </CustomInput>
                             </Col>

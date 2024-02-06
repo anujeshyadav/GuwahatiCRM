@@ -17,14 +17,12 @@ import {
   Button,
   ModalHeader,
   ModalBody,
-  Badge,
   Spinner,
 } from "reactstrap";
 import { ContextLayout } from "../../../../utility/context/Layout";
 import { AgGridReact } from "ag-grid-react";
 import "ag-grid-community/dist/styles/ag-grid.css";
-// import EditAccount from "../accounts/EditAccount";
-// import ViewAccount from "../accounts/ViewAccount";
+
 import jsPDF from "jspdf";
 import "jspdf-autotable";
 import Logo from "../../../../assets/img/profile/pages/logomain.png";
@@ -38,20 +36,15 @@ import {
   FaArrowAltCircleLeft,
   FaArrowAltCircleRight,
   FaFilter,
-  FaPlus,
 } from "react-icons/fa";
 import moment from "moment-timezone";
 import swal from "sweetalert";
 import {
-  CreateAccountList,
-  CreateAccountView,
   CreateProductXMLView,
-  DeleteAccount,
   ProductListView,
   _Delete,
 } from "../../../../ApiEndPoint/ApiCalling";
 import {
-  BsCloudDownloadFill,
   BsFillArrowDownSquareFill,
   BsFillArrowUpSquareFill,
 } from "react-icons/bs";
@@ -185,12 +178,31 @@ class HouseProductList extends React.Component {
         let dropdown = JSON.parse(jsonData).createProduct?.MyDropDown;
         if (dropdown.length) {
           var mydropdownArray = dropdown?.map((ele) => {
-            return {
-              headerName: ele?.dropdown?.label?._text,
-              field: ele?.dropdown?.name?._text,
-              filter: true,
-              sortable: true,
-            };
+            if (ele?.dropdown?.label?._text == "Warehouse") {
+              return {
+                headerName: "WareHouse",
+                field: "warehouse.warehouseName",
+                filter: true,
+                sortable: true,
+                cellRendererFramework: (params) => {
+                  console.log(params.data);
+                  return (
+                    <>
+                      <div className="actions cursor-pointer">
+                        <span>{params?.data?.warehouse?.warehouseName}</span>
+                      </div>
+                    </>
+                  );
+                },
+              };
+            } else {
+              return {
+                headerName: ele?.dropdown?.label?._text,
+                field: ele?.dropdown?.name?._text,
+                filter: true,
+                sortable: true,
+              };
+            }
           });
         } else {
           var adddropdown = [
@@ -224,6 +236,7 @@ class HouseProductList extends React.Component {
             field: "transactions",
             width: 190,
             cellRendererFramework: (params) => {
+              console.log(params.data);
               return (
                 <div className="actions cursor-pointer">
                   {/* <Route
@@ -293,6 +306,7 @@ class HouseProductList extends React.Component {
           },
 
           ...myHeadings,
+
           {
             headerName: "Created date",
             field: "createdAt",
