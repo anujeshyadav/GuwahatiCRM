@@ -125,7 +125,7 @@ const AddProduct = () => {
       }
     }
   };
-  console.log(formData);
+
 
   const changeHandler1 = (e) => {
     setFormData({

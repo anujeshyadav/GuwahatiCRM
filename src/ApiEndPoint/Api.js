@@ -335,6 +335,27 @@ export const Login_OTP = "/create-account/verify-otp";
 export const Edit_Profile = "/create-account/edit-profile/";
 
 // part catalougue
+//Start HRM group
+
+export const HRM_RECPLACE = "/create-job/save-job"; //post
+export const Hrm_JobList = "/create-job/view-job";// Get
+export const Hrm_Update = "/create-job/update-job/"; //put
+export const Hrm_ViewOne = "/create-job/view-job-by-id/" //Get
+export const Hrm_Delete = "/create-job/delete-job/" // Delete
+
+export const Hrm_AppyGroup = "/job-applied/save-job-applied"; //post
+export const Hrm_AppyList = "/job-applied/view-job-applied"; //Get 
+export const Hrm_AppUpdate = "/job-applied/update-job-applied/"; // put
+export const Hrm_AppviewOne = "/job-applied/view-job-applied-by-id/" // Get
+export const Hrm_AppDelete = "/job-applied/delete-job-applied/"    // Delete
+
+export const Hrm_InterviewGroup = "/interview/save-interview"; //post
+export const Hrm_InterviewList = "/interview/view-interview"; //Get 
+export const Hrm_InterviewUpdate = "/interview/update-interview/"; // Put
+export const Hrm_Interviewone = "/interview/view-interview-by-id/" // Get
+export const Hrm_InterDelete = "/interview/delete-interview/" // Delete
+
+// End HRM group
 
 // Policy
 export const PolicyView = "/policy/get-xml";

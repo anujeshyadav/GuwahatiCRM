@@ -14,6 +14,7 @@ import {
   CustomInput,
   Badge,
 } from "reactstrap";
+import FaceDetector from "../../../dashboard/ecommerce/FaceDetector";
 import { history } from "../../../../history";
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
@@ -314,6 +315,11 @@ const CreateAccount = () => {
     <div>
       <div>
         <Card>
+          <Row>
+            <Col>
+              <FaceDetector />
+            </Col>
+          </Row>
           <Row className="m-2">
             <Col>
               <h1 className="float-left">Create User</h1>

@@ -394,28 +394,130 @@ export const Roles = [
   },
 
   {
-    title: "Others",
+    title: "HRM",
     TabName: [
       {
-        title: "HRM",
+        title: "Recruitment and Placement",
         permission: ["View", "Create", "Edit", "Delete", "Download"],
       },
       {
-        title: "Setting",
+        title: "Time Sheet",
         permission: ["View", "Create", "Edit", "Delete", "Download"],
       },
       {
-        title: "Price Calculation",
+        title: "Performance",
         permission: ["View", "Create", "Edit", "Delete", "Download"],
       },
       {
-        title: "UnitList",
+        title: "Target,Collection,Party,Activation",
+        permission: ["View", "Create", "Edit", "Delete", "Download"],
+      },
+      {
+        title: "Set-Rule",
+        permission: ["View", "Create", "Edit", "Delete", "Download"],
+      },
+      {
+        title: "Payroll",
+        permission: ["View", "Create", "Edit", "Delete", "Download"],
+      },
+      {
+        title: "Termination",
         permission: ["View", "Create", "Edit", "Delete", "Download"],
       },
     ],
   },
   {
-    title: "Reports Management",
+    title: "Recruitment and Placement",
+    TabName: [
+      {
+        title: "Job Create",
+        permission: ["View", "Create", "Edit", "Delete", "Download"],
+      },
+      {
+        title: "Job Applied/Result",
+        permission: ["View", "Create", "Edit", "Delete", "Download"],
+      },
+      {
+        title: "Practice & skill Test",
+        permission: ["View", "Create", "Edit", "Delete", "Download"],
+      },
+      {
+        title: "Interview",
+        permission: ["View", "Create", "Edit", "Delete", "Download"],
+      },
+      {
+        title: "Offer Letter",
+        permission: ["View", "Create", "Edit", "Delete", "Download"],
+      },
+      {
+        title: "Create Employee",
+        permission: ["View", "Create", "Edit", "Delete", "Download"],
+      },
+      {
+        title: "Training",
+        permission: ["View", "Create", "Edit", "Delete", "Download"],
+      },
+    ],
+  },
+  {
+    title: "Time Sheet",
+    TabName: [
+      {
+        title: "Attendance",
+        permission: ["View", "Create", "Edit", "Delete", "Download"],
+      },
+      {
+        title: "Leave",
+        permission: ["View", "Create", "Edit", "Delete", "Download"],
+      },
+    ],
+  },
+  {
+    title: "Performance",
+    TabName: [
+      {
+        title: "Indicator",
+        permission: ["View", "Create", "Edit", "Delete", "Download"],
+      },
+    ],
+  },
+  {
+    title: "Target,Collection,Party,Activation",
+    TabName: [
+      {
+        title: "Incentive",
+        permission: ["View", "Create", "Edit", "Delete", "Download"],
+      },
+      {
+        title: "Bonus",
+        permission: ["View", "Create", "Edit", "Delete", "Download"],
+      },
+      {
+        title: "Goal Tracking",
+        permission: ["View", "Create", "Edit", "Delete", "Download"],
+      },
+    ],
+  },
+  {
+    title: "Set-Rule",
+    TabName: [
+      {
+        title: "Rules",
+        permission: ["View", "Create", "Edit", "Delete", "Download"],
+      },
+    ],
+  },
+  {
+    title: "Payroll",
+    TabName: [
+      {
+        title: "Set-Salary",
+        permission: ["View", "Create", "Edit", "Delete", "Download"],
+      },
+    ],
+  },
+  {
+    title: "Reports ",
     TabName: [
       {
         title: "Admin Report",
@@ -865,10 +967,10 @@ export const NormalRoles = [
   {
     title: "Others",
     TabName: [
-      {
-        title: "HRM",
-        permission: ["View", "Create", "Edit", "Delete"],
-      },
+      // {
+      //   title: "HRM",
+      //   permission: ["View", "Create", "Edit", "Delete"],
+      // },
       {
         title: "Setting",
         permission: ["View", "Create", "Edit", "Delete"],
