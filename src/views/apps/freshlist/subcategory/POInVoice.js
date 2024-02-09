@@ -761,7 +761,7 @@ const POInVoice = ({
                       fontWeight: "1000",
                       marginLeft: "5px",
                     }}>
-                    {ele?.productId["GST Rate"]}
+                    {ele?.productId["GSTRate"]}
                   </Text>
                 </View>
                 <View

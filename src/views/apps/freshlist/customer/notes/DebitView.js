@@ -115,8 +115,8 @@ const DebitView = ({ ViewOneData }) => {
                           disabled
                           type="number"
                           placeholder="Price"
-                          name={ele?.productId["GST Rate"]}
-                          value={ele?.productId["GST Rate"]}
+                          name={ele?.productId["GSTRate"]}
+                          value={ele?.productId["GSTRate"]}
                         />
                       </FormGroup>
                     </Col>

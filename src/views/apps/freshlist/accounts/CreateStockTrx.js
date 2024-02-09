@@ -232,8 +232,8 @@ const CreateTarget = (args) => {
   };
   const handleSelectionone = (selectedList, selectedItem, index) => {
     SelectedSize.push(selectedItem);
-
     setProduct((prevProductList) => {
+      debugger;
       const updatedProductList = [...prevProductList]; // Create a copy of the productList array
       const updatedProduct = { ...updatedProductList[index] }; // Create a copy of the product at the specified index
       updatedProduct.Size = selectedItem?.unitQty; // Update the price of the copied product

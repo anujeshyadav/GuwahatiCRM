@@ -103,7 +103,7 @@ class OrderList extends React.Component {
           headerName: "Actions",
           field: "transactions",
           width: 180,
-          cellRendererFramework: params => {
+          cellRendererFramework: (params) => {
             return (
               <div className="actions cursor-pointer">
                 {this.state.InsiderPermissions &&
@@ -174,7 +174,7 @@ class OrderList extends React.Component {
           field: "status",
           filter: true,
           width: 150,
-          cellRendererFramework: params => {
+          cellRendererFramework: (params) => {
             return params.data?.status?.toLowerCase()?.includes("completed") ? (
               <div className="badge badge-pill badge-success">
                 {params.data?.status}
@@ -198,7 +198,7 @@ class OrderList extends React.Component {
           filter: true,
           resizable: true,
           width: 230,
-          cellRendererFramework: params => {
+          cellRendererFramework: (params) => {
             console.log(params?.data);
             return (
               <div className="d-flex align-items-center cursor-pointer">
@@ -214,7 +214,7 @@ class OrderList extends React.Component {
           field: "partyId.OwnerName",
           filter: true,
           width: 180,
-          cellRendererFramework: params => {
+          cellRendererFramework: (params) => {
             return (
               <div className="d-flex align-items-center cursor-pointer">
                 <div>
@@ -229,7 +229,7 @@ class OrderList extends React.Component {
           field: "partyId.limit",
           filter: true,
           width: 180,
-          cellRendererFramework: params => {
+          cellRendererFramework: (params) => {
             return (
               <div className="d-flex align-items-center cursor-pointer">
                 <div>
@@ -240,15 +240,21 @@ class OrderList extends React.Component {
           },
         },
         {
-          headerName: "Transposrter detail",
-          field: "partyId.transposrter_detail",
+          headerName: "Transposrter",
+          field: "partyId.assignTransporter",
           filter: true,
-          width: 180,
-          cellRendererFramework: params => {
+          width: 200,
+          cellRendererFramework: (params) => {
             return (
               <div className="d-flex align-items-center cursor-pointer">
                 <div>
-                  <span>{params.data?.partyId?.transposrter_detail}</span>
+                  <Badge
+                    // onClick={(e)=>{}}
+                    color="primary">
+                    {!!params.data?.partyId?.assignTransporter
+                      ? "Available"
+                      : "Not Available"}
+                  </Badge>
                 </div>
               </div>
             );
@@ -260,7 +266,7 @@ class OrderList extends React.Component {
           field: "grandTotal",
           filter: true,
           width: 150,
-          cellRendererFramework: params => {
+          cellRendererFramework: (params) => {
             return (
               <div className="d-flex align-items-center cursor-pointer">
                 <div>
@@ -275,7 +281,7 @@ class OrderList extends React.Component {
           field: "taxAmount",
           filter: true,
           width: 150,
-          cellRendererFramework: params => {
+          cellRendererFramework: (params) => {
             return (
               <div className="d-flex align-items-center cursor-pointer">
                 <div>
@@ -347,7 +353,7 @@ class OrderList extends React.Component {
     const userId = JSON.parse(localStorage.getItem("userData"))._id;
     const UserInformation = this.context?.UserInformatio;
     const InsidePermissions = CheckPermission("Sales Order");
-    // console.log(InsidePermissions);
+    console.log(InsidePermissions);
     this.setState({ InsiderPermissions: InsidePermissions });
     let pageparmission = JSON.parse(localStorage.getItem("userData"));
 
@@ -758,7 +764,7 @@ class OrderList extends React.Component {
                       </div>
                     </span>
                   )}
-                  {InsiderPermissions && InsiderPermissions?.Download && (
+                  {InsiderPermissions && InsiderPermissions?.Create && (
                     <span>
                       <Route
                         render={({ history }) => (

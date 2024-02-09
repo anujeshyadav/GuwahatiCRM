@@ -487,14 +487,15 @@ class InvoiceGenerator extends React.Component {
   MergeBillNow = async (data) => {
     let billnum = localStorage.getItem("billnumber");
 
-    // console.log("grandTotal", data.grandTotal);
-    // console.log(this.state.CompanyDetails);
-    // this.setState({ ShowBill: false });
-    // this.setState({ PrintData: data });
-    // const toWords = new ToWords();
-    // let words = toWords.convert(Number(data?.grandTotal), { currency: true });
-    // this.setState({ wordsNumber: words });
-    // this.toggleModalOne();
+    console.log("grandTotal", data.grandTotal);
+    console.log(this.state.CompanyDetails);
+    this.setState({ ShowBill: false });
+    this.setState({ PrintData: data });
+    const toWords = new ToWords();
+    let words = toWords.convert(Number(data?.grandTotal), { currency: true });
+    this.setState({ wordsNumber: words });
+    this.toggleModalOne();
+    debugger;
     if (billnum) {
       await Sales_OrderToDispatchList(data?._id)
         .then((res) => {
@@ -1044,7 +1045,7 @@ class InvoiceGenerator extends React.Component {
                             />
                           </Col>
                         )}
-                        {InsiderPermissions && InsiderPermissions?.Create && (
+                        {/* {InsiderPermissions && InsiderPermissions?.Create && (
                           <Col>
                             <Button
                               className="float-right"
@@ -1059,7 +1060,6 @@ class InvoiceGenerator extends React.Component {
                                 let billnumber =
                                   localStorage.getItem("billnumber");
                                 if (billnumber) {
-                                  // swal("You already Selected Bill Type");
                                   this.setState({ ShowBill: true });
                                   this.toggleModalOne();
                                 } else {
@@ -1070,7 +1070,7 @@ class InvoiceGenerator extends React.Component {
                               Invoice Template
                             </Button>
                           </Col>
-                        )}
+                        )} */}
                         <Col lg="1" md="1">
                           {InsiderPermissions && InsiderPermissions?.View && (
                             <>

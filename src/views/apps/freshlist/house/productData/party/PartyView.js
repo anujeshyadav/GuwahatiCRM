@@ -150,8 +150,8 @@ const PartyView = ({ ViewOneData }) => {
                           disabled
                           type="number"
                           placeholder="Price"
-                          name={ele.product["GST Rate"]}
-                          value={ele.product["GST Rate"]}
+                          name={ele.product["GSTRate"]}
+                          value={ele.product["GSTRate"]
                         />
                       </FormGroup>
                     </Col>

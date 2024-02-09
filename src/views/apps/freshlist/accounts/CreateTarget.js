@@ -274,7 +274,7 @@ const CreateTarget = (args) => {
                       options={UserList}
                       onSelect={onSelect1}
                       onRemove={onRemove1}
-                      displayValue="OwnerName"
+                      displayValue="firstName"
                     />
                   </div>
                 </Col>

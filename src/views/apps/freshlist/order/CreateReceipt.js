@@ -103,6 +103,7 @@ const CreateReceipt = (args) => {
     CreateCustomerList(userdata?._id, userdata?.database)
       .then((res) => {
         let value = res?.Customer;
+        debugger;
         if (value?.length) {
           setPartyList(value);
         }
@@ -255,7 +256,9 @@ const CreateReceipt = (args) => {
                       <Label>Choose Party</Label>
                       <Multiselect
                         required
-                        selectedValues={[SelectedParty]}
+                        selectedValues={
+                          SelectedParty && SelectedParty ? SelectedParty : null
+                        }
                         selectionLimit={1}
                         isObject="false"
                         options={PartyList}
@@ -263,7 +266,7 @@ const CreateReceipt = (args) => {
                           handleSelectionParty(selectedList, selectedItem)
                         }
                         onRemove={onRemove1}
-                        displayValue="OwnerName"
+                        displayValue="firstName"
                       />
                     </div>
                   </Col>

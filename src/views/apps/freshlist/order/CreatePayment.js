@@ -249,7 +249,9 @@ const CreatePayment = (args) => {
                       <Label>Choose Party</Label>
                       <Multiselect
                         required
-                        selectedValues={[SelectedParty]}
+                        selectedValues={
+                          SelectedParty && SelectedParty ? SelectedParty : null
+                        }
                         selectionLimit={1}
                         isObject="false"
                         options={PartyList}
@@ -257,7 +259,7 @@ const CreatePayment = (args) => {
                           handleSelectionParty(selectedList, selectedItem)
                         }
                         onRemove={onRemove1}
-                        displayValue="OwnerName"
+                        displayValue="firstName"
                       />
                     </div>
                   </Col>

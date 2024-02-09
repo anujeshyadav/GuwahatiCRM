@@ -1157,7 +1157,7 @@ class PlaceOrderList extends React.Component {
                                       <td>{ele?.Size}</td>
                                       <td>{ele?.unitType}</td>
                                       <td>{ele?.productId?.HSN_Code}</td>
-                                      <td>{ele?.productId["GST Rate"]}</td>
+                                      <td>{ele?.productId["GSTRate"]}</td>
                                       <td>{ele?.qty}</td>
                                       <td>
                                         {ele?.price * ele?.Size * ele?.qty}

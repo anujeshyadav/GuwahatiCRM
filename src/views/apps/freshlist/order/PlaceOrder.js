@@ -303,8 +303,8 @@ const PlaceOrder = (args) => {
                         handleSelectionParty(selectedList, selectedItem, index)
                       }
                       onRemove={onRemove1} // Function will trigger on remove event
-                      displayValue="OwnerName" // Property name to display in the dropdown options
-                      // displayValue="firstName" // Property name to display in the dropdown options
+                      // displayValue="OwnerName" // Property name to display in the dropdown options
+                      displayValue="firstName" // Property name to display in the dropdown options
                     />
                   </div>
                 </Col>

@@ -230,7 +230,7 @@ const EditOrder = (args) => {
                             type="number"
                             placeholder="GST Rate"
                             name="GSTRate"
-                            value={product?.productId["GST Rate"]}
+                            value={product?.productId["GSTRate"]}
                             // onChange={e => handleProductChangeProduct(e, index)}
                           />
                         </FormGroup>
