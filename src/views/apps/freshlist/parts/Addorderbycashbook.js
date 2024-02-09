@@ -260,8 +260,7 @@ const Addorderbycashbook = args => {
                     size="sm"
                     onClick={() =>
                       history.push("/app/SoftNumen/parts/Cashbook")
-                    }
-                  >
+                    }>
                     Back
                   </Button>
                 )}
@@ -285,7 +284,7 @@ const Addorderbycashbook = args => {
                         handleSelectionParty(selectedList, selectedItem, index)
                       }
                       onRemove={onRemove1}
-                      displayValue="OwnerName"
+                      displayValue="firstName"
                     />
                   </div>
                 </Col>
@@ -297,7 +296,7 @@ const Addorderbycashbook = args => {
                       type="date"
                       name="DateofDelivery"
                       value={dateofDelivery}
-                      onChange={e => setDateofDelivery(e.target.value)}
+                      onChange={(e) => setDateofDelivery(e.target.value)}
                     />
                   </div>
                 </Col>
@@ -349,7 +348,7 @@ const Addorderbycashbook = args => {
                           required
                           autocomplete="off"
                           value={product?.qty}
-                          onChange={e =>
+                          onChange={(e) =>
                             handleRequredQty(e, index, product?.availableQty)
                           }
                         />
@@ -411,8 +410,7 @@ const Addorderbycashbook = args => {
                             color="danger"
                             className="button remove "
                             size="sm"
-                            onClick={() => removeMoreProduct(index)}
-                          >
+                            onClick={() => removeMoreProduct(index)}>
                             -
                           </Button>
                         ) : null}
@@ -424,8 +422,7 @@ const Addorderbycashbook = args => {
                           color="primary"
                           type="button"
                           size="sm"
-                          onClick={() => addMoreProduct()}
-                        >
+                          onClick={() => addMoreProduct()}>
                           +
                         </Button>
                       </div>
@@ -477,8 +474,7 @@ const Addorderbycashbook = args => {
                     <Button.Ripple
                       color="primary"
                       type="submit"
-                      className="mt-2"
-                    >
+                      className="mt-2">
                       Submit
                     </Button.Ripple>
                   </div>

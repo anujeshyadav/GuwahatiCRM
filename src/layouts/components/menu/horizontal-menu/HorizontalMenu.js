@@ -21,6 +21,7 @@ import { Route } from "react-router-dom";
 import { FormattedMessage } from "react-intl";
 import { history } from "../../../../history";
 import "../../../assets/scss/core/menu/horizontal-menu.scss";
+import { FaPencilAlt } from "react-icons/fa";
 
 import navigationConfig from "../../../../configs/horizontalMenuConfig";
 import { FaArrowAltCircleLeft, FaArrowAltCircleRight } from "react-icons/fa";
@@ -500,7 +501,7 @@ class HorizontalSidebar extends React.Component {
             {/* </ul> */}
           </div>
           <span>
-            <Edit
+            <FaPencilAlt
               onClick={this.handleTogglemodal}
               style={{ cursor: "pointer" }}
               color="red"

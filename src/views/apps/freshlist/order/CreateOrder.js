@@ -2,6 +2,7 @@ import React, { useEffect, useState, useContext } from "react";
 import xmlJs from "xml-js";
 import { Route } from "react-router-dom";
 import { history } from "../../../../history";
+
 import {
   Card,
   CardBody,
@@ -27,26 +28,34 @@ import {
   _Get,
 } from "../../../../ApiEndPoint/ApiCalling";
 import "../../../../assets/scss/pages/users.scss";
-import { WareHouse_Current_Stock } from "../../../../ApiEndPoint/Api";
+import {
+  View_Wareahouse_Byid,
+  WareHouse_Current_Stock,
+} from "../../../../ApiEndPoint/Api";
 import UserContext from "../../../../context/Context";
+import { GstCalculation } from "./GstCalculation";
 let GrandTotal = [];
 let SelectedITems = [];
 let SelectedSize = [];
 const CreateOrder = (args) => {
   const [Index, setIndex] = useState("");
-  const [index, setindex] = useState("");
-  const [error, setError] = useState("");
+  const [PartyLogin, setPartyLogin] = useState(false);
+
   const [ProductList, setProductList] = useState([]);
+  const [GSTData, setGSTData] = useState({});
   const [PartyList, setPartyList] = useState([]);
   const [PartyId, setPartyId] = useState("");
+  const [Party, setParty] = useState({});
   const [UnitList, setUnitList] = useState([]);
-  const [grandTotalAmt, setGrandTotalAmt] = useState(0);
-  const [priceTotal, setPriceTotal] = useState(0);
+
   const [UserInfo, setUserInfo] = useState({});
+
   const [dateofDelivery, setDateofDelivery] = useState("");
   const [product, setProduct] = useState([
     {
       productId: "",
+      productData: "",
+      disCountPercentage: "",
       availableQty: "",
       qty: 1,
       price: "",
@@ -66,6 +75,7 @@ const CreateOrder = (args) => {
         list[index][name] = Number(value);
 
         let amt = 0;
+
         if (list.length > 0) {
           const x = list?.map((val) => {
             GrandTotal[index] = val.Size * val.qty * val.price;
@@ -74,24 +84,34 @@ const CreateOrder = (args) => {
           });
           amt = x.reduce((a, b) => a + b);
         }
+
+        const gstdetails = GstCalculation(Party, list, Context);
+
+        setGSTData(gstdetails);
+
         setProduct(list);
-        setGrandTotalAmt(amt);
       }
     }
   };
 
-  const handleSelectionParty = (selectedList, selectedItem, index) => {
+  const handleSelectionParty = (selectedList, selectedItem) => {
     setPartyId(selectedItem._id);
+    setParty(selectedItem);
   };
 
   const handleSelection = async (selectedList, selectedItem, index) => {
     const userdata = JSON.parse(localStorage.getItem("userData"));
 
     SelectedITems.push(selectedItem);
-    // console.log(selectedItem?.warehouse);
-    // console.log(selectedItem?._id);
-    // console.log(userdata?._id, userdata?.database);
-    let URl = `${WareHouse_Current_Stock}${selectedItem?.warehouse}/`;
+
+    _Get(View_Wareahouse_Byid, selectedItem?.warehouse?._id)
+      .then((res) => {
+        console.log(res);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+    let URl = `${WareHouse_Current_Stock}${selectedItem?.warehouse?._id}/`;
     var Stock;
     await _Get(URl, selectedItem?._id)
       .then((res) => {
@@ -102,13 +122,23 @@ const CreateOrder = (args) => {
         console.log(err);
         swal("something went Wrong");
       });
+
     setProduct((prevProductList) => {
+      debugger;
       const updatedProductList = [...prevProductList];
       const updatedProduct = { ...updatedProductList[index] }; // Create a copy of the product at the specified index
       updatedProduct.price = selectedItem.Product_MRP; // Update the price of the copied product
       updatedProduct.productId = selectedItem._id;
+      updatedProduct.productData = selectedItem;
+      updatedProduct.disCountPercentage =
+        Party?.Category?.discount && Party?.Category?.discount
+          ? Party?.Category?.discount
+          : 0;
       updatedProduct.availableQty = Stock?.currentStock;
-      updatedProductList[index] = updatedProduct; // Replace the product at the specified index with the updated one
+      updatedProductList[index] = updatedProduct;
+      const gstdetails = GstCalculation(Party, updatedProductList, Context);
+      setGSTData(gstdetails);
+      // Replace the product at the specified index with the updated one
       return updatedProductList; // Return the updated product list to set the state
     });
   };
@@ -129,24 +159,22 @@ const CreateOrder = (args) => {
         return indextotal;
       });
       let amt = myarr.reduce((a, b) => a + b);
-      setGrandTotalAmt(amt);
+
+      const gstdetails = GstCalculation(Party, updatedUnitList, Context);
+
+      setGSTData(gstdetails);
       return updatedUnitList; // Return the updated product list
     });
   };
-  let subtotal = product?.reduce((acc, product) => acc + product.totalprice, 0);
-  let taxRate = 0.1; // 10%
-  let tax = subtotal * taxRate;
-  let discountRate = 0.2;
-  let discountAmount = subtotal * discountRate;
-  let Grandtotals = subtotal + tax;
 
   useEffect(() => {
-    // console.log(Context?.CompanyDetails?.created_by);
-    // debugger;
-    const userId = JSON.parse(localStorage.getItem("userData"))._id;
-
     let userdata = JSON.parse(localStorage.getItem("userData"));
 
+    let findParty = userdata?.rolename?.roleName == "Customer";
+    if (findParty) {
+      setPartyLogin(true);
+      setPartyId(userdata?._id);
+    }
     ProductListView(userdata?._id, userdata?.database)
       .then((res) => {
         let product = res?.Product?.filter(
@@ -185,6 +213,8 @@ const CreateOrder = (args) => {
       ...product,
       {
         productId: "",
+        productData: "",
+        disCountPercentage: "",
         availableQty: "",
         qty: 1,
         price: "",
@@ -199,39 +229,48 @@ const CreateOrder = (args) => {
     newFormValues.splice(i, 1);
     GrandTotal.splice(i, 1);
     let amt = GrandTotal.reduce((a, b) => a + b, 0);
-    setGrandTotalAmt(amt);
     setProduct(newFormValues);
+    const gstdetails = GstCalculation(Party, newFormValues, Context);
+    setGSTData(gstdetails);
   };
+
   const submitHandler = (e) => {
+    const gstdetails = GstCalculation(Party, product, Context);
+    debugger;
     e.preventDefault();
     const fullname = UserInfo?.firstName + " " + UserInfo?.lastName;
     const payload = {
       userId: UserInfo?._id,
+      database: UserInfo?.database,
+      partyId: PartyId,
       SuperAdmin: Context?.CompanyDetails?.created_by,
       fullName: fullname,
-      address: UserInfo?.currentAddress,
-      grandTotal: grandTotalAmt + grandTotalAmt * 0.05 + grandTotalAmt * 0.18,
+      address: UserInfo?.address,
+      grandTotal: gstdetails?.Tax?.GrandTotal,
+      roundOff:Number( (gstdetails?.Tax?.GrandTotal - gstdetails?.Tax?.RoundOff).toFixed(2)),
+      amount: gstdetails?.Tax?.Amount,
+      sgstTotal: gstdetails?.Tax?.CgstTotal,
+      igstTaxType: gstdetails?.Tax?.IgstTaxType,
+      cgstTotal: gstdetails?.Tax?.CgstTotal,
+      igstTotal: gstdetails?.Tax?.IgstTotal,
+      gstDetails: gstdetails?.gstDetails,
       MobileNo: UserInfo?.mobileNumber,
       country: UserInfo?.Country,
       state: UserInfo?.State,
       city: UserInfo?.City,
       orderItems: product,
       DateofDelivery: dateofDelivery,
-      partyId: PartyId,
     };
-    if (error) {
-      swal("Error occured while Entering Details");
-    } else {
-      SaveOrder(payload)
-        .then((res) => {
-          console.log(res);
-          swal("Order Created Successfully");
-          //  history.push("/app/softnumen/order/orderList")
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    }
+
+    SaveOrder(payload)
+      .then((res) => {
+        console.log(res);
+        swal("Order Created Successfully");
+        //  history.push("/app/softnumen/order/orderList")
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   };
 
   const onRemove1 = (selectedList, removedItem, index) => {
@@ -267,35 +306,39 @@ const CreateOrder = (args) => {
           <CardBody>
             <Form className="m-1" onSubmit={submitHandler}>
               <Row>
-                <Col className="mb-1" lg="4" md="4" sm="12">
-                  <div className="">
-                    <Label>Choose Party</Label>
+                {PartyLogin && PartyLogin ? null : (
+                  <>
+                    <Col className="mb-1" lg="4" md="4" sm="12">
+                      <div className="">
+                        <Label>Choose Party</Label>
 
-                    <Multiselect
-                      required
-                      selectionLimit={1}
-                      isObject="false"
-                      options={PartyList}
-                      onSelect={(selectedList, selectedItem) =>
-                        handleSelectionParty(selectedList, selectedItem, index)
-                      }
-                      onRemove={onRemove1}
-                      displayValue="OwnerName"
-                    />
-                  </div>
-                </Col>
-                <Col className="mb-1" lg="4" md="4" sm="12">
-                  <div className="">
-                    <Label>Expected Delivery Date</Label>
-                    <Input
-                      required
-                      type="date"
-                      name="DateofDelivery"
-                      value={dateofDelivery}
-                      onChange={(e) => setDateofDelivery(e.target.value)}
-                    />
-                  </div>
-                </Col>
+                        <Multiselect
+                          required
+                          selectionLimit={1}
+                          isObject="false"
+                          options={PartyList}
+                          onSelect={(selectedList, selectedItem) =>
+                            handleSelectionParty(selectedList, selectedItem)
+                          }
+                          onRemove={onRemove1}
+                          displayValue="firstName"
+                        />
+                      </div>
+                    </Col>
+                    <Col className="mb-1" lg="4" md="4" sm="12">
+                      <div className="">
+                        <Label>Expected Delivery Date</Label>
+                        <Input
+                          required
+                          type="date"
+                          name="DateofDelivery"
+                          value={dateofDelivery}
+                          onChange={(e) => setDateofDelivery(e.target.value)}
+                        />
+                      </div>
+                    </Col>
+                  </>
+                )}
                 <Col className="mb-1" lg="4" md="4" sm="12"></Col>
               </Row>
               {product &&
@@ -333,24 +376,6 @@ const CreateOrder = (args) => {
                     </Col>
                     <Col className="mb-1">
                       <div className="">
-                        <Label>Required Size</Label>
-                        <Input
-                          type="number"
-                          name="qty"
-                          min={0}
-                          placeholder="Req_Qty"
-                          required
-                          autocomplete="off"
-                          value={product?.qty}
-                          onChange={(e) =>
-                            handleRequredQty(e, index, product?.availableQty)
-                          }
-                        />
-                      </div>
-                    </Col>
-
-                    <Col className="mb-1">
-                      <div className="">
                         <Label>Choose Unit</Label>
                         <Multiselect
                           required
@@ -371,7 +396,36 @@ const CreateOrder = (args) => {
                         />
                       </div>
                     </Col>
+                    <Col className="mb-1">
+                      <div className="">
+                        <Label>Required Size</Label>
+                        <Input
+                          type="number"
+                          name="qty"
+                          min={0}
+                          placeholder="Req_Qty"
+                          required
+                          autocomplete="off"
+                          value={product?.qty}
+                          onChange={(e) =>
+                            handleRequredQty(e, index, product?.availableQty)
+                          }
+                        />
+                      </div>
+                    </Col>
 
+                    <Col className="mb-1">
+                      <div className="">
+                        <Label>Dis(%)</Label>
+                        <Input
+                          type="text"
+                          name="disCountPercentage"
+                          disabled
+                          placeholder="Discount Percentage"
+                          value={product?.disCountPercentage}
+                        />
+                      </div>
+                    </Col>
                     <Col className="mb-1">
                       <div className="">
                         <Label>Price</Label>
@@ -429,34 +483,66 @@ const CreateOrder = (args) => {
                     <ul className="subtotal">
                       <li>
                         <Label className="pr-5">
-                          Grand Total:
+                          Total:
                           <span className="p-2">
-                            {grandTotalAmt && grandTotalAmt == "NaN"
-                              ? 0
-                              : grandTotalAmt}
+                            {!!GSTData?.Tax?.Amount && GSTData?.Tax?.Amount
+                              ? (GSTData?.Tax?.Amount).toFixed(2)
+                              : 0}
                           </span>
                         </Label>
                       </li>
-                      <li>
-                        <Label className="">
-                          Shipping Cost :{" "}
-                          <strong>RS {grandTotalAmt * 0.05}</strong>
-                        </Label>
-                      </li>
-                      <li>
-                        <Label className="">
-                          Tax: <strong>RS {grandTotalAmt * 0.18}</strong>
-                        </Label>
-                      </li>
+                      {GSTData?.Tax?.IgstTaxType &&
+                      GSTData?.Tax?.IgstTaxType ? (
+                        <li>
+                          <Label className="">
+                            IGST Tax:{" "}
+                            <strong>
+                              RS{" "}
+                              {!!GSTData?.Tax?.IgstTotal &&
+                              GSTData?.Tax?.IgstTotal
+                                ? GSTData?.Tax?.IgstTotal
+                                : 0}
+                            </strong>
+                          </Label>
+                        </li>
+                      ) : (
+                        <>
+                          <li>
+                            <Label className="">
+                              SGST Tax:{" "}
+                              <strong>
+                                RS{" "}
+                                {!!GSTData?.Tax?.SgstTotal &&
+                                GSTData?.Tax?.SgstTotal
+                                  ? GSTData?.Tax?.SgstTotal
+                                  : 0}
+                              </strong>
+                            </Label>
+                          </li>
+                          <li>
+                            <Label className="">
+                              CGST Tax:{" "}
+                              <strong>
+                                RS{" "}
+                                {!!GSTData?.Tax?.CgstTotal &&
+                                GSTData?.Tax?.CgstTotal
+                                  ? GSTData?.Tax?.CgstTotal
+                                  : 0}
+                              </strong>
+                            </Label>
+                          </li>
+                        </>
+                      )}
 
                       <li>
                         {" "}
                         <Label className="pr-5">
                           Grand Total :{" "}
                           <strong>
-                            {grandTotalAmt +
-                              grandTotalAmt * 0.05 +
-                              grandTotalAmt * 0.18}
+                            RS{" "}
+                            {!!GSTData?.Tax?.GrandTotal
+                              ? GSTData?.Tax?.GrandTotal
+                              : 0}
                           </strong>
                         </Label>
                       </li>
@@ -464,6 +550,7 @@ const CreateOrder = (args) => {
                   </div>
                 </Col>
               </Row>
+
               <Row>
                 <Col>
                   <div className="d-flex justify-content-center">

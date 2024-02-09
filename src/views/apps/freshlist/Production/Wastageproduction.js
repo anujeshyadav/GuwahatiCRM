@@ -336,7 +336,7 @@ class Wastageproduction extends React.Component {
         //   width: 180,
         //   valueGetter: (params) => {
         //     if (params.data.orderItems && params.data.orderItems.length > 0) {
-        //       return params.data.orderItems[0].product["GST Rate"]; // Return the price
+        //       return params.data.orderItems[0].product["GSTRate"]; // Return the price
         //     }
         //     return null; // Or handle cases where there's no price
         //   },

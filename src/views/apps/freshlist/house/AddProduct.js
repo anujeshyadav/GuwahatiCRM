@@ -28,8 +28,6 @@ import {
   CreateProductXMLView,
   SaveProduct,
   UnitListView,
-  CreateWarehouseList,
-  CreateAccountList,
   _BulkUpload,
   _Get,
 } from "../../../../ApiEndPoint/ApiCalling";
@@ -63,7 +61,6 @@ const AddProduct = () => {
 
   const handleInputChange = (e, type, i) => {
     const { name, value, checked } = e.target;
-
     if (name == "Unit") {
       let value = document.getElementById("unitType").value;
       const selectedOptionValue = e.target.value;
@@ -72,6 +69,7 @@ const AddProduct = () => {
 
       let list = formData;
       list["unitType"] = selectedOptionText;
+      list["unitQty"] = selectedOptionValue;
       setFormData(list);
     }
     setindex(i);
@@ -125,7 +123,6 @@ const AddProduct = () => {
       }
     }
   };
-
 
   const changeHandler1 = (e) => {
     setFormData({
@@ -197,9 +194,12 @@ const AddProduct = () => {
       [name]: e.target.files[0],
     });
   };
+  
 
   const submitHandler = async (e) => {
     e.preventDefault();
+   
+   
     if (BulkImport !== null || BulkImport != undefined) {
       let formdata = new FormData();
       formdata.append("file", BulkImport);
@@ -227,6 +227,9 @@ const AddProduct = () => {
       });
 
       formdata.append("unitType", formData?.unitType);
+      if (formData?.unitQty) {
+        formdata.append("unitQty", formData?.unitQty);
+      }
       formdata.append("addProductType", formData?.ProductType);
       CreatAccountView?.MyDropDown?.map((ele, i) => {
         formdata.append(
@@ -270,6 +273,8 @@ const AddProduct = () => {
       swal("Select Category");
     }
   };
+
+  console.log(formData);
 
   return (
     <div>
@@ -329,7 +334,7 @@ const AddProduct = () => {
             {Show && Show && (
               <Form className="m-1" onSubmit={submitHandler}>
                 <Row className="mb-2">
-                  {dropdownValue &&
+                  {dropdownValue?.MyDropDown?.length > 0 &&
                     dropdownValue?.MyDropDown?.map((ele, i) => {
                       if (ele?.dropdown?.name?._text == "category") {
                         return (
@@ -349,11 +354,12 @@ const AddProduct = () => {
                                   handlechangeSubcat(e);
                                 }}>
                                 <option value="NA">--Select Category--</option>
-                                {categoryList?.map((cat) => (
-                                  <option value={cat?.name} key={cat?._id}>
-                                    {cat?.name}
-                                  </option>
-                                ))}
+                                {categoryList &&
+                                  categoryList?.map((cat) => (
+                                    <option value={cat?.name} key={cat?._id}>
+                                      {cat?.name}
+                                    </option>
+                                  ))}
                               </CustomInput>
                             </Col>
                           </>
@@ -376,11 +382,12 @@ const AddProduct = () => {
                                 <option value="NA">
                                   --Select SubCategory--
                                 </option>
-                                {subcatlist?.map((cat) => (
-                                  <option value={cat?.name} key={cat?._id}>
-                                    {cat?.name}
-                                  </option>
-                                ))}
+                                {subcatlist &&
+                                  subcatlist?.map((cat) => (
+                                    <option value={cat?.name} key={cat?._id}>
+                                      {cat?.name}
+                                    </option>
+                                  ))}
                               </CustomInput>
                             </Col>
                           </>
@@ -393,9 +400,8 @@ const AddProduct = () => {
                       ) {
                         return (
                           <>
-                            {/* {formData?.ProductType == "Product" && ( */}
                             <Col key={i} lg="4" md="4">
-                              <Label className="mb-1 mt-1">
+                              <Label className="mb-1">
                                 {ele?.dropdown?.label?._text} *
                               </Label>
                               <CustomInput
@@ -426,7 +432,8 @@ const AddProduct = () => {
                       if (ele?.dropdown?.name?._text == "Unit") {
                         return (
                           <>
-                            {formData?.ProductType == "Item" ? (
+                            {formData.ProductType &&
+                            formData?.ProductType == "Item" ? (
                               <>
                                 <Col lg="4" md="4">
                                   <div className="">
@@ -438,12 +445,15 @@ const AddProduct = () => {
                                       className="form-control"
                                       name="Unit"
                                       placeholder="selecetedUnit"
-                                      // value={product?.selecetedUnit}
+                                      value={
+                                        formData[ele?.dropdown?.name?._text]
+                                      }
                                       onChange={handleInputChange}>
                                       <option value="">--select Unit--</option>
-                                      {UnitList &&
+                                      {UnitList?.length > 0 &&
                                         UnitList?.map((cat) => (
                                           <option
+                                            // data-order={cat.primaryUnit}
                                             value={cat?.primaryUnit}
                                             key={cat?._id}>
                                             {cat?.primaryUnit}
@@ -513,6 +523,7 @@ const AddProduct = () => {
                                     {UnitList &&
                                       UnitList?.map((cat) => (
                                         <option
+                                          data-order={cat.primaryUnit}
                                           value={cat?.unitQty}
                                           key={cat?._id}>
                                           {cat?.primaryUnit}
@@ -536,13 +547,16 @@ const AddProduct = () => {
                                 value={formData[ele?.dropdown?.name?._text]}
                                 onChange={handleInputChange}>
                                 <option value="">--Select Role--</option>
-                                {ele?.dropdown?.option?.map((option, index) => (
-                                  <option
-                                    key={index}
-                                    value={option?._attributes?.value}>
-                                    {option?._attributes?.value}
-                                  </option>
-                                ))}
+                                {ele?.dropdown?.option &&
+                                  ele?.dropdown?.option?.map(
+                                    (option, index) => (
+                                      <option
+                                        key={index}
+                                        value={option?._attributes?.value}>
+                                        {option?._attributes?.value}
+                                      </option>
+                                    )
+                                  )}
                               </CustomInput>
                             </FormGroup>
                           </Col>

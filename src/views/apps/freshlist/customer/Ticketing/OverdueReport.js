@@ -245,7 +245,7 @@ class OverdueReport extends React.Component {
           cellRendererFramework: params => {
             return (
               <div>
-                <span>{params.data?.productId["GST Rate"]} </span>
+                <span>{params.data?.productId["GSTRate"]} </span>
               </div>
             );
           },

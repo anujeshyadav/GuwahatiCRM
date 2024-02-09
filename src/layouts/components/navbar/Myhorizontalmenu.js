@@ -216,7 +216,7 @@ class HorizontalSidebar extends React.Component {
                           <span className="menu-icon align-bottom mr-1">
                             {child.icon}
                           </span>
-                          <span style={{ fontWeight: "600" }}>
+                          <span style={{ fontWeight: "400" }}>
                             <FormattedMessage
                               className="menu-title "
                               id={child.title}
@@ -239,7 +239,7 @@ class HorizontalSidebar extends React.Component {
                       </span>
                       <span
                         className="menu-title align-middle"
-                        style={{ fontWeight: "600" }}>
+                        style={{ fontWeight: "400" }}>
                         <FormattedMessage id={child.title} />
                       </span>
                     </div>
@@ -354,7 +354,7 @@ class HorizontalSidebar extends React.Component {
                     </span>
                     <span
                       className="menu-title align-middle"
-                      style={{ fontWeight: "600" }}>
+                      style={{ fontWeight: "400" }}>
                       <FormattedMessage
                         className="menu-title align-middle"
                         id={item.title}

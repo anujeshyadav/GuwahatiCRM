@@ -761,14 +761,14 @@ class JobappList extends React.Component {
                               {this.gridApi
                                 ? this.state.currenPageSize
                                 : "" * this.state.getPageSize -
-                                (this.state.getPageSize - 1)}{" "}
+                                  (this.state.getPageSize - 1)}{" "}
                               -{" "}
                               {this.state.rowData.length -
                                 this.state.currenPageSize *
-                                this.state.getPageSize >
-                                0
+                                  this.state.getPageSize >
+                              0
                                 ? this.state.currenPageSize *
-                                this.state.getPageSize
+                                  this.state.getPageSize
                                 : this.state.rowData.length}{" "}
                               of {this.state.rowData.length}
                               <ChevronDown className="ml-50" size={15} />
@@ -922,10 +922,11 @@ class JobappList extends React.Component {
                                       }
                                       style={{
                                         cursor: "pointer",
-                                        backgroundColor: `${this.state.Arrindex === i
-                                          ? "#1877f2"
-                                          : ""
-                                          }`,
+                                        backgroundColor: `${
+                                          this.state.Arrindex === i
+                                            ? "#1877f2"
+                                            : ""
+                                        }`,
                                       }}
                                       className="allfields">
                                       <IoMdRemoveCircleOutline
@@ -1119,7 +1120,7 @@ class JobappList extends React.Component {
                                       <td>{ele?.Size}</td>
                                       <td>{ele?.unitType}</td>
                                       <td>{ele?.productId?.HSN_Code}</td>
-                                      <td>{ele?.productId["GST Rate"]}</td>
+                                      <td>{ele?.productId["GSTRate"]}</td>
                                       <td>{ele?.qty}</td>
                                       <td>
                                         {ele?.price * ele?.Size * ele?.qty}

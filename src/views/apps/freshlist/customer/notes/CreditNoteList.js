@@ -232,7 +232,7 @@ class CreditNoteList extends React.Component {
         //       params.data?.productItems?.length > 0
         //     ) {
         //       return params?.data?.productItems?.map((val) => {
-        //         return val?.productId["GST Rate"];
+        //         return val?.productId["GSTRate"];
         //       });
         //     }
         //     return null;

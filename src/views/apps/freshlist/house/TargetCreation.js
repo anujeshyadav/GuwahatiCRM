@@ -180,12 +180,13 @@ class TargetCreation extends React.Component {
           filter: true,
           width: 200,
           cellRendererFramework: (params) => {
+      
             return (
               <div className="d-flex align-items-center cursor-pointer">
                 <div className="">
                   <span>
-                    {params.data?.partyId?.OwnerName &&
-                      params.data?.partyId?.OwnerName}
+                    {params.data?.partyId?.firstName &&
+                      params.data?.partyId?.firstName}
                   </span>
                 </div>
               </div>

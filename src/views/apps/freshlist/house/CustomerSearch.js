@@ -130,7 +130,7 @@ class CustomerSearch extends React.Component {
     const UserInformation = this.context?.UserInformatio;
     const InsidePermissions = CheckPermission("Create Customer");
     this.setState({ InsiderPermissions: InsidePermissions });
-    debugger;
+    
     let userData = JSON.parse(localStorage.getItem("userData"));
     if (userData?.rolename?.roleName === "MASTER") {
       this.setState({ MasterShow: true });
@@ -151,37 +151,33 @@ class CustomerSearch extends React.Component {
         );
 
         const inputs = allinput?.map((ele) => {
-          return {
-            headerName: ele?.label._text,
-            field: ele?.name._text,
-            filter: true,
-            sortable: true,
-          };
+          if (ele?.name?._text == "Category") {
+            return {
+              headerName: "Category",
+              field: "Category.groupName",
+              filter: true,
+              sortable: true,
+              editable: true,
+              cellRendererFramework: (params) => {
+                console.log(params.data);
+                return (
+                  <>
+                    <div className="actions cursor-pointer">
+                      <span>{params?.data?.Category?.groupName}</span>
+                    </div>
+                  </>
+                );
+              },
+            };
+          } else {
+            return {
+              headerName: ele?.label._text,
+              field: ele?.name._text,
+              filter: true,
+              sortable: true,
+            };
+          }
         });
-        // let Radioinput =
-        //   JSON.parse(jsonData).CreateAccount?.Radiobutton?.input[0]?.name
-        //     ?._text;
-        // const addRadio = [
-        //   {
-        //     headerName: Radioinput,
-        //     field: Radioinput,
-        //     filter: true,
-        //     sortable: true,
-        //     cellRendererFramework: (params) => {
-        //       return params.data?.Status === "Active" ? (
-        //         <div className="badge badge-pill badge-success">
-        //           {params.data.Status}
-        //         </div>
-        //       ) : params.data?.Status === "Deactive" ? (
-        //         <div className="badge badge-pill badge-warning">
-        //           {params.data.Status}
-        //         </div>
-        //       ) : (
-        //         "NA"
-        //       );
-        //     },
-        //   },
-        // ];
 
         let dropdown = JSON.parse(jsonData).CreateCustomer?.MyDropDown;
         if (dropdown?.length) {
@@ -213,6 +209,7 @@ class CustomerSearch extends React.Component {
             editable: true,
 
             cellRendererFramework: (params) => {
+              console.log(params.data);
               return (
                 <>
                   <div className="actions cursor-pointer">

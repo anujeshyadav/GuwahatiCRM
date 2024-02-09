@@ -17,6 +17,7 @@ import {
   Table,
   Label,
   Button,
+  Spinner,
 } from "reactstrap";
 import { ContextLayout } from "../../../../../utility/context/Layout";
 import { AgGridReact } from "ag-grid-react";
@@ -50,6 +51,8 @@ import {
 import * as XLSX from "xlsx";
 import UserContext from "../../../../../context/Context";
 import { CheckPermission } from "../../house/CheckPermission";
+import SuperAdminUI from "../../../../SuperAdminUi/SuperAdminUI";
+import { ImDownload } from "react-icons/im";
 
 const SelectedColums = [];
 
@@ -61,6 +64,7 @@ class Salesreport extends React.Component {
     this.gridApi = null;
     this.state = {
       isOpen: false,
+      MasterShow: false,
       Arrindex: "",
       rowData: [],
       startDate: "",
@@ -97,7 +101,7 @@ class Salesreport extends React.Component {
           headerName: "Actions",
           field: "transactions",
           width: 180,
-          cellRendererFramework: params => {
+          cellRendererFramework: (params) => {
             return (
               <div className="actions cursor-pointer">
                 {this.state.InsiderPermissions &&
@@ -121,7 +125,7 @@ class Salesreport extends React.Component {
           field: "status",
           filter: true,
           width: 150,
-          cellRendererFramework: params => {
+          cellRendererFramework: (params) => {
             return params.value == "completed" ? (
               <div className="badge badge-pill badge-success">
                 {params.data.status}
@@ -147,11 +151,24 @@ class Salesreport extends React.Component {
         },
 
         {
-          headerName: "Full Name",
-          field: "FullName",
+          headerName: "invoiceId",
+          field: "invoiceId",
           filter: true,
           width: 150,
-          cellRendererFramework: params => {
+          cellRendererFramework: (params) => {
+            return (
+              <div>
+                <span>{params?.data?.invoiceId}</span>
+              </div>
+            );
+          },
+        },
+        {
+          headerName: "Full Name",
+          field: "fullName",
+          filter: true,
+          width: 150,
+          cellRendererFramework: (params) => {
             return (
               <div>
                 <span>{params?.data?.fullName}</span>
@@ -164,7 +181,7 @@ class Salesreport extends React.Component {
           field: "MobileNo",
           filter: true,
           width: 150,
-          cellRendererFramework: params => {
+          cellRendererFramework: (params) => {
             return (
               <div>
                 <span>{params?.data?.MobileNo}</span>
@@ -177,7 +194,7 @@ class Salesreport extends React.Component {
           field: "country",
           filter: true,
           width: 150,
-          cellRendererFramework: params => {
+          cellRendererFramework: (params) => {
             return (
               <div>
                 <span>{params?.data?.country}</span>
@@ -190,7 +207,7 @@ class Salesreport extends React.Component {
           field: "state",
           filter: true,
           width: 200,
-          cellRendererFramework: params => {
+          cellRendererFramework: (params) => {
             return (
               <div>
                 <span>{params?.data?.state}</span>
@@ -203,7 +220,7 @@ class Salesreport extends React.Component {
           field: "city",
           filter: true,
           width: 150,
-          cellRendererFramework: params => {
+          cellRendererFramework: (params) => {
             return (
               <div>
                 <span>{params?.data?.city}</span>
@@ -216,33 +233,21 @@ class Salesreport extends React.Component {
           field: "grandTotal",
           filter: true,
           width: 150,
-          cellRendererFramework: params => {
+          cellRendererFramework: (params) => {
             return (
               <div>
-                <span>{params?.data?.grandTotal}</span>
+                <Badge color="primary">{params?.data?.grandTotal}</Badge>
               </div>
             );
           },
         },
+
         {
-          headerName: "PaymentMode",
-          field: "paymentMode",
-          filter: true,
-          width: 200,
-          cellRendererFramework: params => {
-            return (
-              <div>
-                <span>{params?.data?.paymentMode}</span>
-              </div>
-            );
-          },
-        },
-        {
-          headerName: "address",
-          field: "Address",
+          headerName: "Address",
+          field: "address",
           filter: true,
           width: 150,
-          cellRendererFramework: params => {
+          cellRendererFramework: (params) => {
             return (
               <div>
                 <span>{params?.data?.address}</span>
@@ -253,10 +258,10 @@ class Salesreport extends React.Component {
 
         {
           headerName: "Create Date",
-          field: "orderItems",
+          field: "updatedAt",
           filter: true,
           width: 180,
-          valueGetter: params => {
+          valueGetter: (params) => {
             const dateList = new Date(params?.data?.updatedAt);
             const onlyDate = dateList?.toISOString().split("T")[0];
             return onlyDate;
@@ -266,12 +271,12 @@ class Salesreport extends React.Component {
     };
   }
   toggleModal = () => {
-    this.setState(prevState => ({
+    this.setState((prevState) => ({
       modalone: !prevState.modalone,
     }));
   };
   LookupviewStart = () => {
-    this.setState(prevState => ({
+    this.setState((prevState) => ({
       modal: !prevState.modal,
     }));
   };
@@ -288,20 +293,16 @@ class Salesreport extends React.Component {
     }
   };
 
-  async componentDidMount() {
-    const userId = JSON.parse(localStorage.getItem("userData"))._id;
-    const UserInformation = this.context?.UserInformatio;
-    const InsidePermissions = CheckPermission("Sales Order");
-    console.log(InsidePermissions);
-    this.setState({ InsiderPermissions: InsidePermissions });
-    await createOrderhistoryview(userId)
-      .then(res => {
-        console.log(res?.orderHistory);
+  async Apicalling(id, db) {
+    this.setState({ Loading: true });
+    await createOrderhistoryview(id)
+      .then((res) => {
+        this.setState({ Loading: false });
         this.setState({ rowData: res?.orderHistory });
         this.setState({ AllcolumnDefs: this.state.columnDefs });
         this.setState({ SelectedCols: this.state.columnDefs });
 
-        let userHeading = JSON.parse(localStorage.getItem("OrderListshow"));
+        let userHeading = JSON.parse(localStorage.getItem("OrderReportList"));
         if (userHeading?.length) {
           this.setState({ columnDefs: userHeading });
           this.gridApi.setColumnDefs(userHeading);
@@ -311,13 +312,25 @@ class Salesreport extends React.Component {
           this.setState({ SelectedcolumnDefs: this.state.columnDefs });
         }
       })
-      .catch(err => {
+      .catch((err) => {
         console.log(err);
+        this.setState({ Loading: false });
+        this.setState({ rowData: [] });
       });
+  }
+  async componentDidMount() {
+    const userInfo = JSON.parse(localStorage.getItem("userData"));
+    const UserInformation = this.context?.UserInformatio;
+    if (userInfo?.rolename?.roleName === "MASTER") {
+      this.setState({ MasterShow: true });
+    }
+    const InsidePermissions = CheckPermission("Order Report");
+    await this.Apicalling(userInfo?._id, userInfo?.database);
+    this.setState({ InsiderPermissions: InsidePermissions });
   }
 
   togglemodal = () => {
-    this.setState(prevState => ({
+    this.setState((prevState) => ({
       modalone: !prevState.modalone,
     }));
     this.setState({ ShowBill: false });
@@ -326,7 +339,7 @@ class Salesreport extends React.Component {
     this.setState({ ShowBill: true });
   };
   toggleDropdown = () => {
-    this.setState(prevState => ({ isOpen: !prevState.isOpen }));
+    this.setState((prevState) => ({ isOpen: !prevState.isOpen }));
   };
 
   runthisfunction(id) {
@@ -335,15 +348,15 @@ class Salesreport extends React.Component {
         cancel: "cancel",
         catch: { text: "Delete ", value: "delete" },
       },
-    }).then(value => {
+    }).then((value) => {
       switch (value) {
         case "delete":
           Delete_targetINlist(id)
-            .then(res => {
+            .then((res) => {
               let selectedData = this.gridApi.getSelectedRows();
               this.gridApi.updateRowData({ remove: selectedData });
             })
-            .catch(err => {
+            .catch((err) => {
               console.log(err);
             });
           break;
@@ -352,7 +365,7 @@ class Salesreport extends React.Component {
     });
   }
 
-  onGridReady = params => {
+  onGridReady = (params) => {
     this.gridApi = params.api;
     this.gridColumnApi = params.columnApi;
     this.gridRef.current = params.api;
@@ -364,11 +377,11 @@ class Salesreport extends React.Component {
     });
   };
 
-  updateSearchQuery = val => {
+  updateSearchQuery = (val) => {
     this.gridApi.setQuickFilter(val);
   };
 
-  filterSize = val => {
+  filterSize = (val) => {
     if (this.gridApi) {
       this.gridApi.paginationSetPageSize(Number(val));
       this.setState({
@@ -383,7 +396,7 @@ class Salesreport extends React.Component {
       SelectedColums?.push(value);
     } else {
       const delindex = SelectedColums?.findIndex(
-        ele => ele?.headerName === value?.headerName
+        (ele) => ele?.headerName === value?.headerName
       );
 
       SelectedColums?.splice(delindex, 1);
@@ -394,14 +407,14 @@ class Salesreport extends React.Component {
       Papa.parse(csvData, {
         header: true,
         skipEmptyLines: true,
-        complete: result => {
+        complete: (result) => {
           if (result.data && result.data.length > 0) {
             resolve(result.data);
           } else {
             reject(new Error("No data found in the CSV"));
           }
         },
-        error: error => {
+        error: (error) => {
           reject(error);
         },
       });
@@ -413,7 +426,7 @@ class Salesreport extends React.Component {
 
     const doc = new jsPDF("landscape", "mm", size, false);
     doc.setTextColor(5, 87, 97);
-    const tableData = parsedData.map(row => Object.values(row));
+    const tableData = parsedData.map((row) => Object.values(row));
     doc.addImage(Logo, "JPEG", 10, 10, 50, 30);
     let date = new Date();
     doc.setCreationDate(date);
@@ -438,12 +451,12 @@ class Salesreport extends React.Component {
       console.error("Error parsing CSV:", error);
     }
   };
-  processCell = params => {
+  processCell = (params) => {
     return params.value;
   };
 
   convertCsvToExcel(csvData) {
-    return new Promise(resolve => {
+    return new Promise((resolve) => {
       Papa.parse(csvData, {
         header: true,
         dynamicTyping: true,
@@ -474,7 +487,7 @@ class Salesreport extends React.Component {
     window.URL.revokeObjectURL(url);
   }
 
-  exportToExcel = async e => {
+  exportToExcel = async (e) => {
     const CsvData = this.gridApi.getDataAsCsv({
       processCellCallback: this.processCell,
     });
@@ -487,7 +500,7 @@ class Salesreport extends React.Component {
       processCellCallback: this.processCell,
     });
     Papa.parse(CsvData, {
-      complete: result => {
+      complete: (result) => {
         const ws = XLSX.utils.json_to_sheet(result.data);
         const wb = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(wb, ws, "Sheet1");
@@ -518,14 +531,14 @@ class Salesreport extends React.Component {
       this.setState({ SelectedcolumnDefs: myArrayCopy });
     }
   };
-  handleDate = e => {
+  handleDate = (e) => {
     const { name, value } = e.target;
     this.setState({ [name]: value });
   };
 
   handleSubmitDate = () => {
     console.log(this.state.rowData);
-    const filteredItems = this.state.rowData.filter(item => {
+    const filteredItems = this.state.rowData.filter((item) => {
       const dateList = new Date(item.updatedAt);
       const onlyDate = dateList.toISOString().split("T")[0];
       return onlyDate >= this.state.startDate && onlyDate <= this.state.EndDate;
@@ -537,12 +550,12 @@ class Salesreport extends React.Component {
       processCellCallback: this.processCell,
     });
     Papa.parse(CsvData, {
-      complete: result => {
+      complete: (result) => {
         const rows = result.data;
 
         let xmlString = "<root>\n";
 
-        rows.forEach(row => {
+        rows.forEach((row) => {
           xmlString += "  <row>\n";
           row.forEach((cell, index) => {
             xmlString += `    <field${index + 1}>${cell}</field${index + 1}>\n`;
@@ -560,7 +573,7 @@ class Salesreport extends React.Component {
     });
   };
 
-  HandleSetVisibleField = e => {
+  HandleSetVisibleField = (e) => {
     e.preventDefault();
     debugger;
     this.gridApi.setColumnDefs(this.state.SelectedcolumnDefs);
@@ -568,7 +581,7 @@ class Salesreport extends React.Component {
     this.setState({ SelectedcolumnDefs: this.state.SelectedcolumnDefs });
     this.setState({ rowData: this.state.rowData });
     localStorage.setItem(
-      "OrderListshow",
+      "OrderReportList",
       JSON.stringify(this.state.SelectedcolumnDefs)
     );
     this.LookupviewStart();
@@ -577,10 +590,10 @@ class Salesreport extends React.Component {
   HeadingRightShift = () => {
     const updatedSelectedColumnDefs = [
       ...new Set([
-        ...this.state.SelectedcolumnDefs.map(item => JSON.stringify(item)),
-        ...SelectedColums.map(item => JSON.stringify(item)),
+        ...this.state.SelectedcolumnDefs.map((item) => JSON.stringify(item)),
+        ...SelectedColums.map((item) => JSON.stringify(item)),
       ]),
-    ].map(item => JSON.parse(item));
+    ].map((item) => JSON.parse(item));
     this.setState({
       SelectedcolumnDefs: [...new Set(updatedSelectedColumnDefs)], // Update the state with the combined array
     });
@@ -597,7 +610,36 @@ class Salesreport extends React.Component {
       });
     }
   };
+  handleParentSubmit = (e) => {
+    e.preventDefault();
+    let SuperAdmin = JSON.parse(localStorage.getItem("SuperadminIdByMaster"));
+    let id = SuperAdmin.split(" ")[0];
+    let db = SuperAdmin.split(" ")[1];
+    this.Apicalling(id, db);
+  };
+  handleDropdownChange = (selectedValue) => {
+    localStorage.setItem("SuperadminIdByMaster", JSON.stringify(selectedValue));
+  };
   render() {
+    if (this.state.Loading) {
+      return (
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            marginTop: "20rem",
+          }}>
+          <Spinner
+            style={{
+              height: "4rem",
+              width: "4rem",
+            }}
+            color="primary">
+            Loading...
+          </Spinner>
+        </div>
+      );
+    }
     const {
       rowData,
       columnDefs,
@@ -614,59 +656,47 @@ class Salesreport extends React.Component {
           <Col sm="12">
             <Card>
               <Row className="ml-2 mt-2 mr-2">
-                <Col>
-                  <h1 className="float-left " style={{ fontWeight: "600" }}>
+                <Col lg="2" md="2" sm="12">
+                  <h3 className="float-left " style={{ fontWeight: "600" }}>
                     Order Report
-                  </h1>
+                  </h3>
                 </Col>
+                {this.state.MasterShow && this.state.MasterShow ? (
+                  <Col lg="4" md="4" sm="6">
+                    <SuperAdminUI
+                      onDropdownChange={this.handleDropdownChange}
+                      onSubmit={this.handleParentSubmit}
+                    />
+                  </Col>
+                ) : (
+                  <Col></Col>
+                )}
+
                 <Col>
-                  <Label>Start Date</Label>
-                  <Input
-                    type="date"
-                    name="startDate"
-                    value={this.state.startDate}
-                    onChange={this.handleDate}
-                  />
-                </Col>
-                <Col>
-                  <Label>End Date</Label>
-                  <Input
-                    type="date"
-                    name="EndDate"
-                    value={this.state.EndDate}
-                    onChange={this.handleDate}
-                  />
-                </Col>
-                <Col>
-                  <Button
-                    type="submit"
-                    className="mt-1"
-                    color="primary"
-                    onClick={this.handleSubmitDate}>
-                    Submit
-                  </Button>
-                </Col>
-                {InsiderPermissions && InsiderPermissions?.View && (
-                  <Col>
-                    <span className="mx-1">
+                  {InsiderPermissions && InsiderPermissions?.View && (
+                    <span className="">
                       <FaFilter
                         style={{ cursor: "pointer" }}
                         title="filter coloumn"
-                        size="25px"
+                        size="35px"
                         onClick={this.LookupviewStart}
                         color="#39cccc"
-                        className="float-right"
+                        className="float-right mt-1"
                       />
                     </span>
-                    <span className="mx-1">
+                  )}
+                  {InsiderPermissions && InsiderPermissions?.Download && (
+                    <span
+                      onMouseEnter={this.toggleDropdown}
+                      onMouseLeave={this.toggleDropdown}
+                      className="">
                       <div className="dropdown-container float-right">
-                        <BsCloudDownloadFill
+                        <ImDownload
                           style={{ cursor: "pointer" }}
-                          title="download file"
-                          size="25px"
-                          className="dropdown-button "
+                          title="Download file"
+                          size="35px"
+                          className="dropdown-button mt-1"
                           color="#39cccc"
-                          onClick={this.toggleDropdown}
                         />
                         {isOpen && (
                           <div
@@ -709,8 +739,8 @@ class Salesreport extends React.Component {
                         )}
                       </div>
                     </span>
-                  </Col>
-                )}
+                  )}
+                </Col>
               </Row>
               <CardBody style={{ marginTop: "-1.5rem" }}>
                 {this.state.rowData === null ? null : (
@@ -765,7 +795,35 @@ class Salesreport extends React.Component {
                       </div>
                       <div className="d-flex flex-wrap justify-content-end mb-1">
                         <div className="table-input mr-1">
+                          <Label>Start Date</Label>
                           <Input
+                            type="date"
+                            name="startDate"
+                            value={this.state.startDate}
+                            onChange={this.handleDate}
+                          />
+                        </div>
+                        <div className="table-input mr-1">
+                          <Label>End Date</Label>
+                          <Input
+                            type="date"
+                            name="EndDate"
+                            value={this.state.EndDate}
+                            onChange={this.handleDate}
+                          />
+                        </div>
+                        <div className="table-input mr-1">
+                          <Button
+                            type="submit"
+                            className="mt-1"
+                            color="primary"
+                            onClick={this.handleSubmitDate}>
+                            Submit
+                          </Button>
+                        </div>
+                        <div className="table-input mr-1">
+                          <Input
+                            className="mt-1"
                             placeholder="search Item here..."
                             onChange={(e) =>
                               this.updateSearchQuery(e.target.value)
@@ -1081,7 +1139,7 @@ class Salesreport extends React.Component {
                                       <td>{ele?.Size}</td>
                                       <td>{ele?.unitType}</td>
                                       <td>{ele?.productId?.HSN_Code}</td>
-                                      <td>{ele?.productId["GST Rate"]}</td>
+                                      <td>{ele?.productId["GSTRate"]}</td>
                                       <td>{ele?.qty}</td>
                                       <td>
                                         {ele?.productId?.Product_MRP *
